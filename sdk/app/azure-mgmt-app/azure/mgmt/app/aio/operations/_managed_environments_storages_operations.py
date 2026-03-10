@@ -9,7 +9,13 @@ import functools
 from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -18,9 +24,16 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._managed_environments_storages_operations import build_create_or_update_request, build_delete_request, build_get_request, build_list_request
-T = TypeVar('T')
+from ...operations._managed_environments_storages_operations import (
+    build_create_or_update_request,
+    build_delete_request,
+    build_get_request,
+    build_list_request,
+)
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class ManagedEnvironmentsStoragesOperations:
     """ManagedEnvironmentsStoragesOperations async operations.
@@ -46,10 +59,7 @@ class ManagedEnvironmentsStoragesOperations:
 
     @distributed_trace_async
     async def list(
-        self,
-        resource_group_name: str,
-        env_name: str,
-        **kwargs: Any
+        self, resource_group_name: str, env_name: str, **kwargs: Any
     ) -> "_models.ManagedEnvironmentStoragesCollection":
         """Get all storages for a managedEnvironment.
 
@@ -64,18 +74,15 @@ class ManagedEnvironmentsStoragesOperations:
         :rtype: ~container_apps_api_client.models.ManagedEnvironmentStoragesCollection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedEnvironmentStoragesCollection"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ManagedEnvironmentStoragesCollection"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_list_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             env_name=env_name,
-            template_url=self.list.metadata['url'],
+            template_url=self.list.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -88,23 +95,18 @@ class ManagedEnvironmentsStoragesOperations:
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('ManagedEnvironmentStoragesCollection', pipeline_response)
+        deserialized = self._deserialize("ManagedEnvironmentStoragesCollection", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{envName}/storages'}  # type: ignore
-
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{envName}/storages"}  # type: ignore
 
     @distributed_trace_async
     async def get(
-        self,
-        resource_group_name: str,
-        env_name: str,
-        name: str,
-        **kwargs: Any
+        self, resource_group_name: str, env_name: str, name: str, **kwargs: Any
     ) -> "_models.ManagedEnvironmentStorage":
         """Get storage for a managedEnvironment.
 
@@ -121,19 +123,16 @@ class ManagedEnvironmentsStoragesOperations:
         :rtype: ~container_apps_api_client.models.ManagedEnvironmentStorage
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedEnvironmentStorage"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ManagedEnvironmentStorage"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_get_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             env_name=env_name,
             name=name,
-            template_url=self.get.metadata['url'],
+            template_url=self.get.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -146,15 +145,14 @@ class ManagedEnvironmentsStoragesOperations:
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('ManagedEnvironmentStorage', pipeline_response)
+        deserialized = self._deserialize("ManagedEnvironmentStorage", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{envName}/storages/{name}'}  # type: ignore
-
+    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{envName}/storages/{name}"}  # type: ignore
 
     @distributed_trace_async
     async def create_or_update(
@@ -182,15 +180,13 @@ class ManagedEnvironmentsStoragesOperations:
         :rtype: ~container_apps_api_client.models.ManagedEnvironmentStorage
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedEnvironmentStorage"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ManagedEnvironmentStorage"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(storage_envelope, 'ManagedEnvironmentStorage')
+        _json = self._serialize.body(storage_envelope, "ManagedEnvironmentStorage")
 
         request = build_create_or_update_request(
             subscription_id=self._config.subscription_id,
@@ -199,7 +195,7 @@ class ManagedEnvironmentsStoragesOperations:
             name=name,
             content_type=content_type,
             json=_json,
-            template_url=self.create_or_update.metadata['url'],
+            template_url=self.create_or_update.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -212,24 +208,17 @@ class ManagedEnvironmentsStoragesOperations:
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('ManagedEnvironmentStorage', pipeline_response)
+        deserialized = self._deserialize("ManagedEnvironmentStorage", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{envName}/storages/{name}'}  # type: ignore
-
+    create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{envName}/storages/{name}"}  # type: ignore
 
     @distributed_trace_async
-    async def delete(
-        self,
-        resource_group_name: str,
-        env_name: str,
-        name: str,
-        **kwargs: Any
-    ) -> None:
+    async def delete(self, resource_group_name: str, env_name: str, name: str, **kwargs: Any) -> None:
         """Delete storage for a managedEnvironment.
 
         Delete storage for a managedEnvironment.
@@ -245,19 +234,16 @@ class ManagedEnvironmentsStoragesOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_delete_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             env_name=env_name,
             name=name,
-            template_url=self.delete.metadata['url'],
+            template_url=self.delete.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -273,5 +259,4 @@ class ManagedEnvironmentsStoragesOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{envName}/storages/{name}'}  # type: ignore
-
+    delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{envName}/storages/{name}"}  # type: ignore

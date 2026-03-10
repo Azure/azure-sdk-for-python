@@ -12,7 +12,6 @@ from .._internal import AadClient, AadClientBase, within_dac
 from .._internal.decorators import log_get_token
 from .._internal.shared_token_cache import NO_TOKEN, SharedTokenCacheBase
 
-
 T = TypeVar("T", bound="_SharedTokenCacheCredential")
 
 

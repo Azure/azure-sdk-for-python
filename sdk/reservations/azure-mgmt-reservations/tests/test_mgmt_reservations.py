@@ -3,16 +3,12 @@ import pytest
 from azure.mgmt.reservations import AzureReservationAPI
 from azure.mgmt.reservations.models import *
 from devtools_testutils import AzureMgmtRecordedTestCase
-from azure.mgmt.reservations.models import (
-    ReservedResourceType,
-    InstanceFlexibility,
-    AppliedScopeType
-)
+from azure.mgmt.reservations.models import ReservedResourceType, InstanceFlexibility, AppliedScopeType
 import unittest
-
 
 # change the custom endpoint to set the environment
 _CUSTOM_ENDPOINT = "https://api-dogfood.resources.windows-int.net/"
+
 
 @pytest.mark.skip("skip test")
 class TestMgmtReservations(AzureMgmtRecordedTestCase):
@@ -55,7 +51,8 @@ class TestMgmtReservations(AzureMgmtRecordedTestCase):
             display_name="TestPythonPurchase",
             applied_scope_type="Single",
             applied_scopes=["/subscriptions/{}".format(self.settings.SUBSCRIPTION_ID)],
-            reserved_resource_properties=PurchaseRequestPropertiesReservedResourceProperties(instance_flexibility="On"))
+            reserved_resource_properties=PurchaseRequestPropertiesReservedResourceProperties(instance_flexibility="On"),
+        )
 
     def _calculate_reservation_order(self):
         purchase_request = self._create_purchase_request()
@@ -78,13 +75,19 @@ class TestMgmtReservations(AzureMgmtRecordedTestCase):
         self._validate_reservation(reservation)
 
     def _test_update_reservation_to_shared(self, reservation_order_id, reservation_id):
-        patch = Patch(applied_scope_type=AppliedScopeType.shared, applied_scopes=None, instance_flexibility=InstanceFlexibility.on)
+        patch = Patch(
+            applied_scope_type=AppliedScopeType.shared, applied_scopes=None, instance_flexibility=InstanceFlexibility.on
+        )
         reservation = self.reservation_client.reservation.update(reservation_order_id, reservation_id, patch).result()
         self._validate_reservation(reservation)
 
     def _test_update_reservation_to_single(self, reservation_order_id, reservation_id):
         scope = ["/subscriptions/{}".format(self.settings.SUBSCRIPTION_ID)]
-        patch = Patch(applied_scope_type=AppliedScopeType.single, applied_scopes=scope, instance_flexibility=InstanceFlexibility.on)
+        patch = Patch(
+            applied_scope_type=AppliedScopeType.single,
+            applied_scopes=scope,
+            instance_flexibility=InstanceFlexibility.on,
+        )
         reservation = self.reservation_client.reservation.update(reservation_order_id, reservation_id, patch).result()
         self._validate_reservation(reservation)
 
@@ -93,9 +96,13 @@ class TestMgmtReservations(AzureMgmtRecordedTestCase):
         for reservation in reservation_list:
             if "Succeeded" in reservation.properties.provisioning_state:
                 reservation_to_update = reservation
-        split_reservation_id = reservation_to_update.id.split('/')[6]
-        reservation_id = "/providers/Microsoft.Capacity/reservationOrders/{}/reservations/{}".format(reservation_order_id, split_reservation_id)
-        split_response = self.reservation_client.reservation.split(reservation_order_id, [1, 1], reservation_id).result()
+        split_reservation_id = reservation_to_update.id.split("/")[6]
+        reservation_id = "/providers/Microsoft.Capacity/reservationOrders/{}/reservations/{}".format(
+            reservation_order_id, split_reservation_id
+        )
+        split_response = self.reservation_client.reservation.split(
+            reservation_order_id, [1, 1], reservation_id
+        ).result()
 
         split_quantity = 0
         for reservation in split_response:
@@ -111,13 +118,19 @@ class TestMgmtReservations(AzureMgmtRecordedTestCase):
         for reservation in reservation_list:
             if "Succeeded" in reservation.properties.provisioning_state:
                 if split_id1 is None:
-                    split_id1 = reservation.id.split('/')[6]
+                    split_id1 = reservation.id.split("/")[6]
                 else:
-                    split_id2 = reservation.id.split('/')[6]
-        merge_id1 = "/providers/Microsoft.Capacity/reservationOrders/{}/reservations/{}".format(reservation_order_id, split_id1)
-        merge_id2 = "/providers/Microsoft.Capacity/reservationOrders/{}/reservations/{}".format(reservation_order_id, split_id2)
-        merge_response = self.reservation_client.reservation.merge(reservation_order_id, [merge_id1, merge_id2]).result()
-        
+                    split_id2 = reservation.id.split("/")[6]
+        merge_id1 = "/providers/Microsoft.Capacity/reservationOrders/{}/reservations/{}".format(
+            reservation_order_id, split_id1
+        )
+        merge_id2 = "/providers/Microsoft.Capacity/reservationOrders/{}/reservations/{}".format(
+            reservation_order_id, split_id2
+        )
+        merge_response = self.reservation_client.reservation.merge(
+            reservation_order_id, [merge_id1, merge_id2]
+        ).result()
+
         merge_quantity = 0
         for reservation in merge_response:
             self._validate_reservation(reservation)
@@ -155,26 +168,32 @@ class TestMgmtReservations(AzureMgmtRecordedTestCase):
     def test_reservation_order_list(self):
         reservation_order_list = self.reservation_client.reservation_order.list()
         self.assertIsNotNone(reservation_order_list)
-        self.assertTrue(len(reservation_order_list._attribute_map['current_page']) > 0)
+        self.assertTrue(len(reservation_order_list._attribute_map["current_page"]) > 0)
         for reservation_order in reservation_order_list:
             self._validate_reservation_order(reservation_order)
 
     def test_get_catalog(self):
-        catalog_items = self.reservation_client.get_catalog(self.settings.SUBSCRIPTION_ID, ReservedResourceType.virtual_machines, "westus")
+        catalog_items = self.reservation_client.get_catalog(
+            self.settings.SUBSCRIPTION_ID, ReservedResourceType.virtual_machines, "westus"
+        )
         for item in catalog_items:
             self.assertIsNotNone(item.resource_type)
             self.assertIsNotNone(item.name)
             self.assertTrue(len(item.terms) > 0)
             self.assertTrue(len(item.locations) > 0)
             self.assertTrue(len(item.sku_properties) > 0)
-        catalog_items = self.reservation_client.get_catalog(self.settings.SUBSCRIPTION_ID, ReservedResourceType.sql_databases, "southeastasia")
+        catalog_items = self.reservation_client.get_catalog(
+            self.settings.SUBSCRIPTION_ID, ReservedResourceType.sql_databases, "southeastasia"
+        )
         for item in catalog_items:
             self.assertIsNotNone(item.resource_type)
             self.assertIsNotNone(item.name)
             self.assertTrue(len(item.terms) > 0)
             self.assertTrue(len(item.locations) > 0)
             self.assertTrue(len(item.sku_properties) > 0)
-        catalog_items = self.reservation_client.get_catalog(self.settings.SUBSCRIPTION_ID, ReservedResourceType.suse_linux)
+        catalog_items = self.reservation_client.get_catalog(
+            self.settings.SUBSCRIPTION_ID, ReservedResourceType.suse_linux
+        )
         for item in catalog_items:
             self.assertIsNotNone(item.resource_type)
             self.assertIsNotNone(item.name)
@@ -183,7 +202,9 @@ class TestMgmtReservations(AzureMgmtRecordedTestCase):
 
     def test_applied_reservation(self):
         applied_reservation = self.reservation_client.get_applied_reservation_list(self.settings.SUBSCRIPTION_ID)
-        expected_id = "/subscriptions/{}/providers/microsoft.capacity/AppliedReservations/default".format(self.settings.SUBSCRIPTION_ID)
+        expected_id = "/subscriptions/{}/providers/microsoft.capacity/AppliedReservations/default".format(
+            self.settings.SUBSCRIPTION_ID
+        )
         self.assertEqual(expected_id, applied_reservation.id)
         self.assertEqual("default", applied_reservation.name)
         self.assertEqual("Microsoft.Capacity/AppliedReservations", applied_reservation.type)
@@ -196,6 +217,7 @@ class TestMgmtReservations(AzureMgmtRecordedTestCase):
             self.assertIsNotNone(operation.name)
             self.assertIsNotNone(operation.display)
 
-#------------------------------------------------------------------------------
-if __name__ == '__main__':
+
+# ------------------------------------------------------------------------------
+if __name__ == "__main__":
     unittest.main()

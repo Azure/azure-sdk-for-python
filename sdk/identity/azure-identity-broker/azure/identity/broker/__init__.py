@@ -4,7 +4,6 @@
 # ------------------------------------
 from ._browser import InteractiveBrowserBrokerCredential, PopTokenRequestOptions
 
-
 __all__ = [
     "InteractiveBrowserBrokerCredential",
     "PopTokenRequestOptions",

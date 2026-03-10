@@ -11,7 +11,6 @@ import pytest
 
 from helpers import mock, GET_TOKEN_METHODS
 
-
 ALL_VARIABLES = {
     _
     for _ in EnvironmentVariables.CLIENT_SECRET_VARS

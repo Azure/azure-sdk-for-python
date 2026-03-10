@@ -10,6 +10,7 @@ import os
 from azure.cosmos import exceptions, PartitionKey
 from azure.cosmos.aio import CosmosClient
 
+
 async def examples_async():
     # All interaction with Cosmos DB starts with an instance of the CosmosClient
     # In order to use the asynchronous client, we need to use async/await keywords,
@@ -73,7 +74,7 @@ async def examples_async():
         # [START list_containers]
         database = client.get_database_client(database_name)
         async for container_c in database.list_containers():
-            print("Container ID: {}".format(container_c['id']))
+            print("Container ID: {}".format(container_c["id"]))
         # [END list_containers]
 
         # Insert new items by defining a dict and calling Container.upsert_item
@@ -98,7 +99,7 @@ async def examples_async():
         # as such, we iterate over it by using an async for loop
         # [START query_items]
         async for queried_item in container.query_items(
-                query='SELECT * FROM products p WHERE p.productModel <> "DISCONTINUED"'
+            query='SELECT * FROM products p WHERE p.productModel <> "DISCONTINUED"'
         ):
             print(json.dumps(queried_item, indent=True))
         # [END query_items]
@@ -121,9 +122,9 @@ async def examples_async():
         # then Azure Cosmos DB will throttle low priority requests to allow high priority requests to execute.
         # Can be used for Read, Write, and Query operations. This is specified with the `priority` keyword.
         # the value can either be low or high.
-        
+
         async for queried_item in container.query_items(
-                query='SELECT * FROM products p WHERE p.productModel <> "DISCONTINUED"', priority="High"
+            query='SELECT * FROM products p WHERE p.productModel <> "DISCONTINUED"', priority="High"
         ):
             print(json.dumps(queried_item, indent=True))
         # [END priority_level option]
@@ -172,7 +173,7 @@ async def examples_async():
             # This query will use High priority, overriding the client's Low priority setting
             async for important_item in container_with_priority.query_items(
                 query='SELECT * FROM products p WHERE p.priority = "High"',
-                priority="High"  # Request-level priority overrides client-level priority
+                priority="High",  # Request-level priority overrides client-level priority
             ):
                 print(json.dumps(important_item, indent=True))
 
@@ -190,7 +191,7 @@ async def examples_async():
         # on the container.
         # [START delete_items]
         async for queried_item in container.query_items(
-                query='SELECT * FROM products p WHERE p.productModel = "DISCONTINUED" AND p.productName="Widget"'
+            query='SELECT * FROM products p WHERE p.productModel = "DISCONTINUED" AND p.productName="Widget"'
         ):
             await container.delete_item(queried_item, partition_key="Widget")
         # [END delete_items]
@@ -207,26 +208,36 @@ async def examples_async():
         properties = await container._get_properties()
 
         # Print _rid and partitionKey
-        print("Resource ID: ", properties.get('_rid'))
-        print("Partition Key: ", properties.get('partitionKey'))
+        print("Resource ID: ", properties.get("_rid"))
+        print("Partition Key: ", properties.get("partitionKey"))
 
         # Read the container to get the latests of all the Container Properties. (This will make a backend requests and will consume RUs)
         container_properties = await container.read()
 
         # Print each property one by one if they are currently in the container properties
         print("indexingPolicy: ", container_properties.get("indexingPolicy"))
-        print("etag: ", container_properties.get('_etag'))
-        print("lastModified: ", container_properties.get('lastModified'))
-        print("defaultTtl: ", container_properties.get('defaultTtl'))
-        print("uniqueKeyPolicy: ", container_properties.get('uniqueKeyPolicy'))
-        print("conflictResolutionPolicy: ", container_properties.get('conflictResolutionPolicy'))
-        print("changeFeedPolicy: ", container_properties.get('changeFeedPolicy'))
-        print("geospatialConfig: ", container_properties.get('geospatialConfig'))
+        print("etag: ", container_properties.get("_etag"))
+        print("lastModified: ", container_properties.get("lastModified"))
+        print("defaultTtl: ", container_properties.get("defaultTtl"))
+        print("uniqueKeyPolicy: ", container_properties.get("uniqueKeyPolicy"))
+        print("conflictResolutionPolicy: ", container_properties.get("conflictResolutionPolicy"))
+        print("changeFeedPolicy: ", container_properties.get("changeFeedPolicy"))
+        print("geospatialConfig: ", container_properties.get("geospatialConfig"))
 
         # Print remaining properties if they are in the current container properties
         for key, value in container_properties.items():
-            if key not in ['_rid', 'partitionKey', 'indexingPolicy', '_etag', 'lastModified', 'defaultTtl', 'uniqueKeyPolicy',
-                           'conflictResolutionPolicy', 'changeFeedPolicy', 'geospatialConfig']:
+            if key not in [
+                "_rid",
+                "partitionKey",
+                "indexingPolicy",
+                "_etag",
+                "lastModified",
+                "defaultTtl",
+                "uniqueKeyPolicy",
+                "conflictResolutionPolicy",
+                "changeFeedPolicy",
+                "geospatialConfig",
+            ]:
                 print(f"{key}: {value}")
         # [END get_container_properties]
 
@@ -236,11 +247,11 @@ async def examples_async():
         # when the TTL has elapsed since it was last edited.
         # [START reset_container_properties]
         # Set the TTL on the container to 3600 seconds (one hour)
-        await database.replace_container(container, partition_key=PartitionKey(path='/productName'), default_ttl=3600)
+        await database.replace_container(container, partition_key=PartitionKey(path="/productName"), default_ttl=3600)
 
         # Display the new TTL setting for the container
         container_props = await database.get_container_client(container_name).read()
-        print("New container TTL: {}".format(json.dumps(container_props['defaultTtl'])))
+        print("New container TTL: {}".format(json.dumps(container_props["defaultTtl"])))
         # [END reset_container_properties]
 
         # Create a user in the database.
@@ -278,16 +289,14 @@ async def examples_async():
         try:
             container = await database.create_container(
                 id=location_container_name,
-                partition_key=PartitionKey(path=["/state", "/city", "/zipcode"], kind="MultiHash")
+                partition_key=PartitionKey(path=["/state", "/city", "/zipcode"], kind="MultiHash"),
             )
         except exceptions.CosmosResourceExistsError:
             container = database.get_container_client(location_container_name)
         # [END create_container]
         # [START upsert_items]
         for i in range(1, 10):
-            await container.upsert_item(
-                dict(id="item{}".format(i), state="WA", city="Redmond", zipcode=98052)
-            )
+            await container.upsert_item(dict(id="item{}".format(i), state="WA", city="Redmond", zipcode=98052))
         # [END upsert_items]
 
         # Modify an existing item in the container
@@ -302,16 +311,12 @@ async def examples_async():
         # Query the items in a container using SQL-like syntax. This example
         # gets all items whose product model hasn't been discontinued.
         # [START query_items]
-        async for queried_item in container.query_items(
-                query='SELECT * FROM location l WHERE l.state = "WA"'
-        ):
+        async for queried_item in container.query_items(query='SELECT * FROM location l WHERE l.state = "WA"'):
             print(json.dumps(queried_item, indent=True))
         # [END query_items]
 
-         # [START delete_items]
-        async for item_dict in container.query_items(
-                query='SELECT * FROM location p WHERE p.state = "GA"'
-        ):
+        # [START delete_items]
+        async for item_dict in container.query_items(query='SELECT * FROM location p WHERE p.state = "GA"'):
             await container.delete_item(item_dict, partition_key=["GA", "Atlanta", 30363])
         # [END delete_items]
 
@@ -319,9 +324,7 @@ async def examples_async():
         # gets all items within the feed range.
         # [START query_items_feed_range]
         async for feed_range in container.read_feed_ranges():
-            async for queried_item in container.query_items(
-                    query='SELECT * from c',
-                    feed_range=feed_range):
+            async for queried_item in container.query_items(query="SELECT * from c", feed_range=feed_range):
                 print(json.dumps(queried_item, indent=True))
         # [END query_items_param]
 
@@ -345,7 +348,6 @@ async def examples_async():
                 break
         # [END is_feed_range_subset]
 
-
         # Query a sorted list of items that were changed for one feed range.
         # The asynchronous client returns asynchronous iterators for its query methods;
         # as such, we iterate over it by using an async for loop
@@ -367,21 +369,15 @@ async def examples_async():
 
         # configure availability strategy config on request level
         # [START read_item_with_availability_strategy]
-        strategy = {'threshold_ms':500, 'threshold_steps_ms':100}
-        await container.read_item(
-            item="id1",
-            partition_key="pk1",
-            availability_strategy=strategy)
+        strategy = {"threshold_ms": 500, "threshold_steps_ms": 100}
+        await container.read_item(item="id1", partition_key="pk1", availability_strategy=strategy)
         # [END read_item_with_availability_strategy]
 
         # disable availability strategy config on request level
         # [START read_item_with_disabled_availability_strategy]
-        await container.read_item(
-            item="id1",
-            partition_key="pk1",
-            availability_strategy=None
-        )
+        await container.read_item(item="id1", partition_key="pk1", availability_strategy=None)
         # [END read_item_with_disabled_availability_strategy]
+
 
 if __name__ == "__main__":
     asyncio.run(examples_async())

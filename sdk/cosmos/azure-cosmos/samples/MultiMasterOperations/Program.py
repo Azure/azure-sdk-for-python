@@ -1,6 +1,6 @@
 from MultiMasterScenario import MultiMasterScenario
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print("Multimaster demo started!")
     scenario = MultiMasterScenario()
     scenario.initialize_async()

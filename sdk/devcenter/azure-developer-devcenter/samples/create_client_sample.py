@@ -28,8 +28,8 @@
 FILE: create_client_sample.py
 
 DESCRIPTION:
-    This sample demonstrates how to create a Dev Center client. For this sample, you must 
-    have previously configured a Dev Center in Azure. More details on how to configure it at 
+    This sample demonstrates how to create a Dev Center client. For this sample, you must
+    have previously configured a Dev Center in Azure. More details on how to configure it at
     https://learn.microsoft.com/azure/deployment-environments/quickstart-create-and-configure-devcenter#create-a-dev-center
 
 USAGE:
@@ -38,6 +38,7 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) DEVCENTER_ENDPOINT - the endpoint for your devcenter
 """
+
 
 def create_dev_center_client():
     # [START create_dev_center_client]
@@ -56,6 +57,7 @@ def create_dev_center_client():
     # Build a client through AAD
     client = DevCenterClient(endpoint, credential=DefaultAzureCredential())
     # [END create_dev_center_client]
+
 
 if __name__ == "__main__":
     create_dev_center_client()

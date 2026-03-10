@@ -50,8 +50,7 @@ class ClinicalCodedElement(_model_base.Model):
         code: str,
         name: Optional[str] = None,
         value: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -96,8 +95,7 @@ class ClinicalNoteEvidence(_model_base.Model):
         offset: int,
         length: int,
         text: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -139,8 +137,7 @@ class DocumentContent(_model_base.Model):
         *,
         source_type: Union[str, "_models.DocumentContentSourceType"],
         value: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -192,8 +189,7 @@ class Error(_model_base.Model):
         details: List["_models.Error"],
         target: Optional[str] = None,
         innererror: Optional["_models.InnerError"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -236,8 +232,7 @@ system. """
         patient_data_evidence: Optional["_models.ClinicalNoteEvidence"] = None,
         patient_info_evidence: Optional["_models.ClinicalCodedElement"] = None,
         importance: Optional[float] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -274,8 +269,7 @@ class InnerError(_model_base.Model):
         *,
         code: str,
         innererror: Optional["_models.InnerError"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -311,8 +305,7 @@ class OncoPhenotypeData(_model_base.Model):
         *,
         patients: List["_models.PatientRecord"],
         configuration: Optional["_models.OncoPhenotypeModelConfiguration"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -347,7 +340,7 @@ class OncoPhenotypeInference(_model_base.Model):
     :vartype case_id: str
     """
 
-    type: Union[str, "_models.OncoPhenotypeInferenceType"] = rest_field() # pylint: disable=redefined-builtin
+    type: Union[str, "_models.OncoPhenotypeInferenceType"] = rest_field()  # pylint: disable=redefined-builtin
     """The type of the Onco Phenotype inference. Required. Known values are: \"tumorSite\", \"histology\",
     \"clinicalStageT\", \"clinicalStageN\", \"clinicalStageM\", \"pathologicStageT\", \"pathologicStageN\",
     and \"pathologicStageM\". """
@@ -366,14 +359,13 @@ class OncoPhenotypeInference(_model_base.Model):
     def __init__(
         self,
         *,
-        type: Union[str, "_models.OncoPhenotypeInferenceType"], # pylint: disable=redefined-builtin
+        type: Union[str, "_models.OncoPhenotypeInferenceType"],  # pylint: disable=redefined-builtin
         value: str,
         description: Optional[str] = None,
         confidence_score: Optional[float] = None,
         evidence: Optional[List["_models.InferenceEvidence"]] = None,
         case_id: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -426,8 +418,7 @@ If this list is omitted or empty, the model will return all the inference types.
         include_evidence: bool = True,
         inference_types: Optional[List[Union[str, "_models.OncoPhenotypeInferenceType"]]] = None,
         check_for_cancer_case: bool = False,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -462,8 +453,7 @@ class OncoPhenotypePatientResult(_model_base.Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         inferences: List["_models.OncoPhenotypeInference"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -543,8 +533,7 @@ class OncoPhenotypeResults(_model_base.Model):
         *,
         patients: List["_models.OncoPhenotypePatientResult"],
         model_version: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -583,7 +572,7 @@ class PatientDocument(_model_base.Model):
     :vartype content: ~azure.healthinsights.cancerprofiling.models.DocumentContent
     """
 
-    type: Union[str, "_models.DocumentType"] = rest_field() # pylint: disable=redefined-builtin
+    type: Union[str, "_models.DocumentType"] = rest_field()  # pylint: disable=redefined-builtin
     """The type of the patient document, such as 'note' (text document) or 'fhirBundle' (FHIR JSON document).
     Required. Known values are: \"note\", \"fhirBundle\", \"dicom\", and \"genomicSequencing\". """
     clinical_type: Optional[Union[str, "_models.ClinicalDocumentType"]] = rest_field(name="clinicalType")
@@ -602,14 +591,13 @@ class PatientDocument(_model_base.Model):
     def __init__(
         self,
         *,
-        type: Union[str, "_models.DocumentType"], # pylint: disable=redefined-builtin
+        type: Union[str, "_models.DocumentType"],  # pylint: disable=redefined-builtin
         id: str,  # pylint: disable=redefined-builtin
         content: "_models.DocumentContent",
         clinical_type: Optional[Union[str, "_models.ClinicalDocumentType"]] = None,
         language: Optional[str] = None,
         created_date_time: Optional[datetime.datetime] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -648,8 +636,7 @@ class PatientInfo(_model_base.Model):
         sex: Optional[Union[str, "_models.PatientInfoSex"]] = None,
         birth_date: Optional[datetime.date] = None,
         clinical_info: Optional[List["_models.ClinicalCodedElement"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -691,8 +678,7 @@ class PatientRecord(_model_base.Model):
         id: str,  # pylint: disable=redefined-builtin
         info: Optional["_models.PatientInfo"] = None,
         data: Optional[List["_models.PatientDocument"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):

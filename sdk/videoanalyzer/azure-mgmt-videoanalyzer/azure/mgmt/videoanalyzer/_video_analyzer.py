@@ -93,7 +93,7 @@ class VideoAnalyzer(object):
     ):
         # type: (...) -> None
         if not base_url:
-            base_url = 'https://management.azure.com'
+            base_url = "https://management.azure.com"
         self._config = VideoAnalyzerConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
@@ -102,40 +102,41 @@ class VideoAnalyzer(object):
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
-        self.edge_modules = EdgeModulesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+        self.edge_modules = EdgeModulesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.pipeline_topologies = PipelineTopologiesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.live_pipelines = LivePipelinesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.pipeline_jobs = PipelineJobsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.live_pipelines = LivePipelinesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.pipeline_jobs = PipelineJobsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.live_pipeline_operation_statuses = LivePipelineOperationStatusesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.pipeline_job_operation_statuses = PipelineJobOperationStatusesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.video_analyzers = VideoAnalyzersOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.video_analyzers = VideoAnalyzersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.private_link_resources = PrivateLinkResourcesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.operation_statuses = OperationStatusesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.operation_results = OperationResultsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.video_analyzer_operation_statuses = VideoAnalyzerOperationStatusesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.video_analyzer_operation_results = VideoAnalyzerOperationResultsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.locations = LocationsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.videos = VideosOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.access_policies = AccessPoliciesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.locations = LocationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.videos = VideosOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.access_policies = AccessPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, http_request, **kwargs):
         # type: (HttpRequest, Any) -> HttpResponse
@@ -148,7 +149,9 @@ class VideoAnalyzer(object):
         :rtype: ~azure.core.pipeline.transport.HttpResponse
         """
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", min_length=1
+            ),
         }
         http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
         stream = kwargs.pop("stream", True)

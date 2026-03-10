@@ -11,6 +11,7 @@ To monitor an activity, either wrap the logical block of code with the
 ``log_activity()`` method or use the ``@monitor_with_activity``
 decorator.
 """
+
 import contextlib
 import functools
 import inspect

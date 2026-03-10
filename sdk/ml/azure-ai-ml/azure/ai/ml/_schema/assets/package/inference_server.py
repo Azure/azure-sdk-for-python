@@ -13,7 +13,6 @@ from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml.constants._common import InferenceServerType
 from .online_inference_configuration import OnlineInferenceConfigurationSchema
 
-
 module_logger = logging.getLogger(__name__)
 
 

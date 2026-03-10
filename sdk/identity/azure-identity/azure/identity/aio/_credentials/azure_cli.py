@@ -35,7 +35,6 @@ from ..._internal import (
     validate_subscription,
 )
 
-
 _LOGGER = logging.getLogger(__name__)
 
 

@@ -24,15 +24,10 @@ class AllowedAudiencesValidation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'allowed_audiences': {'key': 'allowedAudiences', 'type': '[str]'},
+        "allowed_audiences": {"key": "allowedAudiences", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        allowed_audiences: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, allowed_audiences: Optional[List[str]] = None, **kwargs):
         """
         :keyword allowed_audiences: The configuration settings of the allowed list of audiences from
          which to validate the JWT token.
@@ -52,17 +47,11 @@ class AllowedPrincipals(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'groups': {'key': 'groups', 'type': '[str]'},
-        'identities': {'key': 'identities', 'type': '[str]'},
+        "groups": {"key": "groups", "type": "[str]"},
+        "identities": {"key": "identities", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        groups: Optional[List[str]] = None,
-        identities: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, groups: Optional[List[str]] = None, identities: Optional[List[str]] = None, **kwargs):
         """
         :keyword groups: The list of the allowed groups.
         :paramtype groups: list[str]
@@ -87,9 +76,9 @@ class Apple(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'registration': {'key': 'registration', 'type': 'AppleRegistration'},
-        'login': {'key': 'login', 'type': 'LoginScopes'},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "registration": {"key": "registration", "type": "AppleRegistration"},
+        "login": {"key": "login", "type": "LoginScopes"},
     }
 
     def __init__(
@@ -125,17 +114,11 @@ class AppleRegistration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'client_id': {'key': 'clientId', 'type': 'str'},
-        'client_secret_setting_name': {'key': 'clientSecretSettingName', 'type': 'str'},
+        "client_id": {"key": "clientId", "type": "str"},
+        "client_secret_setting_name": {"key": "clientSecretSettingName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        client_id: Optional[str] = None,
-        client_secret_setting_name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, client_id: Optional[str] = None, client_secret_setting_name: Optional[str] = None, **kwargs):
         """
         :keyword client_id: The Client ID of the app used for login.
         :paramtype client_id: str
@@ -158,8 +141,8 @@ class AppLogsConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'destination': {'key': 'destination', 'type': 'str'},
-        'log_analytics_configuration': {'key': 'logAnalyticsConfiguration', 'type': 'LogAnalyticsConfiguration'},
+        "destination": {"key": "destination", "type": "str"},
+        "log_analytics_configuration": {"key": "logAnalyticsConfiguration", "type": "LogAnalyticsConfiguration"},
     }
 
     def __init__(
@@ -191,17 +174,11 @@ class AppRegistration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'app_id': {'key': 'appId', 'type': 'str'},
-        'app_secret_setting_name': {'key': 'appSecretSettingName', 'type': 'str'},
+        "app_id": {"key": "appId", "type": "str"},
+        "app_secret_setting_name": {"key": "appSecretSettingName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        app_id: Optional[str] = None,
-        app_secret_setting_name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, app_id: Optional[str] = None, app_secret_setting_name: Optional[str] = None, **kwargs):
         """
         :keyword app_id: The App ID of the app used for login.
         :paramtype app_id: str
@@ -232,25 +209,21 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -277,25 +250,21 @@ class ProxyResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(ProxyResource, self).__init__(**kwargs)
 
 
@@ -333,22 +302,22 @@ class AuthConfig(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'platform': {'key': 'properties.platform', 'type': 'AuthPlatform'},
-        'global_validation': {'key': 'properties.globalValidation', 'type': 'GlobalValidation'},
-        'identity_providers': {'key': 'properties.identityProviders', 'type': 'IdentityProviders'},
-        'login': {'key': 'properties.login', 'type': 'Login'},
-        'http_settings': {'key': 'properties.httpSettings', 'type': 'HttpSettings'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "platform": {"key": "properties.platform", "type": "AuthPlatform"},
+        "global_validation": {"key": "properties.globalValidation", "type": "GlobalValidation"},
+        "identity_providers": {"key": "properties.identityProviders", "type": "IdentityProviders"},
+        "login": {"key": "properties.login", "type": "Login"},
+        "http_settings": {"key": "properties.httpSettings", "type": "HttpSettings"},
     }
 
     def __init__(
@@ -400,21 +369,16 @@ class AuthConfigCollection(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AuthConfig]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[AuthConfig]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["AuthConfig"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["AuthConfig"], **kwargs):
         """
         :keyword value: Required. Collection of resources.
         :paramtype value: list[~container_apps_api_client.models.AuthConfig]
@@ -438,17 +402,11 @@ class AuthPlatform(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'runtime_version': {'key': 'runtimeVersion', 'type': 'str'},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "runtime_version": {"key": "runtimeVersion", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        enabled: Optional[bool] = None,
-        runtime_version: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, enabled: Optional[bool] = None, runtime_version: Optional[str] = None, **kwargs):
         """
         :keyword enabled: :code:`<code>true</code>` if the Authentication / Authorization feature is
          enabled for the current app; otherwise, :code:`<code>false</code>`.
@@ -475,17 +433,11 @@ class AvailableOperations(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[OperationDetail]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[OperationDetail]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["OperationDetail"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["OperationDetail"]] = None, next_link: Optional[str] = None, **kwargs):
         """
         :keyword value: Collection of available operation details.
         :paramtype value: list[~container_apps_api_client.models.OperationDetail]
@@ -520,11 +472,11 @@ class AzureActiveDirectory(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'registration': {'key': 'registration', 'type': 'AzureActiveDirectoryRegistration'},
-        'login': {'key': 'login', 'type': 'AzureActiveDirectoryLogin'},
-        'validation': {'key': 'validation', 'type': 'AzureActiveDirectoryValidation'},
-        'is_auto_provisioned': {'key': 'isAutoProvisioned', 'type': 'bool'},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "registration": {"key": "registration", "type": "AzureActiveDirectoryRegistration"},
+        "login": {"key": "login", "type": "AzureActiveDirectoryLogin"},
+        "validation": {"key": "validation", "type": "AzureActiveDirectoryValidation"},
+        "is_auto_provisioned": {"key": "isAutoProvisioned", "type": "bool"},
     }
 
     def __init__(
@@ -577,16 +529,12 @@ class AzureActiveDirectoryLogin(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'login_parameters': {'key': 'loginParameters', 'type': '[str]'},
-        'disable_www_authenticate': {'key': 'disableWWWAuthenticate', 'type': 'bool'},
+        "login_parameters": {"key": "loginParameters", "type": "[str]"},
+        "disable_www_authenticate": {"key": "disableWWWAuthenticate", "type": "bool"},
     }
 
     def __init__(
-        self,
-        *,
-        login_parameters: Optional[List[str]] = None,
-        disable_www_authenticate: Optional[bool] = None,
-        **kwargs
+        self, *, login_parameters: Optional[List[str]] = None, disable_www_authenticate: Optional[bool] = None, **kwargs
     ):
         """
         :keyword login_parameters: Login parameters to send to the OpenID Connect authorization
@@ -638,12 +586,15 @@ class AzureActiveDirectoryRegistration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'open_id_issuer': {'key': 'openIdIssuer', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
-        'client_secret_setting_name': {'key': 'clientSecretSettingName', 'type': 'str'},
-        'client_secret_certificate_thumbprint': {'key': 'clientSecretCertificateThumbprint', 'type': 'str'},
-        'client_secret_certificate_subject_alternative_name': {'key': 'clientSecretCertificateSubjectAlternativeName', 'type': 'str'},
-        'client_secret_certificate_issuer': {'key': 'clientSecretCertificateIssuer', 'type': 'str'},
+        "open_id_issuer": {"key": "openIdIssuer", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
+        "client_secret_setting_name": {"key": "clientSecretSettingName", "type": "str"},
+        "client_secret_certificate_thumbprint": {"key": "clientSecretCertificateThumbprint", "type": "str"},
+        "client_secret_certificate_subject_alternative_name": {
+            "key": "clientSecretCertificateSubjectAlternativeName",
+            "type": "str",
+        },
+        "client_secret_certificate_issuer": {"key": "clientSecretCertificateIssuer", "type": "str"},
     }
 
     def __init__(
@@ -714,9 +665,9 @@ class AzureActiveDirectoryValidation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'jwt_claim_checks': {'key': 'jwtClaimChecks', 'type': 'JwtClaimChecks'},
-        'allowed_audiences': {'key': 'allowedAudiences', 'type': '[str]'},
-        'default_authorization_policy': {'key': 'defaultAuthorizationPolicy', 'type': 'DefaultAuthorizationPolicy'},
+        "jwt_claim_checks": {"key": "jwtClaimChecks", "type": "JwtClaimChecks"},
+        "allowed_audiences": {"key": "allowedAudiences", "type": "[str]"},
+        "default_authorization_policy": {"key": "defaultAuthorizationPolicy", "type": "DefaultAuthorizationPolicy"},
     }
 
     def __init__(
@@ -759,10 +710,10 @@ class AzureCredentials(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'client_id': {'key': 'clientId', 'type': 'str'},
-        'client_secret': {'key': 'clientSecret', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
+        "client_id": {"key": "clientId", "type": "str"},
+        "client_secret": {"key": "clientSecret", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
     }
 
     def __init__(
@@ -805,10 +756,10 @@ class AzureFileProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'account_name': {'key': 'accountName', 'type': 'str'},
-        'account_key': {'key': 'accountKey', 'type': 'str'},
-        'access_mode': {'key': 'accessMode', 'type': 'str'},
-        'share_name': {'key': 'shareName', 'type': 'str'},
+        "account_name": {"key": "accountName", "type": "str"},
+        "account_key": {"key": "accountKey", "type": "str"},
+        "access_mode": {"key": "accessMode", "type": "str"},
+        "share_name": {"key": "shareName", "type": "str"},
     }
 
     def __init__(
@@ -849,8 +800,8 @@ class AzureStaticWebApps(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'registration': {'key': 'registration', 'type': 'AzureStaticWebAppsRegistration'},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "registration": {"key": "registration", "type": "AzureStaticWebAppsRegistration"},
     }
 
     def __init__(
@@ -880,15 +831,10 @@ class AzureStaticWebAppsRegistration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'client_id': {'key': 'clientId', 'type': 'str'},
+        "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        client_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, client_id: Optional[str] = None, **kwargs):
         """
         :keyword client_id: The Client ID of the app used for login.
         :paramtype client_id: str
@@ -922,29 +868,23 @@ class TrackedResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
         :keyword tags: A set of tags. Resource tags.
         :paramtype tags: dict[str, str]
@@ -983,21 +923,21 @@ class Certificate(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'CertificateProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "CertificateProperties"},
     }
 
     def __init__(
@@ -1034,21 +974,16 @@ class CertificateCollection(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Certificate]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Certificate]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["Certificate"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["Certificate"], **kwargs):
         """
         :keyword value: Required. Collection of resources.
         :paramtype value: list[~container_apps_api_client.models.Certificate]
@@ -1066,15 +1001,10 @@ class CertificatePatch(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
         :keyword tags: A set of tags. Application-specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
@@ -1113,36 +1043,30 @@ class CertificateProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'subject_name': {'readonly': True},
-        'issuer': {'readonly': True},
-        'issue_date': {'readonly': True},
-        'expiration_date': {'readonly': True},
-        'thumbprint': {'readonly': True},
-        'valid': {'readonly': True},
-        'public_key_hash': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "subject_name": {"readonly": True},
+        "issuer": {"readonly": True},
+        "issue_date": {"readonly": True},
+        "expiration_date": {"readonly": True},
+        "thumbprint": {"readonly": True},
+        "valid": {"readonly": True},
+        "public_key_hash": {"readonly": True},
     }
 
     _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
-        'subject_name': {'key': 'subjectName', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'bytearray'},
-        'issuer': {'key': 'issuer', 'type': 'str'},
-        'issue_date': {'key': 'issueDate', 'type': 'iso-8601'},
-        'expiration_date': {'key': 'expirationDate', 'type': 'iso-8601'},
-        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
-        'valid': {'key': 'valid', 'type': 'bool'},
-        'public_key_hash': {'key': 'publicKeyHash', 'type': 'str'},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "password": {"key": "password", "type": "str"},
+        "subject_name": {"key": "subjectName", "type": "str"},
+        "value": {"key": "value", "type": "bytearray"},
+        "issuer": {"key": "issuer", "type": "str"},
+        "issue_date": {"key": "issueDate", "type": "iso-8601"},
+        "expiration_date": {"key": "expirationDate", "type": "iso-8601"},
+        "thumbprint": {"key": "thumbprint", "type": "str"},
+        "valid": {"key": "valid", "type": "bool"},
+        "public_key_hash": {"key": "publicKeyHash", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        password: Optional[str] = None,
-        value: Optional[bytearray] = None,
-        **kwargs
-    ):
+    def __init__(self, *, password: Optional[str] = None, value: Optional[bytearray] = None, **kwargs):
         """
         :keyword password: Certificate password.
         :paramtype password: str
@@ -1172,17 +1096,11 @@ class ClientRegistration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'client_id': {'key': 'clientId', 'type': 'str'},
-        'client_secret_setting_name': {'key': 'clientSecretSettingName', 'type': 'str'},
+        "client_id": {"key": "clientId", "type": "str"},
+        "client_secret_setting_name": {"key": "clientSecretSettingName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        client_id: Optional[str] = None,
-        client_secret_setting_name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, client_id: Optional[str] = None, client_secret_setting_name: Optional[str] = None, **kwargs):
         """
         :keyword client_id: The Client ID of the app used for login.
         :paramtype client_id: str
@@ -1201,10 +1119,10 @@ class Configuration(msrest.serialization.Model):
     :vartype secrets: list[~container_apps_api_client.models.Secret]
     :ivar active_revisions_mode: ActiveRevisionsMode controls how active revisions are handled for
      the Container app:
-    
-    
+
+
      .. raw:: html
-    
+
         <list><item>Multiple: multiple revisions can be active. If no value if provided, this is
      the default</item><item>Single: Only one revision can be active at a time. Revision weights can
      not be used in this mode</item></list>. Possible values include: "multiple", "single".
@@ -1219,11 +1137,11 @@ class Configuration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'secrets': {'key': 'secrets', 'type': '[Secret]'},
-        'active_revisions_mode': {'key': 'activeRevisionsMode', 'type': 'str'},
-        'ingress': {'key': 'ingress', 'type': 'Ingress'},
-        'registries': {'key': 'registries', 'type': '[RegistryCredentials]'},
-        'dapr': {'key': 'dapr', 'type': 'Dapr'},
+        "secrets": {"key": "secrets", "type": "[Secret]"},
+        "active_revisions_mode": {"key": "activeRevisionsMode", "type": "str"},
+        "ingress": {"key": "ingress", "type": "Ingress"},
+        "registries": {"key": "registries", "type": "[RegistryCredentials]"},
+        "dapr": {"key": "dapr", "type": "Dapr"},
     }
 
     def __init__(
@@ -1241,10 +1159,10 @@ class Configuration(msrest.serialization.Model):
         :paramtype secrets: list[~container_apps_api_client.models.Secret]
         :keyword active_revisions_mode: ActiveRevisionsMode controls how active revisions are handled
          for the Container app:
-        
-        
+
+
          .. raw:: html
-        
+
             <list><item>Multiple: multiple revisions can be active. If no value if provided, this is
          the default</item><item>Single: Only one revision can be active at a time. Revision weights can
          not be used in this mode</item></list>. Possible values include: "multiple", "single".
@@ -1287,14 +1205,14 @@ class Container(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'image': {'key': 'image', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'command': {'key': 'command', 'type': '[str]'},
-        'args': {'key': 'args', 'type': '[str]'},
-        'env': {'key': 'env', 'type': '[EnvironmentVar]'},
-        'resources': {'key': 'resources', 'type': 'ContainerResources'},
-        'probes': {'key': 'probes', 'type': '[ContainerAppProbe]'},
-        'volume_mounts': {'key': 'volumeMounts', 'type': '[VolumeMount]'},
+        "image": {"key": "image", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "command": {"key": "command", "type": "[str]"},
+        "args": {"key": "args", "type": "[str]"},
+        "env": {"key": "env", "type": "[EnvironmentVar]"},
+        "resources": {"key": "resources", "type": "ContainerResources"},
+        "probes": {"key": "probes", "type": "[ContainerAppProbe]"},
+        "volume_mounts": {"key": "volumeMounts", "type": "[VolumeMount]"},
     }
 
     def __init__(
@@ -1386,34 +1304,34 @@ class ContainerApp(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'latest_revision_name': {'readonly': True},
-        'latest_revision_fqdn': {'readonly': True},
-        'custom_domain_verification_id': {'readonly': True},
-        'outbound_ip_addresses': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "latest_revision_name": {"readonly": True},
+        "latest_revision_fqdn": {"readonly": True},
+        "custom_domain_verification_id": {"readonly": True},
+        "outbound_ip_addresses": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'managed_environment_id': {'key': 'properties.managedEnvironmentId', 'type': 'str'},
-        'latest_revision_name': {'key': 'properties.latestRevisionName', 'type': 'str'},
-        'latest_revision_fqdn': {'key': 'properties.latestRevisionFqdn', 'type': 'str'},
-        'custom_domain_verification_id': {'key': 'properties.customDomainVerificationId', 'type': 'str'},
-        'configuration': {'key': 'properties.configuration', 'type': 'Configuration'},
-        'template': {'key': 'properties.template', 'type': 'Template'},
-        'outbound_ip_addresses': {'key': 'properties.outboundIPAddresses', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "managed_environment_id": {"key": "properties.managedEnvironmentId", "type": "str"},
+        "latest_revision_name": {"key": "properties.latestRevisionName", "type": "str"},
+        "latest_revision_fqdn": {"key": "properties.latestRevisionFqdn", "type": "str"},
+        "custom_domain_verification_id": {"key": "properties.customDomainVerificationId", "type": "str"},
+        "configuration": {"key": "properties.configuration", "type": "Configuration"},
+        "template": {"key": "properties.template", "type": "Template"},
+        "outbound_ip_addresses": {"key": "properties.outboundIPAddresses", "type": "[str]"},
     }
 
     def __init__(
@@ -1468,21 +1386,16 @@ class ContainerAppCollection(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ContainerApp]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ContainerApp]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["ContainerApp"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["ContainerApp"], **kwargs):
         """
         :keyword value: Required. Collection of resources.
         :paramtype value: list[~container_apps_api_client.models.ContainerApp]
@@ -1500,15 +1413,10 @@ class ContainerAppPatch(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
         :keyword tags: A set of tags. Application-specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
@@ -1556,15 +1464,15 @@ class ContainerAppProbe(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'failure_threshold': {'key': 'failureThreshold', 'type': 'int'},
-        'http_get': {'key': 'httpGet', 'type': 'ContainerAppProbeHttpGet'},
-        'initial_delay_seconds': {'key': 'initialDelaySeconds', 'type': 'int'},
-        'period_seconds': {'key': 'periodSeconds', 'type': 'int'},
-        'success_threshold': {'key': 'successThreshold', 'type': 'int'},
-        'tcp_socket': {'key': 'tcpSocket', 'type': 'ContainerAppProbeTcpSocket'},
-        'termination_grace_period_seconds': {'key': 'terminationGracePeriodSeconds', 'type': 'long'},
-        'timeout_seconds': {'key': 'timeoutSeconds', 'type': 'int'},
-        'type': {'key': 'type', 'type': 'str'},
+        "failure_threshold": {"key": "failureThreshold", "type": "int"},
+        "http_get": {"key": "httpGet", "type": "ContainerAppProbeHttpGet"},
+        "initial_delay_seconds": {"key": "initialDelaySeconds", "type": "int"},
+        "period_seconds": {"key": "periodSeconds", "type": "int"},
+        "success_threshold": {"key": "successThreshold", "type": "int"},
+        "tcp_socket": {"key": "tcpSocket", "type": "ContainerAppProbeTcpSocket"},
+        "termination_grace_period_seconds": {"key": "terminationGracePeriodSeconds", "type": "long"},
+        "timeout_seconds": {"key": "timeoutSeconds", "type": "int"},
+        "type": {"key": "type", "type": "str"},
     }
 
     def __init__(
@@ -1649,15 +1557,15 @@ class ContainerAppProbeHttpGet(msrest.serialization.Model):
     """
 
     _validation = {
-        'port': {'required': True},
+        "port": {"required": True},
     }
 
     _attribute_map = {
-        'host': {'key': 'host', 'type': 'str'},
-        'http_headers': {'key': 'httpHeaders', 'type': '[ContainerAppProbeHttpGetHttpHeadersItem]'},
-        'path': {'key': 'path', 'type': 'str'},
-        'port': {'key': 'port', 'type': 'int'},
-        'scheme': {'key': 'scheme', 'type': 'str'},
+        "host": {"key": "host", "type": "str"},
+        "http_headers": {"key": "httpHeaders", "type": "[ContainerAppProbeHttpGetHttpHeadersItem]"},
+        "path": {"key": "path", "type": "str"},
+        "port": {"key": "port", "type": "int"},
+        "scheme": {"key": "scheme", "type": "str"},
     }
 
     def __init__(
@@ -1705,22 +1613,16 @@ class ContainerAppProbeHttpGetHttpHeadersItem(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'value': {'required': True},
+        "name": {"required": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        value: str,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, value: str, **kwargs):
         """
         :keyword name: Required. The header field name.
         :paramtype name: str
@@ -1745,21 +1647,15 @@ class ContainerAppProbeTcpSocket(msrest.serialization.Model):
     """
 
     _validation = {
-        'port': {'required': True},
+        "port": {"required": True},
     }
 
     _attribute_map = {
-        'host': {'key': 'host', 'type': 'str'},
-        'port': {'key': 'port', 'type': 'int'},
+        "host": {"key": "host", "type": "str"},
+        "port": {"key": "port", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        port: int,
-        host: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, port: int, host: Optional[str] = None, **kwargs):
         """
         :keyword host: Optional: Host name to connect to, defaults to the pod IP.
         :paramtype host: str
@@ -1784,21 +1680,17 @@ class ContainerAppSecret(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'value': {'readonly': True},
+        "name": {"readonly": True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(ContainerAppSecret, self).__init__(**kwargs)
         self.name = None
         self.value = None
@@ -1818,22 +1710,16 @@ class ContainerResources(msrest.serialization.Model):
     """
 
     _validation = {
-        'ephemeral_storage': {'readonly': True},
+        "ephemeral_storage": {"readonly": True},
     }
 
     _attribute_map = {
-        'cpu': {'key': 'cpu', 'type': 'float'},
-        'memory': {'key': 'memory', 'type': 'str'},
-        'ephemeral_storage': {'key': 'ephemeralStorage', 'type': 'str'},
+        "cpu": {"key": "cpu", "type": "float"},
+        "memory": {"key": "memory", "type": "str"},
+        "ephemeral_storage": {"key": "ephemeralStorage", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        cpu: Optional[float] = None,
-        memory: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, cpu: Optional[float] = None, memory: Optional[str] = None, **kwargs):
         """
         :keyword cpu: Required CPU in cores, e.g. 0.5.
         :paramtype cpu: float
@@ -1858,8 +1744,8 @@ class CookieExpiration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'convention': {'key': 'convention', 'type': 'str'},
-        'time_to_expiration': {'key': 'timeToExpiration', 'type': 'str'},
+        "convention": {"key": "convention", "type": "str"},
+        "time_to_expiration": {"key": "timeToExpiration", "type": "str"},
     }
 
     def __init__(
@@ -1898,23 +1784,18 @@ class CustomDomain(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'certificate_id': {'required': True},
+        "name": {"required": True},
+        "certificate_id": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'binding_type': {'key': 'bindingType', 'type': 'str'},
-        'certificate_id': {'key': 'certificateId', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "binding_type": {"key": "bindingType", "type": "str"},
+        "certificate_id": {"key": "certificateId", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        name: str,
-        certificate_id: str,
-        binding_type: Optional[Union[str, "BindingType"]] = None,
-        **kwargs
+        self, *, name: str, certificate_id: str, binding_type: Optional[Union[str, "BindingType"]] = None, **kwargs
     ):
         """
         :keyword name: Required. Hostname.
@@ -1980,34 +1861,37 @@ class CustomHostnameAnalysisResult(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'host_name': {'readonly': True},
-        'is_hostname_already_verified': {'readonly': True},
-        'custom_domain_verification_test': {'readonly': True},
-        'custom_domain_verification_failure_info': {'readonly': True},
-        'has_conflict_on_managed_environment': {'readonly': True},
-        'conflicting_container_app_resource_id': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "host_name": {"readonly": True},
+        "is_hostname_already_verified": {"readonly": True},
+        "custom_domain_verification_test": {"readonly": True},
+        "custom_domain_verification_failure_info": {"readonly": True},
+        "has_conflict_on_managed_environment": {"readonly": True},
+        "conflicting_container_app_resource_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'host_name': {'key': 'properties.hostName', 'type': 'str'},
-        'is_hostname_already_verified': {'key': 'properties.isHostnameAlreadyVerified', 'type': 'bool'},
-        'custom_domain_verification_test': {'key': 'properties.customDomainVerificationTest', 'type': 'str'},
-        'custom_domain_verification_failure_info': {'key': 'properties.customDomainVerificationFailureInfo', 'type': 'DefaultErrorResponse'},
-        'has_conflict_on_managed_environment': {'key': 'properties.hasConflictOnManagedEnvironment', 'type': 'bool'},
-        'conflicting_container_app_resource_id': {'key': 'properties.conflictingContainerAppResourceId', 'type': 'str'},
-        'c_name_records': {'key': 'properties.cNameRecords', 'type': '[str]'},
-        'txt_records': {'key': 'properties.txtRecords', 'type': '[str]'},
-        'a_records': {'key': 'properties.aRecords', 'type': '[str]'},
-        'alternate_c_name_records': {'key': 'properties.alternateCNameRecords', 'type': '[str]'},
-        'alternate_txt_records': {'key': 'properties.alternateTxtRecords', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "host_name": {"key": "properties.hostName", "type": "str"},
+        "is_hostname_already_verified": {"key": "properties.isHostnameAlreadyVerified", "type": "bool"},
+        "custom_domain_verification_test": {"key": "properties.customDomainVerificationTest", "type": "str"},
+        "custom_domain_verification_failure_info": {
+            "key": "properties.customDomainVerificationFailureInfo",
+            "type": "DefaultErrorResponse",
+        },
+        "has_conflict_on_managed_environment": {"key": "properties.hasConflictOnManagedEnvironment", "type": "bool"},
+        "conflicting_container_app_resource_id": {"key": "properties.conflictingContainerAppResourceId", "type": "str"},
+        "c_name_records": {"key": "properties.cNameRecords", "type": "[str]"},
+        "txt_records": {"key": "properties.txtRecords", "type": "[str]"},
+        "a_records": {"key": "properties.aRecords", "type": "[str]"},
+        "alternate_c_name_records": {"key": "properties.alternateCNameRecords", "type": "[str]"},
+        "alternate_txt_records": {"key": "properties.alternateTxtRecords", "type": "[str]"},
     }
 
     def __init__(
@@ -2061,9 +1945,9 @@ class CustomOpenIdConnectProvider(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'registration': {'key': 'registration', 'type': 'OpenIdConnectRegistration'},
-        'login': {'key': 'login', 'type': 'OpenIdConnectLogin'},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "registration": {"key": "registration", "type": "OpenIdConnectRegistration"},
+        "login": {"key": "login", "type": "OpenIdConnectLogin"},
     }
 
     def __init__(
@@ -2104,9 +1988,9 @@ class CustomScaleRule(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'metadata': {'key': 'metadata', 'type': '{str}'},
-        'auth': {'key': 'auth', 'type': '[ScaleRuleAuth]'},
+        "type": {"key": "type", "type": "str"},
+        "metadata": {"key": "metadata", "type": "{str}"},
+        "auth": {"key": "auth", "type": "[ScaleRuleAuth]"},
     }
 
     def __init__(
@@ -2147,10 +2031,10 @@ class Dapr(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'app_id': {'key': 'appId', 'type': 'str'},
-        'app_protocol': {'key': 'appProtocol', 'type': 'str'},
-        'app_port': {'key': 'appPort', 'type': 'int'},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "app_id": {"key": "appId", "type": "str"},
+        "app_protocol": {"key": "appProtocol", "type": "str"},
+        "app_port": {"key": "appPort", "type": "int"},
     }
 
     def __init__(
@@ -2213,24 +2097,24 @@ class DaprComponent(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'component_type': {'key': 'properties.componentType', 'type': 'str'},
-        'version': {'key': 'properties.version', 'type': 'str'},
-        'ignore_errors': {'key': 'properties.ignoreErrors', 'type': 'bool'},
-        'init_timeout': {'key': 'properties.initTimeout', 'type': 'str'},
-        'secrets': {'key': 'properties.secrets', 'type': '[Secret]'},
-        'metadata': {'key': 'properties.metadata', 'type': '[DaprMetadata]'},
-        'scopes': {'key': 'properties.scopes', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "component_type": {"key": "properties.componentType", "type": "str"},
+        "version": {"key": "properties.version", "type": "str"},
+        "ignore_errors": {"key": "properties.ignoreErrors", "type": "bool"},
+        "init_timeout": {"key": "properties.initTimeout", "type": "str"},
+        "secrets": {"key": "properties.secrets", "type": "[Secret]"},
+        "metadata": {"key": "properties.metadata", "type": "[DaprMetadata]"},
+        "scopes": {"key": "properties.scopes", "type": "[str]"},
     }
 
     def __init__(
@@ -2285,21 +2169,16 @@ class DaprComponentsCollection(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[DaprComponent]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[DaprComponent]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["DaprComponent"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["DaprComponent"], **kwargs):
         """
         :keyword value: Required. Collection of resources.
         :paramtype value: list[~container_apps_api_client.models.DaprComponent]
@@ -2322,18 +2201,13 @@ class DaprMetadata(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-        'secret_ref': {'key': 'secretRef', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+        "secret_ref": {"key": "secretRef", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        value: Optional[str] = None,
-        secret_ref: Optional[str] = None,
-        **kwargs
+        self, *, name: Optional[str] = None, value: Optional[str] = None, secret_ref: Optional[str] = None, **kwargs
     ):
         """
         :keyword name: Metadata property name.
@@ -2362,8 +2236,8 @@ class DefaultAuthorizationPolicy(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'allowed_principals': {'key': 'allowedPrincipals', 'type': 'AllowedPrincipals'},
-        'allowed_applications': {'key': 'allowedApplications', 'type': '[str]'},
+        "allowed_principals": {"key": "allowedPrincipals", "type": "AllowedPrincipals"},
+        "allowed_applications": {"key": "allowedApplications", "type": "[str]"},
     }
 
     def __init__(
@@ -2396,19 +2270,15 @@ class DefaultErrorResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'error': {'readonly': True},
+        "error": {"readonly": True},
     }
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'DefaultErrorResponseError'},
+        "error": {"key": "error", "type": "DefaultErrorResponseError"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(DefaultErrorResponse, self).__init__(**kwargs)
         self.error = None
 
@@ -2431,26 +2301,21 @@ class DefaultErrorResponseError(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'innererror': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "innererror": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[DefaultErrorResponseErrorDetailsItem]'},
-        'innererror': {'key': 'innererror', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[DefaultErrorResponseErrorDetailsItem]"},
+        "innererror": {"key": "innererror", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        details: Optional[List["DefaultErrorResponseErrorDetailsItem"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, details: Optional[List["DefaultErrorResponseErrorDetailsItem"]] = None, **kwargs):
         """
         :keyword details: Details or the error.
         :paramtype details:
@@ -2478,23 +2343,19 @@ class DefaultErrorResponseErrorDetailsItem(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(DefaultErrorResponseErrorDetailsItem, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -2514,18 +2375,13 @@ class EnvironmentVar(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-        'secret_ref': {'key': 'secretRef', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+        "secret_ref": {"key": "secretRef", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        value: Optional[str] = None,
-        secret_ref: Optional[str] = None,
-        **kwargs
+        self, *, name: Optional[str] = None, value: Optional[str] = None, secret_ref: Optional[str] = None, **kwargs
     ):
         """
         :keyword name: Environment variable name.
@@ -2558,10 +2414,10 @@ class Facebook(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'registration': {'key': 'registration', 'type': 'AppRegistration'},
-        'graph_api_version': {'key': 'graphApiVersion', 'type': 'str'},
-        'login': {'key': 'login', 'type': 'LoginScopes'},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "registration": {"key": "registration", "type": "AppRegistration"},
+        "graph_api_version": {"key": "graphApiVersion", "type": "str"},
+        "login": {"key": "login", "type": "LoginScopes"},
     }
 
     def __init__(
@@ -2605,9 +2461,9 @@ class ForwardProxy(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'convention': {'key': 'convention', 'type': 'str'},
-        'custom_host_header_name': {'key': 'customHostHeaderName', 'type': 'str'},
-        'custom_proto_header_name': {'key': 'customProtoHeaderName', 'type': 'str'},
+        "convention": {"key": "convention", "type": "str"},
+        "custom_host_header_name": {"key": "customHostHeaderName", "type": "str"},
+        "custom_proto_header_name": {"key": "customProtoHeaderName", "type": "str"},
     }
 
     def __init__(
@@ -2646,9 +2502,9 @@ class GitHub(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'registration': {'key': 'registration', 'type': 'ClientRegistration'},
-        'login': {'key': 'login', 'type': 'LoginScopes'},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "registration": {"key": "registration", "type": "ClientRegistration"},
+        "login": {"key": "login", "type": "LoginScopes"},
     }
 
     def __init__(
@@ -2695,13 +2551,13 @@ class GithubActionConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'registry_info': {'key': 'registryInfo', 'type': 'RegistryInfo'},
-        'azure_credentials': {'key': 'azureCredentials', 'type': 'AzureCredentials'},
-        'dockerfile_path': {'key': 'dockerfilePath', 'type': 'str'},
-        'publish_type': {'key': 'publishType', 'type': 'str'},
-        'os': {'key': 'os', 'type': 'str'},
-        'runtime_stack': {'key': 'runtimeStack', 'type': 'str'},
-        'runtime_version': {'key': 'runtimeVersion', 'type': 'str'},
+        "registry_info": {"key": "registryInfo", "type": "RegistryInfo"},
+        "azure_credentials": {"key": "azureCredentials", "type": "AzureCredentials"},
+        "dockerfile_path": {"key": "dockerfilePath", "type": "str"},
+        "publish_type": {"key": "publishType", "type": "str"},
+        "os": {"key": "os", "type": "str"},
+        "runtime_stack": {"key": "runtimeStack", "type": "str"},
+        "runtime_version": {"key": "runtimeVersion", "type": "str"},
     }
 
     def __init__(
@@ -2762,9 +2618,9 @@ class GlobalValidation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'unauthenticated_client_action': {'key': 'unauthenticatedClientAction', 'type': 'str'},
-        'redirect_to_provider': {'key': 'redirectToProvider', 'type': 'str'},
-        'excluded_paths': {'key': 'excludedPaths', 'type': '[str]'},
+        "unauthenticated_client_action": {"key": "unauthenticatedClientAction", "type": "str"},
+        "redirect_to_provider": {"key": "redirectToProvider", "type": "str"},
+        "excluded_paths": {"key": "excludedPaths", "type": "[str]"},
     }
 
     def __init__(
@@ -2813,10 +2669,10 @@ class Google(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'registration': {'key': 'registration', 'type': 'ClientRegistration'},
-        'login': {'key': 'login', 'type': 'LoginScopes'},
-        'validation': {'key': 'validation', 'type': 'AllowedAudiencesValidation'},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "registration": {"key": "registration", "type": "ClientRegistration"},
+        "login": {"key": "login", "type": "LoginScopes"},
+        "validation": {"key": "validation", "type": "AllowedAudiencesValidation"},
     }
 
     def __init__(
@@ -2858,16 +2714,12 @@ class HttpScaleRule(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'metadata': {'key': 'metadata', 'type': '{str}'},
-        'auth': {'key': 'auth', 'type': '[ScaleRuleAuth]'},
+        "metadata": {"key": "metadata", "type": "{str}"},
+        "auth": {"key": "auth", "type": "[ScaleRuleAuth]"},
     }
 
     def __init__(
-        self,
-        *,
-        metadata: Optional[Dict[str, str]] = None,
-        auth: Optional[List["ScaleRuleAuth"]] = None,
-        **kwargs
+        self, *, metadata: Optional[Dict[str, str]] = None, auth: Optional[List["ScaleRuleAuth"]] = None, **kwargs
     ):
         """
         :keyword metadata: Metadata properties to describe http scale rule.
@@ -2893,9 +2745,9 @@ class HttpSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'require_https': {'key': 'requireHttps', 'type': 'bool'},
-        'routes': {'key': 'routes', 'type': 'HttpSettingsRoutes'},
-        'forward_proxy': {'key': 'forwardProxy', 'type': 'ForwardProxy'},
+        "require_https": {"key": "requireHttps", "type": "bool"},
+        "routes": {"key": "routes", "type": "HttpSettingsRoutes"},
+        "forward_proxy": {"key": "forwardProxy", "type": "ForwardProxy"},
     }
 
     def __init__(
@@ -2930,15 +2782,10 @@ class HttpSettingsRoutes(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'api_prefix': {'key': 'apiPrefix', 'type': 'str'},
+        "api_prefix": {"key": "apiPrefix", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        api_prefix: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, api_prefix: Optional[str] = None, **kwargs):
         """
         :keyword api_prefix: The prefix that should precede all the authentication/authorization paths.
         :paramtype api_prefix: str
@@ -2973,14 +2820,17 @@ class IdentityProviders(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'azure_active_directory': {'key': 'azureActiveDirectory', 'type': 'AzureActiveDirectory'},
-        'facebook': {'key': 'facebook', 'type': 'Facebook'},
-        'git_hub': {'key': 'gitHub', 'type': 'GitHub'},
-        'google': {'key': 'google', 'type': 'Google'},
-        'twitter': {'key': 'twitter', 'type': 'Twitter'},
-        'apple': {'key': 'apple', 'type': 'Apple'},
-        'azure_static_web_apps': {'key': 'azureStaticWebApps', 'type': 'AzureStaticWebApps'},
-        'custom_open_id_connect_providers': {'key': 'customOpenIdConnectProviders', 'type': '{CustomOpenIdConnectProvider}'},
+        "azure_active_directory": {"key": "azureActiveDirectory", "type": "AzureActiveDirectory"},
+        "facebook": {"key": "facebook", "type": "Facebook"},
+        "git_hub": {"key": "gitHub", "type": "GitHub"},
+        "google": {"key": "google", "type": "Google"},
+        "twitter": {"key": "twitter", "type": "Twitter"},
+        "apple": {"key": "apple", "type": "Apple"},
+        "azure_static_web_apps": {"key": "azureStaticWebApps", "type": "AzureStaticWebApps"},
+        "custom_open_id_connect_providers": {
+            "key": "customOpenIdConnectProviders",
+            "type": "{CustomOpenIdConnectProvider}",
+        },
     }
 
     def __init__(
@@ -3053,17 +2903,17 @@ class Ingress(msrest.serialization.Model):
     """
 
     _validation = {
-        'fqdn': {'readonly': True},
+        "fqdn": {"readonly": True},
     }
 
     _attribute_map = {
-        'fqdn': {'key': 'fqdn', 'type': 'str'},
-        'external': {'key': 'external', 'type': 'bool'},
-        'target_port': {'key': 'targetPort', 'type': 'int'},
-        'transport': {'key': 'transport', 'type': 'str'},
-        'traffic': {'key': 'traffic', 'type': '[TrafficWeight]'},
-        'custom_domains': {'key': 'customDomains', 'type': '[CustomDomain]'},
-        'allow_insecure': {'key': 'allowInsecure', 'type': 'bool'},
+        "fqdn": {"key": "fqdn", "type": "str"},
+        "external": {"key": "external", "type": "bool"},
+        "target_port": {"key": "targetPort", "type": "int"},
+        "transport": {"key": "transport", "type": "str"},
+        "traffic": {"key": "traffic", "type": "[TrafficWeight]"},
+        "custom_domains": {"key": "customDomains", "type": "[CustomDomain]"},
+        "allow_insecure": {"key": "allowInsecure", "type": "bool"},
     }
 
     def __init__(
@@ -3113,8 +2963,8 @@ class JwtClaimChecks(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'allowed_groups': {'key': 'allowedGroups', 'type': '[str]'},
-        'allowed_client_applications': {'key': 'allowedClientApplications', 'type': '[str]'},
+        "allowed_groups": {"key": "allowedGroups", "type": "[str]"},
+        "allowed_client_applications": {"key": "allowedClientApplications", "type": "[str]"},
     }
 
     def __init__(
@@ -3145,17 +2995,11 @@ class LogAnalyticsConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'customer_id': {'key': 'customerId', 'type': 'str'},
-        'shared_key': {'key': 'sharedKey', 'type': 'str'},
+        "customer_id": {"key": "customerId", "type": "str"},
+        "shared_key": {"key": "sharedKey", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        customer_id: Optional[str] = None,
-        shared_key: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, customer_id: Optional[str] = None, shared_key: Optional[str] = None, **kwargs):
         """
         :keyword customer_id: Log analytics customer id.
         :paramtype customer_id: str
@@ -3187,11 +3031,11 @@ class Login(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'routes': {'key': 'routes', 'type': 'LoginRoutes'},
-        'preserve_url_fragments_for_logins': {'key': 'preserveUrlFragmentsForLogins', 'type': 'bool'},
-        'allowed_external_redirect_urls': {'key': 'allowedExternalRedirectUrls', 'type': '[str]'},
-        'cookie_expiration': {'key': 'cookieExpiration', 'type': 'CookieExpiration'},
-        'nonce': {'key': 'nonce', 'type': 'Nonce'},
+        "routes": {"key": "routes", "type": "LoginRoutes"},
+        "preserve_url_fragments_for_logins": {"key": "preserveUrlFragmentsForLogins", "type": "bool"},
+        "allowed_external_redirect_urls": {"key": "allowedExternalRedirectUrls", "type": "[str]"},
+        "cookie_expiration": {"key": "cookieExpiration", "type": "CookieExpiration"},
+        "nonce": {"key": "nonce", "type": "Nonce"},
     }
 
     def __init__(
@@ -3236,15 +3080,10 @@ class LoginRoutes(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'logout_endpoint': {'key': 'logoutEndpoint', 'type': 'str'},
+        "logout_endpoint": {"key": "logoutEndpoint", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        logout_endpoint: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, logout_endpoint: Optional[str] = None, **kwargs):
         """
         :keyword logout_endpoint: The endpoint at which a logout request should be made.
         :paramtype logout_endpoint: str
@@ -3261,15 +3100,10 @@ class LoginScopes(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'scopes': {'key': 'scopes', 'type': '[str]'},
+        "scopes": {"key": "scopes", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        scopes: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, scopes: Optional[List[str]] = None, **kwargs):
         """
         :keyword scopes: A list of the scopes that should be requested while authenticating.
         :paramtype scopes: list[str]
@@ -3324,31 +3158,31 @@ class ManagedEnvironment(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'deployment_errors': {'readonly': True},
-        'default_domain': {'readonly': True},
-        'static_ip': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "deployment_errors": {"readonly": True},
+        "default_domain": {"readonly": True},
+        "static_ip": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'dapr_ai_instrumentation_key': {'key': 'properties.daprAIInstrumentationKey', 'type': 'str'},
-        'vnet_configuration': {'key': 'properties.vnetConfiguration', 'type': 'VnetConfiguration'},
-        'deployment_errors': {'key': 'properties.deploymentErrors', 'type': 'str'},
-        'default_domain': {'key': 'properties.defaultDomain', 'type': 'str'},
-        'static_ip': {'key': 'properties.staticIp', 'type': 'str'},
-        'app_logs_configuration': {'key': 'properties.appLogsConfiguration', 'type': 'AppLogsConfiguration'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "dapr_ai_instrumentation_key": {"key": "properties.daprAIInstrumentationKey", "type": "str"},
+        "vnet_configuration": {"key": "properties.vnetConfiguration", "type": "VnetConfiguration"},
+        "deployment_errors": {"key": "properties.deploymentErrors", "type": "str"},
+        "default_domain": {"key": "properties.defaultDomain", "type": "str"},
+        "static_ip": {"key": "properties.staticIp", "type": "str"},
+        "app_logs_configuration": {"key": "properties.appLogsConfiguration", "type": "AppLogsConfiguration"},
     }
 
     def __init__(
@@ -3394,15 +3228,10 @@ class ManagedEnvironmentPatch(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
         :keyword tags: A set of tags. Application-specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
@@ -3425,21 +3254,16 @@ class ManagedEnvironmentsCollection(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ManagedEnvironment]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ManagedEnvironment]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["ManagedEnvironment"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["ManagedEnvironment"], **kwargs):
         """
         :keyword value: Required. Collection of resources.
         :paramtype value: list[~container_apps_api_client.models.ManagedEnvironment]
@@ -3470,26 +3294,21 @@ class ManagedEnvironmentStorage(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'properties': {'key': 'properties', 'type': 'ManagedEnvironmentStorageProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "ManagedEnvironmentStorageProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["ManagedEnvironmentStorageProperties"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, properties: Optional["ManagedEnvironmentStorageProperties"] = None, **kwargs):
         """
         :keyword properties: Storage properties.
         :paramtype properties: ~container_apps_api_client.models.ManagedEnvironmentStorageProperties
@@ -3506,15 +3325,10 @@ class ManagedEnvironmentStorageProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'azure_file': {'key': 'azureFile', 'type': 'AzureFileProperties'},
+        "azure_file": {"key": "azureFile", "type": "AzureFileProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        azure_file: Optional["AzureFileProperties"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, azure_file: Optional["AzureFileProperties"] = None, **kwargs):
         """
         :keyword azure_file: Azure file properties.
         :paramtype azure_file: ~container_apps_api_client.models.AzureFileProperties
@@ -3533,19 +3347,14 @@ class ManagedEnvironmentStoragesCollection(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ManagedEnvironmentStorage]'},
+        "value": {"key": "value", "type": "[ManagedEnvironmentStorage]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["ManagedEnvironmentStorage"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["ManagedEnvironmentStorage"], **kwargs):
         """
         :keyword value: Required. Collection of storage resources.
         :paramtype value: list[~container_apps_api_client.models.ManagedEnvironmentStorage]
@@ -3580,16 +3389,16 @@ class ManagedServiceIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
-        'type': {'required': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentity}'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentity}"},
     }
 
     def __init__(
@@ -3630,16 +3439,12 @@ class Nonce(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'validate_nonce': {'key': 'validateNonce', 'type': 'bool'},
-        'nonce_expiration_interval': {'key': 'nonceExpirationInterval', 'type': 'str'},
+        "validate_nonce": {"key": "validateNonce", "type": "bool"},
+        "nonce_expiration_interval": {"key": "nonceExpirationInterval", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        validate_nonce: Optional[bool] = None,
-        nonce_expiration_interval: Optional[str] = None,
-        **kwargs
+        self, *, validate_nonce: Optional[bool] = None, nonce_expiration_interval: Optional[str] = None, **kwargs
     ):
         """
         :keyword validate_nonce: :code:`<code>false</code>` if the nonce should not be validated while
@@ -3666,17 +3471,11 @@ class OpenIdConnectClientCredential(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'method': {'key': 'method', 'type': 'str'},
-        'client_secret_setting_name': {'key': 'clientSecretSettingName', 'type': 'str'},
+        "method": {"key": "method", "type": "str"},
+        "client_secret_setting_name": {"key": "clientSecretSettingName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        method: Optional[str] = None,
-        client_secret_setting_name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, method: Optional[str] = None, client_secret_setting_name: Optional[str] = None, **kwargs):
         """
         :keyword method: The method that should be used to authenticate the user. The only acceptable
          values to pass in are None and "ClientSecretPost". The default value is None.
@@ -3707,11 +3506,11 @@ class OpenIdConnectConfig(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'authorization_endpoint': {'key': 'authorizationEndpoint', 'type': 'str'},
-        'token_endpoint': {'key': 'tokenEndpoint', 'type': 'str'},
-        'issuer': {'key': 'issuer', 'type': 'str'},
-        'certification_uri': {'key': 'certificationUri', 'type': 'str'},
-        'well_known_open_id_configuration': {'key': 'wellKnownOpenIdConfiguration', 'type': 'str'},
+        "authorization_endpoint": {"key": "authorizationEndpoint", "type": "str"},
+        "token_endpoint": {"key": "tokenEndpoint", "type": "str"},
+        "issuer": {"key": "issuer", "type": "str"},
+        "certification_uri": {"key": "certificationUri", "type": "str"},
+        "well_known_open_id_configuration": {"key": "wellKnownOpenIdConfiguration", "type": "str"},
     }
 
     def __init__(
@@ -3756,17 +3555,11 @@ class OpenIdConnectLogin(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name_claim_type': {'key': 'nameClaimType', 'type': 'str'},
-        'scopes': {'key': 'scopes', 'type': '[str]'},
+        "name_claim_type": {"key": "nameClaimType", "type": "str"},
+        "scopes": {"key": "scopes", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        name_claim_type: Optional[str] = None,
-        scopes: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name_claim_type: Optional[str] = None, scopes: Optional[List[str]] = None, **kwargs):
         """
         :keyword name_claim_type: The name of the claim that contains the users name.
         :paramtype name_claim_type: str
@@ -3791,9 +3584,9 @@ class OpenIdConnectRegistration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'client_id': {'key': 'clientId', 'type': 'str'},
-        'client_credential': {'key': 'clientCredential', 'type': 'OpenIdConnectClientCredential'},
-        'open_id_connect_configuration': {'key': 'openIdConnectConfiguration', 'type': 'OpenIdConnectConfig'},
+        "client_id": {"key": "clientId", "type": "str"},
+        "client_credential": {"key": "clientCredential", "type": "OpenIdConnectClientCredential"},
+        "open_id_connect_configuration": {"key": "openIdConnectConfiguration", "type": "OpenIdConnectConfig"},
     }
 
     def __init__(
@@ -3834,10 +3627,10 @@ class OperationDetail(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
     }
 
     def __init__(
@@ -3880,10 +3673,10 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -3924,9 +3717,9 @@ class QueueScaleRule(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'queue_name': {'key': 'queueName', 'type': 'str'},
-        'queue_length': {'key': 'queueLength', 'type': 'int'},
-        'auth': {'key': 'auth', 'type': '[ScaleRuleAuth]'},
+        "queue_name": {"key": "queueName", "type": "str"},
+        "queue_length": {"key": "queueLength", "type": "int"},
+        "auth": {"key": "auth", "type": "[ScaleRuleAuth]"},
     }
 
     def __init__(
@@ -3963,9 +3756,9 @@ class RegistryCredentials(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'server': {'key': 'server', 'type': 'str'},
-        'username': {'key': 'username', 'type': 'str'},
-        'password_secret_ref': {'key': 'passwordSecretRef', 'type': 'str'},
+        "server": {"key": "server", "type": "str"},
+        "username": {"key": "username", "type": "str"},
+        "password_secret_ref": {"key": "passwordSecretRef", "type": "str"},
     }
 
     def __init__(
@@ -4002,9 +3795,9 @@ class RegistryInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'registry_url': {'key': 'registryUrl', 'type': 'str'},
-        'registry_user_name': {'key': 'registryUserName', 'type': 'str'},
-        'registry_password': {'key': 'registryPassword', 'type': 'str'},
+        "registry_url": {"key": "registryUrl", "type": "str"},
+        "registry_user_name": {"key": "registryUserName", "type": "str"},
+        "registry_password": {"key": "registryPassword", "type": "str"},
     }
 
     def __init__(
@@ -4052,28 +3845,23 @@ class Replica(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'created_time': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "created_time": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'created_time': {'key': 'properties.createdTime', 'type': 'iso-8601'},
-        'containers': {'key': 'properties.containers', 'type': '[ReplicaContainer]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "created_time": {"key": "properties.createdTime", "type": "iso-8601"},
+        "containers": {"key": "properties.containers", "type": "[ReplicaContainer]"},
     }
 
-    def __init__(
-        self,
-        *,
-        containers: Optional[List["ReplicaContainer"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, containers: Optional[List["ReplicaContainer"]] = None, **kwargs):
         """
         :keyword containers: The containers collection under a replica.
         :paramtype containers: list[~container_apps_api_client.models.ReplicaContainer]
@@ -4093,19 +3881,14 @@ class ReplicaCollection(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Replica]'},
+        "value": {"key": "value", "type": "[Replica]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["Replica"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["Replica"], **kwargs):
         """
         :keyword value: Required. Collection of resources.
         :paramtype value: list[~container_apps_api_client.models.Replica]
@@ -4130,11 +3913,11 @@ class ReplicaContainer(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'container_id': {'key': 'containerId', 'type': 'str'},
-        'ready': {'key': 'ready', 'type': 'bool'},
-        'started': {'key': 'started', 'type': 'bool'},
-        'restart_count': {'key': 'restartCount', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "container_id": {"key": "containerId", "type": "str"},
+        "ready": {"key": "ready", "type": "bool"},
+        "started": {"key": "started", "type": "bool"},
+        "restart_count": {"key": "restartCount", "type": "int"},
     }
 
     def __init__(
@@ -4209,43 +3992,39 @@ class Revision(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'created_time': {'readonly': True},
-        'fqdn': {'readonly': True},
-        'template': {'readonly': True},
-        'active': {'readonly': True},
-        'replicas': {'readonly': True},
-        'traffic_weight': {'readonly': True},
-        'provisioning_error': {'readonly': True},
-        'health_state': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "created_time": {"readonly": True},
+        "fqdn": {"readonly": True},
+        "template": {"readonly": True},
+        "active": {"readonly": True},
+        "replicas": {"readonly": True},
+        "traffic_weight": {"readonly": True},
+        "provisioning_error": {"readonly": True},
+        "health_state": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'created_time': {'key': 'properties.createdTime', 'type': 'iso-8601'},
-        'fqdn': {'key': 'properties.fqdn', 'type': 'str'},
-        'template': {'key': 'properties.template', 'type': 'Template'},
-        'active': {'key': 'properties.active', 'type': 'bool'},
-        'replicas': {'key': 'properties.replicas', 'type': 'int'},
-        'traffic_weight': {'key': 'properties.trafficWeight', 'type': 'int'},
-        'provisioning_error': {'key': 'properties.provisioningError', 'type': 'str'},
-        'health_state': {'key': 'properties.healthState', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "created_time": {"key": "properties.createdTime", "type": "iso-8601"},
+        "fqdn": {"key": "properties.fqdn", "type": "str"},
+        "template": {"key": "properties.template", "type": "Template"},
+        "active": {"key": "properties.active", "type": "bool"},
+        "replicas": {"key": "properties.replicas", "type": "int"},
+        "traffic_weight": {"key": "properties.trafficWeight", "type": "int"},
+        "provisioning_error": {"key": "properties.provisioningError", "type": "str"},
+        "health_state": {"key": "properties.healthState", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(Revision, self).__init__(**kwargs)
         self.created_time = None
         self.fqdn = None
@@ -4272,21 +4051,16 @@ class RevisionCollection(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Revision]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Revision]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["Revision"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["Revision"], **kwargs):
         """
         :keyword value: Required. Collection of resources.
         :paramtype value: list[~container_apps_api_client.models.Revision]
@@ -4308,9 +4082,9 @@ class Scale(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'min_replicas': {'key': 'minReplicas', 'type': 'int'},
-        'max_replicas': {'key': 'maxReplicas', 'type': 'int'},
-        'rules': {'key': 'rules', 'type': '[ScaleRule]'},
+        "min_replicas": {"key": "minReplicas", "type": "int"},
+        "max_replicas": {"key": "maxReplicas", "type": "int"},
+        "rules": {"key": "rules", "type": "[ScaleRule]"},
     }
 
     def __init__(
@@ -4350,10 +4124,10 @@ class ScaleRule(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'azure_queue': {'key': 'azureQueue', 'type': 'QueueScaleRule'},
-        'custom': {'key': 'custom', 'type': 'CustomScaleRule'},
-        'http': {'key': 'http', 'type': 'HttpScaleRule'},
+        "name": {"key": "name", "type": "str"},
+        "azure_queue": {"key": "azureQueue", "type": "QueueScaleRule"},
+        "custom": {"key": "custom", "type": "CustomScaleRule"},
+        "http": {"key": "http", "type": "HttpScaleRule"},
     }
 
     def __init__(
@@ -4392,17 +4166,11 @@ class ScaleRuleAuth(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'secret_ref': {'key': 'secretRef', 'type': 'str'},
-        'trigger_parameter': {'key': 'triggerParameter', 'type': 'str'},
+        "secret_ref": {"key": "secretRef", "type": "str"},
+        "trigger_parameter": {"key": "triggerParameter", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        secret_ref: Optional[str] = None,
-        trigger_parameter: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, secret_ref: Optional[str] = None, trigger_parameter: Optional[str] = None, **kwargs):
         """
         :keyword secret_ref: Name of the Container App secret from which to pull the auth params.
         :paramtype secret_ref: str
@@ -4424,17 +4192,11 @@ class Secret(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs):
         """
         :keyword name: Secret Name.
         :paramtype name: str
@@ -4456,19 +4218,14 @@ class SecretsCollection(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ContainerAppSecret]'},
+        "value": {"key": "value", "type": "[ContainerAppSecret]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["ContainerAppSecret"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["ContainerAppSecret"], **kwargs):
         """
         :keyword value: Required. Collection of resources.
         :paramtype value: list[~container_apps_api_client.models.ContainerAppSecret]
@@ -4509,22 +4266,25 @@ class SourceControl(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'operation_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "operation_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'operation_state': {'key': 'properties.operationState', 'type': 'str'},
-        'repo_url': {'key': 'properties.repoUrl', 'type': 'str'},
-        'branch': {'key': 'properties.branch', 'type': 'str'},
-        'github_action_configuration': {'key': 'properties.githubActionConfiguration', 'type': 'GithubActionConfiguration'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "operation_state": {"key": "properties.operationState", "type": "str"},
+        "repo_url": {"key": "properties.repoUrl", "type": "str"},
+        "branch": {"key": "properties.branch", "type": "str"},
+        "github_action_configuration": {
+            "key": "properties.githubActionConfiguration",
+            "type": "GithubActionConfiguration",
+        },
     }
 
     def __init__(
@@ -4568,21 +4328,16 @@ class SourceControlCollection(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
+        "value": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SourceControl]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SourceControl]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["SourceControl"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["SourceControl"], **kwargs):
         """
         :keyword value: Required. Collection of resources.
         :paramtype value: list[~container_apps_api_client.models.SourceControl]
@@ -4612,12 +4367,12 @@ class SystemData(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
@@ -4658,24 +4413,24 @@ class SystemData(msrest.serialization.Model):
 
 class Template(msrest.serialization.Model):
     """Container App versioned application definition.
-Defines the desired state of an immutable revision.
-Any changes to this section Will result in a new revision being created.
+    Defines the desired state of an immutable revision.
+    Any changes to this section Will result in a new revision being created.
 
-    :ivar revision_suffix: User friendly suffix that is appended to the revision name.
-    :vartype revision_suffix: str
-    :ivar containers: List of container definitions for the Container App.
-    :vartype containers: list[~container_apps_api_client.models.Container]
-    :ivar scale: Scaling properties for the Container App.
-    :vartype scale: ~container_apps_api_client.models.Scale
-    :ivar volumes: List of volume definitions for the Container App.
-    :vartype volumes: list[~container_apps_api_client.models.Volume]
+        :ivar revision_suffix: User friendly suffix that is appended to the revision name.
+        :vartype revision_suffix: str
+        :ivar containers: List of container definitions for the Container App.
+        :vartype containers: list[~container_apps_api_client.models.Container]
+        :ivar scale: Scaling properties for the Container App.
+        :vartype scale: ~container_apps_api_client.models.Scale
+        :ivar volumes: List of volume definitions for the Container App.
+        :vartype volumes: list[~container_apps_api_client.models.Volume]
     """
 
     _attribute_map = {
-        'revision_suffix': {'key': 'revisionSuffix', 'type': 'str'},
-        'containers': {'key': 'containers', 'type': '[Container]'},
-        'scale': {'key': 'scale', 'type': 'Scale'},
-        'volumes': {'key': 'volumes', 'type': '[Volume]'},
+        "revision_suffix": {"key": "revisionSuffix", "type": "str"},
+        "containers": {"key": "containers", "type": "[Container]"},
+        "scale": {"key": "scale", "type": "Scale"},
+        "volumes": {"key": "volumes", "type": "[Volume]"},
     }
 
     def __init__(
@@ -4716,9 +4471,9 @@ class TrafficWeight(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'revision_name': {'key': 'revisionName', 'type': 'str'},
-        'weight': {'key': 'weight', 'type': 'int'},
-        'latest_revision': {'key': 'latestRevision', 'type': 'bool'},
+        "revision_name": {"key": "revisionName", "type": "str"},
+        "weight": {"key": "weight", "type": "int"},
+        "latest_revision": {"key": "latestRevision", "type": "bool"},
     }
 
     def __init__(
@@ -4756,16 +4511,12 @@ class Twitter(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'registration': {'key': 'registration', 'type': 'TwitterRegistration'},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "registration": {"key": "registration", "type": "TwitterRegistration"},
     }
 
     def __init__(
-        self,
-        *,
-        enabled: Optional[bool] = None,
-        registration: Optional["TwitterRegistration"] = None,
-        **kwargs
+        self, *, enabled: Optional[bool] = None, registration: Optional["TwitterRegistration"] = None, **kwargs
     ):
         """
         :keyword enabled: :code:`<code>false</code>` if the Twitter provider should not be enabled
@@ -4794,16 +4545,12 @@ class TwitterRegistration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'consumer_key': {'key': 'consumerKey', 'type': 'str'},
-        'consumer_secret_setting_name': {'key': 'consumerSecretSettingName', 'type': 'str'},
+        "consumer_key": {"key": "consumerKey", "type": "str"},
+        "consumer_secret_setting_name": {"key": "consumerSecretSettingName", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        consumer_key: Optional[str] = None,
-        consumer_secret_setting_name: Optional[str] = None,
-        **kwargs
+        self, *, consumer_key: Optional[str] = None, consumer_secret_setting_name: Optional[str] = None, **kwargs
     ):
         """
         :keyword consumer_key: The OAuth 1.0a consumer key of the Twitter application used for sign-in.
@@ -4832,21 +4579,17 @@ class UserAssignedIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'client_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(UserAssignedIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
@@ -4879,12 +4622,12 @@ class VnetConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'internal': {'key': 'internal', 'type': 'bool'},
-        'infrastructure_subnet_id': {'key': 'infrastructureSubnetId', 'type': 'str'},
-        'runtime_subnet_id': {'key': 'runtimeSubnetId', 'type': 'str'},
-        'docker_bridge_cidr': {'key': 'dockerBridgeCidr', 'type': 'str'},
-        'platform_reserved_cidr': {'key': 'platformReservedCidr', 'type': 'str'},
-        'platform_reserved_dns_ip': {'key': 'platformReservedDnsIP', 'type': 'str'},
+        "internal": {"key": "internal", "type": "bool"},
+        "infrastructure_subnet_id": {"key": "infrastructureSubnetId", "type": "str"},
+        "runtime_subnet_id": {"key": "runtimeSubnetId", "type": "str"},
+        "docker_bridge_cidr": {"key": "dockerBridgeCidr", "type": "str"},
+        "platform_reserved_cidr": {"key": "platformReservedCidr", "type": "str"},
+        "platform_reserved_dns_ip": {"key": "platformReservedDnsIP", "type": "str"},
     }
 
     def __init__(
@@ -4943,9 +4686,9 @@ class Volume(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'storage_type': {'key': 'storageType', 'type': 'str'},
-        'storage_name': {'key': 'storageName', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "storage_type": {"key": "storageType", "type": "str"},
+        "storage_name": {"key": "storageName", "type": "str"},
     }
 
     def __init__(
@@ -4982,17 +4725,11 @@ class VolumeMount(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'volume_name': {'key': 'volumeName', 'type': 'str'},
-        'mount_path': {'key': 'mountPath', 'type': 'str'},
+        "volume_name": {"key": "volumeName", "type": "str"},
+        "mount_path": {"key": "mountPath", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        volume_name: Optional[str] = None,
-        mount_path: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, volume_name: Optional[str] = None, mount_path: Optional[str] = None, **kwargs):
         """
         :keyword volume_name: This must match the Name of a Volume.
         :paramtype volume_name: str

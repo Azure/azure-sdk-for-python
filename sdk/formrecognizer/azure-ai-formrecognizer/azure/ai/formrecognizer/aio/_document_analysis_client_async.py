@@ -124,9 +124,7 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             _client_op_path = self._client
             if kwargs.pop("features", None):
-                raise ValueError(
-                    "Keyword argument 'features' is only available for API version V2023_07_31 and later."
-                )
+                raise ValueError("Keyword argument 'features' is only available for API version V2023_07_31 and later.")
         else:
             _client_op_path = self._client.document_models
         return await _client_op_path.begin_analyze_document(  # type: ignore
@@ -193,9 +191,7 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             _client_op_path = self._client
             if kwargs.pop("features", None):
-                raise ValueError(
-                    "Keyword argument 'features' is only available for API version V2023_07_31 and later."
-                )
+                raise ValueError("Keyword argument 'features' is only available for API version V2023_07_31 and later.")
         else:
             _client_op_path = self._client.document_models
         return await _client_op_path.begin_analyze_document(  # type: ignore
@@ -237,8 +233,9 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
         """
 
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
-            raise ValueError("Method 'begin_classify_document()' is only available for API version "
-                             "V2023_07_31 and later")
+            raise ValueError(
+                "Method 'begin_classify_document()' is only available for API version " "V2023_07_31 and later"
+            )
 
         cls = kwargs.pop("cls", self._analyze_document_callback)
         continuation_token = kwargs.pop("continuation_token", None)
@@ -287,8 +284,9 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
         """
 
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
-            raise ValueError("Method 'begin_classify_document_from_url()' is only available for API version "
-                             "V2023_07_31 and later")
+            raise ValueError(
+                "Method 'begin_classify_document_from_url()' is only available for API version " "V2023_07_31 and later"
+            )
         cls = kwargs.pop("cls", self._analyze_document_callback)
         continuation_token = kwargs.pop("continuation_token", None)
 

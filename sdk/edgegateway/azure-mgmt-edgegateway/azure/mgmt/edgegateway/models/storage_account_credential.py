@@ -47,33 +47,33 @@ class StorageAccountCredential(ARMBaseModel):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'alias': {'required': True},
-        'ssl_status': {'required': True},
-        'account_type': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "alias": {"required": True},
+        "ssl_status": {"required": True},
+        "account_type": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'alias': {'key': 'properties.alias', 'type': 'str'},
-        'user_name': {'key': 'properties.userName', 'type': 'str'},
-        'account_key': {'key': 'properties.accountKey', 'type': 'AsymmetricEncryptedSecret'},
-        'connection_string': {'key': 'properties.connectionString', 'type': 'str'},
-        'ssl_status': {'key': 'properties.sslStatus', 'type': 'str'},
-        'blob_domain_name': {'key': 'properties.blobDomainName', 'type': 'str'},
-        'account_type': {'key': 'properties.accountType', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "alias": {"key": "properties.alias", "type": "str"},
+        "user_name": {"key": "properties.userName", "type": "str"},
+        "account_key": {"key": "properties.accountKey", "type": "AsymmetricEncryptedSecret"},
+        "connection_string": {"key": "properties.connectionString", "type": "str"},
+        "ssl_status": {"key": "properties.sslStatus", "type": "str"},
+        "blob_domain_name": {"key": "properties.blobDomainName", "type": "str"},
+        "account_type": {"key": "properties.accountType", "type": "str"},
     }
 
     def __init__(self, **kwargs):
         super(StorageAccountCredential, self).__init__(**kwargs)
-        self.alias = kwargs.get('alias', None)
-        self.user_name = kwargs.get('user_name', None)
-        self.account_key = kwargs.get('account_key', None)
-        self.connection_string = kwargs.get('connection_string', None)
-        self.ssl_status = kwargs.get('ssl_status', None)
-        self.blob_domain_name = kwargs.get('blob_domain_name', None)
-        self.account_type = kwargs.get('account_type', None)
+        self.alias = kwargs.get("alias", None)
+        self.user_name = kwargs.get("user_name", None)
+        self.account_key = kwargs.get("account_key", None)
+        self.connection_string = kwargs.get("connection_string", None)
+        self.ssl_status = kwargs.get("ssl_status", None)
+        self.blob_domain_name = kwargs.get("blob_domain_name", None)
+        self.account_type = kwargs.get("account_type", None)

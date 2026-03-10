@@ -39,9 +39,7 @@ class TestDeviceRegistrationStateGet(object):
     def test_device_registration_state_get(self, service_client_get, sdk_client):
         sdk_client.device_registration_state.get(id=registration_id)
 
-    def test_device_registration_state_get_error(
-        self, service_client_get_error, sdk_client
-    ):
+    def test_device_registration_state_get_error(self, service_client_get_error, sdk_client):
         with pytest.raises(HttpResponseError):
             sdk_client.device_registration_state.get(id=registration_id)
 
@@ -71,9 +69,7 @@ class TestDeviceRegistrationStateDelete(object):
         result = sdk_client.device_registration_state.delete(id=registration_id)
         assert not result
 
-    def test_device_registration_state_get_error(
-        self, service_client_delete_error, sdk_client
-    ):
+    def test_device_registration_state_get_error(self, service_client_delete_error, sdk_client):
         with pytest.raises(HttpResponseError):
             sdk_client.device_registration_state.delete(id=registration_id)
 
@@ -103,9 +99,7 @@ class TestDeviceRegistrationStateQuery(object):
         query = sdk_client.device_registration_state.query(id=enrollment_group_id)
         assert [state for state in query]
 
-    def test_device_registration_state_query_error(
-        self, service_client_query_error, sdk_client
-    ):
+    def test_device_registration_state_query_error(self, service_client_query_error, sdk_client):
         with pytest.raises(HttpResponseError):
             query = sdk_client.device_registration_state.query(id=enrollment_group_id)
             assert [state for state in query]

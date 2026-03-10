@@ -11,7 +11,6 @@ import os
 import re
 from setuptools import setup, find_packages
 
-
 PACKAGE_NAME = "azure-monitor-query"
 PACKAGE_PPRINT_NAME = "Azure Monitor Query"
 PACKAGE_NAMESPACE = "azure.monitor.query"

@@ -10,6 +10,7 @@ operation type.
 from azure.cosmos.documents import _OperationType
 from azure.cosmos.http_constants import ResourceType
 
+
 class ServiceRequestRetryPolicy(object):
 
     def __init__(self, connection_policy, global_endpoint_manager, pk_range_wrapper, *args):
@@ -25,12 +26,15 @@ class ServiceRequestRetryPolicy(object):
             if _OperationType.IsReadOnlyOperation(self.request.operation_type):
                 self.total_retries = len(
                     self.global_endpoint_manager.location_cache._get_applicable_read_regional_routing_contexts(
-                        self.request))
+                        self.request
+                    )
+                )
             else:
                 self.total_retries = len(
                     self.global_endpoint_manager.location_cache._get_applicable_write_regional_routing_contexts(
-                        self.request))
-
+                        self.request
+                    )
+                )
 
     def ShouldRetry(self):  # pylint: disable=too-many-return-statements
         """Returns true if the request should retry based on preferred regions and retries already done.

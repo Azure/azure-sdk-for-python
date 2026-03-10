@@ -11,23 +11,22 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AnalyzeResultOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Operation status.
-    """
+    """Operation status."""
 
     NOT_STARTED = "notStarted"
     RUNNING = "running"
     FAILED = "failed"
     SUCCEEDED = "succeeded"
 
+
 class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """API version.
-    """
+    """API version."""
 
     TWO_THOUSAND_TWENTY_TWO08_31 = "2022-08-31"
 
+
 class ContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Content type for upload
-    """
+    """Content type for upload"""
 
     #: Content Type 'application/octet-stream'.
     APPLICATION_OCTET_STREAM = "application/octet-stream"
@@ -46,16 +45,16 @@ class ContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Content Type 'application/json'.
     APPLICATION_JSON = "application/json"
 
+
 class DocumentBuildMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Custom document model build mode.
-    """
+    """Custom document model build mode."""
 
     TEMPLATE = "template"
     NEURAL = "neural"
 
+
 class DocumentFieldType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Semantic data type of the field value.
-    """
+    """Semantic data type of the field value."""
 
     STRING = "string"
     DATE = "date"
@@ -71,22 +70,23 @@ class DocumentFieldType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CURRENCY = "currency"
     ADDRESS = "address"
 
+
 class DocumentSignatureType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Presence of signature.
-    """
+    """Presence of signature."""
 
     SIGNED = "signed"
     UNSIGNED = "unsigned"
 
+
 class DocumentTableCellKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Table cell kind.
-    """
+    """Table cell kind."""
 
     CONTENT = "content"
     ROW_HEADER = "rowHeader"
     COLUMN_HEADER = "columnHeader"
     STUB_HEAD = "stubHead"
     DESCRIPTION = "description"
+
 
 class LengthUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The unit used by the width, height, and polygon properties. For images, the unit is "pixel".
@@ -96,17 +96,17 @@ class LengthUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PIXEL = "pixel"
     INCH = "inch"
 
+
 class OperationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of operation.
-    """
+    """Type of operation."""
 
     DOCUMENT_MODEL_BUILD = "documentModelBuild"
     DOCUMENT_MODEL_COMPOSE = "documentModelCompose"
     DOCUMENT_MODEL_COPY_TO = "documentModelCopyTo"
 
+
 class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Operation status.
-    """
+    """Operation status."""
 
     NOT_STARTED = "notStarted"
     RUNNING = "running"
@@ -114,9 +114,9 @@ class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SUCCEEDED = "succeeded"
     CANCELED = "canceled"
 
+
 class ParagraphRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Semantic role of the paragraph.
-    """
+    """Semantic role of the paragraph."""
 
     PAGE_HEADER = "pageHeader"
     PAGE_FOOTER = "pageFooter"
@@ -125,16 +125,16 @@ class ParagraphRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SECTION_HEADING = "sectionHeading"
     FOOTNOTE = "footnote"
 
+
 class SelectionMarkState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """State of the selection mark.
-    """
+    """State of the selection mark."""
 
     SELECTED = "selected"
     UNSELECTED = "unselected"
 
+
 class StringIndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Method used to compute string offset and length.
-    """
+    """Method used to compute string offset and length."""
 
     TEXT_ELEMENTS = "textElements"
     UNICODE_CODE_POINT = "unicodeCodePoint"

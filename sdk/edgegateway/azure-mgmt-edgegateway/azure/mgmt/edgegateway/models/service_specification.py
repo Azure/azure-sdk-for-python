@@ -21,9 +21,9 @@ class ServiceSpecification(Model):
     """
 
     _attribute_map = {
-        'metric_specifications': {'key': 'metricSpecifications', 'type': '[MetricSpecificationV1]'},
+        "metric_specifications": {"key": "metricSpecifications", "type": "[MetricSpecificationV1]"},
     }
 
     def __init__(self, **kwargs):
         super(ServiceSpecification, self).__init__(**kwargs)
-        self.metric_specifications = kwargs.get('metric_specifications', None)
+        self.metric_specifications = kwargs.get("metric_specifications", None)

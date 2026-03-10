@@ -24,6 +24,7 @@ USAGE:
 This example uses DefaultAzureCredential, which requests a token from Microsoft Entra ID.
 For more information on DefaultAzureCredential, see https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
 """
+
 from datetime import timedelta
 import os
 
@@ -31,7 +32,6 @@ from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
 from azure.monitor.query import LogsQueryClient, LogsQueryStatus
 import plotly.express as px
-
 
 credential = DefaultAzureCredential()
 client = LogsQueryClient(credential)

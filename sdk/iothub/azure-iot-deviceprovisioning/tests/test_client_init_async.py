@@ -28,53 +28,37 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
     @ProvisioningServicePreparer()
     @recorded_by_proxy_async
     async def test_default_credentials(self, iothub_dps_endpoint):
-        client = self.create_provisioning_service_client_default_credentials(
-            iothub_dps_endpoint
-        )
+        client = self.create_provisioning_service_client_default_credentials(iothub_dps_endpoint)
 
-        enrollments = await client.enrollment.query(
-            query_specification={"query": "SELECT *"}
-        )
+        enrollments = await client.enrollment.query(query_specification={"query": "SELECT *"})
         assert len([enrollment async for enrollment in enrollments]) == 0
 
     @pytest.mark.asyncio
     @ProvisioningServicePreparer()
     @recorded_by_proxy_async
-    async def test_named_key(
-        self, iothub_dps_endpoint, iothub_dps_conn_str
-    ):
+    async def test_named_key(self, iothub_dps_endpoint, iothub_dps_conn_str):
         # get name and key from token
         cs_parts = parse_connection_string(iothub_dps_conn_str)
         name = cs_parts["sharedaccesskeyname"]
         key = cs_parts["sharedaccesskey"]
-        client = self.create_provisioning_service_client_namedkey(
-            iothub_dps_endpoint, name, key
-        )
+        client = self.create_provisioning_service_client_namedkey(iothub_dps_endpoint, name, key)
 
-        enrollments = await client.enrollment.query(
-            query_specification={"query": "SELECT *"}
-        )
+        enrollments = await client.enrollment.query(query_specification={"query": "SELECT *"})
 
         assert len([enrollment async for enrollment in enrollments]) == 0
 
     @pytest.mark.asyncio
     @ProvisioningServicePreparer()
     @recorded_by_proxy_async
-    async def test_sas_creds(
-        self, iothub_dps_endpoint, iothub_dps_conn_str
-    ):
+    async def test_sas_creds(self, iothub_dps_endpoint, iothub_dps_conn_str):
         cs_parts = parse_connection_string(iothub_dps_conn_str)
 
         name = cs_parts["sharedaccesskeyname"]
         key = cs_parts["sharedaccesskey"]
 
         sas = generate_sas_token(iothub_dps_endpoint, name, key)
-        client = self.create_provisioning_service_client_sas(
-            iothub_dps_endpoint, sas
-        )
+        client = self.create_provisioning_service_client_sas(iothub_dps_endpoint, sas)
 
-        enrollments = await client.enrollment.query(
-            query_specification={"query": "SELECT *"}
-        )
+        enrollments = await client.enrollment.query(query_specification={"query": "SELECT *"})
 
         assert len([enrollment async for enrollment in enrollments]) == 0

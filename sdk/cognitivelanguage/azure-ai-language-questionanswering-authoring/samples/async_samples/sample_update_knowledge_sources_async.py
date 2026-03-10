@@ -21,7 +21,7 @@ async def sample_update_knowledge_sources_async():
     client = QuestionAnsweringAuthoringClient(endpoint, AzureKeyCredential(key))
     async with client:
         project_name = "MicrosoftFAQProject"
-        await client.create_project( # pylint: disable=no-value-for-parameter
+        await client.create_project(  # pylint: disable=no-value-for-parameter
             project_name=project_name,
             options={
                 "description": "Test project for some Microsoft QnAs",
@@ -31,7 +31,7 @@ async def sample_update_knowledge_sources_async():
             },
         )
 
-        sources_poller = await client.begin_update_sources( # pylint: disable=no-value-for-parameter
+        sources_poller = await client.begin_update_sources(  # pylint: disable=no-value-for-parameter
             project_name=project_name,
             sources=[
                 _models.UpdateSourceRecord(
@@ -50,7 +50,7 @@ async def sample_update_knowledge_sources_async():
         await sources_poller.result()
         print("Knowledge source added (MicrosoftFAQ)")
 
-        qna_poller = await client.begin_update_qnas( # pylint: disable=no-value-for-parameter
+        qna_poller = await client.begin_update_qnas(  # pylint: disable=no-value-for-parameter
             project_name=project_name,
             qnas=[
                 _models.UpdateQnaRecord(
@@ -67,7 +67,7 @@ async def sample_update_knowledge_sources_async():
         await qna_poller.result()
         print("QnA added (1 record)")
 
-        await client.update_synonyms( # pylint: disable=no-value-for-parameter
+        await client.update_synonyms(  # pylint: disable=no-value-for-parameter
             project_name=project_name,
             synonyms=_models.SynonymAssets(
                 value=[

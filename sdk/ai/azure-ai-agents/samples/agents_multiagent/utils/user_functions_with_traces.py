@@ -9,7 +9,6 @@ import datetime
 from typing import Any, Callable, Set, Optional
 from opentelemetry import trace
 
-
 tracer = trace.get_tracer(__name__)
 
 

@@ -211,7 +211,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                     )
                 if partition_key and partition_key != event_data._partition_key:  # pylint: disable=protected-access
                     raise ValueError("The partition_key does not match the one of the EventDataBatch")
-                wrapper_event_data = event_data  # type:ignore
+                wrapper_event_data = event_data  # type: ignore
             else:
                 if partition_key:
                     event_data = _set_partition_key(event_data, partition_key, self._amqp_transport)

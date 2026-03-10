@@ -19,8 +19,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Create, read, update and delete and execute scripts in the Azure Cosmos DB SQL API service.
-"""
+"""Create, read, update and delete and execute scripts in the Azure Cosmos DB SQL API service."""
+
 # pylint: disable=protected-access
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 
@@ -39,6 +39,7 @@ from ..partition_key import NonePartitionKeyValue, _return_undefined_or_empty_pa
 if TYPE_CHECKING:
     from ._container import ContainerProxy
 
+
 class ScriptsProxy:
     """An interface to interact with stored procedures.
 
@@ -47,10 +48,7 @@ class ScriptsProxy:
     """
 
     def __init__(
-        self,
-        container: "ContainerProxy",
-        client_connection: _CosmosClientConnection,
-        container_link: str
+        self, container: "ContainerProxy", client_connection: _CosmosClientConnection, container_link: str
     ) -> None:
         self.client_connection = client_connection
         self.container_link = container_link
@@ -63,10 +61,7 @@ class ScriptsProxy:
 
     @distributed_trace
     def list_stored_procedures(
-        self,
-        *,
-        max_item_count: Optional[int] = None,
-        **kwargs: Any
+        self, *, max_item_count: Optional[int] = None, **kwargs: Any
     ) -> AsyncItemPaged[dict[str, Any]]:
         """List all stored procedures in the container.
 
@@ -112,11 +107,7 @@ class ScriptsProxy:
         )
 
     @distributed_trace_async
-    async def get_stored_procedure(
-        self,
-        sproc: Union[str, Mapping[str, Any]],
-        **kwargs: Any
-    ) -> CosmosDict:
+    async def get_stored_procedure(self, sproc: Union[str, Mapping[str, Any]], **kwargs: Any) -> CosmosDict:
         """Get the stored procedure identified by `sproc`.
 
         :param sproc: The ID (name) or dict representing the stored procedure to retrieve.
@@ -132,11 +123,7 @@ class ScriptsProxy:
         )
 
     @distributed_trace_async
-    async def create_stored_procedure(
-        self,
-        body: dict[str, Any],
-        **kwargs: Any
-    ) -> CosmosDict:
+    async def create_stored_procedure(self, body: dict[str, Any], **kwargs: Any) -> CosmosDict:
         """Create a new stored procedure in the container.
 
         To replace an existing stored procedure, use the :func:`Container.scripts.replace_stored_procedure` method.
@@ -154,10 +141,7 @@ class ScriptsProxy:
 
     @distributed_trace_async
     async def replace_stored_procedure(
-        self,
-        sproc: Union[str, Mapping[str, Any]],
-        body: dict[str, Any],
-        **kwargs: Any
+        self, sproc: Union[str, Mapping[str, Any]], body: dict[str, Any], **kwargs: Any
     ) -> CosmosDict:
         """Replace a specified stored procedure in the container.
 
@@ -229,8 +213,7 @@ class ScriptsProxy:
         request_options = _build_options(kwargs)
         if partition_key is not None:
             request_options["partitionKey"] = (
-                _return_undefined_or_empty_partition_key(
-                    await self.container_proxy.is_system_key)
+                _return_undefined_or_empty_partition_key(await self.container_proxy.is_system_key)
                 if partition_key == NonePartitionKeyValue
                 else partition_key
             )
@@ -244,12 +227,7 @@ class ScriptsProxy:
         )
 
     @distributed_trace
-    def list_triggers(
-        self,
-        *,
-        max_item_count: Optional[int] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
+    def list_triggers(self, *, max_item_count: Optional[int] = None, **kwargs: Any) -> AsyncItemPaged[dict[str, Any]]:
         """List all triggers in the container.
 
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
@@ -260,9 +238,7 @@ class ScriptsProxy:
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
-        return self.client_connection.ReadTriggers(
-            collection_link=self.container_link, options=feed_options, **kwargs
-        )
+        return self.client_connection.ReadTriggers(collection_link=self.container_link, options=feed_options, **kwargs)
 
     @distributed_trace
     def query_triggers(
@@ -325,10 +301,7 @@ class ScriptsProxy:
 
     @distributed_trace_async
     async def replace_trigger(
-        self,
-        trigger: Union[str, Mapping[str, Any]],
-        body: dict[str, Any],
-        **kwargs: Any
+        self, trigger: Union[str, Mapping[str, Any]], body: dict[str, Any], **kwargs: Any
     ) -> dict[str, Any]:
         """Replace a specified trigger in the container.
 
@@ -370,10 +343,7 @@ class ScriptsProxy:
 
     @distributed_trace
     def list_user_defined_functions(
-        self,
-        *,
-        max_item_count: Optional[int] = None,
-        **kwargs: Any
+        self, *, max_item_count: Optional[int] = None, **kwargs: Any
     ) -> AsyncItemPaged[dict[str, Any]]:
         """List all the user-defined functions in the container.
 
@@ -452,10 +422,7 @@ class ScriptsProxy:
 
     @distributed_trace_async
     async def replace_user_defined_function(
-        self,
-        udf: Union[str, Mapping[str, Any]],
-        body: dict[str, Any],
-        **kwargs: Any
+        self, udf: Union[str, Mapping[str, Any]], body: dict[str, Any], **kwargs: Any
     ) -> dict[str, Any]:
         """Replace a specified user-defined function in the container.
 

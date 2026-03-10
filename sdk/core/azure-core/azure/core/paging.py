@@ -37,7 +37,6 @@ import logging
 
 from .exceptions import AzureError
 
-
 _LOGGER = logging.getLogger(__name__)
 
 ReturnType = TypeVar("ReturnType")

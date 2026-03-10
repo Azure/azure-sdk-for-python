@@ -22,6 +22,7 @@ if TYPE_CHECKING:
 
     from azure.core.credentials_async import AsyncTokenCredential
 
+
 class PurviewMetadataPoliciesClient:
     """PurviewMetadataPoliciesClient.
 
@@ -38,13 +39,8 @@ class PurviewMetadataPoliciesClient:
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     """
 
-    def __init__(
-        self,
-        endpoint: str,
-        credential: "AsyncTokenCredential",
-        **kwargs: Any
-    ) -> None:
-        _endpoint = '{Endpoint}/policyStore'
+    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
+        _endpoint = "{Endpoint}/policyStore"
         self._config = PurviewMetadataPoliciesClientConfiguration(endpoint, credential, **kwargs)
         self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
@@ -54,12 +50,7 @@ class PurviewMetadataPoliciesClient:
         self.metadata_roles = MetadataRolesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.metadata_policy = MetadataPolicyOperations(self._client, self._config, self._serialize, self._deserialize)
 
-
-    def send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -79,7 +70,7 @@ class PurviewMetadataPoliciesClient:
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

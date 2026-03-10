@@ -13,7 +13,7 @@ DESCRIPTION:
 USAGE:
     python exception_policy_crud_ops.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - Communication Service connection string 
+    1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - Communication Service connection string
 """
 
 import os

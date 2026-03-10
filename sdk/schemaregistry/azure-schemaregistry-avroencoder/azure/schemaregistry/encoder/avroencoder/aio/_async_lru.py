@@ -29,10 +29,9 @@
 # 2. The last update to the library was a year ago, so it seems the library is
 #    not being actively maintained.
 
-import asyncio # pylint:disable=do-not-import-asyncio
+import asyncio  # pylint:disable=do-not-import-asyncio
 from collections import OrderedDict
 from functools import _CacheInfo, _make_key, partial, wraps
-
 
 __version__ = "1.0.2"
 
@@ -83,9 +82,7 @@ def _open(wrapped):
         raise RuntimeError("alru_cache is not closed")
 
     # pylint: disable=protected-access
-    was_closed = (
-        wrapped.hits == wrapped.misses == len(wrapped.tasks) == len(wrapped._cache) == 0
-    )
+    was_closed = wrapped.hits == wrapped.misses == len(wrapped.tasks) == len(wrapped._cache) == 0
 
     if not was_closed:
         raise RuntimeError("alru_cache was not closed correctly")

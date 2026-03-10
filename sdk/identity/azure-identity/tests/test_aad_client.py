@@ -17,7 +17,6 @@ from urllib.parse import urlparse
 from helpers import build_aad_response, mock_response
 from test_certificate_credential import PEM_CERT_PATH
 
-
 BASE_CLASS_METHODS = [
     ("_get_auth_code_request", ("code", "redirect_uri")),
     ("_get_client_secret_request", ("secret",)),

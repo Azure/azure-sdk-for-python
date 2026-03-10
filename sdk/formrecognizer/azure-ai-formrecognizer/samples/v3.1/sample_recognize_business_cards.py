@@ -29,8 +29,11 @@ import os
 class RecognizeBusinessCardSample(object):
 
     def recognize_business_card(self):
-        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
-                                                            "..", "..", "./sample_forms/business_cards/business-card-english.jpg"))
+        path_to_sample_forms = os.path.abspath(
+            os.path.join(
+                os.path.abspath(__file__), "..", "..", "./sample_forms/business_cards/business-card-english.jpg"
+            )
+        )
         # [START recognize_business_cards]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
@@ -38,24 +41,26 @@ class RecognizeBusinessCardSample(object):
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
-        form_recognizer_client = FormRecognizerClient(
-            endpoint=endpoint, credential=AzureKeyCredential(key)
-        )
+        form_recognizer_client = FormRecognizerClient(endpoint=endpoint, credential=AzureKeyCredential(key))
         with open(path_to_sample_forms, "rb") as f:
             poller = form_recognizer_client.begin_recognize_business_cards(business_card=f, locale="en-US")
         business_cards = poller.result()
 
         for idx, business_card in enumerate(business_cards):
-            print("--------Recognizing business card #{}--------".format(idx+1))
+            print("--------Recognizing business card #{}--------".format(idx + 1))
             contact_names = business_card.fields.get("ContactNames")
             if contact_names:
                 for contact_name in contact_names.value:
-                    print("Contact First Name: {} has confidence: {}".format(
-                        contact_name.value["FirstName"].value, contact_name.value["FirstName"].confidence
-                    ))
-                    print("Contact Last Name: {} has confidence: {}".format(
-                        contact_name.value["LastName"].value, contact_name.value["LastName"].confidence
-                    ))
+                    print(
+                        "Contact First Name: {} has confidence: {}".format(
+                            contact_name.value["FirstName"].value, contact_name.value["FirstName"].confidence
+                        )
+                    )
+                    print(
+                        "Contact Last Name: {} has confidence: {}".format(
+                            contact_name.value["LastName"].value, contact_name.value["LastName"].confidence
+                        )
+                    )
             company_names = business_card.fields.get("CompanyNames")
             if company_names:
                 for company_name in company_names.value:
@@ -99,6 +104,6 @@ class RecognizeBusinessCardSample(object):
         # [END recognize_business_cards]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample = RecognizeBusinessCardSample()
     sample.recognize_business_card()

@@ -40,7 +40,8 @@ from .._utils import current_time_millis
 
 logger = logging.getLogger("azure.cosmos.aio._GlobalEndpointManager")
 
-class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attributes
+
+class _GlobalEndpointManager(object):  # pylint: disable=too-many-instance-attributes
     """
     This internal class implements the logic for endpoint management for
     geo-replicated database accounts.
@@ -51,10 +52,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self.PreferredLocations = client.connection_policy.PreferredLocations
         self.DefaultEndpoint = client.url_connection
         self.refresh_time_interval_in_ms = self.get_refresh_time_interval_in_ms_stub()
-        self.location_cache = LocationCache(
-            self.DefaultEndpoint,
-            client.connection_policy
-        )
+        self.location_cache = LocationCache(self.DefaultEndpoint, client.connection_policy)
         self.startup = True
         self.refresh_task = None
         self.refresh_needed = False
@@ -72,10 +70,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
     def get_read_endpoint(self):
         return self.location_cache.get_read_regional_routing_context()
 
-    def _resolve_service_endpoint(
-            self,
-            request: RequestObject
-    ) -> str:
+    def _resolve_service_endpoint(self, request: RequestObject) -> str:
         return self.location_cache.resolve_service_endpoint(request)
 
     def mark_endpoint_unavailable_for_read(self, endpoint, refresh_cache, context: str):
@@ -90,7 +85,9 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
     def get_ordered_read_locations(self):
         return self.location_cache.get_ordered_read_locations()
 
-    def get_applicable_read_regional_routing_contexts(self, request: RequestObject) -> list[RegionalRoutingContext]: # pylint: disable=name-too-long
+    def get_applicable_read_regional_routing_contexts(
+        self, request: RequestObject
+    ) -> list[RegionalRoutingContext]:  # pylint: disable=name-too-long
         """Gets the applicable read regional routing contexts based on request parameters.
 
         :param request: Request object containing operation parameters and exclusion lists
@@ -100,7 +97,9 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         """
         return self.location_cache._get_applicable_read_regional_routing_contexts(request)
 
-    def get_applicable_write_regional_routing_contexts(self, request: RequestObject) -> list[RegionalRoutingContext]: # pylint: disable=name-too-long
+    def get_applicable_write_regional_routing_contexts(
+        self, request: RequestObject
+    ) -> list[RegionalRoutingContext]:  # pylint: disable=name-too-long
         """Gets the applicable write regional routing contexts based on request parameters.
 
         :param request: Request object containing operation parameters and exclusion lists
@@ -150,7 +149,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
             try:
                 await self.refresh_task
                 self.refresh_task = None
-            except (Exception, asyncio.CancelledError) as exception: #pylint: disable=broad-exception-caught
+            except (Exception, asyncio.CancelledError) as exception:  # pylint: disable=broad-exception-caught
                 logger.error("Health check task failed: %s", exception, exc_info=True)
         if current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms:
             self.refresh_needed = True
@@ -198,7 +197,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
             await self.client.health_check(endpoint, **kwargs)
             self.location_cache.mark_endpoint_available(endpoint)
         except (exceptions.CosmosHttpResponseError, AzureError):
-            self._mark_endpoint_unavailable(endpoint,"_database_account_check")
+            self._mark_endpoint_unavailable(endpoint, "_database_account_check")
 
     async def _endpoints_health_check(self, **kwargs):
         """Gets the database account for each endpoint.
@@ -242,7 +241,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     self._database_account_cache = database_account
                     return database_account
                 except (exceptions.CosmosHttpResponseError, AzureError):
-                    self._mark_endpoint_unavailable(locational_endpoint,"_GetDatabaseAccount")
+                    self._mark_endpoint_unavailable(locational_endpoint, "_GetDatabaseAccount")
             raise
 
     async def _GetDatabaseAccountStub(self, endpoint, **kwargs):
@@ -261,5 +260,5 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
             self.refresh_task.cancel()
             try:
                 await self.refresh_task
-            except (Exception, asyncio.CancelledError) : #pylint: disable=broad-exception-caught
+            except (Exception, asyncio.CancelledError):  # pylint: disable=broad-exception-caught
                 pass

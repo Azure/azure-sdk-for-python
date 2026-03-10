@@ -37,7 +37,7 @@ def on_group_message(msg: OnGroupDataMessageArgs):
 
 
 def main():
-    service_client = WebPubSubServiceClient.from_connection_string( # type: ignore
+    service_client = WebPubSubServiceClient.from_connection_string(  # type: ignore
         connection_string=os.getenv("WEBPUBSUB_CONNECTION_STRING", ""), hub="hub"
     )
     client = WebPubSubClient(

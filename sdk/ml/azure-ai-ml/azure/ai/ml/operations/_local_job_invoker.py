@@ -142,7 +142,7 @@ def get_execution_service_response(
     try:
         local = job_definition.properties.services.get("Local", None)
 
-        (url, encodedBody) = local.endpoint.split(EXECUTION_SERVICE_URL_KEY)
+        url, encodedBody = local.endpoint.split(EXECUTION_SERVICE_URL_KEY)
         body = urllib.parse.unquote_plus(encodedBody)
         body_dict: Dict = json.loads(body)
         response = requests_pipeline.post(url, json=body_dict, headers={"Authorization": "Bearer " + token})
@@ -408,7 +408,7 @@ def start_run_if_local(
     :rtype: str
     """
     token = credential.get_token(ws_base_url + "/.default").token
-    (zip_content, snapshot_id) = get_execution_service_response(job_definition, token, requests_pipeline)
+    zip_content, snapshot_id = get_execution_service_response(job_definition, token, requests_pipeline)
 
     try:
         temp_dir = unzip_to_temporary_file(job_definition, zip_content)

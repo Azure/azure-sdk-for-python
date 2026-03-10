@@ -30,17 +30,17 @@ class NetworkSettings(ARMBaseModel):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'network_adapters': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "network_adapters": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'network_adapters': {'key': 'properties.networkAdapters', 'type': '[NetworkAdapter]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "network_adapters": {"key": "properties.networkAdapters", "type": "[NetworkAdapter]"},
     }
 
     def __init__(self, **kwargs) -> None:

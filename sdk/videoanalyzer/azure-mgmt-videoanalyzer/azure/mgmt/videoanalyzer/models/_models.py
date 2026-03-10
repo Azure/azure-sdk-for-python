@@ -29,23 +29,20 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -72,23 +69,20 @@ class ProxyResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ProxyResource, self).__init__(**kwargs)
 
 
@@ -116,28 +110,25 @@ class AccessPolicyEntity(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'role': {'key': 'properties.role', 'type': 'str'},
-        'authentication': {'key': 'properties.authentication', 'type': 'AuthenticationBase'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "role": {"key": "properties.role", "type": "str"},
+        "authentication": {"key": "properties.authentication", "type": "AuthenticationBase"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AccessPolicyEntity, self).__init__(**kwargs)
-        self.role = kwargs.get('role', None)
-        self.authentication = kwargs.get('authentication', None)
+        self.role = kwargs.get("role", None)
+        self.authentication = kwargs.get("authentication", None)
 
 
 class AccessPolicyEntityCollection(msrest.serialization.Model):
@@ -151,17 +142,14 @@ class AccessPolicyEntityCollection(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AccessPolicyEntity]'},
-        'next_link': {'key': '@nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[AccessPolicyEntity]"},
+        "next_link": {"key": "@nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AccessPolicyEntityCollection, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class AccountEncryption(msrest.serialization.Model):
@@ -183,25 +171,22 @@ class AccountEncryption(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
-        'status': {'readonly': True},
+        "type": {"required": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'key_vault_properties': {'key': 'keyVaultProperties', 'type': 'KeyVaultProperties'},
-        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
-        'status': {'key': 'status', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "key_vault_properties": {"key": "keyVaultProperties", "type": "KeyVaultProperties"},
+        "identity": {"key": "identity", "type": "ResourceIdentity"},
+        "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AccountEncryption, self).__init__(**kwargs)
-        self.type = kwargs['type']
-        self.key_vault_properties = kwargs.get('key_vault_properties', None)
-        self.identity = kwargs.get('identity', None)
+        self.type = kwargs["type"]
+        self.key_vault_properties = kwargs.get("key_vault_properties", None)
+        self.identity = kwargs.get("identity", None)
         self.status = None
 
 
@@ -222,25 +207,20 @@ class AudioEncoderBase(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'bitrate_kbps': {'key': 'bitrateKbps', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "bitrate_kbps": {"key": "bitrateKbps", "type": "str"},
     }
 
-    _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.AudioEncoderAac': 'AudioEncoderAac'}
-    }
+    _subtype_map = {"type": {"#Microsoft.VideoAnalyzer.AudioEncoderAac": "AudioEncoderAac"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AudioEncoderBase, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
-        self.bitrate_kbps = kwargs.get('bitrate_kbps', None)
+        self.bitrate_kbps = kwargs.get("bitrate_kbps", None)
 
 
 class AudioEncoderAac(AudioEncoderBase):
@@ -257,20 +237,17 @@ class AudioEncoderAac(AudioEncoderBase):
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'bitrate_kbps': {'key': 'bitrateKbps', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "bitrate_kbps": {"key": "bitrateKbps", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AudioEncoderAac, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.AudioEncoderAac'  # type: str
+        self.type = "#Microsoft.VideoAnalyzer.AudioEncoderAac"  # type: str
 
 
 class AuthenticationBase(msrest.serialization.Model):
@@ -286,21 +263,16 @@ class AuthenticationBase(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
     }
 
-    _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.JwtAuthentication': 'JwtAuthentication'}
-    }
+    _subtype_map = {"type": {"#Microsoft.VideoAnalyzer.JwtAuthentication": "JwtAuthentication"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AuthenticationBase, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
 
@@ -318,21 +290,16 @@ class CertificateSource(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
     }
 
-    _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.PemCertificateList': 'PemCertificateList'}
-    }
+    _subtype_map = {"type": {"#Microsoft.VideoAnalyzer.PemCertificateList": "PemCertificateList"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CertificateSource, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
 
@@ -347,17 +314,14 @@ class CheckNameAvailabilityRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CheckNameAvailabilityRequest, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.type = kwargs.get('type', None)
+        self.name = kwargs.get("name", None)
+        self.type = kwargs.get("type", None)
 
 
 class CheckNameAvailabilityResponse(msrest.serialization.Model):
@@ -373,19 +337,16 @@ class CheckNameAvailabilityResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "name_available": {"key": "nameAvailable", "type": "bool"},
+        "reason": {"key": "reason", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CheckNameAvailabilityResponse, self).__init__(**kwargs)
-        self.name_available = kwargs.get('name_available', None)
-        self.reason = kwargs.get('reason', None)
-        self.message = kwargs.get('message', None)
+        self.name_available = kwargs.get("name_available", None)
+        self.reason = kwargs.get("reason", None)
+        self.message = kwargs.get("message", None)
 
 
 class CredentialsBase(msrest.serialization.Model):
@@ -401,21 +362,16 @@ class CredentialsBase(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
     }
 
-    _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.UsernamePasswordCredentials': 'UsernamePasswordCredentials'}
-    }
+    _subtype_map = {"type": {"#Microsoft.VideoAnalyzer.UsernamePasswordCredentials": "UsernamePasswordCredentials"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CredentialsBase, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
 
@@ -436,26 +392,26 @@ class TokenKey(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
-        'kid': {'required': True},
+        "type": {"required": True},
+        "kid": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'kid': {'key': 'kid', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "kid": {"key": "kid", "type": "str"},
     }
 
     _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.EccTokenKey': 'EccTokenKey', '#Microsoft.VideoAnalyzer.RsaTokenKey': 'RsaTokenKey'}
+        "type": {
+            "#Microsoft.VideoAnalyzer.EccTokenKey": "EccTokenKey",
+            "#Microsoft.VideoAnalyzer.RsaTokenKey": "RsaTokenKey",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(TokenKey, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
-        self.kid = kwargs['kid']
+        self.kid = kwargs["kid"]
 
 
 class EccTokenKey(TokenKey):
@@ -478,30 +434,27 @@ class EccTokenKey(TokenKey):
     """
 
     _validation = {
-        'type': {'required': True},
-        'kid': {'required': True},
-        'alg': {'required': True},
-        'x': {'required': True},
-        'y': {'required': True},
+        "type": {"required": True},
+        "kid": {"required": True},
+        "alg": {"required": True},
+        "x": {"required": True},
+        "y": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'kid': {'key': 'kid', 'type': 'str'},
-        'alg': {'key': 'alg', 'type': 'str'},
-        'x': {'key': 'x', 'type': 'str'},
-        'y': {'key': 'y', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "kid": {"key": "kid", "type": "str"},
+        "alg": {"key": "alg", "type": "str"},
+        "x": {"key": "x", "type": "str"},
+        "y": {"key": "y", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(EccTokenKey, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.EccTokenKey'  # type: str
-        self.alg = kwargs['alg']
-        self.x = kwargs['x']
-        self.y = kwargs['y']
+        self.type = "#Microsoft.VideoAnalyzer.EccTokenKey"  # type: str
+        self.alg = kwargs["alg"]
+        self.x = kwargs["x"]
+        self.y = kwargs["y"]
 
 
 class EdgeModuleEntity(ProxyResource):
@@ -525,25 +478,22 @@ class EdgeModuleEntity(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'edge_module_id': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "edge_module_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'edge_module_id': {'key': 'properties.edgeModuleId', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "edge_module_id": {"key": "properties.edgeModuleId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(EdgeModuleEntity, self).__init__(**kwargs)
         self.edge_module_id = None
 
@@ -559,17 +509,14 @@ class EdgeModuleEntityCollection(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[EdgeModuleEntity]'},
-        'next_link': {'key': '@nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[EdgeModuleEntity]"},
+        "next_link": {"key": "@nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(EdgeModuleEntityCollection, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class EdgeModuleProvisioningToken(msrest.serialization.Model):
@@ -587,19 +534,16 @@ class EdgeModuleProvisioningToken(msrest.serialization.Model):
     """
 
     _validation = {
-        'expiration_date': {'readonly': True},
-        'token': {'readonly': True},
+        "expiration_date": {"readonly": True},
+        "token": {"readonly": True},
     }
 
     _attribute_map = {
-        'expiration_date': {'key': 'expirationDate', 'type': 'iso-8601'},
-        'token': {'key': 'token', 'type': 'str'},
+        "expiration_date": {"key": "expirationDate", "type": "iso-8601"},
+        "token": {"key": "token", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(EdgeModuleProvisioningToken, self).__init__(**kwargs)
         self.expiration_date = None
         self.token = None
@@ -618,21 +562,21 @@ class EncoderPresetBase(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
     }
 
     _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.EncoderCustomPreset': 'EncoderCustomPreset', '#Microsoft.VideoAnalyzer.EncoderSystemPreset': 'EncoderSystemPreset'}
+        "type": {
+            "#Microsoft.VideoAnalyzer.EncoderCustomPreset": "EncoderCustomPreset",
+            "#Microsoft.VideoAnalyzer.EncoderSystemPreset": "EncoderSystemPreset",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(EncoderPresetBase, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
 
@@ -651,23 +595,20 @@ class EncoderCustomPreset(EncoderPresetBase):
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'audio_encoder': {'key': 'audioEncoder', 'type': 'AudioEncoderBase'},
-        'video_encoder': {'key': 'videoEncoder', 'type': 'VideoEncoderBase'},
+        "type": {"key": "@type", "type": "str"},
+        "audio_encoder": {"key": "audioEncoder", "type": "AudioEncoderBase"},
+        "video_encoder": {"key": "videoEncoder", "type": "VideoEncoderBase"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(EncoderCustomPreset, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.EncoderCustomPreset'  # type: str
-        self.audio_encoder = kwargs.get('audio_encoder', None)
-        self.video_encoder = kwargs.get('video_encoder', None)
+        self.type = "#Microsoft.VideoAnalyzer.EncoderCustomPreset"  # type: str
+        self.audio_encoder = kwargs.get("audio_encoder", None)
+        self.video_encoder = kwargs.get("video_encoder", None)
 
 
 class NodeBase(msrest.serialization.Model):
@@ -685,26 +626,27 @@ class NodeBase(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
     _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.ProcessorNodeBase': 'ProcessorNodeBase', '#Microsoft.VideoAnalyzer.SinkNodeBase': 'SinkNodeBase', '#Microsoft.VideoAnalyzer.SourceNodeBase': 'SourceNodeBase'}
+        "type": {
+            "#Microsoft.VideoAnalyzer.ProcessorNodeBase": "ProcessorNodeBase",
+            "#Microsoft.VideoAnalyzer.SinkNodeBase": "SinkNodeBase",
+            "#Microsoft.VideoAnalyzer.SourceNodeBase": "SourceNodeBase",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(NodeBase, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
-        self.name = kwargs['name']
+        self.name = kwargs["name"]
 
 
 class ProcessorNodeBase(NodeBase):
@@ -725,28 +667,23 @@ class ProcessorNodeBase(NodeBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
-        'inputs': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
+        "inputs": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'inputs': {'key': 'inputs', 'type': '[NodeInput]'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "inputs": {"key": "inputs", "type": "[NodeInput]"},
     }
 
-    _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.EncoderProcessor': 'EncoderProcessor'}
-    }
+    _subtype_map = {"type": {"#Microsoft.VideoAnalyzer.EncoderProcessor": "EncoderProcessor"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ProcessorNodeBase, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.ProcessorNodeBase'  # type: str
-        self.inputs = kwargs['inputs']
+        self.type = "#Microsoft.VideoAnalyzer.ProcessorNodeBase"  # type: str
+        self.inputs = kwargs["inputs"]
 
 
 class EncoderProcessor(ProcessorNodeBase):
@@ -767,26 +704,23 @@ class EncoderProcessor(ProcessorNodeBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
-        'inputs': {'required': True},
-        'preset': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
+        "inputs": {"required": True},
+        "preset": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'inputs': {'key': 'inputs', 'type': '[NodeInput]'},
-        'preset': {'key': 'preset', 'type': 'EncoderPresetBase'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "inputs": {"key": "inputs", "type": "[NodeInput]"},
+        "preset": {"key": "preset", "type": "EncoderPresetBase"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(EncoderProcessor, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.EncoderProcessor'  # type: str
-        self.preset = kwargs['preset']
+        self.type = "#Microsoft.VideoAnalyzer.EncoderProcessor"  # type: str
+        self.preset = kwargs["preset"]
 
 
 class EncoderSystemPreset(EncoderPresetBase):
@@ -803,22 +737,19 @@ class EncoderSystemPreset(EncoderPresetBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(EncoderSystemPreset, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.EncoderSystemPreset'  # type: str
-        self.name = kwargs['name']
+        self.type = "#Microsoft.VideoAnalyzer.EncoderSystemPreset"  # type: str
+        self.name = kwargs["name"]
 
 
 class Endpoint(msrest.serialization.Model):
@@ -833,21 +764,18 @@ class Endpoint(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'endpoint_url': {'key': 'endpointUrl', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "endpoint_url": {"key": "endpointUrl", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Endpoint, self).__init__(**kwargs)
-        self.endpoint_url = kwargs.get('endpoint_url', None)
-        self.type = kwargs['type']
+        self.endpoint_url = kwargs.get("endpoint_url", None)
+        self.type = kwargs["type"]
 
 
 class EndpointBase(msrest.serialization.Model):
@@ -870,31 +798,31 @@ class EndpointBase(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
-        'credentials': {'required': True},
-        'url': {'required': True},
+        "type": {"required": True},
+        "credentials": {"required": True},
+        "url": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'credentials': {'key': 'credentials', 'type': 'CredentialsBase'},
-        'url': {'key': 'url', 'type': 'str'},
-        'tunnel': {'key': 'tunnel', 'type': 'TunnelBase'},
+        "type": {"key": "@type", "type": "str"},
+        "credentials": {"key": "credentials", "type": "CredentialsBase"},
+        "url": {"key": "url", "type": "str"},
+        "tunnel": {"key": "tunnel", "type": "TunnelBase"},
     }
 
     _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.TlsEndpoint': 'TlsEndpoint', '#Microsoft.VideoAnalyzer.UnsecuredEndpoint': 'UnsecuredEndpoint'}
+        "type": {
+            "#Microsoft.VideoAnalyzer.TlsEndpoint": "TlsEndpoint",
+            "#Microsoft.VideoAnalyzer.UnsecuredEndpoint": "UnsecuredEndpoint",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(EndpointBase, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
-        self.credentials = kwargs['credentials']
-        self.url = kwargs['url']
-        self.tunnel = kwargs.get('tunnel', None)
+        self.credentials = kwargs["credentials"]
+        self.url = kwargs["url"]
+        self.tunnel = kwargs.get("tunnel", None)
 
 
 class ErrorAdditionalInfo(msrest.serialization.Model):
@@ -909,19 +837,16 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -945,25 +870,22 @@ class ErrorDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -980,15 +902,12 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ErrorResponse, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
+        self.error = kwargs.get("error", None)
 
 
 class GroupLevelAccessControl(msrest.serialization.Model):
@@ -1000,15 +919,12 @@ class GroupLevelAccessControl(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
+        "public_network_access": {"key": "publicNetworkAccess", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(GroupLevelAccessControl, self).__init__(**kwargs)
-        self.public_network_access = kwargs.get('public_network_access', None)
+        self.public_network_access = kwargs.get("public_network_access", None)
 
 
 class IotHub(msrest.serialization.Model):
@@ -1027,24 +943,21 @@ class IotHub(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
-        'identity': {'required': True},
-        'status': {'readonly': True},
+        "id": {"required": True},
+        "identity": {"required": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
-        'status': {'key': 'status', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "identity": {"key": "identity", "type": "ResourceIdentity"},
+        "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(IotHub, self).__init__(**kwargs)
-        self.id = kwargs['id']
-        self.identity = kwargs['identity']
+        self.id = kwargs["id"]
+        self.identity = kwargs["identity"]
         self.status = None
 
 
@@ -1071,27 +984,24 @@ class JwtAuthentication(AuthenticationBase):
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'issuers': {'key': 'issuers', 'type': '[str]'},
-        'audiences': {'key': 'audiences', 'type': '[str]'},
-        'claims': {'key': 'claims', 'type': '[TokenClaim]'},
-        'keys': {'key': 'keys', 'type': '[TokenKey]'},
+        "type": {"key": "@type", "type": "str"},
+        "issuers": {"key": "issuers", "type": "[str]"},
+        "audiences": {"key": "audiences", "type": "[str]"},
+        "claims": {"key": "claims", "type": "[TokenClaim]"},
+        "keys": {"key": "keys", "type": "[TokenKey]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(JwtAuthentication, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.JwtAuthentication'  # type: str
-        self.issuers = kwargs.get('issuers', None)
-        self.audiences = kwargs.get('audiences', None)
-        self.claims = kwargs.get('claims', None)
-        self.keys = kwargs.get('keys', None)
+        self.type = "#Microsoft.VideoAnalyzer.JwtAuthentication"  # type: str
+        self.issuers = kwargs.get("issuers", None)
+        self.audiences = kwargs.get("audiences", None)
+        self.claims = kwargs.get("claims", None)
+        self.keys = kwargs.get("keys", None)
 
 
 class KeyVaultProperties(msrest.serialization.Model):
@@ -1111,21 +1021,18 @@ class KeyVaultProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'key_identifier': {'required': True},
-        'current_key_identifier': {'readonly': True},
+        "key_identifier": {"required": True},
+        "current_key_identifier": {"readonly": True},
     }
 
     _attribute_map = {
-        'key_identifier': {'key': 'keyIdentifier', 'type': 'str'},
-        'current_key_identifier': {'key': 'currentKeyIdentifier', 'type': 'str'},
+        "key_identifier": {"key": "keyIdentifier", "type": "str"},
+        "current_key_identifier": {"key": "currentKeyIdentifier", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(KeyVaultProperties, self).__init__(**kwargs)
-        self.key_identifier = kwargs['key_identifier']
+        self.key_identifier = kwargs["key_identifier"]
         self.current_key_identifier = None
 
 
@@ -1141,19 +1048,16 @@ class ListProvisioningTokenInput(msrest.serialization.Model):
     """
 
     _validation = {
-        'expiration_date': {'required': True},
+        "expiration_date": {"required": True},
     }
 
     _attribute_map = {
-        'expiration_date': {'key': 'expirationDate', 'type': 'iso-8601'},
+        "expiration_date": {"key": "expirationDate", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ListProvisioningTokenInput, self).__init__(**kwargs)
-        self.expiration_date = kwargs['expiration_date']
+        self.expiration_date = kwargs["expiration_date"]
 
 
 class LivePipeline(ProxyResource):
@@ -1196,35 +1100,32 @@ class LivePipeline(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'topology_name': {'key': 'properties.topologyName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'bitrate_kbps': {'key': 'properties.bitrateKbps', 'type': 'int'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'parameters': {'key': 'properties.parameters', 'type': '[ParameterDefinition]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "topology_name": {"key": "properties.topologyName", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "bitrate_kbps": {"key": "properties.bitrateKbps", "type": "int"},
+        "state": {"key": "properties.state", "type": "str"},
+        "parameters": {"key": "properties.parameters", "type": "[ParameterDefinition]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(LivePipeline, self).__init__(**kwargs)
-        self.topology_name = kwargs.get('topology_name', None)
-        self.description = kwargs.get('description', None)
-        self.bitrate_kbps = kwargs.get('bitrate_kbps', None)
+        self.topology_name = kwargs.get("topology_name", None)
+        self.description = kwargs.get("description", None)
+        self.bitrate_kbps = kwargs.get("bitrate_kbps", None)
         self.state = None
-        self.parameters = kwargs.get('parameters', None)
+        self.parameters = kwargs.get("parameters", None)
 
 
 class LivePipelineCollection(msrest.serialization.Model):
@@ -1238,17 +1139,14 @@ class LivePipelineCollection(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[LivePipeline]'},
-        'next_link': {'key': '@nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[LivePipeline]"},
+        "next_link": {"key": "@nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(LivePipelineCollection, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class LivePipelineOperationStatus(msrest.serialization.Model):
@@ -1265,21 +1163,18 @@ class LivePipelineOperationStatus(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'status': {'readonly': True},
-        'error': {'readonly': True},
+        "name": {"readonly": True},
+        "status": {"readonly": True},
+        "error": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "name": {"key": "name", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(LivePipelineOperationStatus, self).__init__(**kwargs)
         self.name = None
         self.status = None
@@ -1326,35 +1221,32 @@ class LivePipelineUpdate(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'topology_name': {'key': 'properties.topologyName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'bitrate_kbps': {'key': 'properties.bitrateKbps', 'type': 'int'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'parameters': {'key': 'properties.parameters', 'type': '[ParameterDefinition]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "topology_name": {"key": "properties.topologyName", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "bitrate_kbps": {"key": "properties.bitrateKbps", "type": "int"},
+        "state": {"key": "properties.state", "type": "str"},
+        "parameters": {"key": "properties.parameters", "type": "[ParameterDefinition]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(LivePipelineUpdate, self).__init__(**kwargs)
-        self.topology_name = kwargs.get('topology_name', None)
-        self.description = kwargs.get('description', None)
-        self.bitrate_kbps = kwargs.get('bitrate_kbps', None)
+        self.topology_name = kwargs.get("topology_name", None)
+        self.description = kwargs.get("description", None)
+        self.bitrate_kbps = kwargs.get("bitrate_kbps", None)
         self.state = None
-        self.parameters = kwargs.get('parameters', None)
+        self.parameters = kwargs.get("parameters", None)
 
 
 class LogSpecification(msrest.serialization.Model):
@@ -1371,21 +1263,18 @@ class LogSpecification(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'display_name': {'readonly': True},
-        'blob_duration': {'readonly': True},
+        "name": {"readonly": True},
+        "display_name": {"readonly": True},
+        "blob_duration": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'blob_duration': {'key': 'blobDuration', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "blob_duration": {"key": "blobDuration", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(LogSpecification, self).__init__(**kwargs)
         self.name = None
         self.display_name = None
@@ -1406,21 +1295,18 @@ class MetricDimension(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'display_name': {'readonly': True},
-        'to_be_exported_for_shoebox': {'readonly': True},
+        "name": {"readonly": True},
+        "display_name": {"readonly": True},
+        "to_be_exported_for_shoebox": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'to_be_exported_for_shoebox': {'key': 'toBeExportedForShoebox', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "to_be_exported_for_shoebox": {"key": "toBeExportedForShoebox", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(MetricDimension, self).__init__(**kwargs)
         self.name = None
         self.display_name = None
@@ -1461,38 +1347,35 @@ class MetricSpecification(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'display_name': {'readonly': True},
-        'display_description': {'readonly': True},
-        'unit': {'readonly': True},
-        'aggregation_type': {'readonly': True},
-        'lock_aggregation_type': {'readonly': True},
-        'dimensions': {'readonly': True},
-        'enable_regional_mdm_account': {'readonly': True},
-        'source_mdm_account': {'readonly': True},
-        'source_mdm_namespace': {'readonly': True},
-        'supported_time_grain_types': {'readonly': True},
+        "name": {"readonly": True},
+        "display_name": {"readonly": True},
+        "display_description": {"readonly": True},
+        "unit": {"readonly": True},
+        "aggregation_type": {"readonly": True},
+        "lock_aggregation_type": {"readonly": True},
+        "dimensions": {"readonly": True},
+        "enable_regional_mdm_account": {"readonly": True},
+        "source_mdm_account": {"readonly": True},
+        "source_mdm_namespace": {"readonly": True},
+        "supported_time_grain_types": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'display_description': {'key': 'displayDescription', 'type': 'str'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
-        'lock_aggregation_type': {'key': 'lockAggregationType', 'type': 'str'},
-        'supported_aggregation_types': {'key': 'supportedAggregationTypes', 'type': '[str]'},
-        'dimensions': {'key': 'dimensions', 'type': '[MetricDimension]'},
-        'enable_regional_mdm_account': {'key': 'enableRegionalMdmAccount', 'type': 'bool'},
-        'source_mdm_account': {'key': 'sourceMdmAccount', 'type': 'str'},
-        'source_mdm_namespace': {'key': 'sourceMdmNamespace', 'type': 'str'},
-        'supported_time_grain_types': {'key': 'supportedTimeGrainTypes', 'type': '[str]'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "display_description": {"key": "displayDescription", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+        "aggregation_type": {"key": "aggregationType", "type": "str"},
+        "lock_aggregation_type": {"key": "lockAggregationType", "type": "str"},
+        "supported_aggregation_types": {"key": "supportedAggregationTypes", "type": "[str]"},
+        "dimensions": {"key": "dimensions", "type": "[MetricDimension]"},
+        "enable_regional_mdm_account": {"key": "enableRegionalMdmAccount", "type": "bool"},
+        "source_mdm_account": {"key": "sourceMdmAccount", "type": "str"},
+        "source_mdm_namespace": {"key": "sourceMdmNamespace", "type": "str"},
+        "supported_time_grain_types": {"key": "supportedTimeGrainTypes", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(MetricSpecification, self).__init__(**kwargs)
         self.name = None
         self.display_name = None
@@ -1500,7 +1383,7 @@ class MetricSpecification(msrest.serialization.Model):
         self.unit = None
         self.aggregation_type = None
         self.lock_aggregation_type = None
-        self.supported_aggregation_types = kwargs.get('supported_aggregation_types', None)
+        self.supported_aggregation_types = kwargs.get("supported_aggregation_types", None)
         self.dimensions = None
         self.enable_regional_mdm_account = None
         self.source_mdm_account = None
@@ -1520,19 +1403,16 @@ class NetworkAccessControl(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'integration': {'key': 'integration', 'type': 'GroupLevelAccessControl'},
-        'ingestion': {'key': 'ingestion', 'type': 'GroupLevelAccessControl'},
-        'consumption': {'key': 'consumption', 'type': 'GroupLevelAccessControl'},
+        "integration": {"key": "integration", "type": "GroupLevelAccessControl"},
+        "ingestion": {"key": "ingestion", "type": "GroupLevelAccessControl"},
+        "consumption": {"key": "consumption", "type": "GroupLevelAccessControl"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(NetworkAccessControl, self).__init__(**kwargs)
-        self.integration = kwargs.get('integration', None)
-        self.ingestion = kwargs.get('ingestion', None)
-        self.consumption = kwargs.get('consumption', None)
+        self.integration = kwargs.get("integration", None)
+        self.ingestion = kwargs.get("ingestion", None)
+        self.consumption = kwargs.get("consumption", None)
 
 
 class NodeInput(msrest.serialization.Model):
@@ -1546,19 +1426,16 @@ class NodeInput(msrest.serialization.Model):
     """
 
     _validation = {
-        'node_name': {'required': True},
+        "node_name": {"required": True},
     }
 
     _attribute_map = {
-        'node_name': {'key': 'nodeName', 'type': 'str'},
+        "node_name": {"key": "nodeName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(NodeInput, self).__init__(**kwargs)
-        self.node_name = kwargs['node_name']
+        self.node_name = kwargs["node_name"]
 
 
 class Operation(msrest.serialization.Model):
@@ -1581,29 +1458,26 @@ class Operation(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'Properties'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'action_type': {'key': 'actionType', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
+        "properties": {"key": "properties", "type": "Properties"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "action_type": {"key": "actionType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Operation, self).__init__(**kwargs)
-        self.name = kwargs['name']
-        self.display = kwargs.get('display', None)
-        self.origin = kwargs.get('origin', None)
-        self.properties = kwargs.get('properties', None)
-        self.is_data_action = kwargs.get('is_data_action', None)
-        self.action_type = kwargs.get('action_type', None)
+        self.name = kwargs["name"]
+        self.display = kwargs.get("display", None)
+        self.origin = kwargs.get("origin", None)
+        self.properties = kwargs.get("properties", None)
+        self.is_data_action = kwargs.get("is_data_action", None)
+        self.action_type = kwargs.get("action_type", None)
 
 
 class OperationCollection(msrest.serialization.Model):
@@ -1614,15 +1488,12 @@ class OperationCollection(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
+        "value": {"key": "value", "type": "[Operation]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(OperationCollection, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs.get("value", None)
 
 
 class OperationDisplay(msrest.serialization.Model):
@@ -1639,21 +1510,18 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(OperationDisplay, self).__init__(**kwargs)
-        self.provider = kwargs.get('provider', None)
-        self.resource = kwargs.get('resource', None)
-        self.operation = kwargs.get('operation', None)
-        self.description = kwargs.get('description', None)
+        self.provider = kwargs.get("provider", None)
+        self.resource = kwargs.get("resource", None)
+        self.operation = kwargs.get("operation", None)
+        self.description = kwargs.get("description", None)
 
 
 class ParameterDeclaration(msrest.serialization.Model):
@@ -1674,26 +1542,23 @@ class ParameterDeclaration(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'type': {'required': True},
+        "name": {"required": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'default': {'key': 'default', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "default": {"key": "default", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ParameterDeclaration, self).__init__(**kwargs)
-        self.name = kwargs['name']
-        self.type = kwargs['type']
-        self.description = kwargs.get('description', None)
-        self.default = kwargs.get('default', None)
+        self.name = kwargs["name"]
+        self.type = kwargs["type"]
+        self.description = kwargs.get("description", None)
+        self.default = kwargs.get("default", None)
 
 
 class ParameterDefinition(msrest.serialization.Model):
@@ -1708,21 +1573,18 @@ class ParameterDefinition(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ParameterDefinition, self).__init__(**kwargs)
-        self.name = kwargs['name']
-        self.value = kwargs.get('value', None)
+        self.name = kwargs["name"]
+        self.value = kwargs.get("value", None)
 
 
 class PemCertificateList(CertificateSource):
@@ -1737,22 +1599,19 @@ class PemCertificateList(CertificateSource):
     """
 
     _validation = {
-        'type': {'required': True},
-        'certificates': {'required': True},
+        "type": {"required": True},
+        "certificates": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'certificates': {'key': 'certificates', 'type': '[str]'},
+        "type": {"key": "@type", "type": "str"},
+        "certificates": {"key": "certificates", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(PemCertificateList, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.PemCertificateList'  # type: str
-        self.certificates = kwargs['certificates']
+        self.type = "#Microsoft.VideoAnalyzer.PemCertificateList"  # type: str
+        self.certificates = kwargs["certificates"]
 
 
 class PipelineJob(ProxyResource):
@@ -1792,39 +1651,36 @@ class PipelineJob(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'state': {'readonly': True},
-        'expiration': {'readonly': True},
-        'error': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "state": {"readonly": True},
+        "expiration": {"readonly": True},
+        "error": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'topology_name': {'key': 'properties.topologyName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'expiration': {'key': 'properties.expiration', 'type': 'iso-8601'},
-        'error': {'key': 'properties.error', 'type': 'PipelineJobError'},
-        'parameters': {'key': 'properties.parameters', 'type': '[ParameterDefinition]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "topology_name": {"key": "properties.topologyName", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "state": {"key": "properties.state", "type": "str"},
+        "expiration": {"key": "properties.expiration", "type": "iso-8601"},
+        "error": {"key": "properties.error", "type": "PipelineJobError"},
+        "parameters": {"key": "properties.parameters", "type": "[ParameterDefinition]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(PipelineJob, self).__init__(**kwargs)
-        self.topology_name = kwargs.get('topology_name', None)
-        self.description = kwargs.get('description', None)
+        self.topology_name = kwargs.get("topology_name", None)
+        self.description = kwargs.get("description", None)
         self.state = None
         self.expiration = None
         self.error = None
-        self.parameters = kwargs.get('parameters', None)
+        self.parameters = kwargs.get("parameters", None)
 
 
 class PipelineJobCollection(msrest.serialization.Model):
@@ -1838,17 +1694,14 @@ class PipelineJobCollection(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PipelineJob]'},
-        'next_link': {'key': '@nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PipelineJob]"},
+        "next_link": {"key": "@nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(PipelineJobCollection, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class PipelineJobError(msrest.serialization.Model):
@@ -1861,17 +1714,14 @@ class PipelineJobError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(PipelineJobError, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
+        self.code = kwargs.get("code", None)
+        self.message = kwargs.get("message", None)
 
 
 class PipelineJobOperationStatus(msrest.serialization.Model):
@@ -1888,21 +1738,18 @@ class PipelineJobOperationStatus(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'status': {'readonly': True},
-        'error': {'readonly': True},
+        "name": {"readonly": True},
+        "status": {"readonly": True},
+        "error": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "name": {"key": "name", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(PipelineJobOperationStatus, self).__init__(**kwargs)
         self.name = None
         self.status = None
@@ -1946,123 +1793,117 @@ class PipelineJobUpdate(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'state': {'readonly': True},
-        'expiration': {'readonly': True},
-        'error': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "state": {"readonly": True},
+        "expiration": {"readonly": True},
+        "error": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'topology_name': {'key': 'properties.topologyName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'expiration': {'key': 'properties.expiration', 'type': 'iso-8601'},
-        'error': {'key': 'properties.error', 'type': 'PipelineJobError'},
-        'parameters': {'key': 'properties.parameters', 'type': '[ParameterDefinition]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "topology_name": {"key": "properties.topologyName", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "state": {"key": "properties.state", "type": "str"},
+        "expiration": {"key": "properties.expiration", "type": "iso-8601"},
+        "error": {"key": "properties.error", "type": "PipelineJobError"},
+        "parameters": {"key": "properties.parameters", "type": "[ParameterDefinition]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(PipelineJobUpdate, self).__init__(**kwargs)
-        self.topology_name = kwargs.get('topology_name', None)
-        self.description = kwargs.get('description', None)
+        self.topology_name = kwargs.get("topology_name", None)
+        self.description = kwargs.get("description", None)
         self.state = None
         self.expiration = None
         self.error = None
-        self.parameters = kwargs.get('parameters', None)
+        self.parameters = kwargs.get("parameters", None)
 
 
 class PipelineTopology(ProxyResource):
     """Pipeline topology describes the processing steps to be applied when processing content for a particular outcome. The topology should be defined according to the scenario to be achieved and can be reused across many pipeline instances which share the same processing characteristics. For instance, a pipeline topology which captures content from a RTSP camera and archives the content can be reused across many different cameras, as long as the same processing is to be applied across all the cameras. Individual instance properties can be defined through the use of user-defined parameters, which allow for a topology to be parameterized. This allows  individual pipelines refer to different values, such as individual cameras' RTSP endpoints and credentials. Overall a topology is composed of the following:
 
 
-* Parameters: list of user defined parameters that can be references across the topology nodes.
-* Sources: list of one or more data sources nodes such as an RTSP source which allows for content to be ingested from cameras.
-* Processors: list of nodes which perform data analysis or transformations.
-* Sinks: list of one or more data sinks which allow for data to be stored or exported to other destinations.
+    * Parameters: list of user defined parameters that can be references across the topology nodes.
+    * Sources: list of one or more data sources nodes such as an RTSP source which allows for content to be ingested from cameras.
+    * Processors: list of nodes which perform data analysis or transformations.
+    * Sinks: list of one or more data sinks which allow for data to be stored or exported to other destinations.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+        Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+        All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~video_analyzer.models.SystemData
-    :param kind: Required. Topology kind. Possible values include: "Live", "Batch".
-    :type kind: str or ~video_analyzer.models.Kind
-    :param sku: Required. Describes the properties of a SKU.
-    :type sku: ~video_analyzer.models.Sku
-    :param description: An optional description of the pipeline topology. It is recommended that
-     the expected use of the topology to be described here.
-    :type description: str
-    :param parameters: List of the topology parameter declarations. Parameters declared here can be
-     referenced throughout the topology nodes through the use of "${PARAMETER_NAME}" string pattern.
-     Parameters can have optional default values and can later be defined in individual instances of
-     the pipeline.
-    :type parameters: list[~video_analyzer.models.ParameterDeclaration]
-    :param sources: List of the topology source nodes. Source nodes enable external data to be
-     ingested by the pipeline.
-    :type sources: list[~video_analyzer.models.SourceNodeBase]
-    :param processors: List of the topology processor nodes. Processor nodes enable pipeline data
-     to be analyzed, processed or transformed.
-    :type processors: list[~video_analyzer.models.ProcessorNodeBase]
-    :param sinks: List of the topology sink nodes. Sink nodes allow pipeline data to be stored or
-     exported.
-    :type sinks: list[~video_analyzer.models.SinkNodeBase]
+        :ivar id: Fully qualified resource ID for the resource. Ex -
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+        :vartype id: str
+        :ivar name: The name of the resource.
+        :vartype name: str
+        :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+         "Microsoft.Storage/storageAccounts".
+        :vartype type: str
+        :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+         information.
+        :vartype system_data: ~video_analyzer.models.SystemData
+        :param kind: Required. Topology kind. Possible values include: "Live", "Batch".
+        :type kind: str or ~video_analyzer.models.Kind
+        :param sku: Required. Describes the properties of a SKU.
+        :type sku: ~video_analyzer.models.Sku
+        :param description: An optional description of the pipeline topology. It is recommended that
+         the expected use of the topology to be described here.
+        :type description: str
+        :param parameters: List of the topology parameter declarations. Parameters declared here can be
+         referenced throughout the topology nodes through the use of "${PARAMETER_NAME}" string pattern.
+         Parameters can have optional default values and can later be defined in individual instances of
+         the pipeline.
+        :type parameters: list[~video_analyzer.models.ParameterDeclaration]
+        :param sources: List of the topology source nodes. Source nodes enable external data to be
+         ingested by the pipeline.
+        :type sources: list[~video_analyzer.models.SourceNodeBase]
+        :param processors: List of the topology processor nodes. Processor nodes enable pipeline data
+         to be analyzed, processed or transformed.
+        :type processors: list[~video_analyzer.models.ProcessorNodeBase]
+        :param sinks: List of the topology sink nodes. Sink nodes allow pipeline data to be stored or
+         exported.
+        :type sinks: list[~video_analyzer.models.SinkNodeBase]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'kind': {'required': True},
-        'sku': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "kind": {"required": True},
+        "sku": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'parameters': {'key': 'properties.parameters', 'type': '[ParameterDeclaration]'},
-        'sources': {'key': 'properties.sources', 'type': '[SourceNodeBase]'},
-        'processors': {'key': 'properties.processors', 'type': '[ProcessorNodeBase]'},
-        'sinks': {'key': 'properties.sinks', 'type': '[SinkNodeBase]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "kind": {"key": "kind", "type": "str"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "description": {"key": "properties.description", "type": "str"},
+        "parameters": {"key": "properties.parameters", "type": "[ParameterDeclaration]"},
+        "sources": {"key": "properties.sources", "type": "[SourceNodeBase]"},
+        "processors": {"key": "properties.processors", "type": "[ProcessorNodeBase]"},
+        "sinks": {"key": "properties.sinks", "type": "[SinkNodeBase]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(PipelineTopology, self).__init__(**kwargs)
-        self.kind = kwargs['kind']
-        self.sku = kwargs['sku']
-        self.description = kwargs.get('description', None)
-        self.parameters = kwargs.get('parameters', None)
-        self.sources = kwargs.get('sources', None)
-        self.processors = kwargs.get('processors', None)
-        self.sinks = kwargs.get('sinks', None)
+        self.kind = kwargs["kind"]
+        self.sku = kwargs["sku"]
+        self.description = kwargs.get("description", None)
+        self.parameters = kwargs.get("parameters", None)
+        self.sources = kwargs.get("sources", None)
+        self.processors = kwargs.get("processors", None)
+        self.sinks = kwargs.get("sinks", None)
 
 
 class PipelineTopologyCollection(msrest.serialization.Model):
@@ -2076,97 +1917,91 @@ class PipelineTopologyCollection(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PipelineTopology]'},
-        'next_link': {'key': '@nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PipelineTopology]"},
+        "next_link": {"key": "@nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(PipelineTopologyCollection, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class PipelineTopologyUpdate(ProxyResource):
     """Pipeline topology describes the processing steps to be applied when processing content for a particular outcome. The topology should be defined according to the scenario to be achieved and can be reused across many pipeline instances which share the same processing characteristics. For instance, a pipeline topology which captures content from a RTSP camera and archives the content can be reused across many different cameras, as long as the same processing is to be applied across all the cameras. Individual instance properties can be defined through the use of user-defined parameters, which allow for a topology to be parameterized. This allows  individual pipelines refer to different values, such as individual cameras' RTSP endpoints and credentials. Overall a topology is composed of the following:
 
 
-* Parameters: list of user defined parameters that can be references across the topology nodes.
-* Sources: list of one or more data sources nodes such as an RTSP source which allows for content to be ingested from cameras.
-* Processors: list of nodes which perform data analysis or transformations.
-* Sinks: list of one or more data sinks which allow for data to be stored or exported to other destinations.
+    * Parameters: list of user defined parameters that can be references across the topology nodes.
+    * Sources: list of one or more data sources nodes such as an RTSP source which allows for content to be ingested from cameras.
+    * Processors: list of nodes which perform data analysis or transformations.
+    * Sinks: list of one or more data sinks which allow for data to be stored or exported to other destinations.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+        Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~video_analyzer.models.SystemData
-    :param kind: Topology kind. Possible values include: "Live", "Batch".
-    :type kind: str or ~video_analyzer.models.Kind
-    :param sku: Describes the properties of a SKU.
-    :type sku: ~video_analyzer.models.Sku
-    :param description: An optional description of the pipeline topology. It is recommended that
-     the expected use of the topology to be described here.
-    :type description: str
-    :param parameters: List of the topology parameter declarations. Parameters declared here can be
-     referenced throughout the topology nodes through the use of "${PARAMETER_NAME}" string pattern.
-     Parameters can have optional default values and can later be defined in individual instances of
-     the pipeline.
-    :type parameters: list[~video_analyzer.models.ParameterDeclaration]
-    :param sources: List of the topology source nodes. Source nodes enable external data to be
-     ingested by the pipeline.
-    :type sources: list[~video_analyzer.models.SourceNodeBase]
-    :param processors: List of the topology processor nodes. Processor nodes enable pipeline data
-     to be analyzed, processed or transformed.
-    :type processors: list[~video_analyzer.models.ProcessorNodeBase]
-    :param sinks: List of the topology sink nodes. Sink nodes allow pipeline data to be stored or
-     exported.
-    :type sinks: list[~video_analyzer.models.SinkNodeBase]
+        :ivar id: Fully qualified resource ID for the resource. Ex -
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+        :vartype id: str
+        :ivar name: The name of the resource.
+        :vartype name: str
+        :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+         "Microsoft.Storage/storageAccounts".
+        :vartype type: str
+        :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+         information.
+        :vartype system_data: ~video_analyzer.models.SystemData
+        :param kind: Topology kind. Possible values include: "Live", "Batch".
+        :type kind: str or ~video_analyzer.models.Kind
+        :param sku: Describes the properties of a SKU.
+        :type sku: ~video_analyzer.models.Sku
+        :param description: An optional description of the pipeline topology. It is recommended that
+         the expected use of the topology to be described here.
+        :type description: str
+        :param parameters: List of the topology parameter declarations. Parameters declared here can be
+         referenced throughout the topology nodes through the use of "${PARAMETER_NAME}" string pattern.
+         Parameters can have optional default values and can later be defined in individual instances of
+         the pipeline.
+        :type parameters: list[~video_analyzer.models.ParameterDeclaration]
+        :param sources: List of the topology source nodes. Source nodes enable external data to be
+         ingested by the pipeline.
+        :type sources: list[~video_analyzer.models.SourceNodeBase]
+        :param processors: List of the topology processor nodes. Processor nodes enable pipeline data
+         to be analyzed, processed or transformed.
+        :type processors: list[~video_analyzer.models.ProcessorNodeBase]
+        :param sinks: List of the topology sink nodes. Sink nodes allow pipeline data to be stored or
+         exported.
+        :type sinks: list[~video_analyzer.models.SinkNodeBase]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'parameters': {'key': 'properties.parameters', 'type': '[ParameterDeclaration]'},
-        'sources': {'key': 'properties.sources', 'type': '[SourceNodeBase]'},
-        'processors': {'key': 'properties.processors', 'type': '[ProcessorNodeBase]'},
-        'sinks': {'key': 'properties.sinks', 'type': '[SinkNodeBase]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "kind": {"key": "kind", "type": "str"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "description": {"key": "properties.description", "type": "str"},
+        "parameters": {"key": "properties.parameters", "type": "[ParameterDeclaration]"},
+        "sources": {"key": "properties.sources", "type": "[SourceNodeBase]"},
+        "processors": {"key": "properties.processors", "type": "[ProcessorNodeBase]"},
+        "sinks": {"key": "properties.sinks", "type": "[SinkNodeBase]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(PipelineTopologyUpdate, self).__init__(**kwargs)
-        self.kind = kwargs.get('kind', None)
-        self.sku = kwargs.get('sku', None)
-        self.description = kwargs.get('description', None)
-        self.parameters = kwargs.get('parameters', None)
-        self.sources = kwargs.get('sources', None)
-        self.processors = kwargs.get('processors', None)
-        self.sinks = kwargs.get('sinks', None)
+        self.kind = kwargs.get("kind", None)
+        self.sku = kwargs.get("sku", None)
+        self.description = kwargs.get("description", None)
+        self.parameters = kwargs.get("parameters", None)
+        self.sources = kwargs.get("sources", None)
+        self.processors = kwargs.get("processors", None)
+        self.sinks = kwargs.get("sinks", None)
 
 
 class PrivateEndpoint(msrest.serialization.Model):
@@ -2179,17 +2014,14 @@ class PrivateEndpoint(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
+        "id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(PrivateEndpoint, self).__init__(**kwargs)
         self.id = None
 
@@ -2223,30 +2055,30 @@ class PrivateEndpointConnection(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
-        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "private_endpoint": {"key": "properties.privateEndpoint", "type": "PrivateEndpoint"},
+        "private_link_service_connection_state": {
+            "key": "properties.privateLinkServiceConnectionState",
+            "type": "PrivateLinkServiceConnectionState",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(PrivateEndpointConnection, self).__init__(**kwargs)
-        self.private_endpoint = kwargs.get('private_endpoint', None)
-        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
+        self.private_endpoint = kwargs.get("private_endpoint", None)
+        self.private_link_service_connection_state = kwargs.get("private_link_service_connection_state", None)
         self.provisioning_state = None
 
 
@@ -2258,15 +2090,12 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateEndpointConnection]'},
+        "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs.get("value", None)
 
 
 class PrivateLinkResource(Resource):
@@ -2294,32 +2123,29 @@ class PrivateLinkResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'group_id': {'readonly': True},
-        'required_members': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "group_id": {"readonly": True},
+        "required_members": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'group_id': {'key': 'properties.groupId', 'type': 'str'},
-        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
-        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "group_id": {"key": "properties.groupId", "type": "str"},
+        "required_members": {"key": "properties.requiredMembers", "type": "[str]"},
+        "required_zone_names": {"key": "properties.requiredZoneNames", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(PrivateLinkResource, self).__init__(**kwargs)
         self.group_id = None
         self.required_members = None
-        self.required_zone_names = kwargs.get('required_zone_names', None)
+        self.required_zone_names = kwargs.get("required_zone_names", None)
 
 
 class PrivateLinkResourceListResult(msrest.serialization.Model):
@@ -2330,15 +2156,12 @@ class PrivateLinkResourceListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
+        "value": {"key": "value", "type": "[PrivateLinkResource]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(PrivateLinkResourceListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs.get("value", None)
 
 
 class PrivateLinkServiceConnectionState(msrest.serialization.Model):
@@ -2355,19 +2178,16 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "actions_required": {"key": "actionsRequired", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
-        self.status = kwargs.get('status', None)
-        self.description = kwargs.get('description', None)
-        self.actions_required = kwargs.get('actions_required', None)
+        self.status = kwargs.get("status", None)
+        self.description = kwargs.get("description", None)
+        self.actions_required = kwargs.get("actions_required", None)
 
 
 class Properties(msrest.serialization.Model):
@@ -2380,17 +2200,14 @@ class Properties(msrest.serialization.Model):
     """
 
     _validation = {
-        'service_specification': {'readonly': True},
+        "service_specification": {"readonly": True},
     }
 
     _attribute_map = {
-        'service_specification': {'key': 'serviceSpecification', 'type': 'ServiceSpecification'},
+        "service_specification": {"key": "serviceSpecification", "type": "ServiceSpecification"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Properties, self).__init__(**kwargs)
         self.service_specification = None
 
@@ -2406,19 +2223,16 @@ class ResourceIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'user_assigned_identity': {'required': True},
+        "user_assigned_identity": {"required": True},
     }
 
     _attribute_map = {
-        'user_assigned_identity': {'key': 'userAssignedIdentity', 'type': 'str'},
+        "user_assigned_identity": {"key": "userAssignedIdentity", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ResourceIdentity, self).__init__(**kwargs)
-        self.user_assigned_identity = kwargs['user_assigned_identity']
+        self.user_assigned_identity = kwargs["user_assigned_identity"]
 
 
 class RsaTokenKey(TokenKey):
@@ -2441,30 +2255,27 @@ class RsaTokenKey(TokenKey):
     """
 
     _validation = {
-        'type': {'required': True},
-        'kid': {'required': True},
-        'alg': {'required': True},
-        'n': {'required': True},
-        'e': {'required': True},
+        "type": {"required": True},
+        "kid": {"required": True},
+        "alg": {"required": True},
+        "n": {"required": True},
+        "e": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'kid': {'key': 'kid', 'type': 'str'},
-        'alg': {'key': 'alg', 'type': 'str'},
-        'n': {'key': 'n', 'type': 'str'},
-        'e': {'key': 'e', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "kid": {"key": "kid", "type": "str"},
+        "alg": {"key": "alg", "type": "str"},
+        "n": {"key": "n", "type": "str"},
+        "e": {"key": "e", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(RsaTokenKey, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.RsaTokenKey'  # type: str
-        self.alg = kwargs['alg']
-        self.n = kwargs['n']
-        self.e = kwargs['e']
+        self.type = "#Microsoft.VideoAnalyzer.RsaTokenKey"  # type: str
+        self.alg = kwargs["alg"]
+        self.n = kwargs["n"]
+        self.e = kwargs["e"]
 
 
 class SourceNodeBase(NodeBase):
@@ -2482,25 +2293,25 @@ class SourceNodeBase(NodeBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
     _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.RtspSource': 'RtspSource', '#Microsoft.VideoAnalyzer.VideoSource': 'VideoSource'}
+        "type": {
+            "#Microsoft.VideoAnalyzer.RtspSource": "RtspSource",
+            "#Microsoft.VideoAnalyzer.VideoSource": "VideoSource",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SourceNodeBase, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.SourceNodeBase'  # type: str
+        self.type = "#Microsoft.VideoAnalyzer.SourceNodeBase"  # type: str
 
 
 class RtspSource(SourceNodeBase):
@@ -2525,26 +2336,23 @@ class RtspSource(SourceNodeBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
-        'endpoint': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
+        "endpoint": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'transport': {'key': 'transport', 'type': 'str'},
-        'endpoint': {'key': 'endpoint', 'type': 'EndpointBase'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "transport": {"key": "transport", "type": "str"},
+        "endpoint": {"key": "endpoint", "type": "EndpointBase"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(RtspSource, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.RtspSource'  # type: str
-        self.transport = kwargs.get('transport', None)
-        self.endpoint = kwargs['endpoint']
+        self.type = "#Microsoft.VideoAnalyzer.RtspSource"  # type: str
+        self.transport = kwargs.get("transport", None)
+        self.endpoint = kwargs["endpoint"]
 
 
 class TunnelBase(msrest.serialization.Model):
@@ -2560,21 +2368,16 @@ class TunnelBase(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
     }
 
-    _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.SecureIotDeviceRemoteTunnel': 'SecureIotDeviceRemoteTunnel'}
-    }
+    _subtype_map = {"type": {"#Microsoft.VideoAnalyzer.SecureIotDeviceRemoteTunnel": "SecureIotDeviceRemoteTunnel"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(TunnelBase, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
 
@@ -2594,25 +2397,22 @@ class SecureIotDeviceRemoteTunnel(TunnelBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'iot_hub_name': {'required': True},
-        'device_id': {'required': True},
+        "type": {"required": True},
+        "iot_hub_name": {"required": True},
+        "device_id": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'iot_hub_name': {'key': 'iotHubName', 'type': 'str'},
-        'device_id': {'key': 'deviceId', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "iot_hub_name": {"key": "iotHubName", "type": "str"},
+        "device_id": {"key": "deviceId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SecureIotDeviceRemoteTunnel, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.SecureIotDeviceRemoteTunnel'  # type: str
-        self.iot_hub_name = kwargs['iot_hub_name']
-        self.device_id = kwargs['device_id']
+        self.type = "#Microsoft.VideoAnalyzer.SecureIotDeviceRemoteTunnel"  # type: str
+        self.iot_hub_name = kwargs["iot_hub_name"]
+        self.device_id = kwargs["device_id"]
 
 
 class ServiceSpecification(msrest.serialization.Model):
@@ -2627,19 +2427,16 @@ class ServiceSpecification(msrest.serialization.Model):
     """
 
     _validation = {
-        'log_specifications': {'readonly': True},
-        'metric_specifications': {'readonly': True},
+        "log_specifications": {"readonly": True},
+        "metric_specifications": {"readonly": True},
     }
 
     _attribute_map = {
-        'log_specifications': {'key': 'logSpecifications', 'type': '[LogSpecification]'},
-        'metric_specifications': {'key': 'metricSpecifications', 'type': '[MetricSpecification]'},
+        "log_specifications": {"key": "logSpecifications", "type": "[LogSpecification]"},
+        "metric_specifications": {"key": "metricSpecifications", "type": "[MetricSpecification]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ServiceSpecification, self).__init__(**kwargs)
         self.log_specifications = None
         self.metric_specifications = None
@@ -2663,28 +2460,23 @@ class SinkNodeBase(NodeBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
-        'inputs': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
+        "inputs": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'inputs': {'key': 'inputs', 'type': '[NodeInput]'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "inputs": {"key": "inputs", "type": "[NodeInput]"},
     }
 
-    _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.VideoSink': 'VideoSink'}
-    }
+    _subtype_map = {"type": {"#Microsoft.VideoAnalyzer.VideoSink": "VideoSink"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SinkNodeBase, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.SinkNodeBase'  # type: str
-        self.inputs = kwargs['inputs']
+        self.type = "#Microsoft.VideoAnalyzer.SinkNodeBase"  # type: str
+        self.inputs = kwargs["inputs"]
 
 
 class Sku(msrest.serialization.Model):
@@ -2701,21 +2493,18 @@ class Sku(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'tier': {'readonly': True},
+        "name": {"required": True},
+        "tier": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Sku, self).__init__(**kwargs)
-        self.name = kwargs['name']
+        self.name = kwargs["name"]
         self.tier = None
 
 
@@ -2737,23 +2526,20 @@ class StorageAccount(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
-        'status': {'readonly': True},
+        "id": {"required": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
-        'status': {'key': 'status', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "identity": {"key": "identity", "type": "ResourceIdentity"},
+        "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(StorageAccount, self).__init__(**kwargs)
-        self.id = kwargs['id']
-        self.identity = kwargs.get('identity', None)
+        self.id = kwargs["id"]
+        self.identity = kwargs.get("identity", None)
         self.status = None
 
 
@@ -2777,25 +2563,22 @@ class SystemData(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SystemData, self).__init__(**kwargs)
-        self.created_by = kwargs.get('created_by', None)
-        self.created_by_type = kwargs.get('created_by_type', None)
-        self.created_at = kwargs.get('created_at', None)
-        self.last_modified_by = kwargs.get('last_modified_by', None)
-        self.last_modified_by_type = kwargs.get('last_modified_by_type', None)
-        self.last_modified_at = kwargs.get('last_modified_at', None)
+        self.created_by = kwargs.get("created_by", None)
+        self.created_by_type = kwargs.get("created_by_type", None)
+        self.created_at = kwargs.get("created_at", None)
+        self.last_modified_by = kwargs.get("last_modified_by", None)
+        self.last_modified_by_type = kwargs.get("last_modified_by_type", None)
+        self.last_modified_at = kwargs.get("last_modified_at", None)
 
 
 class TimeSequenceBase(msrest.serialization.Model):
@@ -2811,21 +2594,18 @@ class TimeSequenceBase(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
     }
 
     _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.VideoSequenceAbsoluteTimeMarkers': 'VideoSequenceAbsoluteTimeMarkers'}
+        "type": {"#Microsoft.VideoAnalyzer.VideoSequenceAbsoluteTimeMarkers": "VideoSequenceAbsoluteTimeMarkers"}
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(TimeSequenceBase, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
 
@@ -2854,28 +2634,25 @@ class TlsEndpoint(EndpointBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'credentials': {'required': True},
-        'url': {'required': True},
+        "type": {"required": True},
+        "credentials": {"required": True},
+        "url": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'credentials': {'key': 'credentials', 'type': 'CredentialsBase'},
-        'url': {'key': 'url', 'type': 'str'},
-        'tunnel': {'key': 'tunnel', 'type': 'TunnelBase'},
-        'trusted_certificates': {'key': 'trustedCertificates', 'type': 'CertificateSource'},
-        'validation_options': {'key': 'validationOptions', 'type': 'TlsValidationOptions'},
+        "type": {"key": "@type", "type": "str"},
+        "credentials": {"key": "credentials", "type": "CredentialsBase"},
+        "url": {"key": "url", "type": "str"},
+        "tunnel": {"key": "tunnel", "type": "TunnelBase"},
+        "trusted_certificates": {"key": "trustedCertificates", "type": "CertificateSource"},
+        "validation_options": {"key": "validationOptions", "type": "TlsValidationOptions"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(TlsEndpoint, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.TlsEndpoint'  # type: str
-        self.trusted_certificates = kwargs.get('trusted_certificates', None)
-        self.validation_options = kwargs.get('validation_options', None)
+        self.type = "#Microsoft.VideoAnalyzer.TlsEndpoint"  # type: str
+        self.trusted_certificates = kwargs.get("trusted_certificates", None)
+        self.validation_options = kwargs.get("validation_options", None)
 
 
 class TlsValidationOptions(msrest.serialization.Model):
@@ -2890,17 +2667,14 @@ class TlsValidationOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'ignore_hostname': {'key': 'ignoreHostname', 'type': 'str'},
-        'ignore_signature': {'key': 'ignoreSignature', 'type': 'str'},
+        "ignore_hostname": {"key": "ignoreHostname", "type": "str"},
+        "ignore_signature": {"key": "ignoreSignature", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(TlsValidationOptions, self).__init__(**kwargs)
-        self.ignore_hostname = kwargs.get('ignore_hostname', None)
-        self.ignore_signature = kwargs.get('ignore_signature', None)
+        self.ignore_hostname = kwargs.get("ignore_hostname", None)
+        self.ignore_signature = kwargs.get("ignore_signature", None)
 
 
 class TokenClaim(msrest.serialization.Model):
@@ -2915,22 +2689,19 @@ class TokenClaim(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'value': {'required': True},
+        "name": {"required": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(TokenClaim, self).__init__(**kwargs)
-        self.name = kwargs['name']
-        self.value = kwargs['value']
+        self.name = kwargs["name"]
+        self.value = kwargs["value"]
 
 
 class TrackedResource(Resource):
@@ -2958,29 +2729,26 @@ class TrackedResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(TrackedResource, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
-        self.location = kwargs['location']
+        self.tags = kwargs.get("tags", None)
+        self.location = kwargs["location"]
 
 
 class UnsecuredEndpoint(EndpointBase):
@@ -3000,24 +2768,21 @@ class UnsecuredEndpoint(EndpointBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'credentials': {'required': True},
-        'url': {'required': True},
+        "type": {"required": True},
+        "credentials": {"required": True},
+        "url": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'credentials': {'key': 'credentials', 'type': 'CredentialsBase'},
-        'url': {'key': 'url', 'type': 'str'},
-        'tunnel': {'key': 'tunnel', 'type': 'TunnelBase'},
+        "type": {"key": "@type", "type": "str"},
+        "credentials": {"key": "credentials", "type": "CredentialsBase"},
+        "url": {"key": "url", "type": "str"},
+        "tunnel": {"key": "tunnel", "type": "TunnelBase"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(UnsecuredEndpoint, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.UnsecuredEndpoint'  # type: str
+        self.type = "#Microsoft.VideoAnalyzer.UnsecuredEndpoint"  # type: str
 
 
 class UserAssignedManagedIdentity(msrest.serialization.Model):
@@ -3032,19 +2797,16 @@ class UserAssignedManagedIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'client_id': {'readonly': True},
-        'principal_id': {'readonly': True},
+        "client_id": {"readonly": True},
+        "principal_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'client_id': {'key': 'clientId', 'type': 'str'},
-        'principal_id': {'key': 'principalId', 'type': 'str'},
+        "client_id": {"key": "clientId", "type": "str"},
+        "principal_id": {"key": "principalId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(UserAssignedManagedIdentity, self).__init__(**kwargs)
         self.client_id = None
         self.principal_id = None
@@ -3066,25 +2828,22 @@ class UsernamePasswordCredentials(CredentialsBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'username': {'required': True},
-        'password': {'required': True},
+        "type": {"required": True},
+        "username": {"required": True},
+        "password": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'username': {'key': 'username', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "username": {"key": "username", "type": "str"},
+        "password": {"key": "password", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(UsernamePasswordCredentials, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.UsernamePasswordCredentials'  # type: str
-        self.username = kwargs['username']
-        self.password = kwargs['password']
+        self.type = "#Microsoft.VideoAnalyzer.UsernamePasswordCredentials"  # type: str
+        self.username = kwargs["username"]
+        self.password = kwargs["password"]
 
 
 class VideoAnalyzer(TrackedResource):
@@ -3133,46 +2892,46 @@ class VideoAnalyzer(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
-        'endpoints': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'private_endpoint_connections': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "endpoints": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "private_endpoint_connections": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'VideoAnalyzerIdentity'},
-        'storage_accounts': {'key': 'properties.storageAccounts', 'type': '[StorageAccount]'},
-        'endpoints': {'key': 'properties.endpoints', 'type': '[Endpoint]'},
-        'encryption': {'key': 'properties.encryption', 'type': 'AccountEncryption'},
-        'iot_hubs': {'key': 'properties.iotHubs', 'type': '[IotHub]'},
-        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
-        'network_access_control': {'key': 'properties.networkAccessControl', 'type': 'NetworkAccessControl'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "identity": {"key": "identity", "type": "VideoAnalyzerIdentity"},
+        "storage_accounts": {"key": "properties.storageAccounts", "type": "[StorageAccount]"},
+        "endpoints": {"key": "properties.endpoints", "type": "[Endpoint]"},
+        "encryption": {"key": "properties.encryption", "type": "AccountEncryption"},
+        "iot_hubs": {"key": "properties.iotHubs", "type": "[IotHub]"},
+        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
+        "network_access_control": {"key": "properties.networkAccessControl", "type": "NetworkAccessControl"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "private_endpoint_connections": {
+            "key": "properties.privateEndpointConnections",
+            "type": "[PrivateEndpointConnection]",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VideoAnalyzer, self).__init__(**kwargs)
-        self.identity = kwargs.get('identity', None)
-        self.storage_accounts = kwargs.get('storage_accounts', None)
+        self.identity = kwargs.get("identity", None)
+        self.storage_accounts = kwargs.get("storage_accounts", None)
         self.endpoints = None
-        self.encryption = kwargs.get('encryption', None)
-        self.iot_hubs = kwargs.get('iot_hubs', None)
-        self.public_network_access = kwargs.get('public_network_access', None)
-        self.network_access_control = kwargs.get('network_access_control', None)
+        self.encryption = kwargs.get("encryption", None)
+        self.iot_hubs = kwargs.get("iot_hubs", None)
+        self.public_network_access = kwargs.get("public_network_access", None)
+        self.network_access_control = kwargs.get("network_access_control", None)
         self.provisioning_state = None
         self.private_endpoint_connections = None
 
@@ -3185,15 +2944,12 @@ class VideoAnalyzerCollection(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VideoAnalyzer]'},
+        "value": {"key": "value", "type": "[VideoAnalyzer]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VideoAnalyzerCollection, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs.get("value", None)
 
 
 class VideoAnalyzerIdentity(msrest.serialization.Model):
@@ -3208,21 +2964,18 @@ class VideoAnalyzerIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedManagedIdentity}'},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedManagedIdentity}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VideoAnalyzerIdentity, self).__init__(**kwargs)
-        self.type = kwargs['type']
-        self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
+        self.type = kwargs["type"]
+        self.user_assigned_identities = kwargs.get("user_assigned_identities", None)
 
 
 class VideoAnalyzerOperationStatus(msrest.serialization.Model):
@@ -3245,29 +2998,26 @@ class VideoAnalyzerOperationStatus(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'str'},
-        'end_time': {'key': 'endTime', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "start_time": {"key": "startTime", "type": "str"},
+        "end_time": {"key": "endTime", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VideoAnalyzerOperationStatus, self).__init__(**kwargs)
-        self.name = kwargs['name']
-        self.id = kwargs.get('id', None)
-        self.start_time = kwargs.get('start_time', None)
-        self.end_time = kwargs.get('end_time', None)
-        self.status = kwargs.get('status', None)
-        self.error = kwargs.get('error', None)
+        self.name = kwargs["name"]
+        self.id = kwargs.get("id", None)
+        self.start_time = kwargs.get("start_time", None)
+        self.end_time = kwargs.get("end_time", None)
+        self.status = kwargs.get("status", None)
+        self.error = kwargs.get("error", None)
 
 
 class VideoAnalyzerPrivateEndpointConnectionOperationStatus(msrest.serialization.Model):
@@ -3290,29 +3040,26 @@ class VideoAnalyzerPrivateEndpointConnectionOperationStatus(msrest.serialization
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'str'},
-        'end_time': {'key': 'endTime', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "start_time": {"key": "startTime", "type": "str"},
+        "end_time": {"key": "endTime", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VideoAnalyzerPrivateEndpointConnectionOperationStatus, self).__init__(**kwargs)
-        self.name = kwargs['name']
-        self.id = kwargs.get('id', None)
-        self.start_time = kwargs.get('start_time', None)
-        self.end_time = kwargs.get('end_time', None)
-        self.status = kwargs.get('status', None)
-        self.error = kwargs.get('error', None)
+        self.name = kwargs["name"]
+        self.id = kwargs.get("id", None)
+        self.start_time = kwargs.get("start_time", None)
+        self.end_time = kwargs.get("end_time", None)
+        self.status = kwargs.get("status", None)
+        self.error = kwargs.get("error", None)
 
 
 class VideoAnalyzerUpdate(msrest.serialization.Model):
@@ -3346,37 +3093,37 @@ class VideoAnalyzerUpdate(msrest.serialization.Model):
     """
 
     _validation = {
-        'endpoints': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'private_endpoint_connections': {'readonly': True},
+        "endpoints": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "private_endpoint_connections": {"readonly": True},
     }
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'VideoAnalyzerIdentity'},
-        'storage_accounts': {'key': 'properties.storageAccounts', 'type': '[StorageAccount]'},
-        'endpoints': {'key': 'properties.endpoints', 'type': '[Endpoint]'},
-        'encryption': {'key': 'properties.encryption', 'type': 'AccountEncryption'},
-        'iot_hubs': {'key': 'properties.iotHubs', 'type': '[IotHub]'},
-        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
-        'network_access_control': {'key': 'properties.networkAccessControl', 'type': 'NetworkAccessControl'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "identity": {"key": "identity", "type": "VideoAnalyzerIdentity"},
+        "storage_accounts": {"key": "properties.storageAccounts", "type": "[StorageAccount]"},
+        "endpoints": {"key": "properties.endpoints", "type": "[Endpoint]"},
+        "encryption": {"key": "properties.encryption", "type": "AccountEncryption"},
+        "iot_hubs": {"key": "properties.iotHubs", "type": "[IotHub]"},
+        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
+        "network_access_control": {"key": "properties.networkAccessControl", "type": "NetworkAccessControl"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "private_endpoint_connections": {
+            "key": "properties.privateEndpointConnections",
+            "type": "[PrivateEndpointConnection]",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VideoAnalyzerUpdate, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
-        self.identity = kwargs.get('identity', None)
-        self.storage_accounts = kwargs.get('storage_accounts', None)
+        self.tags = kwargs.get("tags", None)
+        self.identity = kwargs.get("identity", None)
+        self.storage_accounts = kwargs.get("storage_accounts", None)
         self.endpoints = None
-        self.encryption = kwargs.get('encryption', None)
-        self.iot_hubs = kwargs.get('iot_hubs', None)
-        self.public_network_access = kwargs.get('public_network_access', None)
-        self.network_access_control = kwargs.get('network_access_control', None)
+        self.encryption = kwargs.get("encryption", None)
+        self.iot_hubs = kwargs.get("iot_hubs", None)
+        self.public_network_access = kwargs.get("public_network_access", None)
+        self.network_access_control = kwargs.get("network_access_control", None)
         self.provisioning_state = None
         self.private_endpoint_connections = None
 
@@ -3393,19 +3140,16 @@ class VideoArchival(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'retention_period': {'key': 'retentionPeriod', 'type': 'str'},
+        "retention_period": {"key": "retentionPeriod", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VideoArchival, self).__init__(**kwargs)
-        self.retention_period = kwargs.get('retention_period', None)
+        self.retention_period = kwargs.get("retention_period", None)
 
 
 class VideoContentToken(msrest.serialization.Model):
-    """"Video content token grants access to the video content URLs.".
+    """ "Video content token grants access to the video content URLs.".
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3418,19 +3162,16 @@ class VideoContentToken(msrest.serialization.Model):
     """
 
     _validation = {
-        'expiration_date': {'readonly': True},
-        'token': {'readonly': True},
+        "expiration_date": {"readonly": True},
+        "token": {"readonly": True},
     }
 
     _attribute_map = {
-        'expiration_date': {'key': 'expirationDate', 'type': 'iso-8601'},
-        'token': {'key': 'token', 'type': 'str'},
+        "expiration_date": {"key": "expirationDate", "type": "iso-8601"},
+        "token": {"key": "token", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VideoContentToken, self).__init__(**kwargs)
         self.expiration_date = None
         self.token = None
@@ -3448,13 +3189,13 @@ class VideoContentUrls(msrest.serialization.Model):
      automatically played by the Azure Video Analyzer player widget. Alternatively, this URL can be
      used in conjunction with the video content authorization token on any compatible DASH or HLS
      players by appending the following to the base URL:
-    
+
      .. code-block::
-    
+
         - HLSv4:     /manifest(format=m3u8-aapl).m3u8
         - HLS CMAF:  /manifest(format=m3u8-cmaf)
         - DASH CMAF: /manifest(format=mpd-time-cmaf)
-    
+
         Moreover, an ongoing video recording can be played in "live mode" with latencies which are
      approximately double of the chosen video segment length. It is available when the video type is
      'archive' and video archiving is enabled.
@@ -3473,21 +3214,18 @@ class VideoContentUrls(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'download_url': {'key': 'downloadUrl', 'type': 'str'},
-        'archive_base_url': {'key': 'archiveBaseUrl', 'type': 'str'},
-        'rtsp_tunnel_url': {'key': 'rtspTunnelUrl', 'type': 'str'},
-        'preview_image_urls': {'key': 'previewImageUrls', 'type': 'VideoPreviewImageUrls'},
+        "download_url": {"key": "downloadUrl", "type": "str"},
+        "archive_base_url": {"key": "archiveBaseUrl", "type": "str"},
+        "rtsp_tunnel_url": {"key": "rtspTunnelUrl", "type": "str"},
+        "preview_image_urls": {"key": "previewImageUrls", "type": "VideoPreviewImageUrls"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VideoContentUrls, self).__init__(**kwargs)
-        self.download_url = kwargs.get('download_url', None)
-        self.archive_base_url = kwargs.get('archive_base_url', None)
-        self.rtsp_tunnel_url = kwargs.get('rtsp_tunnel_url', None)
-        self.preview_image_urls = kwargs.get('preview_image_urls', None)
+        self.download_url = kwargs.get("download_url", None)
+        self.archive_base_url = kwargs.get("archive_base_url", None)
+        self.rtsp_tunnel_url = kwargs.get("rtsp_tunnel_url", None)
+        self.preview_image_urls = kwargs.get("preview_image_urls", None)
 
 
 class VideoCreationProperties(msrest.serialization.Model):
@@ -3516,21 +3254,18 @@ class VideoCreationProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'title': {'key': 'title', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'segment_length': {'key': 'segmentLength', 'type': 'str'},
-        'retention_period': {'key': 'retentionPeriod', 'type': 'str'},
+        "title": {"key": "title", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "segment_length": {"key": "segmentLength", "type": "str"},
+        "retention_period": {"key": "retentionPeriod", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VideoCreationProperties, self).__init__(**kwargs)
-        self.title = kwargs.get('title', None)
-        self.description = kwargs.get('description', None)
-        self.segment_length = kwargs.get('segment_length', None)
-        self.retention_period = kwargs.get('retention_period', None)
+        self.title = kwargs.get("title", None)
+        self.description = kwargs.get("description", None)
+        self.segment_length = kwargs.get("segment_length", None)
+        self.retention_period = kwargs.get("retention_period", None)
 
 
 class VideoEncoderBase(msrest.serialization.Model):
@@ -3557,29 +3292,24 @@ class VideoEncoderBase(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'bitrate_kbps': {'key': 'bitrateKbps', 'type': 'str'},
-        'frame_rate': {'key': 'frameRate', 'type': 'str'},
-        'scale': {'key': 'scale', 'type': 'VideoScale'},
+        "type": {"key": "@type", "type": "str"},
+        "bitrate_kbps": {"key": "bitrateKbps", "type": "str"},
+        "frame_rate": {"key": "frameRate", "type": "str"},
+        "scale": {"key": "scale", "type": "VideoScale"},
     }
 
-    _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.VideoEncoderH264': 'VideoEncoderH264'}
-    }
+    _subtype_map = {"type": {"#Microsoft.VideoAnalyzer.VideoEncoderH264": "VideoEncoderH264"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VideoEncoderBase, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
-        self.bitrate_kbps = kwargs.get('bitrate_kbps', None)
-        self.frame_rate = kwargs.get('frame_rate', None)
-        self.scale = kwargs.get('scale', None)
+        self.bitrate_kbps = kwargs.get("bitrate_kbps", None)
+        self.frame_rate = kwargs.get("frame_rate", None)
+        self.scale = kwargs.get("scale", None)
 
 
 class VideoEncoderH264(VideoEncoderBase):
@@ -3603,22 +3333,19 @@ class VideoEncoderH264(VideoEncoderBase):
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'bitrate_kbps': {'key': 'bitrateKbps', 'type': 'str'},
-        'frame_rate': {'key': 'frameRate', 'type': 'str'},
-        'scale': {'key': 'scale', 'type': 'VideoScale'},
+        "type": {"key": "@type", "type": "str"},
+        "bitrate_kbps": {"key": "bitrateKbps", "type": "str"},
+        "frame_rate": {"key": "frameRate", "type": "str"},
+        "scale": {"key": "scale", "type": "VideoScale"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VideoEncoderH264, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.VideoEncoderH264'  # type: str
+        self.type = "#Microsoft.VideoAnalyzer.VideoEncoderH264"  # type: str
 
 
 class VideoEntity(ProxyResource):
@@ -3658,41 +3385,38 @@ class VideoEntity(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'type_properties_type': {'readonly': True},
-        'flags': {'readonly': True},
-        'content_urls': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "type_properties_type": {"readonly": True},
+        "flags": {"readonly": True},
+        "content_urls": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'title': {'key': 'properties.title', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'type_properties_type': {'key': 'properties.type', 'type': 'str'},
-        'flags': {'key': 'properties.flags', 'type': 'VideoFlags'},
-        'content_urls': {'key': 'properties.contentUrls', 'type': 'VideoContentUrls'},
-        'media_info': {'key': 'properties.mediaInfo', 'type': 'VideoMediaInfo'},
-        'archival': {'key': 'properties.archival', 'type': 'VideoArchival'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "title": {"key": "properties.title", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "type_properties_type": {"key": "properties.type", "type": "str"},
+        "flags": {"key": "properties.flags", "type": "VideoFlags"},
+        "content_urls": {"key": "properties.contentUrls", "type": "VideoContentUrls"},
+        "media_info": {"key": "properties.mediaInfo", "type": "VideoMediaInfo"},
+        "archival": {"key": "properties.archival", "type": "VideoArchival"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VideoEntity, self).__init__(**kwargs)
-        self.title = kwargs.get('title', None)
-        self.description = kwargs.get('description', None)
+        self.title = kwargs.get("title", None)
+        self.description = kwargs.get("description", None)
         self.type_properties_type = None
         self.flags = None
         self.content_urls = None
-        self.media_info = kwargs.get('media_info', None)
-        self.archival = kwargs.get('archival', None)
+        self.media_info = kwargs.get("media_info", None)
+        self.archival = kwargs.get("archival", None)
 
 
 class VideoEntityCollection(msrest.serialization.Model):
@@ -3706,17 +3430,14 @@ class VideoEntityCollection(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VideoEntity]'},
-        'next_link': {'key': '@nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VideoEntity]"},
+        "next_link": {"key": "@nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VideoEntityCollection, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get("value", None)
+        self.next_link = kwargs.get("next_link", None)
 
 
 class VideoFlags(msrest.serialization.Model):
@@ -3738,25 +3459,22 @@ class VideoFlags(msrest.serialization.Model):
     """
 
     _validation = {
-        'can_stream': {'required': True},
-        'has_data': {'required': True},
-        'is_in_use': {'required': True},
+        "can_stream": {"required": True},
+        "has_data": {"required": True},
+        "is_in_use": {"required": True},
     }
 
     _attribute_map = {
-        'can_stream': {'key': 'canStream', 'type': 'bool'},
-        'has_data': {'key': 'hasData', 'type': 'bool'},
-        'is_in_use': {'key': 'isInUse', 'type': 'bool'},
+        "can_stream": {"key": "canStream", "type": "bool"},
+        "has_data": {"key": "hasData", "type": "bool"},
+        "is_in_use": {"key": "isInUse", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VideoFlags, self).__init__(**kwargs)
-        self.can_stream = kwargs['can_stream']
-        self.has_data = kwargs['has_data']
-        self.is_in_use = kwargs['is_in_use']
+        self.can_stream = kwargs["can_stream"]
+        self.has_data = kwargs["has_data"]
+        self.is_in_use = kwargs["is_in_use"]
 
 
 class VideoMediaInfo(msrest.serialization.Model):
@@ -3772,15 +3490,12 @@ class VideoMediaInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'segment_length': {'key': 'segmentLength', 'type': 'str'},
+        "segment_length": {"key": "segmentLength", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VideoMediaInfo, self).__init__(**kwargs)
-        self.segment_length = kwargs.get('segment_length', None)
+        self.segment_length = kwargs.get("segment_length", None)
 
 
 class VideoPreviewImageUrls(msrest.serialization.Model):
@@ -3795,19 +3510,16 @@ class VideoPreviewImageUrls(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'small': {'key': 'small', 'type': 'str'},
-        'medium': {'key': 'medium', 'type': 'str'},
-        'large': {'key': 'large', 'type': 'str'},
+        "small": {"key": "small", "type": "str"},
+        "medium": {"key": "medium", "type": "str"},
+        "large": {"key": "large", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VideoPreviewImageUrls, self).__init__(**kwargs)
-        self.small = kwargs.get('small', None)
-        self.medium = kwargs.get('medium', None)
-        self.large = kwargs.get('large', None)
+        self.small = kwargs.get("small", None)
+        self.medium = kwargs.get("medium", None)
+        self.large = kwargs.get("large", None)
 
 
 class VideoPublishingOptions(msrest.serialization.Model):
@@ -3825,17 +3537,14 @@ class VideoPublishingOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'disable_archive': {'key': 'disableArchive', 'type': 'str'},
-        'disable_rtsp_publishing': {'key': 'disableRtspPublishing', 'type': 'str'},
+        "disable_archive": {"key": "disableArchive", "type": "str"},
+        "disable_rtsp_publishing": {"key": "disableRtspPublishing", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VideoPublishingOptions, self).__init__(**kwargs)
-        self.disable_archive = kwargs.get('disable_archive', None)
-        self.disable_rtsp_publishing = kwargs.get('disable_rtsp_publishing', None)
+        self.disable_archive = kwargs.get("disable_archive", None)
+        self.disable_rtsp_publishing = kwargs.get("disable_rtsp_publishing", None)
 
 
 class VideoScale(msrest.serialization.Model):
@@ -3853,19 +3562,16 @@ class VideoScale(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'height': {'key': 'height', 'type': 'str'},
-        'width': {'key': 'width', 'type': 'str'},
-        'mode': {'key': 'mode', 'type': 'str'},
+        "height": {"key": "height", "type": "str"},
+        "width": {"key": "width", "type": "str"},
+        "mode": {"key": "mode", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VideoScale, self).__init__(**kwargs)
-        self.height = kwargs.get('height', None)
-        self.width = kwargs.get('width', None)
-        self.mode = kwargs.get('mode', None)
+        self.height = kwargs.get("height", None)
+        self.width = kwargs.get("width", None)
+        self.mode = kwargs.get("mode", None)
 
 
 class VideoSequenceAbsoluteTimeMarkers(TimeSequenceBase):
@@ -3881,22 +3587,19 @@ class VideoSequenceAbsoluteTimeMarkers(TimeSequenceBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'ranges': {'required': True},
+        "type": {"required": True},
+        "ranges": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'ranges': {'key': 'ranges', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "ranges": {"key": "ranges", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VideoSequenceAbsoluteTimeMarkers, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.VideoSequenceAbsoluteTimeMarkers'  # type: str
-        self.ranges = kwargs['ranges']
+        self.type = "#Microsoft.VideoAnalyzer.VideoSequenceAbsoluteTimeMarkers"  # type: str
+        self.ranges = kwargs["ranges"]
 
 
 class VideoSink(SinkNodeBase):
@@ -3924,30 +3627,27 @@ class VideoSink(SinkNodeBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
-        'inputs': {'required': True},
-        'video_name': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
+        "inputs": {"required": True},
+        "video_name": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'inputs': {'key': 'inputs', 'type': '[NodeInput]'},
-        'video_name': {'key': 'videoName', 'type': 'str'},
-        'video_creation_properties': {'key': 'videoCreationProperties', 'type': 'VideoCreationProperties'},
-        'video_publishing_options': {'key': 'videoPublishingOptions', 'type': 'VideoPublishingOptions'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "inputs": {"key": "inputs", "type": "[NodeInput]"},
+        "video_name": {"key": "videoName", "type": "str"},
+        "video_creation_properties": {"key": "videoCreationProperties", "type": "VideoCreationProperties"},
+        "video_publishing_options": {"key": "videoPublishingOptions", "type": "VideoPublishingOptions"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VideoSink, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.VideoSink'  # type: str
-        self.video_name = kwargs['video_name']
-        self.video_creation_properties = kwargs.get('video_creation_properties', None)
-        self.video_publishing_options = kwargs.get('video_publishing_options', None)
+        self.type = "#Microsoft.VideoAnalyzer.VideoSink"  # type: str
+        self.video_name = kwargs["video_name"]
+        self.video_creation_properties = kwargs.get("video_creation_properties", None)
+        self.video_publishing_options = kwargs.get("video_publishing_options", None)
 
 
 class VideoSource(SourceNodeBase):
@@ -3968,24 +3668,21 @@ class VideoSource(SourceNodeBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
-        'video_name': {'required': True},
-        'time_sequences': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
+        "video_name": {"required": True},
+        "time_sequences": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'video_name': {'key': 'videoName', 'type': 'str'},
-        'time_sequences': {'key': 'timeSequences', 'type': 'TimeSequenceBase'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "video_name": {"key": "videoName", "type": "str"},
+        "time_sequences": {"key": "timeSequences", "type": "TimeSequenceBase"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(VideoSource, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.VideoSource'  # type: str
-        self.video_name = kwargs['video_name']
-        self.time_sequences = kwargs['time_sequences']
+        self.type = "#Microsoft.VideoAnalyzer.VideoSource"  # type: str
+        self.video_name = kwargs["video_name"]
+        self.time_sequences = kwargs["time_sequences"]

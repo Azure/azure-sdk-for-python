@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for the retry policy."""
+
 try:
     from io import BytesIO
 except ImportError:

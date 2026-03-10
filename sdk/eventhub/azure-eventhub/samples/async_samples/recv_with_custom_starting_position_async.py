@@ -8,6 +8,7 @@
 """
 An example to show receiving events from Event Hub partitions with custom starting position asynchronously.
 """
+
 import os
 import asyncio
 from azure.eventhub.aio import EventHubConsumerClient, EventHubProducerClient

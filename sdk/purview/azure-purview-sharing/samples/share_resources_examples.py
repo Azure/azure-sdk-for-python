@@ -25,9 +25,9 @@ client = PurviewSharingClient(endpoint=endpoint, credential=credential)
 # List share resources
 # [START list_share_resources]
 list_request = client.share_resources.list(
-    filter="properties/storeKind eq 'AdlsGen2Account'",
-    order_by="properties/createdAt desc")
+    filter="properties/storeKind eq 'AdlsGen2Account'", order_by="properties/createdAt desc"
+)
 
 for list_response in list_request:
     print(list_response)
-#[END list_share_resources]
+# [END list_share_resources]

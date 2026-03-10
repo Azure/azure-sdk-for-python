@@ -20,13 +20,9 @@ class TestLocalJobInvoker:
         in_text += '[{"Id": "abc-123"}]'
         in_text += """' Everything after is ignored"""
 
-        expected_out = (
-            """unread strings
+        expected_out = """unread strings
         everythng before are ignored
-        continue to ignore --snapshots"""
-            + ' "[{\\"Id\\": \\"abc-123\\"}]" '
-            + """Everything after is ignored"""
-        )
+        continue to ignore --snapshots""" + ' "[{\\"Id\\": \\"abc-123\\"}]" ' + """Everything after is ignored"""
 
         with tempfile.TemporaryDirectory() as temp_dir:
             with tempfile.NamedTemporaryFile(mode="w", delete=False, dir=temp_dir) as f:
@@ -38,13 +34,9 @@ class TestLocalJobInvoker:
     def test_serialize_patch_no_op(self):
         # Validate that the previously escaped string does not modify if funciton is run
         dummy_file = Path("./dummy_file2.txt").resolve()
-        expected_out = (
-            """unread strings
+        expected_out = """unread strings
         everythng before are ignored
-        continue to ignore --snapshots"""
-            + ' "[{\\"Id\\": \\"abc-123\\"}]" '
-            + """Everything after is ignored"""
-        )
+        continue to ignore --snapshots""" + ' "[{\\"Id\\": \\"abc-123\\"}]" ' + """Everything after is ignored"""
         dummy_file.write_text(expected_out)
         # Should change nothing if correctly serialized
         patch_invocation_script_serialization(dummy_file)

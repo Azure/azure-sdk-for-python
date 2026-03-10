@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for the distributed tracing policy in an async pipeline."""
+
 import pytest
 
 from azure.core.pipeline import AsyncPipeline

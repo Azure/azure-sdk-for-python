@@ -10,17 +10,13 @@ class TestDeviceRegistration(AzureRecordedTestCase):
         client = DeviceProvisioningClient(endpoint=endpoint, credential=credential)
         return client
 
-    def create_symmetric_device_registration(
-        self, endpoint, id_scope, group_id, device_id
-    ):
+    def create_symmetric_device_registration(self, endpoint, id_scope, group_id, device_id):
         from azure.iot.device import ProvisioningDeviceClient
 
         client = self.create_provisioning_service_client(endpoint)
 
         # get enrollment key
-        enrollment_group_attestation = (
-            client.enrollment_group.get_attestation_mechanism(id=group_id)
-        )
+        enrollment_group_attestation = client.enrollment_group.get_attestation_mechanism(id=group_id)
         primary_key = enrollment_group_attestation["symmetricKey"]["primaryKey"]
         symmetric_key = sign_string(primary_key, device_id)
 
@@ -35,12 +31,8 @@ class TestDeviceRegistration(AzureRecordedTestCase):
 
     @ProvisioningServicePreparer()
     @recorded_by_proxy
-    def test_device_registration_lifecycle(
-        self, iothub_dps_endpoint, iothub_dps_idscope
-    ):
-        client = self.create_provisioning_service_client(
-            iothub_dps_endpoint
-        )
+    def test_device_registration_lifecycle(self, iothub_dps_endpoint, iothub_dps_idscope):
+        client = self.create_provisioning_service_client(iothub_dps_endpoint)
         # create new enrollment group
         enrollment_group_id = self.create_random_name("reg_enroll_grp_")
         device_id = self.create_random_name("device-")
@@ -54,9 +46,7 @@ class TestDeviceRegistration(AzureRecordedTestCase):
         )
 
         # query - should have zero registrations
-        device_registrations = client.device_registration_state.query(
-            id=enrollment_group_id
-        )
+        device_registrations = client.device_registration_state.query(id=enrollment_group_id)
         assert len([d for d in device_registrations]) == 0
 
         # create device registration
@@ -75,9 +65,7 @@ class TestDeviceRegistration(AzureRecordedTestCase):
         registration_id = registration_response["registrationId"]
 
         # query registration
-        registration_query_response: list = client.device_registration_state.query(
-            id=enrollment_group_id
-        )
+        registration_query_response: list = client.device_registration_state.query(id=enrollment_group_id)
         registrations = [reg for reg in registration_query_response]
         assert len(registrations) == 1
         assert registrations[0]["registrationId"] == registration_id
@@ -86,9 +74,7 @@ class TestDeviceRegistration(AzureRecordedTestCase):
         client.device_registration_state.delete(id=registration_id)
 
         # confirm delete
-        registration_query_response: list = client.device_registration_state.query(
-            id=enrollment_group_id
-        )
+        registration_query_response: list = client.device_registration_state.query(id=enrollment_group_id)
         assert len([reg for reg in registration_query_response]) == 0
 
         # delete enrollment group

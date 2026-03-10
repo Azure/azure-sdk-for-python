@@ -16,6 +16,7 @@ USAGE:
     3) EVENTGRID_TOPIC_NAME - The namespace topic name.
     4) EVENTGRID_EVENT_SUBSCRIPTION_NAME = The event subscription name.
 """
+
 import os
 from azure.eventgrid.aio import EventGridPublisherClient, EventGridConsumerClient
 from azure.core.credentials import AzureKeyCredential

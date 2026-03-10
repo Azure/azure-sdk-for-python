@@ -32,14 +32,16 @@ from datetime import datetime
 from azure.core.credentials import AzureKeyCredential, AccessToken, TokenCredential
 from azure.core.pipeline.policies import NetworkTraceLoggingPolicy
 from azure.mixedreality.authentication import MixedRealityStsClient
-from azure.mixedreality.remoterendering import (AssetConversion,
-                                                AssetConversionInputSettings,
-                                                AssetConversionOutputSettings,
-                                                AssetConversionStatus,
-                                                RemoteRenderingClient,
-                                                RenderingSessionSize,
-                                                RenderingSessionStatus,
-                                                AssetConversionOutput)
+from azure.mixedreality.remoterendering import (
+    AssetConversion,
+    AssetConversionInputSettings,
+    AssetConversionOutputSettings,
+    AssetConversionStatus,
+    RemoteRenderingClient,
+    RenderingSessionSize,
+    RenderingSessionStatus,
+    AssetConversionOutput,
+)
 
 # Create a logger for the 'azure' SDK
 logger = logging.getLogger("azure")
@@ -97,7 +99,7 @@ client = RemoteRenderingClient(
     account_id=account_id,
     account_domain=account_domain,
     credential=key_credential,
-    logging_policy=logging_policy
+    logging_policy=logging_policy,
 )
 
 
@@ -120,14 +122,14 @@ def perform_asset_conversion():
 
         output_settings = AssetConversionOutputSettings(
             storage_container_uri=storage_container_uri,  # Note: different input/output containers can be specified
-            blob_prefix="output/"+conversion_id,
+            blob_prefix="output/" + conversion_id,
             # output_asset_filename= convertedAsset.arrAsset # if not specified the output will be "<inputfile>.arrAsset".
             # container_write_sas  #if storage is not linked with the ARR account provide a SAS here to grant access.
         )
 
-        conversion_poller = client.begin_asset_conversion(conversion_id=conversion_id,
-                                                          input_settings=input_settings,
-                                                          output_settings=output_settings)
+        conversion_poller = client.begin_asset_conversion(
+            conversion_id=conversion_id, input_settings=input_settings, output_settings=output_settings
+        )
 
         print("conversion with id:", conversion_id, "created. Waiting for completion.")
         conversion = conversion_poller.result()
@@ -170,11 +172,21 @@ def demonstrate_rendering_session_lifecycle():
         session_id = str(uuid.uuid4())
         print("starting rendering session with id:", session_id)
         session_poller = client.begin_rendering_session(
-            session_id=session_id, size=RenderingSessionSize.STANDARD, lease_time_minutes=5)
-        print("rendering session with id:", session_id, "created. Waiting for session to be ready.",)
+            session_id=session_id, size=RenderingSessionSize.STANDARD, lease_time_minutes=5
+        )
+        print(
+            "rendering session with id:",
+            session_id,
+            "created. Waiting for session to be ready.",
+        )
 
         session = session_poller.result()
-        print("session with id:", session.id, "is ready. lease_time_minutes:", session.lease_time_minutes,)
+        print(
+            "session with id:",
+            session.id,
+            "is ready. lease_time_minutes:",
+            session.lease_time_minutes,
+        )
 
         # a poller can also be acquired by a id if a session already exists
         # id_poller = client.get_rendering_session_poller(session_id=session_id)
@@ -191,8 +203,15 @@ def demonstrate_rendering_session_lifecycle():
         session = client.get_rendering_session(session_id)
         if cast(int, session.lease_time_minutes) - cast(int, session.elapsed_time_minutes) < 2:
             session = client.update_rendering_session(
-                session_id=session_id, lease_time_minutes=cast(int, session.lease_time_minutes) + 10)
-            print("session with id:", session.id, "updated. New lease time:", session.lease_time_minutes, "minutes",)
+                session_id=session_id, lease_time_minutes=cast(int, session.lease_time_minutes) + 10
+            )
+            print(
+                "session with id:",
+                session.id,
+                "updated. New lease time:",
+                session.lease_time_minutes,
+                "minutes",
+            )
 
         # once we do not need the session anymore we can stop the session
         client.stop_rendering_session(session_id)
@@ -207,7 +226,14 @@ def list_all_rendering_sessions():
     rendering_sessions = client.list_rendering_sessions()
     for session in rendering_sessions:
         created_on = cast(datetime, session.created_on).strftime("%m/%d/%Y, %H:%M:%S")
-        print("\t session:  id:", session.id, "status:", session.status, "created on:", created_on,)
+        print(
+            "\t session:  id:",
+            session.id,
+            "status:",
+            session.status,
+            "created on:",
+            created_on,
+        )
 
 
 if __name__ == "__main__":

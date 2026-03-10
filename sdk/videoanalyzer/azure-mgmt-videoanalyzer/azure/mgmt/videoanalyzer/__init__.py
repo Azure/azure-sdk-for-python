@@ -10,10 +10,11 @@ from ._video_analyzer import VideoAnalyzer
 from ._version import VERSION
 
 __version__ = VERSION
-__all__ = ['VideoAnalyzer']
+__all__ = ["VideoAnalyzer"]
 
 try:
     from ._patch import patch_sdk  # type: ignore
+
     patch_sdk()
 except ImportError:
     pass

@@ -11,26 +11,25 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class DocumentSentimentValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Predicted sentiment for document (Negative, Neutral, Positive, or Mixed).
-    """
+    """Predicted sentiment for document (Negative, Neutral, Positive, or Mixed)."""
 
     POSITIVE = "positive"
     NEUTRAL = "neutral"
     NEGATIVE = "negative"
     MIXED = "mixed"
 
+
 class ErrorCodeValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Error code.
-    """
+    """Error code."""
 
     INVALID_REQUEST = "invalidRequest"
     INVALID_ARGUMENT = "invalidArgument"
     INTERNAL_SERVER_ERROR = "internalServerError"
     SERVICE_UNAVAILABLE = "serviceUnavailable"
 
+
 class InnerErrorCodeValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Error code.
-    """
+    """Error code."""
 
     INVALID_PARAMETER_VALUE = "invalidParameterValue"
     INVALID_REQUEST_BODY_FORMAT = "invalidRequestBodyFormat"
@@ -42,17 +41,17 @@ class InnerErrorCodeValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UNSUPPORTED_LANGUAGE_CODE = "unsupportedLanguageCode"
     INVALID_COUNTRY_HINT = "invalidCountryHint"
 
+
 class SentenceSentimentValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The predicted Sentiment for the sentence.
-    """
+    """The predicted Sentiment for the sentence."""
 
     POSITIVE = "positive"
     NEUTRAL = "neutral"
     NEGATIVE = "negative"
 
+
 class WarningCodeValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Error code.
-    """
+    """Error code."""
 
     LONG_WORDS_IN_DOCUMENT = "LongWordsInDocument"
     DOCUMENT_TRUNCATED = "DocumentTruncated"

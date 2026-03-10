@@ -29,6 +29,7 @@ This `utils` module provides functionality that is intended to be used by develo
 building on top of the core package.
 
 """
+
 from ._utils import case_insensitive_dict, CaseInsensitiveDict
 from ._enum_meta import CaseInsensitiveEnumMeta
 

@@ -6,6 +6,4 @@
 
 from ._remote_rendering_client_async import RemoteRenderingClient
 
-__all__ = [
-    'RemoteRenderingClient'
-]
+__all__ = ["RemoteRenderingClient"]

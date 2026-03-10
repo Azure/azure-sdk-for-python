@@ -25,7 +25,6 @@ from ...._bicep.utils import clean_name
 from ...._resource import Resource, ExtensionResources, ResourceReference
 from .. import ConfigStore
 
-
 if TYPE_CHECKING:
     from ...resourcegroup import ResourceGroup
     from .types import ConfigSettingResource

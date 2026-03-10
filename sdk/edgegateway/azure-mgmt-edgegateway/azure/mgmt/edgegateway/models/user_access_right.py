@@ -25,16 +25,16 @@ class UserAccessRight(Model):
     """
 
     _validation = {
-        'user_id': {'required': True},
-        'access_type': {'required': True},
+        "user_id": {"required": True},
+        "access_type": {"required": True},
     }
 
     _attribute_map = {
-        'user_id': {'key': 'userId', 'type': 'str'},
-        'access_type': {'key': 'accessType', 'type': 'str'},
+        "user_id": {"key": "userId", "type": "str"},
+        "access_type": {"key": "accessType", "type": "str"},
     }
 
     def __init__(self, **kwargs):
         super(UserAccessRight, self).__init__(**kwargs)
-        self.user_id = kwargs.get('user_id', None)
-        self.access_type = kwargs.get('access_type', None)
+        self.user_id = kwargs.get("user_id", None)
+        self.access_type = kwargs.get("access_type", None)

@@ -12,7 +12,7 @@ FILE: sample_get_elements_with_spans_async.py
 DESCRIPTION:
     This sample demonstrates how to get elements that are contained in the spans of another element.
     In this sample, the examples attempt to find the lines and styles that have the same spans as the
-    main search element. The purpose of this sample is to show how to search for document elements 
+    main search element. The purpose of this sample is to show how to search for document elements
     that are within the same span area as other elements.
 
 USAGE:
@@ -32,9 +32,9 @@ def get_styles(element_spans, styles):
     for span in element_spans:
         for style in styles:
             for style_span in style.spans:
-                if style_span.offset >= span.offset and (
-                    style_span.offset + style_span.length
-                ) <= (span.offset + span.length):
+                if style_span.offset >= span.offset and (style_span.offset + style_span.length) <= (
+                    span.offset + span.length
+                ):
                     result.append(style)
     return result
 
@@ -44,9 +44,9 @@ def get_lines(element_spans, document_page):
     for span in element_spans:
         for line in document_page.lines:
             for line_span in line.spans:
-                if line_span.offset >= span.offset and (
-                    line_span.offset + line_span.length
-                ) <= (span.offset + span.length):
+                if line_span.offset >= span.offset and (line_span.offset + line_span.length) <= (
+                    span.offset + span.length
+                ):
                     result.append(line)
     return result
 
@@ -75,14 +75,10 @@ async def get_elements_with_spans_async():
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
-    document_analysis_client = DocumentAnalysisClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
+    document_analysis_client = DocumentAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     async with document_analysis_client:
         with open(path_to_sample_documents, "rb") as f:
-            poller = await document_analysis_client.begin_analyze_document(
-                "prebuilt-document", document=f
-            )
+            poller = await document_analysis_client.begin_analyze_document("prebuilt-document", document=f)
         result = await poller.result()
 
     # Below is a method to search for the lines of a particular element by using spans.
@@ -92,26 +88,18 @@ async def get_elements_with_spans_async():
     # `sample_get_words_on_document_line.py` under the samples v3.2_and_later directory.
     if result.tables is not None:
         for table_idx, table in enumerate(result.tables):
-            print(
-                f"Table # {table_idx} has {table.row_count} rows and {table.column_count} columns"
-            )
+            print(f"Table # {table_idx} has {table.row_count} rows and {table.column_count} columns")
 
             lines = []
 
             if table.bounding_regions is not None:
                 for region in table.bounding_regions:
                     print(f"Table # {table_idx} location on page: {region.page_number}")
-                    lines.extend(
-                        get_lines(
-                            table.spans, get_page(region.page_number, result.pages)
-                        )
-                    )
+                    lines.extend(get_lines(table.spans, get_page(region.page_number, result.pages)))
 
             print(f"Found # {len(lines)} lines in the table")
             for line in lines:
-                print(
-                    f"...Line '{line.content}' is within bounding polygon: '{line.polygon}'"
-                )
+                print(f"...Line '{line.content}' is within bounding polygon: '{line.polygon}'")
 
     # Below is a method to search for the style of a particular element by using spans.
     # This example uses DocumentLine, but other elements that also have a `spans` or `span`

@@ -27,7 +27,6 @@ from .._internal import (
 )
 from .._internal.decorators import log_get_token
 
-
 _LOGGER = logging.getLogger(__name__)
 
 CLI_NOT_FOUND = "Azure CLI not found on path"

@@ -60,7 +60,6 @@ from azure.monitor.opentelemetry.exporter.export._base import (
 )
 from . import _utils as trace_utils
 
-
 _logger = logging.getLogger(__name__)
 
 __all__ = ["AzureMonitorTraceExporter"]

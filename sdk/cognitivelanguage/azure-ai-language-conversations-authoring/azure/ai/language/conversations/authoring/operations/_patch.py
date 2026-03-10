@@ -7,8 +7,10 @@
 """Customize generated code here.
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 from ._project_op_patch import ProjectOperations
 from ._deployment_op_patch import DeploymentOperations
+
 
 def patch_sdk():
     """Do not remove from this file.

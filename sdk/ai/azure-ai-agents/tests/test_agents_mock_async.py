@@ -35,7 +35,6 @@ from azure.ai.agents.models import (
 
 from user_functions import user_functions
 
-
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 

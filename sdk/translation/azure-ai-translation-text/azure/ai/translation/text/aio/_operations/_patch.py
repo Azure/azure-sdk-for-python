@@ -9,6 +9,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 from collections.abc import MutableMapping
 from typing import Any, cast, IO, List, Optional, overload, Union
 
@@ -25,7 +26,9 @@ JSON = MutableMapping[str, Any]
 class _TextTranslationClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, TextTranslationClientConfiguration]):
     """Mixin class that delegates to the generated operations class while providing custom method signatures."""
 
-    def _get_generated_operations(self) -> _TextTranslationClientOperationsMixinGenerated:  # pylint: disable=protected-access
+    def _get_generated_operations(
+        self,
+    ) -> _TextTranslationClientOperationsMixinGenerated:  # pylint: disable=protected-access
         """Get an instance of the generated operations mixin.
 
         This creates a wrapper object that shares the same _client, _config, _serialize, and _deserialize

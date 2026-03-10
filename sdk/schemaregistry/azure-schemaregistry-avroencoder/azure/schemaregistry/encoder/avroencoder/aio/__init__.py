@@ -25,6 +25,4 @@
 # --------------------------------------------------------------------------
 from ._schema_registry_avro_encoder_async import AvroEncoder  # pylint: disable=import-error
 
-__all__ = [
-    "AvroEncoder"
-]
+__all__ = ["AvroEncoder"]

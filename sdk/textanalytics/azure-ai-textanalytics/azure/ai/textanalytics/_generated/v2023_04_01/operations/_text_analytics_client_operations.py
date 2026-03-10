@@ -9,7 +9,13 @@
 from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 
 from ...._lro import AnalyzeActionsLROPoller, AnalyzeActionsLROPollingMethod
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
@@ -21,74 +27,58 @@ from azure.core.utils import case_insensitive_dict
 from .. import models as _models
 from ..._serialization import Serializer
 from .._vendor import MixinABC, _convert_request, _format_url_section
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
-def build_analyze_text_request(
-    *,
-    show_stats: Optional[bool] = None,
-    **kwargs: Any
-) -> HttpRequest:
+
+def build_analyze_text_request(*, show_stats: Optional[bool] = None, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-04-01"))  # type: str
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))  # type: str
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/:analyze-text")
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if show_stats is not None:
-        _params['showStats'] = _SERIALIZER.query("show_stats", show_stats, 'bool')
+        _params["showStats"] = _SERIALIZER.query("show_stats", show_stats, "bool")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_analyze_text_submit_job_request(
-    **kwargs: Any
-) -> HttpRequest:
+def build_analyze_text_submit_job_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-04-01"))  # type: str
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))  # type: str
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/analyze-text/jobs")
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_analyze_text_job_status_request(
@@ -102,69 +92,55 @@ def build_analyze_text_job_status_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-04-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/analyze-text/jobs/{jobId}")
     path_format_arguments = {
-        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if show_stats is not None:
-        _params['showStats'] = _SERIALIZER.query("show_stats", show_stats, 'bool')
+        _params["showStats"] = _SERIALIZER.query("show_stats", show_stats, "bool")
     if top is not None:
-        _params['top'] = _SERIALIZER.query("top", top, 'int')
+        _params["top"] = _SERIALIZER.query("top", top, "int")
     if skip is not None:
-        _params['skip'] = _SERIALIZER.query("skip", skip, 'int')
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_analyze_text_cancel_job_request(
-    job_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_analyze_text_cancel_job_request(job_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-04-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/analyze-text/jobs/{jobId}:cancel")
     path_format_arguments = {
-        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
 
 class TextAnalyticsClientOperationsMixin(MixinABC):
 
@@ -198,12 +174,7 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
 
     @overload
     def analyze_text(
-        self,
-        body: IO,
-        show_stats: Optional[bool] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO, show_stats: Optional[bool] = None, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AnalyzeTextTaskResult:
         """Request text analysis over a collection of documents.
 
@@ -224,13 +195,9 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace
     def analyze_text(
-        self,
-        body: Union[_models.AnalyzeTextTask, IO],
-        show_stats: Optional[bool] = None,
-        **kwargs: Any
+        self, body: Union[_models.AnalyzeTextTask, IO], show_stats: Optional[bool] = None, **kwargs: Any
     ) -> _models.AnalyzeTextTaskResult:
         """Request text analysis over a collection of documents.
 
@@ -251,17 +218,15 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         :rtype: ~azure.ai.textanalytics.v2023_04_01.models.AnalyzeTextTaskResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-04-01"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AnalyzeTextTaskResult]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AnalyzeTextTaskResult]
 
         content_type = content_type or "application/json"
         _json = None
@@ -269,7 +234,7 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         if isinstance(body, (IO, bytes)):
             _content = body
         else:
-            _json = self._serialize.body(body, 'AnalyzeTextTask')
+            _json = self._serialize.body(body, "AnalyzeTextTask")
 
         request = build_analyze_text_request(
             show_stats=show_stats,
@@ -277,20 +242,18 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.analyze_text.metadata['url'],
+            template_url=self.analyze_text.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -300,32 +263,27 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('AnalyzeTextTaskResult', pipeline_response)
+        deserialized = self._deserialize("AnalyzeTextTaskResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    analyze_text.metadata = {'url': "/:analyze-text"}  # type: ignore
-
+    analyze_text.metadata = {"url": "/:analyze-text"}  # type: ignore
 
     def _analyze_text_submit_job_initial(
-        self,
-        body: Union[_models.AnalyzeTextJobsInput, IO],
-        **kwargs: Any
+        self, body: Union[_models.AnalyzeTextJobsInput, IO], **kwargs: Any
     ) -> Optional[_models.AnalyzeTextJobState]:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-04-01"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.AnalyzeTextJobState]]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.AnalyzeTextJobState]]
 
         content_type = content_type or "application/json"
         _json = None
@@ -333,27 +291,25 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         if isinstance(body, (IO, bytes)):
             _content = body
         else:
-            _json = self._serialize.body(body, 'AnalyzeTextJobsInput')
+            _json = self._serialize.body(body, "AnalyzeTextJobsInput")
 
         request = build_analyze_text_submit_job_request(
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._analyze_text_submit_job_initial.metadata['url'],
+            template_url=self._analyze_text_submit_job_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -366,27 +322,23 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         deserialized = None
         response_headers = {}
         if response.status_code == 200:
-            deserialized = self._deserialize('AnalyzeTextJobState', pipeline_response)
+            deserialized = self._deserialize("AnalyzeTextJobState", pipeline_response)
 
         if response.status_code == 202:
-            response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-            
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    _analyze_text_submit_job_initial.metadata = {'url': "/analyze-text/jobs"}  # type: ignore
-
+    _analyze_text_submit_job_initial.metadata = {"url": "/analyze-text/jobs"}  # type: ignore
 
     @overload
     def begin_analyze_text_submit_job(
-        self,
-        body: _models.AnalyzeTextJobsInput,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: _models.AnalyzeTextJobsInput, *, content_type: str = "application/json", **kwargs: Any
     ) -> AnalyzeActionsLROPoller[_models.AnalyzeTextJobState]:
         """Submit text analysis job.
 
@@ -415,11 +367,7 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
 
     @overload
     def begin_analyze_text_submit_job(
-        self,
-        body: IO,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> AnalyzeActionsLROPoller[_models.AnalyzeTextJobState]:
         """Submit text analysis job.
 
@@ -446,12 +394,9 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace
     def begin_analyze_text_submit_job(
-        self,
-        body: Union[_models.AnalyzeTextJobsInput, IO],
-        **kwargs: Any
+        self, body: Union[_models.AnalyzeTextJobsInput, IO], **kwargs: Any
     ) -> AnalyzeActionsLROPoller[_models.AnalyzeTextJobState]:
         """Submit text analysis job.
 
@@ -481,57 +426,53 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-04-01"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AnalyzeTextJobState]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AnalyzeTextJobState]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._analyze_text_submit_job_initial(  # type: ignore
                 body=body,
                 api_version=api_version,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('AnalyzeTextJobState', pipeline_response)
+            deserialized = self._deserialize("AnalyzeTextJobState", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, AnalyzeActionsLROPollingMethod(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                PollingMethod,
+                AnalyzeActionsLROPollingMethod(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return AnalyzeActionsLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return AnalyzeActionsLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_analyze_text_submit_job.metadata = {'url': "/analyze-text/jobs"}  # type: ignore
+    begin_analyze_text_submit_job.metadata = {"url": "/analyze-text/jobs"}  # type: ignore
 
     @distributed_trace
     def analyze_text_job_status(
@@ -564,38 +505,33 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         :rtype: ~azure.ai.textanalytics.v2023_04_01.models.AnalyzeTextJobState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-04-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AnalyzeTextJobState]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AnalyzeTextJobState]
 
-        
         request = build_analyze_text_job_status_request(
             job_id=job_id,
             show_stats=show_stats,
             top=top,
             skip=skip,
             api_version=api_version,
-            template_url=self.analyze_text_job_status.metadata['url'],
+            template_url=self.analyze_text_job_status.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -605,50 +541,42 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('AnalyzeTextJobState', pipeline_response)
+        deserialized = self._deserialize("AnalyzeTextJobState", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    analyze_text_job_status.metadata = {'url': "/analyze-text/jobs/{jobId}"}  # type: ignore
-
+    analyze_text_job_status.metadata = {"url": "/analyze-text/jobs/{jobId}"}  # type: ignore
 
     def _analyze_text_cancel_job_initial(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_id: str,
-        **kwargs: Any
+        self, job_id: str, **kwargs: Any
     ) -> None:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-04-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        
         request = build_analyze_text_cancel_job_request(
             job_id=job_id,
             api_version=api_version,
-            template_url=self._analyze_text_cancel_job_initial.metadata['url'],
+            template_url=self._analyze_text_cancel_job_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -659,21 +587,15 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    _analyze_text_cancel_job_initial.metadata = {'url': "/analyze-text/jobs/{jobId}:cancel"}  # type: ignore
-
+    _analyze_text_cancel_job_initial.metadata = {"url": "/analyze-text/jobs/{jobId}:cancel"}  # type: ignore
 
     @distributed_trace
-    def begin_analyze_text_cancel_job(
-        self,
-        job_id: str,
-        **kwargs: Any
-    ) -> LROPoller[None]:
+    def begin_analyze_text_cancel_job(self, job_id: str, **kwargs: Any) -> LROPoller[None]:
         """Cancel a long-running Text Analysis job.
 
         Cancel a long-running Text Analysis job.
@@ -695,50 +617,45 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-04-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._analyze_text_cancel_job_initial(  # type: ignore
                 job_id=job_id,
                 api_version=api_version,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
                 return cls(pipeline_response, None, {})
 
-
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, LROBasePolling(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_analyze_text_cancel_job.metadata = {'url': "/analyze-text/jobs/{jobId}:cancel"}  # type: ignore
+    begin_analyze_text_cancel_job.metadata = {"url": "/analyze-text/jobs/{jobId}:cancel"}  # type: ignore

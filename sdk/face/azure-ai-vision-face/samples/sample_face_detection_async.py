@@ -18,6 +18,7 @@ USAGE:
     1) AZURE_FACE_API_ENDPOINT - the endpoint to your Face resource.
     2) AZURE_FACE_API_ACCOUNT_KEY - your Face API key.
 """
+
 import asyncio
 import os
 

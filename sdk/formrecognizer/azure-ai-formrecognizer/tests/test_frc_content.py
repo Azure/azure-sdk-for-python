@@ -44,10 +44,7 @@ class TestContentFromStream(FormRecognizerTest):
         client = get_fr_client()
         with open(self.invoice_pdf, "rb") as fd:
             my_file = fd.read()
-        poller = client.begin_recognize_content(
-            my_file,
-            content_type=FormContentType.APPLICATION_PDF
-        )
+        poller = client.begin_recognize_content(my_file, content_type=FormContentType.APPLICATION_PDF)
         result = poller.result()
         assert result is not None
 
@@ -67,10 +64,7 @@ class TestContentFromStream(FormRecognizerTest):
         with open(self.invoice_pdf, "rb") as fd:
             my_file = fd.read()
         with pytest.raises(ValueError):
-            poller = client.begin_recognize_content(
-                my_file,
-                content_type="application/jpeg"
-            )
+            poller = client.begin_recognize_content(my_file, content_type="application/jpeg")
 
     @FormRecognizerPreparer()
     def test_auto_detect_unsupported_stream_content(self, **kwargs):
@@ -79,9 +73,7 @@ class TestContentFromStream(FormRecognizerTest):
             my_file = fd.read()
 
         with pytest.raises(ValueError):
-            poller = client.begin_recognize_content(
-                my_file
-            )
+            poller = client.begin_recognize_content(my_file)
 
     @skip_flaky_test
     @FormRecognizerPreparer()
@@ -119,7 +111,7 @@ class TestContentFromStream(FormRecognizerTest):
 
         poller = client.begin_recognize_content(form, reading_order="natural")
 
-        assert 'natural' == poller._polling_method._initial_response.http_response.request.query['readingOrder']
+        assert "natural" == poller._polling_method._initial_response.http_response.request.query["readingOrder"]
         result = poller.result()
         assert result
 
@@ -162,11 +154,11 @@ class TestContentFromStream(FormRecognizerTest):
         assert layout.page_number == 1
         self.assertFormPagesHasValues(result)
         assert layout.tables[0].row_count == 5
-        assert layout.tables[0].column_count== 4
+        assert layout.tables[0].column_count == 4
         assert layout.tables[1].row_count == 4
-        assert layout.tables[1].column_count== 2
+        assert layout.tables[1].column_count == 2
         assert layout.tables[0].page_number == 1
-        assert layout.tables[1].page_number== 1
+        assert layout.tables[1].page_number == 1
 
     @skip_flaky_test
     @FormRecognizerPreparer()
@@ -311,7 +303,7 @@ class TestContentFromStream(FormRecognizerTest):
         with open(self.form_jpg, "rb") as fd:
             my_file = fd.read()
         poller = client.begin_recognize_content(my_file, language="de")
-        assert 'de' == poller._polling_method._initial_response.http_response.request.query['language']
+        assert "de" == poller._polling_method._initial_response.http_response.request.query["language"]
         result = poller.result()
         assert result
 

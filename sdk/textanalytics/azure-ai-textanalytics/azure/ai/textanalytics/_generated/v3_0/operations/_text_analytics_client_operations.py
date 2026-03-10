@@ -8,7 +8,13 @@
 # --------------------------------------------------------------------------
 from typing import Any, Callable, Dict, List, Optional, TypeVar
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
@@ -18,185 +24,143 @@ from azure.core.utils import case_insensitive_dict
 from .. import models as _models
 from ..._serialization import Serializer
 from .._vendor import MixinABC, _convert_request
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
+
 def build_entities_recognition_general_request(
-    *,
-    model_version: Optional[str] = None,
-    show_stats: Optional[bool] = None,
-    **kwargs: Any
+    *, model_version: Optional[str] = None, show_stats: Optional[bool] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/json, text/json")
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json, text/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/entities/recognition/general")
 
     # Construct parameters
     if model_version is not None:
-        _params['model-version'] = _SERIALIZER.query("model_version", model_version, 'str')
+        _params["model-version"] = _SERIALIZER.query("model_version", model_version, "str")
     if show_stats is not None:
-        _params['showStats'] = _SERIALIZER.query("show_stats", show_stats, 'bool')
+        _params["showStats"] = _SERIALIZER.query("show_stats", show_stats, "bool")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_entities_linking_request(
-    *,
-    model_version: Optional[str] = None,
-    show_stats: Optional[bool] = None,
-    **kwargs: Any
+    *, model_version: Optional[str] = None, show_stats: Optional[bool] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/json, text/json")
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json, text/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/entities/linking")
 
     # Construct parameters
     if model_version is not None:
-        _params['model-version'] = _SERIALIZER.query("model_version", model_version, 'str')
+        _params["model-version"] = _SERIALIZER.query("model_version", model_version, "str")
     if show_stats is not None:
-        _params['showStats'] = _SERIALIZER.query("show_stats", show_stats, 'bool')
+        _params["showStats"] = _SERIALIZER.query("show_stats", show_stats, "bool")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_key_phrases_request(
-    *,
-    model_version: Optional[str] = None,
-    show_stats: Optional[bool] = None,
-    **kwargs: Any
+    *, model_version: Optional[str] = None, show_stats: Optional[bool] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/json, text/json")
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json, text/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/keyPhrases")
 
     # Construct parameters
     if model_version is not None:
-        _params['model-version'] = _SERIALIZER.query("model_version", model_version, 'str')
+        _params["model-version"] = _SERIALIZER.query("model_version", model_version, "str")
     if show_stats is not None:
-        _params['showStats'] = _SERIALIZER.query("show_stats", show_stats, 'bool')
+        _params["showStats"] = _SERIALIZER.query("show_stats", show_stats, "bool")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_languages_request(
-    *,
-    model_version: Optional[str] = None,
-    show_stats: Optional[bool] = None,
-    **kwargs: Any
+    *, model_version: Optional[str] = None, show_stats: Optional[bool] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/json, text/json")
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json, text/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/languages")
 
     # Construct parameters
     if model_version is not None:
-        _params['model-version'] = _SERIALIZER.query("model_version", model_version, 'str')
+        _params["model-version"] = _SERIALIZER.query("model_version", model_version, "str")
     if show_stats is not None:
-        _params['showStats'] = _SERIALIZER.query("show_stats", show_stats, 'bool')
+        _params["showStats"] = _SERIALIZER.query("show_stats", show_stats, "bool")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_sentiment_request(
-    *,
-    model_version: Optional[str] = None,
-    show_stats: Optional[bool] = None,
-    **kwargs: Any
+    *, model_version: Optional[str] = None, show_stats: Optional[bool] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/json, text/json")
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json, text/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/sentiment")
 
     # Construct parameters
     if model_version is not None:
-        _params['model-version'] = _SERIALIZER.query("model_version", model_version, 'str')
+        _params["model-version"] = _SERIALIZER.query("model_version", model_version, "str")
     if show_stats is not None:
-        _params['showStats'] = _SERIALIZER.query("show_stats", show_stats, 'bool')
+        _params["showStats"] = _SERIALIZER.query("show_stats", show_stats, "bool")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
 
 class TextAnalyticsClientOperationsMixin(MixinABC):
 
@@ -229,39 +193,35 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         :rtype: ~azure.ai.textanalytics.v3_0.models.EntitiesResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.EntitiesResult]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.EntitiesResult]
 
         _input = _models.MultiLanguageBatchInput(documents=documents)
-        _json = self._serialize.body(_input, 'MultiLanguageBatchInput')
+        _json = self._serialize.body(_input, "MultiLanguageBatchInput")
 
         request = build_entities_recognition_general_request(
             model_version=model_version,
             show_stats=show_stats,
             content_type=content_type,
             json=_json,
-            template_url=self.entities_recognition_general.metadata['url'],
+            template_url=self.entities_recognition_general.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -271,15 +231,14 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('EntitiesResult', pipeline_response)
+        deserialized = self._deserialize("EntitiesResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    entities_recognition_general.metadata = {'url': "/entities/recognition/general"}  # type: ignore
-
+    entities_recognition_general.metadata = {"url": "/entities/recognition/general"}  # type: ignore
 
     @distributed_trace
     def entities_linking(
@@ -309,39 +268,35 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         :rtype: ~azure.ai.textanalytics.v3_0.models.EntityLinkingResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.EntityLinkingResult]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.EntityLinkingResult]
 
         _input = _models.MultiLanguageBatchInput(documents=documents)
-        _json = self._serialize.body(_input, 'MultiLanguageBatchInput')
+        _json = self._serialize.body(_input, "MultiLanguageBatchInput")
 
         request = build_entities_linking_request(
             model_version=model_version,
             show_stats=show_stats,
             content_type=content_type,
             json=_json,
-            template_url=self.entities_linking.metadata['url'],
+            template_url=self.entities_linking.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -351,15 +306,14 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('EntityLinkingResult', pipeline_response)
+        deserialized = self._deserialize("EntityLinkingResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    entities_linking.metadata = {'url': "/entities/linking"}  # type: ignore
-
+    entities_linking.metadata = {"url": "/entities/linking"}  # type: ignore
 
     @distributed_trace
     def key_phrases(
@@ -389,39 +343,35 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         :rtype: ~azure.ai.textanalytics.v3_0.models.KeyPhraseResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.KeyPhraseResult]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.KeyPhraseResult]
 
         _input = _models.MultiLanguageBatchInput(documents=documents)
-        _json = self._serialize.body(_input, 'MultiLanguageBatchInput')
+        _json = self._serialize.body(_input, "MultiLanguageBatchInput")
 
         request = build_key_phrases_request(
             model_version=model_version,
             show_stats=show_stats,
             content_type=content_type,
             json=_json,
-            template_url=self.key_phrases.metadata['url'],
+            template_url=self.key_phrases.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -431,15 +381,14 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('KeyPhraseResult', pipeline_response)
+        deserialized = self._deserialize("KeyPhraseResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    key_phrases.metadata = {'url': "/keyPhrases"}  # type: ignore
-
+    key_phrases.metadata = {"url": "/keyPhrases"}  # type: ignore
 
     @distributed_trace
     def languages(
@@ -470,39 +419,35 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         :rtype: ~azure.ai.textanalytics.v3_0.models.LanguageResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.LanguageResult]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.LanguageResult]
 
         _input = _models.LanguageBatchInput(documents=documents)
-        _json = self._serialize.body(_input, 'LanguageBatchInput')
+        _json = self._serialize.body(_input, "LanguageBatchInput")
 
         request = build_languages_request(
             model_version=model_version,
             show_stats=show_stats,
             content_type=content_type,
             json=_json,
-            template_url=self.languages.metadata['url'],
+            template_url=self.languages.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -512,15 +457,14 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('LanguageResult', pipeline_response)
+        deserialized = self._deserialize("LanguageResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    languages.metadata = {'url': "/languages"}  # type: ignore
-
+    languages.metadata = {"url": "/languages"}  # type: ignore
 
     @distributed_trace
     def sentiment(
@@ -551,39 +495,35 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         :rtype: ~azure.ai.textanalytics.v3_0.models.SentimentResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SentimentResponse]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SentimentResponse]
 
         _input = _models.MultiLanguageBatchInput(documents=documents)
-        _json = self._serialize.body(_input, 'MultiLanguageBatchInput')
+        _json = self._serialize.body(_input, "MultiLanguageBatchInput")
 
         request = build_sentiment_request(
             model_version=model_version,
             show_stats=show_stats,
             content_type=content_type,
             json=_json,
-            template_url=self.sentiment.metadata['url'],
+            template_url=self.sentiment.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -593,12 +533,11 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('SentimentResponse', pipeline_response)
+        deserialized = self._deserialize("SentimentResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    sentiment.metadata = {'url': "/sentiment"}  # type: ignore
-
+    sentiment.metadata = {"url": "/sentiment"}  # type: ignore

@@ -32,35 +32,33 @@ import config
 # 5. Delete a Database given its Id property (DeleteDatabase)
 # ----------------------------------------------------------------------------------------------------------
 
-HOST = config.settings['host']
-MASTER_KEY = config.settings['master_key']
-DATABASE_ID = config.settings['database_id']
+HOST = config.settings["host"]
+MASTER_KEY = config.settings["master_key"]
+DATABASE_ID = config.settings["database_id"]
+
 
 async def find_database(client, id):
-    print('1. Query for Database')
+    print("1. Query for Database")
 
     # Because the asynchronous client returns an asynchronous iterator object for methods that use
     # return several databases using queries, we do not need to await the function. However, attempting
     # to cast this object into a list directly will throw an error; instead, iterate over the databases
     # to populate your list using an async for loop like shown here or in the list_databases() method
-    query_databases_response = client.query_databases(query={
-        "query": "SELECT * FROM r WHERE r.id=@id",
-        "parameters": [
-            { "name":"@id", "value": id }
-        ]
-    })
+    query_databases_response = client.query_databases(
+        query={"query": "SELECT * FROM r WHERE r.id=@id", "parameters": [{"name": "@id", "value": id}]}
+    )
 
     databases = [database async for database in query_databases_response]
 
     if len(databases) > 0:
-        print('Database with id \'{0}\' was found'.format(id))
+        print("Database with id '{0}' was found".format(id))
     else:
-        print('No database with id \'{0}\' was found'. format(id))
+        print("No database with id '{0}' was found".format(id))
 
     # Alternatively, you can directly iterate over the asynchronous iterator without building a separate
     # list if you don't need the ordering or indexing capabilities
     async for database in query_databases_response:
-        print(database['id'])
+        print(database["id"])
 
 
 async def create_database(client, id):
@@ -68,21 +66,21 @@ async def create_database(client, id):
 
     try:
         await client.create_database(id=id)
-        print('Database with id \'{0}\' created'.format(id))
+        print("Database with id '{0}' created".format(id))
 
     except exceptions.CosmosResourceExistsError:
-        print('A database with id \'{0}\' already exists'.format(id))
+        print("A database with id '{0}' already exists".format(id))
 
     print("\n2.8 Create Database - With autoscale settings")
 
     try:
         await client.create_database(
-            id=id,
-            offer_throughput=ThroughputProperties(auto_scale_max_throughput=5000, auto_scale_increment_percent=0))
-        print('Database with id \'{0}\' created'.format(id))
+            id=id, offer_throughput=ThroughputProperties(auto_scale_max_throughput=5000, auto_scale_increment_percent=0)
+        )
+        print("Database with id '{0}' created".format(id))
 
     except exceptions.CosmosResourceExistsError:
-        print('A database with id \'{0}\' already exists'.format(id))
+        print("A database with id '{0}' already exists".format(id))
 
     # Alternatively, you can also use the create_database_if_not_exists method to avoid using a try catch
     # This method attempts to read the database first, and based on the result either creates or returns
@@ -97,16 +95,16 @@ async def read_database(client, id):
     try:
         database = client.get_database_client(id)
         await database.read()
-        print('Database with id \'{0}\' was found, it\'s link is {1}'.format(id, database.database_link))
+        print("Database with id '{0}' was found, it's link is {1}".format(id, database.database_link))
 
     except exceptions.CosmosResourceNotFoundError:
-        print('A database with id \'{0}\' does not exist'.format(id))
+        print("A database with id '{0}' does not exist".format(id))
 
 
 async def list_databases(client):
     print("\n4. List all Databases on an account")
 
-    print('Databases:')
+    print("Databases:")
 
     # Because the asynchronous client returns an asynchronous iterator object for methods that use
     # return several databases using queries, we do not need to await the function. However, attempting
@@ -119,12 +117,12 @@ async def list_databases(client):
         return
 
     for database in databases:
-        print(database['id'])
+        print(database["id"])
 
     # Alternatively, you can directly iterate over the asynchronous iterator without building a separate
     # list if you don't need the ordering or indexing capabilities
     async for database in list_databases_response:
-        print(database['id'])
+        print(database["id"])
 
 
 async def delete_database(client, id):
@@ -132,14 +130,14 @@ async def delete_database(client, id):
 
     try:
         await client.delete_database(id)
-        print('Database with id \'{0}\' was deleted'.format(id))
+        print("Database with id '{0}' was deleted".format(id))
 
     except exceptions.CosmosResourceNotFoundError:
-        print('A database with id \'{0}\' does not exist'.format(id))
+        print("A database with id '{0}' does not exist".format(id))
 
 
 async def run_sample():
-    async with CosmosClient(HOST, {'masterKey': MASTER_KEY}) as client:
+    async with CosmosClient(HOST, {"masterKey": MASTER_KEY}) as client:
         try:
             # query for a database
             await find_database(client, DATABASE_ID)
@@ -157,10 +155,11 @@ async def run_sample():
             await delete_database(client, DATABASE_ID)
 
         except exceptions.CosmosHttpResponseError as e:
-            print('\nrun_sample has caught an error. {0}'.format(e.message))
+            print("\nrun_sample has caught an error. {0}".format(e.message))
 
         finally:
             print("\nrun_sample done")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(run_sample())

@@ -36,11 +36,10 @@ from devtools_testutils import (
     add_uri_regex_sanitizer,
     add_body_key_sanitizer,
     remove_batch_sanitizers,
-    set_custom_default_matcher
+    set_custom_default_matcher,
 )
 from router_test_constants import SANITIZED, FAKE_FUNCTION_URI, FAKE_ENDPOINT, FAKE_CONNECTION_STRING
 from azure.communication.jobrouter._shared.utils import parse_connection_str
-
 
 # fixture needs to be visible from conftest
 

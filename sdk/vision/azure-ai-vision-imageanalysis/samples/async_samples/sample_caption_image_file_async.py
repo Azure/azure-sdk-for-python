@@ -11,9 +11,9 @@ DESCRIPTION:
     You have the option to request gender-neutral terms such as "person" or "child" by setting
     `gender_neutral_caption = True` when calling `analyze`, as shown in this example.
 
-    The asynchronous (non-blocking) `analyze` method call, when completes, returns 
+    The asynchronous (non-blocking) `analyze` method call, when completes, returns
     an `ImageAnalysisResult` object. Its `caption` property (a `CaptionResult` object) contains:
-    - The text of the caption. Captions are only supported in English at the moment. 
+    - The text of the caption. Captions are only supported in English at the moment.
     - A confidence score in the range [0, 1], with higher values indicating greater confidences in
       the caption.
 
@@ -25,6 +25,7 @@ USAGE:
                          where `your-resource-name` is your unique Azure Computer Vision resource name.
     2) VISION_KEY - Your Computer Vision key (a 32-character Hexadecimal number)
 """
+
 import asyncio
 
 
@@ -48,16 +49,10 @@ async def sample_caption_image_file_async():
         image_data = f.read()
 
     # Create an asynchronous Image Analysis client
-    client = ImageAnalysisClient(
-        endpoint=endpoint,
-        credential=AzureKeyCredential(key)
-    )
+    client = ImageAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Get a caption for the image, asynchronously.
-    result = await client.analyze(
-        image_data=image_data,
-        visual_features=[VisualFeatures.CAPTION]
-    )
+    result = await client.analyze(image_data=image_data, visual_features=[VisualFeatures.CAPTION])
 
     await client.close()
 

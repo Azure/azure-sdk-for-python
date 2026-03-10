@@ -34,11 +34,12 @@ class CrossRegionHedgingStrategy:
     :param config: Dictionary containing configuration values, defaults to None
     :type config: Optional[Dict[str, Any]]
     :raises ValueError: If configuration values are invalid
-    
+
     The config dictionary can contain:
     - threshold_ms: Time in ms before routing to alternate region (default: 500)
     - threshold_steps_ms: Time interval between routing attempts (default: 100)
     """
+
     def __init__(self, config: Optional[dict[str, Any]] = None) -> None:
         if config is None:
             self.threshold_ms = DEFAULT_THRESHOLD_MS
@@ -54,10 +55,10 @@ class CrossRegionHedgingStrategy:
 
 
 def _validate_request_hedging_strategy(
-        config: Optional[Union[bool, dict[str, Any]]]
+    config: Optional[Union[bool, dict[str, Any]]],
 ) -> Union[CrossRegionHedgingStrategy, bool, None]:
     """Validate and create a CrossRegionHedgingStrategy for a request.
-    
+
     :param config: Configuration for availability strategy. Can be:
         - None: Returns None (no strategy, uses client default if available)
         - True: Returns strategy with default values (threshold_ms=500, threshold_steps_ms=100)
@@ -74,9 +75,7 @@ def _validate_request_hedging_strategy(
     return config
 
 
-def validate_client_hedging_strategy(
-        config: Union[bool, dict[str, Any]]
-) -> Union[CrossRegionHedgingStrategy, None]:
+def validate_client_hedging_strategy(config: Union[bool, dict[str, Any]]) -> Union[CrossRegionHedgingStrategy, None]:
     """Validate and create a CrossRegionHedgingStrategy for the client.
 
     :param config: Configuration for availability strategy. Can be:

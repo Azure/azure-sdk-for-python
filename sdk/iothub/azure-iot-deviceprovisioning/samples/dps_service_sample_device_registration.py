@@ -37,9 +37,7 @@ class DeviceRegistrationSamples(object):
         # Instantiate a DPS Service Client using a connection string
         from azure.iot.deviceprovisioning import DeviceProvisioningClient
 
-        dps_service_client = DeviceProvisioningClient.from_connection_string(
-            self.connection_string
-        )
+        dps_service_client = DeviceProvisioningClient.from_connection_string(self.connection_string)
 
         # Create enrollment group object
         enrollment_group = {
@@ -55,9 +53,7 @@ class DeviceRegistrationSamples(object):
         )
 
         # Get Enrollment Attestation with Symmetric Key
-        attestation = dps_service_client.enrollment_group.get_attestation_mechanism(
-            id=self.enrollment_group_id
-        )
+        attestation = dps_service_client.enrollment_group.get_attestation_mechanism(id=self.enrollment_group_id)
 
         # Get Primary Key of Enrollment Attestation
         enrollment_group_key = attestation["symmetricKey"]["primaryKey"]
@@ -73,9 +69,7 @@ class DeviceRegistrationSamples(object):
         # Instantiate a DPS Service Client using a connection string
         from azure.iot.deviceprovisioning import DeviceProvisioningClient
 
-        dps_service_client = DeviceProvisioningClient.from_connection_string(
-            self.connection_string
-        )
+        dps_service_client = DeviceProvisioningClient.from_connection_string(self.connection_string)
 
         # Query all device registrations for enrollment_group_id
         registrations = dps_service_client.device_registration_state.query(id=self.enrollment_group_id)
@@ -87,9 +81,7 @@ class DeviceRegistrationSamples(object):
         # Instantiate a DPS Service Client using a connection string
         from azure.iot.deviceprovisioning import DeviceProvisioningClient
 
-        dps_service_client = DeviceProvisioningClient.from_connection_string(
-            self.connection_string
-        )
+        dps_service_client = DeviceProvisioningClient.from_connection_string(self.connection_string)
 
         # Get Device Registration State by Device ID
         dps_service_client.device_registration_state.get(id=self.device_id)
@@ -98,14 +90,10 @@ class DeviceRegistrationSamples(object):
         # Instantiate a DPS Service Client using a connection string
         from azure.iot.deviceprovisioning import DeviceProvisioningClient
 
-        dps_service_client = DeviceProvisioningClient.from_connection_string(
-            self.connection_string
-        )
+        dps_service_client = DeviceProvisioningClient.from_connection_string(self.connection_string)
 
         # Get Device Registration State by Device ID
-        registration_response = dps_service_client.device_registration_state.get(
-            id=self.device_id
-        )
+        registration_response = dps_service_client.device_registration_state.get(id=self.device_id)
 
         # Parse Registration ID
         registration_id = registration_response["registrationId"]
@@ -117,17 +105,13 @@ class DeviceRegistrationSamples(object):
         # Instantiate a DPS Service Client using a connection string
         from azure.iot.deviceprovisioning import DeviceProvisioningClient
 
-        dps_service_client = DeviceProvisioningClient.from_connection_string(
-            self.connection_string
-        )
+        dps_service_client = DeviceProvisioningClient.from_connection_string(self.connection_string)
 
         # Delete our created enrollment group
         dps_service_client.enrollment_group.delete(id=self.enrollment_group_id)
 
 
-def _register_device_with_symmetric_key(
-    id_scope: str, enrollment_group_key: str, device_id: str
-):
+def _register_device_with_symmetric_key(id_scope: str, enrollment_group_key: str, device_id: str):
     """
     Helper method to register a device using the IoT Device SDK
     Args:
@@ -139,9 +123,7 @@ def _register_device_with_symmetric_key(
     # Register device using Provisioning Device Client from Device SDK
     from azure.iot.device import ProvisioningDeviceClient  # type: ignore
 
-    symmetric_key = _compute_device_symmetric_key(
-        key=enrollment_group_key, string_to_sign=device_id
-    )
+    symmetric_key = _compute_device_symmetric_key(key=enrollment_group_key, string_to_sign=device_id)
 
     device_sdk = ProvisioningDeviceClient.create_from_symmetric_key(
         provisioning_host=GLOBAL_PROVISIONING_HOST,

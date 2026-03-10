@@ -4,6 +4,7 @@
 """
 This module contains a utility class for managing a list of JSON lines.
 """
+
 import json
 
 

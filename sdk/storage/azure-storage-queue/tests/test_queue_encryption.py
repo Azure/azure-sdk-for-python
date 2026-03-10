@@ -41,7 +41,6 @@ from devtools_testutils.storage import StorageRecordedTestCase
 from encryption_test_helper import KeyResolver, KeyWrapper, mock_urandom, RSAKeyWrapper
 from settings.testcase import QueuePreparer
 
-
 # ------------------------------------------------------------------------------
 TEST_QUEUE_PREFIX = "encryptionqueue"
 # ------------------------------------------------------------------------------

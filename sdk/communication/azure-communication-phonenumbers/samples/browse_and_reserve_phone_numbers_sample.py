@@ -14,7 +14,7 @@ DESCRIPTION:
 USAGE:
     python browse_and_reserve_phone_numbers_sample.py
     Set the environment variables with your own values before running the sample:
-    1) COMMUNICATION_SAMPLES_CONNECTION_STRING - The connection string including your endpoint and 
+    1) COMMUNICATION_SAMPLES_CONNECTION_STRING - The connection string including your endpoint and
         access key of your Azure Communication Service
 """
 
@@ -23,15 +23,11 @@ import uuid
 from azure.communication.phonenumbers import PhoneNumbersClient
 
 connection_str = os.environ["COMMUNICATION_SAMPLES_CONNECTION_STRING"]
-phone_numbers_client = PhoneNumbersClient.from_connection_string(
-    connection_str)
+phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 
 
 def browse_and_reserve_phone_numbers():
-    browse_result = phone_numbers_client.browse_available_phone_numbers(
-        country_code="US",
-        phone_number_type="tollFree"
-    )
+    browse_result = phone_numbers_client.browse_available_phone_numbers(country_code="US", phone_number_type="tollFree")
     number_to_reserve = browse_result.phone_numbers[0]
     print(f"Reserving phone number: {number_to_reserve.phone_number}")
 
@@ -40,21 +36,18 @@ def browse_and_reserve_phone_numbers():
     print(f"Using reservation ID: {reservation_id}")
 
     reservation = phone_numbers_client.create_or_update_reservation(
-        reservation_id=reservation_id,
-        numbers_to_add=[number_to_reserve]
+        reservation_id=reservation_id, numbers_to_add=[number_to_reserve]
     )
 
     # Check if any errors occurred during reservation
     if reservation.phone_numbers:
-        numbers_with_error = [
-            n for n in reservation.phone_numbers.values() if n.status == "error"]
+        numbers_with_error = [n for n in reservation.phone_numbers.values() if n.status == "error"]
     if any(numbers_with_error):
         print("Errors occurred during reservation:")
         for number in numbers_with_error:
             error_code = number.error.code if number.error and number.error.code else "Unknown"
             error_message = number.error.message if number.error and number.error.message else "Unknown error"
-            print(
-                f"Phone number: {number.phone_number}, Error: {error_code}, Message: {error_message}")
+            print(f"Phone number: {number.phone_number}, Error: {error_code}, Message: {error_message}")
     else:
         print("Reservation operation completed without errors.")
 

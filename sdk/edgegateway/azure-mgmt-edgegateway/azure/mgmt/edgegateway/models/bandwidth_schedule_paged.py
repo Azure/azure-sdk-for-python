@@ -18,8 +18,8 @@ class BandwidthSchedulePaged(Paged):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[BandwidthSchedule]'}
+        "next_link": {"key": "nextLink", "type": "str"},
+        "current_page": {"key": "value", "type": "[BandwidthSchedule]"},
     }
 
     def __init__(self, *args, **kwargs):

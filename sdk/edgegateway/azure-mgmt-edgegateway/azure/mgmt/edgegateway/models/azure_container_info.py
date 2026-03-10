@@ -31,19 +31,19 @@ class AzureContainerInfo(Model):
     """
 
     _validation = {
-        'storage_account_credential_id': {'required': True},
-        'container_name': {'required': True},
-        'data_format': {'required': True},
+        "storage_account_credential_id": {"required": True},
+        "container_name": {"required": True},
+        "data_format": {"required": True},
     }
 
     _attribute_map = {
-        'storage_account_credential_id': {'key': 'storageAccountCredentialId', 'type': 'str'},
-        'container_name': {'key': 'containerName', 'type': 'str'},
-        'data_format': {'key': 'dataFormat', 'type': 'str'},
+        "storage_account_credential_id": {"key": "storageAccountCredentialId", "type": "str"},
+        "container_name": {"key": "containerName", "type": "str"},
+        "data_format": {"key": "dataFormat", "type": "str"},
     }
 
     def __init__(self, **kwargs):
         super(AzureContainerInfo, self).__init__(**kwargs)
-        self.storage_account_credential_id = kwargs.get('storage_account_credential_id', None)
-        self.container_name = kwargs.get('container_name', None)
-        self.data_format = kwargs.get('data_format', None)
+        self.storage_account_credential_id = kwargs.get("storage_account_credential_id", None)
+        self.container_name = kwargs.get("container_name", None)
+        self.data_format = kwargs.get("data_format", None)

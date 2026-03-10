@@ -1,14 +1,15 @@
 # coding: utf-8
 
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 import unittest
 
 import azure.mgmt.billing
 from devtools_testutils import AzureMgmtTestCase
+
 
 class MgmtBillingTest(AzureMgmtTestCase):
 
@@ -56,19 +57,19 @@ class MgmtBillingTest(AzureMgmtTestCase):
 
     @unittest.skip("skip")
     def test_billing_invoice_list_generate_url(self):
-        output = list(self.billing_client.invoices.list(expand='downloadUrl'))
+        output = list(self.billing_client.invoices.list(expand="downloadUrl"))
         self.assertTrue(len(output) > 0)
         self._validate_invoice(output[0], url_generated=True)
 
     @unittest.skip("skip")
     def test_billing_invoice_list_top(self):
-        output = list(self.billing_client.invoices.list(expand='downloadUrl', top=1))
+        output = list(self.billing_client.invoices.list(expand="downloadUrl", top=1))
         self.assertEqual(1, len(output))
         self._validate_invoice(output[0], url_generated=True)
 
     @unittest.skip("skip")
     def test_billing_invoice_list_filter(self):
-        output = list(self.billing_client.invoices.list(filter='invoicePeriodEndDate gt 2017-02-01'))
+        output = list(self.billing_client.invoices.list(filter="invoicePeriodEndDate gt 2017-02-01"))
         self.assertTrue(len(output) > 0)
         self._validate_invoice(output[0], url_generated=False)
 
@@ -88,10 +89,11 @@ class MgmtBillingTest(AzureMgmtTestCase):
 
     @unittest.skip("skip")
     def test_billing_period_list_filter(self):
-        output = list(self.billing_client.billing_periods.list(filter='billingPeriodEndDate gt 2017-02-01'))
+        output = list(self.billing_client.billing_periods.list(filter="billingPeriodEndDate gt 2017-02-01"))
         self.assertTrue(len(output) > 0)
         self._validate_billing_period(output[0])
 
-#------------------------------------------------------------------------------
-if __name__ == '__main__':
+
+# ------------------------------------------------------------------------------
+if __name__ == "__main__":
     unittest.main()

@@ -35,7 +35,6 @@ from devtools_testutils.sanitizers import (
     add_oauth_response_sanitizer,
 )
 
-
 # Environment variable keys
 ENV_SUBSCRIPTION_ID = "AZURE_SUBSCRIPTION_ID"
 ENV_DCE = "AZURE_MONITOR_DCE"

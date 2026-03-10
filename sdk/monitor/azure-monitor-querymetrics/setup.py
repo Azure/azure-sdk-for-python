@@ -11,7 +11,6 @@ import os
 import re
 from setuptools import setup, find_packages
 
-
 PACKAGE_NAME = "azure-monitor-querymetrics"
 PACKAGE_PPRINT_NAME = "Azure Monitor Query Metrics"
 PACKAGE_NAMESPACE = "azure.monitor.querymetrics"

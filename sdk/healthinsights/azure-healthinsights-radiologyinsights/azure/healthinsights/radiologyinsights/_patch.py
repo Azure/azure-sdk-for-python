@@ -7,6 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 from typing import (
     Any,
     IO,
@@ -32,7 +33,6 @@ from azure.core.utils import case_insensitive_dict
 from . import models as _models
 from ._model_base import _deserialize
 from ._client import RadiologyInsightsClient as _RadiologyInsightsClient
-
 
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")

@@ -33,7 +33,9 @@ async def test_get_properties(auth_credentials_async, uamqp_transport, client_ar
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_get_properties_with_auth_error_async(auth_credentials_async, live_eventhub, uamqp_transport, client_args):
+async def test_get_properties_with_auth_error_async(
+    auth_credentials_async, live_eventhub, uamqp_transport, client_args
+):
     fully_qualified_namespace, eventhub_name, _ = auth_credentials_async
     client = EventHubConsumerClient(
         fully_qualified_namespace=fully_qualified_namespace,

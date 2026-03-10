@@ -13,7 +13,7 @@ DESCRIPTION:
 USAGE:
     python update_phone_number_capabilities_sample.py
     Set the environment variables with your own values before running the sample:
-    1) COMMUNICATION_SAMPLES_CONNECTION_STRING - The connection string including your endpoint and 
+    1) COMMUNICATION_SAMPLES_CONNECTION_STRING - The connection string including your endpoint and
         access key of your Azure Communication Service
     2) AZURE_PHONE_NUMBER - The phone number you want to update
 """

@@ -19,8 +19,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Synchronized request in the Azure Cosmos database service.
-"""
+"""Synchronized request in the Azure Cosmos database service."""
+
 import copy
 import json
 import time
@@ -35,6 +35,7 @@ from ._availability_strategy_handler import execute_with_hedging
 from ._constants import _Constants
 from ._request_object import RequestObject
 from .documents import _OperationType
+
 
 # cspell:ignore ppaf
 def _is_readable_stream(obj):
@@ -69,7 +70,9 @@ def _request_body_from_data(data):
     return None
 
 
-def _Request(global_endpoint_manager, request_params, connection_policy, pipeline_client, request, **kwargs): # pylint: disable=too-many-statements
+def _Request(
+    global_endpoint_manager, request_params, connection_policy, pipeline_client, request, **kwargs
+):  # pylint: disable=too-many-statements
     """Makes one http request using the requests module.
 
     :param _GlobalEndpointManager global_endpoint_manager:
@@ -94,7 +97,7 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     read_timeout = kwargs.pop("read_timeout", read_timeout)
 
     # Every request tries to perform a refresh
-    client_timeout = kwargs.get('timeout')
+    client_timeout = kwargs.get("timeout")
     start_time = time.time()
     if request_params.healthy_tentative_location:
         read_timeout = connection_policy.RecoveryReadTimeout
@@ -109,16 +112,17 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
         read_timeout = request_params.read_timeout_override
 
     if client_timeout is not None:
-        kwargs['timeout'] = client_timeout - (time.time() - start_time)
-        if kwargs['timeout'] <= 0:
+        kwargs["timeout"] = client_timeout - (time.time() - start_time)
+        if kwargs["timeout"] <= 0:
             raise exceptions.CosmosClientTimeoutError()
 
     if request_params.endpoint_override:
         base_url = request_params.endpoint_override
     else:
         pk_range_wrapper = None
-        if (global_endpoint_manager.is_circuit_breaker_applicable(request_params) or
-                global_endpoint_manager.is_per_partition_automatic_failover_applicable(request_params)):
+        if global_endpoint_manager.is_circuit_breaker_applicable(
+            request_params
+        ) or global_endpoint_manager.is_per_partition_automatic_failover_applicable(request_params):
             # Circuit breaker or per-partition failover are applicable, so we need to use the endpoint from the request
             pk_range_wrapper = global_endpoint_manager.create_pk_range_wrapper(request_params)
         base_url = global_endpoint_manager.resolve_service_endpoint_for_partition(request_params, pk_range_wrapper)
@@ -193,34 +197,32 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
         try:
             result = json.loads(data)
         except Exception as e:
-            raise DecodeError(
-                message="Failed to decode JSON data: {}".format(e),
-                response=response,
-                error=e) from e
+            raise DecodeError(message="Failed to decode JSON data: {}".format(e), response=response, error=e) from e
 
     return result, headers
 
 
 def _is_availability_strategy_applicable(request_params: RequestObject) -> bool:
     """Determine if availability strategy should be applied to the request.
-    
+
     :param request_params: Request parameters containing operation details
     :type request_params: ~azure.cosmos._request_object.RequestObject
     :returns: True if availability strategy should be applied, False otherwise
     :rtype: bool
     """
-    return (request_params.availability_strategy is not None and
-            not request_params.is_hedging_request and
-            request_params.resource_type == http_constants.ResourceType.Document and
-            (not _OperationType.IsWriteOperation(request_params.operation_type) or
-             request_params.retry_write > 0))
+    return (
+        request_params.availability_strategy is not None
+        and not request_params.is_hedging_request
+        and request_params.resource_type == http_constants.ResourceType.Document
+        and (not _OperationType.IsWriteOperation(request_params.operation_type) or request_params.retry_write > 0)
+    )
 
 
 def _replace_url_prefix(original_url, new_prefix):
-    parts = original_url.split('/', 3)
+    parts = original_url.split("/", 3)
 
-    if not new_prefix.endswith('/'):
-        new_prefix += '/'
+    if not new_prefix.endswith("/"):
+        new_prefix += "/"
 
     new_url = new_prefix + parts[3] if len(parts) > 3 else new_prefix
 
@@ -232,15 +234,9 @@ def _PipelineRunFunction(pipeline_client, request, **kwargs):
 
     return pipeline_client._pipeline.run(request, **kwargs)
 
+
 def SynchronizedRequest(
-        client,
-        request_params,
-        global_endpoint_manager,
-        connection_policy,
-        pipeline_client,
-        request,
-        request_data,
-        **kwargs
+    client, request_params, global_endpoint_manager, connection_policy, pipeline_client, request, request_data, **kwargs
 ):
     """Performs one synchronized http request according to the parameters.
 
@@ -273,25 +269,11 @@ def SynchronizedRequest(
             global_endpoint_manager,
             request,
             lambda req_param, r: _retry_utility.Execute(
-                client,
-                global_endpoint_manager,
-                _Request,
-                req_param,
-                connection_policy,
-                pipeline_client,
-                r,
-                **kwargs
-            )
+                client, global_endpoint_manager, _Request, req_param, connection_policy, pipeline_client, r, **kwargs
+            ),
         )
 
     # Pass _Request function with its parameters to retry_utility's Execute method that wraps the call with retries
     return _retry_utility.Execute(
-        client,
-        global_endpoint_manager,
-        _Request,
-        request_params,
-        connection_policy,
-        pipeline_client,
-        request,
-        **kwargs
+        client, global_endpoint_manager, _Request, request_params, connection_policy, pipeline_client, request, **kwargs
     )

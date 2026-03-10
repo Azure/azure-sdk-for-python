@@ -23,6 +23,7 @@
 IMPORTANT: This file has been marked for deprecation and will be removed in the future. For diagnostics logging in our
 SDK, please use our CosmosHttpLoggingPolicy outlined in our README.
 """
+
 import warnings
 
 from azure.core.utils import CaseInsensitiveDict
@@ -93,12 +94,12 @@ class _RecordDiagnostics(object):
 
 
 def __getattr__(name):
-    if name == 'RecordDiagnostics':
+    if name == "RecordDiagnostics":
         warnings.warn(
-            "RecordDiagnostics is deprecated and should not be used. " +
-            "For logging diagnostics information for the SDK, please use our CosmosHttpLoggingPolicy. " +
-            "For more information on this, please see our README.",
-            DeprecationWarning
+            "RecordDiagnostics is deprecated and should not be used. "
+            + "For logging diagnostics information for the SDK, please use our CosmosHttpLoggingPolicy. "
+            + "For more information on this, please see our README.",
+            DeprecationWarning,
         )
         return _RecordDiagnostics
 

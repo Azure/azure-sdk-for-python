@@ -25,8 +25,9 @@ class TestMatchTrials(AzureRecordedTestCase):
     @HealthInsightsEnvPreparer()
     @recorded_by_proxy
     def test_match_trials(self, healthinsights_endpoint, healthinsights_key):
-        clinical_matching_client = ClinicalMatchingClient(healthinsights_endpoint,
-                                                  AzureKeyCredential(healthinsights_key))
+        clinical_matching_client = ClinicalMatchingClient(
+            healthinsights_endpoint, AzureKeyCredential(healthinsights_key)
+        )
 
         assert clinical_matching_client is not None
 
@@ -35,26 +36,16 @@ class TestMatchTrials(AzureRecordedTestCase):
                 "clinicalTrials": {
                     "registryFilters": [
                         {
-                            "conditions": [
-                                "non small cell lung cancer (nsclc)"
-                            ],
-                            "sources": [
-                                "clinicaltrials_gov"
-                            ],
-                            "recruitmentStatuses": [
-                                "recruiting"
-                            ],
+                            "conditions": ["non small cell lung cancer (nsclc)"],
+                            "sources": ["clinicaltrials_gov"],
+                            "recruitmentStatuses": ["recruiting"],
                             "facilityLocations": [
-                                {
-                                    "city": "gilbert",
-                                    "state": "arizona",
-                                    "countryOrRegion": "United States"
-                                }
-                            ]
+                                {"city": "gilbert", "state": "arizona", "countryOrRegion": "United States"}
+                            ],
                         }
                     ]
                 },
-                "includeEvidence": True
+                "includeEvidence": True,
             },
             "patients": [
                 {
@@ -62,39 +53,41 @@ class TestMatchTrials(AzureRecordedTestCase):
                     "info": {
                         "sex": "male",
                         "birthDate": "1961-04-25T09:54:29.5210127+00:00",
-                        "clinicalInfo": [{
-                            "system": "http://www.nlm.nih.gov/research/umls",
-                            "code": "C0032181",
-                            "name": "Platelet count",
-                            "value": "250000"
-                        },
+                        "clinicalInfo": [
+                            {
+                                "system": "http://www.nlm.nih.gov/research/umls",
+                                "code": "C0032181",
+                                "name": "Platelet count",
+                                "value": "250000",
+                            },
                             {
                                 "system": "http://www.nlm.nih.gov/research/umls",
                                 "code": "C0002965",
                                 "name": "Unstable Angina",
-                                "value": "true"
+                                "value": "true",
                             },
                             {
                                 "system": "http://www.nlm.nih.gov/research/umls",
                                 "code": "C1522449",
                                 "name": "Radiotherapy",
-                                "value": "false"
+                                "value": "false",
                             },
                             {
                                 "system": "http://www.nlm.nih.gov/research/umls",
                                 "code": "C0242957",
                                 "name": "GeneOrProtein-Expression",
-                                "value": "Negative;EntityType:GENEORPROTEIN-EXPRESSION"
+                                "value": "Negative;EntityType:GENEORPROTEIN-EXPRESSION",
                             },
                             {
                                 "system": "http://www.nlm.nih.gov/research/umls",
                                 "code": "C1300072",
                                 "name": "cancer stage",
-                                "value": "2"
-                            }]
-                    }
+                                "value": "2",
+                            },
+                        ],
+                    },
                 }
-            ]
+            ],
         }
 
         poller = clinical_matching_client.begin_match_trials(data)

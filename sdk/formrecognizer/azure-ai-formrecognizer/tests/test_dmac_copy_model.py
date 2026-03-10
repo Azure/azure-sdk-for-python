@@ -9,12 +9,18 @@ import uuid
 import functools
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.core.exceptions import HttpResponseError
-from azure.ai.formrecognizer._generated.v2023_07_31.models import DocumentModelCopyToOperationDetails, DocumentModelDetails as ModelDetails
-from azure.ai.formrecognizer import DocumentModelDetails, DocumentModelAdministrationClient, DocumentModelAdministrationLROPoller
+from azure.ai.formrecognizer._generated.v2023_07_31.models import (
+    DocumentModelCopyToOperationDetails,
+    DocumentModelDetails as ModelDetails,
+)
+from azure.ai.formrecognizer import (
+    DocumentModelDetails,
+    DocumentModelAdministrationClient,
+    DocumentModelAdministrationLROPoller,
+)
 from testcase import FormRecognizerTest
 from preparers import FormRecognizerPreparer, get_sync_client
 from conftest import skip_flaky_test
-
 
 get_dma_client = functools.partial(get_sync_client, DocumentModelAdministrationClient)
 
@@ -29,7 +35,7 @@ class TestCopyModel(FormRecognizerTest):
         assert "model_id cannot be None or empty." in str(e.value)
 
     @FormRecognizerPreparer()
-    def test_copy_model_empty_model_id(self,**kwargs):
+    def test_copy_model_empty_model_id(self, **kwargs):
         client = get_dma_client()
         with pytest.raises(ValueError) as e:
             client.begin_copy_document_model_to(model_id="", target={})
@@ -41,7 +47,9 @@ class TestCopyModel(FormRecognizerTest):
     def test_copy_model_successful(self, formrecognizer_storage_container_sas_url, **kwargs):
         client = get_dma_client()
         set_bodiless_matcher()
-        poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+        poller = client.begin_build_document_model(
+            "template", blob_container_url=formrecognizer_storage_container_sas_url
+        )
         model = poller.result()
 
         target = client.get_copy_authorization(tags={"testkey": "testvalue"})
@@ -67,7 +75,9 @@ class TestCopyModel(FormRecognizerTest):
     def test_copy_model_with_model_id_and_desc(self, formrecognizer_storage_container_sas_url, **kwargs):
         client = get_dma_client()
         set_bodiless_matcher()
-        poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+        poller = client.begin_build_document_model(
+            "template", blob_container_url=formrecognizer_storage_container_sas_url
+        )
         model = poller.result()
 
         model_id = str(uuid.uuid4())
@@ -83,8 +93,8 @@ class TestCopyModel(FormRecognizerTest):
         assert copy.created_on
         for name, doc_type in copy.doc_types.items():
             # if self.is_live:
-                # FIXME: tracking issue #24916
-                # assert name == target["targetModelId"]
+            # FIXME: tracking issue #24916
+            # assert name == target["targetModelId"]
             for key, field in doc_type.field_schema.items():
                 assert key
                 assert field["type"]
@@ -96,7 +106,9 @@ class TestCopyModel(FormRecognizerTest):
     def test_copy_model_fail_bad_model_id(self, formrecognizer_storage_container_sas_url, **kwargs):
         client = get_dma_client()
         set_bodiless_matcher()
-        poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+        poller = client.begin_build_document_model(
+            "template", blob_container_url=formrecognizer_storage_container_sas_url
+        )
         model = poller.result()
 
         target = client.get_copy_authorization()
@@ -112,7 +124,9 @@ class TestCopyModel(FormRecognizerTest):
     def test_copy_model_transform(self, formrecognizer_storage_container_sas_url, **kwargs):
         client = get_dma_client()
         set_bodiless_matcher()
-        poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+        poller = client.begin_build_document_model(
+            "template", blob_container_url=formrecognizer_storage_container_sas_url
+        )
         model = poller.result()
 
         target = client.get_copy_authorization()
@@ -154,10 +168,14 @@ class TestCopyModel(FormRecognizerTest):
     def test_copy_model_with_composed_model(self, formrecognizer_storage_container_sas_url, **kwargs):
         client = get_dma_client()
         set_bodiless_matcher()
-        poller_1 = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+        poller_1 = client.begin_build_document_model(
+            "template", blob_container_url=formrecognizer_storage_container_sas_url
+        )
         model_1 = poller_1.result()
 
-        poller_2 = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+        poller_2 = client.begin_build_document_model(
+            "template", blob_container_url=formrecognizer_storage_container_sas_url
+        )
         model_2 = poller_2.result()
 
         composed_poller = client.begin_compose_document_model([model_1.model_id, model_2.model_id])
@@ -186,7 +204,9 @@ class TestCopyModel(FormRecognizerTest):
     def test_copy_continuation_token(self, **kwargs):
         client = get_dma_client()
         formrecognizer_storage_container_sas_url = kwargs.pop("formrecognizer_storage_container_sas_url")
-        poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+        poller = client.begin_build_document_model(
+            "template", blob_container_url=formrecognizer_storage_container_sas_url
+        )
         model = poller.result()
 
         target = client.get_copy_authorization()
@@ -205,7 +225,9 @@ class TestCopyModel(FormRecognizerTest):
     def test_poller_metadata(self, formrecognizer_storage_container_sas_url, **kwargs):
         client = get_dma_client()
         set_bodiless_matcher()
-        poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+        poller = client.begin_build_document_model(
+            "template", blob_container_url=formrecognizer_storage_container_sas_url
+        )
         model = poller.result()
 
         target = client.get_copy_authorization()

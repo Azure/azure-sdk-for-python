@@ -80,13 +80,16 @@ def add_batch(batch, message):
     encode_payload(output, message)
     batch[5].append(output)
 
+
 def set_message_properties(message, properties: list):
     if not message[3]:
         message[3] = Properties(*properties)
 
+
 def set_message_annotations(message, annotations: dict):
     if not message[2]:
         message[2] = annotations
+
 
 def encode_str(data, encoding="utf-8"):
     try:

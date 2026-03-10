@@ -5,9 +5,9 @@
 FILE: sample_hello_world_async.py
 
 DESCRIPTION:
-    This sample demonstrates the most basic operation that can be 
-    performed - creation of a Party. Use this to understand how to 
-    create the client object, how to authenticate it, and make sure 
+    This sample demonstrates the most basic operation that can be
+    performed - creation of a Party. Use this to understand how to
+    create the client object, how to authenticate it, and make sure
     your client is set up correctly to call into your FarmBeats endpoint.
 
 USAGE:
@@ -30,14 +30,11 @@ import random
 
 async def sample_hello_world_async():
 
-    farmbeats_endpoint = os.environ['FARMBEATS_ENDPOINT']
+    farmbeats_endpoint = os.environ["FARMBEATS_ENDPOINT"]
 
     credential = DefaultAzureCredential()
 
-    client = FarmBeatsClient(
-        endpoint=farmbeats_endpoint,
-        credential=credential
-    )
+    client = FarmBeatsClient(endpoint=farmbeats_endpoint, credential=credential)
 
     party_id = f"contoso-party-{random.randint(0,1000)}"
     party_name = "Contoso"
@@ -50,15 +47,11 @@ async def sample_hello_world_async():
             "name": party_name,
             "description": party_description,
             "status": "Sample Status",
-            "properties": {
-                "foo": "bar",
-                "numeric one": 1,
-                1: "numeric key"
-            }
-        }
+            "properties": {"foo": "bar", "numeric one": 1, 1: "numeric key"},
+        },
     )
     print("Done")
-    
+
     print("Here are the details of the party:")
     print("\tID:", party["id"])
     print("\tName:", party["name"])
@@ -73,7 +66,7 @@ async def sample_hello_world_async():
 if __name__ == "__main__":
 
     load_dotenv()
-    
+
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     asyncio.run(sample_hello_world_async())

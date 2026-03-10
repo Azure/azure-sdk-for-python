@@ -160,31 +160,25 @@ class TestField:
     def test_version_types(self, tmp_path):
         data_name = f"version_rand_name"
         p = tmp_path / "version_float.yml"
-        p.write_text(
-            f"""
+        p.write_text(f"""
 name: {data_name}
 version: 3.12
-path: ./bla"""
-        )
+path: ./bla""")
         asset = load_data(source=p)
         assert asset.version == "3.12"
 
         p = tmp_path / "version_int.yml"
-        p.write_text(
-            f"""
+        p.write_text(f"""
 name: {data_name}
 version: 3
-path: ./bla"""
-        )
+path: ./bla""")
         asset = load_data(source=p)
         assert asset.version == "3"
 
         p = tmp_path / "version_str.yml"
-        p.write_text(
-            f"""
+        p.write_text(f"""
 name: {data_name}
 version: foobar
-path: ./bla"""
-        )
+path: ./bla""")
         asset = load_data(source=p)
         assert asset.version == "foobar"

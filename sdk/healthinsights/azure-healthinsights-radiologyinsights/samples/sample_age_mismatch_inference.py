@@ -13,7 +13,7 @@ submit it to the client, RadiologyInsightsClient, and display
 -the Age Mismatch url extension,
 -the Age Mismatch offset extension,
 -the Age Mismatch length extension, and
--the Age Mismatch evidence     
+-the Age Mismatch evidence
 
 
 USAGE:
@@ -23,8 +23,9 @@ USAGE:
     - For more details how to use DefaultAzureCredential, please take a look at https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential
 
 2. python sample_age_mismatch_inference.py
-   
+
 """
+
 import datetime
 import os
 import uuid

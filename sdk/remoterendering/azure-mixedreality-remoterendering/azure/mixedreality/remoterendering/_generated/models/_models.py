@@ -38,34 +38,31 @@ class AssetConversion(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
-        'settings': {'required': True},
-        'output': {'readonly': True},
-        'error': {'required': True},
-        'status': {'required': True},
-        'created_on': {'required': True},
+        "id": {"required": True},
+        "settings": {"required": True},
+        "output": {"readonly": True},
+        "error": {"required": True},
+        "status": {"required": True},
+        "created_on": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'settings': {'key': 'settings', 'type': 'AssetConversionSettings'},
-        'output': {'key': 'output', 'type': 'AssetConversionOutput'},
-        'error': {'key': 'error', 'type': 'RemoteRenderingError'},
-        'status': {'key': 'status', 'type': 'str'},
-        'created_on': {'key': 'creationTime', 'type': 'iso-8601'},
+        "id": {"key": "id", "type": "str"},
+        "settings": {"key": "settings", "type": "AssetConversionSettings"},
+        "output": {"key": "output", "type": "AssetConversionOutput"},
+        "error": {"key": "error", "type": "RemoteRenderingError"},
+        "status": {"key": "status", "type": "str"},
+        "created_on": {"key": "creationTime", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AssetConversion, self).__init__(**kwargs)
-        self.id = kwargs['id']
-        self.settings = kwargs['settings']
+        self.id = kwargs["id"]
+        self.settings = kwargs["settings"]
         self.output = None
-        self.error = kwargs['error']
-        self.status = kwargs['status']
-        self.created_on = kwargs['created_on']
+        self.error = kwargs["error"]
+        self.status = kwargs["status"]
+        self.created_on = kwargs["created_on"]
 
 
 class AssetConversionInputSettings(msrest.serialization.Model):
@@ -94,26 +91,23 @@ class AssetConversionInputSettings(msrest.serialization.Model):
     """
 
     _validation = {
-        'storage_container_uri': {'required': True},
-        'relative_input_asset_path': {'required': True},
+        "storage_container_uri": {"required": True},
+        "relative_input_asset_path": {"required": True},
     }
 
     _attribute_map = {
-        'storage_container_uri': {'key': 'storageContainerUri', 'type': 'str'},
-        'storage_container_read_list_sas': {'key': 'storageContainerReadListSas', 'type': 'str'},
-        'blob_prefix': {'key': 'blobPrefix', 'type': 'str'},
-        'relative_input_asset_path': {'key': 'relativeInputAssetPath', 'type': 'str'},
+        "storage_container_uri": {"key": "storageContainerUri", "type": "str"},
+        "storage_container_read_list_sas": {"key": "storageContainerReadListSas", "type": "str"},
+        "blob_prefix": {"key": "blobPrefix", "type": "str"},
+        "relative_input_asset_path": {"key": "relativeInputAssetPath", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AssetConversionInputSettings, self).__init__(**kwargs)
-        self.storage_container_uri = kwargs['storage_container_uri']
-        self.storage_container_read_list_sas = kwargs.get('storage_container_read_list_sas', None)
-        self.blob_prefix = kwargs.get('blob_prefix', None)
-        self.relative_input_asset_path = kwargs['relative_input_asset_path']
+        self.storage_container_uri = kwargs["storage_container_uri"]
+        self.storage_container_read_list_sas = kwargs.get("storage_container_read_list_sas", None)
+        self.blob_prefix = kwargs.get("blob_prefix", None)
+        self.relative_input_asset_path = kwargs["relative_input_asset_path"]
 
 
 class AssetConversionOutput(msrest.serialization.Model):
@@ -126,17 +120,14 @@ class AssetConversionOutput(msrest.serialization.Model):
     """
 
     _validation = {
-        'asset_uri': {'readonly': True},
+        "asset_uri": {"readonly": True},
     }
 
     _attribute_map = {
-        'asset_uri': {'key': 'outputAssetUri', 'type': 'str'},
+        "asset_uri": {"key": "outputAssetUri", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AssetConversionOutput, self).__init__(**kwargs)
         self.asset_uri = None
 
@@ -167,25 +158,22 @@ class AssetConversionOutputSettings(msrest.serialization.Model):
     """
 
     _validation = {
-        'storage_container_uri': {'required': True},
+        "storage_container_uri": {"required": True},
     }
 
     _attribute_map = {
-        'storage_container_uri': {'key': 'storageContainerUri', 'type': 'str'},
-        'storage_container_write_sas': {'key': 'storageContainerWriteSas', 'type': 'str'},
-        'blob_prefix': {'key': 'blobPrefix', 'type': 'str'},
-        'output_asset_filename': {'key': 'outputAssetFilename', 'type': 'str'},
+        "storage_container_uri": {"key": "storageContainerUri", "type": "str"},
+        "storage_container_write_sas": {"key": "storageContainerWriteSas", "type": "str"},
+        "blob_prefix": {"key": "blobPrefix", "type": "str"},
+        "output_asset_filename": {"key": "outputAssetFilename", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AssetConversionOutputSettings, self).__init__(**kwargs)
-        self.storage_container_uri = kwargs['storage_container_uri']
-        self.storage_container_write_sas = kwargs.get('storage_container_write_sas', None)
-        self.blob_prefix = kwargs.get('blob_prefix', None)
-        self.output_asset_filename = kwargs.get('output_asset_filename', None)
+        self.storage_container_uri = kwargs["storage_container_uri"]
+        self.storage_container_write_sas = kwargs.get("storage_container_write_sas", None)
+        self.blob_prefix = kwargs.get("blob_prefix", None)
+        self.output_asset_filename = kwargs.get("output_asset_filename", None)
 
 
 class AssetConversionSettings(msrest.serialization.Model):
@@ -204,22 +192,19 @@ class AssetConversionSettings(msrest.serialization.Model):
     """
 
     _validation = {
-        'input_settings': {'required': True},
-        'output_settings': {'required': True},
+        "input_settings": {"required": True},
+        "output_settings": {"required": True},
     }
 
     _attribute_map = {
-        'input_settings': {'key': 'inputLocation', 'type': 'AssetConversionInputSettings'},
-        'output_settings': {'key': 'outputLocation', 'type': 'AssetConversionOutputSettings'},
+        "input_settings": {"key": "inputLocation", "type": "AssetConversionInputSettings"},
+        "output_settings": {"key": "outputLocation", "type": "AssetConversionOutputSettings"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(AssetConversionSettings, self).__init__(**kwargs)
-        self.input_settings = kwargs['input_settings']
-        self.output_settings = kwargs['output_settings']
+        self.input_settings = kwargs["input_settings"]
+        self.output_settings = kwargs["output_settings"]
 
 
 class ConversionList(msrest.serialization.Model):
@@ -238,21 +223,18 @@ class ConversionList(msrest.serialization.Model):
     """
 
     _validation = {
-        'conversions': {'required': True},
-        'next_link': {'readonly': True},
+        "conversions": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'conversions': {'key': 'conversions', 'type': '[AssetConversion]'},
-        'next_link': {'key': '@nextLink', 'type': 'str'},
+        "conversions": {"key": "conversions", "type": "[AssetConversion]"},
+        "next_link": {"key": "@nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ConversionList, self).__init__(**kwargs)
-        self.conversions = kwargs['conversions']
+        self.conversions = kwargs["conversions"]
         self.next_link = None
 
 
@@ -267,19 +249,16 @@ class CreateAssetConversionSettings(msrest.serialization.Model):
     """
 
     _validation = {
-        'settings': {'required': True},
+        "settings": {"required": True},
     }
 
     _attribute_map = {
-        'settings': {'key': 'settings', 'type': 'AssetConversionSettings'},
+        "settings": {"key": "settings", "type": "AssetConversionSettings"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CreateAssetConversionSettings, self).__init__(**kwargs)
-        self.settings = kwargs['settings']
+        self.settings = kwargs["settings"]
 
 
 class CreateRenderingSessionSettings(msrest.serialization.Model):
@@ -297,22 +276,19 @@ class CreateRenderingSessionSettings(msrest.serialization.Model):
     """
 
     _validation = {
-        'lease_time_minutes': {'required': True},
-        'size': {'required': True},
+        "lease_time_minutes": {"required": True},
+        "size": {"required": True},
     }
 
     _attribute_map = {
-        'lease_time_minutes': {'key': 'maxLeaseTimeMinutes', 'type': 'int'},
-        'size': {'key': 'size', 'type': 'str'},
+        "lease_time_minutes": {"key": "maxLeaseTimeMinutes", "type": "int"},
+        "size": {"key": "size", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CreateRenderingSessionSettings, self).__init__(**kwargs)
-        self.lease_time_minutes = kwargs['lease_time_minutes']
-        self.size = kwargs['size']
+        self.lease_time_minutes = kwargs["lease_time_minutes"]
+        self.size = kwargs["size"]
 
 
 class ErrorResponse(msrest.serialization.Model):
@@ -325,19 +301,16 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'error': {'required': True},
+        "error": {"required": True},
     }
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'RemoteRenderingError'},
+        "error": {"key": "error", "type": "RemoteRenderingError"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ErrorResponse, self).__init__(**kwargs)
-        self.error = kwargs['error']
+        self.error = kwargs["error"]
 
 
 class RemoteRenderingError(msrest.serialization.Model):
@@ -363,28 +336,25 @@ class RemoteRenderingError(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
-        'details': {'readonly': True},
-        'target': {'readonly': True},
-        'inner_error': {'readonly': True},
+        "code": {"required": True},
+        "message": {"required": True},
+        "details": {"readonly": True},
+        "target": {"readonly": True},
+        "inner_error": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[RemoteRenderingError]'},
-        'target': {'key': 'target', 'type': 'str'},
-        'inner_error': {'key': 'innerError', 'type': 'RemoteRenderingError'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "details": {"key": "details", "type": "[RemoteRenderingError]"},
+        "target": {"key": "target", "type": "str"},
+        "inner_error": {"key": "innerError", "type": "RemoteRenderingError"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(RemoteRenderingError, self).__init__(**kwargs)
-        self.code = kwargs['code']
-        self.message = kwargs['message']
+        self.code = kwargs["code"]
+        self.message = kwargs["message"]
         self.details = None
         self.target = None
         self.inner_error = None
@@ -431,46 +401,43 @@ class RenderingSession(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
-        'arr_inspector_port': {'readonly': True, 'maximum': 65534, 'minimum': 49152},
-        'handshake_port': {'readonly': True, 'maximum': 65534, 'minimum': 49152},
-        'elapsed_time_minutes': {'readonly': True},
-        'hostname': {'readonly': True},
-        'lease_time_minutes': {'readonly': True},
-        'size': {'required': True},
-        'status': {'required': True},
-        'teraflops': {'readonly': True},
-        'error': {'readonly': True},
-        'created_on': {'readonly': True},
+        "id": {"required": True},
+        "arr_inspector_port": {"readonly": True, "maximum": 65534, "minimum": 49152},
+        "handshake_port": {"readonly": True, "maximum": 65534, "minimum": 49152},
+        "elapsed_time_minutes": {"readonly": True},
+        "hostname": {"readonly": True},
+        "lease_time_minutes": {"readonly": True},
+        "size": {"required": True},
+        "status": {"required": True},
+        "teraflops": {"readonly": True},
+        "error": {"readonly": True},
+        "created_on": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'arr_inspector_port': {'key': 'arrInspectorPort', 'type': 'int'},
-        'handshake_port': {'key': 'handshakePort', 'type': 'int'},
-        'elapsed_time_minutes': {'key': 'elapsedTimeMinutes', 'type': 'int'},
-        'hostname': {'key': 'hostname', 'type': 'str'},
-        'lease_time_minutes': {'key': 'maxLeaseTimeMinutes', 'type': 'int'},
-        'size': {'key': 'size', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'teraflops': {'key': 'teraflops', 'type': 'float'},
-        'error': {'key': 'error', 'type': 'RemoteRenderingError'},
-        'created_on': {'key': 'creationTime', 'type': 'iso-8601'},
+        "id": {"key": "id", "type": "str"},
+        "arr_inspector_port": {"key": "arrInspectorPort", "type": "int"},
+        "handshake_port": {"key": "handshakePort", "type": "int"},
+        "elapsed_time_minutes": {"key": "elapsedTimeMinutes", "type": "int"},
+        "hostname": {"key": "hostname", "type": "str"},
+        "lease_time_minutes": {"key": "maxLeaseTimeMinutes", "type": "int"},
+        "size": {"key": "size", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "teraflops": {"key": "teraflops", "type": "float"},
+        "error": {"key": "error", "type": "RemoteRenderingError"},
+        "created_on": {"key": "creationTime", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(RenderingSession, self).__init__(**kwargs)
-        self.id = kwargs['id']
+        self.id = kwargs["id"]
         self.arr_inspector_port = None
         self.handshake_port = None
         self.elapsed_time_minutes = None
         self.hostname = None
         self.lease_time_minutes = None
-        self.size = kwargs['size']
-        self.status = kwargs['status']
+        self.size = kwargs["size"]
+        self.status = kwargs["status"]
         self.teraflops = None
         self.error = None
         self.created_on = None
@@ -493,21 +460,18 @@ class SessionsList(msrest.serialization.Model):
     """
 
     _validation = {
-        'sessions': {'required': True},
-        'next_link': {'readonly': True},
+        "sessions": {"required": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'sessions': {'key': 'sessions', 'type': '[RenderingSession]'},
-        'next_link': {'key': '@nextLink', 'type': 'str'},
+        "sessions": {"key": "sessions", "type": "[RenderingSession]"},
+        "next_link": {"key": "@nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SessionsList, self).__init__(**kwargs)
-        self.sessions = kwargs['sessions']
+        self.sessions = kwargs["sessions"]
         self.next_link = None
 
 
@@ -523,16 +487,13 @@ class UpdateSessionSettings(msrest.serialization.Model):
     """
 
     _validation = {
-        'lease_time_minutes': {'required': True},
+        "lease_time_minutes": {"required": True},
     }
 
     _attribute_map = {
-        'lease_time_minutes': {'key': 'maxLeaseTimeMinutes', 'type': 'int'},
+        "lease_time_minutes": {"key": "maxLeaseTimeMinutes", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(UpdateSessionSettings, self).__init__(**kwargs)
-        self.lease_time_minutes = kwargs['lease_time_minutes']
+        self.lease_time_minutes = kwargs["lease_time_minutes"]

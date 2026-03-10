@@ -21,6 +21,7 @@ USAGE:
     4)  LOADTESTSERVICE_ENDPOINT - Data Plane endpoint for Loadtestservice
     5)  LOADTESTSERVICE_TEST_ID - The ID of the load test for which to generate recommendations, it should have browser recording file before generating recommendations.
 """
+
 from azure.developer.loadtesting import LoadTestAdministrationClient
 from azure.identity import DefaultAzureCredential
 
@@ -31,9 +32,7 @@ load_dotenv()
 LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
 TEST_ID = os.environ["LOADTESTSERVICE_TEST_ID"]
 
-client = LoadTestAdministrationClient(
-    credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT
-)
+client = LoadTestAdministrationClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
 
 # Generate test plan recommendations
 print("Generating test plan recommendations...")

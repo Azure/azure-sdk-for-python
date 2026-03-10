@@ -5,7 +5,7 @@
 FILE: sample_cascade_delete_async.py
 
 DESCRIPTION:
-    This sample demonstrates 
+    This sample demonstrates
     - Getting a filtered list of parties based on last modified timestamp
     - Queuing a cascade delete job on a party, and polling for it to complete
 
@@ -31,23 +31,18 @@ from dotenv import load_dotenv
 
 async def sample_cascade_delete_async():
 
-    farmbeats_endpoint = os.environ['FARMBEATS_ENDPOINT']
+    farmbeats_endpoint = os.environ["FARMBEATS_ENDPOINT"]
 
     credential = DefaultAzureCredential()
 
-    client = FarmBeatsClient(
-        endpoint=farmbeats_endpoint,
-        credential=credential
-    )
+    client = FarmBeatsClient(endpoint=farmbeats_endpoint, credential=credential)
 
     job_id_prefix = "cascade-delete-job"
 
     # Getting list of parties modified in the last 7 days
     print("Getting list of recently modified party id's... ", end="", flush=True)
-    parties = client.parties.list(
-        min_last_modified_date_time=datetime.now(tz=UTC) - timedelta(days=7)
-    )
-    party_ids = [party['id'] async for party in parties]
+    parties = client.parties.list(min_last_modified_date_time=datetime.now(tz=UTC) - timedelta(days=7))
+    party_ids = [party["id"] async for party in parties]
     print("Done")
 
     # Ask for the id of the party which is to be deleted.
@@ -62,8 +57,7 @@ async def sample_cascade_delete_async():
     job_id = f"{job_id_prefix}-{randint(0, 1000)}"
     print(f"Queuing cascade delete job {job_id}... ", end="", flush=True)
     cascade_delete_job_poller = await client.parties.begin_create_cascade_delete_job(
-        job_id=job_id,
-        party_id = party_id_to_delete
+        job_id=job_id, party_id=party_id_to_delete
     )
     print("Queued. Waiting for completion... ", end="", flush=True)
     await cascade_delete_job_poller.result()

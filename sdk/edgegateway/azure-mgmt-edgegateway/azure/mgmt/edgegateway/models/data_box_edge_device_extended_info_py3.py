@@ -35,22 +35,22 @@ class DataBoxEdgeDeviceExtendedInfo(ARMBaseModel):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'resource_key': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "resource_key": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'encryption_key_thumbprint': {'key': 'properties.encryptionKeyThumbprint', 'type': 'str'},
-        'encryption_key': {'key': 'properties.encryptionKey', 'type': 'str'},
-        'resource_key': {'key': 'properties.resourceKey', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "encryption_key_thumbprint": {"key": "properties.encryptionKeyThumbprint", "type": "str"},
+        "encryption_key": {"key": "properties.encryptionKey", "type": "str"},
+        "resource_key": {"key": "properties.resourceKey", "type": "str"},
     }
 
-    def __init__(self, *, encryption_key_thumbprint: str=None, encryption_key: str=None, **kwargs) -> None:
+    def __init__(self, *, encryption_key_thumbprint: str = None, encryption_key: str = None, **kwargs) -> None:
         super(DataBoxEdgeDeviceExtendedInfo, self).__init__(**kwargs)
         self.encryption_key_thumbprint = encryption_key_thumbprint
         self.encryption_key = encryption_key

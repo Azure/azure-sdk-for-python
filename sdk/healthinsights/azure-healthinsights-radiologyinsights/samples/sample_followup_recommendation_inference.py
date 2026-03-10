@@ -27,7 +27,7 @@ submit it to the client, RadiologyInsightsClient, and display
 - the Imaging procedure modality extension url
 - the Imaging procedure modality extension reference
 - the Imaging procedure modality extension offset
-- the Imaging procedure modality extension length       
+- the Imaging procedure modality extension length
 
 
 USAGE:
@@ -37,8 +37,9 @@ USAGE:
     - For more details how to use DefaultAzureCredential, please take a look at https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential
 
 2. python sample_followup_recommendation_inference.py
-   
+
 """
+
 import datetime
 import os
 import uuid

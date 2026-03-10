@@ -10,7 +10,6 @@ from azure.identity.aio import ManagedIdentityCredential as AsyncManagedIdentity
 from azure.storage.blob.aio import BlobServiceClient as AsyncBlobServiceClient
 from flask import Flask
 
-
 app = Flask(__name__)
 
 EXPECTED_VARIABLES = (

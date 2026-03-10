@@ -9,14 +9,11 @@ from testcase import DeviceUpdateTest, DeviceUpdatePowerShellPreparer
 from azure.core.exceptions import ResourceNotFoundError
 import pytest
 
+
 class TestDeviceManagementClient(DeviceUpdateTest):
     @recorded_by_proxy
     @DeviceUpdatePowerShellPreparer()
-    def test_get_devices(
-            self,
-            deviceupdate_endpoint,
-            deviceupdate_instance_id
-    ):
+    def test_get_devices(self, deviceupdate_endpoint, deviceupdate_instance_id):
         client = self.create_client(endpoint=deviceupdate_endpoint, instance_id=deviceupdate_instance_id)
         try:
             response = client.device_management.list_devices()
@@ -27,11 +24,7 @@ class TestDeviceManagementClient(DeviceUpdateTest):
 
     @recorded_by_proxy
     @DeviceUpdatePowerShellPreparer()
-    def test_get_device_not_found(
-            self,
-            deviceupdate_endpoint,
-            deviceupdate_instance_id
-    ):
+    def test_get_device_not_found(self, deviceupdate_endpoint, deviceupdate_instance_id):
         client = self.create_client(endpoint=deviceupdate_endpoint, instance_id=deviceupdate_instance_id)
         try:
             client.device_management.get_device("foo")
@@ -41,11 +34,7 @@ class TestDeviceManagementClient(DeviceUpdateTest):
 
     @recorded_by_proxy
     @DeviceUpdatePowerShellPreparer()
-    def test_get_groups(
-            self,
-            deviceupdate_endpoint,
-            deviceupdate_instance_id
-    ):
+    def test_get_groups(self, deviceupdate_endpoint, deviceupdate_instance_id):
         client = self.create_client(endpoint=deviceupdate_endpoint, instance_id=deviceupdate_instance_id)
         try:
             response = client.device_management.list_groups()
@@ -56,23 +45,14 @@ class TestDeviceManagementClient(DeviceUpdateTest):
 
     @recorded_by_proxy
     @DeviceUpdatePowerShellPreparer()
-    def test_get_group(
-            self,
-            deviceupdate_endpoint,
-            deviceupdate_instance_id,
-            deviceupdate_device_group
-    ):
+    def test_get_group(self, deviceupdate_endpoint, deviceupdate_instance_id, deviceupdate_device_group):
         client = self.create_client(endpoint=deviceupdate_endpoint, instance_id=deviceupdate_instance_id)
         response = client.device_management.get_group(deviceupdate_device_group)
         assert response is not None
 
     @recorded_by_proxy
     @DeviceUpdatePowerShellPreparer()
-    def test_get_group_not_found(
-            self,
-            deviceupdate_endpoint,
-            deviceupdate_instance_id
-    ):
+    def test_get_group_not_found(self, deviceupdate_endpoint, deviceupdate_instance_id):
         client = self.create_client(endpoint=deviceupdate_endpoint, instance_id=deviceupdate_instance_id)
         try:
             client.device_management.get_group("foo")
@@ -82,11 +62,7 @@ class TestDeviceManagementClient(DeviceUpdateTest):
 
     @recorded_by_proxy
     @DeviceUpdatePowerShellPreparer()
-    def _test_get_device_classes(
-            self,
-            deviceupdate_endpoint,
-            deviceupdate_instance_id
-    ):
+    def _test_get_device_classes(self, deviceupdate_endpoint, deviceupdate_instance_id):
         client = self.create_client(endpoint=deviceupdate_endpoint, instance_id=deviceupdate_instance_id)
         try:
             response = client.device_management.list_device_classes()
@@ -97,11 +73,7 @@ class TestDeviceManagementClient(DeviceUpdateTest):
 
     @recorded_by_proxy
     @DeviceUpdatePowerShellPreparer()
-    def test_get_device_class_not_found(
-            self,
-            deviceupdate_endpoint,
-            deviceupdate_instance_id
-    ):
+    def test_get_device_class_not_found(self, deviceupdate_endpoint, deviceupdate_instance_id):
         client = self.create_client(endpoint=deviceupdate_endpoint, instance_id=deviceupdate_instance_id)
         try:
             client.device_management.get_device_class("foo")
@@ -112,10 +84,7 @@ class TestDeviceManagementClient(DeviceUpdateTest):
     @recorded_by_proxy
     @DeviceUpdatePowerShellPreparer()
     def _test_get_best_updates_for_group(
-            self,
-            deviceupdate_endpoint,
-            deviceupdate_instance_id,
-            deviceupdate_device_group
+        self, deviceupdate_endpoint, deviceupdate_instance_id, deviceupdate_device_group
     ):
         client = self.create_client(endpoint=deviceupdate_endpoint, instance_id=deviceupdate_instance_id)
         response = client.device_management.list_best_updates_for_group(deviceupdate_device_group)
@@ -124,11 +93,7 @@ class TestDeviceManagementClient(DeviceUpdateTest):
 
     @recorded_by_proxy
     @DeviceUpdatePowerShellPreparer()
-    def test_get_best_updates_for_group_not_found(
-            self,
-            deviceupdate_endpoint,
-            deviceupdate_instance_id
-    ):
+    def test_get_best_updates_for_group_not_found(self, deviceupdate_endpoint, deviceupdate_instance_id):
         client = self.create_client(endpoint=deviceupdate_endpoint, instance_id=deviceupdate_instance_id)
         try:
             response = client.device_management.list_best_updates_for_group("foo")
@@ -140,10 +105,7 @@ class TestDeviceManagementClient(DeviceUpdateTest):
     @recorded_by_proxy
     @DeviceUpdatePowerShellPreparer()
     def _test_get_deployments_for_group(
-            self,
-            deviceupdate_endpoint,
-            deviceupdate_instance_id,
-            deviceupdate_device_group
+        self, deviceupdate_endpoint, deviceupdate_instance_id, deviceupdate_device_group
     ):
         client = self.create_client(endpoint=deviceupdate_endpoint, instance_id=deviceupdate_instance_id)
         response = client.device_management.list_best_updates_for_group(deviceupdate_device_group)
@@ -152,11 +114,7 @@ class TestDeviceManagementClient(DeviceUpdateTest):
 
     @recorded_by_proxy
     @DeviceUpdatePowerShellPreparer()
-    def test_get_deployments_for_group_not_found(
-            self,
-            deviceupdate_endpoint,
-            deviceupdate_instance_id
-    ):
+    def test_get_deployments_for_group_not_found(self, deviceupdate_endpoint, deviceupdate_instance_id):
         client = self.create_client(endpoint=deviceupdate_endpoint, instance_id=deviceupdate_instance_id)
         try:
             response = client.device_management.list_best_updates_for_group("foo")
@@ -164,4 +122,3 @@ class TestDeviceManagementClient(DeviceUpdateTest):
             assert len(result) > 0
         except ResourceNotFoundError as e:
             assert 404 == e.status_code
-

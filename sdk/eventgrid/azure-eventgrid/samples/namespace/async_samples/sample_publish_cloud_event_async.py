@@ -16,6 +16,7 @@ USAGE:
     "https://<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net".
     3) EVENTGRID_TOPIC_NAME - The namespace topic name.
 """
+
 import os
 import asyncio
 from azure.eventgrid.aio import EventGridPublisherClient

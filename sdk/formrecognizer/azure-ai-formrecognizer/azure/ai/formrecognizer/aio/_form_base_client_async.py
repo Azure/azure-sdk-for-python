@@ -116,5 +116,9 @@ class FormRecognizerClientBaseAsync:
         path_format_arguments = {
             "endpoint": _SERIALIZER.url("endpoint", self._endpoint, "str", skip_quote=True),
         }
-        request_copy.url = self._client._client.format_url(request_copy.url, **path_format_arguments)  # pylint:disable=protected-access
-        return await self._client._client.send_request(request_copy, stream=stream, **kwargs)  # pylint:disable=protected-access
+        request_copy.url = self._client._client.format_url(
+            request_copy.url, **path_format_arguments
+        )  # pylint:disable=protected-access
+        return await self._client._client.send_request(
+            request_copy, stream=stream, **kwargs
+        )  # pylint:disable=protected-access

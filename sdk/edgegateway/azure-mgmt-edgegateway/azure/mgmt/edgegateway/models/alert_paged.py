@@ -18,8 +18,8 @@ class AlertPaged(Paged):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Alert]'}
+        "next_link": {"key": "nextLink", "type": "str"},
+        "current_page": {"key": "value", "type": "[Alert]"},
     }
 
     def __init__(self, *args, **kwargs):

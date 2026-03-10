@@ -24,9 +24,7 @@ if api_key:
     llm = init_chat_model(f"azure_openai:{deployment_name}")
 else:
     credential = DefaultAzureCredential()
-    token_provider = get_bearer_token_provider(
-        credential, "https://cognitiveservices.azure.com/.default"
-    )
+    token_provider = get_bearer_token_provider(credential, "https://cognitiveservices.azure.com/.default")
     llm = init_chat_model(
         f"azure_openai:{deployment_name}",
         azure_ad_token_provider=token_provider,

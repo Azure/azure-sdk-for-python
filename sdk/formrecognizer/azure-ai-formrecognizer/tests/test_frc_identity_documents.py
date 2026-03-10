@@ -36,18 +36,14 @@ class TestIdDocument(FormRecognizerTest):
         client = get_fr_client()
         damaged_pdf = b"\x50\x44\x46\x55\x55\x55"  # doesn't match any magic file numbers
         with pytest.raises(ValueError):
-            poller = client.begin_recognize_identity_documents(
-                damaged_pdf
-            )
+            poller = client.begin_recognize_identity_documents(damaged_pdf)
 
     @FormRecognizerPreparer()
     def test_damaged_file_bytes_io_fails_autodetect(self, **kwargs):
         client = get_fr_client()
         damaged_pdf = BytesIO(b"\x50\x44\x46\x55\x55\x55")  # doesn't match any magic file numbers
         with pytest.raises(ValueError):
-            poller = client.begin_recognize_identity_documents(
-                damaged_pdf
-            )
+            poller = client.begin_recognize_identity_documents(damaged_pdf)
 
     @FormRecognizerPreparer()
     def test_passing_bad_content_type_param_passed(self, **kwargs):
@@ -55,10 +51,7 @@ class TestIdDocument(FormRecognizerTest):
         with open(self.identity_document_license_jpg, "rb") as fd:
             my_file = fd.read()
         with pytest.raises(ValueError):
-            poller = client.begin_recognize_identity_documents(
-                my_file,
-                content_type="application/jpeg"
-            )
+            poller = client.begin_recognize_identity_documents(my_file, content_type="application/jpeg")
 
     @FormRecognizerPreparer()
     def test_auto_detect_unsupported_stream_content(self, **kwargs):
@@ -67,9 +60,7 @@ class TestIdDocument(FormRecognizerTest):
             my_file = fd.read()
 
         with pytest.raises(ValueError):
-            poller = client.begin_recognize_identity_documents(
-                my_file
-            )
+            poller = client.begin_recognize_identity_documents(my_file)
 
     @skip_flaky_test
     @FormRecognizerPreparer()
@@ -88,9 +79,7 @@ class TestIdDocument(FormRecognizerTest):
             my_file = fd.read()
 
         poller = client.begin_recognize_identity_documents(
-            identity_document=my_file,
-            include_field_elements=True,
-            cls=callback
+            identity_document=my_file, include_field_elements=True, cls=callback
         )
 
         result = poller.result()
@@ -105,8 +94,8 @@ class TestIdDocument(FormRecognizerTest):
         self.assertFormFieldsTransformCorrect(id_document.fields, actual, read_results)
 
         # check page range
-        assert id_document.page_range.first_page_number ==  document_results[0].page_range[0]
-        assert id_document.page_range.last_page_number ==  document_results[0].page_range[1]
+        assert id_document.page_range.first_page_number == document_results[0].page_range[0]
+        assert id_document.page_range.last_page_number == document_results[0].page_range[1]
 
         # Check page metadata
         self.assertFormPagesTransformCorrect(id_document.pages, read_results, page_results)
@@ -128,12 +117,14 @@ class TestIdDocument(FormRecognizerTest):
 
         for field in id_document.fields.values():
             if field.name == "CountryRegion":
-                assert field.value ==  "USA"
+                assert field.value == "USA"
                 continue
             elif field.name == "Region":
-                assert field.value ==  "Washington"
+                assert field.value == "Washington"
             else:
-                self.assertFieldElementsHasValues(field.value_data.field_elements, id_document.page_range.first_page_number)
+                self.assertFieldElementsHasValues(
+                    field.value_data.field_elements, id_document.page_range.first_page_number
+                )
 
     @pytest.mark.live_test_only
     @skip_flaky_test
@@ -157,7 +148,9 @@ class TestIdDocument(FormRecognizerTest):
             id_document = fd.read()
         with pytest.raises(ValueError) as e:
             client.begin_recognize_identity_documents(id_document)
-        assert "Method 'begin_recognize_identity_documents' is only available for API version V2_1 and up" in str(e.value)
+        assert "Method 'begin_recognize_identity_documents' is only available for API version V2_1 and up" in str(
+            e.value
+        )
 
     @skip_flaky_test
     @FormRecognizerPreparer()
@@ -167,6 +160,6 @@ class TestIdDocument(FormRecognizerTest):
         with open(self.identity_document_license_jpg, "rb") as fd:
             id_document = fd.read()
         poller = client.begin_recognize_identity_documents(id_document, pages=["1"])
-        assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
+        assert "1" == poller._polling_method._initial_response.http_response.request.query["pages"]
         result = poller.result()
         assert result

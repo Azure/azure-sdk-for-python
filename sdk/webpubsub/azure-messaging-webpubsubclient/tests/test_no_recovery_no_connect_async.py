@@ -41,9 +41,7 @@ class TestWebpubsubClientNoRecoveryNoReconnectAsync(WebpubsubClientTestAsync):
     # disable recovery and auto reconnect, then send message concurrently
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy_async
-    async def test_disable_recovery_and_autoconnect_send_concurrently_async(
-        self, webpubsubclient_connection_string
-    ):
+    async def test_disable_recovery_and_autoconnect_send_concurrently_async(self, webpubsubclient_connection_string):
         client = await self.create_client(
             connection_string=webpubsubclient_connection_string,
             reconnect_retry_total=0,

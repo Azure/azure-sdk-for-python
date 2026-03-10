@@ -55,8 +55,7 @@ Previous, Subsequent, Linear, Zero, Fixed. Known values are: \"Previous\", \"Sub
         align_mode: Optional[Union[str, "_models.AlignMode"]] = None,
         fill_n_a_method: Optional[Union[str, "_models.FillNAMethod"]] = None,
         padding_value: Optional[float] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -105,8 +104,7 @@ information. """
         created_time: datetime.datetime,
         last_updated_time: datetime.datetime,
         model_info: Optional["_models.ModelInfo"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -148,8 +146,7 @@ class AnomalyDetectorError(_model_base.Model):
         x_ms_error_code: Optional[str] = None,
         code: Optional[Union[str, "_models.AnomalyDetectorErrorCodes"]] = None,
         message: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -191,8 +188,7 @@ number between 0 and 1. """
         variable: Optional[str] = None,
         contribution_score: Optional[float] = None,
         correlation_changes: Optional["_models.CorrelationChanges"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -233,8 +229,7 @@ class AnomalyState(_model_base.Model):
         timestamp: datetime.datetime,
         value: Optional["_models.AnomalyValue"] = None,
         errors: Optional[List["_models.ErrorResponse"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -284,8 +279,7 @@ well. Required. """
         severity: float,
         score: float,
         interpretation: Optional[List["_models.AnomalyInterpretation"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -315,8 +309,7 @@ class CorrelationChanges(_model_base.Model):
         self,
         *,
         changed_variables: Optional[List[str]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -350,8 +343,7 @@ class DiagnosticsInfo(_model_base.Model):
         *,
         model_state: Optional["_models.ModelState"] = None,
         variable_states: Optional[List["_models.VariableState"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -387,8 +379,7 @@ class ErrorResponse(_model_base.Model):
         *,
         code: str,
         message: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -483,8 +474,7 @@ detect whether the timestamp is anomaly or not. """
         align_policy: Optional["_models.AlignPolicy"] = None,
         status: Optional[Union[str, "_models.ModelStatus"]] = None,
         diagnostics_info: Optional["_models.DiagnosticsInfo"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -565,8 +555,7 @@ epoch. """
         train_losses: Optional[List[float]] = None,
         validation_losses: Optional[List[float]] = None,
         latencies_in_seconds: Optional[List[float]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -629,8 +618,7 @@ be date-time of ISO 8601 format. Required. """
         top_contributor_count: int,
         start_time: datetime.datetime,
         end_time: datetime.datetime,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -680,8 +668,7 @@ will need another API to get detection results. Required. """
         setup_info: "_models.MultivariateBatchDetectionOptions",
         errors: Optional[List["_models.ErrorResponse"]] = None,
         variable_states: Optional[List["_models.VariableState"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -724,8 +711,7 @@ class MultivariateDetectionResult(_model_base.Model):
         *,
         summary: "_models.MultivariateBatchDetectionResultSummary",
         results: List["_models.AnomalyState"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -768,8 +754,7 @@ variables for one anomalous timestamp in the response. The default number is
         *,
         variables: List["_models.VariableValues"],
         top_contributor_count: int,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -803,8 +788,7 @@ class MultivariateLastDetectionResult(_model_base.Model):
         *,
         variable_states: Optional[List["_models.VariableState"]] = None,
         results: Optional[List["_models.AnomalyState"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -845,8 +829,7 @@ class ResponseError(_model_base.Model):
         code: str,
         message: str,
         x_ms_error_code: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -882,8 +865,7 @@ class TimeSeriesPoint(_model_base.Model):
         *,
         value: float,
         timestamp: Optional[datetime.datetime] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -959,8 +941,7 @@ be accepted. """
         period: Optional[int] = None,
         stable_trend_window: Optional[int] = None,
         threshold: Optional[float] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1007,8 +988,7 @@ array is consistent with the input series. """
         *,
         is_change_point: Optional[List[bool]] = None,
         confidence_scores: Optional[List[float]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1107,8 +1087,7 @@ and imputeMode is \"fixed\". """
         sensitivity: Optional[int] = None,
         impute_mode: Optional[Union[str, "_models.ImputeMode"]] = None,
         impute_fixed_value: Optional[float] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1219,8 +1198,7 @@ sever the anomaly is. For normal points, the \"severity\" is always 0. """
         is_negative_anomaly: List[bool],
         is_positive_anomaly: List[bool],
         severity: Optional[List[float]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1314,8 +1292,7 @@ sever the anomaly is. For normal points, the \"severity\" is always 0. """
         is_negative_anomaly: bool,
         is_positive_anomaly: bool,
         severity: Optional[float] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1364,8 +1341,7 @@ class VariableState(_model_base.Model):
         effective_count: Optional[int] = None,
         first_timestamp: Optional[datetime.datetime] = None,
         last_timestamp: Optional[datetime.datetime] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1406,8 +1382,7 @@ class VariableValues(_model_base.Model):
         variable: str,
         timestamps: List[str],
         values: List[float],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):

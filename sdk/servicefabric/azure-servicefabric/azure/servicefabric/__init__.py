@@ -11,9 +11,9 @@
 
 from ._configuration import ServiceFabricClientAPIsConfiguration
 from ._service_fabric_client_ap_is import ServiceFabricClientAPIs
-__all__ = ['ServiceFabricClientAPIs', 'ServiceFabricClientAPIsConfiguration']
+
+__all__ = ["ServiceFabricClientAPIs", "ServiceFabricClientAPIsConfiguration"]
 
 from .version import VERSION
 
 __version__ = VERSION
-

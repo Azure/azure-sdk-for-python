@@ -30,8 +30,8 @@ from typing import Dict, Any
 # Each time a Container is created the account will be billed for 1 hour of usage based on
 # the provisioned throughput (RU/s) of that account.
 # ----------------------------------------------------------------------------------------------------------
-# Adding region name to use the code sample in docs 
-#<configureConnectivity>
+# Adding region name to use the code sample in docs
+# <configureConnectivity>
 HOST = config.settings["host"]
 MASTER_KEY = config.settings["master_key"]
 
@@ -123,8 +123,7 @@ def token_client_query(container, username):
 
 def run_sample():
     client = cosmos_client.CosmosClient(HOST, {"masterKey": MASTER_KEY})
-#</configureConnectivity>
-
+    # </configureConnectivity>
 
     try:
         try:
@@ -133,9 +132,7 @@ def run_sample():
             db = client.get_database_client(DATABASE_ID)
 
         try:
-            container = db.create_container(
-                id=CONTAINER_ID, partition_key=PARTITION_KEY
-            )
+            container = db.create_container(id=CONTAINER_ID, partition_key=PARTITION_KEY)
         except exceptions.CosmosResourceExistsError:
             container = db.get_container_client(CONTAINER_ID)
 
@@ -206,13 +203,13 @@ def run_sample():
         item_3 = token_container.read_item(item=ITEM_3_ID, partition_key=USERNAME_2)
         permission_list = list(user_2.list_permissions())
         for p in permission_list:
-            user_2.delete_permission(p.get('id'))
+            user_2.delete_permission(p.get("id"))
         assert len(list(user_2.list_permissions())) == 0
 
         permission_definition = {
             "id": DOCUMENT_ALL_PERMISSION,
             "permissionMode": documents.PermissionMode.All,
-            "resource": str(item_3.get('_self')) #this identifies the item with id "3"
+            "resource": str(item_3.get("_self")),  # this identifies the item with id "3"
         }
 
         permission = create_permission_if_not_exists(user_2, permission_definition)

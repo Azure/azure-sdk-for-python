@@ -11,8 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AccessPolicyEccAlgo(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Elliptical curve algorithm to be used: ES256, ES384 or ES512.
-    """
+    """Elliptical curve algorithm to be used: ES256, ES384 or ES512."""
 
     #: ES265.
     ES256 = "ES256"
@@ -21,16 +20,16 @@ class AccessPolicyEccAlgo(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: ES512.
     ES512 = "ES512"
 
+
 class AccessPolicyRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Defines the access level granted by this policy.
-    """
+    """Defines the access level granted by this policy."""
 
     #: Reader role allows for read-only operations to be performed through the client APIs.
     READER = "Reader"
 
+
 class AccessPolicyRsaAlgo(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """RSA algorithm to be used: RS256, RS384 or RS512.
-    """
+    """RSA algorithm to be used: RS256, RS384 or RS512."""
 
     #: RS256.
     RS256 = "RS256"
@@ -39,41 +38,41 @@ class AccessPolicyRsaAlgo(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: RS512.
     RS512 = "RS512"
 
+
 class AccountEncryptionKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of key used to encrypt the Account Key.
-    """
+    """The type of key used to encrypt the Account Key."""
 
     #: The Account Key is encrypted with a System Key.
     SYSTEM_KEY = "SystemKey"
     #: The Account Key is encrypted with a Customer Key.
     CUSTOMER_KEY = "CustomerKey"
 
+
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Indicates the action type.
-    """
+    """Indicates the action type."""
 
     #: An internal action.
     INTERNAL = "Internal"
 
+
 class CheckNameAvailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The reason why the given name is not available.
-    """
+    """The reason why the given name is not available."""
 
     INVALID = "Invalid"
     ALREADY_EXISTS = "AlreadyExists"
 
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of identity that created the resource.
-    """
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
+
 class EncoderSystemPresetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Name of the built-in encoding preset.
-    """
+    """Name of the built-in encoding preset."""
 
     #: Produces an MP4 file where the video is encoded with H.264 codec at a picture height of 540
     #: pixels, and at a maximum bitrate of 2000 Kbps. Encoded video has the same average frame rate as
@@ -96,18 +95,18 @@ class EncoderSystemPresetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: it is encoded with AAC-LC codec at 128 Kbps.
     SINGLE_LAYER2160_P_H264_AAC = "SingleLayer_2160p_H264_AAC"
 
+
 class Kind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Topology kind.
-    """
+    """Topology kind."""
 
     #: Live pipeline topology resource.
     LIVE = "Live"
     #: Batch pipeline topology resource.
     BATCH = "Batch"
 
+
 class LivePipelineState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Current state of the pipeline (read-only).
-    """
+    """Current state of the pipeline (read-only)."""
 
     #: The live pipeline is idle and not processing media.
     INACTIVE = "Inactive"
@@ -121,9 +120,9 @@ class LivePipelineState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: The live pipeline is transitioning into the inactive state.
     DEACTIVATING = "Deactivating"
 
+
 class MetricAggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The metric aggregation type
-    """
+    """The metric aggregation type"""
 
     #: The average.
     AVERAGE = "Average"
@@ -132,9 +131,9 @@ class MetricAggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: The sum.
     TOTAL = "Total"
 
+
 class MetricUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The metric unit
-    """
+    """The metric unit"""
 
     #: The number of bytes.
     BYTES = "Bytes"
@@ -143,9 +142,9 @@ class MetricUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: The number of milliseconds.
     MILLISECONDS = "Milliseconds"
 
+
 class ParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of the parameter.
-    """
+    """Type of the parameter."""
 
     #: The parameter's value is a string.
     STRING = "String"
@@ -158,9 +157,9 @@ class ParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: The parameter's value is a boolean value that is either true or false.
     BOOL = "Bool"
 
+
 class PipelineJobState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Current state of the pipeline (read-only).
-    """
+    """Current state of the pipeline (read-only)."""
 
     #: Pipeline job is processing.
     PROCESSING = "Processing"
@@ -171,26 +170,26 @@ class PipelineJobState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Pipeline job failed.
     FAILED = "Failed"
 
+
 class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The current provisioning state.
-    """
+    """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
     CREATING = "Creating"
     DELETING = "Deleting"
     FAILED = "Failed"
 
+
 class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The private endpoint connection status.
-    """
+    """The private endpoint connection status."""
 
     PENDING = "Pending"
     APPROVED = "Approved"
     REJECTED = "Rejected"
 
+
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Provisioning state of the Video Analyzer account.
-    """
+    """Provisioning state of the Video Analyzer account."""
 
     #: Provisioning state failed.
     FAILED = "Failed"
@@ -199,14 +198,15 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Provisioning state succeeded.
     SUCCEEDED = "Succeeded"
 
+
 class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Whether or not public network access is allowed for resources under the Video Analyzer account.
-    """
+    """Whether or not public network access is allowed for resources under the Video Analyzer account."""
 
     #: Public network access is enabled.
     ENABLED = "Enabled"
     #: Public network access is disabled.
     DISABLED = "Disabled"
+
 
 class RtspTransport(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Network transport utilized by the RTSP and RTP exchange: TCP or HTTP. When using TCP, the RTP
@@ -222,9 +222,9 @@ class RtspTransport(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: channel.
     TCP = "Tcp"
 
+
 class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The SKU name.
-    """
+    """The SKU name."""
 
     #: Represents the Live S1 SKU name. Using this SKU you can create live pipelines to capture,
     #: record, and stream live video from RTSP-capable cameras at bitrate settings from 0.5 Kbps to
@@ -234,19 +234,20 @@ class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: recorded content.
     BATCH_S1 = "Batch_S1"
 
+
 class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The SKU tier.
-    """
+    """The SKU tier."""
 
     #: Standard tier.
     STANDARD = "Standard"
 
+
 class VideoAnalyzerEndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the endpoint.
-    """
+    """The type of the endpoint."""
 
     #: The client API endpoint.
     CLIENT_API = "ClientApi"
+
 
 class VideoScaleMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes the video scaling mode to be applied. Default mode is 'Pad'. If the mode is 'Pad' or
@@ -265,6 +266,7 @@ class VideoScaleMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PRESERVE_ASPECT_RATIO = "PreserveAspectRatio"
     #: Stretches the original video so it resized to the specified dimensions.
     STRETCH = "Stretch"
+
 
 class VideoType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Video content type. Different content types are suitable for different applications and

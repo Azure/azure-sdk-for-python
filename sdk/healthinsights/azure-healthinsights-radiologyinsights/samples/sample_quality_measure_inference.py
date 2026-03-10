@@ -8,11 +8,11 @@ FILE: sample_quality_measure_inference.py
 DESCRIPTION:
 The sample_quality_measure_inference.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize a RadiologyInsightsClient, build a Radiology Insights request with the sample document,
-submit it to the client, RadiologyInsightsClient, and display 
+submit it to the client, RadiologyInsightsClient, and display
 - the Quality Measure Inference
 - the Quality Measure Denominator
 - the Compliance Type
-- the Quality Criteria  
+- the Quality Criteria
 
 
 USAGE:
@@ -22,7 +22,7 @@ USAGE:
     - For more details how to use DefaultAzureCredential, please take a look at https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential
 
 2. python sample_quality_measure_inference.py
-   
+
 """
 
 import datetime

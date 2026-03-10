@@ -16,7 +16,6 @@ from azure.confidentialledger.certificate.aio import (
 
 from .constants import USER_CERTIFICATE
 
-
 ConfidentialLedgerPreparer = functools.partial(
     EnvironmentVariableLoader,
     "confidentialledger",

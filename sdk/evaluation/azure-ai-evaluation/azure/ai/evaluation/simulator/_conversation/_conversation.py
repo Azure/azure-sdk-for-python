@@ -104,7 +104,7 @@ async def simulate_conversation(
 
     session_state = {}
     # Read the first prompt.
-    (first_response, request, _, full_response) = await bots[0].generate_response(
+    first_response, request, _, full_response = await bots[0].generate_response(
         session=session,
         conversation_history=[],
         max_history=history_limit,

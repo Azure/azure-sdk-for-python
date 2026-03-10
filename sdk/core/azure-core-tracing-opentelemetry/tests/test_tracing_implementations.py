@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """The tests for opentelemetry_span.py"""
+
 from unittest import mock
 
 from opentelemetry import trace

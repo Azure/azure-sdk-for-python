@@ -34,73 +34,73 @@ class _UInt32:
     def value(self, new_value: int) -> None:
         self._value = new_value & 0xFFFFFFFF
 
-    def __add__(self, other: Union[int, '_UInt32']) -> '_UInt32':
+    def __add__(self, other: Union[int, "_UInt32"]) -> "_UInt32":
         result = self.value + (other.value if isinstance(other, _UInt32) else other)
         return _UInt32(result & 0xFFFFFFFF)
 
-    def __sub__(self, other: Union[int, '_UInt32']) -> '_UInt32':
+    def __sub__(self, other: Union[int, "_UInt32"]) -> "_UInt32":
         result = self.value - (other.value if isinstance(other, _UInt32) else other)
         return _UInt32(result & 0xFFFFFFFF)
 
-    def __mul__(self, other: Union[int, '_UInt32']) -> '_UInt32':
+    def __mul__(self, other: Union[int, "_UInt32"]) -> "_UInt32":
         result = self.value * (other.value if isinstance(other, _UInt32) else other)
         return _UInt32(result & 0xFFFFFFFF)
 
-    def __xor__(self, other: Union[int, '_UInt32']) -> '_UInt32':
+    def __xor__(self, other: Union[int, "_UInt32"]) -> "_UInt32":
         result = self.value ^ (other.value if isinstance(other, _UInt32) else other)
         return _UInt32(result & 0xFFFFFFFF)
 
-    def __lshift__(self, other: Union[int, '_UInt32']) -> '_UInt32':
+    def __lshift__(self, other: Union[int, "_UInt32"]) -> "_UInt32":
         result = self.value << (other.value if isinstance(other, _UInt32) else other)
         return _UInt32(result & 0xFFFFFFFF)
 
-    def __ilshift__(self, other: Union[int, '_UInt32']) -> '_UInt32':
+    def __ilshift__(self, other: Union[int, "_UInt32"]) -> "_UInt32":
         self._value = (self.value << (other.value if isinstance(other, _UInt32) else other)) & 0xFFFFFFFF
         return self
 
-    def __rshift__(self, other: Union[int, '_UInt32']) -> '_UInt32':
+    def __rshift__(self, other: Union[int, "_UInt32"]) -> "_UInt32":
         result = self.value >> (other.value if isinstance(other, _UInt32) else other)
         return _UInt32(result & 0xFFFFFFFF)
 
-    def __irshift__(self, other: Union[int, '_UInt32']) -> '_UInt32':
+    def __irshift__(self, other: Union[int, "_UInt32"]) -> "_UInt32":
         self._value = (self.value >> (other.value if isinstance(other, _UInt32) else other)) & 0xFFFFFFFF
         return self
 
-    def __and__(self, other: Union[int, '_UInt32']) -> '_UInt32':
+    def __and__(self, other: Union[int, "_UInt32"]) -> "_UInt32":
         result = self.value & (other.value if isinstance(other, _UInt32) else other)
         return _UInt32(result & 0xFFFFFFFF)
 
-    def __or__(self, other: Union[int, '_UInt32']) -> '_UInt32':
+    def __or__(self, other: Union[int, "_UInt32"]) -> "_UInt32":
         if isinstance(other, _UInt32):
             return _UInt32(self.value | other.value)
         if isinstance(other, int):
             return _UInt32(self.value | other)
         raise TypeError("Unsupported type for OR operation")
 
-    def __invert__(self) -> '_UInt32':
+    def __invert__(self) -> "_UInt32":
         return _UInt32(~self.value & 0xFFFFFFFF)
 
-    def __eq__(self, other: Union[int, '_UInt32', object]) -> bool:
+    def __eq__(self, other: Union[int, "_UInt32", object]) -> bool:
         return self.value == (other.value if isinstance(other, _UInt32) else other)
 
-    def __ne__(self, other: Union[int, '_UInt32', object]) -> bool:
+    def __ne__(self, other: Union[int, "_UInt32", object]) -> bool:
         return not self.__eq__(other)
 
-    def __lt__(self, other: Union[int, '_UInt32']) -> bool:
+    def __lt__(self, other: Union[int, "_UInt32"]) -> bool:
         return self.value < (other.value if isinstance(other, _UInt32) else other)
 
-    def __gt__(self, other: Union[int, '_UInt32']) -> bool:
+    def __gt__(self, other: Union[int, "_UInt32"]) -> bool:
         return self.value > (other.value if isinstance(other, _UInt32) else other)
 
-    def __le__(self, other: Union[int, '_UInt32']) -> bool:
+    def __le__(self, other: Union[int, "_UInt32"]) -> bool:
         return self.value <= (other.value if isinstance(other, _UInt32) else other)
 
-    def __ge__(self, other: Union[int, '_UInt32']) -> bool:
+    def __ge__(self, other: Union[int, "_UInt32"]) -> bool:
         return self.value >= (other.value if isinstance(other, _UInt32) else other)
 
     @staticmethod
     def encode_double_as_uint32(value: float) -> int:
-        value_in_uint32 = struct.unpack('<I', struct.pack('<f', value))[0]
+        value_in_uint32 = struct.unpack("<I", struct.pack("<f", value))[0]
         mask = 0x80000000
         return (value_in_uint32 ^ mask) if value_in_uint32 < mask else (~value_in_uint32) + 1
 
@@ -108,10 +108,11 @@ class _UInt32:
     def decode_double_from_uint32(value: int) -> int:
         mask = 0x80000000
         value = ~(value - 1) if value < mask else value ^ mask
-        return struct.unpack('<f', struct.pack('<I', value))[0]
+        return struct.unpack("<f", struct.pack("<I", value))[0]
 
     def __int__(self) -> int:
         return self.value
+
 
 class _UInt64:
     def __init__(self, value: int) -> None:
@@ -125,73 +126,73 @@ class _UInt64:
     def value(self, new_value: int) -> None:
         self._value = new_value & 0xFFFFFFFFFFFFFFFF
 
-    def __add__(self, other: Union[int, '_UInt64']) -> '_UInt64':
+    def __add__(self, other: Union[int, "_UInt64"]) -> "_UInt64":
         result = self.value + (other.value if isinstance(other, _UInt64) else other)
         return _UInt64(result & 0xFFFFFFFFFFFFFFFF)
 
-    def __sub__(self, other: Union[int, '_UInt64']) -> '_UInt64':
+    def __sub__(self, other: Union[int, "_UInt64"]) -> "_UInt64":
         result = self.value - (other.value if isinstance(other, _UInt64) else other)
         return _UInt64(result & 0xFFFFFFFFFFFFFFFF)
 
-    def __mul__(self, other: Union[int, '_UInt64']) -> '_UInt64':
+    def __mul__(self, other: Union[int, "_UInt64"]) -> "_UInt64":
         result = self.value * (other.value if isinstance(other, _UInt64) else other)
         return _UInt64(result & 0xFFFFFFFFFFFFFFFF)
 
-    def __xor__(self, other: Union[int, '_UInt64']) -> '_UInt64':
+    def __xor__(self, other: Union[int, "_UInt64"]) -> "_UInt64":
         result = self.value ^ (other.value if isinstance(other, _UInt64) else other)
         return _UInt64(result & 0xFFFFFFFFFFFFFFFF)
 
-    def __lshift__(self, other: Union[int, '_UInt64']) -> '_UInt64':
+    def __lshift__(self, other: Union[int, "_UInt64"]) -> "_UInt64":
         result = self.value << (other.value if isinstance(other, _UInt64) else other)
         return _UInt64(result & 0xFFFFFFFFFFFFFFFF)
 
-    def __rshift__(self, other: Union[int, '_UInt64']) -> '_UInt64':
+    def __rshift__(self, other: Union[int, "_UInt64"]) -> "_UInt64":
         result = self.value >> (other.value if isinstance(other, _UInt64) else other)
         return _UInt64(result & 0xFFFFFFFFFFFFFFFF)
 
-    def __and__(self, other: Union[int, '_UInt64']) -> '_UInt64':
+    def __and__(self, other: Union[int, "_UInt64"]) -> "_UInt64":
         result = self.value & (other.value if isinstance(other, _UInt64) else other)
         return _UInt64(result & 0xFFFFFFFFFFFFFFFF)
 
-    def __or__(self, other: Union[int, '_UInt64']) -> '_UInt64':
+    def __or__(self, other: Union[int, "_UInt64"]) -> "_UInt64":
         if isinstance(other, _UInt64):
             return _UInt64(self.value | other.value)
         if isinstance(other, int):
             return _UInt64(self.value | other)
         raise TypeError("Unsupported type for OR operation")
 
-    def __invert__(self) -> '_UInt64':
+    def __invert__(self) -> "_UInt64":
         return _UInt64(~self.value & 0xFFFFFFFFFFFFFFFF)
 
-    def __eq__(self, other: Union[int, '_UInt64', object]) -> bool:
+    def __eq__(self, other: Union[int, "_UInt64", object]) -> bool:
         return self.value == (other.value if isinstance(other, _UInt64) else other)
 
-    def __ne__(self, other: Union[int, '_UInt64', object]) -> bool:
+    def __ne__(self, other: Union[int, "_UInt64", object]) -> bool:
         return not self.__eq__(other)
 
-    def __irshift__(self, other: Union[int, '_UInt64']) -> '_UInt64':
+    def __irshift__(self, other: Union[int, "_UInt64"]) -> "_UInt64":
         self._value = (self.value >> (other.value if isinstance(other, _UInt64) else other)) & 0xFFFFFFFFFFFFFFFF
         return self
 
-    def __ilshift__(self, other: Union[int, '_UInt64']) -> '_UInt64':
+    def __ilshift__(self, other: Union[int, "_UInt64"]) -> "_UInt64":
         self._value = (self.value << (other.value if isinstance(other, _UInt64) else other)) & 0xFFFFFFFFFFFFFFFF
         return self
 
-    def __lt__(self, other: Union[int, '_UInt64']) -> bool:
+    def __lt__(self, other: Union[int, "_UInt64"]) -> bool:
         return self.value < (other.value if isinstance(other, _UInt64) else other)
 
-    def __gt__(self, other: Union[int, '_UInt64']) -> bool:
+    def __gt__(self, other: Union[int, "_UInt64"]) -> bool:
         return self.value > (other.value if isinstance(other, _UInt64) else other)
 
-    def __le__(self, other: Union[int, '_UInt64']) -> bool:
+    def __le__(self, other: Union[int, "_UInt64"]) -> bool:
         return self.value <= (other.value if isinstance(other, _UInt64) else other)
 
-    def __ge__(self, other: Union[int, '_UInt64']) -> bool:
+    def __ge__(self, other: Union[int, "_UInt64"]) -> bool:
         return self.value >= (other.value if isinstance(other, _UInt64) else other)
 
     @staticmethod
     def encode_double_as_uint64(value: float) -> int:
-        value_in_uint64 = struct.unpack('<Q', struct.pack('<d', value))[0]
+        value_in_uint64 = struct.unpack("<Q", struct.pack("<d", value))[0]
         mask = 0x8000000000000000
         return (value_in_uint64 ^ mask) if value_in_uint64 < mask else (~value_in_uint64) + 1
 
@@ -199,7 +200,7 @@ class _UInt64:
     def decode_double_from_uint64(value: int) -> int:
         mask = 0x8000000000000000
         value = ~(value - 1) if value < mask else value ^ mask
-        return struct.unpack('<d', struct.pack('<Q', value))[0]
+        return struct.unpack("<d", struct.pack("<Q", value))[0]
 
     def __int__(self) -> int:
         return self.value
@@ -216,12 +217,12 @@ class _UInt128:
         else:
             self.high = _UInt64(high)
 
-    def __add__(self, other: '_UInt128') -> '_UInt128':
+    def __add__(self, other: "_UInt128") -> "_UInt128":
         low = self.low + other.low
         high = self.high + other.high + _UInt64(int(low.value > 0xFFFFFFFFFFFFFFFF))
         return _UInt128(low & 0xFFFFFFFFFFFFFFFF, high & 0xFFFFFFFFFFFFFFFF)
 
-    def __sub__(self, other: '_UInt128') -> '_UInt128':
+    def __sub__(self, other: "_UInt128") -> "_UInt128":
         borrow = _UInt64(0)
         if self.low.value < other.low.value:
             borrow = _UInt64(1)
@@ -230,30 +231,30 @@ class _UInt128:
         high = (self.high - other.high - borrow) & 0xFFFFFFFFFFFFFFFF
         return _UInt128(low, high)
 
-    def __mul__(self, other: '_UInt128') -> NoReturn:
+    def __mul__(self, other: "_UInt128") -> NoReturn:
         # Multiplication logic here for 128 bits
         raise NotImplementedError()
 
-    def __xor__(self, other: '_UInt128') -> '_UInt128':
+    def __xor__(self, other: "_UInt128") -> "_UInt128":
         low = self.low ^ other.low
         high = self.high ^ other.high
         return _UInt128(low, high)
 
-    def __and__(self, other: '_UInt128') -> '_UInt128':
+    def __and__(self, other: "_UInt128") -> "_UInt128":
         low = self.low & other.low
         high = self.high & other.high
         return _UInt128(low, high)
 
-    def __or__(self, other: '_UInt128') -> '_UInt128':
+    def __or__(self, other: "_UInt128") -> "_UInt128":
         low = self.low | other.low
         high = self.high | other.high
         return _UInt128(low, high)
 
-    def __lshift__(self, shift: '_UInt128') -> NoReturn:
+    def __lshift__(self, shift: "_UInt128") -> NoReturn:
         # Left shift logic for 128 bits
         raise NotImplementedError()
 
-    def __rshift__(self, shift: '_UInt128') -> NoReturn:
+    def __rshift__(self, shift: "_UInt128") -> NoReturn:
         # Right shift logic for 128 bits
         raise NotImplementedError()
 
@@ -276,7 +277,7 @@ class _UInt128:
         return str(self.as_int())
 
     def to_byte_array(self) -> bytearray:
-        high_bytes = self.high.value.to_bytes(8, byteorder='little')
-        low_bytes = self.low.value.to_bytes(8, byteorder='little')
+        high_bytes = self.high.value.to_bytes(8, byteorder="little")
+        low_bytes = self.low.value.to_bytes(8, byteorder="little")
         byte_array = bytearray(low_bytes + high_bytes)
         return byte_array

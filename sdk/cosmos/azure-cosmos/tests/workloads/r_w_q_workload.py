@@ -8,10 +8,12 @@ import time
 from workload_utils import _get_upsert_item
 from workload_utils import *
 from workload_configs import *
+
 sys.path.append(r"/")
 
 from azure.cosmos.aio import CosmosClient as AsyncClient
 import asyncio
+
 
 async def log_request_counts(counter):
     while True:
@@ -30,16 +32,23 @@ async def log_request_counts(counter):
         counter["read_time"] = 0
         counter["error_count"] = 0
 
+
 async def run_workload(client_id, client_logger):
     counter = {"count": 0, "upsert_time": 0, "read_time": 0, "error_count": 0}
     # Start background task
     asyncio.create_task(log_request_counts(counter))
     connectionPolicy = documents.ConnectionPolicy()
     connectionPolicy.UseMultipleWriteLocations = USE_MULTIPLE_WRITABLE_LOCATIONS
-    async with AsyncClient(COSMOS_URI, COSMOS_CREDENTIAL, connection_policy=connectionPolicy,
-                           preferred_locations=PREFERRED_LOCATIONS, excluded_locations=CLIENT_EXCLUDED_LOCATIONS,
-                           enable_diagnostics_logging=True, logger=client_logger,
-                           user_agent=get_user_agent(client_id)) as client:
+    async with AsyncClient(
+        COSMOS_URI,
+        COSMOS_CREDENTIAL,
+        connection_policy=connectionPolicy,
+        preferred_locations=PREFERRED_LOCATIONS,
+        excluded_locations=CLIENT_EXCLUDED_LOCATIONS,
+        enable_diagnostics_logging=True,
+        logger=client_logger,
+        user_agent=get_user_agent(client_id),
+    ) as client:
         db = client.get_database_client(COSMOS_DATABASE)
         cont = db.get_container_client(COSMOS_CONTAINER)
         await asyncio.sleep(1)

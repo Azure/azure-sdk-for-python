@@ -35,9 +35,7 @@ import os
 
 def analyze_custom_documents(custom_model_id):
     path_to_sample_documents = os.path.abspath(
-        os.path.join(
-            os.path.abspath(__file__), "..", "..", "./sample_forms/forms/Form_1.jpg"
-        )
+        os.path.join(os.path.abspath(__file__), "..", "..", "./sample_forms/forms/Form_1.jpg")
     )
     # [START analyze_custom_documents]
     from azure.core.credentials import AzureKeyCredential
@@ -47,15 +45,11 @@ def analyze_custom_documents(custom_model_id):
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
     model_id = os.getenv("CUSTOM_BUILT_MODEL_ID", custom_model_id)
 
-    document_analysis_client = DocumentAnalysisClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
+    document_analysis_client = DocumentAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Make sure your document's type is included in the list of document types the custom model can analyze
     with open(path_to_sample_documents, "rb") as f:
-        poller = document_analysis_client.begin_analyze_document(
-            model_id=model_id, document=f
-        )
+        poller = document_analysis_client.begin_analyze_document(model_id=model_id, document=f)
     result = poller.result()
 
     for idx, document in enumerate(result.documents):
@@ -88,9 +82,7 @@ def analyze_custom_documents(custom_model_id):
         for region in table.bounding_regions:
             print(f"...{region.page_number}")
         for cell in table.cells:
-            print(
-                f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'"
-            )
+            print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
     print("-----------------------------------")
     # [END analyze_custom_documents]
 
@@ -112,9 +104,7 @@ if __name__ == "__main__":
             key = os.getenv("AZURE_FORM_RECOGNIZER_KEY")
 
             if not endpoint or not key:
-                raise ValueError(
-                    "Please provide endpoint and API key to run the samples."
-                )
+                raise ValueError("Please provide endpoint and API key to run the samples.")
 
             document_model_admin_client = DocumentModelAdministrationClient(
                 endpoint=endpoint, credential=AzureKeyCredential(key)

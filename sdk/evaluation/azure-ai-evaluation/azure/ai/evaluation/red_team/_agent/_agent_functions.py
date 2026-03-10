@@ -13,7 +13,6 @@ from typing import Any, Callable, Set, Optional
 from azure.identity import DefaultAzureCredential
 from azure.ai.evaluation.red_team._agent import RedTeamToolProvider
 
-
 # Initialize the credential and tool provider (will be created when first needed)
 credential = None
 tool_provider = None

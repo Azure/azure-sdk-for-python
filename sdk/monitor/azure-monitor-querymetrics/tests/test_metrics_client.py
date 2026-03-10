@@ -10,7 +10,6 @@ from azure.monitor.querymetrics._version import VERSION
 
 from base_testcase import MetricsClientTestCase
 
-
 METRIC_NAME = "requests/count"
 METRIC_RESOURCE_PROVIDER = "Microsoft.Insights/components"
 

@@ -16,10 +16,7 @@ class TestModels(AzureRecordedTestCase):
 
     @pytest.mark.skip("InternalServerError, opened issue")
     @configure
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")])
     def test_models_list(self, client, api_type, api_version, **kwargs):
 
         models = client.models.list()
@@ -27,20 +24,14 @@ class TestModels(AzureRecordedTestCase):
             assert model.id
 
     @configure
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")])
     def test_models_retrieve(self, client, api_type, api_version, **kwargs):
 
         model = client.models.retrieve(**kwargs)
         assert model.id
 
     @configure
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(OPENAI, "v1"), (ASST_AZURE, PREVIEW)]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(OPENAI, "v1"), (ASST_AZURE, PREVIEW)])
     def test_files(self, client, api_type, api_version, **kwargs):
         file_name = f"test{uuid.uuid4()}.txt"
         with open(file_name, "w") as f:
@@ -49,10 +40,7 @@ class TestModels(AzureRecordedTestCase):
         try:
             path = pathlib.Path(file_name)
 
-            file1 = client.files.create(
-                file=open(path, "rb"),
-                purpose="assistants"
-            )
+            file1 = client.files.create(file=open(path, "rb"), purpose="assistants")
 
             files = client.files.list()
             for file in files:
@@ -72,7 +60,5 @@ class TestModels(AzureRecordedTestCase):
             assert retrieved_file.bytes
 
         finally:
-            client.files.delete(
-                file1.id
-            )
+            client.files.delete(file1.id)
             os.remove(file_name)

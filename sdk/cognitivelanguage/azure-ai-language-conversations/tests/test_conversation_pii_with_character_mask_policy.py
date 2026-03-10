@@ -101,7 +101,7 @@ class TestConversationsCase(TestConversations):
         print(f"Status: {d.get('status')}")
 
         # ---- Iterate results and verify redaction ----------------------------
-        for actions_page in paged_actions: # pylint: disable=too-many-nested-blocks
+        for actions_page in paged_actions:  # pylint: disable=too-many-nested-blocks
             for action_result in actions_page.task_results or []:
                 ar = cast(AnalyzeConversationOperationResult, action_result)
                 if isinstance(ar, ConversationPiiOperationResult):

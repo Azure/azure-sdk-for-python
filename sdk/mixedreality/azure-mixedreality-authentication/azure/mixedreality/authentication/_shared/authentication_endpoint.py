@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+
 def construct_endpoint_url(account_domain):
     # type: (str) -> str
-    return 'https://sts.' + account_domain
+    return "https://sts." + account_domain

@@ -19,7 +19,6 @@ import os
 from django.core.asgi import get_asgi_application
 from azure.monitor.opentelemetry import configure_azure_monitor
 
-
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "sample.settings")
 
 # Configure Azure monitor collection telemetry pipeline

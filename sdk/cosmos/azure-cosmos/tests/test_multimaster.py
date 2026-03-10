@@ -40,49 +40,39 @@ class TestMultiMaster(unittest.TestCase):
         try:
             connectionPolicy = TestMultiMaster.connectionPolicy
             connectionPolicy.UseMultipleWriteLocations = True
-            client = cosmos_client.CosmosClient(TestMultiMaster.host, TestMultiMaster.masterKey,
-                                                consistency_level="Session",
-                                                connection_policy=connectionPolicy)
+            client = cosmos_client.CosmosClient(
+                TestMultiMaster.host,
+                TestMultiMaster.masterKey,
+                consistency_level="Session",
+                connection_policy=connectionPolicy,
+            )
 
             created_db = client.get_database_client(self.configs.TEST_DATABASE_ID)
 
             created_collection = created_db.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
-            document_definition = {'id': 'doc' + str(uuid.uuid4()),
-                                   'pk': 'pk',
-                                   'name': 'sample document',
-                                   'operation': 'insertion'}
+            document_definition = {
+                "id": "doc" + str(uuid.uuid4()),
+                "pk": "pk",
+                "name": "sample document",
+                "operation": "insertion",
+            }
             created_document = created_collection.create_item(body=document_definition)
 
-            sproc_definition = {
-                'id': 'sample sproc' + str(uuid.uuid4()),
-                'serverScript': 'function() {var x = 10;}'
-            }
+            sproc_definition = {"id": "sample sproc" + str(uuid.uuid4()), "serverScript": "function() {var x = 10;}"}
             sproc = created_collection.scripts.create_stored_procedure(body=sproc_definition)
 
-            created_collection.scripts.execute_stored_procedure(
-                sproc=sproc['id'],
-                partition_key='pk'
-            )
+            created_collection.scripts.execute_stored_procedure(sproc=sproc["id"], partition_key="pk")
 
-            created_collection.read_item(
-                item=created_document,
-                partition_key='pk'
-            )
+            created_collection.read_item(item=created_document, partition_key="pk")
 
-            created_document['operation'] = 'replace'
-            replaced_document = created_collection.replace_item(
-                item=created_document['id'],
-                body=created_document
-            )
+            created_document["operation"] = "replace"
+            replaced_document = created_collection.replace_item(item=created_document["id"], body=created_document)
 
-            replaced_document['operation'] = 'upsert'
+            replaced_document["operation"] = "upsert"
             upserted_document = created_collection.upsert_item(body=replaced_document)
 
-            created_collection.delete_item(
-                item=upserted_document,
-                partition_key='pk'
-            )
+            created_collection.delete_item(item=upserted_document, partition_key="pk")
 
             is_allow_tentative_writes_set = self.EnableMultipleWritableLocations is True
 
@@ -93,14 +83,19 @@ class TestMultiMaster(unittest.TestCase):
                 # When multi-write is enabled, at least 6 write operations should have the header:
                 # create_item, create_stored_procedure, execute_stored_procedure,
                 # replace_item, upsert_item, delete_item
-                self.assertGreaterEqual(headers_with_tentative_writes, 6,
+                self.assertGreaterEqual(
+                    headers_with_tentative_writes,
+                    6,
                     f"Expected at least 6 write operations with tentative writes header, "
-                    f"got {headers_with_tentative_writes}")
+                    f"got {headers_with_tentative_writes}",
+                )
             else:
                 # When multi-write is disabled, no operations should have the header
-                self.assertEqual(headers_with_tentative_writes, 0,
-                    f"Expected 0 operations with tentative writes header, "
-                    f"got {headers_with_tentative_writes}")
+                self.assertEqual(
+                    headers_with_tentative_writes,
+                    0,
+                    f"Expected 0 operations with tentative writes header, " f"got {headers_with_tentative_writes}",
+                )
         finally:
             _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
 
@@ -110,10 +105,12 @@ class TestMultiMaster(unittest.TestCase):
             return {constants._Constants.EnableMultipleWritableLocations: self.EnableMultipleWritableLocations}, {}
         else:
             if len(args) > 0:
-                self.last_headers.append(HttpHeaders.AllowTentativeWrites in args[4].headers
-                                         and args[4].headers[HttpHeaders.AllowTentativeWrites] == 'true')
+                self.last_headers.append(
+                    HttpHeaders.AllowTentativeWrites in args[4].headers
+                    and args[4].headers[HttpHeaders.AllowTentativeWrites] == "true"
+                )
             return self.OriginalExecuteFunction(function, *args, **kwargs)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

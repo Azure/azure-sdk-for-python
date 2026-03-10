@@ -51,14 +51,10 @@ async def sample_build_classifier_async():
         poller = await document_model_admin_client.begin_build_document_classifier(
             doc_types={
                 "IRS-1040-A": ClassifierDocumentTypeDetails(
-                    source=BlobSource(
-                        container_url=container_sas_url, prefix="IRS-1040-A/train"
-                    )
+                    source=BlobSource(container_url=container_sas_url, prefix="IRS-1040-A/train")
                 ),
                 "IRS-1040-D": ClassifierDocumentTypeDetails(
-                    source=BlobFileListSource(
-                        container_url=container_sas_url, file_list="IRS-1040-D.jsonl"
-                    )
+                    source=BlobFileListSource(container_url=container_sas_url, file_list="IRS-1040-D.jsonl")
                 ),
             },
             description="IRS document classifier",

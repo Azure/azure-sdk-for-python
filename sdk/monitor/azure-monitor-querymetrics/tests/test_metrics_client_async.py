@@ -14,7 +14,6 @@ from azure.monitor.querymetrics.aio import MetricsClient
 
 from base_testcase import MetricsClientTestCase
 
-
 METRIC_NAME = "requests/count"
 METRIC_RESOURCE_PROVIDER = "Microsoft.Insights/components"
 

@@ -10,7 +10,13 @@ import abc
 import sys
 from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, cast
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
@@ -19,14 +25,119 @@ from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ...operations._operations import build_collection_create_or_update_bulk_request, build_collection_create_or_update_request, build_collection_move_entities_to_collection_request, build_discovery_auto_complete_request, build_discovery_browse_request, build_discovery_query_request, build_discovery_suggest_request, build_entity_add_classification_request, build_entity_add_classifications_by_unique_attribute_request, build_entity_add_classifications_request, build_entity_add_label_request, build_entity_add_labels_by_unique_attribute_request, build_entity_add_or_update_business_metadata_attributes_request, build_entity_add_or_update_business_metadata_request, build_entity_create_or_update_entities_request, build_entity_create_or_update_request, build_entity_delete_business_metadata_attributes_request, build_entity_delete_business_metadata_request, build_entity_delete_by_guid_request, build_entity_delete_by_guids_request, build_entity_delete_by_unique_attribute_request, build_entity_delete_classification_by_unique_attribute_request, build_entity_delete_classification_request, build_entity_delete_labels_by_unique_attribute_request, build_entity_delete_labels_request, build_entity_get_by_guid_request, build_entity_get_by_unique_attributes_request, build_entity_get_classification_request, build_entity_get_classifications_request, build_entity_get_entities_by_unique_attributes_request, build_entity_get_header_request, build_entity_get_sample_business_metadata_template_request, build_entity_list_by_guids_request, build_entity_partial_update_entity_attribute_by_guid_request, build_entity_partial_update_entity_by_unique_attributes_request, build_entity_set_classifications_request, build_entity_set_labels_by_unique_attribute_request, build_entity_set_labels_request, build_entity_update_classifications_by_unique_attribute_request, build_entity_update_classifications_request, build_glossary_assign_term_to_entities_request, build_glossary_create_glossary_categories_request, build_glossary_create_glossary_category_request, build_glossary_create_glossary_request, build_glossary_create_glossary_term_request, build_glossary_create_glossary_terms_request, build_glossary_delete_glossary_category_request, build_glossary_delete_glossary_request, build_glossary_delete_glossary_term_request, build_glossary_delete_term_assignment_from_entities_request, build_glossary_export_glossary_terms_as_csv_request, build_glossary_get_detailed_glossary_request, build_glossary_get_entities_assigned_with_term_request, build_glossary_get_glossary_category_request, build_glossary_get_glossary_request, build_glossary_get_glossary_term_request, build_glossary_get_import_csv_operation_status_request, build_glossary_list_category_terms_request, build_glossary_list_glossaries_request, build_glossary_list_glossary_categories_headers_request, build_glossary_list_glossary_categories_request, build_glossary_list_glossary_term_headers_request, build_glossary_list_glossary_terms_request, build_glossary_list_related_categories_request, build_glossary_list_related_terms_request, build_glossary_list_terms_by_glossary_name_request, build_glossary_partial_update_glossary_category_request, build_glossary_partial_update_glossary_request, build_glossary_partial_update_glossary_term_request, build_glossary_remove_term_assignment_from_entities_request, build_glossary_update_glossary_category_request, build_glossary_update_glossary_request, build_glossary_update_glossary_term_request, build_lineage_get_lineage_by_unique_attribute_request, build_lineage_get_lineage_graph_request, build_lineage_next_page_lineage_request, build_relationship_create_request, build_relationship_delete_request, build_relationship_get_request, build_relationship_update_request, build_types_create_type_definitions_request, build_types_delete_type_by_name_request, build_types_delete_type_definitions_request, build_types_get_all_type_definitions_request, build_types_get_business_metadata_def_by_guid_request, build_types_get_business_metadata_def_by_name_request, build_types_get_classification_def_by_guid_request, build_types_get_classification_def_by_name_request, build_types_get_entity_definition_by_guid_request, build_types_get_entity_definition_by_name_request, build_types_get_enum_def_by_guid_request, build_types_get_enum_def_by_name_request, build_types_get_relationship_def_by_guid_request, build_types_get_relationship_def_by_name_request, build_types_get_struct_def_by_guid_request, build_types_get_struct_def_by_name_request, build_types_get_term_template_def_by_guid_request, build_types_get_term_template_def_by_name_request, build_types_get_type_definition_by_guid_request, build_types_get_type_definition_by_name_request, build_types_list_type_definition_headers_request, build_types_update_atlas_type_definitions_request
+from ...operations._operations import (
+    build_collection_create_or_update_bulk_request,
+    build_collection_create_or_update_request,
+    build_collection_move_entities_to_collection_request,
+    build_discovery_auto_complete_request,
+    build_discovery_browse_request,
+    build_discovery_query_request,
+    build_discovery_suggest_request,
+    build_entity_add_classification_request,
+    build_entity_add_classifications_by_unique_attribute_request,
+    build_entity_add_classifications_request,
+    build_entity_add_label_request,
+    build_entity_add_labels_by_unique_attribute_request,
+    build_entity_add_or_update_business_metadata_attributes_request,
+    build_entity_add_or_update_business_metadata_request,
+    build_entity_create_or_update_entities_request,
+    build_entity_create_or_update_request,
+    build_entity_delete_business_metadata_attributes_request,
+    build_entity_delete_business_metadata_request,
+    build_entity_delete_by_guid_request,
+    build_entity_delete_by_guids_request,
+    build_entity_delete_by_unique_attribute_request,
+    build_entity_delete_classification_by_unique_attribute_request,
+    build_entity_delete_classification_request,
+    build_entity_delete_labels_by_unique_attribute_request,
+    build_entity_delete_labels_request,
+    build_entity_get_by_guid_request,
+    build_entity_get_by_unique_attributes_request,
+    build_entity_get_classification_request,
+    build_entity_get_classifications_request,
+    build_entity_get_entities_by_unique_attributes_request,
+    build_entity_get_header_request,
+    build_entity_get_sample_business_metadata_template_request,
+    build_entity_list_by_guids_request,
+    build_entity_partial_update_entity_attribute_by_guid_request,
+    build_entity_partial_update_entity_by_unique_attributes_request,
+    build_entity_set_classifications_request,
+    build_entity_set_labels_by_unique_attribute_request,
+    build_entity_set_labels_request,
+    build_entity_update_classifications_by_unique_attribute_request,
+    build_entity_update_classifications_request,
+    build_glossary_assign_term_to_entities_request,
+    build_glossary_create_glossary_categories_request,
+    build_glossary_create_glossary_category_request,
+    build_glossary_create_glossary_request,
+    build_glossary_create_glossary_term_request,
+    build_glossary_create_glossary_terms_request,
+    build_glossary_delete_glossary_category_request,
+    build_glossary_delete_glossary_request,
+    build_glossary_delete_glossary_term_request,
+    build_glossary_delete_term_assignment_from_entities_request,
+    build_glossary_export_glossary_terms_as_csv_request,
+    build_glossary_get_detailed_glossary_request,
+    build_glossary_get_entities_assigned_with_term_request,
+    build_glossary_get_glossary_category_request,
+    build_glossary_get_glossary_request,
+    build_glossary_get_glossary_term_request,
+    build_glossary_get_import_csv_operation_status_request,
+    build_glossary_list_category_terms_request,
+    build_glossary_list_glossaries_request,
+    build_glossary_list_glossary_categories_headers_request,
+    build_glossary_list_glossary_categories_request,
+    build_glossary_list_glossary_term_headers_request,
+    build_glossary_list_glossary_terms_request,
+    build_glossary_list_related_categories_request,
+    build_glossary_list_related_terms_request,
+    build_glossary_list_terms_by_glossary_name_request,
+    build_glossary_partial_update_glossary_category_request,
+    build_glossary_partial_update_glossary_request,
+    build_glossary_partial_update_glossary_term_request,
+    build_glossary_remove_term_assignment_from_entities_request,
+    build_glossary_update_glossary_category_request,
+    build_glossary_update_glossary_request,
+    build_glossary_update_glossary_term_request,
+    build_lineage_get_lineage_by_unique_attribute_request,
+    build_lineage_get_lineage_graph_request,
+    build_lineage_next_page_lineage_request,
+    build_relationship_create_request,
+    build_relationship_delete_request,
+    build_relationship_get_request,
+    build_relationship_update_request,
+    build_types_create_type_definitions_request,
+    build_types_delete_type_by_name_request,
+    build_types_delete_type_definitions_request,
+    build_types_get_all_type_definitions_request,
+    build_types_get_business_metadata_def_by_guid_request,
+    build_types_get_business_metadata_def_by_name_request,
+    build_types_get_classification_def_by_guid_request,
+    build_types_get_classification_def_by_name_request,
+    build_types_get_entity_definition_by_guid_request,
+    build_types_get_entity_definition_by_name_request,
+    build_types_get_enum_def_by_guid_request,
+    build_types_get_enum_def_by_name_request,
+    build_types_get_relationship_def_by_guid_request,
+    build_types_get_relationship_def_by_name_request,
+    build_types_get_struct_def_by_guid_request,
+    build_types_get_struct_def_by_name_request,
+    build_types_get_term_template_def_by_guid_request,
+    build_types_get_term_template_def_by_name_request,
+    build_types_get_type_definition_by_guid_request,
+    build_types_get_type_definition_by_name_request,
+    build_types_list_type_definition_headers_request,
+    build_types_update_atlas_type_definitions_request,
+)
+
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore
-JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
-T = TypeVar('T')
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
     """
@@ -45,13 +156,8 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace_async
-    async def create_or_update(
-        self,
-        entity: JSON,
-        **kwargs: Any
-    ) -> JSON:
+    async def create_or_update(self, entity: JSON, **kwargs: Any) -> JSON:
         """Create or update an entity in Atlas.
         Existing entity is matched using its unique guid if supplied or by its unique attributes eg:
         qualifiedName.
@@ -482,16 +588,16 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         _json = entity
 
@@ -502,14 +608,12 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -526,8 +630,6 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, cast(JSON, deserialized), {})
 
         return cast(JSON, deserialized)
-
-
 
     @distributed_trace_async
     async def list_by_guids(
@@ -801,17 +903,14 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     }
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_entity_list_by_guids_request(
             guids=guids,
             min_ext_info=min_ext_info,
@@ -821,14 +920,12 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -846,14 +943,8 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def create_or_update_entities(
-        self,
-        entities: JSON,
-        **kwargs: Any
-    ) -> JSON:
+    async def create_or_update_entities(self, entities: JSON, **kwargs: Any) -> JSON:
         """Create or update entities in Atlas in bulk.
         Existing entity is matched using its unique guid if supplied or by its unique attributes eg:
         qualifiedName.
@@ -1298,16 +1389,16 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         _json = entities
 
@@ -1318,14 +1409,12 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -1343,15 +1432,8 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def delete_by_guids(
-        self,
-        *,
-        guids: List[str],
-        **kwargs: Any
-    ) -> JSON:
+    async def delete_by_guids(self, *, guids: List[str], **kwargs: Any) -> JSON:
         """Delete a list of entities in bulk identified by their GUIDs or unique attributes.
 
         :keyword guids: An array of GUIDs of entities to delete.
@@ -1550,31 +1632,26 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_entity_delete_by_guids_request(
             guids=guids,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -1592,13 +1669,9 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
     async def add_classification(  # pylint: disable=inconsistent-return-statements
-        self,
-        request: JSON,
-        **kwargs: Any
+        self, request: JSON, **kwargs: Any
     ) -> None:
         """Associate a classification to multiple entities in bulk.
 
@@ -1646,16 +1719,16 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = request
 
@@ -1666,14 +1739,12 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -1683,8 +1754,6 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         if cls:
             return cls(pipeline_response, None, {})
-
-
 
     @distributed_trace_async
     async def get_by_guid(
@@ -1940,17 +2009,14 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     }
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_entity_get_by_guid_request(
             guid=guid,
             min_ext_info=min_ext_info,
@@ -1959,14 +2025,12 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -1984,17 +2048,8 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def partial_update_entity_attribute_by_guid(
-        self,
-        guid: str,
-        body: Any,
-        *,
-        name: str,
-        **kwargs: Any
-    ) -> JSON:
+    async def partial_update_entity_attribute_by_guid(self, guid: str, body: Any, *, name: str, **kwargs: Any) -> JSON:
         """Update entity partially - create or update entity attribute identified by its GUID.
         Supports only primitive attribute type and entity references.
         It does not support updating complex types like arrays, and maps.
@@ -2010,16 +2065,16 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
         :rtype: JSON
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         _json = body
 
@@ -2032,14 +2087,12 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -2057,14 +2110,8 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def delete_by_guid(
-        self,
-        guid: str,
-        **kwargs: Any
-    ) -> JSON:
+    async def delete_by_guid(self, guid: str, **kwargs: Any) -> JSON:
         """Delete an entity identified by its GUID.
 
         :param guid: The globally unique identifier of the entity.
@@ -2263,31 +2310,26 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_entity_delete_by_guid_request(
             guid=guid,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -2305,15 +2347,8 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def get_classification(
-        self,
-        guid: str,
-        classification_name: str,
-        **kwargs: Any
-    ) -> JSON:
+    async def get_classification(self, guid: str, classification_name: str, **kwargs: Any) -> JSON:
         """List classifications for a given entity represented by a GUID.
 
         :param guid: The globally unique identifier of the entity.
@@ -2356,17 +2391,14 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_entity_get_classification_request(
             guid=guid,
             classification_name=classification_name,
@@ -2374,14 +2406,12 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -2399,14 +2429,9 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
     async def delete_classification(  # pylint: disable=inconsistent-return-statements
-        self,
-        guid: str,
-        classification_name: str,
-        **kwargs: Any
+        self, guid: str, classification_name: str, **kwargs: Any
     ) -> None:
         """Delete a given classification from an existing entity represented by a GUID.
 
@@ -2418,17 +2443,14 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        
         request = build_entity_delete_classification_request(
             guid=guid,
             classification_name=classification_name,
@@ -2436,14 +2458,12 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -2454,14 +2474,8 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-
-
     @distributed_trace_async
-    async def get_classifications(
-        self,
-        guid: str,
-        **kwargs: Any
-    ) -> JSON:
+    async def get_classifications(self, guid: str, **kwargs: Any) -> JSON:
         """List classifications for a given entity represented by a GUID.
 
         :param guid: The globally unique identifier of the entity.
@@ -2486,31 +2500,26 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     "totalCount": 0.0  # Optional. The total count of items.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_entity_get_classifications_request(
             guid=guid,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -2528,14 +2537,9 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
     async def add_classifications(  # pylint: disable=inconsistent-return-statements
-        self,
-        guid: str,
-        classifications: List[JSON],
-        **kwargs: Any
+        self, guid: str, classifications: List[JSON], **kwargs: Any
     ) -> None:
         """Add classifications to an existing entity represented by a GUID.
 
@@ -2582,16 +2586,16 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     }
                 ]
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = classifications
 
@@ -2603,14 +2607,12 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -2621,14 +2623,9 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-
-
     @distributed_trace_async
     async def update_classifications(  # pylint: disable=inconsistent-return-statements
-        self,
-        guid: str,
-        classifications: List[JSON],
-        **kwargs: Any
+        self, guid: str, classifications: List[JSON], **kwargs: Any
     ) -> None:
         """Update classifications to an existing entity represented by a guid.
 
@@ -2675,16 +2672,16 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     }
                 ]
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = classifications
 
@@ -2696,14 +2693,12 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -2713,8 +2708,6 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         if cls:
             return cls(pipeline_response, None, {})
-
-
 
     @distributed_trace_async
     async def get_by_unique_attributes(
@@ -2979,17 +2972,14 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     }
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_entity_get_by_unique_attributes_request(
             type_name=type_name,
             min_ext_info=min_ext_info,
@@ -2999,14 +2989,12 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -3023,8 +3011,6 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, cast(JSON, deserialized), {})
 
         return cast(JSON, deserialized)
-
-
 
     @distributed_trace_async
     async def partial_update_entity_by_unique_attributes(
@@ -3474,16 +3460,16 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         _json = atlas_entity_with_ext_info
 
@@ -3496,14 +3482,12 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -3521,15 +3505,9 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
     async def delete_by_unique_attribute(
-        self,
-        type_name: str,
-        *,
-        attr_qualified_name: Optional[str] = None,
-        **kwargs: Any
+        self, type_name: str, *, attr_qualified_name: Optional[str] = None, **kwargs: Any
     ) -> JSON:
         """Delete an entity identified by its type and unique attributes.
         In addition to the typeName path parameter, attribute key-value pair(s) can be provided in the
@@ -3737,17 +3715,14 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_entity_delete_by_unique_attribute_request(
             type_name=type_name,
             attr_qualified_name=attr_qualified_name,
@@ -3755,14 +3730,12 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -3780,16 +3753,9 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
     async def delete_classification_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
-        self,
-        type_name: str,
-        classification_name: str,
-        *,
-        attr_qualified_name: Optional[str] = None,
-        **kwargs: Any
+        self, type_name: str, classification_name: str, *, attr_qualified_name: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Delete a given classification from an entity identified by its type and unique attributes.
 
@@ -3803,17 +3769,14 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        
         request = build_entity_delete_classification_by_unique_attribute_request(
             type_name=type_name,
             classification_name=classification_name,
@@ -3822,14 +3785,12 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -3839,8 +3800,6 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         if cls:
             return cls(pipeline_response, None, {})
-
-
 
     @distributed_trace_async
     async def add_classifications_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
@@ -3898,16 +3857,16 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     }
                 ]
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = atlas_classification_array
 
@@ -3920,14 +3879,12 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -3937,8 +3894,6 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         if cls:
             return cls(pipeline_response, None, {})
-
-
 
     @distributed_trace_async
     async def update_classifications_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
@@ -3996,16 +3951,16 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     }
                 ]
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = atlas_classification_array
 
@@ -4018,14 +3973,12 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -4036,14 +3989,8 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-
-
     @distributed_trace_async
-    async def set_classifications(
-        self,
-        entity_headers: JSON,
-        **kwargs: Any
-    ) -> List[str]:
+    async def set_classifications(self, entity_headers: JSON, **kwargs: Any) -> List[str]:
         """Set classifications on entities in bulk.
 
         :param entity_headers: Atlas entity headers.
@@ -4151,16 +4098,16 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     "str"  # Optional.
                 ]
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[List[str]]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[List[str]]
 
         _json = entity_headers
 
@@ -4171,14 +4118,12 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -4195,8 +4140,6 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, cast(List[str], deserialized), {})
 
         return cast(List[str], deserialized)
-
-
 
     @distributed_trace_async
     async def get_entities_by_unique_attributes(
@@ -4482,17 +4425,14 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     }
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_entity_get_entities_by_unique_attributes_request(
             type_name=type_name,
             min_ext_info=min_ext_info,
@@ -4502,14 +4442,12 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -4527,14 +4465,8 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def get_header(
-        self,
-        guid: str,
-        **kwargs: Any
-    ) -> JSON:
+    async def get_header(self, guid: str, **kwargs: Any) -> JSON:
         """Get entity header given its GUID.
 
         :param guid: The globally unique identifier of the entity.
@@ -4623,31 +4555,26 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     "typeName": "str"  # Optional. The name of the type.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_entity_get_header_request(
             guid=guid,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -4665,14 +4592,9 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
     async def delete_business_metadata(  # pylint: disable=inconsistent-return-statements
-        self,
-        guid: str,
-        body: Optional[Dict[str, Any]] = None,
-        **kwargs: Any
+        self, guid: str, body: Optional[Dict[str, Any]] = None, **kwargs: Any
     ) -> None:
         """Remove business metadata from an entity.
 
@@ -4692,16 +4614,16 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     "str": {}  # Optional.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         if body is not None:
             _json = body
@@ -4716,14 +4638,12 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -4734,16 +4654,9 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-
-
     @distributed_trace_async
     async def add_or_update_business_metadata(  # pylint: disable=inconsistent-return-statements
-        self,
-        guid: str,
-        body: Optional[Dict[str, Any]] = None,
-        *,
-        is_overwrite: Optional[bool] = None,
-        **kwargs: Any
+        self, guid: str, body: Optional[Dict[str, Any]] = None, *, is_overwrite: Optional[bool] = None, **kwargs: Any
     ) -> None:
         """Add business metadata to an entity.
 
@@ -4766,16 +4679,16 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     "str": {}  # Optional.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         if body is not None:
             _json = body
@@ -4791,14 +4704,12 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -4809,15 +4720,9 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-
-
     @distributed_trace_async
     async def delete_business_metadata_attributes(  # pylint: disable=inconsistent-return-statements
-        self,
-        bm_name: str,
-        guid: str,
-        body: Optional[Dict[str, Any]] = None,
-        **kwargs: Any
+        self, bm_name: str, guid: str, body: Optional[Dict[str, Any]] = None, **kwargs: Any
     ) -> None:
         """Delete business metadata attributes from an entity.
 
@@ -4839,16 +4744,16 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     "str": {}  # Optional.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         if body is not None:
             _json = body
@@ -4864,14 +4769,12 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -4882,15 +4785,9 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-
-
     @distributed_trace_async
     async def add_or_update_business_metadata_attributes(  # pylint: disable=inconsistent-return-statements
-        self,
-        bm_name: str,
-        guid: str,
-        body: Optional[Dict[str, Any]] = None,
-        **kwargs: Any
+        self, bm_name: str, guid: str, body: Optional[Dict[str, Any]] = None, **kwargs: Any
     ) -> None:
         """Add or update business metadata attributes.
 
@@ -4912,16 +4809,16 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     "str": {}  # Optional.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         if body is not None:
             _json = body
@@ -4937,14 +4834,12 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -4955,43 +4850,33 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-
-
     @distributed_trace_async
-    async def get_sample_business_metadata_template(
-        self,
-        **kwargs: Any
-    ) -> IO:
+    async def get_sample_business_metadata_template(self, **kwargs: Any) -> IO:
         """Get the sample Template for uploading/creating bulk BusinessMetaData.
 
         :return: IO
         :rtype: IO
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
+        cls = kwargs.pop("cls", None)  # type: ClsType[IO]
 
-        
         request = build_entity_get_sample_business_metadata_template_request(
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=True,
-            **kwargs
+            request, stream=True, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -5006,27 +4891,17 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         return cast(IO, deserialized)
 
-
-
     @distributed_trace_async
     @abc.abstractmethod
-    async def import_business_metadata(
-        self,
-        *args,
-        **kwargs
-    ) -> JSON:
+    async def import_business_metadata(self, *args, **kwargs) -> JSON:
         """You need to write a custom operation for "import_business_metadata". Please refer to
         https://aka.ms/azsdk/python/dpcodegen/python/customize to learn how to customize.
 
         """
 
-
     @distributed_trace_async
     async def delete_labels(  # pylint: disable=inconsistent-return-statements
-        self,
-        guid: str,
-        body: Optional[List[str]] = None,
-        **kwargs: Any
+        self, guid: str, body: Optional[List[str]] = None, **kwargs: Any
     ) -> None:
         """delete given labels to a given entity.
 
@@ -5046,16 +4921,16 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     "str"  # Optional.
                 ]
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         if body is not None:
             _json = body
@@ -5070,14 +4945,12 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -5088,14 +4961,9 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-
-
     @distributed_trace_async
     async def set_labels(  # pylint: disable=inconsistent-return-statements
-        self,
-        guid: str,
-        body: Optional[List[str]] = None,
-        **kwargs: Any
+        self, guid: str, body: Optional[List[str]] = None, **kwargs: Any
     ) -> None:
         """Set labels to a given entity.
 
@@ -5115,16 +4983,16 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     "str"  # Optional.
                 ]
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         if body is not None:
             _json = body
@@ -5139,14 +5007,12 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -5157,14 +5023,9 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-
-
     @distributed_trace_async
     async def add_label(  # pylint: disable=inconsistent-return-statements
-        self,
-        guid: str,
-        body: Optional[List[str]] = None,
-        **kwargs: Any
+        self, guid: str, body: Optional[List[str]] = None, **kwargs: Any
     ) -> None:
         """add given labels to a given entity.
 
@@ -5184,16 +5045,16 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     "str"  # Optional.
                 ]
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         if body is not None:
             _json = body
@@ -5208,14 +5069,12 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -5225,8 +5084,6 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         if cls:
             return cls(pipeline_response, None, {})
-
-
 
     @distributed_trace_async
     async def delete_labels_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
@@ -5263,16 +5120,16 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     "str"  # Optional.
                 ]
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         if body is not None:
             _json = body
@@ -5288,14 +5145,12 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -5305,8 +5160,6 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         if cls:
             return cls(pipeline_response, None, {})
-
-
 
     @distributed_trace_async
     async def set_labels_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
@@ -5342,16 +5195,16 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     "str"  # Optional.
                 ]
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         if body is not None:
             _json = body
@@ -5367,14 +5220,12 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -5384,8 +5235,6 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         if cls:
             return cls(pipeline_response, None, {})
-
-
 
     @distributed_trace_async
     async def add_labels_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
@@ -5421,16 +5270,16 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     "str"  # Optional.
                 ]
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         if body is not None:
             _json = body
@@ -5446,14 +5295,12 @@ class EntityOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -5481,7 +5328,6 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
 
     @distributed_trace_async
     async def list_glossaries(
@@ -5593,17 +5439,14 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     }
                 ]
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[List[JSON]]
+        cls = kwargs.pop("cls", None)  # type: ClsType[List[JSON]]
 
-        
         request = build_glossary_list_glossaries_request(
             limit=limit,
             offset=offset,
@@ -5613,14 +5456,12 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -5638,14 +5479,8 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         return cast(List[JSON], deserialized)
 
-
-
     @distributed_trace_async
-    async def create_glossary(
-        self,
-        atlas_glossary: JSON,
-        **kwargs: Any
-    ) -> JSON:
+    async def create_glossary(self, atlas_glossary: JSON, **kwargs: Any) -> JSON:
         """Create a glossary.
 
         :param atlas_glossary: Glossary definition, terms & categories can be anchored to a glossary.
@@ -5804,16 +5639,16 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     "usage": "str"  # Optional. The usage of the glossary.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         _json = atlas_glossary
 
@@ -5824,14 +5659,12 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -5849,14 +5682,8 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def create_glossary_categories(
-        self,
-        glossary_category: List[JSON],
-        **kwargs: Any
-    ) -> List[JSON]:
+    async def create_glossary_categories(self, glossary_category: List[JSON], **kwargs: Any) -> List[JSON]:
         """Create glossary category in bulk.
 
         :param glossary_category: An array of glossary category definitions to be created.
@@ -6060,16 +5887,16 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     }
                 ]
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[List[JSON]]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[List[JSON]]
 
         _json = glossary_category
 
@@ -6080,14 +5907,12 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -6105,14 +5930,8 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         return cast(List[JSON], deserialized)
 
-
-
     @distributed_trace_async
-    async def create_glossary_category(
-        self,
-        glossary_category: JSON,
-        **kwargs: Any
-    ) -> JSON:
+    async def create_glossary_category(self, glossary_category: JSON, **kwargs: Any) -> JSON:
         """Create a glossary category.
 
         :param glossary_category: The glossary category definition. A category must be anchored to a
@@ -6297,16 +6116,16 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         _json = glossary_category
 
@@ -6317,14 +6136,12 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -6342,14 +6159,8 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def get_glossary_category(
-        self,
-        category_guid: str,
-        **kwargs: Any
-    ) -> JSON:
+    async def get_glossary_category(self, category_guid: str, **kwargs: Any) -> JSON:
         """Get specific glossary category by its GUID.
 
         :param category_guid: The globally unique identifier of the category.
@@ -6446,31 +6257,26 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_glossary_get_glossary_category_request(
             category_guid=category_guid,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -6488,15 +6294,8 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def update_glossary_category(
-        self,
-        category_guid: str,
-        glossary_category: JSON,
-        **kwargs: Any
-    ) -> JSON:
+    async def update_glossary_category(self, category_guid: str, glossary_category: JSON, **kwargs: Any) -> JSON:
         """Update the given glossary category by its GUID.
 
         :param category_guid: The globally unique identifier of the category.
@@ -6680,16 +6479,16 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         _json = glossary_category
 
@@ -6701,14 +6500,12 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -6726,13 +6523,9 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
     async def delete_glossary_category(  # pylint: disable=inconsistent-return-statements
-        self,
-        category_guid: str,
-        **kwargs: Any
+        self, category_guid: str, **kwargs: Any
     ) -> None:
         """Delete a glossary category.
 
@@ -6742,31 +6535,26 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        
         request = build_glossary_delete_glossary_category_request(
             category_guid=category_guid,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -6777,14 +6565,9 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-
-
     @distributed_trace_async
     async def partial_update_glossary_category(
-        self,
-        category_guid: str,
-        partial_updates: Dict[str, str],
-        **kwargs: Any
+        self, category_guid: str, partial_updates: Dict[str, str], **kwargs: Any
     ) -> JSON:
         """Update the glossary category partially.
 
@@ -6890,16 +6673,16 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         _json = partial_updates
 
@@ -6911,14 +6694,12 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -6935,8 +6716,6 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, cast(JSON, deserialized), {})
 
         return cast(JSON, deserialized)
-
-
 
     @distributed_trace_async
     async def list_related_categories(
@@ -6982,17 +6761,14 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[Dict[str, List[JSON]]]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Dict[str, List[JSON]]]
 
-        
         request = build_glossary_list_related_categories_request(
             category_guid=category_guid,
             limit=limit,
@@ -7002,14 +6778,12 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -7026,8 +6800,6 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, cast(Dict[str, List[JSON]], deserialized), {})
 
         return cast(Dict[str, List[JSON]], deserialized)
-
-
 
     @distributed_trace_async
     async def list_category_terms(
@@ -7072,17 +6844,14 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     }
                 ]
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[List[JSON]]
+        cls = kwargs.pop("cls", None)  # type: ClsType[List[JSON]]
 
-        
         request = build_glossary_list_category_terms_request(
             category_guid=category_guid,
             limit=limit,
@@ -7092,14 +6861,12 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -7117,15 +6884,9 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         return cast(List[JSON], deserialized)
 
-
-
     @distributed_trace_async
     async def create_glossary_term(
-        self,
-        glossary_term: JSON,
-        *,
-        include_term_hierarchy: Optional[bool] = False,
-        **kwargs: Any
+        self, glossary_term: JSON, *, include_term_hierarchy: Optional[bool] = False, **kwargs: Any
     ) -> JSON:
         """Create a glossary term.
 
@@ -7810,16 +7571,16 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         _json = glossary_term
 
@@ -7831,14 +7592,12 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -7855,8 +7614,6 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, cast(JSON, deserialized), {})
 
         return cast(JSON, deserialized)
-
-
 
     @distributed_trace_async
     async def get_glossary_term(
@@ -8217,17 +7974,14 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_glossary_get_glossary_term_request(
             term_guid=term_guid,
             include_term_hierarchy=include_term_hierarchy,
@@ -8236,14 +7990,12 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -8261,16 +8013,9 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
     async def update_glossary_term(
-        self,
-        term_guid: str,
-        glossary_term: JSON,
-        *,
-        include_term_hierarchy: Optional[bool] = False,
-        **kwargs: Any
+        self, term_guid: str, glossary_term: JSON, *, include_term_hierarchy: Optional[bool] = False, **kwargs: Any
     ) -> JSON:
         """Update the given glossary term by its GUID.
 
@@ -8955,16 +8700,16 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         _json = glossary_term
 
@@ -8977,14 +8722,12 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -9002,13 +8745,9 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
     async def delete_glossary_term(  # pylint: disable=inconsistent-return-statements
-        self,
-        term_guid: str,
-        **kwargs: Any
+        self, term_guid: str, **kwargs: Any
     ) -> None:
         """Delete a glossary term.
 
@@ -9018,31 +8757,26 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        
         request = build_glossary_delete_glossary_term_request(
             term_guid=term_guid,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -9052,8 +8786,6 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         if cls:
             return cls(pipeline_response, None, {})
-
-
 
     @distributed_trace_async
     async def partial_update_glossary_term(
@@ -9419,16 +9151,16 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         _json = partial_updates
 
@@ -9441,14 +9173,12 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -9466,15 +9196,9 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
     async def create_glossary_terms(
-        self,
-        glossary_term: List[JSON],
-        *,
-        include_term_hierarchy: Optional[bool] = False,
-        **kwargs: Any
+        self, glossary_term: List[JSON], *, include_term_hierarchy: Optional[bool] = False, **kwargs: Any
     ) -> List[JSON]:
         """Create glossary terms in bulk.
 
@@ -10231,16 +9955,16 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     }
                 ]
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[List[JSON]]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[List[JSON]]
 
         _json = glossary_term
 
@@ -10252,14 +9976,12 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -10276,8 +9998,6 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, cast(List[JSON], deserialized), {})
 
         return cast(List[JSON], deserialized)
-
-
 
     @distributed_trace_async
     async def get_entities_assigned_with_term(
@@ -10333,17 +10053,14 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     }
                 ]
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[List[JSON]]
+        cls = kwargs.pop("cls", None)  # type: ClsType[List[JSON]]
 
-        
         request = build_glossary_get_entities_assigned_with_term_request(
             term_guid=term_guid,
             limit=limit,
@@ -10353,14 +10070,12 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -10378,14 +10093,9 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         return cast(List[JSON], deserialized)
 
-
-
     @distributed_trace_async
     async def assign_term_to_entities(  # pylint: disable=inconsistent-return-statements
-        self,
-        term_guid: str,
-        related_object_ids: List[JSON],
-        **kwargs: Any
+        self, term_guid: str, related_object_ids: List[JSON], **kwargs: Any
     ) -> None:
         """Assign the given term to the provided list of related objects.
 
@@ -10428,16 +10138,16 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     }
                 ]
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = related_object_ids
 
@@ -10449,14 +10159,12 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -10467,14 +10175,9 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-
-
     @distributed_trace_async
     async def remove_term_assignment_from_entities(  # pylint: disable=inconsistent-return-statements
-        self,
-        term_guid: str,
-        related_object_ids: List[JSON],
-        **kwargs: Any
+        self, term_guid: str, related_object_ids: List[JSON], **kwargs: Any
     ) -> None:
         """Delete the term assignment for the given list of related objects.
 
@@ -10517,16 +10220,16 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     }
                 ]
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = related_object_ids
 
@@ -10538,14 +10241,12 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -10556,14 +10257,9 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-
-
     @distributed_trace_async
     async def delete_term_assignment_from_entities(  # pylint: disable=inconsistent-return-statements
-        self,
-        term_guid: str,
-        related_object_ids: List[JSON],
-        **kwargs: Any
+        self, term_guid: str, related_object_ids: List[JSON], **kwargs: Any
     ) -> None:
         """Delete the term assignment for the given list of related objects.
 
@@ -10606,16 +10302,16 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     }
                 ]
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = related_object_ids
 
@@ -10627,14 +10323,12 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -10644,8 +10338,6 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         if cls:
             return cls(pipeline_response, None, {})
-
-
 
     @distributed_trace_async
     async def list_related_terms(
@@ -10695,17 +10387,14 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[Dict[str, List[JSON]]]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Dict[str, List[JSON]]]
 
-        
         request = build_glossary_list_related_terms_request(
             term_guid=term_guid,
             limit=limit,
@@ -10715,14 +10404,12 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -10740,14 +10427,8 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         return cast(Dict[str, List[JSON]], deserialized)
 
-
-
     @distributed_trace_async
-    async def get_glossary(
-        self,
-        glossary_guid: str,
-        **kwargs: Any
-    ) -> JSON:
+    async def get_glossary(self, glossary_guid: str, **kwargs: Any) -> JSON:
         """Get a specific Glossary by its GUID.
 
         :param glossary_guid: The globally unique identifier for glossary.
@@ -10832,31 +10513,26 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     "usage": "str"  # Optional. The usage of the glossary.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_glossary_get_glossary_request(
             glossary_guid=glossary_guid,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -10874,15 +10550,8 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def update_glossary(
-        self,
-        glossary_guid: str,
-        updated_glossary: JSON,
-        **kwargs: Any
-    ) -> JSON:
+    async def update_glossary(self, glossary_guid: str, updated_glossary: JSON, **kwargs: Any) -> JSON:
         """Update the given glossary.
 
         :param glossary_guid: The globally unique identifier for glossary.
@@ -11042,16 +10711,16 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     "usage": "str"  # Optional. The usage of the glossary.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         _json = updated_glossary
 
@@ -11063,14 +10732,12 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -11088,13 +10755,9 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
     async def delete_glossary(  # pylint: disable=inconsistent-return-statements
-        self,
-        glossary_guid: str,
-        **kwargs: Any
+        self, glossary_guid: str, **kwargs: Any
     ) -> None:
         """Delete a glossary.
 
@@ -11104,31 +10767,26 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        
         request = build_glossary_delete_glossary_request(
             glossary_guid=glossary_guid,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -11138,8 +10796,6 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         if cls:
             return cls(pipeline_response, None, {})
-
-
 
     @distributed_trace_async
     async def list_glossary_categories(
@@ -11264,17 +10920,14 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     }
                 ]
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[List[JSON]]
+        cls = kwargs.pop("cls", None)  # type: ClsType[List[JSON]]
 
-        
         request = build_glossary_list_glossary_categories_request(
             glossary_guid=glossary_guid,
             limit=limit,
@@ -11284,14 +10937,12 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -11308,8 +10959,6 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, cast(List[JSON], deserialized), {})
 
         return cast(List[JSON], deserialized)
-
-
 
     @distributed_trace_async
     async def list_glossary_categories_headers(
@@ -11351,17 +11000,14 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     }
                 ]
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[List[JSON]]
+        cls = kwargs.pop("cls", None)  # type: ClsType[List[JSON]]
 
-        
         request = build_glossary_list_glossary_categories_headers_request(
             glossary_guid=glossary_guid,
             limit=limit,
@@ -11371,14 +11017,12 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -11396,15 +11040,9 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         return cast(List[JSON], deserialized)
 
-
-
     @distributed_trace_async
     async def get_detailed_glossary(
-        self,
-        glossary_guid: str,
-        *,
-        include_term_hierarchy: Optional[bool] = False,
-        **kwargs: Any
+        self, glossary_guid: str, *, include_term_hierarchy: Optional[bool] = False, **kwargs: Any
     ) -> JSON:
         """Get a specific glossary with detailed information.
 
@@ -12019,17 +11657,14 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     "usage": "str"  # Optional. The usage of the glossary.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_glossary_get_detailed_glossary_request(
             glossary_guid=glossary_guid,
             include_term_hierarchy=include_term_hierarchy,
@@ -12037,14 +11672,12 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -12061,8 +11694,6 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, cast(JSON, deserialized), {})
 
         return cast(JSON, deserialized)
-
-
 
     @distributed_trace_async
     async def partial_update_glossary(
@@ -12168,16 +11799,16 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     "usage": "str"  # Optional. The usage of the glossary.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         _json = partial_updates
 
@@ -12190,14 +11821,12 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -12214,8 +11843,6 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, cast(JSON, deserialized), {})
 
         return cast(JSON, deserialized)
-
-
 
     @distributed_trace_async
     async def list_glossary_terms(
@@ -12618,17 +12245,14 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     }
                 ]
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[List[JSON]]
+        cls = kwargs.pop("cls", None)  # type: ClsType[List[JSON]]
 
-        
         request = build_glossary_list_glossary_terms_request(
             glossary_guid=glossary_guid,
             include_term_hierarchy=include_term_hierarchy,
@@ -12639,14 +12263,12 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -12663,8 +12285,6 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, cast(List[JSON], deserialized), {})
 
         return cast(List[JSON], deserialized)
-
-
 
     @distributed_trace_async
     async def list_glossary_term_headers(
@@ -12709,17 +12329,14 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     }
                 ]
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[List[JSON]]
+        cls = kwargs.pop("cls", None)  # type: ClsType[List[JSON]]
 
-        
         request = build_glossary_list_glossary_term_headers_request(
             glossary_guid=glossary_guid,
             limit=limit,
@@ -12729,14 +12346,12 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -12754,29 +12369,19 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         return cast(List[JSON], deserialized)
 
-
-
     async def _import_glossary_terms_via_csv_initial(
-        self,
-        glossary_guid: str,
-        file: IO,
-        *,
-        include_term_hierarchy: Optional[bool] = False,
-        **kwargs: Any
+        self, glossary_guid: str, file: IO, *, include_term_hierarchy: Optional[bool] = False, **kwargs: Any
     ) -> JSON:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-03-01-preview"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01-preview"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_glossary_import_glossary_terms_via_csv_request_initial(
             glossary_guid=glossary_guid,
             api_version=api_version,
@@ -12786,14 +12391,12 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -12811,42 +12414,27 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
     @abc.abstractmethod
-    async def begin_import_glossary_terms_via_csv(
-        self,
-        *args,
-        **kwargs
-    ) -> AsyncLROPoller[JSON]:
+    async def begin_import_glossary_terms_via_csv(self, *args, **kwargs) -> AsyncLROPoller[JSON]:
         """You need to write a custom operation for "begin_import_glossary_terms_via_csv". Please refer to
         https://aka.ms/azsdk/python/dpcodegen/python/customize to learn how to customize.
 
         """
 
-
     async def _import_glossary_terms_via_csv_by_glossary_name_initial(
-        self,
-        glossary_name: str,
-        file: IO,
-        *,
-        include_term_hierarchy: Optional[bool] = False,
-        **kwargs: Any
+        self, glossary_name: str, file: IO, *, include_term_hierarchy: Optional[bool] = False, **kwargs: Any
     ) -> JSON:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-03-01-preview"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01-preview"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_glossary_import_glossary_terms_via_csv_by_glossary_name_request_initial(
             glossary_name=glossary_name,
             api_version=api_version,
@@ -12856,14 +12444,12 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -12881,28 +12467,17 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
     @abc.abstractmethod
-    async def begin_import_glossary_terms_via_csv_by_glossary_name(
-        self,
-        *args,
-        **kwargs
-    ) -> AsyncLROPoller[JSON]:
+    async def begin_import_glossary_terms_via_csv_by_glossary_name(self, *args, **kwargs) -> AsyncLROPoller[JSON]:
         """You need to write a custom operation for
         "begin_import_glossary_terms_via_csv_by_glossary_name". Please refer to
         https://aka.ms/azsdk/python/dpcodegen/python/customize to learn how to customize.
 
         """
 
-
     @distributed_trace_async
-    async def get_import_csv_operation_status(
-        self,
-        operation_guid: str,
-        **kwargs: Any
-    ) -> JSON:
+    async def get_import_csv_operation_status(self, operation_guid: str, **kwargs: Any) -> JSON:
         """Get the status of import csv operation.
 
         :param operation_guid: The globally unique identifier for async operation/job.
@@ -12935,18 +12510,15 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                       Known values are: "NotStarted", "Succeeded", "Failed", "Running".
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-03-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_glossary_get_import_csv_operation_status_request(
             operation_guid=operation_guid,
             api_version=api_version,
@@ -12954,14 +12526,12 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -12978,8 +12548,6 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, cast(JSON, deserialized), {})
 
         return cast(JSON, deserialized)
-
-
 
     @distributed_trace_async
     async def export_glossary_terms_as_csv(
@@ -13010,17 +12578,17 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     "str"  # Optional.
                 ]
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-03-01-preview"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01-preview"))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[IO]
 
         _json = term_guids
 
@@ -13034,14 +12602,12 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -13058,8 +12624,6 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, cast(IO, deserialized), {})
 
         return cast(IO, deserialized)
-
-
 
     @distributed_trace_async
     async def list_terms_by_glossary_name(
@@ -13459,18 +13023,15 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
                     }
                 ]
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-03-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[List[JSON]]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[List[JSON]]
 
-        
         request = build_glossary_list_terms_by_glossary_name_request(
             glossary_name=glossary_name,
             api_version=api_version,
@@ -13481,14 +13042,12 @@ class GlossaryOperations(abc.ABC):  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -13524,13 +13083,8 @@ class DiscoveryOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace_async
-    async def query(
-        self,
-        search_request: JSON,
-        **kwargs: Any
-    ) -> JSON:
+    async def query(self, search_request: JSON, **kwargs: Any) -> JSON:
         """Gets data using search.
 
         :param search_request: An object specifying the search criteria.
@@ -13715,17 +13269,17 @@ class DiscoveryOperations:
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-03-01-preview"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01-preview"))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         _json = search_request
 
@@ -13737,14 +13291,12 @@ class DiscoveryOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -13762,14 +13314,8 @@ class DiscoveryOperations:
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def suggest(
-        self,
-        suggest_request: JSON,
-        **kwargs: Any
-    ) -> JSON:
+    async def suggest(self, suggest_request: JSON, **kwargs: Any) -> JSON:
         """Get search suggestions by query criteria.
 
         :param suggest_request: An object specifying the suggest criteria.
@@ -13846,17 +13392,17 @@ class DiscoveryOperations:
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-03-01-preview"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01-preview"))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         _json = suggest_request
 
@@ -13868,14 +13414,12 @@ class DiscoveryOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -13893,14 +13437,8 @@ class DiscoveryOperations:
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def browse(
-        self,
-        browse_request: JSON,
-        **kwargs: Any
-    ) -> JSON:
+    async def browse(self, browse_request: JSON, **kwargs: Any) -> JSON:
         """Browse entities by path or entity type.
 
         :param browse_request: An object specifying the browse criteria.
@@ -13952,17 +13490,17 @@ class DiscoveryOperations:
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-03-01-preview"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01-preview"))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         _json = browse_request
 
@@ -13974,14 +13512,12 @@ class DiscoveryOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -13999,14 +13535,8 @@ class DiscoveryOperations:
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def auto_complete(
-        self,
-        auto_complete_request: JSON,
-        **kwargs: Any
-    ) -> JSON:
+    async def auto_complete(self, auto_complete_request: JSON, **kwargs: Any) -> JSON:
         """Get auto complete options.
 
         :param auto_complete_request: An object specifying the autocomplete criteria.
@@ -14039,17 +13569,17 @@ class DiscoveryOperations:
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-03-01-preview"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01-preview"))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         _json = auto_complete_request
 
@@ -14061,14 +13591,12 @@ class DiscoveryOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -14103,7 +13631,6 @@ class LineageOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
 
     @distributed_trace_async
     async def get_lineage_graph(
@@ -14264,17 +13791,14 @@ class LineageOperations:
                     }
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_lineage_get_lineage_graph_request(
             guid=guid,
             direction=direction,
@@ -14286,14 +13810,12 @@ class LineageOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -14310,8 +13832,6 @@ class LineageOperations:
             return cls(pipeline_response, cast(JSON, deserialized), {})
 
         return cast(JSON, deserialized)
-
-
 
     @distributed_trace_async
     async def next_page_lineage(
@@ -14468,18 +13988,15 @@ class LineageOperations:
                     }
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-03-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_lineage_next_page_lineage_request(
             guid=guid,
             api_version=api_version,
@@ -14491,14 +14008,12 @@ class LineageOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -14515,8 +14030,6 @@ class LineageOperations:
             return cls(pipeline_response, cast(JSON, deserialized), {})
 
         return cast(JSON, deserialized)
-
-
 
     @distributed_trace_async
     async def get_lineage_by_unique_attribute(
@@ -14684,17 +14197,14 @@ class LineageOperations:
                     }
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_lineage_get_lineage_by_unique_attribute_request(
             type_name=type_name,
             direction=direction,
@@ -14706,14 +14216,12 @@ class LineageOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -14749,13 +14257,8 @@ class RelationshipOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace_async
-    async def create(
-        self,
-        relationship: JSON,
-        **kwargs: Any
-    ) -> JSON:
+    async def create(self, relationship: JSON, **kwargs: Any) -> JSON:
         """Create a new relationship between entities.
 
         :param relationship: The AtlasRelationship object containing the information for the
@@ -14838,16 +14341,16 @@ class RelationshipOperations:
                     "version": 0.0  # Optional. The version of the relationship.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         _json = relationship
 
@@ -14858,14 +14361,12 @@ class RelationshipOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -14883,14 +14384,8 @@ class RelationshipOperations:
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def update(
-        self,
-        relationship: JSON,
-        **kwargs: Any
-    ) -> JSON:
+    async def update(self, relationship: JSON, **kwargs: Any) -> JSON:
         """Update an existing relationship between entities.
 
         :param relationship: The AtlasRelationship object containing the information for the
@@ -14973,16 +14468,16 @@ class RelationshipOperations:
                     "version": 0.0  # Optional. The version of the relationship.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         _json = relationship
 
@@ -14993,14 +14488,12 @@ class RelationshipOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -15018,16 +14511,8 @@ class RelationshipOperations:
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def get(
-        self,
-        guid: str,
-        *,
-        extended_info: Optional[bool] = None,
-        **kwargs: Any
-    ) -> JSON:
+    async def get(self, guid: str, *, extended_info: Optional[bool] = None, **kwargs: Any) -> JSON:
         """Get relationship information between entities by its GUID.
 
         :param guid: The globally unique identifier of the relationship.
@@ -15167,17 +14652,14 @@ class RelationshipOperations:
                     }
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_relationship_get_request(
             guid=guid,
             extended_info=extended_info,
@@ -15185,14 +14667,12 @@ class RelationshipOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -15210,14 +14690,8 @@ class RelationshipOperations:
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def delete(  # pylint: disable=inconsistent-return-statements
-        self,
-        guid: str,
-        **kwargs: Any
-    ) -> None:
+    async def delete(self, guid: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Delete a relationship between entities by its GUID.
 
         :param guid: The globally unique identifier of the relationship.
@@ -15226,31 +14700,26 @@ class RelationshipOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        
         request = build_relationship_delete_request(
             guid=guid,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -15279,13 +14748,8 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace_async
-    async def get_business_metadata_def_by_guid(
-        self,
-        guid: str,
-        **kwargs: Any
-    ) -> JSON:
+    async def get_business_metadata_def_by_guid(self, guid: str, **kwargs: Any) -> JSON:
         """Get the businessMetadata definition for the given guid.
 
         :param guid: businessMetadata guid.
@@ -15405,31 +14869,26 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
                     "version": 0.0  # Optional. The version of the record.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_types_get_business_metadata_def_by_guid_request(
             guid=guid,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -15447,14 +14906,8 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def get_business_metadata_def_by_name(
-        self,
-        name: str,
-        **kwargs: Any
-    ) -> JSON:
+    async def get_business_metadata_def_by_name(self, name: str, **kwargs: Any) -> JSON:
         """Get the businessMetadata definition by it's name (unique).
 
         :param name: businessMetadata name.
@@ -15574,31 +15027,26 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
                     "version": 0.0  # Optional. The version of the record.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_types_get_business_metadata_def_by_name_request(
             name=name,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -15616,14 +15064,8 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def get_classification_def_by_guid(
-        self,
-        guid: str,
-        **kwargs: Any
-    ) -> JSON:
+    async def get_classification_def_by_guid(self, guid: str, **kwargs: Any) -> JSON:
         """Get the classification definition for the given GUID.
 
         :param guid: The globally unique identifier of the classification.
@@ -15764,31 +15206,26 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
                     "version": 0.0  # Optional. The version of the record.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_types_get_classification_def_by_guid_request(
             guid=guid,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -15806,14 +15243,8 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def get_classification_def_by_name(
-        self,
-        name: str,
-        **kwargs: Any
-    ) -> JSON:
+    async def get_classification_def_by_name(self, name: str, **kwargs: Any) -> JSON:
         """Get the classification definition by its name (unique).
 
         :param name: The name of the classification.
@@ -15954,31 +15385,26 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
                     "version": 0.0  # Optional. The version of the record.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_types_get_classification_def_by_name_request(
             name=name,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -15996,14 +15422,8 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def get_entity_definition_by_guid(
-        self,
-        guid: str,
-        **kwargs: Any
-    ) -> JSON:
+    async def get_entity_definition_by_guid(self, guid: str, **kwargs: Any) -> JSON:
         """Get the Entity definition for the given GUID.
 
         :param guid: The globally unique identifier of the entity.
@@ -16170,31 +15590,26 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
                     "version": 0.0  # Optional. The version of the record.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_types_get_entity_definition_by_guid_request(
             guid=guid,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -16212,14 +15627,8 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def get_entity_definition_by_name(
-        self,
-        name: str,
-        **kwargs: Any
-    ) -> JSON:
+    async def get_entity_definition_by_name(self, name: str, **kwargs: Any) -> JSON:
         """Get the entity definition by its name (unique).
 
         :param name: The name of the entity.
@@ -16386,31 +15795,26 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
                     "version": 0.0  # Optional. The version of the record.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_types_get_entity_definition_by_name_request(
             name=name,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -16428,14 +15832,8 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def get_enum_def_by_guid(
-        self,
-        guid: str,
-        **kwargs: Any
-    ) -> JSON:
+    async def get_enum_def_by_guid(self, guid: str, **kwargs: Any) -> JSON:
         """Get the enum definition for the given GUID.
 
         :param guid: The globally unique identifier of the enum.
@@ -16529,31 +15927,26 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
                     "version": 0.0  # Optional. The version of the record.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_types_get_enum_def_by_guid_request(
             guid=guid,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -16571,14 +15964,8 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def get_enum_def_by_name(
-        self,
-        name: str,
-        **kwargs: Any
-    ) -> JSON:
+    async def get_enum_def_by_name(self, name: str, **kwargs: Any) -> JSON:
         """Get the enum definition by its name (unique).
 
         :param name: The name of the enum.
@@ -16672,31 +16059,26 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
                     "version": 0.0  # Optional. The version of the record.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_types_get_enum_def_by_name_request(
             name=name,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -16714,14 +16096,8 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def get_relationship_def_by_guid(
-        self,
-        guid: str,
-        **kwargs: Any
-    ) -> JSON:
+    async def get_relationship_def_by_guid(self, guid: str, **kwargs: Any) -> JSON:
         """Get the relationship definition for the given GUID.
 
         :param guid: The globally unique identifier of the relationship.
@@ -16875,31 +16251,26 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
                     "version": 0.0  # Optional. The version of the record.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_types_get_relationship_def_by_guid_request(
             guid=guid,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -16917,14 +16288,8 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def get_relationship_def_by_name(
-        self,
-        name: str,
-        **kwargs: Any
-    ) -> JSON:
+    async def get_relationship_def_by_name(self, name: str, **kwargs: Any) -> JSON:
         """Get the relationship definition by its name (unique).
 
         :param name: The name of the relationship.
@@ -17078,31 +16443,26 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
                     "version": 0.0  # Optional. The version of the record.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_types_get_relationship_def_by_name_request(
             name=name,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -17120,14 +16480,8 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def get_struct_def_by_guid(
-        self,
-        guid: str,
-        **kwargs: Any
-    ) -> JSON:
+    async def get_struct_def_by_guid(self, guid: str, **kwargs: Any) -> JSON:
         """Get the struct definition for the given GUID.
 
         :param guid: The globally unique identifier of the struct.
@@ -17247,31 +16601,26 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
                     "version": 0.0  # Optional. The version of the record.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_types_get_struct_def_by_guid_request(
             guid=guid,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -17289,14 +16638,8 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def get_struct_def_by_name(
-        self,
-        name: str,
-        **kwargs: Any
-    ) -> JSON:
+    async def get_struct_def_by_name(self, name: str, **kwargs: Any) -> JSON:
         """Get the struct definition by its name (unique).
 
         :param name: The name of the struct.
@@ -17416,31 +16759,26 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
                     "version": 0.0  # Optional. The version of the record.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_types_get_struct_def_by_name_request(
             name=name,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -17458,14 +16796,8 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def get_type_definition_by_guid(
-        self,
-        guid: str,
-        **kwargs: Any
-    ) -> JSON:
+    async def get_type_definition_by_guid(self, guid: str, **kwargs: Any) -> JSON:
         """Get the type definition for the given GUID.
 
         :param guid: The globally unique identifier of the type.
@@ -17692,31 +17024,26 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
                     "version": 0.0  # Optional. The version of the record.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_types_get_type_definition_by_guid_request(
             guid=guid,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -17734,14 +17061,8 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def get_type_definition_by_name(
-        self,
-        name: str,
-        **kwargs: Any
-    ) -> JSON:
+    async def get_type_definition_by_name(self, name: str, **kwargs: Any) -> JSON:
         """Get the type definition by its name (unique).
 
         :param name: The name of the type.
@@ -17968,31 +17289,26 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
                     "version": 0.0  # Optional. The version of the record.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_types_get_type_definition_by_name_request(
             name=name,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -18010,13 +17326,9 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
     async def delete_type_by_name(  # pylint: disable=inconsistent-return-statements
-        self,
-        name: str,
-        **kwargs: Any
+        self, name: str, **kwargs: Any
     ) -> None:
         """Delete API for type identified by its name.
 
@@ -18026,31 +17338,26 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        
         request = build_types_delete_type_by_name_request(
             name=name,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -18061,15 +17368,9 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-
-
     @distributed_trace_async
     async def get_all_type_definitions(
-        self,
-        *,
-        include_term_template: Optional[bool] = False,
-        type: Optional[str] = None,
-        **kwargs: Any
+        self, *, include_term_template: Optional[bool] = False, type: Optional[str] = None, **kwargs: Any
     ) -> JSON:
         """Get all type definitions in Atlas in bulk.
 
@@ -19051,17 +18352,14 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_types_get_all_type_definitions_request(
             include_term_template=include_term_template,
             type=type,
@@ -19069,14 +18367,12 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -19094,14 +18390,8 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def create_type_definitions(
-        self,
-        types_def: JSON,
-        **kwargs: Any
-    ) -> JSON:
+    async def create_type_definitions(self, types_def: JSON, **kwargs: Any) -> JSON:
         """Create all atlas type definitions in bulk, only new definitions will be created.
         Any changes to the existing definitions will be discarded.
 
@@ -21042,16 +20332,16 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         _json = types_def
 
@@ -21062,14 +20352,12 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -21087,14 +20375,8 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def update_atlas_type_definitions(
-        self,
-        types_def: JSON,
-        **kwargs: Any
-    ) -> JSON:
+    async def update_atlas_type_definitions(self, types_def: JSON, **kwargs: Any) -> JSON:
         """Update all types in bulk, changes detected in the type definitions would be persisted.
 
         :param types_def: A composite object that captures all type definition changes.
@@ -23034,16 +22316,16 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         _json = types_def
 
@@ -23054,14 +22336,12 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -23079,13 +22359,9 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
     async def delete_type_definitions(  # pylint: disable=inconsistent-return-statements
-        self,
-        types_def: JSON,
-        **kwargs: Any
+        self, types_def: JSON, **kwargs: Any
     ) -> None:
         """Delete API for all types in bulk.
 
@@ -24062,16 +23338,16 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = types_def
 
@@ -24082,14 +23358,12 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -24100,15 +23374,9 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-
-
     @distributed_trace_async
     async def list_type_definition_headers(
-        self,
-        *,
-        include_term_template: Optional[bool] = False,
-        type: Optional[str] = None,
-        **kwargs: Any
+        self, *, include_term_template: Optional[bool] = False, type: Optional[str] = None, **kwargs: Any
     ) -> List[JSON]:
         """List all type definitions returned as a list of minimal information header.
 
@@ -24137,17 +23405,14 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
                     }
                 ]
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[List[JSON]]
+        cls = kwargs.pop("cls", None)  # type: ClsType[List[JSON]]
 
-        
         request = build_types_list_type_definition_headers_request(
             include_term_template=include_term_template,
             type=type,
@@ -24155,14 +23420,12 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -24180,14 +23443,8 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
 
         return cast(List[JSON], deserialized)
 
-
-
     @distributed_trace_async
-    async def get_term_template_def_by_guid(
-        self,
-        guid: str,
-        **kwargs: Any
-    ) -> JSON:
+    async def get_term_template_def_by_guid(self, guid: str, **kwargs: Any) -> JSON:
         """Get the term template definition for the given GUID.
 
         :param guid: The globally unique identifier of the term template.
@@ -24307,18 +23564,15 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
                     "version": 0.0  # Optional. The version of the record.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-03-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_types_get_term_template_def_by_guid_request(
             guid=guid,
             api_version=api_version,
@@ -24326,14 +23580,12 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -24351,14 +23603,8 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def get_term_template_def_by_name(
-        self,
-        name: str,
-        **kwargs: Any
-    ) -> JSON:
+    async def get_term_template_def_by_name(self, name: str, **kwargs: Any) -> JSON:
         """Get the term template definition by its name (unique).
 
         :param name: The name of the term template.
@@ -24478,18 +23724,15 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
                     "version": 0.0  # Optional. The version of the record.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-03-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        
         request = build_types_get_term_template_def_by_name_request(
             name=name,
             api_version=api_version,
@@ -24497,14 +23740,12 @@ class TypesOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -24540,14 +23781,8 @@ class CollectionOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace_async
-    async def create_or_update(
-        self,
-        collection: str,
-        entity: JSON,
-        **kwargs: Any
-    ) -> JSON:
+    async def create_or_update(self, collection: str, entity: JSON, **kwargs: Any) -> JSON:
         """Creates or updates an entity to a collection.
         Existing entity is matched using its unique guid if supplied or by its unique attributes eg:
         qualifiedName.
@@ -24980,17 +24215,17 @@ class CollectionOperations:
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-03-01-preview"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01-preview"))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         _json = entity
 
@@ -25003,14 +24238,12 @@ class CollectionOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -25028,15 +24261,8 @@ class CollectionOperations:
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def create_or_update_bulk(
-        self,
-        collection: str,
-        entities: JSON,
-        **kwargs: Any
-    ) -> JSON:
+    async def create_or_update_bulk(self, collection: str, entities: JSON, **kwargs: Any) -> JSON:
         """Creates or updates entities in bulk to a collection.
         Existing entity is matched using its unique guid if supplied or by its unique attributes eg:
         qualifiedName.
@@ -25483,17 +24709,17 @@ class CollectionOperations:
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-03-01-preview"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01-preview"))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         _json = entities
 
@@ -25506,14 +24732,12 @@ class CollectionOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -25531,15 +24755,8 @@ class CollectionOperations:
 
         return cast(JSON, deserialized)
 
-
-
     @distributed_trace_async
-    async def move_entities_to_collection(
-        self,
-        collection: str,
-        move_entities_request: JSON,
-        **kwargs: Any
-    ) -> JSON:
+    async def move_entities_to_collection(self, collection: str, move_entities_request: JSON, **kwargs: Any) -> JSON:
         """Move existing entities to the target collection.
 
         :param collection: the collection unique name.
@@ -25748,17 +24965,17 @@ class CollectionOperations:
                     ]
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-03-01-preview"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[JSON]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01-preview"))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         _json = move_entities_request
 
@@ -25771,14 +24988,12 @@ class CollectionOperations:
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -25795,5 +25010,3 @@ class CollectionOperations:
             return cls(pipeline_response, cast(JSON, deserialized), {})
 
         return cast(JSON, deserialized)
-
-

@@ -14,7 +14,6 @@ from ._constants import ALL_PARTITIONS, TransportType
 from ._eventprocessor.event_processor import EventProcessor
 from ._eventprocessor.common import LoadBalancingStrategy
 
-
 if TYPE_CHECKING:
     from ssl import SSLContext
     from ._eventprocessor.partition_context import PartitionContext
@@ -163,7 +162,8 @@ class EventHubConsumerClient(ClientBase):  # pylint: disable=client-accepts-api-
                 "to use the pure Python AMQP transport. "
                 "If you rely on this, please comment on [this issue]"
                 "(https://github.com/Azure/azure-sdk-for-python/issues/40347) ",
-                DeprecationWarning, stacklevel=2
+                DeprecationWarning,
+                stacklevel=2,
             )
         self._checkpoint_store = kwargs.pop("checkpoint_store", None)
         self._load_balancing_interval = kwargs.pop("load_balancing_interval", None)

@@ -32,17 +32,17 @@ class MountPointMap(Model):
     """
 
     _validation = {
-        'share_id': {'required': True},
-        'role_id': {'readonly': True},
-        'mount_point': {'readonly': True},
-        'role_type': {'readonly': True},
+        "share_id": {"required": True},
+        "role_id": {"readonly": True},
+        "mount_point": {"readonly": True},
+        "role_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'share_id': {'key': 'shareId', 'type': 'str'},
-        'role_id': {'key': 'roleId', 'type': 'str'},
-        'mount_point': {'key': 'mountPoint', 'type': 'str'},
-        'role_type': {'key': 'roleType', 'type': 'str'},
+        "share_id": {"key": "shareId", "type": "str"},
+        "role_id": {"key": "roleId", "type": "str"},
+        "mount_point": {"key": "mountPoint", "type": "str"},
+        "role_type": {"key": "roleType", "type": "str"},
     }
 
     def __init__(self, *, share_id: str, **kwargs) -> None:

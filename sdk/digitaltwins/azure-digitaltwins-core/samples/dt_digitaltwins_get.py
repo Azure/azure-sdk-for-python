@@ -32,7 +32,7 @@ try:
     credential = DefaultAzureCredential()
 
     # Create logger
-    logger = logging.getLogger('azure')
+    logger = logging.getLogger("azure")
     logger.setLevel(logging.DEBUG)
     handler = logging.StreamHandler(stream=sys.stdout)
     logger.addHandler(handler)
@@ -40,7 +40,7 @@ try:
     # Create service client and enable logging for all operations
     service_client = DigitalTwinsClient(url, credential, logging_enable=True)
 
-    # DigitalTwinId from the samples: 
+    # DigitalTwinId from the samples:
     #   BuildingTwin
     #   FloorTwin
     #   HVACTwin

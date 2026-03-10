@@ -15,7 +15,7 @@ def is_language_api(api_version):
         or Language service APIs.
     :rtype: bool
     """
-    return re.search(r'\d{4}-\d{2}-\d{2}', api_version)
+    return re.search(r"\d{4}-\d{2}-\d{2}", api_version)
 
 
 def string_index_type_compatibility(string_index_type):

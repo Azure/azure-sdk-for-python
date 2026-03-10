@@ -14,7 +14,12 @@ from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient, Async
 from preparers import FormRecognizerPreparer, get_async_client
 from asynctestcase import AsyncFormRecognizerTest
 from conftest import skip_flaky_test
-from azure.ai.formrecognizer import ClassifierDocumentTypeDetails, BlobSource, BlobFileListSource, DocumentClassifierDetails
+from azure.ai.formrecognizer import (
+    ClassifierDocumentTypeDetails,
+    BlobSource,
+    BlobFileListSource,
+    DocumentClassifierDetails,
+)
 
 get_dma_client = functools.partial(get_async_client, DocumentModelAdministrationClient)
 
@@ -31,36 +36,31 @@ class TestClassifiersAsync(AsyncFormRecognizerTest):
                 doc_types={
                     "IRS-1040-A": ClassifierDocumentTypeDetails(
                         source=BlobSource(
-                            container_url=formrecognizer_training_data_classifier,
-                            prefix="IRS-1040-A/train"
+                            container_url=formrecognizer_training_data_classifier, prefix="IRS-1040-A/train"
                         )
                     ),
                     "IRS-1040-B": ClassifierDocumentTypeDetails(
                         source=BlobSource(
-                            container_url=formrecognizer_training_data_classifier,
-                            prefix="IRS-1040-B/train"
+                            container_url=formrecognizer_training_data_classifier, prefix="IRS-1040-B/train"
                         )
                     ),
                     "IRS-1040-C": ClassifierDocumentTypeDetails(
                         source=BlobSource(
-                            container_url=formrecognizer_training_data_classifier,
-                            prefix="IRS-1040-C/train"
+                            container_url=formrecognizer_training_data_classifier, prefix="IRS-1040-C/train"
                         )
                     ),
                     "IRS-1040-D": ClassifierDocumentTypeDetails(
                         source=BlobSource(
-                            container_url=formrecognizer_training_data_classifier,
-                            prefix="IRS-1040-D/train"
+                            container_url=formrecognizer_training_data_classifier, prefix="IRS-1040-D/train"
                         )
                     ),
                     "IRS-1040-E": ClassifierDocumentTypeDetails(
                         source=BlobSource(
-                            container_url=formrecognizer_training_data_classifier,
-                            prefix="IRS-1040-E/train"
+                            container_url=formrecognizer_training_data_classifier, prefix="IRS-1040-E/train"
                         )
                     ),
                 },
-                description="IRS document classifier"
+                description="IRS document classifier",
             )
             result = await poller.result()
             assert result.api_version
@@ -84,36 +84,31 @@ class TestClassifiersAsync(AsyncFormRecognizerTest):
                 doc_types={
                     "IRS-1040-A": ClassifierDocumentTypeDetails(
                         source=BlobFileListSource(
-                            container_url=formrecognizer_training_data_classifier,
-                            file_list="IRS-1040-A.jsonl"
+                            container_url=formrecognizer_training_data_classifier, file_list="IRS-1040-A.jsonl"
                         )
                     ),
                     "IRS-1040-B": ClassifierDocumentTypeDetails(
                         source=BlobFileListSource(
-                            container_url=formrecognizer_training_data_classifier,
-                            file_list="IRS-1040-B.jsonl"
+                            container_url=formrecognizer_training_data_classifier, file_list="IRS-1040-B.jsonl"
                         )
                     ),
                     "IRS-1040-C": ClassifierDocumentTypeDetails(
                         source=BlobFileListSource(
-                            container_url=formrecognizer_training_data_classifier,
-                            file_list="IRS-1040-C.jsonl"
+                            container_url=formrecognizer_training_data_classifier, file_list="IRS-1040-C.jsonl"
                         )
                     ),
                     "IRS-1040-D": ClassifierDocumentTypeDetails(
                         source=BlobFileListSource(
-                            container_url=formrecognizer_training_data_classifier,
-                            file_list="IRS-1040-D.jsonl"
+                            container_url=formrecognizer_training_data_classifier, file_list="IRS-1040-D.jsonl"
                         )
                     ),
                     "IRS-1040-E": ClassifierDocumentTypeDetails(
                         source=BlobFileListSource(
-                            container_url=formrecognizer_training_data_classifier,
-                            file_list="IRS-1040-E.jsonl"
+                            container_url=formrecognizer_training_data_classifier, file_list="IRS-1040-E.jsonl"
                         )
                     ),
                 },
-                classifier_id=classifier_id
+                classifier_id=classifier_id,
             )
             result = await poller.result()
             if self.is_live:
@@ -139,16 +134,14 @@ class TestClassifiersAsync(AsyncFormRecognizerTest):
                 doc_types={
                     "IRS-1040-A": ClassifierDocumentTypeDetails(
                         source=BlobSource(
-                            container_url=formrecognizer_training_data_classifier,
-                            prefix="IRS-1040-A/train"
+                            container_url=formrecognizer_training_data_classifier, prefix="IRS-1040-A/train"
                         )
                     ),
                     "IRS-1040-B": ClassifierDocumentTypeDetails(
                         source=BlobSource(
-                            container_url=formrecognizer_training_data_classifier,
-                            prefix="IRS-1040-B/train"
+                            container_url=formrecognizer_training_data_classifier, prefix="IRS-1040-B/train"
                         )
-                    )
+                    ),
                 },
             )
             result = await poller.result()
@@ -173,18 +166,16 @@ class TestClassifiersAsync(AsyncFormRecognizerTest):
                 doc_types={
                     "IRS-1040-A": ClassifierDocumentTypeDetails(
                         source=BlobSource(
-                            container_url=formrecognizer_training_data_classifier,
-                            prefix="IRS-1040-A/train"
+                            container_url=formrecognizer_training_data_classifier, prefix="IRS-1040-A/train"
                         )
                     ),
                     "IRS-1040-B": ClassifierDocumentTypeDetails(
                         source=BlobSource(
-                            container_url=formrecognizer_training_data_classifier,
-                            prefix="IRS-1040-B/train"
+                            container_url=formrecognizer_training_data_classifier, prefix="IRS-1040-B/train"
                         )
-                    )
+                    ),
                 },
-                description="IRS document classifier"
+                description="IRS document classifier",
             )
             result = await poller.result()
 

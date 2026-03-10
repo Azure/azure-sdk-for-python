@@ -19,8 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Base functions in the Azure Cosmos database service.
-"""
+"""Base functions in the Azure Cosmos database service."""
 
 import base64
 import time
@@ -48,34 +47,35 @@ if TYPE_CHECKING:
     from ._cosmos_client_connection import CosmosClientConnection
     from .aio._cosmos_client_connection_async import CosmosClientConnection as AsyncClientConnection
     from ._global_partition_endpoint_manager_per_partition_automatic_failover import (
-        _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover)
+        _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover,
+    )
     from ._request_object import RequestObject
     from ._routing.routing_range import PartitionKeyRangeWrapper
 
 # pylint: disable=protected-access
-#cspell:ignore PPAF, ppaf
+# cspell:ignore PPAF, ppaf
 
 _COMMON_OPTIONS = {
-    'initial_headers': 'initialHeaders',
-    'pre_trigger_include': 'preTriggerInclude',
-    'post_trigger_include': 'postTriggerInclude',
-    'access_condition': 'accessCondition',
-    'session_token': 'sessionToken',
-    'resource_token_expiry_seconds': 'resourceTokenExpirySeconds',
-    'offer_enable_ru_per_minute_throughput': 'offerEnableRUPerMinuteThroughput',
-    'disable_ru_per_minute_usage': 'disableRUPerMinuteUsage',
-    'continuation': 'continuation',
-    'content_type': 'contentType',
-    'is_query_plan_request': 'isQueryPlanRequest',
-    'supported_query_features': 'supportedQueryFeatures',
-    'query_version': 'queryVersion',
-    'priority': 'priorityLevel',
-    'no_response': 'responsePayloadOnWriteDisabled',
-    'retry_write': Constants.Kwargs.RETRY_WRITE,
-    'max_item_count': 'maxItemCount',
-    'throughput_bucket': 'throughputBucket',
-    'excluded_locations': Constants.Kwargs.EXCLUDED_LOCATIONS,
-    "availability_strategy": Constants.Kwargs.AVAILABILITY_STRATEGY
+    "initial_headers": "initialHeaders",
+    "pre_trigger_include": "preTriggerInclude",
+    "post_trigger_include": "postTriggerInclude",
+    "access_condition": "accessCondition",
+    "session_token": "sessionToken",
+    "resource_token_expiry_seconds": "resourceTokenExpirySeconds",
+    "offer_enable_ru_per_minute_throughput": "offerEnableRUPerMinuteThroughput",
+    "disable_ru_per_minute_usage": "disableRUPerMinuteUsage",
+    "continuation": "continuation",
+    "content_type": "contentType",
+    "is_query_plan_request": "isQueryPlanRequest",
+    "supported_query_features": "supportedQueryFeatures",
+    "query_version": "queryVersion",
+    "priority": "priorityLevel",
+    "no_response": "responsePayloadOnWriteDisabled",
+    "retry_write": Constants.Kwargs.RETRY_WRITE,
+    "max_item_count": "maxItemCount",
+    "throughput_bucket": "throughputBucket",
+    "excluded_locations": Constants.Kwargs.EXCLUDED_LOCATIONS,
+    "availability_strategy": Constants.Kwargs.AVAILABILITY_STRATEGY,
 }
 
 # Cosmos resource ID validation regex breakdown:
@@ -86,23 +86,23 @@ _VALID_COSMOS_RESOURCE = re.compile(r"^[^/\\#?\t\r\n]*$")
 
 
 def _get_match_headers(kwargs: dict[str, Any]) -> Tuple[Optional[str], Optional[str]]:
-    if_match = kwargs.pop('if_match', None)
-    if_none_match = kwargs.pop('if_none_match', None)
-    match_condition = kwargs.pop('match_condition', None)
+    if_match = kwargs.pop("if_match", None)
+    if_none_match = kwargs.pop("if_none_match", None)
+    match_condition = kwargs.pop("match_condition", None)
     if match_condition == MatchConditions.IfNotModified:
-        if_match = kwargs.pop('etag', None)
+        if_match = kwargs.pop("etag", None)
         if not if_match:
             raise ValueError("'match_condition' specified without 'etag'.")
     elif match_condition == MatchConditions.IfPresent:
-        if_match = '*'
+        if_match = "*"
     elif match_condition == MatchConditions.IfModified:
-        if_none_match = kwargs.pop('etag', None)
+        if_none_match = kwargs.pop("etag", None)
         if not if_none_match:
             raise ValueError("'match_condition' specified without 'etag'.")
     elif match_condition == MatchConditions.IfMissing:
-        if_none_match = '*'
+        if_none_match = "*"
     elif match_condition is None:
-        etag = kwargs.pop('etag', None)
+        etag = kwargs.pop("etag", None)
         if etag is not None:
             raise ValueError("'etag' specified without 'match_condition'.")
     else:
@@ -111,28 +111,26 @@ def _get_match_headers(kwargs: dict[str, Any]) -> Tuple[Optional[str], Optional[
 
 
 def build_options(kwargs: dict[str, Any]) -> dict[str, Any]:
-    options = kwargs.pop('request_options', kwargs.pop('feed_options', {}))
+    options = kwargs.pop("request_options", kwargs.pop("feed_options", {}))
     for key, value in _COMMON_OPTIONS.items():
         if key in kwargs:
             options[value] = kwargs.pop(key)
-    if 'read_timeout' in kwargs:
-        options['read_timeout'] = kwargs['read_timeout']
-    if 'timeout' in kwargs:
-        options['timeout'] = kwargs['timeout']
-
+    if "read_timeout" in kwargs:
+        options["read_timeout"] = kwargs["read_timeout"]
+    if "timeout" in kwargs:
+        options["timeout"] = kwargs["timeout"]
 
     options[Constants.OperationStartTime] = time.time()
     if_match, if_none_match = _get_match_headers(kwargs)
     if if_match:
-        options['accessCondition'] = {'type': 'IfMatch', 'condition': if_match}
+        options["accessCondition"] = {"type": "IfMatch", "condition": if_match}
     if if_none_match:
-        options['accessCondition'] = {'type': 'IfNoneMatch', 'condition': if_none_match}
+        options["accessCondition"] = {"type": "IfNoneMatch", "condition": if_none_match}
     return options
 
+
 def _merge_query_results(
-        results: dict[str, Any],
-        partial_result: dict[str, Any],
-        query: Optional[Union[str, dict[str, Any]]]
+    results: dict[str, Any], partial_result: dict[str, Any], query: Optional[Union[str, dict[str, Any]]]
 ) -> dict[str, Any]:
     """Merges partial query results from different partitions.
 
@@ -170,21 +168,21 @@ def _merge_query_results(
 
     # Check if both results are aggregate queries
     is_partial_agg = (
-            isinstance(partial_docs, list)
-            and len(partial_docs) == 1
-            and isinstance(partial_docs[0], dict)
-            and partial_docs[0].get("_aggregate") is not None
+        isinstance(partial_docs, list)
+        and len(partial_docs) == 1
+        and isinstance(partial_docs[0], dict)
+        and partial_docs[0].get("_aggregate") is not None
     )
     is_results_agg = (
-            results_docs
-            and isinstance(results_docs, list)
-            and len(results_docs) == 1
-            and isinstance(results_docs[0], dict)
-            and results_docs[0].get("_aggregate") is not None
+        results_docs
+        and isinstance(results_docs, list)
+        and len(results_docs) == 1
+        and isinstance(results_docs[0], dict)
+        and results_docs[0].get("_aggregate") is not None
     )
 
     if is_partial_agg and is_results_agg:
-        agg_results = results_docs[0]["_aggregate"] # type: ignore[index]
+        agg_results = results_docs[0]["_aggregate"]  # type: ignore[index]
         agg_partial = partial_docs[0]["_aggregate"]
         for key in agg_partial:
             if key not in agg_results:
@@ -203,15 +201,13 @@ def _merge_query_results(
 
     # Check if both are VALUE aggregate queries
     is_partial_value_agg = (
-            isinstance(partial_docs, list)
-            and len(partial_docs) == 1
-            and isinstance(partial_docs[0], (int, float))
+        isinstance(partial_docs, list) and len(partial_docs) == 1 and isinstance(partial_docs[0], (int, float))
     )
     is_results_value_agg = (
-            results_docs
-            and isinstance(results_docs, list)
-            and len(results_docs) == 1
-            and isinstance(results_docs[0], (int, float))
+        results_docs
+        and isinstance(results_docs, list)
+        and len(results_docs) == 1
+        and isinstance(results_docs[0], (int, float))
     )
 
     if is_partial_value_agg and is_results_value_agg:
@@ -223,11 +219,11 @@ def _merge_query_results(
             # Without robust query parsing, we can't distinguish them reliably.
             # Defaulting to sum for COUNT/SUM. MIN/MAX VALUE queries are not fully supported client-side.
             if " SELECT VALUE MIN" in query_upper:
-                results_docs[0] = min(results_docs[0], partial_docs[0]) # type: ignore[index]
+                results_docs[0] = min(results_docs[0], partial_docs[0])  # type: ignore[index]
             elif " SELECT VALUE MAX" in query_upper:
-                results_docs[0] = max(results_docs[0], partial_docs[0]) # type: ignore[index]
+                results_docs[0] = max(results_docs[0], partial_docs[0])  # type: ignore[index]
             else:  # For COUNT/SUM, we sum the partial results
-                results_docs[0] += partial_docs[0] # type: ignore[index]
+                results_docs[0] += partial_docs[0]  # type: ignore[index]
         return results
 
     # Standard query, append documents
@@ -240,16 +236,16 @@ def _merge_query_results(
 
 
 def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
-        cosmos_client_connection: Union["CosmosClientConnection", "AsyncClientConnection"],
-        default_headers: Mapping[str, Any],
-        verb: str,
-        path: str,
-        resource_id: Optional[str],
-        resource_type: str,
-        operation_type: str,
-        options: Mapping[str, Any],
-        partition_key_range_id: Optional[str] = None,
-        client_id: Optional[str] = None,
+    cosmos_client_connection: Union["CosmosClientConnection", "AsyncClientConnection"],
+    default_headers: Mapping[str, Any],
+    verb: str,
+    path: str,
+    resource_id: Optional[str],
+    resource_type: str,
+    operation_type: str,
+    options: Mapping[str, Any],
+    partition_key_range_id: Optional[str] = None,
+    client_id: Optional[str] = None,
 ) -> dict[str, Any]:
     """Gets HTTP request headers.
 
@@ -270,8 +266,9 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     options = options or {}
 
     # SDK supported capabilities header for partition merge support
-    headers[http_constants.HttpHeaders.SDKSupportedCapabilities] = \
+    headers[http_constants.HttpHeaders.SDKSupportedCapabilities] = (
         http_constants.SDKSupportedCapabilities.PARTITION_MERGE
+    )
 
     # Generate a new activity ID for each request client side.
     headers[http_constants.HttpHeaders.ActivityId] = GenerateGuidId()
@@ -320,16 +317,16 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         headers[http_constants.HttpHeaders.OfferThroughput] = options["offerThroughput"]
 
     if options.get("contentType"):
-        headers[http_constants.HttpHeaders.ContentType] = options['contentType']
+        headers[http_constants.HttpHeaders.ContentType] = options["contentType"]
 
     if options.get("isQueryPlanRequest"):
-        headers[http_constants.HttpHeaders.IsQueryPlanRequest] = options['isQueryPlanRequest']
+        headers[http_constants.HttpHeaders.IsQueryPlanRequest] = options["isQueryPlanRequest"]
 
     if options.get("supportedQueryFeatures"):
-        headers[http_constants.HttpHeaders.SupportedQueryFeatures] = options['supportedQueryFeatures']
+        headers[http_constants.HttpHeaders.SupportedQueryFeatures] = options["supportedQueryFeatures"]
 
     if options.get("queryVersion"):
-        headers[http_constants.HttpHeaders.QueryVersion] = options['queryVersion']
+        headers[http_constants.HttpHeaders.QueryVersion] = options["queryVersion"]
 
     if "partitionKey" in options:
         # if partitionKey value is Undefined, serialize it as [{}] to be consistent with other SDKs.
@@ -341,11 +338,12 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         # else serialize using json dumps method which apart from regular values will serialize None into null
         else:
             # single partitioning uses a string and needs to be turned into a list
-            is_sequence_not_string = (isinstance(options["partitionKey"], Sequence) and
-                                      not isinstance(options["partitionKey"], str))
+            is_sequence_not_string = isinstance(options["partitionKey"], Sequence) and not isinstance(
+                options["partitionKey"], str
+            )
 
             if is_sequence_not_string and options["partitionKey"]:
-                pk_val = json.dumps(list(options["partitionKey"]), separators=(',', ':'))
+                pk_val = json.dumps(list(options["partitionKey"]), separators=(",", ":"))
             else:
                 pk_val = json.dumps([options["partitionKey"]])
             headers[http_constants.HttpHeaders.PartitionKey] = pk_val
@@ -364,7 +362,8 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 
     if options.get("responseContinuationTokenLimitInKb"):
         headers[http_constants.HttpHeaders.ResponseContinuationTokenLimitInKb] = options[
-            "responseContinuationTokenLimitInKb"]
+            "responseContinuationTokenLimitInKb"
+        ]
 
     if options.get("priorityLevel"):
         headers[http_constants.HttpHeaders.PriorityLevel] = options["priorityLevel"]
@@ -443,7 +442,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 
     # If it is an operation at the container level, verify the rid of the container to see if the cache needs to be
     # refreshed.
-    if resource_type != 'dbs' and options.get("containerRID"):
+    if resource_type != "dbs" and options.get("containerRID"):
         headers[http_constants.HttpHeaders.IntendedCollectionRID] = options["containerRID"]
 
     if resource_type == "":
@@ -453,10 +452,12 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 
     return headers
 
+
 def _is_session_token_request(
-        cosmos_client_connection: Union["CosmosClientConnection", "AsyncClientConnection"],
-        headers: dict,
-        request_object: "RequestObject") -> bool:
+    cosmos_client_connection: Union["CosmosClientConnection", "AsyncClientConnection"],
+    headers: dict,
+    request_object: "RequestObject",
+) -> bool:
     consistency_level = headers.get(http_constants.HttpHeaders.ConsistencyLevel)
     # Figure out if consistency level for this request is session
     is_session_consistency = consistency_level == documents.ConsistencyLevel.Session
@@ -464,19 +465,25 @@ def _is_session_token_request(
     # Verify that it is not a metadata request, and that it is either a read request, batch request, or an account
     # configured to use multiple write regions. Batch requests are special-cased because they can contain both read and
     # write operations, and we want to use session consistency for the read operations.
-    return (is_session_consistency is True and not IsMasterResource(request_object.resource_type)
-            and (documents._OperationType.IsReadOnlyOperation(request_object.operation_type)
-                 or request_object.operation_type == "Batch"
-                 or cosmos_client_connection._global_endpoint_manager.can_use_multiple_write_locations(request_object)))
+    return (
+        is_session_consistency is True
+        and not IsMasterResource(request_object.resource_type)
+        and (
+            documents._OperationType.IsReadOnlyOperation(request_object.operation_type)
+            or request_object.operation_type == "Batch"
+            or cosmos_client_connection._global_endpoint_manager.can_use_multiple_write_locations(request_object)
+        )
+    )
 
 
 def set_session_token_header(
-        cosmos_client_connection: Union["CosmosClientConnection", "AsyncClientConnection"],
-        headers: dict,
-        path: str,
-        request_object: "RequestObject",
-        options: Mapping[str, Any],
-        partition_key_range_id: Optional[str] = None) -> None:
+    cosmos_client_connection: Union["CosmosClientConnection", "AsyncClientConnection"],
+    headers: dict,
+    path: str,
+    request_object: "RequestObject",
+    options: Mapping[str, Any],
+    partition_key_range_id: Optional[str] = None,
+) -> None:
     # set session token if required
     if _is_session_token_request(cosmos_client_connection, headers, request_object):
         # if there is a token set via option, then use it to override default
@@ -485,28 +492,33 @@ def set_session_token_header(
         else:
             # check if the client's default consistency is session (and request consistency level is same),
             # then update from session container
-            if headers[http_constants.HttpHeaders.ConsistencyLevel] == documents.ConsistencyLevel.Session and \
-                    cosmos_client_connection.session:
+            if (
+                headers[http_constants.HttpHeaders.ConsistencyLevel] == documents.ConsistencyLevel.Session
+                and cosmos_client_connection.session
+            ):
                 # urllib_unquote is used to decode the path, as it may contain encoded characters
                 path = urllib_unquote(path)
                 # populate session token from the client's session container
-                session_token = (
-                    cosmos_client_connection.session.get_session_token(path,
-                                                                options.get('partitionKey'),
-                                                                cosmos_client_connection._container_properties_cache,
-                                                                cosmos_client_connection._routing_map_provider,
-                                                                partition_key_range_id,
-                                                                options))
+                session_token = cosmos_client_connection.session.get_session_token(
+                    path,
+                    options.get("partitionKey"),
+                    cosmos_client_connection._container_properties_cache,
+                    cosmos_client_connection._routing_map_provider,
+                    partition_key_range_id,
+                    options,
+                )
                 if session_token != "":
                     headers[http_constants.HttpHeaders.SessionToken] = session_token
 
+
 async def set_session_token_header_async(
-        cosmos_client_connection: Union["CosmosClientConnection", "AsyncClientConnection"],
-        headers: dict,
-        path: str,
-        request_object: "RequestObject",
-        options: Mapping[str, Any],
-        partition_key_range_id: Optional[str] = None) -> None:
+    cosmos_client_connection: Union["CosmosClientConnection", "AsyncClientConnection"],
+    headers: dict,
+    path: str,
+    request_object: "RequestObject",
+    options: Mapping[str, Any],
+    partition_key_range_id: Optional[str] = None,
+) -> None:
     # set session token if required
     if _is_session_token_request(cosmos_client_connection, headers, request_object):
         # if there is a token set via option, then use it to override default
@@ -515,20 +527,24 @@ async def set_session_token_header_async(
         else:
             # check if the client's default consistency is session (and request consistency level is same),
             # then update from session container
-            if headers[http_constants.HttpHeaders.ConsistencyLevel] == documents.ConsistencyLevel.Session and \
-                    cosmos_client_connection.session:
+            if (
+                headers[http_constants.HttpHeaders.ConsistencyLevel] == documents.ConsistencyLevel.Session
+                and cosmos_client_connection.session
+            ):
                 # populate session token from the client's session container
                 # urllib_unquote is used to decode the path, as it may contain encoded characters
                 path = urllib_unquote(path)
-                session_token = \
-                    await cosmos_client_connection.session.get_session_token_async(path,
-                                                                options.get('partitionKey'),
-                                                                cosmos_client_connection._container_properties_cache,
-                                                                cosmos_client_connection._routing_map_provider,
-                                                                partition_key_range_id,
-                                                                options)
+                session_token = await cosmos_client_connection.session.get_session_token_async(
+                    path,
+                    options.get("partitionKey"),
+                    cosmos_client_connection._container_properties_cache,
+                    cosmos_client_connection._routing_map_provider,
+                    partition_key_range_id,
+                    options,
+                )
                 if session_token != "":
                     headers[http_constants.HttpHeaders.SessionToken] = session_token
+
 
 def GetResourceIdOrFullNameFromLink(resource_link: str) -> str:
     """Gets resource id or full name from resource link.
@@ -746,7 +762,7 @@ def GetItemContainerInfo(self_link: str, alt_content_path: str, resource_id: str
 
     if start_index != -1 and end_index != -1:
         # parse only the collection rid from the path as it's unique across databases
-        collection_rid = self_link[start_index + 1:end_index]
+        collection_rid = self_link[start_index + 1 : end_index]
 
         if "colls" in self_link:
             # this is a collection request
@@ -872,7 +888,7 @@ def ParsePaths(paths: list[str]) -> list[str]:
                     newIndex += 1
 
                 # This will extract the token excluding the quote chars
-                token = path[currentIndex + 1: newIndex]
+                token = path[currentIndex + 1 : newIndex]
                 tokens.append(token)
                 currentIndex = newIndex + 1
             else:
@@ -903,8 +919,9 @@ def create_scope_from_url(url: str) -> str:
 def validate_cache_staleness_value(max_integrated_cache_staleness: Any) -> None:
     int(max_integrated_cache_staleness)  # Will throw error if data type cant be converted to int
     if max_integrated_cache_staleness < 0:
-        raise ValueError("Parameter 'max_integrated_cache_staleness_in_ms' can only be an "
-                         "integer greater than or equal to zero")
+        raise ValueError(
+            "Parameter 'max_integrated_cache_staleness_in_ms' can only be an " "integer greater than or equal to zero"
+        )
 
 
 def _validate_resource(resource: Mapping[str, Any]) -> None:
@@ -939,10 +956,11 @@ def _set_throughput_options(offer: Optional[Union[int, ThroughputProperties]], r
             increment_percent = offer.auto_scale_increment_percent
 
             if max_throughput is not None:
-                request_options['autoUpgradePolicy'] = _stringify_auto_scale(offer=offer)
+                request_options["autoUpgradePolicy"] = _stringify_auto_scale(offer=offer)
             elif increment_percent:
-                raise ValueError("auto_scale_max_throughput must be supplied in "
-                                 "conjunction with auto_scale_increment_percent")
+                raise ValueError(
+                    "auto_scale_max_throughput must be supplied in " "conjunction with auto_scale_increment_percent"
+                )
             if offer.offer_throughput:
                 request_options["offerThroughput"] = offer.offer_throughput
         except AttributeError as e:
@@ -951,27 +969,20 @@ def _set_throughput_options(offer: Optional[Union[int, ThroughputProperties]], r
 
 def _deserialize_throughput(throughput: list[dict[str, dict[str, Any]]]) -> ThroughputProperties:
     properties = throughput[0]
-    offer_autopilot: Optional[dict[str, Any]] = properties['content'].get('offerAutopilotSettings')
-    if offer_autopilot and 'autoUpgradePolicy' in offer_autopilot:
+    offer_autopilot: Optional[dict[str, Any]] = properties["content"].get("offerAutopilotSettings")
+    if offer_autopilot and "autoUpgradePolicy" in offer_autopilot:
         return ThroughputProperties(
             properties=properties,
-            auto_scale_max_throughput=offer_autopilot['maxThroughput'],
-            auto_scale_increment_percent=offer_autopilot['autoUpgradePolicy']['throughputPolicy']['incrementPercent']
+            auto_scale_max_throughput=offer_autopilot["maxThroughput"],
+            auto_scale_increment_percent=offer_autopilot["autoUpgradePolicy"]["throughputPolicy"]["incrementPercent"],
         )
     if offer_autopilot:
-        return ThroughputProperties(
-            properties=properties,
-            auto_scale_max_throughput=offer_autopilot['maxThroughput']
-        )
-    return ThroughputProperties(
-        offer_throughput=properties["content"]["offerThroughput"],
-        properties=properties
-    )
+        return ThroughputProperties(properties=properties, auto_scale_max_throughput=offer_autopilot["maxThroughput"])
+    return ThroughputProperties(offer_throughput=properties["content"]["offerThroughput"], properties=properties)
 
 
 def _replace_throughput(
-    throughput: Union[int, ThroughputProperties],
-    new_throughput_properties: dict[str, Any]
+    throughput: Union[int, ThroughputProperties], new_throughput_properties: dict[str, Any]
 ) -> None:
     if isinstance(throughput, int):
         new_throughput_properties["content"]["offerThroughput"] = throughput
@@ -980,9 +991,13 @@ def _replace_throughput(
             max_throughput = throughput.auto_scale_max_throughput
             increment_percent = throughput.auto_scale_increment_percent
             if max_throughput is not None:
-                new_throughput_properties['content']['offerAutopilotSettings']['maxThroughput'] = max_throughput
+                new_throughput_properties["content"]["offerAutopilotSettings"]["maxThroughput"] = max_throughput
                 if increment_percent:
-                    new_throughput_properties['content']['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy']['incrementPercent'] = increment_percent  # pylint: disable=line-too-long
+                    new_throughput_properties["content"]["offerAutopilotSettings"]["autoUpgradePolicy"][
+                        "throughputPolicy"
+                    ][
+                        "incrementPercent"
+                    ] = increment_percent  # pylint: disable=line-too-long
             if throughput.offer_throughput:
                 new_throughput_properties["content"]["offerThroughput"] = throughput.offer_throughput
         except AttributeError as e:
@@ -1009,7 +1024,7 @@ def _populate_batch_headers(current_headers: dict[str, Any]) -> None:
 
 
 def _format_batch_operations(
-    operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], dict[str, Any]]]]
+    operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], dict[str, Any]]]],
 ) -> list[dict[str, Any]]:
     final_operations = []
     for index, batch_operation in enumerate(operations):
@@ -1025,33 +1040,23 @@ def _format_batch_operations(
 
         if len(args) == 1:
             if operation_type.lower() == "create":
-                operation = {"operationType": "Create",
-                             "resourceBody": args[0]}
+                operation = {"operationType": "Create", "resourceBody": args[0]}
             elif operation_type.lower() == "upsert":
-                operation = {"operationType": "Upsert",
-                             "resourceBody": args[0]}
+                operation = {"operationType": "Upsert", "resourceBody": args[0]}
             elif operation_type.lower() == "read":
-                operation = {"operationType": "Read",
-                             "id": args[0]}
+                operation = {"operationType": "Read", "id": args[0]}
             elif operation_type.lower() == "delete":
-                operation = {"operationType": "Delete",
-                             "id": args[0]}
+                operation = {"operationType": "Delete", "id": args[0]}
         elif len(args) == 2:
             if operation_type.lower() == "replace":
-                operation = {"operationType": "Replace",
-                             "id": args[0],
-                             "resourceBody": args[1]}
+                operation = {"operationType": "Replace", "id": args[0], "resourceBody": args[1]}
             elif operation_type.lower() == "patch":
-                operation = {"operationType": "Patch",
-                             "id": args[0],
-                             "resourceBody": {"operations": args[1]}}
+                operation = {"operationType": "Patch", "id": args[0], "resourceBody": {"operations": args[1]}}
                 filter_predicate = kwargs.pop("filter_predicate", None)
                 if filter_predicate is not None:
                     operation["resourceBody"]["condition"] = filter_predicate
         else:
-            raise AttributeError(
-                f"Operation type or args passed in not recognized for operation with index {index}."
-            )
+            raise AttributeError(f"Operation type or args passed in not recognized for operation with index {index}.")
 
         if_match_etag = kwargs.pop("if_match_etag", None)
         if_none_match_etag = kwargs.pop("if_none_match_etag", None)
@@ -1067,9 +1072,12 @@ def _format_batch_operations(
 
 def _build_properties_cache(properties: dict[str, Any], container_link: str) -> dict[str, Any]:
     return {
-        "_self": properties.get("_self", None), "_rid": properties.get("_rid", None),
-        "partitionKey": properties.get("partitionKey", None), "container_link": container_link
+        "_self": properties.get("_self", None),
+        "_rid": properties.get("_rid", None),
+        "partitionKey": properties.get("partitionKey", None),
+        "container_link": container_link,
     }
+
 
 def format_pk_range_options(query_options: Mapping[str, Any]) -> dict[str, Any]:
     """Formats the partition key range options to be used internally from the query ones.

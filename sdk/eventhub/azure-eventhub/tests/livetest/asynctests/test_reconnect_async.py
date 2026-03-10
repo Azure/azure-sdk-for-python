@@ -177,7 +177,9 @@ async def test_send_connection_idle_timeout_and_reconnect_async(
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_receive_connection_idle_timeout_and_reconnect_async(auth_credential_senders_async, uamqp_transport, client_args):
+async def test_receive_connection_idle_timeout_and_reconnect_async(
+    auth_credential_senders_async, uamqp_transport, client_args
+):
     fully_qualified_namespace, eventhub_name, credential, senders = auth_credential_senders_async
     client = EventHubConsumerClient(
         fully_qualified_namespace=fully_qualified_namespace,

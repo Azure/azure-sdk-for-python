@@ -21,7 +21,6 @@ from ._legacy import (
 )
 from ._serialization import Deserializer, Serializer
 
-
 DEFAULT_STANDARD_API_VERSION = "2024-06-01"
 DEFAULT_BASIC_API_VERSION = "2018-01-01"
 
@@ -70,8 +69,8 @@ class EventGridPublisherClient(InternalEventGridPublisherClient):
                 endpoint,
                 credential,
                 api_version=api_version or DEFAULT_BASIC_API_VERSION,
-            )  # type:ignore[assignment]
-            self._publish = self._client.send  # type:ignore[attr-defined]
+            )  # type: ignore[assignment]
+            self._publish = self._client.send  # type: ignore[attr-defined]
         else:
             if isinstance(credential, AzureSasCredential):
                 raise TypeError("SAS token authentication is not supported for Event Grid Namespace.")

@@ -39,7 +39,9 @@ class TestHealth(TextAnalyticsTest):
     async def test_no_single_input(self, client):
         with pytest.raises(TypeError):
             async with client:
-                response = await (await client.begin_analyze_healthcare_entities("hello world", polling_interval=self._interval())).result()
+                response = await (
+                    await client.begin_analyze_healthcare_entities("hello world", polling_interval=self._interval())
+                ).result()
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -48,15 +50,16 @@ class TestHealth(TextAnalyticsTest):
         docs = [
             "Patient does not suffer from high blood pressure.",
             "Prescribed 100mg ibuprofen, taken twice daily.",
-            ""
+            "",
         ]
 
         async with client:
-            result = await(await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())).result()
+            result = await (
+                await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
+            ).result()
             response = []
             async for r in result:
                 response.append(r)
-
 
         for i in range(2):
             assert response[i].id is not None
@@ -71,15 +74,16 @@ class TestHealth(TextAnalyticsTest):
         docs = [
             "Patient does not suffer from high blood pressure.",
             "Prescribed 100mg ibuprofen, taken twice daily.",
-            ""
+            "",
         ]
 
         async with client:
-            result = await(await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())).result()
+            result = await (
+                await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
+            ).result()
             response = []
             async for r in result:
                 response.append(r)
-
 
         for i in range(2):
             assert response[i].id is not None
@@ -91,12 +95,16 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
     async def test_input_with_some_errors(self, client):
-        docs = [{"id": "1", "language": "en", "text": ""},
-                {"id": "2", "language": "english", "text": "Patient does not suffer from high blood pressure."},
-                {"id": "3", "language": "en", "text": "Prescribed 100mg ibuprofen, taken twice daily."}]
+        docs = [
+            {"id": "1", "language": "en", "text": ""},
+            {"id": "2", "language": "english", "text": "Patient does not suffer from high blood pressure."},
+            {"id": "3", "language": "en", "text": "Prescribed 100mg ibuprofen, taken twice daily."},
+        ]
 
         async with client:
-            result = await(await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())).result()
+            result = await (
+                await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
+            ).result()
             response = []
             async for r in result:
                 response.append(r)
@@ -146,14 +154,18 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
     async def test_out_of_order_ids(self, client):
-        docs = [{"id": "56", "text": ":)"},
-                {"id": "0", "text": ":("},
-                {"id": "22", "text": ""},
-                {"id": "19", "text": ":P"},
-                {"id": "1", "text": ":D"}]
+        docs = [
+            {"id": "56", "text": ":)"},
+            {"id": "0", "text": ":("},
+            {"id": "22", "text": ""},
+            {"id": "19", "text": ":P"},
+            {"id": "1", "text": ":D"},
+        ]
 
         async with client:
-            result = await(await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())).result()
+            result = await (
+                await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
+            ).result()
             response = []
             async for r in result:
                 response.append(r)
@@ -168,32 +180,39 @@ class TestHealth(TextAnalyticsTest):
             assert not resp.statistics
         assert num_error == 1
 
-    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud raise InternalServerError: https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15860714')
+    @pytest.mark.skipif(
+        not is_public_cloud(),
+        reason="Usgov and China Cloud raise InternalServerError: https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15860714",
+    )
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.1"})
     @recorded_by_proxy_async
     async def test_show_stats_and_model_version_v3_1(self, client):
-        docs = [{"id": "56", "text": ":)"},
-                {"id": "0", "text": ":("},
-                {"id": "22", "text": ""},
-                {"id": "19", "text": ":P"},
-                {"id": "1", "text": ":D"}]
+        docs = [
+            {"id": "56", "text": ":)"},
+            {"id": "0", "text": ":("},
+            {"id": "22", "text": ""},
+            {"id": "19", "text": ":P"},
+            {"id": "1", "text": ":D"},
+        ]
 
         def callback(resp):
             assert resp.raw_response
-            stats = resp.raw_response['results']['statistics']
-            assert stats['documentsCount'] == 5
-            assert stats['validDocumentsCount'] == 4
-            assert stats['erroneousDocumentsCount'] == 1
-            assert stats['transactionsCount'] == 4
+            stats = resp.raw_response["results"]["statistics"]
+            assert stats["documentsCount"] == 5
+            assert stats["validDocumentsCount"] == 4
+            assert stats["erroneousDocumentsCount"] == 1
+            assert stats["transactionsCount"] == 4
 
         async with client:
-            response = await (await client.begin_analyze_healthcare_entities(
-                docs,
-                show_stats=True,
-                polling_interval=self._interval(),
-                raw_response_hook=callback,
-            )).result()
+            response = await (
+                await client.begin_analyze_healthcare_entities(
+                    docs,
+                    show_stats=True,
+                    polling_interval=self._interval(),
+                    raw_response_hook=callback,
+                )
+            ).result()
 
         assert response
         assert not hasattr(response, "statistics")
@@ -211,38 +230,42 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
     async def test_show_stats_and_model_version(self, client):
-        docs = [{"id": "56", "text": ":)"},
-                {"id": "0", "text": ":("},
-                {"id": "22", "text": ""},
-                {"id": "19", "text": ":P"},
-                {"id": "1", "text": ":D"}]
+        docs = [
+            {"id": "56", "text": ":)"},
+            {"id": "0", "text": ":("},
+            {"id": "22", "text": ""},
+            {"id": "19", "text": ":P"},
+            {"id": "1", "text": ":D"},
+        ]
 
         def callback(resp):
             assert resp.raw_response
-            tasks = resp.raw_response['tasks']
-            assert tasks['completed'] == 1
-            assert tasks['inProgress'] == 0
-            assert tasks['failed'] == 0
-            assert tasks['total'] == 1
+            tasks = resp.raw_response["tasks"]
+            assert tasks["completed"] == 1
+            assert tasks["inProgress"] == 0
+            assert tasks["failed"] == 0
+            assert tasks["total"] == 1
             num_tasks = 0
             for task in tasks["items"]:
                 num_tasks += 1
-                task_stats = task['results']['statistics']
-                assert task['results']['modelVersion']
-                assert task_stats['documentsCount'] == 5
-                assert task_stats['validDocumentsCount'] == 4
-                assert task_stats['erroneousDocumentsCount'] == 1
-                assert task_stats['transactionsCount'] == 4
+                task_stats = task["results"]["statistics"]
+                assert task["results"]["modelVersion"]
+                assert task_stats["documentsCount"] == 5
+                assert task_stats["validDocumentsCount"] == 4
+                assert task_stats["erroneousDocumentsCount"] == 1
+                assert task_stats["transactionsCount"] == 4
             assert num_tasks == 1
 
         async with client:
-            response = await (await client.begin_analyze_healthcare_entities(
-                docs,
-                show_stats=True,
-                model_version="latest",
-                polling_interval=self._interval(),
-                raw_response_hook=callback,
-            )).result()
+            response = await (
+                await client.begin_analyze_healthcare_entities(
+                    docs,
+                    show_stats=True,
+                    model_version="latest",
+                    polling_interval=self._interval(),
+                    raw_response_hook=callback,
+                )
+            ).result()
 
         assert response
         assert not hasattr(response, "statistics")
@@ -260,12 +283,16 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
     async def test_whole_batch_language_hint_and_dict_input(self, client):
-        docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
+        docs = [
+            {"id": "1", "text": "I will go to the park."},
+            {"id": "2", "text": "I did not like the hotel we stayed at."},
+            {"id": "3", "text": "The restaurant had really good food."},
+        ]
 
         async with client:
-            result = await(await client.begin_analyze_healthcare_entities(docs, language="en", polling_interval=self._interval())).result()
+            result = await (
+                await client.begin_analyze_healthcare_entities(docs, language="en", polling_interval=self._interval())
+            ).result()
             response = []
             async for r in result:
                 response.append(r)
@@ -281,43 +308,61 @@ class TestHealth(TextAnalyticsTest):
         docs = ["This should fail because we're passing in an invalid language hint"]
 
         async with client:
-            result = await(await client.begin_analyze_healthcare_entities(docs, language="notalanguage", polling_interval=self._interval())).result()
+            result = await (
+                await client.begin_analyze_healthcare_entities(
+                    docs, language="notalanguage", polling_interval=self._interval()
+                )
+            ).result()
             response = []
             async for r in result:
                 response.append(r)
 
-        assert response[0].error.code == 'UnsupportedLanguageCode'
+        assert response[0].error.code == "UnsupportedLanguageCode"
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
     async def test_invalid_language_hint_docs(self, client):
-        docs = [{"id": "1", "language": "notalanguage", "text": "This should fail because we're passing in an invalid language hint"}]
+        docs = [
+            {
+                "id": "1",
+                "language": "notalanguage",
+                "text": "This should fail because we're passing in an invalid language hint",
+            }
+        ]
 
         async with client:
-            result = await(await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())).result()
+            result = await (
+                await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
+            ).result()
             response = []
             async for r in result:
                 response.append(r)
 
-        assert response[0].error.code == 'UnsupportedLanguageCode'
+        assert response[0].error.code == "UnsupportedLanguageCode"
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
     async def test_user_agent(self, client):  # TODO: verify
         def callback(resp):
-            assert "azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
-                VERSION, platform.python_version(), platform.platform()) in \
-                resp.http_request.headers["User-Agent"]
+            assert (
+                "azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
+                    VERSION, platform.python_version(), platform.platform()
+                )
+                in resp.http_request.headers["User-Agent"]
+            )
 
         docs = [{"id": "1", "text": "I will go to the park."}]
 
         async with client:
             poller = await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
-            assert "azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
-                    VERSION, platform.python_version(), platform.platform()) in \
-                    poller._polling_method._initial_response.http_request.headers["User-Agent"]
+            assert (
+                "azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
+                    VERSION, platform.python_version(), platform.platform()
+                )
+                in poller._polling_method._initial_response.http_request.headers["User-Agent"]
+            )
 
             await poller.result()  # need to call this before tearDown runs even though we don't need the response for the test.
 
@@ -329,7 +374,11 @@ class TestHealth(TextAnalyticsTest):
 
         with pytest.raises(HttpResponseError) as err:
             async with client:
-                result = await(await client.begin_analyze_healthcare_entities(docs, model_version="bad", polling_interval=self._interval())).result()
+                result = await (
+                    await client.begin_analyze_healthcare_entities(
+                        docs, model_version="bad", polling_interval=self._interval()
+                    )
+                ).result()
                 response = []
                 async for r in result:
                     response.append(r)
@@ -344,12 +393,16 @@ class TestHealth(TextAnalyticsTest):
         for _ in range(5121):
             text += "x"
 
-        docs = [{"id": "1", "text": ""},
-                {"id": "2", "language": "english", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": text}]
+        docs = [
+            {"id": "1", "text": ""},
+            {"id": "2", "language": "english", "text": "I did not like the hotel we stayed at."},
+            {"id": "3", "text": text},
+        ]
 
         async with client:
-            result = await(await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())).result()
+            result = await (
+                await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
+            ).result()
             doc_results = []
             async for r in result:
                 doc_results.append(r)
@@ -365,8 +418,7 @@ class TestHealth(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_duplicate_ids_error(self, client):
         # Duplicate Ids
-        docs = [{"id": "1", "text": "hello world"},
-                {"id": "1", "text": "I did not like the hotel we stayed at."}]
+        docs = [{"id": "1", "text": "hello world"}, {"id": "1", "text": "I did not like the hotel we stayed at."}]
         try:
             async with client:
                 result = await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
@@ -382,11 +434,11 @@ class TestHealth(TextAnalyticsTest):
             return "cls result"
 
         async with client:
-            res = await (await client.begin_analyze_healthcare_entities(
-                documents=["Test passing cls to endpoint"],
-                cls=callback,
-                polling_interval=self._interval()
-            )).result()
+            res = await (
+                await client.begin_analyze_healthcare_entities(
+                    documents=["Test passing cls to endpoint"], cls=callback, polling_interval=self._interval()
+                )
+            ).result()
         assert res == "cls result"
 
     @TextAnalyticsPreparer()
@@ -406,7 +458,9 @@ class TestHealth(TextAnalyticsTest):
             in the anterior lateral leads , thought due to fatigue and wrist pain , his anginal equivalent. Due to the patient's \
             increased symptoms and family history and history left main disease with total occasional of his RCA was referred \
             for revascularization with open heart surgery."
-        docs = [{"id": str(idx), "text": large_doc*3} for (idx, val) in enumerate(list(itertools.repeat(large_doc, 25)))]
+        docs = [
+            {"id": str(idx), "text": large_doc * 3} for (idx, val) in enumerate(list(itertools.repeat(large_doc, 25)))
+        ]
 
         async with client:
             poller = await client.begin_analyze_healthcare_entities(docs, polling_interval=self._interval())
@@ -416,13 +470,15 @@ class TestHealth(TextAnalyticsTest):
                 await cancellation_poller.wait()
 
             except HttpResponseError:
-                pass # expected if the operation was already in a terminal state.
+                pass  # expected if the operation was already in a terminal state.
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
     @recorded_by_proxy_async
     async def test_default_string_index_type_is_UnicodeCodePoint(self, client):
-        poller = await client.begin_analyze_healthcare_entities(documents=["Hello world"], polling_interval=self._interval())
+        poller = await client.begin_analyze_healthcare_entities(
+            documents=["Hello world"], polling_interval=self._interval()
+        )
         actual_string_index_type = poller._polling_method._initial_response.http_request.query["stringIndexType"]
         assert actual_string_index_type == "UnicodeCodePoint"
         await poller.result()
@@ -444,10 +500,12 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
     async def test_relations(self, client):
-        response = await (await client.begin_analyze_healthcare_entities(
-            documents=["The patient was diagnosed with Parkinsons Disease (PD)"],
-            polling_interval=self._interval(),
-        )).result()
+        response = await (
+            await client.begin_analyze_healthcare_entities(
+                documents=["The patient was diagnosed with Parkinsons Disease (PD)"],
+                polling_interval=self._interval(),
+            )
+        ).result()
 
         result = []
         async for r in response:
@@ -478,18 +536,18 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
     async def test_normalized_text(self, client):
-        response = await (await client.begin_analyze_healthcare_entities(
-            documents=["patients must have histologically confirmed NHL"],
-            polling_interval=self._interval(),
-        )).result()
+        response = await (
+            await client.begin_analyze_healthcare_entities(
+                documents=["patients must have histologically confirmed NHL"],
+                polling_interval=self._interval(),
+            )
+        ).result()
 
         result = []
         async for r in response:
             result.append(r)
 
-        assert all([
-            e for e in result[0].entities if hasattr(e, "normalized_text")
-        ])
+        assert all([e for e in result[0].entities if hasattr(e, "normalized_text")])
 
         histologically_entity = list(filter(lambda x: x.text == "histologically", result[0].entities))[0]
         assert histologically_entity.normalized_text == "Histology Procedure"
@@ -498,10 +556,14 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
     async def test_healthcare_assertion(self, client):
-        response = await (await client.begin_analyze_healthcare_entities(
-            documents=["Baby not likely to have Meningitis. In case of fever in the mother, consider Penicillin for the baby too."],
-            polling_interval=self._interval(),
-        )).result()
+        response = await (
+            await client.begin_analyze_healthcare_entities(
+                documents=[
+                    "Baby not likely to have Meningitis. In case of fever in the mother, consider Penicillin for the baby too."
+                ],
+                polling_interval=self._interval(),
+            )
+        ).result()
 
         result = []
         async for r in response:
@@ -520,13 +582,16 @@ class TestHealth(TextAnalyticsTest):
             # this is called for both the initial post
             # and the gets. Only care about the initial post
             if resp.http_request.method == "POST":
-                assert resp.http_request.query['loggingOptOut']
-        await (await client.begin_analyze_healthcare_entities(
-            documents=["Test for logging disable"],
-            polling_interval=self._interval(),
-            disable_service_logs=True,
-            raw_response_hook=callback,
-        )).result()
+                assert resp.http_request.query["loggingOptOut"]
+
+        await (
+            await client.begin_analyze_healthcare_entities(
+                documents=["Test for logging disable"],
+                polling_interval=self._interval(),
+                disable_service_logs=True,
+                raw_response_hook=callback,
+            )
+        ).result()
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -535,10 +600,13 @@ class TestHealth(TextAnalyticsTest):
         async with client:
             initial_poller = await client.begin_analyze_healthcare_entities(
                 documents=[
-                    {"id": "1", "text": "Baby not likely to have Meningitis. In case of fever in the mother, consider Penicillin for the baby too."},
+                    {
+                        "id": "1",
+                        "text": "Baby not likely to have Meningitis. In case of fever in the mother, consider Penicillin for the baby too.",
+                    },
                     {"id": "2", "text": "patients must have histologically confirmed NHL"},
                     {"id": "3", "text": ""},
-                    {"id": "4", "text": "The patient was diagnosed with Parkinsons Disease (PD)"}
+                    {"id": "4", "text": "The patient was diagnosed with Parkinsons Disease (PD)"},
                 ],
                 show_stats=True,
                 polling_interval=self._interval(),
@@ -599,17 +667,22 @@ class TestHealth(TextAnalyticsTest):
         with pytest.raises(ValueError) as e:
             poller = await client.begin_analyze_healthcare_entities(
                 documents=[
-                    {"id": "1",
-                     "text": "Baby not likely to have Meningitis. In case of fever in the mother, consider Penicillin for the baby too."},
+                    {
+                        "id": "1",
+                        "text": "Baby not likely to have Meningitis. In case of fever in the mother, consider Penicillin for the baby too.",
+                    },
                     {"id": "2", "text": "patients must have histologically confirmed NHL"},
                     {"id": "3", "text": ""},
-                    {"id": "4", "text": "The patient was diagnosed with Parkinsons Disease (PD)"}
+                    {"id": "4", "text": "The patient was diagnosed with Parkinsons Disease (PD)"},
                 ],
                 show_stats=True,
                 polling_interval=self._interval(),
             )
-        assert str(e.value) == "'TextAnalyticsClient.begin_analyze_healthcare_entities' is not available in API version v3.0. " \
-                               "Use service API version v3.1 or newer."
+        assert (
+            str(e.value)
+            == "'TextAnalyticsClient.begin_analyze_healthcare_entities' is not available in API version v3.0. "
+            "Use service API version v3.1 or newer."
+        )
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.1"})
@@ -619,14 +692,19 @@ class TestHealth(TextAnalyticsTest):
         with pytest.raises(ValueError) as e:
             poller = await client.begin_analyze_healthcare_entities(
                 documents=[
-                    {"id": "1",
-                     "text": "Baby not likely to have Meningitis. In case of fever in the mother, consider Penicillin for the baby too."},
+                    {
+                        "id": "1",
+                        "text": "Baby not likely to have Meningitis. In case of fever in the mother, consider Penicillin for the baby too.",
+                    },
                     {"id": "2", "text": "patients must have histologically confirmed NHL"},
                     {"id": "3", "text": ""},
-                    {"id": "4", "text": "The patient was diagnosed with Parkinsons Disease (PD)"}
+                    {"id": "4", "text": "The patient was diagnosed with Parkinsons Disease (PD)"},
                 ],
                 display_name="this won't work",
                 show_stats=True,
                 polling_interval=self._interval(),
             )
-        assert str(e.value) == "'display_name' is not available in API version v3.1. Use service API version 2022-05-01 or newer.\n"
+        assert (
+            str(e.value)
+            == "'display_name' is not available in API version v3.1. Use service API version 2022-05-01 or newer.\n"
+        )

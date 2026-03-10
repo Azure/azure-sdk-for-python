@@ -17,7 +17,7 @@ from ._generated.v2023_07_31.models import (
     AzureBlobFileListContentSource,
     AzureBlobContentSource,
     ClassifierDocumentTypeDetails as GeneratedClassifierDocumentTypeDetails,
-    Error
+    Error,
 )
 from ._helpers import (
     adjust_value_type,
@@ -27,19 +27,15 @@ from ._helpers import (
     _get_deserialize,
 )
 
+TargetAuthorization = NewType("TargetAuthorization", Dict[str, str])
 
-TargetAuthorization = NewType('TargetAuthorization', Dict[str, str])
 
 def prepare_document_spans(spans):
     return [DocumentSpan._from_generated(span) for span in spans] if spans else []
 
 
 def prepare_bounding_regions(regions):
-    return (
-        [BoundingRegion._from_generated(region) for region in regions]
-        if regions
-        else []
-    )
+    return [BoundingRegion._from_generated(region) for region in regions] if regions else []
 
 
 def get_bounding_box(field):
@@ -57,10 +53,7 @@ def get_bounding_box(field):
 
 def get_polygon(field):
     return (
-        [
-            Point(x=field.polygon[point], y=field.polygon[point+1])
-            for point in range(0, len(field.polygon), 2)
-        ]
+        [Point(x=field.polygon[point], y=field.polygon[point + 1]) for point in range(0, len(field.polygon), 2)]
         if field.polygon
         else []
     )
@@ -77,9 +70,7 @@ def resolve_element(element, read_result):
     raise ValueError("Failed to parse element reference.")
 
 
-def get_field_value(
-    field, value, read_result
-):  # pylint: disable=too-many-return-statements
+def get_field_value(field, value, read_result):  # pylint: disable=too-many-return-statements
     if value is None:
         return value
     if value.type == "string":
@@ -96,19 +87,13 @@ def get_field_value(
         return value.value_time
     if value.type == "array":
         return (
-            [
-                FormField._from_generated(field, value, read_result)
-                for value in value.value_array
-            ]
+            [FormField._from_generated(field, value, read_result) for value in value.value_array]
             if value.value_array
             else []
         )
     if value.type == "object":
         return (
-            {
-                key: FormField._from_generated(key, value, read_result)
-                for key, value in value.value_object.items()
-            }
+            {key: FormField._from_generated(key, value, read_result) for key, value in value.value_object.items()}
             if value.value_object
             else {}
         )
@@ -137,29 +122,14 @@ def get_field_value_v3(value):  # pylint: disable=too-many-return-statements
     if value.type == "signature":
         return value.value_signature
     if value.type == "array":
-        return (
-            [DocumentField._from_generated(value) for value in value.value_array]
-            if value.value_array
-            else []
-        )
+        return [DocumentField._from_generated(value) for value in value.value_array] if value.value_array else []
     if value.type == "currency":
-        return (
-            CurrencyValue._from_generated(value.value_currency)
-            if value.value_currency
-            else None
-        )
+        return CurrencyValue._from_generated(value.value_currency) if value.value_currency else None
     if value.type == "address":
-        return (
-            AddressValue._from_generated(value.value_address)
-            if value.value_address
-            else None
-        )
+        return AddressValue._from_generated(value.value_address) if value.value_address else None
     if value.type == "object":
         return (
-            {
-                key: DocumentField._from_generated(value)
-                for key, value in value.value_object.items()
-            }
+            {key: DocumentField._from_generated(value) for key, value in value.value_object.items()}
             if value.value_object
             else {}
         )
@@ -263,11 +233,11 @@ class Point(namedtuple("Point", "x y")):
     .. versionadded:: v2.1
         Support for *to_dict* and *from_dict* methods
     """
+
     x: float
     """x-coordinate"""
     y: float
     """y-coordinate"""
-
 
     __slots__ = ()
 
@@ -299,6 +269,7 @@ class TextAppearance:
     .. versionadded:: v2.1
         Support for *to_dict* and *from_dict* methods
     """
+
     style_name: str
     """The text line style name.
         Possible values include: "other", "handwriting"."""
@@ -352,6 +323,7 @@ class FormPageRange(namedtuple("FormPageRange", "first_page_number last_page_num
     .. versionadded:: v2.1
         Support for *to_dict* and *from_dict* methods
     """
+
     first_page_number: int
     """The first page number of the form."""
     last_page_number: int
@@ -360,9 +332,7 @@ class FormPageRange(namedtuple("FormPageRange", "first_page_number last_page_num
     __slots__ = ()
 
     def __new__(cls, first_page_number: int, last_page_number: int) -> "FormPageRange":
-        return super().__new__(
-            cls, first_page_number, last_page_number
-        )
+        return super().__new__(cls, first_page_number, last_page_number)
 
     def to_dict(self) -> Dict:
         """Returns a dict representation of FormPageRange.
@@ -395,6 +365,7 @@ class FormElement:
     .. versionadded:: v2.1
         Support for *to_dict* and *from_dict* methods
     """
+
     text: str
     """The text content of the element."""
     bounding_box: List[Point]
@@ -408,7 +379,6 @@ class FormElement:
     """The kind of form element. Possible kinds are "word", "line", or "selectionMark" which
         correspond to a :class:`~azure.ai.formrecognizer.FormWord` :class:`~azure.ai.formrecognizer.FormLine`,
         or :class:`~azure.ai.formrecognizer.FormSelectionMark`, respectively."""
-
 
     def __init__(self, **kwargs: Any) -> None:
         self.bounding_box = kwargs.get("bounding_box", None)
@@ -424,9 +394,7 @@ class FormElement:
         """
         return {
             "text": self.text,
-            "bounding_box": [f.to_dict() for f in self.bounding_box]
-            if self.bounding_box
-            else [],
+            "bounding_box": [f.to_dict() for f in self.bounding_box] if self.bounding_box else [],
             "page_number": self.page_number,
             "kind": self.kind,
         }
@@ -443,9 +411,11 @@ class FormElement:
             text=data.get("text", None),
             page_number=data.get("page_number", None),
             kind=data.get("kind", None),
-            bounding_box=[Point.from_dict(f) for f in data.get("bounding_box")]  # type: ignore
-            if len(data.get("bounding_box", [])) > 0
-            else [],
+            bounding_box=(
+                [Point.from_dict(f) for f in data.get("bounding_box")]  # type: ignore
+                if len(data.get("bounding_box", [])) > 0
+                else []
+            ),
         )
 
 
@@ -455,6 +425,7 @@ class FormWord(FormElement):
     .. versionadded:: v2.1
         Support for *to_dict* and *from_dict* methods
     """
+
     text: str
     """The text content of the word."""
     bounding_box: List[Point]
@@ -468,7 +439,6 @@ class FormWord(FormElement):
     """The 1-based number of the page in which this content is present."""
     kind: str
     """For FormWord, this is "word"."""
-
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(kind="word", **kwargs)
@@ -497,9 +467,7 @@ class FormWord(FormElement):
         """
         return {
             "text": self.text,
-            "bounding_box": [f.to_dict() for f in self.bounding_box]
-            if self.bounding_box
-            else [],
+            "bounding_box": [f.to_dict() for f in self.bounding_box] if self.bounding_box else [],
             "confidence": self.confidence,
             "page_number": self.page_number,
             "kind": self.kind,
@@ -516,9 +484,11 @@ class FormWord(FormElement):
         return cls(
             text=data.get("text", None),
             page_number=data.get("page_number", None),
-            bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
-            if len(data.get("bounding_box", [])) > 0
-            else [],
+            bounding_box=(
+                [Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
+                if len(data.get("bounding_box", [])) > 0
+                else []
+            ),
             confidence=data.get("confidence", None),
         )
 
@@ -529,6 +499,7 @@ class FormSelectionMark(FormElement):
     .. versionadded:: v2.1
         Support for *to_dict* and *from_dict* methods
     """
+
     text: str
     """The text content - not returned for FormSelectionMark."""
     bounding_box: List[Point]
@@ -574,9 +545,7 @@ class FormSelectionMark(FormElement):
         """
         return {
             "text": self.text,
-            "bounding_box": [f.to_dict() for f in self.bounding_box]
-            if self.bounding_box
-            else [],
+            "bounding_box": [f.to_dict() for f in self.bounding_box] if self.bounding_box else [],
             "confidence": self.confidence,
             "state": self.state,
             "page_number": self.page_number,
@@ -594,9 +563,11 @@ class FormSelectionMark(FormElement):
         return cls(
             text=data.get("text", None),
             page_number=data.get("page_number", None),
-            bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
-            if len(data.get("bounding_box", [])) > 0
-            else [],
+            bounding_box=(
+                [Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
+                if len(data.get("bounding_box", [])) > 0
+                else []
+            ),
             confidence=data.get("confidence", None),
             state=data.get("state", None),
         )
@@ -608,6 +579,7 @@ class FormLine(FormElement):
     .. versionadded:: v2.1
         *appearance* property, support for *to_dict* and *from_dict* methods
     """
+
     text: str
     """The text content of the line."""
     bounding_box: List[Point]
@@ -624,7 +596,6 @@ class FormLine(FormElement):
     appearance: TextAppearance
     """An object representing the appearance of the line."""
 
-
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(kind="line", **kwargs)
         self.words = kwargs.get("words", None)
@@ -632,18 +603,12 @@ class FormLine(FormElement):
 
     @classmethod
     def _from_generated(cls, line, page):
-        line_appearance = (
-            TextAppearance._from_generated(line.appearance)
-            if hasattr(line, "appearance")
-            else None
-        )
+        line_appearance = TextAppearance._from_generated(line.appearance) if hasattr(line, "appearance") else None
         return cls(
             text=line.text,
             bounding_box=get_bounding_box(line),
             page_number=page,
-            words=[FormWord._from_generated(word, page) for word in line.words]
-            if line.words
-            else None,
+            words=[FormWord._from_generated(word, page) for word in line.words] if line.words else None,
             appearance=line_appearance,
         )
 
@@ -661,9 +626,7 @@ class FormLine(FormElement):
         """
         return {
             "text": self.text,
-            "bounding_box": [f.to_dict() for f in self.bounding_box]
-            if self.bounding_box
-            else [],
+            "bounding_box": [f.to_dict() for f in self.bounding_box] if self.bounding_box else [],
             "words": [f.to_dict() for f in self.words] if self.words else [],
             "page_number": self.page_number,
             "kind": self.kind,
@@ -681,15 +644,19 @@ class FormLine(FormElement):
         return cls(
             text=data.get("text", None),
             page_number=data.get("page_number", None),
-            bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
-            if len(data.get("bounding_box", [])) > 0
-            else [],
-            words=[FormWord.from_dict(v) for v in data.get("words")]  # type: ignore
-            if len(data.get("words", [])) > 0
-            else [],
-            appearance=TextAppearance.from_dict(data.get("appearance"))  # type: ignore
-            if data.get("appearance")
-            else None,
+            bounding_box=(
+                [Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
+                if len(data.get("bounding_box", [])) > 0
+                else []
+            ),
+            words=(
+                [FormWord.from_dict(v) for v in data.get("words")]  # type: ignore
+                if len(data.get("words", [])) > 0
+                else []
+            ),
+            appearance=(
+                TextAppearance.from_dict(data.get("appearance")) if data.get("appearance") else None  # type: ignore
+            ),
         )
 
 
@@ -700,6 +667,7 @@ class FormTableCell:  # pylint:disable=too-many-instance-attributes
         *FormSelectionMark* is added to the types returned in the list of field_elements, support for
         *to_dict* and *from_dict* methods
     """
+
     text: str
     """Text content of the cell."""
     row_index: int
@@ -755,11 +723,9 @@ class FormTableCell:  # pylint:disable=too-many-instance-attributes
             is_header=cell.is_header or False,
             is_footer=cell.is_footer or False,
             page_number=page,
-            field_elements=[
-                resolve_element(element, read_result) for element in cell.elements
-            ]
-            if cell.elements
-            else None,
+            field_elements=(
+                [resolve_element(element, read_result) for element in cell.elements] if cell.elements else None
+            ),
         )
 
     def __repr__(self) -> str:
@@ -786,12 +752,8 @@ class FormTableCell:  # pylint:disable=too-many-instance-attributes
             "is_header": self.is_header,
             "is_footer": self.is_footer,
             "page_number": self.page_number,
-            "bounding_box": [box.to_dict() for box in self.bounding_box]
-            if self.bounding_box
-            else [],
-            "field_elements": [element.to_dict() for element in self.field_elements]
-            if self.field_elements
-            else [],
+            "bounding_box": [box.to_dict() for box in self.bounding_box] if self.bounding_box else [],
+            "field_elements": [element.to_dict() for element in self.field_elements] if self.field_elements else [],
         }
 
     @classmethod
@@ -823,9 +785,11 @@ class FormTableCell:  # pylint:disable=too-many-instance-attributes
             is_header=data.get("is_header", None),
             is_footer=data.get("is_footer", None),
             page_number=data.get("page_number", None),
-            bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
-            if len(data.get("bounding_box", [])) > 0
-            else [],
+            bounding_box=(
+                [Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
+                if len(data.get("bounding_box", [])) > 0
+                else []
+            ),
             field_elements=field_elements,
         )
 
@@ -836,6 +800,7 @@ class FormTable:
     .. versionadded:: v2.1
         The *bounding_box* property, support for *to_dict* and *from_dict* methods
     """
+
     page_number: int
     """The 1-based number of the page in which this table is present."""
     cells: List[FormTableCell]
@@ -874,9 +839,7 @@ class FormTable:
             "row_count": self.row_count,
             "column_count": self.column_count,
             "cells": [cell.to_dict() for cell in self.cells],
-            "bounding_box": [box.to_dict() for box in self.bounding_box]
-            if self.bounding_box
-            else [],
+            "bounding_box": [box.to_dict() for box in self.bounding_box] if self.bounding_box else [],
         }
 
     @classmethod
@@ -891,12 +854,16 @@ class FormTable:
             row_count=data.get("row_count", None),
             page_number=data.get("page_number", None),
             column_count=data.get("column_count", None),
-            bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
-            if len(data.get("bounding_box", [])) > 0
-            else [],
-            cells=[FormTableCell.from_dict(v) for v in data.get("cells")]  # type: ignore
-            if len(data.get("cells", [])) > 0
-            else [],
+            bounding_box=(
+                [Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
+                if len(data.get("bounding_box", [])) > 0
+                else []
+            ),
+            cells=(
+                [FormTableCell.from_dict(v) for v in data.get("cells")]  # type: ignore
+                if len(data.get("cells", [])) > 0
+                else []
+            ),
         )
 
 
@@ -907,6 +874,7 @@ class FormPage:
     .. versionadded:: v2.1
         *selection_marks* property, support for *to_dict* and *from_dict* methods
     """
+
     page_number: int
     """The 1-based number of the page in which this content is present."""
     text_angle: float
@@ -933,7 +901,6 @@ class FormPage:
         only supported in `begin_recognize_content` and `begin_recognize_content_from_url`)."""
     selection_marks: List[FormSelectionMark]
     """List of selection marks extracted from the page."""
-
 
     def __init__(self, **kwargs: Any) -> None:
         self.page_number = kwargs.get("page_number", None)
@@ -966,9 +933,7 @@ class FormPage:
             "unit": self.unit,
             "tables": [table.to_dict() for table in self.tables] if self.tables else [],
             "lines": [line.to_dict() for line in self.lines] if self.lines else [],
-            "selection_marks": [mark.to_dict() for mark in self.selection_marks]
-            if self.selection_marks
-            else [],
+            "selection_marks": [mark.to_dict() for mark in self.selection_marks] if self.selection_marks else [],
         }
 
     @classmethod
@@ -985,17 +950,21 @@ class FormPage:
             height=data.get("height", None),
             unit=data.get("unit", None),
             page_number=data.get("page_number", None),
-            tables=[FormTable.from_dict(v) for v in data.get("tables")]  # type: ignore
-            if len(data.get("tables", [])) > 0
-            else [],
-            lines=[FormLine.from_dict(v) for v in data.get("lines")]  # type: ignore
-            if len(data.get("lines", [])) > 0
-            else [],
-            selection_marks=[
-                FormSelectionMark.from_dict(v) for v in data.get("selection_marks")  # type: ignore
-            ]
-            if len(data.get("selection_marks", [])) > 0
-            else [],
+            tables=(
+                [FormTable.from_dict(v) for v in data.get("tables")]  # type: ignore
+                if len(data.get("tables", [])) > 0
+                else []
+            ),
+            lines=(
+                [FormLine.from_dict(v) for v in data.get("lines")]  # type: ignore
+                if len(data.get("lines", [])) > 0
+                else []
+            ),
+            selection_marks=(
+                [FormSelectionMark.from_dict(v) for v in data.get("selection_marks")]  # type: ignore
+                if len(data.get("selection_marks", [])) > 0
+                else []
+            ),
         )
 
 
@@ -1008,6 +977,7 @@ class FieldData:
         *FormSelectionMark* is added to the types returned in the list of field_elements, support for
         *to_dict* and *from_dict* methods
     """
+
     page_number: int
     """The 1-based number of the page in which this content is present."""
     text: str
@@ -1017,12 +987,10 @@ class FieldData:
         that outlines the text. The points are listed in clockwise
         order: top-left, top-right, bottom-right, bottom-left.
         Units are in pixels for images and inches for PDF."""
-    field_elements: List[Union[FormElement, FormWord,
-        FormLine, FormSelectionMark]]
+    field_elements: List[Union[FormElement, FormWord, FormLine, FormSelectionMark]]
     """When `include_field_elements` is set to true, a list of
         elements constituting this field or value is returned. The list
         constitutes of elements such as lines, words, and selection marks."""
-
 
     def __init__(self, **kwargs: Any) -> None:
         self.page_number = kwargs.get("page_number", None)
@@ -1032,20 +1000,15 @@ class FieldData:
 
     @classmethod
     def _from_generated(cls, field, read_result):
-        if field is None or all(
-            field_data is None
-            for field_data in [field.page, field.text, field.bounding_box]
-        ):
+        if field is None or all(field_data is None for field_data in [field.page, field.text, field.bounding_box]):
             return None
         return cls(
             page_number=field.page,
             text=field.text,
             bounding_box=get_bounding_box(field),
-            field_elements=[
-                resolve_element(element, read_result) for element in field.elements
-            ]
-            if field.elements
-            else None,
+            field_elements=(
+                [resolve_element(element, read_result) for element in field.elements] if field.elements else None
+            ),
         )
 
     @classmethod
@@ -1054,11 +1017,9 @@ class FieldData:
             page_number=page,
             text=field.text,
             bounding_box=get_bounding_box(field),
-            field_elements=[
-                resolve_element(element, read_result) for element in field.elements
-            ]
-            if field.elements
-            else None,
+            field_elements=(
+                [resolve_element(element, read_result) for element in field.elements] if field.elements else None
+            ),
         )
 
     def __repr__(self) -> str:
@@ -1075,13 +1036,9 @@ class FieldData:
         """
         return {
             "text": self.text,
-            "bounding_box": [f.to_dict() for f in self.bounding_box]
-            if self.bounding_box
-            else [],
+            "bounding_box": [f.to_dict() for f in self.bounding_box] if self.bounding_box else [],
             "page_number": self.page_number,
-            "field_elements": [f.to_dict() for f in self.field_elements]
-            if self.field_elements
-            else [],
+            "field_elements": [f.to_dict() for f in self.field_elements] if self.field_elements else [],
         }
 
     @classmethod
@@ -1106,9 +1063,11 @@ class FieldData:
         return cls(
             text=data.get("text", None),
             page_number=data.get("page_number", None),
-            bounding_box=[Point.from_dict(f) for f in data.get("bounding_box")]  # type: ignore
-            if len(data.get("bounding_box", [])) > 0
-            else [],
+            bounding_box=(
+                [Point.from_dict(f) for f in data.get("bounding_box")]  # type: ignore
+                if len(data.get("bounding_box", [])) > 0
+                else []
+            ),
             field_elements=field_elements,
         )
 
@@ -1119,7 +1078,8 @@ class FormField:
     .. versionadded:: v2.1
         Support for *to_dict* and *from_dict* methods
     """
-    value_type:  str
+
+    value_type: str
     """The type of `value` found on FormField. Described in
         :class:`~azure.ai.formrecognizer.FieldValueType`, possible types include: 'string',
         'date', 'time', 'phoneNumber', 'float', 'integer', 'dictionary', 'list', 'selectionMark',
@@ -1132,14 +1092,12 @@ class FormField:
     name: str
     """The unique name of the field or the training-time label if
         analyzed from a custom model that was trained with labels."""
-    value: Union[str, int, float, datetime.date, datetime.time,
-        Dict[str, "FormField"], List["FormField"]]
+    value: Union[str, int, float, datetime.date, datetime.time, Dict[str, "FormField"], List["FormField"]]
     """The value for the recognized field. Its semantic data type is described by `value_type`.
         If the value is extracted from the form, but cannot be normalized to its type,
         then access the `value_data.text` property for a textual representation of the value."""
     confidence: float
     """Measures the degree of certainty of the recognition result. Value is between [0.0, 1.0]."""
-
 
     def __init__(self, **kwargs: Any) -> None:
         self.value_type = kwargs.get("value_type", None)
@@ -1164,12 +1122,8 @@ class FormField:
     def _from_generated_unlabeled(cls, field, idx, page, read_result):
         return cls(
             value_type="string",  # unlabeled only returns string
-            label_data=FieldData._from_generated_unlabeled(
-                field.key, page, read_result
-            ),
-            value_data=FieldData._from_generated_unlabeled(
-                field.value, page, read_result
-            ),
+            label_data=FieldData._from_generated_unlabeled(field.key, page, read_result),
+            value_data=FieldData._from_generated_unlabeled(field.value, page, read_result),
             value=field.value.text,
             name="field-" + str(idx),
             confidence=adjust_confidence(field.confidence),
@@ -1177,10 +1131,10 @@ class FormField:
 
     def __repr__(self) -> str:
         return (
-                f"FormField(value_type={self.value_type}, label_data={repr(self.label_data)}, "
-                f"value_data={repr(self.value_data)}, name={self.name}, value={repr(self.value)}, "
-                f"confidence={self.confidence})"
-            )[:1024]
+            f"FormField(value_type={self.value_type}, label_data={repr(self.label_data)}, "
+            f"value_data={repr(self.value_data)}, name={self.name}, value={repr(self.value)}, "
+            f"confidence={self.confidence})"
+        )[:1024]
 
     def to_dict(self) -> Dict:
         """Returns a dict representation of FormField.
@@ -1221,12 +1175,8 @@ class FormField:
             name=data.get("name", None),
             value=value,
             confidence=data.get("confidence", None),
-            label_data=FieldData.from_dict(data.get("label_data"))  # type: ignore
-            if data.get("label_data")
-            else None,
-            value_data=FieldData.from_dict(data.get("value_data"))  # type: ignore
-            if data.get("value_data")
-            else None,
+            label_data=FieldData.from_dict(data.get("label_data")) if data.get("label_data") else None,  # type: ignore
+            value_data=FieldData.from_dict(data.get("value_data")) if data.get("value_data") else None,  # type: ignore
         )
 
 
@@ -1240,6 +1190,7 @@ class RecognizedForm:
         The *form_type_confidence* and *model_id* properties, support for
         *to_dict* and *from_dict* methods
     """
+
     form_type: str
     """The type of form the model identified the submitted form to be."""
     form_type_confidence: int
@@ -1258,7 +1209,6 @@ class RecognizedForm:
     """A list of pages recognized from the input document. Contains lines,
         words, selection marks, tables and page metadata."""
 
-
     def __init__(self, **kwargs: Any) -> None:
         self.fields = kwargs.get("fields", None)
         self.form_type = kwargs.get("form_type", None)
@@ -1272,7 +1222,7 @@ class RecognizedForm:
             f"RecognizedForm(form_type={self.form_type}, fields={repr(self.fields)}, "
             f"page_range={repr(self.page_range)}, pages={repr(self.pages)}, "
             f"form_type_confidence={self.form_type_confidence}, model_id={self.model_id})"
-            )[:1024]
+        )[:1024]
 
     def to_dict(self) -> Dict:
         """Returns a dict representation of RecognizedForm.
@@ -1281,9 +1231,7 @@ class RecognizedForm:
         :rtype: dict
         """
         return {
-            "fields": {k: v.to_dict() for k, v in self.fields.items()}
-            if self.fields
-            else {},
+            "fields": {k: v.to_dict() for k, v in self.fields.items()} if self.fields else {},
             "form_type": self.form_type,
             "pages": [v.to_dict() for v in self.pages] if self.pages else [],
             "model_id": self.model_id,
@@ -1300,18 +1248,22 @@ class RecognizedForm:
         :rtype: RecognizedForm
         """
         return cls(
-            fields={k: FormField.from_dict(v) for k, v in data.get("fields").items()}  # type: ignore
-            if data.get("fields")
-            else {},
+            fields=(
+                {k: FormField.from_dict(v) for k, v in data.get("fields").items()}  # type: ignore
+                if data.get("fields")
+                else {}
+            ),
             form_type=data.get("form_type", None),
-            pages=[FormPage.from_dict(v) for v in data.get("pages")]  # type: ignore
-            if len(data.get("pages", [])) > 0
-            else [],
+            pages=(
+                [FormPage.from_dict(v) for v in data.get("pages")]  # type: ignore
+                if len(data.get("pages", [])) > 0
+                else []
+            ),
             model_id=data.get("model_id", None),
             form_type_confidence=data.get("form_type_confidence", None),
-            page_range=FormPageRange.from_dict(data.get("page_range"))  # type: ignore
-            if data.get("page_range")
-            else None,
+            page_range=(
+                FormPageRange.from_dict(data.get("page_range")) if data.get("page_range") else None  # type: ignore
+            ),
         )
 
 
@@ -1321,6 +1273,7 @@ class FormRecognizerError:
     .. versionadded:: v2.1
         Support for *to_dict* and *from_dict* methods
     """
+
     code: str
     """Error code."""
     message: str
@@ -1332,11 +1285,7 @@ class FormRecognizerError:
 
     @classmethod
     def _from_generated(cls, err):
-        return (
-            [cls(code=error.code, message=error.message) for error in err]
-            if err
-            else []
-        )
+        return [cls(code=error.code, message=error.message) for error in err] if err else []
 
     def __repr__(self) -> str:
         return f"FormRecognizerError(code={self.code}, message={self.message})"[:1024]
@@ -1369,6 +1318,7 @@ class CustomFormModelField:
     .. versionadded:: v2.1
         Support for *to_dict* and *from_dict* methods
     """
+
     label: str
     """The form fields label on the form."""
     name: str
@@ -1428,6 +1378,7 @@ class TrainingDocumentInfo:
     .. versionadded:: v2.1
         The *model_id* property, support for *to_dict* and *from_dict* methods
     """
+
     name: str
     """The name of the document."""
     status: str
@@ -1457,9 +1408,7 @@ class TrainingDocumentInfo:
                     status=doc.status,
                     page_count=doc.pages,
                     errors=FormRecognizerError._from_generated(doc.errors),
-                    model_id=train_result.model_id
-                    if hasattr(train_result, "model_id")
-                    else None,
+                    model_id=train_result.model_id if hasattr(train_result, "model_id") else None,
                 )
                 for doc in train_result.training_documents
             ]
@@ -1515,9 +1464,7 @@ class TrainingDocumentInfo:
             name=data.get("name", None),
             status=data.get("status", None),
             page_count=data.get("page_count", None),
-            errors=[
-                FormRecognizerError.from_dict(v) for v in data.get("errors")  # type: ignore
-            ],
+            errors=[FormRecognizerError.from_dict(v) for v in data.get("errors")],  # type: ignore
             model_id=data.get("model_id", None),
         )
 
@@ -1528,6 +1475,7 @@ class AccountProperties:
     .. versionadded:: v2.1
         Support for *to_dict* and *from_dict* methods
     """
+
     custom_model_count: int
     """Current count of trained custom models."""
     custom_model_limit: int
@@ -1581,6 +1529,7 @@ class CustomFormModelProperties:
     .. versionadded:: v2.1
         Support for *to_dict* and *from_dict* methods
     """
+
     is_composed_model: bool
     """Is this model composed? (default: false)."""
 
@@ -1623,6 +1572,7 @@ class CustomFormModelInfo:
     .. versionadded:: v2.1
         The *model_name* and *properties* properties, support for *to_dict* and *from_dict* methods
     """
+
     model_id: str
     """The unique identifier of the model."""
     status: str
@@ -1704,9 +1654,11 @@ class CustomFormModelInfo:
             training_started_on=data.get("training_started_on", None),
             training_completed_on=data.get("training_completed_on", None),
             model_name=data.get("model_name", None),
-            properties=CustomFormModelProperties.from_dict(data.get("properties"))  # type: ignore
-            if data.get("properties")
-            else None,
+            properties=(
+                CustomFormModelProperties.from_dict(data.get("properties"))  # type: ignore
+                if data.get("properties")
+                else None
+            ),
         )
 
 
@@ -1716,6 +1668,7 @@ class CustomFormSubmodel:
     .. versionadded:: v2.1
         The *model_id* property, support for *to_dict* and *from_dict* methods
     """
+
     model_id: str
     """Model identifier of the submodel."""
     accuracy: float
@@ -1761,14 +1714,14 @@ class CustomFormSubmodel:
                 cls(
                     model_id=model.model_info.model_id,
                     accuracy=model.train_result.average_model_accuracy,
-                    fields={
-                        field.field_name: CustomFormModelField._from_generated_labeled(
-                            field
-                        )
-                        for field in model.train_result.fields
-                    }
-                    if model.train_result.fields
-                    else None,
+                    fields=(
+                        {
+                            field.field_name: CustomFormModelField._from_generated_labeled(field)
+                            for field in model.train_result.fields
+                        }
+                        if model.train_result.fields
+                        else None
+                    ),
                     form_type=form_type,
                 )
             ]
@@ -1781,14 +1734,14 @@ class CustomFormSubmodel:
         return [
             cls(
                 accuracy=train_result.average_model_accuracy,
-                fields={
-                    field.field_name: CustomFormModelField._from_generated_labeled(
-                        field
-                    )
-                    for field in train_result.fields
-                }
-                if train_result.fields
-                else None,
+                fields=(
+                    {
+                        field.field_name: CustomFormModelField._from_generated_labeled(field)
+                        for field in train_result.fields
+                    }
+                    if train_result.fields
+                    else None
+                ),
                 form_type="custom:" + train_result.model_id,
                 model_id=train_result.model_id,
             )
@@ -1810,9 +1763,7 @@ class CustomFormSubmodel:
         return {
             "model_id": self.model_id,
             "accuracy": self.accuracy,
-            "fields": {k: v.to_dict() for k, v in self.fields.items()}
-            if self.fields
-            else {},
+            "fields": {k: v.to_dict() for k, v in self.fields.items()} if self.fields else {},
             "form_type": self.form_type,
         }
 
@@ -1827,9 +1778,11 @@ class CustomFormSubmodel:
         return cls(
             model_id=data.get("model_id", None),
             accuracy=data.get("accuracy", None),
-            fields={k: CustomFormModelField.from_dict(v) for k, v in data.get("fields").items()}  # type: ignore
-            if data.get("fields")
-            else {},
+            fields=(
+                {k: CustomFormModelField.from_dict(v) for k, v in data.get("fields").items()}  # type: ignore
+                if data.get("fields")
+                else {}
+            ),
             form_type=data.get("form_type", None),
         )
 
@@ -1840,6 +1793,7 @@ class CustomFormModel:
     .. versionadded:: v2.1
         The *model_name* and *properties* properties, support for *to_dict* and *from_dict* methods
     """
+
     model_id: str
     """The unique identifier of this model."""
     status: str
@@ -1875,11 +1829,7 @@ class CustomFormModel:
 
     @classmethod
     def _from_generated(cls, model, api_version):
-        model_name = (
-            model.model_info.model_name
-            if hasattr(model.model_info, "model_name")
-            else None
-        )
+        model_name = model.model_info.model_name if hasattr(model.model_info, "model_name") else None
         properties = (
             CustomFormModelProperties._from_generated(model.model_info)
             if hasattr(model.model_info, "attributes")
@@ -1890,17 +1840,13 @@ class CustomFormModel:
             status=model.model_info.status,
             training_started_on=model.model_info.created_date_time,
             training_completed_on=model.model_info.last_updated_date_time,
-            submodels=CustomFormSubmodel._from_generated_unlabeled(model)
-            if model.keys
-            else CustomFormSubmodel._from_generated_labeled(
-                model, api_version, model_name=model_name
+            submodels=(
+                CustomFormSubmodel._from_generated_unlabeled(model)
+                if model.keys
+                else CustomFormSubmodel._from_generated_labeled(model, api_version, model_name=model_name)
             ),
-            errors=FormRecognizerError._from_generated(model.train_result.errors)
-            if model.train_result
-            else None,
-            training_documents=TrainingDocumentInfo._from_generated(model.train_result)
-            if model.train_result
-            else None,
+            errors=FormRecognizerError._from_generated(model.train_result.errors) if model.train_result else None,
+            training_documents=TrainingDocumentInfo._from_generated(model.train_result) if model.train_result else None,
             properties=properties,
             model_name=model_name,
         )
@@ -1938,13 +1884,9 @@ class CustomFormModel:
             "status": self.status,
             "training_started_on": self.training_started_on,
             "training_completed_on": self.training_completed_on,
-            "submodels": [submodel.to_dict() for submodel in self.submodels]
-            if self.submodels
-            else [],
+            "submodels": [submodel.to_dict() for submodel in self.submodels] if self.submodels else [],
             "errors": [err.to_dict() for err in self.errors] if self.errors else [],
-            "training_documents": [doc.to_dict() for doc in self.training_documents]
-            if self.training_documents
-            else [],
+            "training_documents": [doc.to_dict() for doc in self.training_documents] if self.training_documents else [],
             "model_name": self.model_name,
             "properties": self.properties.to_dict() if self.properties else None,
         }
@@ -1962,21 +1904,27 @@ class CustomFormModel:
             status=data.get("status", None),
             training_started_on=data.get("training_started_on", None),
             training_completed_on=data.get("training_completed_on", None),
-            submodels=[CustomFormSubmodel.from_dict(v) for v in data.get("submodels")]  # type: ignore
-            if len(data.get("submodels", [])) > 0
-            else [],
-            errors=[FormRecognizerError.from_dict(v) for v in data.get("errors")]  # type: ignore
-            if len(data.get("errors", [])) > 0
-            else [],
-            training_documents=[
-                TrainingDocumentInfo.from_dict(v) for v in data.get("training_documents")  # type: ignore
-            ]
-            if len(data.get("training_documents", [])) > 0
-            else [],
+            submodels=(
+                [CustomFormSubmodel.from_dict(v) for v in data.get("submodels")]  # type: ignore
+                if len(data.get("submodels", [])) > 0
+                else []
+            ),
+            errors=(
+                [FormRecognizerError.from_dict(v) for v in data.get("errors")]  # type: ignore
+                if len(data.get("errors", [])) > 0
+                else []
+            ),
+            training_documents=(
+                [TrainingDocumentInfo.from_dict(v) for v in data.get("training_documents")]  # type: ignore
+                if len(data.get("training_documents", [])) > 0
+                else []
+            ),
             model_name=data.get("model_name", None),
-            properties=CustomFormModelProperties.from_dict(data.get("properties"))  # type: ignore
-            if data.get("properties")
-            else None,
+            properties=(
+                CustomFormModelProperties.from_dict(data.get("properties"))  # type: ignore
+                if data.get("properties")
+                else None
+            ),
         )
 
 
@@ -2063,9 +2011,7 @@ class BoundingRegion:
         """
         return {
             "page_number": self.page_number,
-            "polygon": [f.to_dict() for f in self.polygon]
-            if self.polygon
-            else [],
+            "polygon": [f.to_dict() for f in self.polygon] if self.polygon else [],
         }
 
     @classmethod
@@ -2078,9 +2024,11 @@ class BoundingRegion:
         """
         return cls(
             page_number=data.get("page_number", None),
-            polygon=[Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
-            if len(data.get("polygon", [])) > 0
-            else [],
+            polygon=(
+                [Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
+                if len(data.get("polygon", [])) > 0
+                else []
+            ),
         )
 
 
@@ -2161,7 +2109,7 @@ class AddressValue:  # pylint: disable=too-many-instance-attributes
             state_district=state_district,
             suburb=suburb,
             house=house,
-            level=level
+            level=level,
         )
 
     def __repr__(self) -> str:
@@ -2218,7 +2166,7 @@ class AddressValue:  # pylint: disable=too-many-instance-attributes
             state_district=data.get("state_district", None),
             suburb=data.get("suburb", None),
             house=data.get("house", None),
-            level=data.get("level", None)
+            level=data.get("level", None),
         )
 
 
@@ -2244,11 +2192,7 @@ class CurrencyValue:
     @classmethod
     def _from_generated(cls, data):
         currency_code = data.currency_code if hasattr(data, "currency_code") else None
-        return cls(
-            amount=data.amount,
-            symbol=data.currency_symbol,
-            code=currency_code
-        )
+        return cls(amount=data.amount, symbol=data.currency_symbol, code=currency_code)
 
     def __str__(self):
         if self.symbol is not None:
@@ -2321,9 +2265,7 @@ class DocumentLanguage:
         """
         return {
             "locale": self.locale,
-            "spans": [f.to_dict() for f in self.spans]
-            if self.spans
-            else [],
+            "spans": [f.to_dict() for f in self.spans] if self.spans else [],
             "confidence": self.confidence,
         }
 
@@ -2337,9 +2279,11 @@ class DocumentLanguage:
         """
         return cls(
             locale=data.get("locale", None),
-            spans=[DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
-            if len(data.get("spans", [])) > 0
-            else [],
+            spans=(
+                [DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
+                if len(data.get("spans", [])) > 0
+                else []
+            ),
             confidence=data.get("confidence", None),
         )
 
@@ -2355,8 +2299,20 @@ class DocumentField:
     """The type of `value` found on DocumentField. Possible types include:
      "string", "date", "time", "phoneNumber", "float", "integer", "selectionMark", "countryRegion",
      "signature", "currency", "address", "boolean", "list", "dictionary"."""
-    value: Optional[Union[str, int, float, bool, datetime.date, datetime.time,
-        CurrencyValue, AddressValue, Dict[str, "DocumentField"], List["DocumentField"]]]
+    value: Optional[
+        Union[
+            str,
+            int,
+            float,
+            bool,
+            datetime.date,
+            datetime.time,
+            CurrencyValue,
+            AddressValue,
+            Dict[str, "DocumentField"],
+            List["DocumentField"],
+        ]
+    ]
     """The value for the recognized field. Its semantic data type is described by `value_type`.
         If the value is extracted from the document, but cannot be normalized to its type,
         then access the `content` property for a textual representation of the value."""
@@ -2385,24 +2341,28 @@ class DocumentField:
             value=get_field_value_v3(field),
             value_type=adjust_value_type(field.type) if field.type else None,
             content=field.content if field.content else None,
-            bounding_regions=[
-                BoundingRegion(
-                    page_number=region.page_number,
-                    polygon=get_polygon(region),
-                )
-                for region in field.bounding_regions
-            ]
-            if field.bounding_regions
-            else [],
-            spans=[
-                DocumentSpan(
-                    offset=span.offset,
-                    length=span.length,
-                )
-                for span in field.spans
-            ]
-            if field.spans
-            else [],
+            bounding_regions=(
+                [
+                    BoundingRegion(
+                        page_number=region.page_number,
+                        polygon=get_polygon(region),
+                    )
+                    for region in field.bounding_regions
+                ]
+                if field.bounding_regions
+                else []
+            ),
+            spans=(
+                [
+                    DocumentSpan(
+                        offset=span.offset,
+                        length=span.length,
+                    )
+                    for span in field.spans
+                ]
+                if field.spans
+                else []
+            ),
             confidence=field.confidence if field.confidence else None,
         )
 
@@ -2437,12 +2397,8 @@ class DocumentField:
             "value_type": self.value_type,
             "value": value,
             "content": self.content,
-            "bounding_regions": [f.to_dict() for f in self.bounding_regions]
-            if self.bounding_regions
-            else [],
-            "spans": [f.to_dict() for f in self.spans]
-            if self.spans
-            else [],
+            "bounding_regions": [f.to_dict() for f in self.bounding_regions] if self.bounding_regions else [],
+            "spans": [f.to_dict() for f in self.spans] if self.spans else [],
             "confidence": self.confidence,
         }
 
@@ -2460,12 +2416,12 @@ class DocumentField:
         # to call the proper from_dict() method.
         if data.get("value_type", None) == "currency":
             if value is not None:
-                value = CurrencyValue.from_dict(data.get("value"))  #type: ignore
+                value = CurrencyValue.from_dict(data.get("value"))  # type: ignore
         # AddressValue objects are interpreted as dict, therefore need to be processed first
         # to call the proper from_dict() method.
         elif data.get("value_type", None) == "address":
             if value is not None:
-                value = AddressValue.from_dict(data.get("value"))  #type: ignore
+                value = AddressValue.from_dict(data.get("value"))  # type: ignore
         elif isinstance(data.get("value"), dict):
             value = {k: DocumentField.from_dict(v) for k, v in data.get("value").items()}  # type: ignore
         elif isinstance(data.get("value"), list):
@@ -2475,12 +2431,16 @@ class DocumentField:
             value_type=data.get("value_type", None),
             value=value,
             content=data.get("content", None),
-            bounding_regions=[BoundingRegion.from_dict(v) for v in data.get("bounding_regions")]  # type: ignore
-            if len(data.get("bounding_regions", [])) > 0
-            else [],
-            spans=[DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
-            if len(data.get("spans", [])) > 0
-            else [],
+            bounding_regions=(
+                [BoundingRegion.from_dict(v) for v in data.get("bounding_regions")]  # type: ignore
+                if len(data.get("bounding_regions", [])) > 0
+                else []
+            ),
+            spans=(
+                [DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
+                if len(data.get("spans", [])) > 0
+                else []
+            ),
             confidence=data.get("confidence", None),
         )
 
@@ -2512,12 +2472,11 @@ class AnalyzedDocument:
             doc_type=document.doc_type,
             bounding_regions=prepare_bounding_regions(document.bounding_regions),
             spans=prepare_document_spans(document.spans),
-            fields={
-                key: DocumentField._from_generated(field)
-                for key, field in document.fields.items()
-            }
-            if document.fields
-            else {},
+            fields=(
+                {key: DocumentField._from_generated(field) for key, field in document.fields.items()}
+                if document.fields
+                else {}
+            ),
             confidence=document.confidence,
         )
 
@@ -2535,15 +2494,9 @@ class AnalyzedDocument:
         """
         return {
             "doc_type": self.doc_type,
-            "bounding_regions": [f.to_dict() for f in self.bounding_regions]
-            if self.bounding_regions
-            else [],
-            "spans": [f.to_dict() for f in self.spans]
-            if self.spans
-            else [],
-            "fields": {k: v.to_dict() for k, v in self.fields.items()}
-            if self.fields
-            else {},
+            "bounding_regions": [f.to_dict() for f in self.bounding_regions] if self.bounding_regions else [],
+            "spans": [f.to_dict() for f in self.spans] if self.spans else [],
+            "fields": {k: v.to_dict() for k, v in self.fields.items()} if self.fields else {},
             "confidence": self.confidence,
         }
 
@@ -2557,15 +2510,21 @@ class AnalyzedDocument:
         """
         return cls(
             doc_type=data.get("doc_type", None),
-            bounding_regions=[BoundingRegion.from_dict(v) for v in data.get("bounding_regions")]  # type: ignore
-            if len(data.get("bounding_regions", [])) > 0
-            else [],
-            spans=[DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
-            if len(data.get("spans", [])) > 0
-            else [],
-            fields={k: DocumentField.from_dict(v) for k, v in data.get("fields").items()}  # type: ignore
-            if data.get("fields")
-            else {},
+            bounding_regions=(
+                [BoundingRegion.from_dict(v) for v in data.get("bounding_regions")]  # type: ignore
+                if len(data.get("bounding_regions", [])) > 0
+                else []
+            ),
+            spans=(
+                [DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
+                if len(data.get("spans", [])) > 0
+                else []
+            ),
+            fields=(
+                {k: DocumentField.from_dict(v) for k, v in data.get("fields").items()}  # type: ignore
+                if data.get("fields")
+                else {}
+            ),
             confidence=data.get("confidence", None),
         )
 
@@ -2590,15 +2549,12 @@ class DocumentKeyValueElement:
     def _from_generated(cls, element):
         return cls(
             content=element.content,
-            bounding_regions=[
-                BoundingRegion._from_generated(region)
-                for region in element.bounding_regions
-            ]
-            if element.bounding_regions
-            else [],
-            spans=[DocumentSpan._from_generated(span) for span in element.spans]
-            if element.spans
-            else [],
+            bounding_regions=(
+                [BoundingRegion._from_generated(region) for region in element.bounding_regions]
+                if element.bounding_regions
+                else []
+            ),
+            spans=[DocumentSpan._from_generated(span) for span in element.spans] if element.spans else [],
         )
 
     def __repr__(self) -> str:
@@ -2615,12 +2571,8 @@ class DocumentKeyValueElement:
         """
         return {
             "content": self.content,
-            "bounding_regions": [f.to_dict() for f in self.bounding_regions]
-            if self.bounding_regions
-            else [],
-            "spans": [f.to_dict() for f in self.spans]
-            if self.spans
-            else [],
+            "bounding_regions": [f.to_dict() for f in self.bounding_regions] if self.bounding_regions else [],
+            "spans": [f.to_dict() for f in self.spans] if self.spans else [],
         }
 
     @classmethod
@@ -2633,12 +2585,16 @@ class DocumentKeyValueElement:
         """
         return cls(
             content=data.get("content", None),
-            bounding_regions=[BoundingRegion.from_dict(v) for v in data.get("bounding_regions")]  # type: ignore
-            if len(data.get("bounding_regions", [])) > 0
-            else [],
-            spans=[DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
-            if len(data.get("spans", [])) > 0
-            else [],
+            bounding_regions=(
+                [BoundingRegion.from_dict(v) for v in data.get("bounding_regions")]  # type: ignore
+                if len(data.get("bounding_regions", [])) > 0
+                else []
+            ),
+            spans=(
+                [DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
+                if len(data.get("spans", [])) > 0
+                else []
+            ),
         )
 
 
@@ -2660,20 +2616,13 @@ class DocumentKeyValuePair:
     @classmethod
     def _from_generated(cls, key_value_pair):
         return cls(
-            key=DocumentKeyValueElement._from_generated(key_value_pair.key)
-            if key_value_pair.key
-            else None,
-            value=DocumentKeyValueElement._from_generated(key_value_pair.value)
-            if key_value_pair.value
-            else None,
+            key=DocumentKeyValueElement._from_generated(key_value_pair.key) if key_value_pair.key else None,
+            value=DocumentKeyValueElement._from_generated(key_value_pair.value) if key_value_pair.value else None,
             confidence=key_value_pair.confidence,
         )
 
     def __repr__(self) -> str:
-        return (
-            f"DocumentKeyValuePair(key={repr(self.key)}, value={repr(self.value)}, "
-            f"confidence={self.confidence})"
-        )
+        return f"DocumentKeyValuePair(key={repr(self.key)}, value={repr(self.value)}, " f"confidence={self.confidence})"
 
     def to_dict(self) -> Dict:
         """Returns a dict representation of DocumentKeyValuePair.
@@ -2696,12 +2645,8 @@ class DocumentKeyValuePair:
         :rtype: DocumentKeyValuePair
         """
         return cls(
-            key=DocumentKeyValueElement.from_dict(data.get("key"))  # type: ignore
-            if data.get("key")
-            else None,
-            value=DocumentKeyValueElement.from_dict(data.get("value"))  # type: ignore
-            if data.get("value")
-            else None,
+            key=DocumentKeyValueElement.from_dict(data.get("key")) if data.get("key") else None,  # type: ignore
+            value=DocumentKeyValueElement.from_dict(data.get("value")) if data.get("value") else None,  # type: ignore
             confidence=data.get("confidence", None),
         )
 
@@ -2710,6 +2655,7 @@ class DocumentWord:
     """A word object consisting of a contiguous sequence of characters.  For non-space delimited languages,
     such as Chinese, Japanese, and Korean, each character is represented as its own word.
     """
+
     content: str
     """Text content of the word."""
     polygon: Sequence[Point]
@@ -2730,9 +2676,7 @@ class DocumentWord:
         return cls(
             content=word.content,
             polygon=get_polygon(word),
-            span=DocumentSpan._from_generated(word.span)
-            if word.span
-            else None,
+            span=DocumentSpan._from_generated(word.span) if word.span else None,
             confidence=word.confidence,
         )
 
@@ -2750,9 +2694,7 @@ class DocumentWord:
         """
         return {
             "content": self.content,
-            "polygon": [f.to_dict() for f in self.polygon]
-            if self.polygon
-            else [],
+            "polygon": [f.to_dict() for f in self.polygon] if self.polygon else [],
             "span": self.span.to_dict() if self.span else None,
             "confidence": self.confidence,
         }
@@ -2767,9 +2709,11 @@ class DocumentWord:
         """
         return cls(
             content=data.get("content", None),
-            polygon=[Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
-            if len(data.get("polygon", [])) > 0
-            else [],
+            polygon=(
+                [Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
+                if len(data.get("polygon", [])) > 0
+                else []
+            ),
             span=DocumentSpan.from_dict(data.get("span")) if data.get("span") else None,  # type: ignore
             confidence=data.get("confidence", None),
         )
@@ -2800,9 +2744,7 @@ class DocumentSelectionMark:
         return cls(
             state=mark.state,
             polygon=get_polygon(mark),
-            span=DocumentSpan._from_generated(mark.span)
-            if mark.span
-            else None,
+            span=DocumentSpan._from_generated(mark.span) if mark.span else None,
             confidence=mark.confidence,
         )
 
@@ -2820,9 +2762,7 @@ class DocumentSelectionMark:
         """
         return {
             "state": self.state,
-            "polygon": [f.to_dict() for f in self.polygon]
-            if self.polygon
-            else [],
+            "polygon": [f.to_dict() for f in self.polygon] if self.polygon else [],
             "span": self.span.to_dict() if self.span else None,
             "confidence": self.confidence,
         }
@@ -2837,9 +2777,11 @@ class DocumentSelectionMark:
         """
         return cls(
             state=data.get("state", None),
-            polygon=[Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
-            if len(data.get("polygon", [])) > 0
-            else [],
+            polygon=(
+                [Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
+                if len(data.get("polygon", [])) > 0
+                else []
+            ),
             span=DocumentSpan.from_dict(data.get("span")) if data.get("span") else None,  # type: ignore
             confidence=data.get("confidence", None),
         )
@@ -2881,12 +2823,8 @@ class DocumentLine:
         """
         return {
             "content": self.content,
-            "polygon": [f.to_dict() for f in self.polygon]
-            if self.polygon
-            else [],
-            "spans": [f.to_dict() for f in self.spans]
-            if self.spans
-            else [],
+            "polygon": [f.to_dict() for f in self.polygon] if self.polygon else [],
+            "spans": [f.to_dict() for f in self.spans] if self.spans else [],
         }
 
     @classmethod
@@ -2899,12 +2837,16 @@ class DocumentLine:
         """
         return cls(
             content=data.get("content", None),
-            polygon=[Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
-            if len(data.get("polygon", [])) > 0
-            else [],
-            spans=[DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
-            if len(data.get("spans", [])) > 0
-            else [],
+            polygon=(
+                [Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
+                if len(data.get("polygon", [])) > 0
+                else []
+            ),
+            spans=(
+                [DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
+                if len(data.get("spans", [])) > 0
+                else []
+            ),
         )
 
     def get_words(self) -> Iterable["DocumentWord"]:
@@ -2917,7 +2859,7 @@ class DocumentLine:
             raise ValueError(
                 "Cannot use get_words() on a model that has been converted from a dictionary. "
                 "Missing reference to parent element."
-                )
+            )
         result = []
         for word in self._parent.words:
             if _in_span(word, self.spans):
@@ -2972,12 +2914,8 @@ class DocumentParagraph:
         return {
             "role": self.role,
             "content": self.content,
-            "bounding_regions": [f.to_dict() for f in self.bounding_regions]
-            if self.bounding_regions
-            else [],
-            "spans": [f.to_dict() for f in self.spans]
-            if self.spans
-            else [],
+            "bounding_regions": [f.to_dict() for f in self.bounding_regions] if self.bounding_regions else [],
+            "spans": [f.to_dict() for f in self.spans] if self.spans else [],
         }
 
     @classmethod
@@ -2991,21 +2929,41 @@ class DocumentParagraph:
         return cls(
             role=data.get("role", None),
             content=data.get("content", None),
-            bounding_regions=[BoundingRegion.from_dict(v) for v in data.get("bounding_regions")]  # type: ignore
-            if len(data.get("bounding_regions", [])) > 0
-            else [],
-            spans=[DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
-            if len(data.get("spans", [])) > 0
-            else [],
+            bounding_regions=(
+                [BoundingRegion.from_dict(v) for v in data.get("bounding_regions")]  # type: ignore
+                if len(data.get("bounding_regions", [])) > 0
+                else []
+            ),
+            spans=(
+                [DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
+                if len(data.get("spans", [])) > 0
+                else []
+            ),
         )
 
 
 class DocumentBarcode:
     """A barcode object."""
 
-    kind: Literal["QRCode", "PDF417", "UPCA", "UPCE", "Code39", "Code128", "EAN8", "EAN13",
-                  "DataBar", "Code93", "Codabar", "DataBarExpanded", "ITF", "MicroQRCode",
-                  "Aztec", "DataMatrix", "MaxiCode"]
+    kind: Literal[
+        "QRCode",
+        "PDF417",
+        "UPCA",
+        "UPCE",
+        "Code39",
+        "Code128",
+        "EAN8",
+        "EAN13",
+        "DataBar",
+        "Code93",
+        "Codabar",
+        "DataBarExpanded",
+        "ITF",
+        "MicroQRCode",
+        "Aztec",
+        "DataMatrix",
+        "MaxiCode",
+    ]
     """Barcode kind. Known values are "QRCode", "PDF417", "UPCA", "UPCE",
      "Code39", "Code128", "EAN8", "EAN13", "DataBar", "Code93", "Codabar", "DataBarExpanded", "ITF",
      "MicroQRCode", "Aztec", "DataMatrix", "MaxiCode"."""
@@ -3018,10 +2976,7 @@ class DocumentBarcode:
     confidence: float
     """Confidence of correctly extracting the barcode."""
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         self.kind = kwargs.get("kind", None)
         self.value = kwargs.get("value", None)
         self.polygon = kwargs.get("polygon", None)
@@ -3033,11 +2988,9 @@ class DocumentBarcode:
         return cls(
             kind=barcode.kind,
             value=barcode.value,
-            span=DocumentSpan._from_generated(barcode.span)
-            if barcode.span
-            else None,
+            span=DocumentSpan._from_generated(barcode.span) if barcode.span else None,
             polygon=get_polygon(barcode) if barcode.polygon else [],
-            confidence=barcode.confidence
+            confidence=barcode.confidence,
         )
 
     def __repr__(self) -> str:
@@ -3054,9 +3007,7 @@ class DocumentBarcode:
         """
         return {
             "kind": self.kind,
-            "polygon": [f.to_dict() for f in self.polygon]
-            if self.polygon
-            else [],
+            "polygon": [f.to_dict() for f in self.polygon] if self.polygon else [],
             "confidence": self.confidence,
             "span": self.span.to_dict() if self.span else None,
             "value": self.value,
@@ -3072,9 +3023,11 @@ class DocumentBarcode:
         """
         return cls(
             kind=data.get("kind", None),
-            polygon=[Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
-            if len(data.get("polygon", [])) > 0
-            else [],
+            polygon=(
+                [Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
+                if len(data.get("polygon", [])) > 0
+                else []
+            ),
             confidence=data.get("confidence", None),
             span=DocumentSpan.from_dict(data.get("span")) if data.get("span") else None,  # type: ignore
             value=data.get("value", None),
@@ -3095,10 +3048,7 @@ class DocumentFormula:
     confidence: float
     """Confidence of correctly extracting the formula."""
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         self.kind = kwargs.get("kind", None)
         self.value = kwargs.get("value", None)
         self.polygon = kwargs.get("polygon", None)
@@ -3110,11 +3060,9 @@ class DocumentFormula:
         return cls(
             kind=formula.kind,
             value=formula.value,
-            span=DocumentSpan._from_generated(formula.span)
-            if formula.span
-            else None,
+            span=DocumentSpan._from_generated(formula.span) if formula.span else None,
             polygon=get_polygon(formula) if formula.polygon else [],
-            confidence=formula.confidence
+            confidence=formula.confidence,
         )
 
     def __repr__(self) -> str:
@@ -3131,9 +3079,7 @@ class DocumentFormula:
         """
         return {
             "kind": self.kind,
-            "polygon": [f.to_dict() for f in self.polygon]
-            if self.polygon
-            else [],
+            "polygon": [f.to_dict() for f in self.polygon] if self.polygon else [],
             "confidence": self.confidence,
             "span": self.span.to_dict() if self.span else None,
             "value": self.value,
@@ -3149,9 +3095,11 @@ class DocumentFormula:
         """
         return cls(
             kind=data.get("kind", None),
-            polygon=[Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
-            if len(data.get("polygon", [])) > 0
-            else [],
+            polygon=(
+                [Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
+                if len(data.get("polygon", [])) > 0
+                else []
+            ),
             confidence=data.get("confidence", None),
             span=DocumentSpan.from_dict(data.get("span")) if data.get("span") else None,  # type: ignore
             value=data.get("value", None),
@@ -3212,36 +3160,20 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
 
         return cls(
             page_number=page.page_number,
-            angle=adjust_text_angle(page.angle)
-            if page.angle else None,
+            angle=adjust_text_angle(page.angle) if page.angle else None,
             width=page.width,
             height=page.height,
             unit=page.unit,
-            lines=[DocumentLine._from_generated(line, page) for line in page.lines]
-            if page.lines
-            else [],
-            words=[DocumentWord._from_generated(word) for word in page.words]
-            if page.words
-            else [],
-            selection_marks=[
-                DocumentSelectionMark._from_generated(mark)
-                for mark in page.selection_marks
-            ]
-            if page.selection_marks
-            else [],
+            lines=[DocumentLine._from_generated(line, page) for line in page.lines] if page.lines else [],
+            words=[DocumentWord._from_generated(word) for word in page.words] if page.words else [],
+            selection_marks=(
+                [DocumentSelectionMark._from_generated(mark) for mark in page.selection_marks]
+                if page.selection_marks
+                else []
+            ),
             spans=prepare_document_spans(page.spans),
-            barcodes=[
-                DocumentBarcode._from_generated(barcode)
-                for barcode in barcodes
-            ]
-            if barcodes
-            else [],
-            formulas=[
-                DocumentFormula._from_generated(formula)
-                for formula in formulas
-            ]
-            if formulas
-            else [],
+            barcodes=[DocumentBarcode._from_generated(barcode) for barcode in barcodes] if barcodes else [],
+            formulas=[DocumentFormula._from_generated(formula) for formula in formulas] if formulas else [],
         )
 
     def __repr__(self) -> str:
@@ -3264,24 +3196,12 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
             "width": self.width,
             "height": self.height,
             "unit": self.unit,
-            "lines": [f.to_dict() for f in self.lines]
-            if self.lines
-            else [],
-            "words": [f.to_dict() for f in self.words]
-            if self.words
-            else [],
-            "selection_marks": [f.to_dict() for f in self.selection_marks]
-            if self.selection_marks
-            else [],
-            "spans": [f.to_dict() for f in self.spans]
-            if self.spans
-            else [],
-            "barcodes": [f.to_dict() for f in self.barcodes]
-            if self.barcodes
-            else [],
-            "formulas": [f.to_dict() for f in self.formulas]
-            if self.formulas
-            else [],
+            "lines": [f.to_dict() for f in self.lines] if self.lines else [],
+            "words": [f.to_dict() for f in self.words] if self.words else [],
+            "selection_marks": [f.to_dict() for f in self.selection_marks] if self.selection_marks else [],
+            "spans": [f.to_dict() for f in self.spans] if self.spans else [],
+            "barcodes": [f.to_dict() for f in self.barcodes] if self.barcodes else [],
+            "formulas": [f.to_dict() for f in self.formulas] if self.formulas else [],
         }
 
     @classmethod
@@ -3298,24 +3218,36 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
             width=data.get("width", None),
             height=data.get("height", None),
             unit=data.get("unit", None),
-            lines=[DocumentLine.from_dict(v) for v in data.get("lines")]  # type: ignore
-            if len(data.get("lines", [])) > 0
-            else [],
-            words=[DocumentWord.from_dict(v) for v in data.get("words")]  # type: ignore
-            if len(data.get("words", [])) > 0
-            else [],
-            selection_marks=[DocumentSelectionMark.from_dict(v) for v in data.get("selection_marks")]  # type: ignore
-            if len(data.get("selection_marks", [])) > 0
-            else [],
-            spans=[DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
-            if len(data.get("spans", [])) > 0
-            else [],
-            barcodes=[DocumentBarcode.from_dict(v) for v in data.get("barcodes")]  # type: ignore
-            if len(data.get("barcodes", [])) > 0
-            else [],
-            formulas=[DocumentFormula.from_dict(v) for v in data.get("formulas")]  # type: ignore
-            if len(data.get("formulas", [])) > 0
-            else [],
+            lines=(
+                [DocumentLine.from_dict(v) for v in data.get("lines")]  # type: ignore
+                if len(data.get("lines", [])) > 0
+                else []
+            ),
+            words=(
+                [DocumentWord.from_dict(v) for v in data.get("words")]  # type: ignore
+                if len(data.get("words", [])) > 0
+                else []
+            ),
+            selection_marks=(
+                [DocumentSelectionMark.from_dict(v) for v in data.get("selection_marks")]  # type: ignore
+                if len(data.get("selection_marks", [])) > 0
+                else []
+            ),
+            spans=(
+                [DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
+                if len(data.get("spans", [])) > 0
+                else []
+            ),
+            barcodes=(
+                [DocumentBarcode.from_dict(v) for v in data.get("barcodes")]  # type: ignore
+                if len(data.get("barcodes", [])) > 0
+                else []
+            ),
+            formulas=(
+                [DocumentFormula.from_dict(v) for v in data.get("formulas")]  # type: ignore
+                if len(data.get("formulas", [])) > 0
+                else []
+            ),
         )
 
 
@@ -3371,9 +3303,7 @@ class DocumentStyle:
             font_weight=font_weight,
             color=color,
             background_color=background_color,
-            spans=[DocumentSpan._from_generated(span) for span in style.spans]
-            if style.spans
-            else [],
+            spans=[DocumentSpan._from_generated(span) for span in style.spans] if style.spans else [],
             confidence=style.confidence,
         )
 
@@ -3398,9 +3328,7 @@ class DocumentStyle:
             "font_weight": self.font_weight,
             "color": self.color,
             "background_color": self.background_color,
-            "spans": [f.to_dict() for f in self.spans]
-            if self.spans
-            else [],
+            "spans": [f.to_dict() for f in self.spans] if self.spans else [],
             "confidence": self.confidence,
         }
 
@@ -3419,9 +3347,11 @@ class DocumentStyle:
             font_weight=data.get("font_weight", None),
             color=data.get("color", None),
             background_color=data.get("background_color", None),
-            spans=[DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
-            if len(data.get("spans", [])) > 0
-            else [],
+            spans=(
+                [DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
+                if len(data.get("spans", [])) > 0
+                else []
+            ),
             confidence=data.get("confidence", None),
         )
 
@@ -3466,15 +3396,12 @@ class DocumentTableCell:
             row_span=cell.row_span if cell.row_span else 1,
             column_span=cell.column_span if cell.column_span else 1,
             content=cell.content,
-            bounding_regions=[
-                BoundingRegion._from_generated(region)
-                for region in cell.bounding_regions
-            ]
-            if cell.bounding_regions
-            else [],
-            spans=[DocumentSpan._from_generated(span) for span in cell.spans]
-            if cell.spans
-            else [],
+            bounding_regions=(
+                [BoundingRegion._from_generated(region) for region in cell.bounding_regions]
+                if cell.bounding_regions
+                else []
+            ),
+            spans=[DocumentSpan._from_generated(span) for span in cell.spans] if cell.spans else [],
         )
 
     def __repr__(self) -> str:
@@ -3498,12 +3425,8 @@ class DocumentTableCell:
             "row_span": self.row_span,
             "column_span": self.column_span,
             "content": self.content,
-            "bounding_regions": [f.to_dict() for f in self.bounding_regions]
-            if self.bounding_regions
-            else [],
-            "spans": [f.to_dict() for f in self.spans]
-            if self.spans
-            else [],
+            "bounding_regions": [f.to_dict() for f in self.bounding_regions] if self.bounding_regions else [],
+            "spans": [f.to_dict() for f in self.spans] if self.spans else [],
         }
 
     @classmethod
@@ -3521,12 +3444,16 @@ class DocumentTableCell:
             row_span=data.get("row_span", 1),
             column_span=data.get("column_span", 1),
             content=data.get("content", None),
-            bounding_regions=[BoundingRegion.from_dict(v) for v in data.get("bounding_regions")]  # type: ignore
-            if len(data.get("bounding_regions", [])) > 0
-            else [],
-            spans=[DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
-            if len(data.get("spans", [])) > 0
-            else [],
+            bounding_regions=(
+                [BoundingRegion.from_dict(v) for v in data.get("bounding_regions")]  # type: ignore
+                if len(data.get("bounding_regions", [])) > 0
+                else []
+            ),
+            spans=(
+                [DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
+                if len(data.get("spans", [])) > 0
+                else []
+            ),
         )
 
 
@@ -3556,9 +3483,7 @@ class DocumentTable:
         return cls(
             row_count=table.row_count,
             column_count=table.column_count,
-            cells=[DocumentTableCell._from_generated(cell) for cell in table.cells]
-            if table.cells
-            else [],
+            cells=[DocumentTableCell._from_generated(cell) for cell in table.cells] if table.cells else [],
             bounding_regions=prepare_bounding_regions(table.bounding_regions),
             spans=prepare_document_spans(table.spans),
         )
@@ -3579,15 +3504,9 @@ class DocumentTable:
         return {
             "row_count": self.row_count,
             "column_count": self.column_count,
-            "cells": [f.to_dict() for f in self.cells]
-            if self.cells
-            else [],
-            "bounding_regions": [f.to_dict() for f in self.bounding_regions]
-            if self.bounding_regions
-            else [],
-            "spans": [f.to_dict() for f in self.spans]
-            if self.spans
-            else [],
+            "cells": [f.to_dict() for f in self.cells] if self.cells else [],
+            "bounding_regions": [f.to_dict() for f in self.bounding_regions] if self.bounding_regions else [],
+            "spans": [f.to_dict() for f in self.spans] if self.spans else [],
         }
 
     @classmethod
@@ -3601,15 +3520,21 @@ class DocumentTable:
         return cls(
             row_count=data.get("row_count", None),
             column_count=data.get("column_count", None),
-            cells=[DocumentTableCell.from_dict(v) for v in data.get("cells")]  # type: ignore
-            if len(data.get("cells", [])) > 0
-            else [],
-            bounding_regions=[BoundingRegion.from_dict(v) for v in data.get("bounding_regions")]  # type: ignore
-            if len(data.get("bounding_regions", [])) > 0
-            else [],
-            spans=[DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
-            if len(data.get("spans", [])) > 0
-            else [],
+            cells=(
+                [DocumentTableCell.from_dict(v) for v in data.get("cells")]  # type: ignore
+                if len(data.get("cells", [])) > 0
+                else []
+            ),
+            bounding_regions=(
+                [BoundingRegion.from_dict(v) for v in data.get("bounding_regions")]  # type: ignore
+                if len(data.get("bounding_regions", [])) > 0
+                else []
+            ),
+            spans=(
+                [DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
+                if len(data.get("spans", [])) > 0
+                else []
+            ),
         )
 
 
@@ -3617,6 +3542,7 @@ class DocumentTypeDetails:
     """DocumentTypeDetails represents a document type that a model can recognize, including its
     fields and types, and the confidence for those fields.
     """
+
     description: Optional[str]
     """A description for the model."""
     build_mode: Optional[str]
@@ -3627,10 +3553,7 @@ class DocumentTypeDetails:
     field_confidence: Optional[Dict[str, float]]
     """Estimated confidence for each field."""
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         self.description = kwargs.get("description", None)
         self.build_mode = kwargs.get("build_mode", None)
         self.field_schema = kwargs.get("field_schema", None)
@@ -3647,10 +3570,12 @@ class DocumentTypeDetails:
         return cls(
             description=doc_type.description,
             build_mode=doc_type.build_mode,
-            field_schema={name: field.serialize() for name, field in doc_type.field_schema.items()}
-            if doc_type.field_schema else {},
-            field_confidence=doc_type.field_confidence
-            if doc_type.field_confidence else {},
+            field_schema=(
+                {name: field.serialize() for name, field in doc_type.field_schema.items()}
+                if doc_type.field_schema
+                else {}
+            ),
+            field_confidence=doc_type.field_confidence if doc_type.field_confidence else {},
         )
 
     def to_dict(self) -> Dict:
@@ -3689,6 +3614,7 @@ class DocumentModelSummary:
     .. versionadded:: 2023-07-31
         The *expires_on* property.
     """
+
     model_id: str
     """Unique model id."""
     description: Optional[str]
@@ -3702,10 +3628,7 @@ class DocumentModelSummary:
     tags: Optional[Dict[str, str]]
     """List of user defined key-value tag attributes associated with the model."""
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         self.model_id = kwargs.get("model_id", None)
         self.description = kwargs.get("description", None)
         self.created_on = kwargs.get("created_on", None)
@@ -3729,7 +3652,7 @@ class DocumentModelSummary:
             created_on=model.created_date_time,
             api_version=model.api_version,
             tags=model.tags if model.tags else {},
-            expires_on=expires_on
+            expires_on=expires_on,
         )
 
     def to_dict(self) -> Dict[str, Any]:
@@ -3764,6 +3687,7 @@ class DocumentModelSummary:
             expires_on=data.get("expires_on", None),
         )
 
+
 class BlobFileListSource:
     """Content source for a file list in Azure Blob Storage."""
 
@@ -3772,26 +3696,17 @@ class BlobFileListSource:
     file_list: str
     """Path to a JSONL file within the container specifying a subset of documents for training."""
 
-    def __init__(  # pylint: disable=unused-argument
-        self,
-        container_url: str,
-        file_list: str
-    ) -> None:
+    def __init__(self, container_url: str, file_list: str) -> None:  # pylint: disable=unused-argument
         self.container_url = container_url
         self.file_list = file_list
         self._kind: Literal["azureBlobFileList"] = "azureBlobFileList"
 
     def __repr__(self) -> str:
-        return (
-            f"BlobFileListSource(container_url={self.container_url}, file_list={self.file_list})"
-        )
+        return f"BlobFileListSource(container_url={self.container_url}, file_list={self.file_list})"
 
     @classmethod
     def _from_generated(cls, model):
-        return cls(
-            container_url=model.container_url,
-            file_list=model.file_list
-        )
+        return cls(container_url=model.container_url, file_list=model.file_list)
 
     def _to_generated(self) -> AzureBlobFileListContentSource:
         return AzureBlobFileListContentSource(container_url=self.container_url, file_list=self.file_list)
@@ -3802,10 +3717,7 @@ class BlobFileListSource:
         :return: Dict[str, Any]
         :rtype: Dict[str, Any]
         """
-        return {
-            "container_url": self.container_url,
-            "file_list": self.file_list
-        }
+        return {"container_url": self.container_url, "file_list": self.file_list}
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "BlobFileListSource":
@@ -3829,27 +3741,17 @@ class BlobSource:
     prefix: Optional[str]
     """Blob name prefix."""
 
-    def __init__(  # pylint: disable=unused-argument
-        self,
-        container_url: str,
-        *,
-        prefix: Optional[str] = None
-    ) -> None:
+    def __init__(self, container_url: str, *, prefix: Optional[str] = None) -> None:  # pylint: disable=unused-argument
         self.container_url = container_url
         self.prefix = prefix
         self._kind: Literal["azureBlob"] = "azureBlob"
 
     def __repr__(self) -> str:
-        return (
-            f"BlobSource(container_url={self.container_url}, prefix={self.prefix})"
-        )
+        return f"BlobSource(container_url={self.container_url}, prefix={self.prefix})"
 
     @classmethod
     def _from_generated(cls, model):
-        return cls(
-            container_url=model.container_url,
-            prefix=model.prefix
-        )
+        return cls(container_url=model.container_url, prefix=model.prefix)
 
     def _to_generated(self) -> AzureBlobContentSource:
         return AzureBlobContentSource(container_url=self.container_url, prefix=self.prefix)
@@ -3860,10 +3762,7 @@ class BlobSource:
         :return: Dict[str, Any]
         :rtype: Dict[str, Any]
         """
-        return {
-            "container_url": self.container_url,
-            "prefix": self.prefix
-        }
+        return {"container_url": self.container_url, "prefix": self.prefix}
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "BlobSource":
@@ -3888,17 +3787,12 @@ class ClassifierDocumentTypeDetails:
     source: Union[BlobSource, BlobFileListSource]
     """Content source containing the training data."""
 
-    def __init__(  # pylint: disable=unused-argument
-        self,
-        source: Union[BlobSource, BlobFileListSource]
-    ) -> None:
+    def __init__(self, source: Union[BlobSource, BlobFileListSource]) -> None:  # pylint: disable=unused-argument
         self.source_kind = source._kind
         self.source = source
 
     def __repr__(self) -> str:
-        return (
-            f"ClassifierDocumentTypeDetails(source_kind={self.source_kind}, source={repr(self.source)})"
-        )
+        return f"ClassifierDocumentTypeDetails(source_kind={self.source_kind}, source={repr(self.source)})"
 
     @classmethod
     def _from_generated(cls, model):
@@ -3906,7 +3800,7 @@ class ClassifierDocumentTypeDetails:
         if model.azure_blob_source is not None:
             source = BlobSource._from_generated(model.azure_blob_source)
         elif model.azure_blob_file_list_source is not None:
-            source=BlobFileListSource._from_generated(model.azure_blob_file_list_source)
+            source = BlobFileListSource._from_generated(model.azure_blob_file_list_source)
 
         return cls(
             source=source,
@@ -3964,10 +3858,7 @@ class DocumentClassifierDetails:
     doc_types: Mapping[str, ClassifierDocumentTypeDetails]
     """List of document types to classify against."""
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         self.classifier_id = kwargs.get("classifier_id", None)
         self.description = kwargs.get("description", None)
         self.created_on = kwargs.get("created_on", None)
@@ -3990,8 +3881,11 @@ class DocumentClassifierDetails:
             created_on=model.created_date_time,
             expires_on=model.expiration_date_time,
             api_version=model.api_version,
-            doc_types={k: ClassifierDocumentTypeDetails._from_generated(v) for k, v in model.doc_types.items()}
-            if model.doc_types else {}
+            doc_types=(
+                {k: ClassifierDocumentTypeDetails._from_generated(v) for k, v in model.doc_types.items()}
+                if model.doc_types
+                else {}
+            ),
         )
 
     def to_dict(self) -> Dict[str, Any]:
@@ -4006,7 +3900,7 @@ class DocumentClassifierDetails:
             "created_on": self.created_on,
             "expires_on": self.expires_on,
             "api_version": self.api_version,
-            "doc_types": {k: v.to_dict() for k, v in self.doc_types.items()} if self.doc_types else {}  # type: ignore
+            "doc_types": {k: v.to_dict() for k, v in self.doc_types.items()} if self.doc_types else {},  # type: ignore
         }
 
     @classmethod
@@ -4023,10 +3917,13 @@ class DocumentClassifierDetails:
             created_on=data.get("created_on", None),
             expires_on=data.get("expires_on", None),
             api_version=data.get("api_version", None),
-            doc_types={k: ClassifierDocumentTypeDetails.from_dict(v)
-                       for k, v in data.get("doc_types").items()}  # type: ignore
-            if data.get("doc_types")
-            else {},
+            doc_types=(
+                {
+                    k: ClassifierDocumentTypeDetails.from_dict(v) for k, v in data.get("doc_types").items()
+                }  # type: ignore
+                if data.get("doc_types")
+                else {}
+            ),
         )
 
 
@@ -4052,10 +3949,7 @@ class DocumentModelDetails(DocumentModelSummary):
     doc_types: Optional[Dict[str, DocumentTypeDetails]]
     """Supported document types, including the fields for each document and their types."""
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.doc_types = kwargs.get("doc_types", None)
 
@@ -4075,9 +3969,12 @@ class DocumentModelDetails(DocumentModelSummary):
             created_on=model.created_date_time,
             api_version=model.api_version,
             tags=model.tags if model.tags else {},
-            doc_types={k: DocumentTypeDetails._from_generated(v) for k, v in model.doc_types.items()}
-            if model.doc_types else {},
-            expires_on=expires_on
+            doc_types=(
+                {k: DocumentTypeDetails._from_generated(v) for k, v in model.doc_types.items()}
+                if model.doc_types
+                else {}
+            ),
+            expires_on=expires_on,
         )
 
     def to_dict(self) -> Dict[str, Any]:
@@ -4110,9 +4007,11 @@ class DocumentModelDetails(DocumentModelSummary):
             created_on=data.get("created_on", None),
             api_version=data.get("api_version", None),
             tags=data.get("tags", {}),
-            doc_types={k: DocumentTypeDetails.from_dict(v) for k, v in data.get("doc_types").items()}  # type: ignore
-            if data.get("doc_types")
-            else {},
+            doc_types=(
+                {k: DocumentTypeDetails.from_dict(v) for k, v in data.get("doc_types").items()}  # type: ignore
+                if data.get("doc_types")
+                else {}
+            ),
             expires_on=data.get("expires_on", None),
         )
 
@@ -4127,10 +4026,7 @@ class DocumentAnalysisInnerError:
     innererror: Optional["DocumentAnalysisInnerError"]
     """Detailed error."""
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         self.code = kwargs.get("code", None)
         self.message = kwargs.get("message", None)
         self.innererror = kwargs.get("innererror", None)
@@ -4146,7 +4042,7 @@ class DocumentAnalysisInnerError:
         return cls(
             code=ierr.code,
             message=ierr.message,
-            innererror=DocumentAnalysisInnerError._from_generated(ierr.innererror) if ierr.innererror else None
+            innererror=DocumentAnalysisInnerError._from_generated(ierr.innererror) if ierr.innererror else None,
         )
 
     def to_dict(self) -> Dict:
@@ -4158,7 +4054,7 @@ class DocumentAnalysisInnerError:
         return {
             "code": self.code,
             "message": self.message,
-            "innererror": self.innererror.to_dict() if self.innererror else None
+            "innererror": self.innererror.to_dict() if self.innererror else None,
         }
 
     @classmethod
@@ -4172,8 +4068,11 @@ class DocumentAnalysisInnerError:
         return cls(
             code=data.get("code", None),
             message=data.get("message", None),
-            innererror=DocumentAnalysisInnerError.from_dict(data.get("innererror"))  # type: ignore
-            if data.get("innererror") else None
+            innererror=(
+                DocumentAnalysisInnerError.from_dict(data.get("innererror"))  # type: ignore
+                if data.get("innererror")
+                else None
+            ),
         )
 
 
@@ -4191,10 +4090,7 @@ class DocumentAnalysisError:
     innererror: Optional[DocumentAnalysisInnerError]
     """Detailed error."""
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         self.code = kwargs.get("code", None)
         self.message = kwargs.get("message", None)
         self.target = kwargs.get("target", None)
@@ -4214,7 +4110,7 @@ class DocumentAnalysisError:
             message=err.message,
             target=err.target,
             details=[DocumentAnalysisError._from_generated(e) for e in err.details] if err.details else [],
-            innererror=DocumentAnalysisInnerError._from_generated(err.innererror) if err.innererror else None
+            innererror=DocumentAnalysisInnerError._from_generated(err.innererror) if err.innererror else None,
         )
 
     def to_dict(self) -> Dict:
@@ -4228,7 +4124,7 @@ class DocumentAnalysisError:
             "message": self.message,
             "target": self.target,
             "details": [detail.to_dict() for detail in self.details] if self.details else [],
-            "innererror": self.innererror.to_dict() if self.innererror else None
+            "innererror": self.innererror.to_dict() if self.innererror else None,
         }
 
     @classmethod
@@ -4243,10 +4139,16 @@ class DocumentAnalysisError:
             code=data.get("code", None),
             message=data.get("message", None),
             target=data.get("target", None),
-            details=[DocumentAnalysisError.from_dict(e) for e in data.get("details")]  # type: ignore
-            if data.get("details") else [],
-            innererror=DocumentAnalysisInnerError.from_dict(data.get("innererror"))  # type: ignore
-            if data.get("innererror") else None
+            details=(
+                [DocumentAnalysisError.from_dict(e) for e in data.get("details")]  # type: ignore
+                if data.get("details")
+                else []
+            ),
+            innererror=(
+                DocumentAnalysisInnerError.from_dict(data.get("innererror"))  # type: ignore
+                if data.get("innererror")
+                else None
+            ),
         )
 
 
@@ -4262,6 +4164,7 @@ class OperationSummary:
     .. versionadded:: 2023-07-31
         The `documentClassifierBuild` kind.
     """
+
     operation_id: str
     """Operation ID."""
     status: str
@@ -4366,6 +4269,7 @@ class OperationDetails(OperationSummary):
     .. versionadded:: 2023-07-31
         The `documentClassifierBuild` kind and `DocumentClassifierDetails` result.
     """
+
     operation_id: str
     """Operation ID."""
     status: str
@@ -4438,11 +4342,11 @@ class OperationDetails(OperationSummary):
 
         kind = data.get("kind", None)
         if kind == "documentClassifierBuild":
-            result = \
-                DocumentClassifierDetails.from_dict(data.get("result")) if data.get("result") else None  # type: ignore
+            result = (
+                DocumentClassifierDetails.from_dict(data.get("result")) if data.get("result") else None
+            )  # type: ignore
         else:
-            result = \
-                DocumentModelDetails.from_dict(data.get("result")) if data.get("result") else None  # type: ignore
+            result = DocumentModelDetails.from_dict(data.get("result")) if data.get("result") else None  # type: ignore
         return cls(
             operation_id=data.get("operation_id", None),
             status=data.get("status", None),
@@ -4461,11 +4365,13 @@ class OperationDetails(OperationSummary):
     def _from_generated(cls, op, api_version):  # pylint: disable=arguments-differ
         deserialize = _get_deserialize(api_version)
         if op.kind == "documentClassifierBuild":
-            result = DocumentClassifierDetails._from_generated(deserialize(ClassifierDetails, op.result)) \
-                if op.result else None
+            result = (
+                DocumentClassifierDetails._from_generated(deserialize(ClassifierDetails, op.result))
+                if op.result
+                else None
+            )
         else:
-            result = DocumentModelDetails._from_generated(deserialize(ModelDetails, op.result)) \
-                if op.result else None
+            result = DocumentModelDetails._from_generated(deserialize(ModelDetails, op.result)) if op.result else None
         return cls(
             operation_id=op.operation_id,
             status=op.status,
@@ -4475,8 +4381,7 @@ class OperationDetails(OperationSummary):
             kind=op.kind,
             resource_location=op.resource_location,
             result=result,
-            error=DocumentAnalysisError._from_generated(deserialize(Error, op.error))
-            if op.error else None,
+            error=DocumentAnalysisError._from_generated(deserialize(Error, op.error)) if op.error else None,
             api_version=op.api_version,
             tags=op.tags if op.tags else {},
         )
@@ -4525,33 +4430,27 @@ class AnalyzeResult:  # pylint: disable=too-many-instance-attributes
             api_version=response.api_version,
             model_id=response.model_id,
             content=response.content,
-            languages=[DocumentLanguage._from_generated(lang) for lang in response.languages]
-            if response.languages
-            else [],
-            pages=[DocumentPage._from_generated(page) for page in response.pages]
-            if response.pages
-            else [],
-            paragraphs=[DocumentParagraph._from_generated(paragraph) for paragraph in response.paragraphs]
-            if response.paragraphs
-            else [],
-            tables=[DocumentTable._from_generated(table) for table in response.tables]
-            if response.tables
-            else [],
-            key_value_pairs=[
-                DocumentKeyValuePair._from_generated(kv)
-                for kv in response.key_value_pairs
-            ]
-            if response.key_value_pairs
-            else [],
-            styles=[DocumentStyle._from_generated(style) for style in response.styles]
-            if response.styles
-            else [],
-            documents=[
-                AnalyzedDocument._from_generated(document)
-                for document in response.documents
-            ]
-            if response.documents
-            else [],
+            languages=(
+                [DocumentLanguage._from_generated(lang) for lang in response.languages] if response.languages else []
+            ),
+            pages=[DocumentPage._from_generated(page) for page in response.pages] if response.pages else [],
+            paragraphs=(
+                [DocumentParagraph._from_generated(paragraph) for paragraph in response.paragraphs]
+                if response.paragraphs
+                else []
+            ),
+            tables=[DocumentTable._from_generated(table) for table in response.tables] if response.tables else [],
+            key_value_pairs=(
+                [DocumentKeyValuePair._from_generated(kv) for kv in response.key_value_pairs]
+                if response.key_value_pairs
+                else []
+            ),
+            styles=[DocumentStyle._from_generated(style) for style in response.styles] if response.styles else [],
+            documents=(
+                [AnalyzedDocument._from_generated(document) for document in response.documents]
+                if response.documents
+                else []
+            ),
         )
 
     def __repr__(self) -> str:
@@ -4573,27 +4472,13 @@ class AnalyzeResult:  # pylint: disable=too-many-instance-attributes
             "api_version": self.api_version,
             "model_id": self.model_id,
             "content": self.content,
-            "languages": [f.to_dict() for f in self.languages]
-            if self.languages
-            else [],
-            "pages": [f.to_dict() for f in self.pages]
-            if self.pages
-            else [],
-            "paragraphs": [f.to_dict() for f in self.paragraphs]
-            if self.paragraphs
-            else [],
-            "tables": [f.to_dict() for f in self.tables]
-            if self.tables
-            else [],
-            "key_value_pairs": [f.to_dict() for f in self.key_value_pairs]
-            if self.key_value_pairs
-            else [],
-            "styles": [f.to_dict() for f in self.styles]
-            if self.styles
-            else [],
-            "documents": [f.to_dict() for f in self.documents]
-            if self.documents
-            else [],
+            "languages": [f.to_dict() for f in self.languages] if self.languages else [],
+            "pages": [f.to_dict() for f in self.pages] if self.pages else [],
+            "paragraphs": [f.to_dict() for f in self.paragraphs] if self.paragraphs else [],
+            "tables": [f.to_dict() for f in self.tables] if self.tables else [],
+            "key_value_pairs": [f.to_dict() for f in self.key_value_pairs] if self.key_value_pairs else [],
+            "styles": [f.to_dict() for f in self.styles] if self.styles else [],
+            "documents": [f.to_dict() for f in self.documents] if self.documents else [],
         }
 
     @classmethod
@@ -4608,27 +4493,41 @@ class AnalyzeResult:  # pylint: disable=too-many-instance-attributes
             api_version=data.get("api_version", None),
             model_id=data.get("model_id", None),
             content=data.get("content", None),
-            languages=[DocumentLanguage.from_dict(v) for v in data.get("languages")]  # type: ignore
-            if len(data.get("languages", [])) > 0
-            else [],
-            pages=[DocumentPage.from_dict(v) for v in data.get("pages")]  # type: ignore
-            if len(data.get("pages", [])) > 0
-            else [],
-            paragraphs=[DocumentParagraph.from_dict(v) for v in data.get("paragraphs")]  # type: ignore
-            if len(data.get("paragraphs", [])) > 0
-            else [],
-            tables=[DocumentTable.from_dict(v) for v in data.get("tables")]  # type: ignore
-            if len(data.get("tables", [])) > 0
-            else [],
-            key_value_pairs=[DocumentKeyValuePair.from_dict(v) for v in data.get("key_value_pairs")]  # type: ignore
-            if len(data.get("key_value_pairs", [])) > 0
-            else [],
-            styles=[DocumentStyle.from_dict(v) for v in data.get("styles")]  # type: ignore
-            if len(data.get("styles", [])) > 0
-            else [],
-            documents=[AnalyzedDocument.from_dict(v) for v in data.get("documents")]  # type: ignore
-            if len(data.get("documents", [])) > 0
-            else [],
+            languages=(
+                [DocumentLanguage.from_dict(v) for v in data.get("languages")]  # type: ignore
+                if len(data.get("languages", [])) > 0
+                else []
+            ),
+            pages=(
+                [DocumentPage.from_dict(v) for v in data.get("pages")]  # type: ignore
+                if len(data.get("pages", [])) > 0
+                else []
+            ),
+            paragraphs=(
+                [DocumentParagraph.from_dict(v) for v in data.get("paragraphs")]  # type: ignore
+                if len(data.get("paragraphs", [])) > 0
+                else []
+            ),
+            tables=(
+                [DocumentTable.from_dict(v) for v in data.get("tables")]  # type: ignore
+                if len(data.get("tables", [])) > 0
+                else []
+            ),
+            key_value_pairs=(
+                [DocumentKeyValuePair.from_dict(v) for v in data.get("key_value_pairs")]  # type: ignore
+                if len(data.get("key_value_pairs", [])) > 0
+                else []
+            ),
+            styles=(
+                [DocumentStyle.from_dict(v) for v in data.get("styles")]  # type: ignore
+                if len(data.get("styles", [])) > 0
+                else []
+            ),
+            documents=(
+                [AnalyzedDocument.from_dict(v) for v in data.get("documents")]  # type: ignore
+                if len(data.get("documents", [])) > 0
+                else []
+            ),
         )
 
 
@@ -4640,10 +4539,7 @@ class CustomDocumentModelsDetails:
     limit: int
     """Maximum number of custom models supported in the current resource."""
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         self.count = kwargs.get("count", None)
         self.limit = kwargs.get("limit", None)
 
@@ -4656,7 +4552,6 @@ class CustomDocumentModelsDetails:
             count=info.count,
             limit=info.limit,
         )
-
 
     def to_dict(self) -> Dict:
         """Returns a dict representation of CustomDocumentModelsDetails.
@@ -4693,10 +4588,7 @@ class QuotaDetails:
     quota_resets_on: datetime.datetime
     """Date/time when the resource quota usage will be reset."""
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         self.used = kwargs.get("used", None)
         self.quota = kwargs.get("quota", None)
         self.quota_resets_on = kwargs.get("quota_resets_on", None)
@@ -4706,11 +4598,7 @@ class QuotaDetails:
 
     @classmethod
     def _from_generated(cls, info):
-        return cls(
-            used=info.used,
-            quota=info.quota,
-            quota_resets_on=info.quota_reset_date_time
-        )
+        return cls(used=info.used, quota=info.quota, quota_resets_on=info.quota_reset_date_time)
 
     def to_dict(self) -> Dict[str, Any]:
         """Returns a dict representation of QuotaDetails.
@@ -4718,11 +4606,7 @@ class QuotaDetails:
         :return: Dict[str, Any]
         :rtype: Dict[str, Any]
         """
-        return {
-                "used": self.used,
-                "quota": self.quota,
-                "quota_resets_on": self.quota_resets_on
-            }
+        return {"used": self.used, "quota": self.quota, "quota_resets_on": self.quota_resets_on}
 
     @classmethod
     def from_dict(cls, data: Dict) -> "QuotaDetails":
@@ -4735,7 +4619,7 @@ class QuotaDetails:
         return cls(
             used=data.get("used", None),
             quota=data.get("quota", None),
-            quota_resets_on=data.get("quota_resets_on", None)
+            quota_resets_on=data.get("quota_resets_on", None),
         )
 
 
@@ -4751,26 +4635,30 @@ class ResourceDetails:
     neural_document_model_quota: Optional[QuotaDetails]
     """Quota details regarding the custom neural document model builds under the Form Recognizer resource."""
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         self.custom_document_models = kwargs.get("custom_document_models", None)
         self.neural_document_model_quota = kwargs.get("neural_document_model_quota", None)
 
     def __repr__(self) -> str:
-        return f"ResourceDetails(custom_document_models={repr(self.custom_document_models)}, " \
-               f"neural_document_model_quota={repr(self.neural_document_model_quota)})"
+        return (
+            f"ResourceDetails(custom_document_models={repr(self.custom_document_models)}, "
+            f"neural_document_model_quota={repr(self.neural_document_model_quota)})"
+        )
 
     @classmethod
     def _from_generated(cls, info):
-        custom_neural_builds = info.custom_neural_document_model_builds \
-            if hasattr(info, "custom_neural_document_model_builds") else None
+        custom_neural_builds = (
+            info.custom_neural_document_model_builds if hasattr(info, "custom_neural_document_model_builds") else None
+        )
         return cls(
-            custom_document_models=CustomDocumentModelsDetails._from_generated(info.custom_document_models)
-            if info.custom_document_models else None,
-            neural_document_model_quota=QuotaDetails._from_generated(custom_neural_builds)
-            if custom_neural_builds else None,
+            custom_document_models=(
+                CustomDocumentModelsDetails._from_generated(info.custom_document_models)
+                if info.custom_document_models
+                else None
+            ),
+            neural_document_model_quota=(
+                QuotaDetails._from_generated(custom_neural_builds) if custom_neural_builds else None
+            ),
         )
 
     def to_dict(self) -> Dict:
@@ -4780,13 +4668,11 @@ class ResourceDetails:
         :rtype: dict
         """
         return {
-                "custom_document_models": self.custom_document_models.to_dict()
-                if self.custom_document_models
-                else None,
-                "neural_document_model_quota": self.neural_document_model_quota.to_dict()
-                if self.neural_document_model_quota
-                else None,
-            }
+            "custom_document_models": self.custom_document_models.to_dict() if self.custom_document_models else None,
+            "neural_document_model_quota": (
+                self.neural_document_model_quota.to_dict() if self.neural_document_model_quota else None
+            ),
+        }
 
     @classmethod
     def from_dict(cls, data: Dict) -> "ResourceDetails":
@@ -4797,19 +4683,23 @@ class ResourceDetails:
         :rtype: ResourceDetails
         """
         return cls(
-            custom_document_models=CustomDocumentModelsDetails.from_dict(
-                data.get("custom_document_models")  # type: ignore
-            ) if data.get("custom_document_models") else None,
-            neural_document_model_quota=QuotaDetails.from_dict(
-                data.get("neural_document_model_quota")  # type: ignore
-            ) if data.get("neural_document_model_quota") else None,
+            custom_document_models=(
+                CustomDocumentModelsDetails.from_dict(data.get("custom_document_models"))  # type: ignore
+                if data.get("custom_document_models")
+                else None
+            ),
+            neural_document_model_quota=(
+                QuotaDetails.from_dict(data.get("neural_document_model_quota"))  # type: ignore
+                if data.get("neural_document_model_quota")
+                else None
+            ),
         )
 
 
 def _in_span(element: DocumentWord, spans: List[DocumentSpan]) -> bool:
     for span in spans:
-        if element.span.offset >= span.offset and (
-            element.span.offset + element.span.length
-        ) <= (span.offset + span.length):
+        if element.span.offset >= span.offset and (element.span.offset + element.span.length) <= (
+            span.offset + span.length
+        ):
             return True
     return False

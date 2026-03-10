@@ -7,6 +7,7 @@
 """Customize generated code here.
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 from collections.abc import MutableMapping  # pylint:disable=import-error
 from typing import Any, Callable, Dict, Optional, TypeVar, Union, cast
 

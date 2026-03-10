@@ -18,14 +18,14 @@ from ._container_apps_auth_configs_operations import ContainerAppsAuthConfigsOpe
 from ._managed_environments_storages_operations import ManagedEnvironmentsStoragesOperations
 
 __all__ = [
-    'ContainerAppsOperations',
-    'ContainerAppsRevisionsOperations',
-    'ContainerAppsRevisionReplicasOperations',
-    'ManagedEnvironmentsOperations',
-    'CertificatesOperations',
-    'Operations',
-    'ContainerAppsSourceControlsOperations',
-    'DaprComponentsOperations',
-    'ContainerAppsAuthConfigsOperations',
-    'ManagedEnvironmentsStoragesOperations',
+    "ContainerAppsOperations",
+    "ContainerAppsRevisionsOperations",
+    "ContainerAppsRevisionReplicasOperations",
+    "ManagedEnvironmentsOperations",
+    "CertificatesOperations",
+    "Operations",
+    "ContainerAppsSourceControlsOperations",
+    "DaprComponentsOperations",
+    "ContainerAppsAuthConfigsOperations",
+    "ManagedEnvironmentsStoragesOperations",
 ]

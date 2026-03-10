@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 from __future__ import annotations
 import uuid
-import asyncio # pylint: disable=do-not-import-asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 from typing import Iterable, Union, Optional, Any, AnyStr, List, TYPE_CHECKING, cast
 
@@ -197,7 +197,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
                     )
                 if partition_key and partition_key != event_data._partition_key:  # pylint: disable=protected-access
                     raise ValueError("The partition_key does not match the one of the EventDataBatch")
-                wrapper_event_data = event_data  # type:ignore
+                wrapper_event_data = event_data  # type: ignore
             else:
                 if partition_key:
                     event_data = _set_partition_key(event_data, partition_key, self._amqp_transport)

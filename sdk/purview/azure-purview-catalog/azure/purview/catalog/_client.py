@@ -15,7 +15,15 @@ from azure.core import PipelineClient
 from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import PurviewCatalogClientConfiguration
-from .operations import CollectionOperations, DiscoveryOperations, EntityOperations, GlossaryOperations, LineageOperations, RelationshipOperations, TypesOperations
+from .operations import (
+    CollectionOperations,
+    DiscoveryOperations,
+    EntityOperations,
+    GlossaryOperations,
+    LineageOperations,
+    RelationshipOperations,
+    TypesOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -23,7 +31,8 @@ if TYPE_CHECKING:
 
     from azure.core.credentials import TokenCredential
 
-class PurviewCatalogClient:    # pylint: disable=too-many-instance-attributes
+
+class PurviewCatalogClient:  # pylint: disable=too-many-instance-attributes
     """Purview Catalog Service is a fully managed cloud service whose users can discover the data
     sources they need and understand the data sources they find. At the same time, Data Catalog
     helps organizations get more value from their existing investments. This spec defines REST API
@@ -55,13 +64,8 @@ class PurviewCatalogClient:    # pylint: disable=too-many-instance-attributes
      Retry-After header is present.
     """
 
-    def __init__(
-        self,
-        endpoint: str,
-        credential: "TokenCredential",
-        **kwargs: Any
-    ) -> None:
-        _endpoint = '{Endpoint}/catalog/api'
+    def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
+        _endpoint = "{Endpoint}/catalog/api"
         self._config = PurviewCatalogClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
@@ -74,28 +78,13 @@ class PurviewCatalogClient:    # pylint: disable=too-many-instance-attributes
         self.glossary = GlossaryOperations(  # type: ignore # pylint: disable=abstract-class-instantiated
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.discovery = DiscoveryOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.lineage = LineageOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.relationship = RelationshipOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.types = TypesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.collection = CollectionOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.discovery = DiscoveryOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.lineage = LineageOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.relationship = RelationshipOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.types = TypesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.collection = CollectionOperations(self._client, self._config, self._serialize, self._deserialize)
 
-
-    def send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> HttpResponse:
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -115,7 +104,7 @@ class PurviewCatalogClient:    # pylint: disable=too-many-instance-attributes
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

@@ -9,7 +9,6 @@ from azure.ai.evaluation._evaluators._common import EvaluatorBase
 from azure.ai.evaluation._exceptions import EvaluationException
 from typing_extensions import override, overload
 
-
 RetrievalGroundTruthDocument = TypedDict(
     "RetrievalGroundTruthDocument", {"document_id": str, "query_relevance_label": int}
 )

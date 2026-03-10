@@ -11,7 +11,6 @@ import sys
 from typing import Any, Dict
 from pathlib import Path
 
-
 _yaml_regex = re.compile(
     r"^\s*" + r"(?:---|\+\+\+)" + r"(.*?)" + r"(?:---|\+\+\+)" + r"\s*(.+)$",
     re.S | re.M,

@@ -48,20 +48,35 @@ class MetricSpecificationV1(Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'display_description': {'key': 'displayDescription', 'type': 'str'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
-        'dimensions': {'key': 'dimensions', 'type': '[MetricDimensionV1]'},
-        'fill_gap_with_zero': {'key': 'fillGapWithZero', 'type': 'bool'},
-        'category': {'key': 'category', 'type': 'str'},
-        'resource_id_dimension_name_override': {'key': 'resourceIdDimensionNameOverride', 'type': 'str'},
-        'supported_time_grain_types': {'key': 'supportedTimeGrainTypes', 'type': '[str]'},
-        'supported_aggregation_types': {'key': 'supportedAggregationTypes', 'type': '[str]'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "display_description": {"key": "displayDescription", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+        "aggregation_type": {"key": "aggregationType", "type": "str"},
+        "dimensions": {"key": "dimensions", "type": "[MetricDimensionV1]"},
+        "fill_gap_with_zero": {"key": "fillGapWithZero", "type": "bool"},
+        "category": {"key": "category", "type": "str"},
+        "resource_id_dimension_name_override": {"key": "resourceIdDimensionNameOverride", "type": "str"},
+        "supported_time_grain_types": {"key": "supportedTimeGrainTypes", "type": "[str]"},
+        "supported_aggregation_types": {"key": "supportedAggregationTypes", "type": "[str]"},
     }
 
-    def __init__(self, *, name: str=None, display_name: str=None, display_description: str=None, unit=None, aggregation_type=None, dimensions=None, fill_gap_with_zero: bool=None, category=None, resource_id_dimension_name_override: str=None, supported_time_grain_types=None, supported_aggregation_types=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        display_name: str = None,
+        display_description: str = None,
+        unit=None,
+        aggregation_type=None,
+        dimensions=None,
+        fill_gap_with_zero: bool = None,
+        category=None,
+        resource_id_dimension_name_override: str = None,
+        supported_time_grain_types=None,
+        supported_aggregation_types=None,
+        **kwargs
+    ) -> None:
         super(MetricSpecificationV1, self).__init__(**kwargs)
         self.name = name
         self.display_name = display_name

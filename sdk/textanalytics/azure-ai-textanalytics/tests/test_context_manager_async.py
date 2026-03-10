@@ -12,10 +12,12 @@ from testcase import TextAnalyticsPreparer
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics.aio import TextAnalyticsClient
 
+
 def get_completed_future(result=None):
     future = asyncio.Future()
     future.set_result(result)
     return future
+
 
 class AsyncMockTransport(mock.MagicMock):
     """Mock with do-nothing aenter/exit for mocking async transport.
@@ -29,6 +31,7 @@ class AsyncMockTransport(mock.MagicMock):
             self.__aenter__ = mock.Mock(return_value=get_completed_future())
             self.__aexit__ = mock.Mock(return_value=get_completed_future())
 
+
 class TestContextManager(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     async def test_close(self, **kwargs):
@@ -36,9 +39,7 @@ class TestContextManager(TextAnalyticsTest):
         textanalytics_test_api_key = kwargs.pop("textanalytics_test_api_key")
         transport = AsyncMockTransport()
         client = TextAnalyticsClient(
-            textanalytics_test_endpoint,
-            AzureKeyCredential(textanalytics_test_api_key),
-            transport=transport
+            textanalytics_test_endpoint, AzureKeyCredential(textanalytics_test_api_key), transport=transport
         )
 
         await client.close()
@@ -51,9 +52,7 @@ class TestContextManager(TextAnalyticsTest):
         textanalytics_test_api_key = kwargs.pop("textanalytics_test_api_key")
         transport = AsyncMockTransport()
         client = TextAnalyticsClient(
-            textanalytics_test_endpoint,
-            AzureKeyCredential(textanalytics_test_api_key),
-            transport=transport
+            textanalytics_test_endpoint, AzureKeyCredential(textanalytics_test_api_key), transport=transport
         )
 
         async with client:

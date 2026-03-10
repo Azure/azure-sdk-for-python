@@ -10,13 +10,15 @@ import uuid
 from devtools_testutils import set_bodiless_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.exceptions import HttpResponseError
-from azure.ai.formrecognizer._generated.v2023_07_31.models import DocumentModelCopyToOperationDetails, DocumentModelDetails as ModelDetails
+from azure.ai.formrecognizer._generated.v2023_07_31.models import (
+    DocumentModelCopyToOperationDetails,
+    DocumentModelDetails as ModelDetails,
+)
 from azure.ai.formrecognizer import DocumentModelDetails
 from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient, AsyncDocumentModelAdministrationLROPoller
 from preparers import FormRecognizerPreparer, get_async_client
 from asynctestcase import AsyncFormRecognizerTest
 from conftest import skip_flaky_test
-
 
 get_dma_client = functools.partial(get_async_client, DocumentModelAdministrationClient)
 
@@ -46,7 +48,9 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
         client = get_dma_client()
         set_bodiless_matcher()
         async with client:
-            training_poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+            training_poller = await client.begin_build_document_model(
+                "template", blob_container_url=formrecognizer_storage_container_sas_url
+            )
             model = await training_poller.result()
 
             target = await client.get_copy_authorization(tags={"testkey": "testvalue"})
@@ -73,7 +77,9 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
         client = get_dma_client()
         set_bodiless_matcher()
         async with client:
-            poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+            poller = await client.begin_build_document_model(
+                "template", blob_container_url=formrecognizer_storage_container_sas_url
+            )
             model = await poller.result()
 
             model_id = str(uuid.uuid4())
@@ -89,8 +95,8 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
             assert copy.created_on
             for name, doc_type in copy.doc_types.items():
                 # if self.is_live:
-                    # FIXME: tracking issue #24916
-                    # assert name == target["targetModelId"]
+                # FIXME: tracking issue #24916
+                # assert name == target["targetModelId"]
                 for key, field in doc_type.field_schema.items():
                     assert key
                     assert field["type"]
@@ -103,14 +109,18 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
         client = get_dma_client()
         set_bodiless_matcher()
         async with client:
-            poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+            poller = await client.begin_build_document_model(
+                "template", blob_container_url=formrecognizer_storage_container_sas_url
+            )
             model = await poller.result()
 
             target = await client.get_copy_authorization()
 
             with pytest.raises(HttpResponseError):
                 # give bad model_id
-                poller = await client.begin_copy_document_model_to("00000000-0000-0000-0000-000000000000", target=target)
+                poller = await client.begin_copy_document_model_to(
+                    "00000000-0000-0000-0000-000000000000", target=target
+                )
                 copy = await poller.result()
 
     @skip_flaky_test
@@ -129,7 +139,9 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
             raw_response.append(document_model)
 
         async with client:
-            training_poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+            training_poller = await client.begin_build_document_model(
+                "template", blob_container_url=formrecognizer_storage_container_sas_url
+            )
             model = await training_poller.result()
 
             target = await client.get_copy_authorization()
@@ -163,10 +175,14 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
         client = get_dma_client()
         set_bodiless_matcher()
         async with client:
-            poller_1 = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+            poller_1 = await client.begin_build_document_model(
+                "template", blob_container_url=formrecognizer_storage_container_sas_url
+            )
             model_1 = await poller_1.result()
 
-            poller_2 = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+            poller_2 = await client.begin_build_document_model(
+                "template", blob_container_url=formrecognizer_storage_container_sas_url
+            )
             model_2 = await poller_2.result()
 
             composed_poller = await client.begin_compose_document_model([model_1.model_id, model_2.model_id])
@@ -196,7 +212,9 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
         client = get_dma_client()
         formrecognizer_storage_container_sas_url = kwargs.pop("formrecognizer_storage_container_sas_url")
         async with client:
-            poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+            poller = await client.begin_build_document_model(
+                "template", blob_container_url=formrecognizer_storage_container_sas_url
+            )
             model = await poller.result()
 
             target = await client.get_copy_authorization()
@@ -216,7 +234,9 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
         client = get_dma_client()
         set_bodiless_matcher()
         async with client:
-            poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+            poller = await client.begin_build_document_model(
+                "template", blob_container_url=formrecognizer_storage_container_sas_url
+            )
             model = await poller.result()
 
             target = await client.get_copy_authorization()

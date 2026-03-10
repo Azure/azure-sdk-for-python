@@ -14,7 +14,6 @@ from overload_assert_utils import (
 
 from azure.ai.agents.models import ThreadMessageOptions, ToolResources, VectorStore
 
-
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 

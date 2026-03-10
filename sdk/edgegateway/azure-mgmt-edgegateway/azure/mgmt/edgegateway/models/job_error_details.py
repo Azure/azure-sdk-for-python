@@ -27,15 +27,15 @@ class JobErrorDetails(Model):
     """
 
     _validation = {
-        'error_details': {'readonly': True},
-        'code': {'readonly': True},
-        'message': {'readonly': True},
+        "error_details": {"readonly": True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'error_details': {'key': 'errorDetails', 'type': '[JobErrorItem]'},
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "error_details": {"key": "errorDetails", "type": "[JobErrorItem]"},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
     def __init__(self, **kwargs):

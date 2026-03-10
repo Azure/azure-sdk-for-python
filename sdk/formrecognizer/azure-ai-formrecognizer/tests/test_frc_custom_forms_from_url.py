@@ -24,16 +24,15 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
     @recorded_by_proxy
     def test_form_multipage_unlabeled(self, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
         client = get_ft_client()
-        blob_sas_url = _get_blob_url(formrecognizer_multipage_storage_container_sas_url_v2, "multipage-training-data", "multipage_invoice1.pdf")
+        blob_sas_url = _get_blob_url(
+            formrecognizer_multipage_storage_container_sas_url_v2, "multipage-training-data", "multipage_invoice1.pdf"
+        )
         fr_client = client.get_form_recognizer_client()
 
         poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=False)
         model = poller.result()
 
-        poller = fr_client.begin_recognize_custom_forms_from_url(
-            model.model_id,
-            blob_sas_url
-        )
+        poller = fr_client.begin_recognize_custom_forms_from_url(model.model_id, blob_sas_url)
         forms = poller.result()
 
         for form in forms:
@@ -47,32 +46,32 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
     @recorded_by_proxy
     def test_form_multipage_labeled(self, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
         client = get_ft_client()
-        blob_sas_url = _get_blob_url(formrecognizer_multipage_storage_container_sas_url_v2, "multipage-training-data", "multipage_invoice1.pdf")
+        blob_sas_url = _get_blob_url(
+            formrecognizer_multipage_storage_container_sas_url_v2, "multipage-training-data", "multipage_invoice1.pdf"
+        )
         fr_client = client.get_form_recognizer_client()
 
-        poller = client.begin_training(
-            formrecognizer_multipage_storage_container_sas_url_v2,
-            use_training_labels=True
-        )
+        poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=True)
         model = poller.result()
 
-        poller = fr_client.begin_recognize_custom_forms_from_url(
-            model.model_id,
-            blob_sas_url
-        )
+        poller = fr_client.begin_recognize_custom_forms_from_url(model.model_id, blob_sas_url)
         forms = poller.result()
 
         for form in forms:
-            assert form.form_type ==  "custom:"+model.model_id
+            assert form.form_type == "custom:" + model.model_id
             self.assertLabeledRecognizedFormHasValues(form, model)
 
     @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
     @recorded_by_proxy
-    def test_custom_form_multipage_unlabeled_transform(self, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+    def test_custom_form_multipage_unlabeled_transform(
+        self, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs
+    ):
         client = get_ft_client()
         fr_client = client.get_form_recognizer_client()
-        blob_sas_url = _get_blob_url(formrecognizer_multipage_storage_container_sas_url_v2, "multipage-training-data", "multipage_invoice1.pdf")
+        blob_sas_url = _get_blob_url(
+            formrecognizer_multipage_storage_container_sas_url_v2, "multipage-training-data", "multipage_invoice1.pdf"
+        )
         poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=False)
         model = poller.result()
 
@@ -85,10 +84,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
             responses.append(form)
 
         poller = fr_client.begin_recognize_custom_forms_from_url(
-            model.model_id,
-            blob_sas_url,
-            include_field_elements=True,
-            cls=callback
+            model.model_id, blob_sas_url, include_field_elements=True, cls=callback
         )
         form = poller.result()
         actual = responses[0]
@@ -99,19 +95,23 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
         self.assertFormPagesTransformCorrect(recognized_form, read_results, page_results)
 
         for form, actual in zip(recognized_form, page_results):
-            assert form.page_range.first_page_number ==  actual.page
-            assert form.page_range.last_page_number ==  actual.page
+            assert form.page_range.first_page_number == actual.page
+            assert form.page_range.last_page_number == actual.page
             assert form.form_type_confidence is None
-            assert form.model_id ==  model.model_id
+            assert form.model_id == model.model_id
             self.assertUnlabeledFormFieldDictTransformCorrect(form.fields, actual.key_value_pairs, read_results)
 
     @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
     @recorded_by_proxy
-    def test_custom_form_multipage_labeled_transform(self, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+    def test_custom_form_multipage_labeled_transform(
+        self, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs
+    ):
         client = get_ft_client()
         fr_client = client.get_form_recognizer_client()
-        blob_sas_url = _get_blob_url(formrecognizer_multipage_storage_container_sas_url_v2, "multipage-training-data", "multipage_invoice1.pdf")
+        blob_sas_url = _get_blob_url(
+            formrecognizer_multipage_storage_container_sas_url_v2, "multipage-training-data", "multipage_invoice1.pdf"
+        )
         poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=True)
         model = poller.result()
 
@@ -124,10 +124,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
             responses.append(form)
 
         poller = fr_client.begin_recognize_custom_forms_from_url(
-            model.model_id,
-            blob_sas_url,
-            include_field_elements=True,
-            cls=callback
+            model.model_id, blob_sas_url, include_field_elements=True, cls=callback
         )
         form = poller.result()
         actual = responses[0]
@@ -138,11 +135,11 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
 
         self.assertFormPagesTransformCorrect(recognized_form, read_results, page_results)
         for form, actual in zip(recognized_form, document_results):
-            assert form.page_range.first_page_number ==  actual.page_range[0]
-            assert form.page_range.last_page_number ==  actual.page_range[1]
-            assert form.form_type ==  "custom:"+model.model_id
+            assert form.page_range.first_page_number == actual.page_range[0]
+            assert form.page_range.last_page_number == actual.page_range[1]
+            assert form.form_type == "custom:" + model.model_id
             assert form.form_type_confidence is not None
-            assert form.model_id ==  model.model_id
+            assert form.model_id == model.model_id
             self.assertFormFieldsTransformCorrect(form.fields, actual.fields, read_results)
 
     @pytest.mark.skip("Test is flaky and hangs")
@@ -155,17 +152,10 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
         training_poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
         model = training_poller.result()
 
-        initial_poller = fr_client.begin_recognize_custom_forms_from_url(
-            model.model_id,
-            self.form_url_jpg
-        )
+        initial_poller = fr_client.begin_recognize_custom_forms_from_url(model.model_id, self.form_url_jpg)
 
         cont_token = initial_poller.continuation_token()
-        poller = fr_client.begin_recognize_custom_forms_from_url(
-            model.model_id,
-            None,
-            continuation_token=cont_token
-        )
+        poller = fr_client.begin_recognize_custom_forms_from_url(model.model_id, None, continuation_token=cont_token)
         result = poller.result()
         assert result is not None
         initial_poller.wait()  # necessary so devtools_testutils doesn't throw assertion error
@@ -173,11 +163,17 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
     @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
     @recorded_by_proxy
-    def test_custom_form_multipage_vendor_set_unlabeled_transform(self, formrecognizer_multipage_storage_container_sas_url_2_v2, **kwargs):
+    def test_custom_form_multipage_vendor_set_unlabeled_transform(
+        self, formrecognizer_multipage_storage_container_sas_url_2_v2, **kwargs
+    ):
         client = get_ft_client()
         fr_client = client.get_form_recognizer_client()
-        blob_sas_url = _get_blob_url(formrecognizer_multipage_storage_container_sas_url_2_v2, "multipage-vendor-forms", "multi1.pdf")
-        poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_2_v2, use_training_labels=False)
+        blob_sas_url = _get_blob_url(
+            formrecognizer_multipage_storage_container_sas_url_2_v2, "multipage-vendor-forms", "multi1.pdf"
+        )
+        poller = client.begin_training(
+            formrecognizer_multipage_storage_container_sas_url_2_v2, use_training_labels=False
+        )
         model = poller.result()
 
         responses = []
@@ -189,10 +185,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
             responses.append(form)
 
         poller = fr_client.begin_recognize_custom_forms_from_url(
-            model.model_id,
-            blob_sas_url,
-            include_field_elements=True,
-            cls=callback
+            model.model_id, blob_sas_url, include_field_elements=True, cls=callback
         )
         form = poller.result()
         actual = responses[0]
@@ -203,20 +196,26 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
 
         self.assertFormPagesTransformCorrect(recognized_form, read_results, page_results)
         for form, actual in zip(recognized_form, page_results):
-            assert form.page_range.first_page_number ==  actual.page
-            assert form.page_range.last_page_number ==  actual.page
+            assert form.page_range.first_page_number == actual.page
+            assert form.page_range.last_page_number == actual.page
             assert form.form_type_confidence is None
-            assert form.model_id ==  model.model_id
+            assert form.model_id == model.model_id
             self.assertUnlabeledFormFieldDictTransformCorrect(form.fields, actual.key_value_pairs, read_results)
 
     @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
     @recorded_by_proxy
-    def test_custom_form_multipage_vendor_set_labeled_transform(self, formrecognizer_multipage_storage_container_sas_url_2_v2, **kwargs):
+    def test_custom_form_multipage_vendor_set_labeled_transform(
+        self, formrecognizer_multipage_storage_container_sas_url_2_v2, **kwargs
+    ):
         client = get_ft_client()
         fr_client = client.get_form_recognizer_client()
-        blob_sas_url = _get_blob_url(formrecognizer_multipage_storage_container_sas_url_2_v2, "multipage-vendor-forms", "multi1.pdf")
-        poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_2_v2, use_training_labels=True)
+        blob_sas_url = _get_blob_url(
+            formrecognizer_multipage_storage_container_sas_url_2_v2, "multipage-vendor-forms", "multi1.pdf"
+        )
+        poller = client.begin_training(
+            formrecognizer_multipage_storage_container_sas_url_2_v2, use_training_labels=True
+        )
         model = poller.result()
 
         responses = []
@@ -228,10 +227,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
             responses.append(form)
 
         poller = fr_client.begin_recognize_custom_forms_from_url(
-            model.model_id,
-            blob_sas_url,
-            include_field_elements=True,
-            cls=callback
+            model.model_id, blob_sas_url, include_field_elements=True, cls=callback
         )
         form = poller.result()
         actual = responses[0]
@@ -242,11 +238,11 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
 
         self.assertFormPagesTransformCorrect(recognized_form, read_results, page_results)
         for form, actual in zip(recognized_form, document_results):
-            assert form.page_range.first_page_number ==  actual.page_range[0]
-            assert form.page_range.last_page_number ==  actual.page_range[1]
-            assert form.form_type ==  "custom:"+model.model_id
+            assert form.page_range.first_page_number == actual.page_range[0]
+            assert form.page_range.last_page_number == actual.page_range[1]
+            assert form.form_type == "custom:" + model.model_id
             assert form.form_type_confidence is not None
-            assert form.model_id ==  model.model_id
+            assert form.model_id == model.model_id
             self.assertFormFieldsTransformCorrect(form.fields, actual.fields, read_results)
 
     @pytest.mark.skip("Test is flaky and hangs")
@@ -257,10 +253,12 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
         fr_client = client.get_form_recognizer_client()
         blob_sas_url = _get_blob_url(formrecognizer_testing_data_container_sas_url, "testingdata", "multi1.pdf")
 
-        training_poller = client.begin_training(formrecognizer_testing_data_container_sas_url, use_training_labels=False)
+        training_poller = client.begin_training(
+            formrecognizer_testing_data_container_sas_url, use_training_labels=False
+        )
         model = training_poller.result()
 
         poller = fr_client.begin_recognize_custom_forms_from_url(model.model_id, blob_sas_url, pages=["1"])
-        assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
+        assert "1" == poller._polling_method._initial_response.http_response.request.query["pages"]
         result = poller.result()
         assert result

@@ -28,10 +28,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
         with open(self.business_card_png, "rb") as fd:
             my_file = fd.read()
         async with client:
-            poller = await client.begin_recognize_business_cards(
-                my_file,
-                content_type=FormContentType.IMAGE_PNG
-            )
+            poller = await client.begin_recognize_business_cards(my_file, content_type=FormContentType.IMAGE_PNG)
             result = await poller.result()
         assert result is not None
 
@@ -41,9 +38,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
         damaged_pdf = b"\x50\x44\x46\x55\x55\x55"  # doesn't match any magic file numbers
         with pytest.raises(ValueError):
             async with client:
-                poller = await client.begin_recognize_business_cards(
-                    damaged_pdf
-                )
+                poller = await client.begin_recognize_business_cards(damaged_pdf)
 
     @FormRecognizerPreparer()
     async def test_damaged_file_bytes_io_fails_autodetect(self, **kwargs):
@@ -51,9 +46,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
         damaged_pdf = BytesIO(b"\x50\x44\x46\x55\x55\x55")  # doesn't match any magic file numbers
         with pytest.raises(ValueError):
             async with client:
-                poller = await client.begin_recognize_business_cards(
-                    damaged_pdf
-                )
+                poller = await client.begin_recognize_business_cards(damaged_pdf)
                 result = await poller.result()
 
     @FormRecognizerPreparer()
@@ -63,10 +56,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
             my_file = fd.read()
         with pytest.raises(ValueError):
             async with client:
-                poller = await client.begin_recognize_business_cards(
-                    my_file,
-                    content_type="application/jpeg"
-                )
+                poller = await client.begin_recognize_business_cards(my_file, content_type="application/jpeg")
 
     @pytest.mark.live_test_only
     @skip_flaky_test
@@ -86,13 +76,15 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
 
         for name, field in business_card.fields.items():
             for f in field.value:
-                self.assertFieldElementsHasValues(f.value_data.field_elements, business_card.page_range.first_page_number)
+                self.assertFieldElementsHasValues(
+                    f.value_data.field_elements, business_card.page_range.first_page_number
+                )
 
         # check dict values
         assert len(business_card.fields.get("ContactNames").value) == 1
         assert business_card.fields.get("ContactNames").value[0].value_data.page_number == 1
-        assert business_card.fields.get("ContactNames").value[0].value['FirstName'].value == 'Avery'
-        assert business_card.fields.get("ContactNames").value[0].value['LastName'].value == 'Smith'
+        assert business_card.fields.get("ContactNames").value[0].value["FirstName"].value == "Avery"
+        assert business_card.fields.get("ContactNames").value[0].value["LastName"].value == "Smith"
 
         assert len(business_card.fields.get("JobTitles").value) == 1
         assert business_card.fields.get("JobTitles").value[0].value == "Senior Researcher"

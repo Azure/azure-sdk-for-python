@@ -24,6 +24,7 @@ USAGE:
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
 """
+
 import os, sys, json
 from typing import Any, Optional
 from azure.ai.projects import AIProjectClient
@@ -37,7 +38,6 @@ from azure.ai.agents.models import (
     ToolSet,
     RequiredFunctionToolCallDetails,
 )
-
 
 # Add package directory to sys.path to import user_functions
 current_dir = os.path.dirname(os.path.abspath(__file__))

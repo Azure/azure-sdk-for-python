@@ -16,27 +16,22 @@ from devtools_testutils import AzureMgmtRecordedTestCase, ResourceGroupPreparer,
 class TestMgmtConsumption(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
-        self.consumption_client = self.create_mgmt_client(
-            azure.mgmt.consumption.ConsumptionManagementClient
-        )
+        self.consumption_client = self.create_mgmt_client(azure.mgmt.consumption.ConsumptionManagementClient)
 
     @ResourceGroupPreparer()
     @recorded_by_proxy
     def test_budgets(self, resource_group):
-        SUBSCRIPTION_ID = self.get_settings_value('SUBSCRIPTION_ID')
-        SCOPE = '/subscriptions/{}/resourceGroups/{}'.format(SUBSCRIPTION_ID, resource_group.name)
-        BUDGET_NAME = self.get_resource_name('budget')
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
+        SCOPE = "/subscriptions/{}/resourceGroups/{}".format(SUBSCRIPTION_ID, resource_group.name)
+        BUDGET_NAME = self.get_resource_name("budget")
         start_date = "2022-12-01T00:00:00.000Z"
-        end_date =  "2023-06-01T00:00:00.000Z"
+        end_date = "2023-06-01T00:00:00.000Z"
         # create
         BODY = {
             "category": "Cost",
-            "amount": '100',
+            "amount": "100",
             "timeGrain": "Monthly",
-            "timePeriod": {
-                "startDate": start_date,
-                "endDate": end_date
-            }
+            "timePeriod": {"startDate": start_date, "endDate": end_date},
         }
         self.consumption_client.budgets.create_or_update(SCOPE, BUDGET_NAME, BODY)
 
@@ -48,5 +43,5 @@ class TestMgmtConsumption(AzureMgmtRecordedTestCase):
 
 
 # ------------------------------------------------------------------------------
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

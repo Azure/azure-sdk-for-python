@@ -42,29 +42,29 @@ class Alert(ARMBaseModel):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'title': {'readonly': True},
-        'alert_type': {'readonly': True},
-        'appeared_at_date_time': {'readonly': True},
-        'recommendation': {'readonly': True},
-        'severity': {'readonly': True},
-        'error_details': {'readonly': True},
-        'detailed_information': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "title": {"readonly": True},
+        "alert_type": {"readonly": True},
+        "appeared_at_date_time": {"readonly": True},
+        "recommendation": {"readonly": True},
+        "severity": {"readonly": True},
+        "error_details": {"readonly": True},
+        "detailed_information": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'title': {'key': 'properties.title', 'type': 'str'},
-        'alert_type': {'key': 'properties.alertType', 'type': 'str'},
-        'appeared_at_date_time': {'key': 'properties.appearedAtDateTime', 'type': 'iso-8601'},
-        'recommendation': {'key': 'properties.recommendation', 'type': 'str'},
-        'severity': {'key': 'properties.severity', 'type': 'str'},
-        'error_details': {'key': 'properties.errorDetails', 'type': 'AlertErrorDetails'},
-        'detailed_information': {'key': 'properties.detailedInformation', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "title": {"key": "properties.title", "type": "str"},
+        "alert_type": {"key": "properties.alertType", "type": "str"},
+        "appeared_at_date_time": {"key": "properties.appearedAtDateTime", "type": "iso-8601"},
+        "recommendation": {"key": "properties.recommendation", "type": "str"},
+        "severity": {"key": "properties.severity", "type": "str"},
+        "error_details": {"key": "properties.errorDetails", "type": "AlertErrorDetails"},
+        "detailed_information": {"key": "properties.detailedInformation", "type": "{str}"},
     }
 
     def __init__(self, **kwargs) -> None:

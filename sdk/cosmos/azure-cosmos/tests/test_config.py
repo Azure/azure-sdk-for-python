@@ -17,10 +17,14 @@ from azure.cosmos._routing.routing_range import Range
 from azure.cosmos.cosmos_client import CosmosClient
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.http_constants import StatusCodes, HttpHeaders
-from azure.cosmos.partition_key import (PartitionKey, _PartitionKeyKind, _PartitionKeyVersion, _Undefined,
-                                        NonePartitionKeyValue)
-from azure.cosmos import (ContainerProxy, DatabaseProxy, documents, exceptions,
-                          http_constants)
+from azure.cosmos.partition_key import (
+    PartitionKey,
+    _PartitionKeyKind,
+    _PartitionKeyVersion,
+    _Undefined,
+    NonePartitionKeyValue,
+)
+from azure.cosmos import ContainerProxy, DatabaseProxy, documents, exceptions, http_constants
 from devtools_testutils.azure_recorded_testcase import get_credential
 from devtools_testutils.helpers import is_live
 from typing import Sequence, Type, Union
@@ -32,16 +36,18 @@ try:
 except:
     print("no urllib3")
 
-SPLIT_TIMEOUT = 60*10  # timeout test at 10 minutes
+SPLIT_TIMEOUT = 60 * 10  # timeout test at 10 minutes
 SLEEP_TIME = 30  # sleep for 30 seconds
 
+
 class TestConfig(object):
-    local_host = 'https://localhost:8081/'
+    local_host = "https://localhost:8081/"
     # [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Cosmos DB Emulator Key")]
-    masterKey = os.getenv('ACCOUNT_KEY',
-                          'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==')
-    host = os.getenv('ACCOUNT_HOST', local_host)
-    connection_str = os.getenv('ACCOUNT_CONNECTION_STR', 'AccountEndpoint={};AccountKey={};'.format(host, masterKey))
+    masterKey = os.getenv(
+        "ACCOUNT_KEY", "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=="
+    )
+    host = os.getenv("ACCOUNT_HOST", local_host)
+    connection_str = os.getenv("ACCOUNT_CONNECTION_STR", "AccountEndpoint={};AccountKey={};".format(host, masterKey))
 
     connectionPolicy = documents.ConnectionPolicy()
     connectionPolicy.DisableSSLVerification = True
@@ -50,21 +56,21 @@ class TestConfig(object):
     credential = masterKey if is_emulator else get_credential()
     credential_async = masterKey if is_emulator else get_credential(is_async=True)
 
-    global_host = os.getenv('GLOBAL_ACCOUNT_HOST', host)
-    write_location_host = os.getenv('WRITE_LOCATION_HOST', host)
-    read_location_host = os.getenv('READ_LOCATION_HOST', host)
-    read_location2_host = os.getenv('READ_LOCATION_HOST2', host)
-    global_masterKey = os.getenv('GLOBAL_ACCOUNT_KEY', masterKey)
+    global_host = os.getenv("GLOBAL_ACCOUNT_HOST", host)
+    write_location_host = os.getenv("WRITE_LOCATION_HOST", host)
+    read_location_host = os.getenv("READ_LOCATION_HOST", host)
+    read_location2_host = os.getenv("READ_LOCATION_HOST2", host)
+    global_masterKey = os.getenv("GLOBAL_ACCOUNT_KEY", masterKey)
 
-    write_location = os.getenv('WRITE_LOCATION', host)
-    read_location = os.getenv('READ_LOCATION', host)
-    read_location2 = os.getenv('READ_LOCATION2', host)
+    write_location = os.getenv("WRITE_LOCATION", host)
+    read_location = os.getenv("READ_LOCATION", host)
+    read_location2 = os.getenv("READ_LOCATION2", host)
 
     THROUGHPUT_FOR_5_PARTITIONS = 30000
     THROUGHPUT_FOR_2_PARTITIONS = 12000
     THROUGHPUT_FOR_1_PARTITION = 400
 
-    TEST_DATABASE_ID = os.getenv('COSMOS_TEST_DATABASE_ID', "PythonSDKTestDatabase-" + str(uuid.uuid4()))
+    TEST_DATABASE_ID = os.getenv("COSMOS_TEST_DATABASE_ID", "PythonSDKTestDatabase-" + str(uuid.uuid4()))
 
     TEST_SINGLE_PARTITION_CONTAINER_ID = "SinglePartitionTestContainer-" + str(uuid.uuid4())
     TEST_MULTI_PARTITION_CONTAINER_ID = "MultiPartitionTestContainer-" + str(uuid.uuid4())
@@ -73,7 +79,7 @@ class TestConfig(object):
 
     TEST_CONTAINER_PARTITION_KEY = "pk"
     TEST_CONTAINER_PREFIX_PARTITION_KEY = ["pk1", "pk2"]
-    TEST_CONTAINER_PREFIX_PARTITION_KEY_PATH = ['/pk1', '/pk2']
+    TEST_CONTAINER_PREFIX_PARTITION_KEY_PATH = ["/pk1", "/pk2"]
 
     # these will be populated by the get_account_info method
     WRITE_LOCATION = ""
@@ -90,8 +96,9 @@ class TestConfig(object):
     @classmethod
     def create_database_if_not_exist(cls, client):
         # type: (CosmosClient) -> DatabaseProxy
-        test_database = client.create_database_if_not_exists(cls.TEST_DATABASE_ID,
-                                                             offer_throughput=cls.THROUGHPUT_FOR_1_PARTITION)
+        test_database = client.create_database_if_not_exists(
+            cls.TEST_DATABASE_ID, offer_throughput=cls.THROUGHPUT_FOR_1_PARTITION
+        )
         return test_database
 
     @classmethod
@@ -100,8 +107,9 @@ class TestConfig(object):
         database = cls.create_database_if_not_exist(client)
         document_collection = database.create_container_if_not_exists(
             id=cls.TEST_SINGLE_PARTITION_CONTAINER_ID,
-            partition_key=PartitionKey(path='/' + cls.TEST_CONTAINER_PARTITION_KEY, kind='Hash'),
-            offer_throughput=cls.THROUGHPUT_FOR_1_PARTITION)
+            partition_key=PartitionKey(path="/" + cls.TEST_CONTAINER_PARTITION_KEY, kind="Hash"),
+            offer_throughput=cls.THROUGHPUT_FOR_1_PARTITION,
+        )
         return document_collection
 
     @classmethod
@@ -110,8 +118,9 @@ class TestConfig(object):
         database = cls.create_database_if_not_exist(client)
         document_collection = database.create_container_if_not_exists(
             id=cls.TEST_MULTI_PARTITION_CONTAINER_ID,
-            partition_key=PartitionKey(path='/' + cls.TEST_CONTAINER_PARTITION_KEY, kind='Hash'),
-            offer_throughput=cls.THROUGHPUT_FOR_5_PARTITIONS)
+            partition_key=PartitionKey(path="/" + cls.TEST_CONTAINER_PARTITION_KEY, kind="Hash"),
+            offer_throughput=cls.THROUGHPUT_FOR_5_PARTITIONS,
+        )
         return document_collection
 
     @classmethod
@@ -120,8 +129,9 @@ class TestConfig(object):
         database = cls.create_database_if_not_exist(client)
         document_collection = database.create_container_if_not_exists(
             id=cls.TEST_SINGLE_PARTITION_PREFIX_PK_CONTAINER_ID,
-            partition_key=PartitionKey(path=cls.TEST_CONTAINER_PREFIX_PARTITION_KEY_PATH, kind='MultiHash'),
-            offer_throughput=cls.THROUGHPUT_FOR_1_PARTITION)
+            partition_key=PartitionKey(path=cls.TEST_CONTAINER_PREFIX_PARTITION_KEY_PATH, kind="MultiHash"),
+            offer_throughput=cls.THROUGHPUT_FOR_1_PARTITION,
+        )
         return document_collection
 
     @classmethod
@@ -130,8 +140,9 @@ class TestConfig(object):
         database = cls.create_database_if_not_exist(client)
         document_collection = database.create_container_if_not_exists(
             id=cls.TEST_MULTI_PARTITION_PREFIX_PK_CONTAINER_ID,
-            partition_key=PartitionKey(path=cls.TEST_CONTAINER_PREFIX_PARTITION_KEY_PATH, kind='MultiHash'),
-            offer_throughput=cls.THROUGHPUT_FOR_5_PARTITIONS)
+            partition_key=PartitionKey(path=cls.TEST_CONTAINER_PREFIX_PARTITION_KEY_PATH, kind="MultiHash"),
+            offer_throughput=cls.THROUGHPUT_FOR_5_PARTITIONS,
+        )
         return document_collection
 
     @classmethod
@@ -207,18 +218,19 @@ class TestConfig(object):
         if field2 is None:
             return sorted(documents_param, key=lambda d: (d[field1] is not None, d[field1]))
         else:
-            return sorted(documents_param,
-                          key=lambda d: (d[field1] is not None, d[field1], d[field2] is not None, d[field2]))
+            return sorted(
+                documents_param, key=lambda d: (d[field1] is not None, d[field1], d[field2] is not None, d[field2])
+            )
 
     @classmethod
     async def _validate_distinct_offset_limit(cls, created_collection, query, results):
         query_iterable = created_collection.query_items(query=query)
-        assert list(map(lambda doc: doc['value'], [item async for item in query_iterable])) == results
+        assert list(map(lambda doc: doc["value"], [item async for item in query_iterable])) == results
 
     @classmethod
     async def _validate_offset_limit(cls, created_collection, query, results):
         query_iterable = created_collection.query_items(query=query)
-        assert list(map(lambda doc: doc['pk'], [item async for item in query_iterable])) == results
+        assert list(map(lambda doc: doc["pk"], [item async for item in query_iterable])) == results
 
     @staticmethod
     def trigger_split(container, throughput):
@@ -231,7 +243,7 @@ class TestConfig(object):
 
         while True:
             offer = container.get_throughput()
-            if offer.properties['content'].get('isOfferReplacePending', False):
+            if offer.properties["content"].get("isOfferReplacePending", False):
                 if time.time() - start_time > SPLIT_TIMEOUT:  # timeout test at 10 minutes
                     raise unittest.SkipTest("Partition split didn't complete in time")
                 else:
@@ -252,7 +264,7 @@ class TestConfig(object):
 
         while True:
             offer = await container.get_throughput()
-            if offer.properties['content'].get('isOfferReplacePending', False):
+            if offer.properties["content"].get("isOfferReplacePending", False):
                 if time.time() - start_time > SPLIT_TIMEOUT:  # timeout test at 10 minutes
                     raise unittest.SkipTest("Partition split didn't complete in time")
                 else:
@@ -267,10 +279,8 @@ def get_vector_indexing_policy(embedding_type):
     return {
         "indexingMode": "consistent",
         "includedPaths": [{"path": "/*"}],
-        'excludedPaths': [{'path': '/"_etag"/?'}],
-        "vectorIndexes": [
-            {"path": "/embedding", "type": f"{embedding_type}"}
-        ]
+        "excludedPaths": [{"path": '/"_etag"/?'}],
+        "vectorIndexes": [{"path": "/embedding", "type": f"{embedding_type}"}],
     }
 
 
@@ -281,7 +291,7 @@ def get_vector_embedding_policy(distance_function, data_type, dimensions):
                 "path": "/embedding",
                 "dataType": f"{data_type}",
                 "dimensions": dimensions,
-                "distanceFunction": f"{distance_function}"
+                "distanceFunction": f"{distance_function}",
             }
         ]
     }
@@ -291,49 +301,43 @@ def get_full_text_indexing_policy(path):
     return {
         "indexingMode": "consistent",
         "includedPaths": [{"path": "/*"}],
-        'excludedPaths': [{'path': '/"_etag"/?'}],
-        "fullTextIndexes": [
-            {"path": path}
-        ]
+        "excludedPaths": [{"path": '/"_etag"/?'}],
+        "fullTextIndexes": [{"path": path}],
     }
 
 
 def get_full_text_policy(path):
-    return {
-        "defaultLanguage": "en-US",
-        "fullTextPaths": [
-            {
-                "path": path,
-                "language": "en-US"
-            }
-        ]
-    }
+    return {"defaultLanguage": "en-US", "fullTextPaths": [{"path": path, "language": "en-US"}]}
+
 
 def get_test_item():
     test_item = {
-        'id': 'Item_' + str(uuid.uuid4()),
-        'test_object': True,
-        'lastName': 'Smith',
-        'attr1': random.randint(0, 10)
+        "id": "Item_" + str(uuid.uuid4()),
+        "test_object": True,
+        "lastName": "Smith",
+        "attr1": random.randint(0, 10),
     }
     return test_item
 
+
 def pre_split_hook(response):
     request_headers = response.http_request.headers
-    session_token = request_headers.get('x-ms-session-token')
+    session_token = request_headers.get("x-ms-session-token")
     assert len(session_token) <= 20
-    assert session_token.startswith('0')
-    assert session_token.count(':') == 1
-    assert session_token.count(',') == 0
+    assert session_token.startswith("0")
+    assert session_token.count(":") == 1
+    assert session_token.count(",") == 0
+
 
 def post_split_hook(response):
     request_headers = response.http_request.headers
-    session_token = request_headers.get('x-ms-session-token')
+    session_token = request_headers.get("x-ms-session-token")
     assert len(session_token) > 30
-    assert len(session_token) < 60 # should only be 0-1 or 0-2, not 0-1-2
-    assert session_token.startswith('0') is False
-    assert session_token.count(':') == 2
-    assert session_token.count(',') == 1
+    assert len(session_token) < 60  # should only be 0-1 or 0-2, not 0-1-2
+    assert session_token.startswith("0") is False
+    assert session_token.count(":") == 2
+    assert session_token.count(",") == 1
+
 
 class ResponseHookCaller:
     def __init__(self):
@@ -366,9 +370,11 @@ class FakeHttpResponse:
     def body(self):
         return None
 
+
 def no_token_response_hook(raw_response):
     request_headers = raw_response.http_request.headers
     assert request_headers.get(HttpHeaders.SessionToken) is None
+
 
 def token_response_hook(raw_response):
     request_headers = raw_response.http_request.headers
@@ -386,12 +392,15 @@ class MockConnectionRetryPolicy(RetryPolicy):
 
     def send(self, request):
         # background health checks could reset counter unintentionally
-        if request.http_request.headers.get(http_constants.HttpHeaders.ThinClientProxyResourceType) == self.resource_type:
+        if (
+            request.http_request.headers.get(http_constants.HttpHeaders.ThinClientProxyResourceType)
+            == self.resource_type
+        ):
             self.counter = 0
-        absolute_timeout = request.context.options.pop('timeout', None)
-        per_request_timeout = request.context.options.pop('connection_timeout', 0)
-        request_params = request.context.options.pop('request_params', None)
-        global_endpoint_manager = request.context.options.pop('global_endpoint_manager', None)
+        absolute_timeout = request.context.options.pop("timeout", None)
+        per_request_timeout = request.context.options.pop("connection_timeout", 0)
+        request_params = request.context.options.pop("request_params", None)
+        global_endpoint_manager = request.context.options.pop("global_endpoint_manager", None)
         retry_error = None
         retry_active = True
         response = None
@@ -400,7 +409,10 @@ class MockConnectionRetryPolicy(RetryPolicy):
             start_time = time.time()
             try:
                 # raise the passed in exception for the passed in resource + operation combination
-                if request.http_request.headers.get(http_constants.HttpHeaders.ThinClientProxyResourceType) == self.resource_type:
+                if (
+                    request.http_request.headers.get(http_constants.HttpHeaders.ThinClientProxyResourceType)
+                    == self.resource_type
+                ):
                     self.request_endpoints.append(request.http_request.url)
                     if self.error:
                         raise self.error
@@ -414,16 +426,18 @@ class MockConnectionRetryPolicy(RetryPolicy):
             except exceptions.CosmosClientTimeoutError as timeout_error:
                 timeout_error.inner_exception = retry_error
                 timeout_error.response = response
-                timeout_error.history = retry_settings['history']
+                timeout_error.history = retry_settings["history"]
                 raise
             except ServiceRequestError as err:
                 retry_error = err
                 # the request ran into a socket timeout or failed to establish a new connection
                 # since request wasn't sent, raise exception immediately to be dealt with in client retry policies
                 # This logic is based on the _retry.py file from azure-core
-                if (not _has_database_account_header(request.http_request.headers)
-                        and not request_params.healthy_tentative_location):
-                    if retry_settings['connect'] > 0:
+                if (
+                    not _has_database_account_header(request.http_request.headers)
+                    and not request_params.healthy_tentative_location
+                ):
+                    if retry_settings["connect"] > 0:
                         self.counter += 1
                         global_endpoint_manager.record_failure(request_params)
                         retry_active = self.increment(retry_settings, response=request, error=err)
@@ -434,12 +448,14 @@ class MockConnectionRetryPolicy(RetryPolicy):
             except ServiceResponseError as err:
                 retry_error = err
                 # Only read operations can be safely retried with ServiceResponseError
-                if (not _has_read_retryable_headers(request.http_request.headers) or
-                        _has_database_account_header(request.http_request.headers) or
-                        request_params.healthy_tentative_location):
+                if (
+                    not _has_read_retryable_headers(request.http_request.headers)
+                    or _has_database_account_header(request.http_request.headers)
+                    or request_params.healthy_tentative_location
+                ):
                     raise err
                 # This logic is based on the _retry.py file from azure-core
-                if retry_settings['read'] > 0:
+                if retry_settings["read"] > 0:
                     self.counter += 1
                     global_endpoint_manager.record_failure(request_params)
                     retry_active = self.increment(retry_settings, response=request, error=err)
@@ -451,10 +467,12 @@ class MockConnectionRetryPolicy(RetryPolicy):
                 raise err
             except AzureError as err:
                 retry_error = err
-                if (_has_database_account_header(request.http_request.headers) or
-                        request_params.healthy_tentative_location):
+                if (
+                    _has_database_account_header(request.http_request.headers)
+                    or request_params.healthy_tentative_location
+                ):
                     raise err
-                if _has_read_retryable_headers(request.http_request.headers) and retry_settings['read'] > 0:
+                if _has_read_retryable_headers(request.http_request.headers) and retry_settings["read"] > 0:
                     self.counter += 1
                     global_endpoint_manager.record_failure(request_params)
                     retry_active = self.increment(retry_settings, response=request, error=err)
@@ -465,14 +483,15 @@ class MockConnectionRetryPolicy(RetryPolicy):
             finally:
                 end_time = time.time()
                 if absolute_timeout:
-                    absolute_timeout -= (end_time - start_time)
+                    absolute_timeout -= end_time - start_time
 
         self.update_context(response.context, retry_settings)
         return response
 
+
 class MockConnectionRetryPolicyAsync(AsyncRetryPolicy):
 
-    def __init__(self, resource_type, error = None, **kwargs):
+    def __init__(self, resource_type, error=None, **kwargs):
         self.resource_type = resource_type
         self.error = error
         self.counter = 0
@@ -493,10 +512,10 @@ class MockConnectionRetryPolicyAsync(AsyncRetryPolicy):
         :raises ~azure.core.exceptions.ClientAuthenticationError: Authentication failed.
         """
         self.counter = 0
-        absolute_timeout = request.context.options.pop('timeout', None)
-        per_request_timeout = request.context.options.pop('connection_timeout', 0)
-        request_params = request.context.options.pop('request_params', None)
-        global_endpoint_manager = request.context.options.pop('global_endpoint_manager', None)
+        absolute_timeout = request.context.options.pop("timeout", None)
+        per_request_timeout = request.context.options.pop("connection_timeout", 0)
+        request_params = request.context.options.pop("request_params", None)
+        global_endpoint_manager = request.context.options.pop("global_endpoint_manager", None)
         retry_error = None
         retry_active = True
         response = None
@@ -504,8 +523,10 @@ class MockConnectionRetryPolicyAsync(AsyncRetryPolicy):
         while retry_active:
             start_time = time.time()
             try:
-                if request.http_request.headers.get(
-                        http_constants.HttpHeaders.ThinClientProxyResourceType) == self.resource_type:
+                if (
+                    request.http_request.headers.get(http_constants.HttpHeaders.ThinClientProxyResourceType)
+                    == self.resource_type
+                ):
                     self.request_endpoints.append(request.http_request.url)
                     if self.error:
                         raise self.error
@@ -519,15 +540,17 @@ class MockConnectionRetryPolicyAsync(AsyncRetryPolicy):
             except exceptions.CosmosClientTimeoutError as timeout_error:
                 timeout_error.inner_exception = retry_error
                 timeout_error.response = response
-                timeout_error.history = retry_settings['history']
+                timeout_error.history = retry_settings["history"]
                 raise
             except ServiceRequestError as err:
                 retry_error = err
                 # the request ran into a socket timeout or failed to establish a new connection
                 # since request wasn't sent, raise exception immediately to be dealt with in client retry policies
-                if (not _has_database_account_header(request.http_request.headers)
-                        and not request_params.healthy_tentative_location):
-                    if retry_settings['connect'] > 0:
+                if (
+                    not _has_database_account_header(request.http_request.headers)
+                    and not request_params.healthy_tentative_location
+                ):
+                    if retry_settings["connect"] > 0:
                         self.counter += 1
                         await global_endpoint_manager.record_failure(request_params)
                         retry_active = self.increment(retry_settings, response=request, error=err)
@@ -537,18 +560,21 @@ class MockConnectionRetryPolicyAsync(AsyncRetryPolicy):
                 raise err
             except ServiceResponseError as err:
                 retry_error = err
-                if (_has_database_account_header(request.http_request.headers) or
-                        request_params.healthy_tentative_location):
+                if (
+                    _has_database_account_header(request.http_request.headers)
+                    or request_params.healthy_tentative_location
+                ):
                     raise err
                 # Since this is ClientConnectionError, it is safe to be retried on both read and write requests
                 try:
                     # pylint: disable=networking-import-outside-azure-core-transport
-                    from aiohttp.client_exceptions import (
-                        ClientConnectionError)
-                    if (isinstance(err.inner_exception, ClientConnectionError)
-                            or _has_read_retryable_headers(request.http_request.headers)):
+                    from aiohttp.client_exceptions import ClientConnectionError
+
+                    if isinstance(err.inner_exception, ClientConnectionError) or _has_read_retryable_headers(
+                        request.http_request.headers
+                    ):
                         # This logic is based on the _retry.py file from azure-core
-                        if retry_settings['read'] > 0:
+                        if retry_settings["read"] > 0:
                             self.counter += 1
                             await global_endpoint_manager.record_failure(request_params)
                             retry_active = self.increment(retry_settings, response=request, error=err)
@@ -556,16 +582,18 @@ class MockConnectionRetryPolicyAsync(AsyncRetryPolicy):
                                 await self.sleep(retry_settings, request.context.transport)
                                 continue
                 except ImportError:
-                    raise err # pylint: disable=raise-missing-from
+                    raise err  # pylint: disable=raise-missing-from
                 raise err
             except CosmosHttpResponseError as err:
                 raise err
             except AzureError as err:
                 retry_error = err
-                if (_has_database_account_header(request.http_request.headers) or
-                        request_params.healthy_tentative_location):
+                if (
+                    _has_database_account_header(request.http_request.headers)
+                    or request_params.healthy_tentative_location
+                ):
                     raise err
-                if _has_read_retryable_headers(request.http_request.headers) and retry_settings['read'] > 0:
+                if _has_read_retryable_headers(request.http_request.headers) and retry_settings["read"] > 0:
                     self.counter += 1
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
@@ -575,21 +603,23 @@ class MockConnectionRetryPolicyAsync(AsyncRetryPolicy):
             finally:
                 end_time = time.time()
                 if absolute_timeout:
-                    absolute_timeout -= (end_time - start_time)
+                    absolute_timeout -= end_time - start_time
 
         self.update_context(response.context, retry_settings)
         return response
 
+
 def hash_partition_key_value(
-        pk_value: Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]],
-        kind: str = _PartitionKeyKind.HASH,
-        version: int = _PartitionKeyVersion.V2,
-    ):
+    pk_value: Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]],
+    kind: str = _PartitionKeyKind.HASH,
+    version: int = _PartitionKeyVersion.V2,
+):
     return PartitionKey._get_hashed_partition_key_string(
         pk_value=pk_value,
         kind=kind,
         version=version,
     )
+
 
 def create_range(range_min: str, range_max: str, is_min_inclusive: bool = True, is_max_inclusive: bool = False):
     if range_max == range_min:
@@ -600,6 +630,7 @@ def create_range(range_min: str, range_max: str, is_min_inclusive: bool = True, 
         isMinInclusive=is_min_inclusive,
         isMaxInclusive=is_max_inclusive,
     )
+
 
 def create_feed_range_in_dict(feed_range):
     return FeedRangeInternalEpk(feed_range).to_dict()

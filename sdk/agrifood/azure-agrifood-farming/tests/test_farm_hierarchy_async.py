@@ -13,34 +13,27 @@ from testcase_async import FarmBeatsAsyncTestCase
 from testcase import FarmBeatsPowerShellPreparer
 
 
-class TestFarmHierarchyAsync(FarmBeatsAsyncTestCase):    
+class TestFarmHierarchyAsync(FarmBeatsAsyncTestCase):
     @FarmBeatsPowerShellPreparer()
     @recorded_by_proxy_async
     async def test_party_operations(self, **kwargs):
         set_custom_default_matcher(ignored_headers="Accept-Encoding")
         agrifood_endpoint = kwargs.pop("agrifood_endpoint")
-        
+
         # Setup data
         party_id = "test-party-25486"
         party_request = {
             "name": "Test Party",
             "description": "Party created during testing.",
             "status": "Sample Status",
-            "properties": {
-                "foo": "bar",
-                "numeric one": 1,
-                1: "numeric key"
-            }
+            "properties": {"foo": "bar", "numeric one": 1, 1: "numeric key"},
         }
 
         # Setup client
         client = self.create_client(agrifood_endpoint=agrifood_endpoint)
 
         # Create
-        party_response = await client.parties.create_or_update(
-            party_id=party_id,
-            party=party_request
-        )
+        party_response = await client.parties.create_or_update(party_id=party_id, party=party_request)
 
         # Assert on immediate response
         assert party_response["id"] == party_id
@@ -58,8 +51,7 @@ class TestFarmHierarchyAsync(FarmBeatsAsyncTestCase):
         assert type(parse(party_response["modifiedDateTime"])) is datetime
 
         # Retrieve created object
-        retrieved_party = await client.parties.get(
-            party_id=party_id)
+        retrieved_party = await client.parties.get(party_id=party_id)
 
         # Assert on retrieved object
         assert retrieved_party["id"] == party_id
@@ -68,10 +60,7 @@ class TestFarmHierarchyAsync(FarmBeatsAsyncTestCase):
         party_request["name"] += " Updated"
 
         # Update
-        updated_party = await client.parties.create_or_update(
-            party_id=party_id,
-            party=party_request
-        )
+        updated_party = await client.parties.create_or_update(party_id=party_id, party=party_request)
 
         # Assert on immediate response
         # Assert on immediate response
@@ -79,19 +68,16 @@ class TestFarmHierarchyAsync(FarmBeatsAsyncTestCase):
         assert updated_party["createdDateTime"] == party_response["createdDateTime"]
 
         # Retrieve updated object
-        retrieved_party = await client.parties.get(
-            party_id=party_id)
+        retrieved_party = await client.parties.get(party_id=party_id)
 
         # Assert updated object
         assert retrieved_party == updated_party
 
         # Delete
-        await client.parties.delete(
-            party_id=party_id)
+        await client.parties.delete(party_id=party_id)
 
         # Assert object doesn't exist anymore
         with pytest.raises(ResourceNotFoundError):
-            await client.parties.get(
-                party_id=party_id)
-        
+            await client.parties.get(party_id=party_id)
+
         await self.close_client()

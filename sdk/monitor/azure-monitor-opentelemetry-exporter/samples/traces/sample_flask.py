@@ -2,11 +2,12 @@
 # Licensed under the MIT License.
 """
 An example to show an application instrumented with the OpenTelemetry flask instrumentation.
-Calls made with the flask library will be automatically tracked and telemetry is exported to 
+Calls made with the flask library will be automatically tracked and telemetry is exported to
 application insights with the AzureMonitorTraceExporter.
 See more info on the flask instrumentation here:
 https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation/opentelemetry-instrumentation-flask
 """
+
 # mypy: disable-error-code="attr-defined"
 import os
 import flask

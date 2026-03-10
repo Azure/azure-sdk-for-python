@@ -14,7 +14,6 @@ from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCreden
 from azure.monitor.ingestion import LogsIngestionClient
 from azure.monitor.ingestion.aio import LogsIngestionClient as AsyncLogsIngestionClient
 
-
 ALPHANUMERIC_CHARACTERS = string.ascii_letters + string.digits
 
 

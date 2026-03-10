@@ -27,15 +27,15 @@ class Ipv6Config(Model):
     """
 
     _validation = {
-        'ip_address': {'readonly': True},
-        'prefix_length': {'readonly': True},
-        'gateway': {'readonly': True},
+        "ip_address": {"readonly": True},
+        "prefix_length": {"readonly": True},
+        "gateway": {"readonly": True},
     }
 
     _attribute_map = {
-        'ip_address': {'key': 'ipAddress', 'type': 'str'},
-        'prefix_length': {'key': 'prefixLength', 'type': 'int'},
-        'gateway': {'key': 'gateway', 'type': 'str'},
+        "ip_address": {"key": "ipAddress", "type": "str"},
+        "prefix_length": {"key": "prefixLength", "type": "int"},
+        "gateway": {"key": "gateway", "type": "str"},
     }
 
     def __init__(self, **kwargs):

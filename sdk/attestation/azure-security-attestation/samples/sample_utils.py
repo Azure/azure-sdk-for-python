@@ -12,6 +12,7 @@ DESCRIPTION:
     Helper functions used for the azure attestation samples.
 
 """
+
 import datetime
 from cryptography.hazmat.backends import default_backend
 from cryptography import x509

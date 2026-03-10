@@ -18,7 +18,7 @@ _LOGGER = logging.getLogger(__name__)
 
 class QueryAdviceEntry:
     """Represents a single query advice entry.
-    
+
     Each entry contains a rule ID and optional parameters that provide
     specific guidance for query optimization.
     """
@@ -89,7 +89,7 @@ class QueryAdviceEntry:
 
 class QueryAdvice:
     """Collection of query advice entries.
-    
+
     Represents the complete query advice response from Azure Cosmos DB,
     containing one or more optimization recommendations.
     """

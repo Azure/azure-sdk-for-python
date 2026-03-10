@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Fake implementation of AbstractSpan for tests."""
+
 from contextlib import contextmanager
 from azure.core.tracing import HttpSpanMixin, SpanKind
 from typing import Union, Sequence, Optional, Dict

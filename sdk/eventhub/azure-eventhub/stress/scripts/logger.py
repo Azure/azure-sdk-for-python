@@ -11,7 +11,9 @@ from logging.handlers import RotatingFileHandler
 from opencensus.ext.azure.log_exporter import AzureLogHandler
 
 
-def get_base_logger(log_filename, logger_name, level=logging.ERROR, print_console=False, log_format=None, rotating_logs=True):
+def get_base_logger(
+    log_filename, logger_name, level=logging.ERROR, print_console=False, log_format=None, rotating_logs=True
+):
     logger = logging.getLogger(logger_name)
     logger.setLevel(level)
     formatter = log_format or logging.Formatter(

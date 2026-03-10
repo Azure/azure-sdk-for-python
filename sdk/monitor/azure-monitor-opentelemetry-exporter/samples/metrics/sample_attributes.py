@@ -5,6 +5,7 @@ An example to show an application using different attributes with instruments in
 Metrics created and recorded using the sdk are tracked and telemetry is exported to application insights
 with the AzureMonitorMetricExporter.
 """
+
 import os
 
 from opentelemetry import metrics

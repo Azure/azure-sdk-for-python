@@ -36,8 +36,9 @@ import os
 class RecognizeCustomForms(object):
 
     def recognize_custom_forms(self, custom_model_id):
-        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
-                                                            "..", "..", "./sample_forms/forms/Form_1.jpg"))
+        path_to_sample_forms = os.path.abspath(
+            os.path.join(os.path.abspath(__file__), "..", "..", "./sample_forms/forms/Form_1.jpg")
+        )
         # [START recognize_custom_forms]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
@@ -46,9 +47,7 @@ class RecognizeCustomForms(object):
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
         model_id = os.getenv("CUSTOM_TRAINED_MODEL_ID", custom_model_id)
 
-        form_recognizer_client = FormRecognizerClient(
-            endpoint=endpoint, credential=AzureKeyCredential(key)
-        )
+        form_recognizer_client = FormRecognizerClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
         # Make sure your form's type is included in the list of form types the custom model can recognize
         with open(path_to_sample_forms, "rb") as f:
@@ -58,7 +57,7 @@ class RecognizeCustomForms(object):
         forms = poller.result()
 
         for idx, form in enumerate(forms):
-            print("--------Recognizing Form #{}--------".format(idx+1))
+            print("--------Recognizing Form #{}--------".format(idx + 1))
             print("Form has type {}".format(form.form_type))
             print("Form has form type confidence {}".format(form.form_type_confidence))
             print("Form was analyzed with model with ID {}".format(form.model_id))
@@ -67,45 +66,47 @@ class RecognizeCustomForms(object):
                 # label_data is populated if you are using a model trained without labels,
                 # since the service needs to make predictions for labels if not explicitly given to it.
                 if field.label_data:
-                    print("...Field '{}' has label '{}' with a confidence score of {}".format(
-                        name,
-                        field.label_data.text,
-                        field.confidence
-                    ))
+                    print(
+                        "...Field '{}' has label '{}' with a confidence score of {}".format(
+                            name, field.label_data.text, field.confidence
+                        )
+                    )
 
-                print("...Label '{}' has value '{}' with a confidence score of {}".format(
-                    field.label_data.text if field.label_data else name, field.value, field.confidence
-                ))
+                print(
+                    "...Label '{}' has value '{}' with a confidence score of {}".format(
+                        field.label_data.text if field.label_data else name, field.value, field.confidence
+                    )
+                )
 
             # iterate over tables, lines, and selection marks on each page
             for page in form.pages:
                 for i, table in enumerate(page.tables):
-                    print("\nTable {} on page {}".format(i+1, table.page_number))
+                    print("\nTable {} on page {}".format(i + 1, table.page_number))
                     for cell in table.cells:
-                        print("...Cell[{}][{}] has text '{}' with confidence {}".format(
-                            cell.row_index, cell.column_index, cell.text, cell.confidence
-                        ))
+                        print(
+                            "...Cell[{}][{}] has text '{}' with confidence {}".format(
+                                cell.row_index, cell.column_index, cell.text, cell.confidence
+                            )
+                        )
                 print("\nLines found on page {}".format(page.page_number))
                 for line in page.lines:
                     print("...Line '{}' is made up of the following words: ".format(line.text))
                     for word in line.words:
-                        print("......Word '{}' has a confidence of {}".format(
-                            word.text,
-                            word.confidence
-                        ))
+                        print("......Word '{}' has a confidence of {}".format(word.text, word.confidence))
                 if page.selection_marks:
                     print("\nSelection marks found on page {}".format(page.page_number))
                     for selection_mark in page.selection_marks:
-                        print("......Selection mark is '{}' and has a confidence of {}".format(
-                            selection_mark.state,
-                            selection_mark.confidence
-                        ))
+                        print(
+                            "......Selection mark is '{}' and has a confidence of {}".format(
+                                selection_mark.state, selection_mark.confidence
+                            )
+                        )
 
             print("-----------------------------------")
         # [END recognize_custom_forms]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample = RecognizeCustomForms()
     model_id = None
     if os.getenv("CONTAINER_SAS_URL_V2"):
@@ -119,9 +120,7 @@ if __name__ == '__main__':
         if not endpoint or not key:
             raise ValueError("Please provide endpoint and API key to run the samples.")
 
-        form_training_client = FormTrainingClient(
-            endpoint=endpoint, credential=AzureKeyCredential(key)
-        )
+        form_training_client = FormTrainingClient(endpoint=endpoint, credential=AzureKeyCredential(key))
         container_sas_url = os.getenv("CONTAINER_SAS_URL_V2")
         if container_sas_url is not None:
             model = form_training_client.begin_training(container_sas_url, use_training_labels=True).result()

@@ -16,6 +16,7 @@ from conftest import skip_flaky_test
 get_dma_client = functools.partial(get_sync_client, DocumentModelAdministrationClient)
 get_da_client = functools.partial(get_sync_client, DocumentAnalysisClient)
 
+
 class TestDACAnalyzeCustomModel(FormRecognizerTest):
 
     @FormRecognizerPreparer()
@@ -40,7 +41,9 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         set_bodiless_matcher()
         da_client = client.get_document_analysis_client()
 
-        poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+        poller = client.begin_build_document_model(
+            "template", blob_container_url=formrecognizer_storage_container_sas_url
+        )
         model = poller.result()
 
         responses = []
@@ -54,11 +57,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         with open(self.form_jpg, "rb") as fd:
             my_file = fd.read()
 
-        poller = da_client.begin_analyze_document(
-            model.model_id,
-            my_file,
-            cls=callback
-        )
+        poller = da_client.begin_analyze_document(model.model_id, my_file, cls=callback)
         document = poller.result()
 
         raw_analyze_result = responses[0].analyze_result
@@ -72,7 +71,9 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
         self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
         self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
-        self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
+        self.assertDocumentKeyValuePairsTransformCorrect(
+            returned_model.key_value_pairs, raw_analyze_result.key_value_pairs
+        )
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
         # check page range
@@ -86,7 +87,9 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         set_bodiless_matcher()
         da_client = client.get_document_analysis_client()
 
-        poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_multipage_storage_container_sas_url)
+        poller = client.begin_build_document_model(
+            "template", blob_container_url=formrecognizer_multipage_storage_container_sas_url
+        )
         model = poller.result()
 
         responses = []
@@ -100,11 +103,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         with open(self.multipage_invoice_pdf, "rb") as fd:
             my_file = fd.read()
 
-        poller = da_client.begin_analyze_document(
-            model.model_id,
-            my_file,
-            cls=callback
-        )
+        poller = da_client.begin_analyze_document(model.model_id, my_file, cls=callback)
         document = poller.result()
 
         raw_analyze_result = responses[0].analyze_result
@@ -118,7 +117,9 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
         self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
         self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
-        self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
+        self.assertDocumentKeyValuePairsTransformCorrect(
+            returned_model.key_value_pairs, raw_analyze_result.key_value_pairs
+        )
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
         # check page range
@@ -132,7 +133,9 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         set_bodiless_matcher()
         da_client = client.get_document_analysis_client()
 
-        poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_selection_mark_storage_container_sas_url)
+        poller = client.begin_build_document_model(
+            "template", blob_container_url=formrecognizer_selection_mark_storage_container_sas_url
+        )
         model = poller.result()
 
         with open(self.selection_form_pdf, "rb") as fd:
@@ -146,11 +149,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
             responses.append(analyze_result)
             responses.append(document)
 
-        poller = da_client.begin_analyze_document(
-            model.model_id,
-            my_file,
-            cls=callback
-        )
+        poller = da_client.begin_analyze_document(model.model_id, my_file, cls=callback)
         document = poller.result()
 
         raw_analyze_result = responses[0].analyze_result
@@ -164,7 +163,9 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
         self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
         self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
-        self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
+        self.assertDocumentKeyValuePairsTransformCorrect(
+            returned_model.key_value_pairs, raw_analyze_result.key_value_pairs
+        )
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
         # check page range
@@ -181,11 +182,13 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         with open(self.form_jpg, "rb") as fd:
             my_file = fd.read()
 
-        build_poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+        build_poller = client.begin_build_document_model(
+            "template", blob_container_url=formrecognizer_storage_container_sas_url
+        )
         model = build_poller.result()
 
         poller = da_client.begin_analyze_document(model.model_id, my_file, pages="1")
-        assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
+        assert "1" == poller._polling_method._initial_response.http_response.request.query["pages"]
         result = poller.result()
         assert result
 
@@ -200,7 +203,9 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         with open(self.form_jpg, "rb") as fd:
             my_file = fd.read()
 
-        build_polling = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+        build_polling = client.begin_build_document_model(
+            "template", blob_container_url=formrecognizer_storage_container_sas_url
+        )
         model = build_polling.result()
 
         poller = da_client.begin_analyze_document(
@@ -225,7 +230,9 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         with open(self.blank_pdf, "rb") as fd:
             my_file = fd.read()
 
-        build_polling = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+        build_polling = client.begin_build_document_model(
+            "template", blob_container_url=formrecognizer_storage_container_sas_url
+        )
         model = build_polling.result()
 
         poller = da_client.begin_analyze_document(

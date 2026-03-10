@@ -44,9 +44,7 @@ class TrainModelWithLabelsSampleAsync(object):
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
         container_sas_url = os.environ["CONTAINER_SAS_URL_V2"]
 
-        form_training_client = FormTrainingClient(
-            endpoint=endpoint, credential=AzureKeyCredential(key)
-        )
+        form_training_client = FormTrainingClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
         async with form_training_client:
             poller = await form_training_client.begin_training(
@@ -67,13 +65,13 @@ class TrainModelWithLabelsSampleAsync(object):
             # The labels are based on the ones you gave the training document.
             for submodel in model.submodels:
                 print("...The submodel has model ID: {}".format(submodel.model_id))
-                print("...The submodel with form type {} has an average accuracy '{}'".format(
-                    submodel.form_type, submodel.accuracy
-                ))
+                print(
+                    "...The submodel with form type {} has an average accuracy '{}'".format(
+                        submodel.form_type, submodel.accuracy
+                    )
+                )
                 for name, field in submodel.fields.items():
-                    print("...The model found the field '{}' with an accuracy of {}".format(
-                        name, field.accuracy
-                    ))
+                    print("...The model found the field '{}' with an accuracy of {}".format(name, field.accuracy))
 
             # Training result information
             for doc in model.training_documents:
@@ -88,5 +86,5 @@ async def main():
     await sample.train_model_with_labels()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

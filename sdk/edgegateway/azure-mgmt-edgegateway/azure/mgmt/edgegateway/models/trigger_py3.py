@@ -34,24 +34,22 @@ class Trigger(ARMBaseModel):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'kind': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
     }
 
-    _subtype_map = {
-        'kind': {'FileEvent': 'FileEventTrigger', 'PeriodicTimerEvent': 'PeriodicTimerEventTrigger'}
-    }
+    _subtype_map = {"kind": {"FileEvent": "FileEventTrigger", "PeriodicTimerEvent": "PeriodicTimerEventTrigger"}}
 
     def __init__(self, **kwargs) -> None:
         super(Trigger, self).__init__(**kwargs)
         self.kind = None
-        self.kind = 'Trigger'
+        self.kind = "Trigger"

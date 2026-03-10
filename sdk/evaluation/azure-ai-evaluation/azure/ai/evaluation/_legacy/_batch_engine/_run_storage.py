@@ -13,7 +13,6 @@ from typing import Any, Final, Mapping, Optional, Tuple, Union
 
 from ._result import BatchResult, TokenMetrics, BatchStatus
 
-
 EVAL_USER_SUBFOLDER: Final[str] = ".evaluation"
 
 

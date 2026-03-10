@@ -30,18 +30,18 @@ class PeriodicTimerSourceInfo(Model):
     """
 
     _validation = {
-        'start_time': {'required': True},
-        'schedule': {'required': True},
+        "start_time": {"required": True},
+        "schedule": {"required": True},
     }
 
     _attribute_map = {
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'schedule': {'key': 'schedule', 'type': 'str'},
-        'topic': {'key': 'topic', 'type': 'str'},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "schedule": {"key": "schedule", "type": "str"},
+        "topic": {"key": "topic", "type": "str"},
     }
 
     def __init__(self, **kwargs):
         super(PeriodicTimerSourceInfo, self).__init__(**kwargs)
-        self.start_time = kwargs.get('start_time', None)
-        self.schedule = kwargs.get('schedule', None)
-        self.topic = kwargs.get('topic', None)
+        self.start_time = kwargs.get("start_time", None)
+        self.schedule = kwargs.get("schedule", None)
+        self.topic = kwargs.get("topic", None)

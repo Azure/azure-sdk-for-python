@@ -39,10 +39,12 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
     async def test_all_successful_passing_dict(self, client):
-        docs = [{"id": "1", "text": "I should take my cat to the veterinarian."},
-                {"id": "2", "text": "Este es un document escrito en Español."},
-                {"id": "3", "text": "猫は幸せ"},
-                {"id": "4", "text": "Fahrt nach Stuttgart und dann zum Hotel zu Fu."}]
+        docs = [
+            {"id": "1", "text": "I should take my cat to the veterinarian."},
+            {"id": "2", "text": "Este es un document escrito en Español."},
+            {"id": "3", "text": "猫は幸せ"},
+            {"id": "4", "text": "Fahrt nach Stuttgart und dann zum Hotel zu Fu."},
+        ]
 
         response = await client.detect_language(docs, show_stats=True)
 
@@ -68,7 +70,7 @@ class TestDetectLanguage(TextAnalyticsTest):
             DetectLanguageInput(id="1", text="I should take my cat to the veterinarian"),
             DetectLanguageInput(id="2", text="Este es un document escrito en Español."),
             DetectLanguageInput(id="3", text="猫は幸せ"),
-            DetectLanguageInput(id="4", text="Fahrt nach Stuttgart und dann zum Hotel zu Fu.")
+            DetectLanguageInput(id="4", text="Fahrt nach Stuttgart und dann zum Hotel zu Fu."),
         ]
 
         response = await client.detect_language(docs)
@@ -94,7 +96,7 @@ class TestDetectLanguage(TextAnalyticsTest):
             "Este es un document escrito en Español.",
             "猫は幸せ",
             "Fahrt nach Stuttgart und dann zum Hotel zu Fu.",
-            ""
+            "",
         ]
 
         response = await client.detect_language(docs)
@@ -108,10 +110,12 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
     async def test_input_with_some_errors(self, client):
-        docs = [{"id": "1", "country_hint": "United States", "text": "I should take my cat to the veterinarian."},
-                {"id": "2", "text": "Este es un document escrito en Español."},
-                {"id": "3", "text": ""},
-                {"id": "4", "text": "Fahrt nach Stuttgart und dann zum Hotel zu Fu."}]
+        docs = [
+            {"id": "1", "country_hint": "United States", "text": "I should take my cat to the veterinarian."},
+            {"id": "2", "text": "Este es un document escrito en Español."},
+            {"id": "3", "text": ""},
+            {"id": "4", "text": "Fahrt nach Stuttgart und dann zum Hotel zu Fu."},
+        ]
 
         response = await client.detect_language(docs)
 
@@ -128,10 +132,7 @@ class TestDetectLanguage(TextAnalyticsTest):
         for _ in range(5121):
             text += "x"
 
-        docs = [{"id": "1", "text": ""},
-                {"id": "2", "text": ""},
-                {"id": "3", "text": ""},
-                {"id": "4", "text": text}]
+        docs = [{"id": "1", "text": ""}, {"id": "2", "text": ""}, {"id": "3", "text": ""}, {"id": "4", "text": text}]
 
         response = await client.detect_language(docs)
 
@@ -147,7 +148,7 @@ class TestDetectLanguage(TextAnalyticsTest):
             DetectLanguageInput(id="2", text="two"),
             DetectLanguageInput(id="3", text="three"),
             DetectLanguageInput(id="4", text="four"),
-            DetectLanguageInput(id="5", text="five")
+            DetectLanguageInput(id="5", text="five"),
         ]
 
         response = await client.detect_language(docs)
@@ -160,18 +161,14 @@ class TestDetectLanguage(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_empty_credential_class(self, client):
         with pytest.raises(ClientAuthenticationError):
-            response = await client.detect_language(
-                ["This is written in English."]
-            )
+            response = await client.detect_language(["This is written in English."])
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"textanalytics_test_api_key": "xxxxxxxxxxxx"})
     @recorded_by_proxy_async
     async def test_bad_credentials(self, client):
         with pytest.raises(ClientAuthenticationError):
-            response = await client.detect_language(
-                ["This is written in English."]
-            )
+            response = await client.detect_language(["This is written in English."])
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -189,7 +186,7 @@ class TestDetectLanguage(TextAnalyticsTest):
         docs = [
             {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
             DetectLanguageInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
-            "You cannot mix string input with the above documents"
+            "You cannot mix string input with the above documents",
         ]
         with pytest.raises(TypeError):
             response = await client.detect_language(docs)
@@ -198,11 +195,13 @@ class TestDetectLanguage(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
     async def test_out_of_order_ids(self, client):
-        docs = [{"id": "56", "text": ":)"},
-                {"id": "0", "text": ":("},
-                {"id": "22", "text": ""},
-                {"id": "19", "text": ":P"},
-                {"id": "1", "text": ":D"}]
+        docs = [
+            {"id": "56", "text": ":)"},
+            {"id": "0", "text": ":("},
+            {"id": "22", "text": ""},
+            {"id": "19", "text": ":P"},
+            {"id": "1", "text": ":D"},
+        ]
 
         response = await client.detect_language(docs)
         in_order = ["56", "0", "22", "19", "1"]
@@ -222,17 +221,16 @@ class TestDetectLanguage(TextAnalyticsTest):
             assert response.statistics.valid_document_count == 4
             assert response.statistics.erroneous_document_count == 1
 
-        docs = [{"id": "56", "text": ":)"},
-                {"id": "0", "text": ":("},
-                {"id": "22", "text": ""},
-                {"id": "19", "text": ":P"},
-                {"id": "1", "text": ":D"}]
+        docs = [
+            {"id": "56", "text": ":)"},
+            {"id": "0", "text": ":("},
+            {"id": "22", "text": ""},
+            {"id": "19", "text": ":P"},
+            {"id": "1", "text": ":D"},
+        ]
 
         response = await client.detect_language(
-            docs,
-            show_stats=True,
-            model_version="latest",
-            raw_response_hook=callback
+            docs, show_stats=True, model_version="latest", raw_response_hook=callback
         )
 
     @TextAnalyticsPreparer()
@@ -248,14 +246,14 @@ class TestDetectLanguage(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_whole_batch_country_hint(self, client):
         def callback(resp):
-            country_str = "\"countryHint\": \"CA\""
+            country_str = '"countryHint": "CA"'
             country = resp.http_request.body.count(country_str)
             assert country == 3
 
         docs = [
             "This was the best day of my life.",
             "I did not like the hotel we stayed at. It was too expensive.",
-            "The restaurant was not as good as I hoped."
+            "The restaurant was not as good as I hoped.",
         ]
 
         response = await client.detect_language(docs, country_hint="CA", raw_response_hook=callback)
@@ -265,14 +263,14 @@ class TestDetectLanguage(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_whole_batch_dont_use_country_hint(self, client):
         def callback(resp):
-            country_str = "\"countryHint\": \"\""
+            country_str = '"countryHint": ""'
             country = resp.http_request.body.count(country_str)
             assert country == 3
 
         docs = [
             "This was the best day of my life.",
             "I did not like the hotel we stayed at. It was too expensive.",
-            "The restaurant was not as good as I hoped."
+            "The restaurant was not as good as I hoped.",
         ]
 
         response = await client.detect_language(docs, country_hint="", raw_response_hook=callback)
@@ -282,17 +280,18 @@ class TestDetectLanguage(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_per_item_dont_use_country_hint(self, client):
         def callback(resp):
-            country_str = "\"countryHint\": \"\""
+            country_str = '"countryHint": ""'
             country = resp.http_request.body.count(country_str)
             assert country == 2
-            country_str = "\"countryHint\": \"US\""
+            country_str = '"countryHint": "US"'
             country = resp.http_request.body.count(country_str)
             assert country == 1
 
-
-        docs = [{"id": "1", "country_hint": "", "text": "I will go to the park."},
-                {"id": "2", "country_hint": "", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
+        docs = [
+            {"id": "1", "country_hint": "", "text": "I will go to the park."},
+            {"id": "2", "country_hint": "", "text": "I did not like the hotel we stayed at."},
+            {"id": "3", "text": "The restaurant had really good food."},
+        ]
 
         response = await client.detect_language(docs, raw_response_hook=callback)
 
@@ -301,7 +300,7 @@ class TestDetectLanguage(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_whole_batch_country_hint_and_obj_input(self, client):
         def callback(resp):
-            country_str = "\"countryHint\": \"CA\""
+            country_str = '"countryHint": "CA"'
             country = resp.http_request.body.count(country_str)
             assert country == 3
 
@@ -318,13 +317,15 @@ class TestDetectLanguage(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_whole_batch_country_hint_and_dict_input(self, client):
         def callback(resp):
-            country_str = "\"countryHint\": \"CA\""
+            country_str = '"countryHint": "CA"'
             country = resp.http_request.body.count(country_str)
             assert country == 3
 
-        docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
+        docs = [
+            {"id": "1", "text": "I will go to the park."},
+            {"id": "2", "text": "I did not like the hotel we stayed at."},
+            {"id": "3", "text": "The restaurant had really good food."},
+        ]
 
         response = await client.detect_language(docs, country_hint="CA", raw_response_hook=callback)
 
@@ -333,10 +334,10 @@ class TestDetectLanguage(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_whole_batch_country_hint_and_obj_per_item_hints(self, client):
         def callback(resp):
-            country_str = "\"countryHint\": \"CA\""
+            country_str = '"countryHint": "CA"'
             country = resp.http_request.body.count(country_str)
             assert country == 2
-            country_str = "\"countryHint\": \"US\""
+            country_str = '"countryHint": "US"'
             country = resp.http_request.body.count(country_str)
             assert country == 1
 
@@ -353,16 +354,18 @@ class TestDetectLanguage(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_whole_batch_country_hint_and_dict_per_item_hints(self, client):
         def callback(resp):
-            country_str = "\"countryHint\": \"CA\""
+            country_str = '"countryHint": "CA"'
             country = resp.http_request.body.count(country_str)
             assert country == 1
-            country_str = "\"countryHint\": \"US\""
+            country_str = '"countryHint": "US"'
             country = resp.http_request.body.count(country_str)
             assert country == 2
 
-        docs = [{"id": "1", "country_hint": "US", "text": "I will go to the park."},
-                {"id": "2", "country_hint": "US", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
+        docs = [
+            {"id": "1", "country_hint": "US", "text": "I will go to the park."},
+            {"id": "2", "country_hint": "US", "text": "I did not like the hotel we stayed at."},
+            {"id": "3", "text": "The restaurant had really good food."},
+        ]
 
         response = await client.detect_language(docs, country_hint="CA", raw_response_hook=callback)
 
@@ -371,18 +374,20 @@ class TestDetectLanguage(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_client_passed_default_country_hint(self, client):
         def callback(resp):
-            country_str = "\"countryHint\": \"CA\""
+            country_str = '"countryHint": "CA"'
             country = resp.http_request.body.count(country_str)
             assert country == 3
 
         def callback_2(resp):
-            country_str = "\"countryHint\": \"DE\""
+            country_str = '"countryHint": "DE"'
             country = resp.http_request.body.count(country_str)
             assert country == 3
 
-        docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
+        docs = [
+            {"id": "1", "text": "I will go to the park."},
+            {"id": "2", "text": "I did not like the hotel we stayed at."},
+            {"id": "3", "text": "The restaurant had really good food."},
+        ]
 
         response = await client.detect_language(docs, raw_response_hook=callback)
         response = await client.detect_language(docs, country_hint="DE", raw_response_hook=callback_2)
@@ -394,9 +399,11 @@ class TestDetectLanguage(TextAnalyticsTest):
         credential = AzureKeyCredential(textanalytics_test_api_key)
         client = TextAnalyticsClient(textanalytics_test_endpoint, credential)
 
-        docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
+        docs = [
+            {"id": "1", "text": "I will go to the park."},
+            {"id": "2", "text": "I did not like the hotel we stayed at."},
+            {"id": "3", "text": "The restaurant had really good food."},
+        ]
 
         response = await client.detect_language(docs)
         assert response is not None
@@ -414,12 +421,18 @@ class TestDetectLanguage(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_user_agent(self, client):
         def callback(resp):
-            assert "azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
-                VERSION, platform.python_version(), platform.platform()) in resp.http_request.headers["User-Agent"]
+            assert (
+                "azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
+                    VERSION, platform.python_version(), platform.platform()
+                )
+                in resp.http_request.headers["User-Agent"]
+            )
 
-        docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
+        docs = [
+            {"id": "1", "text": "I will go to the park."},
+            {"id": "2", "text": "I did not like the hotel we stayed at."},
+            {"id": "3", "text": "The restaurant had really good food."},
+        ]
 
         response = await client.detect_language(docs, raw_response_hook=callback)
 
@@ -439,10 +452,11 @@ class TestDetectLanguage(TextAnalyticsTest):
         try:
             primary_language = response[0].primary_language
         except AttributeError as custom_error:
-            assert custom_error.args[0] == \
-                '\'DocumentError\' object has no attribute \'primary_language\'. ' \
-                'The service was unable to process this document:\nDocument Id: 1\nError: ' \
-                'InvalidDocument - Document text is empty.\n'
+            assert (
+                custom_error.args[0] == "'DocumentError' object has no attribute 'primary_language'. "
+                "The service was unable to process this document:\nDocument Id: 1\nError: "
+                "InvalidDocument - Document text is empty.\n"
+            )
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -455,7 +469,9 @@ class TestDetectLanguage(TextAnalyticsTest):
         try:
             primary_language = response[0].attribute_not_on_result_or_error
         except AttributeError as default_behavior:
-            assert default_behavior.args[0] == '\'DocumentError\' object has no attribute \'attribute_not_on_result_or_error\''
+            assert (
+                default_behavior.args[0] == "'DocumentError' object has no attribute 'attribute_not_on_result_or_error'"
+            )
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -477,8 +493,7 @@ class TestDetectLanguage(TextAnalyticsTest):
         for _ in range(5121):
             text += "x"
 
-        docs = [{"id": "1", "text": ""},
-                {"id": "2", "text": text}]
+        docs = [{"id": "1", "text": ""}, {"id": "2", "text": text}]
 
         doc_errors = await client.detect_language(docs)
         assert doc_errors[0].error.code == "InvalidDocument"
@@ -531,8 +546,7 @@ class TestDetectLanguage(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_duplicate_ids_error(self, client):
         # Duplicate Ids
-        docs = [{"id": "1", "text": "hello world"},
-                {"id": "1", "text": "I did not like the hotel we stayed at."}]
+        docs = [{"id": "1", "text": "hello world"}, {"id": "1", "text": "I did not like the hotel we stayed at."}]
         try:
             result = await client.detect_language(docs)
         except HttpResponseError as err:
@@ -582,7 +596,7 @@ class TestDetectLanguage(TextAnalyticsTest):
         documents2 = [DetectLanguageInput(id="1", country_hint="none", text="This is written in English.")]
 
         def callback(response):
-            country_str = "\"countryHint\": \"\""
+            country_str = '"countryHint": ""'
             country = response.http_request.body.count(country_str)
             assert country == 1
 
@@ -591,9 +605,13 @@ class TestDetectLanguage(TextAnalyticsTest):
         # test DetectLanguageInput
         result2 = await client.detect_language(documents2, raw_response_hook=callback)
         # test per-operation
-        result3 = await client.detect_language(documents=["this is written in english"], country_hint="none", raw_response_hook=callback)
+        result3 = await client.detect_language(
+            documents=["this is written in english"], country_hint="none", raw_response_hook=callback
+        )
         # test client default
-        new_client = TextAnalyticsClient(textanalytics_test_endpoint, AzureKeyCredential(textanalytics_test_api_key), default_country_hint="none")
+        new_client = TextAnalyticsClient(
+            textanalytics_test_endpoint, AzureKeyCredential(textanalytics_test_api_key), default_country_hint="none"
+        )
         result4 = await new_client.detect_language(documents=["this is written in english"], raw_response_hook=callback)
 
     @TextAnalyticsPreparer()
@@ -601,7 +619,7 @@ class TestDetectLanguage(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_country_hint_kwarg(self, client):
         def callback(response):
-            country_str = "\"countryHint\": \"ES\""
+            country_str = '"countryHint": "ES"'
             assert response.http_request.body.count(country_str) == 1
             assert response.model_version is not None
             assert response.statistics is not None
@@ -611,7 +629,7 @@ class TestDetectLanguage(TextAnalyticsTest):
             model_version="latest",
             show_stats=True,
             country_hint="ES",
-            raw_response_hook=callback
+            raw_response_hook=callback,
         )
 
     @TextAnalyticsPreparer()
@@ -619,11 +637,11 @@ class TestDetectLanguage(TextAnalyticsTest):
     async def test_pass_cls(self, textanalytics_test_endpoint, textanalytics_test_api_key):
         def callback(pipeline_response, deserialized, _):
             return "cls result"
-        text_analytics = TextAnalyticsClient(textanalytics_test_endpoint, AzureKeyCredential(textanalytics_test_api_key))
-        res = await text_analytics.detect_language(
-            documents=["Test passing cls to endpoint"],
-            cls=callback
+
+        text_analytics = TextAnalyticsClient(
+            textanalytics_test_endpoint, AzureKeyCredential(textanalytics_test_api_key)
         )
+        res = await text_analytics.detect_language(documents=["Test passing cls to endpoint"], cls=callback)
         assert res == "cls result"
 
     @TextAnalyticsPreparer()
@@ -639,7 +657,8 @@ class TestDetectLanguage(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_disable_service_logs(self, client):
         def callback(resp):
-            assert resp.http_request.query['loggingOptOut']
+            assert resp.http_request.query["loggingOptOut"]
+
         await client.detect_language(
             documents=["Test for logging disable"],
             disable_service_logs=True,
@@ -652,7 +671,9 @@ class TestDetectLanguage(TextAnalyticsTest):
     async def test_disable_service_logs_body_param(self, client):
         def callback(resp):
             import json
-            assert json.loads(resp.http_request.body)['parameters']['loggingOptOut']
+
+            assert json.loads(resp.http_request.body)["parameters"]["loggingOptOut"]
+
         await client.detect_language(
             documents=["Test for logging disable"],
             disable_service_logs=True,
@@ -666,4 +687,7 @@ class TestDetectLanguage(TextAnalyticsTest):
 
         with pytest.raises(ValueError) as e:
             res = await client.detect_language(["I'm tired"], disable_service_logs=True)
-        assert str(e.value) == "'disable_service_logs' is not available in API version v3.0. Use service API version v3.1 or newer.\n"
+        assert (
+            str(e.value)
+            == "'disable_service_logs' is not available in API version v3.0. Use service API version v3.1 or newer.\n"
+        )

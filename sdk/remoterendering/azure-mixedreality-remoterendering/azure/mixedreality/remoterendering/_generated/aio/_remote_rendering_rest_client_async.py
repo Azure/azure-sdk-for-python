@@ -17,22 +17,18 @@ from .. import models
 
 
 class RemoteRenderingRestClient(object):
-    """Describing the `Azure Remote Rendering <https://docs.microsoft.com/azure/remote-rendering/>`_ REST API for rendering sessions and asset conversions. 
+    """Describing the `Azure Remote Rendering <https://docs.microsoft.com/azure/remote-rendering/>`_ REST API for rendering sessions and asset conversions.
 
-All requests to these APIs must be authenticated using the Secure Token Service as described in the `Azure Remote rendering documentation chapter about authentication <https://docs.microsoft.com/azure/remote-rendering/how-tos/tokens>`_.
+    All requests to these APIs must be authenticated using the Secure Token Service as described in the `Azure Remote rendering documentation chapter about authentication <https://docs.microsoft.com/azure/remote-rendering/how-tos/tokens>`_.
 
-    :ivar remote_rendering: RemoteRenderingOperations operations
-    :vartype remote_rendering: azure.mixedreality.remoterendering._generated.aio.operations_async.RemoteRenderingOperations
-    :param endpoint: The endpoint to use e.g. https://remoterendering.eastus.mixedreality.azure.com. A list can be found at https://docs.microsoft.com/azure/remote-rendering/reference/regions.
-    :type endpoint: str
+        :ivar remote_rendering: RemoteRenderingOperations operations
+        :vartype remote_rendering: azure.mixedreality.remoterendering._generated.aio.operations_async.RemoteRenderingOperations
+        :param endpoint: The endpoint to use e.g. https://remoterendering.eastus.mixedreality.azure.com. A list can be found at https://docs.microsoft.com/azure/remote-rendering/reference/regions.
+        :type endpoint: str
     """
 
-    def __init__(
-        self,
-        endpoint: str,
-        **kwargs: Any
-    ) -> None:
-        base_url = '{endpoint}'
+    def __init__(self, endpoint: str, **kwargs: Any) -> None:
+        base_url = "{endpoint}"
         self._config = RemoteRenderingRestClientConfiguration(endpoint, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
@@ -41,7 +37,8 @@ All requests to these APIs must be authenticated using the Secure Token Service 
         self._deserialize = Deserializer(client_models)
 
         self.remote_rendering = RemoteRenderingOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     async def close(self) -> None:
         await self._client.close()

@@ -7,4 +7,5 @@
 # --------------------------------------------------------------------------
 
 from ._azure_change_analysis_management_client import AzureChangeAnalysisManagementClient
-__all__ = ['AzureChangeAnalysisManagementClient']
+
+__all__ = ["AzureChangeAnalysisManagementClient"]

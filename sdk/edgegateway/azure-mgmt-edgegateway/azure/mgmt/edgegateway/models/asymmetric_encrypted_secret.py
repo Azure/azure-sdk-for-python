@@ -29,18 +29,18 @@ class AsymmetricEncryptedSecret(Model):
     """
 
     _validation = {
-        'value': {'required': True},
-        'encryption_algorithm': {'required': True},
+        "value": {"required": True},
+        "encryption_algorithm": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'encryption_cert_thumbprint': {'key': 'encryptionCertThumbprint', 'type': 'str'},
-        'encryption_algorithm': {'key': 'encryptionAlgorithm', 'type': 'str'},
+        "value": {"key": "value", "type": "str"},
+        "encryption_cert_thumbprint": {"key": "encryptionCertThumbprint", "type": "str"},
+        "encryption_algorithm": {"key": "encryptionAlgorithm", "type": "str"},
     }
 
     def __init__(self, **kwargs):
         super(AsymmetricEncryptedSecret, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.encryption_cert_thumbprint = kwargs.get('encryption_cert_thumbprint', None)
-        self.encryption_algorithm = kwargs.get('encryption_algorithm', None)
+        self.value = kwargs.get("value", None)
+        self.encryption_cert_thumbprint = kwargs.get("encryption_cert_thumbprint", None)
+        self.encryption_algorithm = kwargs.get("encryption_algorithm", None)

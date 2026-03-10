@@ -7,4 +7,5 @@
 # --------------------------------------------------------------------------
 
 from ._form_recognizer_client import FormRecognizerClient
-__all__ = ['FormRecognizerClient']
+
+__all__ = ["FormRecognizerClient"]

@@ -19,9 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Class for retry options in the Azure Cosmos database service.
-"""
-
+"""Class for retry options in the Azure Cosmos database service."""
 
 from typing import Optional
 
@@ -43,7 +41,7 @@ class RetryOptions:
         self,
         max_retry_attempt_count: int = 9,
         fixed_retry_interval_in_milliseconds: Optional[int] = None,
-        max_wait_time_in_seconds: int = 30
+        max_wait_time_in_seconds: int = 30,
     ):
         self._max_retry_attempt_count = max_retry_attempt_count
         self._fixed_retry_interval_in_milliseconds = fixed_retry_interval_in_milliseconds

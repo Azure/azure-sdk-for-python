@@ -136,20 +136,12 @@ def to_formatted_html_table(rows, header):
     html = ["""<table style="width:100%; border:2px solid black" >"""]
     if header is not None:
         html_row = "</td><td>".join(column for column in header)
-        html.append(
-            """<tr style="font-weight:bold; border-bottom:1pt solid black; border-right: 1pt solid black;
-                    text-align: center"><td>{}</td></tr>""".format(
-                html_row
-            )
-        )
+        html.append("""<tr style="font-weight:bold; border-bottom:1pt solid black; border-right: 1pt solid black;
+                    text-align: center"><td>{}</td></tr>""".format(html_row))
 
     for row in rows:
         html_row = "</td><td>".join(str(value) for value in row)
-        html.append(
-            """<tr style="width:100%; word-wrap: break-word; border-bottom:1pt solid black;
-                    text-align: center"><td>{}</td></tr>""".format(
-                html_row
-            )
-        )
+        html.append("""<tr style="width:100%; word-wrap: break-word; border-bottom:1pt solid black;
+                    text-align: center"><td>{}</td></tr>""".format(html_row))
     html.append("</table>")
     return "".join(html)

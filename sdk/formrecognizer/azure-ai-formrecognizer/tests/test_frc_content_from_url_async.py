@@ -80,7 +80,7 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
         assert layout.page_number == 1
         self.assertFormPagesHasValues(result)
         assert layout.tables[0].row_count == 3
-        assert layout.tables[0].column_count== 5
+        assert layout.tables[0].column_count == 5
         assert layout.tables[0].page_number == 1
 
     @skip_flaky_test
@@ -145,16 +145,16 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
         assert layout.page_number == 1
         assert len(layout.tables) == 2
         assert layout.tables[0].row_count == 29
-        assert layout.tables[0].column_count== 4
+        assert layout.tables[0].column_count == 4
         assert layout.tables[0].page_number == 1
         assert layout.tables[1].row_count == 6
-        assert layout.tables[1].column_count== 5
-        assert layout.tables[1].page_number== 1
+        assert layout.tables[1].column_count == 5
+        assert layout.tables[1].page_number == 1
         layout = result[1]
         assert len(layout.tables) == 1
         assert layout.page_number == 2
         assert layout.tables[0].row_count == 23
-        assert layout.tables[0].column_count== 5
+        assert layout.tables[0].column_count == 5
         assert layout.tables[0].page_number == 2
         self.assertFormPagesHasValues(result)
 
@@ -214,7 +214,7 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
         async with client:
             poller = await client.begin_recognize_content_from_url(self.form_url_jpg, reading_order="natural")
 
-            assert 'natural' == poller._polling_method._initial_response.http_response.request.query['readingOrder']
+            assert "natural" == poller._polling_method._initial_response.http_response.request.query["readingOrder"]
             result = await poller.result()
             assert result
 
@@ -225,7 +225,7 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
         client = get_fr_client()
         async with client:
             poller = await client.begin_recognize_content_from_url(self.form_url_jpg, language="de")
-            assert 'de' == poller._polling_method._initial_response.http_response.request.query['language']
+            assert "de" == poller._polling_method._initial_response.http_response.request.query["language"]
             result = await poller.result()
             assert result
 

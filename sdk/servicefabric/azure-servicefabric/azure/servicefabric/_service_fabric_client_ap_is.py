@@ -57,32 +57,28 @@ class ServiceFabricClientAPIs(ServiceFabricClientAPIsOperationsMixin, SDKClient)
     :param str base_url: Service URL
     """
 
-    def __init__(
-            self, credentials, base_url=None):
+    def __init__(self, credentials, base_url=None):
 
         self.config = ServiceFabricClientAPIsConfiguration(credentials, base_url)
         super(ServiceFabricClientAPIs, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '8.2'
+        self.api_version = "8.2"
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.mesh_secret = MeshSecretOperations(
-            self._client, self.config, self._serialize, self._deserialize)
+        self.mesh_secret = MeshSecretOperations(self._client, self.config, self._serialize, self._deserialize)
         self.mesh_secret_value = MeshSecretValueOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.mesh_volume = MeshVolumeOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.mesh_network = MeshNetworkOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.mesh_application = MeshApplicationOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.mesh_service = MeshServiceOperations(
-            self._client, self.config, self._serialize, self._deserialize)
+            self._client, self.config, self._serialize, self._deserialize
+        )
+        self.mesh_volume = MeshVolumeOperations(self._client, self.config, self._serialize, self._deserialize)
+        self.mesh_network = MeshNetworkOperations(self._client, self.config, self._serialize, self._deserialize)
+        self.mesh_application = MeshApplicationOperations(self._client, self.config, self._serialize, self._deserialize)
+        self.mesh_service = MeshServiceOperations(self._client, self.config, self._serialize, self._deserialize)
         self.mesh_code_package = MeshCodePackageOperations(
-            self._client, self.config, self._serialize, self._deserialize)
+            self._client, self.config, self._serialize, self._deserialize
+        )
         self.mesh_service_replica = MeshServiceReplicaOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.mesh_gateway = MeshGatewayOperations(
-            self._client, self.config, self._serialize, self._deserialize)
+            self._client, self.config, self._serialize, self._deserialize
+        )
+        self.mesh_gateway = MeshGatewayOperations(self._client, self.config, self._serialize, self._deserialize)

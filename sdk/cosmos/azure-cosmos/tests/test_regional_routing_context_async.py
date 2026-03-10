@@ -18,12 +18,12 @@ class TestRegionalRoutingContextAsync(unittest.IsolatedAsyncioTestCase):
 
     @classmethod
     def setUpClass(cls):
-        if (cls.masterKey == '[YOUR_KEY_HERE]' or
-                cls.host == '[YOUR_ENDPOINT_HERE]'):
+        if cls.masterKey == "[YOUR_KEY_HERE]" or cls.host == "[YOUR_ENDPOINT_HERE]":
             raise Exception(
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
-                "tests.")
+                "tests."
+            )
 
     async def asyncSetUp(self):
         self.client = CosmosClient(self.host, self.masterKey)
@@ -36,13 +36,16 @@ class TestRegionalRoutingContextAsync(unittest.IsolatedAsyncioTestCase):
     async def test_no_swaps_on_successful_request_async(self):
         # Make sure that getDatabaseAccount call has finished
         await self.client.__aenter__()
-        original_read_endpoint = (self.client.client_connection._global_endpoint_manager
-                                  .location_cache.get_read_regional_routing_context())
+        original_read_endpoint = (
+            self.client.client_connection._global_endpoint_manager.location_cache.get_read_regional_routing_context()
+        )
         await self.created_container.create_item(body={"id": str(uuid.uuid4())})
         # Check for if there was a swap
-        self.assertEqual(original_read_endpoint,
-                         self.client.client_connection._global_endpoint_manager
-                         .location_cache.get_read_regional_routing_context())
-        self.assertEqual(original_read_endpoint,
-                         self.client.client_connection._global_endpoint_manager
-                         .location_cache.get_write_regional_routing_context())
+        self.assertEqual(
+            original_read_endpoint,
+            self.client.client_connection._global_endpoint_manager.location_cache.get_read_regional_routing_context(),
+        )
+        self.assertEqual(
+            original_read_endpoint,
+            self.client.client_connection._global_endpoint_manager.location_cache.get_write_regional_routing_context(),
+        )

@@ -7,4 +7,5 @@
 # --------------------------------------------------------------------------
 
 from ._purview_metadata_policies_client import PurviewMetadataPoliciesClient
-__all__ = ['PurviewMetadataPoliciesClient']
+
+__all__ = ["PurviewMetadataPoliciesClient"]

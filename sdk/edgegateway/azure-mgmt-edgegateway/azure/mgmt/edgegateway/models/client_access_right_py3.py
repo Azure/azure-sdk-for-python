@@ -27,13 +27,13 @@ class ClientAccessRight(Model):
     """
 
     _validation = {
-        'client': {'required': True},
-        'access_permission': {'required': True},
+        "client": {"required": True},
+        "access_permission": {"required": True},
     }
 
     _attribute_map = {
-        'client': {'key': 'client', 'type': 'str'},
-        'access_permission': {'key': 'accessPermission', 'type': 'str'},
+        "client": {"key": "client", "type": "str"},
+        "access_permission": {"key": "accessPermission", "type": "str"},
     }
 
     def __init__(self, *, client: str, access_permission, **kwargs) -> None:

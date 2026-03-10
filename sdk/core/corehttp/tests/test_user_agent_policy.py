@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for the user agent policy."""
+
 from unittest import mock
 
 from corehttp.rest import HttpRequest

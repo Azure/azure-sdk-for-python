@@ -16,7 +16,6 @@ from azure.ai.evaluation._azure._token_manager import AzureMLTokenManager
 from azure.ai.evaluation._constants import TokenScope
 from ._models import BlobStoreInfo, Workspace
 
-
 API_VERSION: Final[str] = "2024-07-01-preview"
 QUERY_KEY_API_VERSION: Final[str] = "api-version"
 PATH_ML_WORKSPACES = ("providers", "Microsoft.MachineLearningServices", "workspaces")

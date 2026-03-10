@@ -26,6 +26,7 @@ USAGE:
     4. Run the sample:
        python sample_chat_completions_streaming_azure_openai_async.py
 """
+
 import asyncio
 
 

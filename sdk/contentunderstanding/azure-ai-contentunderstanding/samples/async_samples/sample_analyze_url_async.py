@@ -64,9 +64,7 @@ async def main() -> None:
     key = os.getenv("CONTENTUNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(
-        endpoint=endpoint, credential=credential
-    ) as client:
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         # [START analyze_document_from_url]
         print("=" * 60)
         print("DOCUMENT ANALYSIS FROM URL")
@@ -92,9 +90,7 @@ async def main() -> None:
         # DocumentContent derives from AnalysisContent and provides additional properties
         # to access full information about document, including Pages, Tables and many others
         document_content = cast(DocumentContent, content)
-        print(
-            f"\nPages: {document_content.start_page_number} - {document_content.end_page_number}"
-        )
+        print(f"\nPages: {document_content.start_page_number} - {document_content.end_page_number}")
 
         # Check for pages
         if document_content.pages and len(document_content.pages) > 0:
@@ -130,15 +126,11 @@ async def main() -> None:
             print("Markdown:")
             print(video_content.markdown)
 
-            summary = (
-                video_content.fields.get("Summary") if video_content.fields else None
-            )
+            summary = video_content.fields.get("Summary") if video_content.fields else None
             if summary and hasattr(summary, "value"):
                 print(f"Summary: {summary.value}")
 
-            print(
-                f"Start: {video_content.start_time_ms} ms, End: {video_content.end_time_ms} ms"
-            )
+            print(f"Start: {video_content.start_time_ms} ms, End: {video_content.end_time_ms} ms")
             print(f"Frame size: {video_content.width} x {video_content.height}")
 
             print("---------------------")
@@ -172,10 +164,7 @@ async def main() -> None:
             print(f"Summary: {summary.value}")
 
         # Example: Access an additional field in AudioVisualContent (transcript phrases)
-        if (
-            audio_content.transcript_phrases
-            and len(audio_content.transcript_phrases) > 0
-        ):
+        if audio_content.transcript_phrases and len(audio_content.transcript_phrases) > 0:
             print("Transcript (first two phrases):")
             for phrase in audio_content.transcript_phrases[:2]:
                 print(f"  [{phrase.speaker}] {phrase.start_time_ms} ms: {phrase.text}")

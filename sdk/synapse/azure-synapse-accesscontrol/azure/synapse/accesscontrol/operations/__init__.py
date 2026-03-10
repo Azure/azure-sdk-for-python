@@ -10,6 +10,6 @@ from ._role_assignments_operations import RoleAssignmentsOperations
 from ._role_definitions_operations import RoleDefinitionsOperations
 
 __all__ = [
-    'RoleAssignmentsOperations',
-    'RoleDefinitionsOperations',
+    "RoleAssignmentsOperations",
+    "RoleDefinitionsOperations",
 ]

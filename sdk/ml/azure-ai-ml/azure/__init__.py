@@ -9,4 +9,5 @@ Main area includes the following:
 * Autorest objects.
 * SDK v2 support the new YAML file format.
 """
+
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)

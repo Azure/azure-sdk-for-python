@@ -20,7 +20,7 @@ class Authentication(Model):
     """
 
     _attribute_map = {
-        'symmetric_key': {'key': 'symmetricKey', 'type': 'SymmetricKey'},
+        "symmetric_key": {"key": "symmetricKey", "type": "SymmetricKey"},
     }
 
     def __init__(self, *, symmetric_key=None, **kwargs) -> None:

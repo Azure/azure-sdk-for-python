@@ -19,9 +19,9 @@ class LivyStatementStates(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELLING = "cancelling"
     CANCELLED = "cancelled"
 
+
 class LivyStates(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The batch state
-    """
+    """The batch state"""
 
     NOT_STARTED = "not_started"
     STARTING = "starting"
@@ -35,6 +35,7 @@ class LivyStates(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RUNNING = "running"
     RECOVERING = "recovering"
 
+
 class PluginCurrentState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     PREPARATION = "Preparation"
@@ -45,20 +46,22 @@ class PluginCurrentState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CLEANUP = "Cleanup"
     ENDED = "Ended"
 
+
 class SchedulerCurrentState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     QUEUED = "Queued"
     SCHEDULED = "Scheduled"
     ENDED = "Ended"
 
+
 class SparkBatchJobResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The Spark batch job result.
-    """
+    """The Spark batch job result."""
 
     UNCERTAIN = "Uncertain"
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
     CANCELLED = "Cancelled"
+
 
 class SparkErrorSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
@@ -67,12 +70,13 @@ class SparkErrorSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UNKNOWN = "Unknown"
     DEPENDENCY = "Dependency"
 
+
 class SparkJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The job type.
-    """
+    """The job type."""
 
     SPARK_BATCH = "SparkBatch"
     SPARK_SESSION = "SparkSession"
+
 
 class SparkSessionResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
@@ -80,6 +84,7 @@ class SparkSessionResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
     CANCELLED = "Cancelled"
+
 
 class SparkStatementLanguageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 

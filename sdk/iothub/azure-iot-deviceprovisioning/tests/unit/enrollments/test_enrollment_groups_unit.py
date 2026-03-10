@@ -17,9 +17,7 @@ enrollment_group_endpoint = "{}/enrollmentGroups".format(endpoint)
 enrollment_group_url = re.compile("{}/.+".format(enrollment_group_endpoint))
 query_url = "{}/query?".format(enrollment_group_endpoint)
 enrollment_group_id = "test_enrollment_group_id"
-attestation_url = "{}/{}/attestationmechanism".format(
-    enrollment_group_endpoint, enrollment_group_id
-)
+attestation_url = "{}/{}/attestationmechanism".format(enrollment_group_endpoint, enrollment_group_id)
 
 
 enrollment_group_list = [
@@ -175,9 +173,7 @@ class TestGroupEnrollmentGet(object):
             match_querystring=False,
         )
 
-    @pytest.mark.parametrize(
-        "id, expected", [(enrollment_group_id, {"registrationId": enrollment_group_id})]
-    )
+    @pytest.mark.parametrize("id, expected", [(enrollment_group_id, {"registrationId": enrollment_group_id})])
     def test_group_enrollment_get(self, service_client_get, sdk_client, id, expected):
         sdk_client.enrollment_group.get(id=id)
 
@@ -210,21 +206,13 @@ class TestGroupEnrollmentCreate(object):
         yield mocked_response
 
     @pytest.mark.parametrize("enrollment_group", enrollment_group_list)
-    def test_group_enrollment_create_or_update(
-        self, service_client, sdk_client, enrollment_group
-    ):
-        sdk_client.enrollment_group.create_or_update(
-            id=enrollment_group_id, enrollment_group=enrollment_group
-        )
+    def test_group_enrollment_create_or_update(self, service_client, sdk_client, enrollment_group):
+        sdk_client.enrollment_group.create_or_update(id=enrollment_group_id, enrollment_group=enrollment_group)
 
     @pytest.mark.parametrize("enrollment_group", enrollment_group_list[:3])
-    def test_group_enrollment_create_or_update_error(
-        self, service_client_generic_error, sdk_client, enrollment_group
-    ):
+    def test_group_enrollment_create_or_update_error(self, service_client_generic_error, sdk_client, enrollment_group):
         with pytest.raises(HttpResponseError):
-            sdk_client.enrollment_group.create_or_update(
-                id=enrollment_group_id, enrollment_group=enrollment_group
-            )
+            sdk_client.enrollment_group.create_or_update(id=enrollment_group_id, enrollment_group=enrollment_group)
 
 
 class TestGroupEnrollmentDelete(object):
@@ -286,9 +274,7 @@ class TestGroupEnrollmentQuery(object):
         query = sdk_client.enrollment_group.query(query_specification=query)
         assert [enrollment for enrollment in query]
 
-    def test_group_enrollment_query_error(
-        self, service_client_generic_error, sdk_client
-    ):
+    def test_group_enrollment_query_error(self, service_client_generic_error, sdk_client):
         with pytest.raises(HttpResponseError):
             query = sdk_client.enrollment_group.query(query_specification="select *")
             assert [enrollment for enrollment in query]
@@ -317,18 +303,12 @@ class TestGroupEnrollmentAttestation(object):
         )
         yield mocked_response
 
-    def test_group_enrollment_get_attestation_mechanism(
-        self, service_client, sdk_client
-    ):
+    def test_group_enrollment_get_attestation_mechanism(self, service_client, sdk_client):
         sdk_client.enrollment_group.get_attestation_mechanism(id=enrollment_group_id)
 
-    def test_group_enrollment_get_attestation_mechanism_error(
-        self, service_client_generic_error, sdk_client
-    ):
+    def test_group_enrollment_get_attestation_mechanism_error(self, service_client_generic_error, sdk_client):
         with pytest.raises(HttpResponseError):
-            sdk_client.enrollment_group.get_attestation_mechanism(
-                id=enrollment_group_id
-            )
+            sdk_client.enrollment_group.get_attestation_mechanism(id=enrollment_group_id)
 
 
 class TestGroupEnrollmentBulk(object):
@@ -369,12 +349,8 @@ class TestGroupEnrollmentBulk(object):
             (enrollment_group_list, "delete"),
         ],
     )
-    def test_group_enrollment_run_bulk_operation(
-        self, service_client, groups, mode, sdk_client
-    ):
-        sdk_client.enrollment_group.run_bulk_operation(
-            bulk_operation={"enrollment_groups": groups, "mode": mode}
-        )
+    def test_group_enrollment_run_bulk_operation(self, service_client, groups, mode, sdk_client):
+        sdk_client.enrollment_group.run_bulk_operation(bulk_operation={"enrollment_groups": groups, "mode": mode})
 
     @pytest.mark.parametrize(
         "groups, mode",
@@ -391,10 +367,6 @@ class TestGroupEnrollmentBulk(object):
             (enrollment_group_list, "delete"),
         ],
     )
-    def test_group_enrollment_run_bulk_operation_error(
-        self, service_client_generic_error, sdk_client, groups, mode
-    ):
+    def test_group_enrollment_run_bulk_operation_error(self, service_client_generic_error, sdk_client, groups, mode):
         with pytest.raises(HttpResponseError):
-            sdk_client.enrollment_group.run_bulk_operation(
-                bulk_operation={"enrollment_groups": groups, "mode": mode}
-            )
+            sdk_client.enrollment_group.run_bulk_operation(bulk_operation={"enrollment_groups": groups, "mode": mode})

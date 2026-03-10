@@ -22,6 +22,7 @@
 """Internal class for query execution endpoint component implementation in the
 Azure Cosmos database service.
 """
+
 import numbers
 import copy
 import hashlib
@@ -55,16 +56,19 @@ class _QueryExecutionOrderByEndpointComponent(_QueryExecutionEndpointComponent):
 
     For each processed orderby result it returns 'payload' item of the result.
     """
+
     def __next__(self):
         return next(self._execution_context)["payload"]
 
     next = __next__  # Python 2 compatibility.
+
 
 class _QueryExecutionNonStreamingEndpointComponent(_QueryExecutionEndpointComponent):
     """Represents an endpoint in handling a non-streaming order by query results.
 
     For each processed orderby result it returns the item result.
     """
+
     def __next__(self):
         return next(self._execution_context)._item_result["payload"]  # pylint: disable=protected-access
 
@@ -94,6 +98,7 @@ class _QueryExecutionDistinctOrderedEndpointComponent(_QueryExecutionEndpointCom
 
     It returns only those values not already returned.
     """
+
     def __init__(self, execution_context):
         super(_QueryExecutionDistinctOrderedEndpointComponent, self).__init__(execution_context)
         self.last_result = None
@@ -113,6 +118,7 @@ class _QueryExecutionDistinctUnorderedEndpointComponent(_QueryExecutionEndpointC
 
     It returns only those values not already returned.
     """
+
     def __init__(self, execution_context):
         super(_QueryExecutionDistinctUnorderedEndpointComponent, self).__init__(execution_context)
         self.last_result = set()
@@ -136,7 +142,7 @@ class _QueryExecutionDistinctUnorderedEndpointComponent(_QueryExecutionEndpointC
         json_repr = json.dumps(self.make_hash(res))
         json_repr = json_repr.encode("utf-8")
 
-        hash_object = hashlib.sha1(json_repr)   # nosec
+        hash_object = hashlib.sha1(json_repr)  # nosec
         hashed_result = hash_object.hexdigest()
 
         while hashed_result in self.last_result:
@@ -144,7 +150,7 @@ class _QueryExecutionDistinctUnorderedEndpointComponent(_QueryExecutionEndpointC
             json_repr = json.dumps(self.make_hash(res))
             json_repr = json_repr.encode("utf-8")
 
-            hash_object = hashlib.sha1(json_repr)   # nosec
+            hash_object = hashlib.sha1(json_repr)  # nosec
             hashed_result = hash_object.hexdigest()
         self.last_result.add(hashed_result)
         return res
@@ -157,6 +163,7 @@ class _QueryExecutionOffsetEndpointComponent(_QueryExecutionEndpointComponent):
 
     It returns results offset by as many results as offset arg specified.
     """
+
     def __init__(self, execution_context, offset_count):
         super(_QueryExecutionOffsetEndpointComponent, self).__init__(execution_context)
         self._offset_count = offset_count

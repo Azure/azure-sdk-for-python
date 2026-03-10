@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 """Tests for the distributed_trace decorator."""
+
 import time
 
 from corehttp.settings import settings

@@ -29,6 +29,7 @@ USAGE:
        from AIProjectClient using the `telemetry.get_application_insights_connection_string()` method. A code sample showing
        how to do this can be found in the `sample_telemetry.py` file in the azure-ai-projects telemetry samples.
 """
+
 from typing import Any, Callable, Set
 
 import os, time, json

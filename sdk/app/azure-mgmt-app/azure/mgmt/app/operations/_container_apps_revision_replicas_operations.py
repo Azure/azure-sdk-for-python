@@ -9,7 +9,13 @@ import functools
 from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
@@ -19,11 +25,13 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
+
 
 def build_get_replica_request(
     subscription_id: str,
@@ -36,69 +44,64 @@ def build_get_replica_request(
     api_version = "2022-01-01-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/replicas/{name}')
+    url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/replicas/{name}",
+    )
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "containerAppName": _SERIALIZER.url("container_app_name", container_app_name, 'str'),
-        "revisionName": _SERIALIZER.url("revision_name", revision_name, 'str'),
-        "name": _SERIALIZER.url("name", name, 'str'),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "containerAppName": _SERIALIZER.url("container_app_name", container_app_name, "str"),
+        "revisionName": _SERIALIZER.url("revision_name", revision_name, "str"),
+        "name": _SERIALIZER.url("name", name, "str"),
     }
 
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
 def build_list_replicas_request(
-    subscription_id: str,
-    resource_group_name: str,
-    container_app_name: str,
-    revision_name: str,
-    **kwargs: Any
+    subscription_id: str, resource_group_name: str, container_app_name: str, revision_name: str, **kwargs: Any
 ) -> HttpRequest:
     api_version = "2022-01-01-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/replicas')
+    url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/replicas",
+    )
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "containerAppName": _SERIALIZER.url("container_app_name", container_app_name, 'str'),
-        "revisionName": _SERIALIZER.url("revision_name", revision_name, 'str'),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "containerAppName": _SERIALIZER.url("container_app_name", container_app_name, "str"),
+        "revisionName": _SERIALIZER.url("revision_name", revision_name, "str"),
     }
 
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)
+
 
 class ContainerAppsRevisionReplicasOperations(object):
     """ContainerAppsRevisionReplicasOperations operations.
@@ -124,12 +127,7 @@ class ContainerAppsRevisionReplicasOperations(object):
 
     @distributed_trace
     def get_replica(
-        self,
-        resource_group_name: str,
-        container_app_name: str,
-        revision_name: str,
-        name: str,
-        **kwargs: Any
+        self, resource_group_name: str, container_app_name: str, revision_name: str, name: str, **kwargs: Any
     ) -> "_models.Replica":
         """Get a replica for a Container App Revision.
 
@@ -148,20 +146,17 @@ class ContainerAppsRevisionReplicasOperations(object):
         :rtype: ~container_apps_api_client.models.Replica
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Replica"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Replica"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_get_replica_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             container_app_name=container_app_name,
             revision_name=revision_name,
             name=name,
-            template_url=self.get_replica.metadata['url'],
+            template_url=self.get_replica.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -174,23 +169,18 @@ class ContainerAppsRevisionReplicasOperations(object):
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Replica', pipeline_response)
+        deserialized = self._deserialize("Replica", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_replica.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/replicas/{name}'}  # type: ignore
-
+    get_replica.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/replicas/{name}"}  # type: ignore
 
     @distributed_trace
     def list_replicas(
-        self,
-        resource_group_name: str,
-        container_app_name: str,
-        revision_name: str,
-        **kwargs: Any
+        self, resource_group_name: str, container_app_name: str, revision_name: str, **kwargs: Any
     ) -> "_models.ReplicaCollection":
         """List replicas for a Container App Revision.
 
@@ -207,19 +197,16 @@ class ContainerAppsRevisionReplicasOperations(object):
         :rtype: ~container_apps_api_client.models.ReplicaCollection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ReplicaCollection"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ReplicaCollection"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_list_replicas_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             container_app_name=container_app_name,
             revision_name=revision_name,
-            template_url=self.list_replicas.metadata['url'],
+            template_url=self.list_replicas.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -232,12 +219,11 @@ class ContainerAppsRevisionReplicasOperations(object):
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('ReplicaCollection', pipeline_response)
+        deserialized = self._deserialize("ReplicaCollection", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    list_replicas.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/replicas'}  # type: ignore
-
+    list_replicas.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/replicas"}  # type: ignore

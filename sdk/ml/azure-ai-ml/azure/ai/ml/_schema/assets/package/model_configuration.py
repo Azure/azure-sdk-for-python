@@ -10,7 +10,6 @@ from marshmallow import fields, post_load
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.core.fields import StringTransformedEnum
 
-
 module_logger = logging.getLogger(__name__)
 
 

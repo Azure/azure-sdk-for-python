@@ -7,6 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 from typing import Optional, Any, overload
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, AzureKeyCredentialPolicy
@@ -81,10 +82,8 @@ def set_authentication_policy(credential, kwargs):
                 )
             else:
                 if kwargs.get("resource_id") or kwargs.get("region"):
-                    raise ValueError(
-                        """Both 'resource_id' and 'region' must be provided with a TokenCredential
-                         for regional resource authentication."""
-                    )
+                    raise ValueError("""Both 'resource_id' and 'region' must be provided with a TokenCredential
+                         for regional resource authentication.""")
                 scope: str = kwargs.pop("audience", DEFAULT_ENTRA_ID_SCOPE)
                 if not is_cognitive_services_scope(scope):
                     scope = scope.rstrip("/").rstrip(DEFAULT_SCOPE) + DEFAULT_SCOPE

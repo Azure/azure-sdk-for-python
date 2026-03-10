@@ -7,10 +7,12 @@
 # --------------------------------------------------------------------------
 
 from ._form_recognizer_client import FormRecognizerClient
-__all__ = ['FormRecognizerClient']
+
+__all__ = ["FormRecognizerClient"]
 
 try:
     from ._patch import patch_sdk  # type: ignore
+
     patch_sdk()
 except ImportError:
     pass

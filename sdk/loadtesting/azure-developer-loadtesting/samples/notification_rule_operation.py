@@ -22,6 +22,7 @@ USAGE:
     4)  LOADTESTSERVICE_ENDPOINT - Data Plane endpoint for Loadtestservice
     5)  ACTION_GROUP_ID - Resource ID of the Azure Monitor action group for notifications
 """
+
 from azure.developer.loadtesting import LoadTestAdministrationClient
 from azure.identity import DefaultAzureCredential
 

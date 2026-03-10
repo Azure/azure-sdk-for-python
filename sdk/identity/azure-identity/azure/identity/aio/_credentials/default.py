@@ -21,7 +21,6 @@ from .shared_cache import SharedTokenCacheCredential
 from .vscode import VisualStudioCodeCredential
 from .workload_identity import WorkloadIdentityCredential
 
-
 _LOGGER = logging.getLogger(__name__)
 
 

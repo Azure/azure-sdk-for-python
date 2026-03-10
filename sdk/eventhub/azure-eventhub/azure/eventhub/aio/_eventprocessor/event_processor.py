@@ -247,9 +247,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
             if partition_id in self._tasks:
                 del self._tasks[partition_id]
 
-    async def _receive(
-        self, partition_id: str, checkpoint: Optional[Dict[str, Any]] = None
-    ) -> None:
+    async def _receive(self, partition_id: str, checkpoint: Optional[Dict[str, Any]] = None) -> None:
         try:
             _LOGGER.info("start ownership %r, checkpoint %r", partition_id, checkpoint)
             (

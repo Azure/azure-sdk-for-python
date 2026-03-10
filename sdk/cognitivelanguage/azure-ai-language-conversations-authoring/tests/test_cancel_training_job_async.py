@@ -19,6 +19,7 @@ class TestConversationsAsync(AzureRecordedTestCase):
     async def create_client(self, endpoint: str, key: str) -> ConversationAuthoringClient:
         return ConversationAuthoringClient(endpoint, AzureKeyCredential(key))
 
+
 @pytest.mark.playback_test_only
 class TestConversationsCancelTrainingAsync(TestConversationsAsync):
     @ConversationsPreparer()

@@ -4,9 +4,11 @@
 """Internal class for timeout failover retry policy implementation in the Azure
 Cosmos database service.
 """
+
 from azure.cosmos.documents import _OperationType
 
 # cspell:ignore PPAF, ppaf
+
 
 class _TimeoutFailoverRetryPolicy(object):
 
@@ -20,9 +22,10 @@ class _TimeoutFailoverRetryPolicy(object):
         # If an account only has 1 region, then we still want to retry once on the same region
         # We want this to be the default retry attempts as paging through a query means there are requests without
         # a request object
-        self._max_retry_attempt_count = len(self.global_endpoint_manager.
-                                            location_cache.read_regional_routing_contexts) + 1
-       # If the request is a write operation, we only want to retry as many times as retry_write
+        self._max_retry_attempt_count = (
+            len(self.global_endpoint_manager.location_cache.read_regional_routing_contexts) + 1
+        )
+        # If the request is a write operation, we only want to retry as many times as retry_write
         if self.request and _OperationType.IsWriteOperation(self.request.operation_type):
             self._max_retry_attempt_count = self.request.retry_write
         self.retry_count = 0
@@ -52,8 +55,9 @@ class _TimeoutFailoverRetryPolicy(object):
 
         # second check here ensures we only do cross-regional retries for read requests
         # non-idempotent write retries should only be retried once, using preferred locations if available (MM)
-        if self.request and (self.is_operation_retryable()
-                             or self.global_endpoint_manager.can_use_multiple_write_locations(self.request)):
+        if self.request and (
+            self.is_operation_retryable() or self.global_endpoint_manager.can_use_multiple_write_locations(self.request)
+        ):
             location_endpoint = self.resolve_next_region_service_endpoint()
             self.request.route_to_location(location_endpoint)
         return True

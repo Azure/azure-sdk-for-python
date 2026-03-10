@@ -37,7 +37,6 @@ from typing import (
 )
 from typing_extensions import Protocol, runtime_checkable
 
-
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 KeyType = TypeVar("KeyType")

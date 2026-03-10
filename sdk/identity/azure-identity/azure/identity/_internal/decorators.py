@@ -11,7 +11,6 @@ from azure.core.exceptions import ClientAuthenticationError
 
 from .utils import within_credential_chain
 
-
 _LOGGER = logging.getLogger(__name__)
 
 

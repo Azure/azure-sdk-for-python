@@ -22,8 +22,8 @@
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
-"""Create, read, update and delete users in the Azure Cosmos DB SQL API service.
-"""
+"""Create, read, update and delete users in the Azure Cosmos DB SQL API service."""
+
 from typing import Any, Mapping, Union, Optional, Callable
 
 from azure.core.paging import ItemPaged
@@ -50,7 +50,7 @@ class UserProxy:
         client_connection: CosmosClientConnection,
         id: str,
         database_link: str,
-        properties: Optional[CosmosDict] = None
+        properties: Optional[CosmosDict] = None,
     ) -> None:
         self.client_connection = client_connection
         self.id = id
@@ -67,18 +67,13 @@ class UserProxy:
             return permission_or_id.permission_link
         return "{}/permissions/{}".format(self.user_link, permission_or_id["id"])
 
-    def _get_properties(
-        self
-    ) -> CosmosDict:
+    def _get_properties(self) -> CosmosDict:
         if self._properties is None:
             self._properties = self.read()
         return self._properties
 
     @distributed_trace
-    def read(
-        self,
-        **kwargs: Any
-    ) -> CosmosDict:
+    def read(self, **kwargs: Any) -> CosmosDict:
         """Read user properties.
 
         :keyword Callable response_hook: A callable invoked with the response metadata.
@@ -87,20 +82,16 @@ class UserProxy:
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         request_options = build_options(kwargs)
-        self._properties = self.client_connection.ReadUser(
-            user_link=self.user_link,
-            options=request_options,
-            **kwargs
-        )
+        self._properties = self.client_connection.ReadUser(user_link=self.user_link, options=request_options, **kwargs)
         return self._properties
 
     @distributed_trace
     def list_permissions(
-            self,
-            max_item_count: Optional[int] = None,
-            *,
-            response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[dict[str, Any]]], None]] = None,
-            **kwargs: Any
+        self,
+        max_item_count: Optional[int] = None,
+        *,
+        response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[dict[str, Any]]], None]] = None,
+        **kwargs: Any
     ) -> ItemPaged[dict[str, Any]]:
         """List all permission for the user.
 
@@ -115,10 +106,8 @@ class UserProxy:
             feed_options["maxItemCount"] = max_item_count
 
         result = self.client_connection.ReadPermissions(
-            user_link=self.user_link,
-            options=feed_options,
-            response_hook=response_hook,
-            **kwargs)
+            user_link=self.user_link, options=feed_options, response_hook=response_hook, **kwargs
+        )
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
@@ -164,11 +153,7 @@ class UserProxy:
         return result
 
     @distributed_trace
-    def get_permission(
-        self,
-        permission: Union[str, Permission, Mapping[str, Any]],
-        **kwargs: Any
-    ) -> Permission:
+    def get_permission(self, permission: Union[str, Permission, Mapping[str, Any]], **kwargs: Any) -> Permission:
         """Get the permission identified by `id`.
 
         :param permission: The ID (name), dict representing the properties or :class:`~azure.cosmos.Permission`
@@ -181,9 +166,7 @@ class UserProxy:
         """
         request_options = build_options(kwargs)
         permission_resp = self.client_connection.ReadPermission(
-            permission_link=self._get_permission_link(permission),
-            options=request_options,
-            **kwargs
+            permission_link=self._get_permission_link(permission), options=request_options, **kwargs
         )
         return Permission(
             id=permission_resp["id"],
@@ -207,10 +190,7 @@ class UserProxy:
         """
         request_options = build_options(kwargs)
         permission = self.client_connection.CreatePermission(
-            user_link=self.user_link,
-            permission=body,
-            options=request_options,
-            **kwargs
+            user_link=self.user_link, permission=body, options=request_options, **kwargs
         )
         return Permission(
             id=permission["id"],
@@ -247,10 +227,7 @@ class UserProxy:
 
     @distributed_trace
     def replace_permission(
-        self,
-        permission: Union[str, Permission, Mapping[str, Any]],
-        body: dict[str, Any],
-        **kwargs
+        self, permission: Union[str, Permission, Mapping[str, Any]], body: dict[str, Any], **kwargs
     ) -> Permission:
         """Replaces the specified permission if it exists for the user.
 
@@ -268,10 +245,7 @@ class UserProxy:
         """
         request_options = build_options(kwargs)
         permission_resp = self.client_connection.ReplacePermission(
-            permission_link=self._get_permission_link(permission),
-            permission=body,
-            options=request_options,
-            **kwargs
+            permission_link=self._get_permission_link(permission), permission=body, options=request_options, **kwargs
         )
         return Permission(
             id=permission_resp["id"],
@@ -282,11 +256,7 @@ class UserProxy:
         )
 
     @distributed_trace
-    def delete_permission(
-        self,
-        permission: Union[str, Permission, Mapping[str, Any]],
-        **kwargs
-    ) -> None:
+    def delete_permission(self, permission: Union[str, Permission, Mapping[str, Any]], **kwargs) -> None:
         """Delete the specified permission from the user.
 
         If the permission does not already exist, an exception is raised.

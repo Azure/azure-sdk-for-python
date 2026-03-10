@@ -24,7 +24,7 @@ submit it to the client, RadiologyInsightsClient, and display
 -the Inference extensions,
 -the Inference extension URL,
 -the Inference extension value string,
--the Inference extension section  
+-the Inference extension section
 
 
 USAGE:
@@ -34,7 +34,7 @@ USAGE:
     - For more details how to use DefaultAzureCredential, please take a look at https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential
 
 2. python sample_finding_inference_async.py
-   
+
 """
 
 import asyncio

@@ -24,7 +24,6 @@ from azure.confidentialledger.certificate import (
     ConfidentialLedgerCertificateClient,
 )
 
-
 logging.basicConfig(level=logging.ERROR)
 LOG = logging.getLogger()
 

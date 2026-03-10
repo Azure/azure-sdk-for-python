@@ -11,7 +11,6 @@ import os
 import re
 from setuptools import setup, find_packages
 
-
 PACKAGE_NAME = "azure-messaging-webpubsubservice"
 PACKAGE_PPRINT_NAME = "Azure WebPubSub Service"
 PACKAGE_NAMESPACE = "azure.messaging.webpubsubservice"

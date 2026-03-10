@@ -16,20 +16,16 @@ import test_config
 from azure.cosmos import DatabaseProxy, ContainerProxy, exceptions
 from azure.core.exceptions import HttpResponseError
 
+
 def _remove_padding(encoded_string):
     while encoded_string.endswith("="):
-        encoded_string = encoded_string[0:len(encoded_string) - 1]
+        encoded_string = encoded_string[0 : len(encoded_string) - 1]
 
     return encoded_string
 
 
 def get_test_item(num):
-    test_item = {
-        'pk': 'pk',
-        'id': 'Item_' + str(num),
-        'test_object': True,
-        'lastName': 'Smith'
-    }
+    test_item = {"pk": "pk", "id": "Item_" + str(num), "test_object": True, "lastName": "Smith"}
     return test_item
 
 
@@ -47,22 +43,35 @@ class CosmosEmulatorCredential(object):
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
           attribute gives a reason.
         """
-        aad_header_cosmos_emulator = "{\"typ\":\"JWT\",\"alg\":\"RS256\",\"x5t\":\"" \
-                                     "CosmosEmulatorPrimaryMaster\",\"kid\":\"CosmosEmulatorPrimaryMaster\"}"
+        aad_header_cosmos_emulator = (
+            '{"typ":"JWT","alg":"RS256","x5t":"' 'CosmosEmulatorPrimaryMaster","kid":"CosmosEmulatorPrimaryMaster"}'
+        )
 
-        aad_claim_cosmos_emulator_format = {"aud": "https://localhost.localhost",
-                                            "iss": "https://sts.fake-issuer.net/7b1999a1-dfd7-440e-8204-00170979b984",
-                                            "iat": int(time.time()), "nbf": int(time.time()),
-                                            "exp": int(time.time() + 7200), "aio": "", "appid": "localhost",
-                                            "appidacr": "1", "idp": "https://localhost:8081/",
-                                            "oid": "96313034-4739-43cb-93cd-74193adbe5b6", "rh": "", "sub": "localhost",
-                                            "tid": "EmulatorFederation", "uti": "", "ver": "1.0",
-                                            "scp": "user_impersonation",
-                                            "groups": ["7ce1d003-4cb3-4879-b7c5-74062a35c66e",
-                                                       "e99ff30c-c229-4c67-ab29-30a6aebc3e58",
-                                                       "5549bb62-c77b-4305-bda9-9ec66b85d9e4",
-                                                       "c44fd685-5c58-452c-aaf7-13ce75184f65",
-                                                       "be895215-eab5-43b7-9536-9ef8fe130330"]}
+        aad_claim_cosmos_emulator_format = {
+            "aud": "https://localhost.localhost",
+            "iss": "https://sts.fake-issuer.net/7b1999a1-dfd7-440e-8204-00170979b984",
+            "iat": int(time.time()),
+            "nbf": int(time.time()),
+            "exp": int(time.time() + 7200),
+            "aio": "",
+            "appid": "localhost",
+            "appidacr": "1",
+            "idp": "https://localhost:8081/",
+            "oid": "96313034-4739-43cb-93cd-74193adbe5b6",
+            "rh": "",
+            "sub": "localhost",
+            "tid": "EmulatorFederation",
+            "uti": "",
+            "ver": "1.0",
+            "scp": "user_impersonation",
+            "groups": [
+                "7ce1d003-4cb3-4879-b7c5-74062a35c66e",
+                "e99ff30c-c229-4c67-ab29-30a6aebc3e58",
+                "5549bb62-c77b-4305-bda9-9ec66b85d9e4",
+                "c44fd685-5c58-452c-aaf7-13ce75184f65",
+                "be895215-eab5-43b7-9536-9ef8fe130330",
+            ],
+        }
 
         emulator_key = test_config.TestConfig.masterKey
 
@@ -104,11 +113,11 @@ class TestAAD(unittest.TestCase):
     def test_aad_credentials(self):
         print("Container info: " + str(self.container.read()))
         self.container.create_item(get_test_item(0))
-        print("Point read result: " + str(self.container.read_item(item='Item_0', partition_key='pk')))
-        query_results = list(self.container.query_items(query='select * from c', partition_key='pk'))
+        print("Point read result: " + str(self.container.read_item(item="Item_0", partition_key="pk")))
+        query_results = list(self.container.query_items(query="select * from c", partition_key="pk"))
         assert len(query_results) == 1
         print("Query result: " + str(query_results[0]))
-        self.container.delete_item(item='Item_0', partition_key='pk')
+        self.container.delete_item(item="Item_0", partition_key="pk")
 
         # Attempting to do management operations will return a 403 Forbidden exception
         try:
@@ -116,7 +125,6 @@ class TestAAD(unittest.TestCase):
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 403
             print("403 error assertion success")
-
 
     def _run_with_scope_capture(self, credential_cls, action, *args, **kwargs):
         scopes_captured = []
@@ -152,7 +160,7 @@ class TestAAD(unittest.TestCase):
         finally:
             del os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"]
             try:
-                container.delete_item(item='Item_10', partition_key='pk')
+                container.delete_item(item="Item_10", partition_key="pk")
             except Exception:
                 pass
 
@@ -199,7 +207,7 @@ class TestAAD(unittest.TestCase):
             assert all(scope == account_scope for scope in scopes), f"Expected only account scope, got: {scopes}"
         finally:
             try:
-                container.delete_item(item='Item_12', partition_key='pk')
+                container.delete_item(item="Item_12", partition_key="pk")
             except Exception:
                 pass
 
@@ -230,10 +238,12 @@ class TestAAD(unittest.TestCase):
         scopes, container = self._run_with_scope_capture(FallbackCredential, action)
         try:
             # Accept multiple calls, but the first should be account_scope, and fallback_scope should appear after error
-            assert account_scope in scopes and fallback_scope in scopes, f"Expected fallback to default scope, got: {scopes}"
+            assert (
+                account_scope in scopes and fallback_scope in scopes
+            ), f"Expected fallback to default scope, got: {scopes}"
         finally:
             try:
-                container.delete_item(item='Item_13', partition_key='pk')
+                container.delete_item(item="Item_13", partition_key="pk")
             except Exception:
                 pass
 

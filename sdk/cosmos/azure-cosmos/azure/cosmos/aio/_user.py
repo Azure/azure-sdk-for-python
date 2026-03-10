@@ -21,8 +21,7 @@
 
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 
-"""Create, read, update and delete users in the Azure Cosmos DB SQL API service.
-"""
+"""Create, read, update and delete users in the Azure Cosmos DB SQL API service."""
 
 from typing import Any, Mapping, Union, Optional, Callable
 
@@ -36,6 +35,7 @@ from .._base import build_options
 from ..permission import Permission
 
 # pylint: disable=docstring-keyword-should-match-keyword-only
+
 
 class UserProxy:
     """An interface to interact with a specific user.
@@ -52,7 +52,7 @@ class UserProxy:
         client_connection: CosmosClientConnection,
         id: str,
         database_link: str,
-        properties: Optional[CosmosDict] = None
+        properties: Optional[CosmosDict] = None,
     ) -> None:
         self.client_connection = client_connection
         self.id = id
@@ -69,18 +69,13 @@ class UserProxy:
             return permission_or_id.permission_link
         return "{}/permissions/{}".format(self.user_link, permission_or_id["id"])
 
-    async def _get_properties(
-        self
-    ) -> CosmosDict:
+    async def _get_properties(self) -> CosmosDict:
         if self._properties is None:
             self._properties = await self.read()
         return self._properties
 
     @distributed_trace_async
-    async def read(
-        self,
-        **kwargs: Any
-    ) -> CosmosDict:
+    async def read(self, **kwargs: Any) -> CosmosDict:
         """Read user properties.
 
         :keyword response_hook: A callable invoked with the response metadata.
@@ -92,9 +87,7 @@ class UserProxy:
         request_options = build_options(kwargs)
 
         self._properties = await self.client_connection.ReadUser(
-            user_link=self.user_link,
-            options=request_options,
-            **kwargs
+            user_link=self.user_link, options=request_options, **kwargs
         )
         return self._properties
 
@@ -163,11 +156,7 @@ class UserProxy:
         return result
 
     @distributed_trace_async
-    async def get_permission(
-        self,
-        permission: Union[str, Mapping[str, Any], Permission],
-        **kwargs: Any
-    ) -> Permission:
+    async def get_permission(self, permission: Union[str, Mapping[str, Any], Permission], **kwargs: Any) -> Permission:
         """Get the permission identified by `id`.
 
         :param permission: The ID (name), dict representing the properties or :class:`Permission`
@@ -251,10 +240,7 @@ class UserProxy:
 
     @distributed_trace_async
     async def replace_permission(
-        self,
-        permission: Union[str, Mapping[str, Any], Permission],
-        body: dict[str, Any],
-        **kwargs: Any
+        self, permission: Union[str, Mapping[str, Any], Permission], body: dict[str, Any], **kwargs: Any
     ) -> Permission:
         """Replaces the specified permission if it exists for the user.
 
@@ -287,11 +273,7 @@ class UserProxy:
         )
 
     @distributed_trace_async
-    async def delete_permission(
-        self,
-        permission: Union[str, Mapping[str, Any], Permission],
-        **kwargs: Any
-    ) -> None:
+    async def delete_permission(self, permission: Union[str, Mapping[str, Any], Permission], **kwargs: Any) -> None:
         """Delete the specified permission from the user.
 
         If the permission does not already exist, an exception is raised.

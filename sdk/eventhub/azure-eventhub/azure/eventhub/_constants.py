@@ -4,7 +4,6 @@
 # --------------------------------------------------------------------------------------------
 from enum import Enum
 
-
 PROP_SEQ_NUMBER = b"x-opt-sequence-number"
 PROP_OFFSET = b"x-opt-offset"
 PROP_PARTITION_KEY = b"x-opt-partition-key"

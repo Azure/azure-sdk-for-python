@@ -17,7 +17,6 @@ from azure.monitor.ingestion._version import VERSION
 
 from base_testcase import LogsIngestionClientTestCase
 
-
 LOGS_BODY = [
     {
         "Time": "2021-12-08T23:51:14.1104269Z",

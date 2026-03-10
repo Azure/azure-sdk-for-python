@@ -14,7 +14,6 @@ from preparers import FormRecognizerPreparer, get_sync_client
 from testcase import FormRecognizerTest
 from conftest import skip_flaky_test
 
-
 get_dma_client = functools.partial(get_sync_client, DocumentModelAdministrationClient)
 
 
@@ -31,23 +30,14 @@ class TestDACClassifyDocument(FormRecognizerTest):
         poller = client.begin_build_document_classifier(
             doc_types={
                 "IRS-1040-A": ClassifierDocumentTypeDetails(
-                    source=BlobSource(
-                        container_url=formrecognizer_training_data_classifier,
-                        prefix="IRS-1040-A/train"
-                    )
+                    source=BlobSource(container_url=formrecognizer_training_data_classifier, prefix="IRS-1040-A/train")
                 ),
                 "IRS-1040-B": ClassifierDocumentTypeDetails(
-                    source=BlobSource(
-                        container_url=formrecognizer_training_data_classifier,
-                        prefix="IRS-1040-B/train"
-                    )
+                    source=BlobSource(container_url=formrecognizer_training_data_classifier, prefix="IRS-1040-B/train")
                 ),
                 "IRS-1040-C": ClassifierDocumentTypeDetails(
-                    source=BlobSource(
-                        container_url=formrecognizer_training_data_classifier,
-                        prefix="IRS-1040-C/train"
-                    )
-                )
+                    source=BlobSource(container_url=formrecognizer_training_data_classifier, prefix="IRS-1040-C/train")
+                ),
             },
         )
         classifier = poller.result()
@@ -63,11 +53,7 @@ class TestDACClassifyDocument(FormRecognizerTest):
         with open(self.irs_classifier_document, "rb") as fd:
             my_file = fd.read()
 
-        poller = da_client.begin_classify_document(
-            classifier.classifier_id,
-            my_file,
-            cls=callback
-        )
+        poller = da_client.begin_classify_document(classifier.classifier_id, my_file, cls=callback)
         document = poller.result()
 
         raw_analyze_result = responses[0].analyze_result
@@ -97,23 +83,14 @@ class TestDACClassifyDocument(FormRecognizerTest):
         poller = client.begin_build_document_classifier(
             doc_types={
                 "IRS-1040-A": ClassifierDocumentTypeDetails(
-                    source=BlobSource(
-                        container_url=formrecognizer_training_data_classifier,
-                        prefix="IRS-1040-A/train"
-                    )
+                    source=BlobSource(container_url=formrecognizer_training_data_classifier, prefix="IRS-1040-A/train")
                 ),
                 "IRS-1040-B": ClassifierDocumentTypeDetails(
-                    source=BlobSource(
-                        container_url=formrecognizer_training_data_classifier,
-                        prefix="IRS-1040-B/train"
-                    )
+                    source=BlobSource(container_url=formrecognizer_training_data_classifier, prefix="IRS-1040-B/train")
                 ),
                 "IRS-1040-C": ClassifierDocumentTypeDetails(
-                    source=BlobSource(
-                        container_url=formrecognizer_training_data_classifier,
-                        prefix="IRS-1040-C/train"
-                    )
-                )
+                    source=BlobSource(container_url=formrecognizer_training_data_classifier, prefix="IRS-1040-C/train")
+                ),
             },
         )
         classifier = poller.result()
@@ -127,9 +104,7 @@ class TestDACClassifyDocument(FormRecognizerTest):
             responses.append(document)
 
         poller = da_client.begin_classify_document_from_url(
-            classifier_id=classifier.classifier_id,
-            document_url=self.irs_classifier_document_url,
-            cls=callback
+            classifier_id=classifier.classifier_id, document_url=self.irs_classifier_document_url, cls=callback
         )
         document = poller.result()
 

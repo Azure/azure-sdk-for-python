@@ -33,13 +33,8 @@ def _validate_input(documents, hint, whole_input_hint):
         raise TypeError("Input documents cannot be a dict")
 
     if not all(isinstance(x, str) for x in documents):
-        if not all(
-            isinstance(x, (dict, TextDocumentInput, DetectLanguageInput))
-            for x in documents
-        ):
-            raise TypeError(
-                "Mixing string and dictionary/object document input unsupported."
-            )
+        if not all(isinstance(x, (dict, TextDocumentInput, DetectLanguageInput)) for x in documents):
+            raise TypeError("Mixing string and dictionary/object document input unsupported.")
 
     request_batch = []
     for idx, doc in enumerate(documents):
@@ -66,16 +61,12 @@ def _validate_input(documents, hint, whole_input_hint):
         if isinstance(doc, TextDocumentInput):
             item_hint = doc.language
             if item_hint is None:
-                doc = TextDocumentInput(
-                    id=doc.id, language=whole_input_hint, text=doc.text
-                )
+                doc = TextDocumentInput(id=doc.id, language=whole_input_hint, text=doc.text)
             request_batch.append(doc)
         if isinstance(doc, DetectLanguageInput):
             item_hint = doc.country_hint
             if item_hint is None:
-                doc = DetectLanguageInput(
-                    id=doc.id, country_hint=whole_input_hint, text=doc.text
-                )
+                doc = DetectLanguageInput(id=doc.id, country_hint=whole_input_hint, text=doc.text)
             elif item_hint.lower() == "none":
                 doc = DetectLanguageInput(id=doc.id, country_hint="", text=doc.text)
             request_batch.append(doc)

@@ -2,9 +2,7 @@ import azure.mgmt.datalake.analytics.account
 
 import unittest
 
-from devtools_testutils import (
-    AzureMgmtRecordedTestCase, ResourceGroupPreparer, recorded_by_proxy
-)
+from devtools_testutils import AzureMgmtRecordedTestCase, ResourceGroupPreparer, recorded_by_proxy
 
 
 class TestMgmtDatalake(AzureMgmtRecordedTestCase):
@@ -22,5 +20,5 @@ class TestMgmtDatalake(AzureMgmtRecordedTestCase):
         assert response
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

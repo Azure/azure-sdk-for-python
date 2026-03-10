@@ -18,8 +18,8 @@ class UserPaged(Paged):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[User]'}
+        "next_link": {"key": "nextLink", "type": "str"},
+        "current_page": {"key": "value", "type": "[User]"},
     }
 
     def __init__(self, *args, **kwargs):

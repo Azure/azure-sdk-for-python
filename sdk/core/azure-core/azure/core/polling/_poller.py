@@ -32,7 +32,6 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.common import with_current_context
 from ._utils import _encode_continuation_token, _decode_continuation_token
 
-
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 DeserializationCallbackType = Any
 

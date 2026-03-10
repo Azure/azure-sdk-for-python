@@ -102,10 +102,7 @@ async def test_client_sas_credential_async(live_eventhub, uamqp_transport, clien
     # Finally let's do it with SAS token + conn str
     token_conn_str = "Endpoint=sb://{}/;SharedAccessSignature={};".format(hostname, token)
     conn_str_producer_client = EventHubProducerClient.from_connection_string(
-        token_conn_str,
-        eventhub_name=live_eventhub["event_hub"],
-        uamqp_transport=uamqp_transport,
-        **client_args
+        token_conn_str, eventhub_name=live_eventhub["event_hub"], uamqp_transport=uamqp_transport, **client_args
     )
 
     async with conn_str_producer_client:
@@ -181,7 +178,7 @@ async def test_client_azure_named_key_credential_async(live_eventhub, uamqp_tran
 # New feature only for Pure Python AMQP, not uamqp.
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-@pytest.mark.no_amqpproxy # testing ssl_context
+@pytest.mark.no_amqpproxy  # testing ssl_context
 async def test_client_with_ssl_context_async(auth_credentials_async, socket_transport):
     fully_qualified_namespace, eventhub_name, credential = auth_credentials_async
 

@@ -12,8 +12,8 @@ from azure.cosmos._cosmos_murmurhash3 import murmurhash3_128
 
 @pytest.mark.cosmosEmulator
 class TestMurmurHash3(unittest.TestCase):
-    """Python Murmurhash3 Tests and its compatibility with backend implementation..
-        """
+    """Python Murmurhash3 Tests and its compatibility with backend implementation.."""
+
     string_low_value = 2792699143512860960
     string_high_value = 15069672278200047189
     test_seed = _UInt128(0, 0)
@@ -29,13 +29,13 @@ class TestMurmurHash3(unittest.TestCase):
     def test_string_hash(self):
         s = "afdgdd"  # cspell:disable-line
         ba = bytearray()
-        ba.extend(s.encode('utf-8'))
+        ba.extend(s.encode("utf-8"))
         ret = murmurhash3_128(ba, self.test_seed)
         self.assertEqual(self.string_low_value, ret.get_low().value)
         self.assertEqual(self.string_high_value, ret.get_high().value)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     try:
         unittest.main()
     except SystemExit as inst:

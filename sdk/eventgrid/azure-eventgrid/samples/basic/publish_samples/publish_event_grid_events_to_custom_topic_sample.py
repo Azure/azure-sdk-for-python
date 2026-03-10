@@ -15,6 +15,7 @@ USAGE:
     2) EVENTGRID_TOPIC_ENDPOINT - The topic hostname. Typically it exists in the format
     "https://<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net/api/events".
 """
+
 import os
 from random import randint, sample
 import time

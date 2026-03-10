@@ -25,10 +25,8 @@ class ParallelComponentSchema(ComponentSchema):
     logging_level = DumpableEnumField(
         allowed_values=[LoggingLevel.DEBUG, LoggingLevel.INFO, LoggingLevel.WARN],
         dump_default=LoggingLevel.INFO,
-        metadata={
-            "description": "A string of the logging level name, which is defined in 'logging'. \
-            Possible values are 'WARNING', 'INFO', and 'DEBUG'."
-        },
+        metadata={"description": "A string of the logging level name, which is defined in 'logging'. \
+            Possible values are 'WARNING', 'INFO', and 'DEBUG'."},
     )
     task = NestedField(ComponentParallelTaskSchema, unknown=INCLUDE)
     mini_batch_size = fields.Str(
@@ -46,22 +44,18 @@ class ParallelComponentSchema(ComponentSchema):
     )
     error_threshold = fields.Integer(
         dump_default=-1,
-        metadata={
-            "description": "The number of item processing failures should be ignored. \
+        metadata={"description": "The number of item processing failures should be ignored. \
             If the error_threshold is reached, the job terminates. \
             For a list of files as inputs, one item means one file reference. \
-            This setting doesn't apply to command parallelization."
-        },
+            This setting doesn't apply to command parallelization."},
     )
     mini_batch_error_threshold = fields.Integer(
         dump_default=-1,
-        metadata={
-            "description": "The number of mini batch processing failures should be ignored. \
+        metadata={"description": "The number of mini batch processing failures should be ignored. \
             If the mini_batch_error_threshold is reached, the job terminates. \
             For a list of files as inputs, one item means one file reference. \
             This setting can be used by either command or python function parallelization. \
-            Only one error_threshold setting can be used in one job."
-        },
+            Only one error_threshold setting can be used in one job."},
     )
 
 

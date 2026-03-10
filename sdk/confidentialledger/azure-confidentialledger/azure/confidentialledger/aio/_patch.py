@@ -7,6 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 import os
 from typing import Any, List, Union
 
@@ -20,7 +21,9 @@ from azure.confidentialledger.aio._client import (
 # Since we can't `await` in __init__, use the sync client for the Identity Service.
 
 
-from azure.confidentialledger.certificate import ConfidentialLedgerCertificateClient  # pylint: disable=import-error,no-name-in-module
+from azure.confidentialledger.certificate import (
+    ConfidentialLedgerCertificateClient,
+)  # pylint: disable=import-error,no-name-in-module
 from azure.confidentialledger._patch import ConfidentialLedgerCertificateCredential
 
 __all__: List[str] = [

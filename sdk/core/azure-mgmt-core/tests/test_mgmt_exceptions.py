@@ -31,7 +31,6 @@ from azure.core.pipeline.transport._base import _HttpResponseBase
 from azure.core.exceptions import HttpResponseError
 from azure.mgmt.core.exceptions import ARMErrorFormat, TypedErrorInfo
 
-
 ARMError = functools.partial(HttpResponseError, error_format=ARMErrorFormat)
 
 

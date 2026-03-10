@@ -22,7 +22,6 @@ from helpers import build_aad_response, mock_response, Request, GET_TOKEN_METHOD
 from helpers_async import async_validating_transport, AsyncMockTransport
 from test_managed_identity import ALL_ENVIRONMENTS
 
-
 MANAGED_IDENTITY_ENVIRON = "azure.identity.aio._credentials.managed_identity.os.environ"
 
 

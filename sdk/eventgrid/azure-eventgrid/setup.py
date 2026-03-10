@@ -11,7 +11,6 @@ import os
 import re
 from setuptools import setup, find_packages
 
-
 PACKAGE_NAME = "azure-eventgrid"
 PACKAGE_PPRINT_NAME = "Azure Event Grid"
 

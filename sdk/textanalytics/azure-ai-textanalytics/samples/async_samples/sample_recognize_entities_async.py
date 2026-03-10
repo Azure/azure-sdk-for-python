@@ -45,7 +45,7 @@ async def sample_recognize_entities_async() -> None:
         """We at the Foo Company re-hired Contoso after all of our past successes with the company.
         Though the food was still great, I feel there has been a quality drop since their last time
         catering for us. Is anyone else running into the same problem?""",
-        """Bar Company is over the moon about the service we received from Contoso, the best sliders ever!!!!"""
+        """Bar Company is over the moon about the service we received from Contoso, the best sliders ever!!!!""",
     ]
 
     async with text_analytics_client:
@@ -58,15 +58,13 @@ async def sample_recognize_entities_async() -> None:
         for entity in review.entities:
             print(f"Entity '{entity.text}' has category '{entity.category}'")
 
-            if entity.category == 'Organization':
+            if entity.category == "Organization":
                 organization_to_reviews.setdefault(entity.text, [])
                 organization_to_reviews[entity.text].append(reviews[idx])
 
     for organization, reviews in organization_to_reviews.items():
         print(
-            "\n\nOrganization '{}' has left us the following review(s): {}".format(
-                organization, "\n\n".join(reviews)
-            )
+            "\n\nOrganization '{}' has left us the following review(s): {}".format(organization, "\n\n".join(reviews))
         )
     # [END recognize_entities_async]
 
@@ -75,5 +73,5 @@ async def main():
     await sample_recognize_entities_async()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

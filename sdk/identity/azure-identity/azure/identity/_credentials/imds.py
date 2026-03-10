@@ -18,7 +18,6 @@ from .._internal import within_credential_chain
 from .._internal.managed_identity_client import ManagedIdentityClient
 from .._internal.msal_managed_identity_client import MsalManagedIdentityClient
 
-
 IMDS_AUTHORITY = "http://169.254.169.254"
 IMDS_TOKEN_PATH = "/metadata/identity/oauth2/token"
 

@@ -11,12 +11,16 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import set_bodiless_matcher
 from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient, AsyncDocumentModelAdministrationLROPoller
 from azure.ai.formrecognizer import DocumentModelDetails
-from azure.ai.formrecognizer._generated.v2023_07_31.models import DocumentModelComposeOperationDetails, DocumentModelDetails as ModelDetails
+from azure.ai.formrecognizer._generated.v2023_07_31.models import (
+    DocumentModelComposeOperationDetails,
+    DocumentModelDetails as ModelDetails,
+)
 from preparers import FormRecognizerPreparer, get_async_client
 from asynctestcase import AsyncFormRecognizerTest
 from conftest import skip_flaky_test
 
 get_dma_client = functools.partial(get_async_client, DocumentModelAdministrationClient)
+
 
 class TestTrainingAsync(AsyncFormRecognizerTest):
 
@@ -30,13 +34,28 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         model_id_2 = str(uuid.uuid4())
         composed_id = str(uuid.uuid4())
         async with client:
-            poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url, model_id=model_id_1, description="model1")
+            poller = await client.begin_build_document_model(
+                "template",
+                blob_container_url=formrecognizer_storage_container_sas_url,
+                model_id=model_id_1,
+                description="model1",
+            )
             model_1 = await poller.result()
 
-            poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url, model_id=model_id_2, description="model2")
+            poller = await client.begin_build_document_model(
+                "template",
+                blob_container_url=formrecognizer_storage_container_sas_url,
+                model_id=model_id_2,
+                description="model2",
+            )
             model_2 = await poller.result()
 
-            poller = await client.begin_compose_document_model([model_1.model_id, model_2.model_id], model_id=composed_id, description="my composed model", tags={"testkey": "testvalue"})
+            poller = await client.begin_compose_document_model(
+                [model_1.model_id, model_2.model_id],
+                model_id=composed_id,
+                description="my composed model",
+                tags={"testkey": "testvalue"},
+            )
 
             composed_model = await poller.result()
             if self.is_live:
@@ -69,13 +88,19 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             raw_response.append(document_model)
 
         async with client:
-            poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url, description="model1")
+            poller = await client.begin_build_document_model(
+                "template", blob_container_url=formrecognizer_storage_container_sas_url, description="model1"
+            )
             model_1 = await poller.result()
 
-            poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url, description="model2")
+            poller = await client.begin_build_document_model(
+                "template", blob_container_url=formrecognizer_storage_container_sas_url, description="model2"
+            )
             model_2 = await poller.result()
 
-            poller = await client.begin_compose_document_model([model_1.model_id, model_2.model_id], description="my composed model", cls=callback)
+            poller = await client.begin_compose_document_model(
+                [model_1.model_id, model_2.model_id], description="my composed model", cls=callback
+            )
             model = await poller.result()
 
         generated = raw_response[0]
@@ -93,10 +118,14 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         client = get_dma_client()
         formrecognizer_storage_container_sas_url = kwargs.pop("formrecognizer_storage_container_sas_url")
         async with client:
-            poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+            poller = await client.begin_build_document_model(
+                "template", blob_container_url=formrecognizer_storage_container_sas_url
+            )
             model_1 = await poller.result()
 
-            poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+            poller = await client.begin_build_document_model(
+                "template", blob_container_url=formrecognizer_storage_container_sas_url
+            )
             model_2 = await poller.result()
 
             initial_poller = await client.begin_compose_document_model([model_1.model_id, model_2.model_id])
@@ -115,10 +144,14 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         client = get_dma_client()
         set_bodiless_matcher()
         async with client:
-            poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+            poller = await client.begin_build_document_model(
+                "template", blob_container_url=formrecognizer_storage_container_sas_url
+            )
             model_1 = await poller.result()
 
-            poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+            poller = await client.begin_build_document_model(
+                "template", blob_container_url=formrecognizer_storage_container_sas_url
+            )
             model_2 = await poller.result()
 
             poller = await client.begin_compose_document_model([model_1.model_id, model_2.model_id])

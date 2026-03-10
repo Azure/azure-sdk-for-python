@@ -11,8 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class GrpcExtensionDataTransferMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Data transfer mode: embedded or sharedMemory.
-    """
+    """Data transfer mode: embedded or sharedMemory."""
 
     #: Media samples are embedded into the gRPC messages. This mode is less efficient but it requires
     #: a simpler implementations and can be used with plugins which are not on the same node as the
@@ -23,18 +22,18 @@ class GrpcExtensionDataTransferMode(str, Enum, metaclass=CaseInsensitiveEnumMeta
     #: sharing the same shared memory space.
     SHARED_MEMORY = "sharedMemory"
 
+
 class H264Profile(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The H264 Profile
-    """
+    """The H264 Profile"""
 
     BASELINE = "Baseline"
     MAIN = "Main"
     EXTENDED = "Extended"
     HIGH = "High"
 
+
 class ImageFormatRawPixelFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Pixel format to be applied to the raw image.
-    """
+    """Pixel format to be applied to the raw image."""
 
     #: Planar YUV 4:2:0, 12bpp, (1 Cr and Cb sample per 2x2 Y samples).
     YUV420_P = "yuv420p"
@@ -59,9 +58,9 @@ class ImageFormatRawPixelFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Packed BGRA 8:8:8:8, 32bpp, BGRABGRA.
     BGRA = "bgra"
 
+
 class ImageScaleMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Describes the image scaling mode to be applied. Default mode is 'pad'.
-    """
+    """Describes the image scaling mode to be applied. Default mode is 'pad'."""
 
     #: Preserves the same aspect ratio as the input image. If only one image dimension is provided,
     #: the second dimension is calculated based on the input image aspect ratio. When 2 dimensions are
@@ -75,9 +74,9 @@ class ImageScaleMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Stretches the original image so it resized to the specified dimensions.
     STRETCH = "stretch"
 
+
 class LivePipelineState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Current pipeline state (read-only).
-    """
+    """Current pipeline state (read-only)."""
 
     #: The live pipeline is idle and not processing media.
     INACTIVE = "inactive"
@@ -91,9 +90,9 @@ class LivePipelineState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: The live pipeline is transitioning into the inactive state.
     DEACTIVATING = "deactivating"
 
+
 class MotionDetectionSensitivity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Motion detection sensitivity: low, medium, high.
-    """
+    """Motion detection sensitivity: low, medium, high."""
 
     #: Low sensitivity.
     LOW = "low"
@@ -102,14 +101,15 @@ class MotionDetectionSensitivity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: High sensitivity.
     HIGH = "high"
 
+
 class MPEG4Profile(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The MPEG4 Profile
-    """
+    """The MPEG4 Profile"""
 
     #: Simple Profile.
     SP = "SP"
     #: Advanced Simple Profile.
     ASP = "ASP"
+
 
 class ObjectTrackingAccuracy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Object tracker accuracy: low, medium, high. Higher accuracy leads to higher CPU consumption in
@@ -123,32 +123,32 @@ class ObjectTrackingAccuracy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: High accuracy.
     HIGH = "high"
 
+
 class OnvifSystemDateTimeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """An enum value determining whether the date time was configured using NTP or manual.
-    """
+    """An enum value determining whether the date time was configured using NTP or manual."""
 
     NTP = "Ntp"
     MANUAL = "Manual"
 
+
 class OutputSelectorOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The operator to compare properties by.
-    """
+    """The operator to compare properties by."""
 
     #: The property is of the type defined by value.
     IS_ENUM = "is"
     #: The property is not of the type defined by value.
     IS_NOT = "isNot"
 
+
 class OutputSelectorProperty(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The property of the data stream to be used as the selection criteria.
-    """
+    """The property of the data stream to be used as the selection criteria."""
 
     #: The stream's MIME type or subtype: audio, video or application.
     MEDIA_TYPE = "mediaType"
 
+
 class ParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of the parameter.
-    """
+    """Type of the parameter."""
 
     #: The parameter's value is a string.
     STRING = "string"
@@ -160,6 +160,7 @@ class ParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DOUBLE = "double"
     #: The parameter's value is a boolean value that is either true or false.
     BOOL = "bool"
+
 
 class RtspTransport(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Network transport utilized by the RTSP and RTP exchange: TCP or HTTP. When using TCP, the RTP
@@ -175,9 +176,9 @@ class RtspTransport(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: channel.
     TCP = "tcp"
 
+
 class SpatialAnalysisOperationFocus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The operation focus type.
-    """
+    """The operation focus type."""
 
     #: The center of the object.
     CENTER = "center"
@@ -186,36 +187,36 @@ class SpatialAnalysisOperationFocus(str, Enum, metaclass=CaseInsensitiveEnumMeta
     #: The footprint.
     FOOTPRINT = "footprint"
 
+
 class SpatialAnalysisPersonCountEventTrigger(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The event trigger type.
-    """
+    """The event trigger type."""
 
     #: Event trigger.
     EVENT = "event"
     #: Interval trigger.
     INTERVAL = "interval"
+
 
 class SpatialAnalysisPersonDistanceEventTrigger(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The event trigger type.
-    """
+    """The event trigger type."""
 
     #: Event trigger.
     EVENT = "event"
     #: Interval trigger.
     INTERVAL = "interval"
 
+
 class SpatialAnalysisPersonZoneCrossingEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The event type.
-    """
+    """The event type."""
 
     #: Zone crossing event type.
     ZONE_CROSSING = "zoneCrossing"
     #: Zone dwell time event type.
     ZONE_DWELL_TIME = "zoneDwellTime"
 
+
 class VideoEncoding(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The video codec used by the Media Profile.
-    """
+    """The video codec used by the Media Profile."""
 
     #: The Media Profile uses JPEG encoding.
     JPEG = "JPEG"

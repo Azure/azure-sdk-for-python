@@ -7,4 +7,4 @@
 # --------------------------------------------------------------------------
 from ._digitaltwins_client_async import DigitalTwinsClient
 
-__all__ = ['DigitalTwinsClient']
+__all__ = ["DigitalTwinsClient"]

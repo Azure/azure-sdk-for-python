@@ -22,11 +22,11 @@ class FileSourceInfo(Model):
     """
 
     _validation = {
-        'share_id': {'required': True},
+        "share_id": {"required": True},
     }
 
     _attribute_map = {
-        'share_id': {'key': 'shareId', 'type': 'str'},
+        "share_id": {"key": "shareId", "type": "str"},
     }
 
     def __init__(self, *, share_id: str, **kwargs) -> None:

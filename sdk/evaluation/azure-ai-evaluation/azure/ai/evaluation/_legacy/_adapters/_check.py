@@ -4,7 +4,6 @@
 
 from typing import Final
 
-
 _has_legacy = False
 try:
     from promptflow._constants import FlowType

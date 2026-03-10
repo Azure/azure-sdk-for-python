@@ -21,6 +21,7 @@ USAGE:
     3)  AZURE_TENANT_ID - tenant id for your Azure
     4)  LOADTESTSERVICE_ENDPOINT - Data Plane endpoint for Loadtestservice
 """
+
 from azure.developer.loadtesting import LoadTestAdministrationClient
 from azure.identity import DefaultAzureCredential
 

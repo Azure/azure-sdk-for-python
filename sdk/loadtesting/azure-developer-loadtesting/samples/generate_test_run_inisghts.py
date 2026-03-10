@@ -21,6 +21,7 @@ USAGE:
     4)  LOADTESTSERVICE_ENDPOINT - Data Plane endpoint for Loadtestservice
     5)  LOADTESTSERVICE_COMPLETED_TEST_RUN_ID - The ID of a completed test run for which we need to generate insights
 """
+
 from azure.developer.loadtesting import LoadTestRunClient
 from azure.identity import DefaultAzureCredential
 
@@ -31,9 +32,7 @@ load_dotenv()
 LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
 COMPLETED_TEST_RUN_ID = os.environ["LOADTESTSERVICE_COMPLETED_TEST_RUN_ID"]
 
-client = LoadTestRunClient(
-    credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT
-)
+client = LoadTestRunClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
 
 # Generate test run insights
 print(f"Generating insights for test run '{COMPLETED_TEST_RUN_ID}'...")

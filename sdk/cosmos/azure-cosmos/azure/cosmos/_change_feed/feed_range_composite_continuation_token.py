@@ -22,15 +22,20 @@
 """Internal class for change feed continuation token by feed range in the Azure Cosmos
 database service.
 """
+
 from collections import deque
 from typing import Any, Deque, Optional
 
 from azure.cosmos._change_feed.composite_continuation_token import CompositeContinuationToken
-from azure.cosmos._change_feed.feed_range_internal import (FeedRangeInternal, FeedRangeInternalEpk,
-                                                           FeedRangeInternalPartitionKey)
+from azure.cosmos._change_feed.feed_range_internal import (
+    FeedRangeInternal,
+    FeedRangeInternalEpk,
+    FeedRangeInternalPartitionKey,
+)
 from azure.cosmos._routing.routing_map_provider import SmartRoutingMapProvider
 from azure.cosmos._routing.aio.routing_map_provider import SmartRoutingMapProvider as AsyncSmartRoutingMapProvider
 from azure.cosmos._routing.routing_range import Range
+
 
 class FeedRangeCompositeContinuation:
     _version_property_name = "v"
@@ -38,10 +43,8 @@ class FeedRangeCompositeContinuation:
     _continuation_property_name = "continuation"
 
     def __init__(
-            self,
-            container_rid: str,
-            feed_range: FeedRangeInternal,
-            continuation: Deque[CompositeContinuationToken]) -> None:
+        self, container_rid: str, feed_range: FeedRangeInternal, continuation: Deque[CompositeContinuationToken]
+    ) -> None:
         if container_rid is None:
             raise ValueError("container_rid is missing")
 
@@ -65,7 +68,7 @@ class FeedRangeCompositeContinuation:
         return json_data
 
     @classmethod
-    def from_json(cls, data) -> 'FeedRangeCompositeContinuation':
+    def from_json(cls, data) -> "FeedRangeCompositeContinuation":
         version = data.get(cls._version_property_name)
         if version is None:
             raise ValueError(f"Invalid feed range composite continuation token [Missing {cls._version_property_name}]")
@@ -74,18 +77,24 @@ class FeedRangeCompositeContinuation:
 
         container_rid = data.get(cls._container_rid_property_name)
         if container_rid is None:
-            raise ValueError(f"Invalid feed range composite continuation token "
-                             f"[Missing {cls._container_rid_property_name}]")
+            raise ValueError(
+                f"Invalid feed range composite continuation token " f"[Missing {cls._container_rid_property_name}]"
+            )
 
         continuation_data = data.get(cls._continuation_property_name)
         if continuation_data is None:
-            raise ValueError(f"Invalid feed range composite continuation token "
-                             f"[Missing {cls._continuation_property_name}]")
+            raise ValueError(
+                f"Invalid feed range composite continuation token " f"[Missing {cls._continuation_property_name}]"
+            )
         if not isinstance(continuation_data, list) or len(continuation_data) == 0:
-            raise ValueError(f"Invalid feed range composite continuation token "
-                             f"[The {cls._continuation_property_name} must be non-empty array]")
-        continuation = [CompositeContinuationToken.from_json(child_range_continuation_token)
-                        for child_range_continuation_token in continuation_data]
+            raise ValueError(
+                f"Invalid feed range composite continuation token "
+                f"[The {cls._continuation_property_name} must be non-empty array]"
+            )
+        continuation = [
+            CompositeContinuationToken.from_json(child_range_continuation_token)
+            for child_range_continuation_token in continuation_data
+        ]
 
         # parsing feed range
         feed_range: Optional[FeedRangeInternal] = None
@@ -99,12 +108,14 @@ class FeedRangeCompositeContinuation:
         return cls(container_rid=container_rid, feed_range=feed_range, continuation=deque(continuation))
 
     def handle_feed_range_gone(
-            self,
-            routing_provider: SmartRoutingMapProvider,
-            collection_link: str,
-            feed_options: Optional[dict[str, Any]] = None) -> None:
-        overlapping_ranges = routing_provider.get_overlapping_ranges(collection_link,
-                                                                     [self._current_token.feed_range], feed_options)
+        self,
+        routing_provider: SmartRoutingMapProvider,
+        collection_link: str,
+        feed_options: Optional[dict[str, Any]] = None,
+    ) -> None:
+        overlapping_ranges = routing_provider.get_overlapping_ranges(
+            collection_link, [self._current_token.feed_range], feed_options
+        )
 
         if len(overlapping_ranges) == 1:
             # merge,reusing the existing the feedRange and continuationToken
@@ -115,22 +126,20 @@ class FeedRangeCompositeContinuation:
             self._continuation.popleft()
             for child_range in overlapping_ranges:
                 self._continuation.append(
-                    CompositeContinuationToken(
-                        Range.PartitionKeyRangeToRange(child_range),
-                        self._current_token.token))
+                    CompositeContinuationToken(Range.PartitionKeyRangeToRange(child_range), self._current_token.token)
+                )
 
             self._current_token = self._continuation[0]
 
     async def handle_feed_range_gone_async(
-            self,
-            routing_provider: AsyncSmartRoutingMapProvider,
-            collection_link: str,
-            feed_options: Optional[dict[str, Any]] = None) -> None:
-        overlapping_ranges = \
-            await routing_provider.get_overlapping_ranges(
-                collection_link,
-                [self._current_token.feed_range],
-                feed_options)
+        self,
+        routing_provider: AsyncSmartRoutingMapProvider,
+        collection_link: str,
+        feed_options: Optional[dict[str, Any]] = None,
+    ) -> None:
+        overlapping_ranges = await routing_provider.get_overlapping_ranges(
+            collection_link, [self._current_token.feed_range], feed_options
+        )
 
         if len(overlapping_ranges) == 1:
             # merge,reusing the existing the feedRange and continuationToken
@@ -141,9 +150,8 @@ class FeedRangeCompositeContinuation:
             self._continuation.popleft()
             for child_range in overlapping_ranges:
                 self._continuation.append(
-                    CompositeContinuationToken(
-                        Range.PartitionKeyRangeToRange(child_range),
-                        self._current_token.token))
+                    CompositeContinuationToken(Range.PartitionKeyRangeToRange(child_range), self._current_token.token)
+                )
 
             self._current_token = self._continuation[0]
 

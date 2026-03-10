@@ -7,6 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 from typing import Any, IO, List, Optional, Union, overload
 
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -289,7 +290,7 @@ class FaceSessionClient(FaceSessionClientGenerated):
         """
         if verify_image is not None:
             if not isinstance(body, _models.CreateLivenessWithVerifySessionContent):
-            # Convert body to CreateLivenessWithVerifySessionContent if necessary
+                # Convert body to CreateLivenessWithVerifySessionContent if necessary
                 body = _models.CreateLivenessWithVerifySessionContent(**body)
             request_body = (
                 _models._models.CreateLivenessWithVerifySessionMultipartContent(  # pylint: disable=protected-access

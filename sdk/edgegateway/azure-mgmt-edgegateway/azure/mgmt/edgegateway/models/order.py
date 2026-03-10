@@ -48,35 +48,35 @@ class Order(ARMBaseModel):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'contact_information': {'required': True},
-        'shipping_address': {'required': True},
-        'order_history': {'readonly': True},
-        'serial_number': {'readonly': True},
-        'delivery_tracking_info': {'readonly': True},
-        'return_tracking_info': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "contact_information": {"required": True},
+        "shipping_address": {"required": True},
+        "order_history": {"readonly": True},
+        "serial_number": {"readonly": True},
+        "delivery_tracking_info": {"readonly": True},
+        "return_tracking_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'contact_information': {'key': 'properties.contactInformation', 'type': 'ContactDetails'},
-        'shipping_address': {'key': 'properties.shippingAddress', 'type': 'Address'},
-        'current_status': {'key': 'properties.currentStatus', 'type': 'OrderStatus'},
-        'order_history': {'key': 'properties.orderHistory', 'type': '[OrderStatus]'},
-        'serial_number': {'key': 'properties.serialNumber', 'type': 'str'},
-        'delivery_tracking_info': {'key': 'properties.deliveryTrackingInfo', 'type': '[TrackingInfo]'},
-        'return_tracking_info': {'key': 'properties.returnTrackingInfo', 'type': '[TrackingInfo]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "contact_information": {"key": "properties.contactInformation", "type": "ContactDetails"},
+        "shipping_address": {"key": "properties.shippingAddress", "type": "Address"},
+        "current_status": {"key": "properties.currentStatus", "type": "OrderStatus"},
+        "order_history": {"key": "properties.orderHistory", "type": "[OrderStatus]"},
+        "serial_number": {"key": "properties.serialNumber", "type": "str"},
+        "delivery_tracking_info": {"key": "properties.deliveryTrackingInfo", "type": "[TrackingInfo]"},
+        "return_tracking_info": {"key": "properties.returnTrackingInfo", "type": "[TrackingInfo]"},
     }
 
     def __init__(self, **kwargs):
         super(Order, self).__init__(**kwargs)
-        self.contact_information = kwargs.get('contact_information', None)
-        self.shipping_address = kwargs.get('shipping_address', None)
-        self.current_status = kwargs.get('current_status', None)
+        self.contact_information = kwargs.get("contact_information", None)
+        self.shipping_address = kwargs.get("shipping_address", None)
+        self.current_status = kwargs.get("current_status", None)
         self.order_history = None
         self.serial_number = None
         self.delivery_tracking_info = None

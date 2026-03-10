@@ -43,6 +43,7 @@ def wrap_in_future(fn):
     def wrapper(*args, **kwargs):
         result = fn(*args, **kwargs)
         return get_completed_future(result)
+
     return wrapper
 
 
@@ -65,13 +66,16 @@ class TestLogging(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     async def test_mock_quota_exceeded_403(self, **kwargs):
         response = mock.Mock(
-            status_code=403,
-            headers={"Retry-After": 186688, "Content-Type": "application/json"},
-            reason="Bad Request"
+            status_code=403, headers={"Retry-After": 186688, "Content-Type": "application/json"}, reason="Bad Request"
         )
         response.text = lambda encoding=None: json.dumps(
-            {"error": {"code": "403", "message": "Out of call volume quota for FormRecognizer F0 pricing tier. "
-            "Please retry after 1 day. To increase your call volume switch to a paid tier."}}
+            {
+                "error": {
+                    "code": "403",
+                    "message": "Out of call volume quota for FormRecognizer F0 pricing tier. "
+                    "Please retry after 1 day. To increase your call volume switch to a paid tier.",
+                }
+            }
         )
         response.content_type = "application/json"
         transport = AsyncMockTransport(send=wrap_in_future(lambda request, **kwargs: response))
@@ -81,18 +85,24 @@ class TestLogging(AsyncFormRecognizerTest):
         with pytest.raises(HttpResponseError) as e:
             poller = await client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)
         assert e.value.status_code == 403
-        assert e.value.error.message == 'Out of call volume quota for FormRecognizer F0 pricing tier. Please retry after 1 day. To increase your call volume switch to a paid tier.'
+        assert (
+            e.value.error.message
+            == "Out of call volume quota for FormRecognizer F0 pricing tier. Please retry after 1 day. To increase your call volume switch to a paid tier."
+        )
 
     @FormRecognizerPreparer()
     async def test_mock_quota_exceeded_429(self, **kwargs):
         response = mock.Mock(
-            status_code=429,
-            headers={"Retry-After": 186688, "Content-Type": "application/json"},
-            reason="Bad Request"
+            status_code=429, headers={"Retry-After": 186688, "Content-Type": "application/json"}, reason="Bad Request"
         )
         response.text = lambda encoding=None: json.dumps(
-            {"error": {"code": "429", "message": "Out of call volume quota for FormRecognizer F0 pricing tier. "
-            "Please retry after 1 day. To increase your call volume switch to a paid tier."}}
+            {
+                "error": {
+                    "code": "429",
+                    "message": "Out of call volume quota for FormRecognizer F0 pricing tier. "
+                    "Please retry after 1 day. To increase your call volume switch to a paid tier.",
+                }
+            }
         )
         response.content_type = "application/json"
         transport = AsyncMockTransport(send=wrap_in_future(lambda request, **kwargs: response))
@@ -101,4 +111,7 @@ class TestLogging(AsyncFormRecognizerTest):
         with pytest.raises(HttpResponseError) as e:
             poller = await client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)
         assert e.value.status_code == 429
-        assert e.value.error.message == 'Out of call volume quota for FormRecognizer F0 pricing tier. Please retry after 1 day. To increase your call volume switch to a paid tier.'
+        assert (
+            e.value.error.message
+            == "Out of call volume quota for FormRecognizer F0 pricing tier. Please retry after 1 day. To increase your call volume switch to a paid tier."
+        )

@@ -39,7 +39,7 @@ class DummyTokenExchangeClient:
 
     def exchange_entra_token(self):
         return DummyToken("dummy", 9999999999)
-        
+
 
 class DummyTokenExchangeClientSwitch:
     def __init__(self, resource_endpoint, token_credential, scopes):
@@ -251,11 +251,11 @@ class TestCommunicationTokenCredential(TestCase):
 
     def test_all_fields_present_calls_token_exchange(monkeypatch):
         # Patch TokenExchangeClient to our dummy
-        with patch("azure.communication.identity._shared.user_credential.TokenExchangeClient", DummyTokenExchangeClient):
+        with patch(
+            "azure.communication.identity._shared.user_credential.TokenExchangeClient", DummyTokenExchangeClient
+        ):
             cred = CommunicationTokenCredential(
-                resource_endpoint="https://endpoint",
-                token_credential=MagicMock(),
-                scopes=["scope"]
+                resource_endpoint="https://endpoint", token_credential=MagicMock(), scopes=["scope"]
             )
             token = cred.get_token()
             assert token.token == "dummy"
@@ -263,11 +263,10 @@ class TestCommunicationTokenCredential(TestCase):
 
     def test_missing_scopes_calls_token_exchange(monkeypatch):
         # Patch TokenExchangeClient to our dummy
-        with patch("azure.communication.identity._shared.user_credential.TokenExchangeClient", DummyTokenExchangeClient):
-            cred = CommunicationTokenCredential(
-                resource_endpoint="https://endpoint",
-                token_credential=MagicMock()
-            )
+        with patch(
+            "azure.communication.identity._shared.user_credential.TokenExchangeClient", DummyTokenExchangeClient
+        ):
+            cred = CommunicationTokenCredential(resource_endpoint="https://endpoint", token_credential=MagicMock())
             token = cred.get_token()
             assert token.token == "dummy"
             assert token.expires_on == 9999999999
@@ -275,11 +274,11 @@ class TestCommunicationTokenCredential(TestCase):
     def test_token_exchange_refreshes_from_expired_to_valid(monkeypatch):
         # Patch TokenExchangeClient to DummyTokenExchangeClientSwitch
         # First call returns expired token - when initializing the token
-        with patch("azure.communication.identity._shared.user_credential.TokenExchangeClient", DummyTokenExchangeClientSwitch):
+        with patch(
+            "azure.communication.identity._shared.user_credential.TokenExchangeClient", DummyTokenExchangeClientSwitch
+        ):
             cred = CommunicationTokenCredential(
-                resource_endpoint="https://endpoint",
-                token_credential=MagicMock(),
-                scopes=["scope"]
+                resource_endpoint="https://endpoint", token_credential=MagicMock(), scopes=["scope"]
             )
             # Second call will trigger a refresh and generate a valid token
             token2 = cred.get_token()

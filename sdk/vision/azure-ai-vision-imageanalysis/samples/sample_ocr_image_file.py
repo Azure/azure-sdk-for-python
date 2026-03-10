@@ -10,7 +10,7 @@ DESCRIPTION:
     The synchronous (blocking) `analyze` method call returns an `ImageAnalysisResult` object.
     Its `read` property (a `ReadResult` object) includes a list of `TextBlock` objects. Currently, the
     list will always contain one element only, as the service does not yet support grouping text lines
-    into separate blocks. The `TextBlock` object contains a list of `DocumentLine` object. Each one includes: 
+    into separate blocks. The `TextBlock` object contains a list of `DocumentLine` object. Each one includes:
     - The text content of the line.
     - A `BoundingPolygon` coordinates in pixels, for a polygon surrounding the line of text in the image.
     - A list of `DocumentWord` objects.
@@ -18,7 +18,7 @@ DESCRIPTION:
     - The text content of the word.
     - A `BoundingPolygon` coordinates in pixels, for a polygon surrounding the word in the image.
     - A confidence score in the range [0, 1], with higher values indicating greater confidences in
-      the recognition of the word. 
+      the recognition of the word.
 
 USAGE:
     python sample_ocr_image_file.py
@@ -47,10 +47,7 @@ def sample_ocr_image_file():
         exit()
 
     # Create an Image Analysis client
-    client = ImageAnalysisClient(
-        endpoint=endpoint,
-        credential=AzureKeyCredential(key)
-    )
+    client = ImageAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # [START read]
     # Load image to analyze into a 'bytes' object
@@ -58,10 +55,7 @@ def sample_ocr_image_file():
         image_data = f.read()
 
     # Extract text (OCR) from an image stream. This will be a synchronously (blocking) call.
-    result = client.analyze(
-        image_data=image_data,
-        visual_features=[VisualFeatures.READ]
-    )
+    result = client.analyze(image_data=image_data, visual_features=[VisualFeatures.READ])
 
     # Print text (OCR) analysis results to the console
     print("Image analysis results:")
@@ -70,7 +64,9 @@ def sample_ocr_image_file():
         for line in result.read.blocks[0].lines:
             print(f"   Line: '{line.text}', Bounding box {line.bounding_polygon}")
             for word in line.words:
-                print(f"     Word: '{word.text}', Bounding polygon {word.bounding_polygon}, Confidence {word.confidence:.4f}")
+                print(
+                    f"     Word: '{word.text}', Bounding polygon {word.bounding_polygon}, Confidence {word.confidence:.4f}"
+                )
     # [END read]
     print(f" Image height: {result.metadata.height}")
     print(f" Image width: {result.metadata.width}")

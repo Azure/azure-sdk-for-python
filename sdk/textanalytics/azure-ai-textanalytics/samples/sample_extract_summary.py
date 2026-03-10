@@ -57,13 +57,9 @@ def sample_extractive_summarization():
     extract_summary_results = poller.result()
     for result in extract_summary_results:
         if result.kind == "ExtractiveSummarization":
-            print("Summary extracted: \n{}".format(
-                " ".join([sentence.text for sentence in result.sentences]))
-            )
+            print("Summary extracted: \n{}".format(" ".join([sentence.text for sentence in result.sentences])))
         elif result.is_error is True:
-            print("...Is an error with code '{}' and message '{}'".format(
-                result.error.code, result.error.message
-            ))
+            print("...Is an error with code '{}' and message '{}'".format(result.error.code, result.error.message))
     # [END extract_summary]
 
 

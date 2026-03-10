@@ -6,6 +6,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 from typing import List, overload, Mapping, Any, Generic, TypeVar
 from azure.core.messaging import CloudEvent
 from ._models import (

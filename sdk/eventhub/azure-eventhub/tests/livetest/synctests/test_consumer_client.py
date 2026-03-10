@@ -226,7 +226,7 @@ def test_receive_batch_no_max_wait_time(auth_credential_senders, uamqp_transport
         credential=credential(),
         consumer_group="$default",
         uamqp_transport=uamqp_transport,
-        **client_args
+        **client_args,
     )
 
     def on_event_batch(partition_context, event_batch):
@@ -287,7 +287,7 @@ def test_receive_batch_empty_with_max_wait_time(
         credential=credential(),
         consumer_group="$default",
         uamqp_transport=uamqp_transport,
-        **client_args
+        **client_args,
     )
 
     def on_event_batch(partition_context, event_batch):
@@ -317,7 +317,7 @@ def test_receive_batch_early_callback(auth_credential_senders, uamqp_transport, 
         credential=credential(),
         consumer_group="$default",
         uamqp_transport=uamqp_transport,
-        **client_args
+        **client_args,
     )
 
     def on_event_batch(partition_context, event_batch):
@@ -373,7 +373,7 @@ def test_receive_batch_tracing(auth_credential_senders, uamqp_transport, client_
         credential=credential(),
         consumer_group="$default",
         uamqp_transport=uamqp_transport,
-        **client_args
+        **client_args,
     )
 
     # with fake_span(name="ReceiveSpan") as root_receive:
@@ -419,7 +419,7 @@ def test_receive_batch_large_event(auth_credential_senders, uamqp_transport, cli
         credential=credential(),
         consumer_group="$default",
         uamqp_transport=uamqp_transport,
-        **client_args
+        **client_args,
     )
 
     def on_event(partition_context, event):

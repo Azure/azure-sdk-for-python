@@ -5,7 +5,6 @@
 from typing import Final, Optional
 from typing_extensions import TypeAlias
 
-
 try:
     from promptflow._utils.user_agent_utils import ClientUserAgentUtil as _ClientUserAgentUtil
     from promptflow._utils.async_utils import async_run_allowing_running_loop as _async_run_allowing_running_loop

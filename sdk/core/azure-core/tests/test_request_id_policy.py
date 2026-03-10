@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for the request id policy."""
+
 from azure.core.pipeline.policies import RequestIdPolicy
 from azure.core.pipeline import PipelineRequest, PipelineContext
 

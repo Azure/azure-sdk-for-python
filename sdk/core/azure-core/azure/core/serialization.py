@@ -12,7 +12,6 @@ from typing import Dict, List, Optional, Union, cast, Any, Type, Callable, Tuple
 from datetime import datetime, date, time, timedelta
 from datetime import timezone
 
-
 __all__ = [
     "NULL",
     "AzureJSONEncoder",

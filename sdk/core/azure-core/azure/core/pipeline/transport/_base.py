@@ -68,7 +68,6 @@ from ...utils._pipeline_transport_rest_shared import (
     _parts_helper,
 )
 
-
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 DataType = Union[bytes, str, Dict[str, Union[str, int]]]

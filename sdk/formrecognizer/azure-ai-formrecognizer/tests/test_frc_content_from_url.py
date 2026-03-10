@@ -71,7 +71,7 @@ class TestContentFromUrl(FormRecognizerTest):
         assert layout.page_number == 1
         self.assertFormPagesHasValues(result)
         assert layout.tables[0].row_count == 3
-        assert layout.tables[0].column_count== 5
+        assert layout.tables[0].column_count == 5
         assert layout.tables[0].page_number == 1
 
     @skip_flaky_test
@@ -109,11 +109,11 @@ class TestContentFromUrl(FormRecognizerTest):
         assert layout.page_number == 1
         self.assertFormPagesHasValues(result)
         assert layout.tables[0].row_count == 5
-        assert layout.tables[0].column_count== 4
+        assert layout.tables[0].column_count == 4
         assert layout.tables[1].row_count == 4
-        assert layout.tables[1].column_count== 2
+        assert layout.tables[1].column_count == 2
         assert layout.tables[0].page_number == 1
-        assert layout.tables[1].page_number== 1
+        assert layout.tables[1].page_number == 1
 
     @skip_flaky_test
     @FormRecognizerPreparer()
@@ -174,16 +174,16 @@ class TestContentFromUrl(FormRecognizerTest):
         assert layout.page_number == 1
         assert len(layout.tables) == 2
         assert layout.tables[0].row_count == 29
-        assert layout.tables[0].column_count== 4
+        assert layout.tables[0].column_count == 4
         assert layout.tables[0].page_number == 1
         assert layout.tables[1].row_count == 6
-        assert layout.tables[1].column_count== 5
-        assert layout.tables[1].page_number== 1
+        assert layout.tables[1].column_count == 5
+        assert layout.tables[1].page_number == 1
         layout = result[1]
         assert len(layout.tables) == 1
         assert layout.page_number == 2
         assert layout.tables[0].row_count == 23
-        assert layout.tables[0].column_count== 5
+        assert layout.tables[0].column_count == 5
         assert layout.tables[0].page_number == 2
         self.assertFormPagesHasValues(result)
 
@@ -239,7 +239,7 @@ class TestContentFromUrl(FormRecognizerTest):
         client = get_fr_client()
         poller = client.begin_recognize_content_from_url(self.form_url_jpg, reading_order="natural")
 
-        assert 'natural' == poller._polling_method._initial_response.http_response.request.query['readingOrder']
+        assert "natural" == poller._polling_method._initial_response.http_response.request.query["readingOrder"]
         result = poller.result()
         assert result
 
@@ -249,7 +249,7 @@ class TestContentFromUrl(FormRecognizerTest):
     def test_content_language_specified(self):
         client = get_fr_client()
         poller = client.begin_recognize_content_from_url(self.form_url_jpg, language="de")
-        assert 'de' == poller._polling_method._initial_response.http_response.request.query['language']
+        assert "de" == poller._polling_method._initial_response.http_response.request.query["language"]
         result = poller.result()
         assert result
 

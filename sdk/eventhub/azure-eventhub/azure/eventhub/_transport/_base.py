@@ -191,7 +191,7 @@ class AmqpTransport(ABC):  # pylint: disable=too-many-public-methods
     @staticmethod
     @abstractmethod
     def get_connection_state(
-        connection: Union["uamqp_Connection", "pyamqp_Connection"]
+        connection: Union["uamqp_Connection", "pyamqp_Connection"],
     ) -> Union["uamqp_ConnectionState", "pyamqp_ConnectionState"]:
         """
         Gets connection state.

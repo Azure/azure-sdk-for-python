@@ -38,59 +38,63 @@ class HealthInsightsSamples:
 
         # Create a Trial Matcher client
         # <client>
-        trial_matcher_client = ClinicalMatchingClient(endpoint=ENDPOINT,
-                                                      credential=AzureKeyCredential(KEY))
+        trial_matcher_client = ClinicalMatchingClient(endpoint=ENDPOINT, credential=AzureKeyCredential(KEY))
         # </client>
 
         # Create clinical info list
         # <clinicalInfo>
-        clinical_info_list = [models.ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
-                                                          code="C0006826",
-                                                          name="Malignant Neoplasms",
-                                                          value="true"),
-                              models.ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
-                                                          code="C1522449",
-                                                          name="Therapeutic radiology procedure",
-                                                          value="true"),
-                              models.ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
-                                                          code="METASTATIC",
-                                                          name="metastatic",
-                                                          value="true"),
-                              models.ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
-                                                          code="C1512162",
-                                                          name="Eastern Cooperative Oncology Group",
-                                                          value="1"),
-                              models.ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
-                                                          code="C0019693",
-                                                          name="HIV Infections",
-                                                          value="false"),
-                              models.ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
-                                                          code="C1300072",
-                                                          name="Tumor stage",
-                                                          value="2"),
-                              models.ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
-                                                          code="C0019163",
-                                                          name="Hepatitis B",
-                                                          value="false"),
-                              models.ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
-                                                          code="C0018802",
-                                                          name="Congestive heart failure",
-                                                          value="true"),
-                              models.ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
-                                                          code="C0019196",
-                                                          name="Hepatitis C",
-                                                          value="false"),
-                              models.ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
-                                                          code="C0220650",
-                                                          name="Metastatic malignant neoplasm to brain",
-                                                          value="true")]
+        clinical_info_list = [
+            models.ClinicalCodedElement(
+                system="http://www.nlm.nih.gov/research/umls", code="C0006826", name="Malignant Neoplasms", value="true"
+            ),
+            models.ClinicalCodedElement(
+                system="http://www.nlm.nih.gov/research/umls",
+                code="C1522449",
+                name="Therapeutic radiology procedure",
+                value="true",
+            ),
+            models.ClinicalCodedElement(
+                system="http://www.nlm.nih.gov/research/umls", code="METASTATIC", name="metastatic", value="true"
+            ),
+            models.ClinicalCodedElement(
+                system="http://www.nlm.nih.gov/research/umls",
+                code="C1512162",
+                name="Eastern Cooperative Oncology Group",
+                value="1",
+            ),
+            models.ClinicalCodedElement(
+                system="http://www.nlm.nih.gov/research/umls", code="C0019693", name="HIV Infections", value="false"
+            ),
+            models.ClinicalCodedElement(
+                system="http://www.nlm.nih.gov/research/umls", code="C1300072", name="Tumor stage", value="2"
+            ),
+            models.ClinicalCodedElement(
+                system="http://www.nlm.nih.gov/research/umls", code="C0019163", name="Hepatitis B", value="false"
+            ),
+            models.ClinicalCodedElement(
+                system="http://www.nlm.nih.gov/research/umls",
+                code="C0018802",
+                name="Congestive heart failure",
+                value="true",
+            ),
+            models.ClinicalCodedElement(
+                system="http://www.nlm.nih.gov/research/umls", code="C0019196", name="Hepatitis C", value="false"
+            ),
+            models.ClinicalCodedElement(
+                system="http://www.nlm.nih.gov/research/umls",
+                code="C0220650",
+                name="Metastatic malignant neoplasm to brain",
+                value="true",
+            ),
+        ]
 
         # </clinicalInfo>
 
         # Construct Patient
         # <PatientConstructor>
-        patient_info = models.PatientInfo(sex=models.PatientInfoSex.MALE, birth_date=datetime.date(1965, 12, 26),
-                                          clinical_info=clinical_info_list)
+        patient_info = models.PatientInfo(
+            sex=models.PatientInfoSex.MALE, birth_date=datetime.date(1965, 12, 26), clinical_info=clinical_info_list
+        )
         patient1 = models.PatientRecord(id="patient_id", info=patient_info)
         # </PatientConstructor>
 
@@ -103,9 +107,9 @@ class HealthInsightsSamples:
         # Specify the clinical trial registry source as ClinicalTrials.Gov
         registry_filters.sources = [models.ClinicalTrialSource.CLINICALTRIALS_GOV]
         # Limit the clinical trial to a certain location, in this case California, USA
-        registry_filters.facility_locations = [models.GeographicLocation(country_or_region="United States",
-                                                                         city="Gilbert",
-                                                                         state="Arizona")]
+        registry_filters.facility_locations = [
+            models.GeographicLocation(country_or_region="United States", city="Gilbert", state="Arizona")
+        ]
         # Limit the trial to a specific study type, interventional
         registry_filters.study_types = [models.ClinicalTrialStudyType.INTERVENTIONAL]
 

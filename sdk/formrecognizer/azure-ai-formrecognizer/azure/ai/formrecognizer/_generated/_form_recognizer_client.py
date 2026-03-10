@@ -26,12 +26,14 @@ if TYPE_CHECKING:
 
     from azure.core.credentials import TokenCredential
 
+
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
         """This is a fake class to support current implemetation of MultiApiClientMixin."
         Will be removed in final version of multiapi azure-core based client
         """
         pass
+
 
 class FormRecognizerClient(FormRecognizerClientOperationsMixin, MultiApiClientMixin, _SDKClient):
     """Extracts information from forms and images into structured data.
@@ -55,53 +57,52 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin, MultiApiClientMi
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    DEFAULT_API_VERSION = '2.1'
+    DEFAULT_API_VERSION = "2.1"
     _PROFILE_TAG = "azure.ai.formrecognizer.FormRecognizerClient"
-    LATEST_PROFILE = ProfileDefinition({
-        _PROFILE_TAG: {
-            None: DEFAULT_API_VERSION,
-            'authorize_copy_document_model': '2022-08-31',
-            'begin_analyze_document': '2022-08-31',
-            'begin_build_document_model': '2022-08-31',
-            'begin_compose_document_model': '2022-08-31',
-            'begin_copy_document_model_to': '2022-08-31',
-            'delete_document_model': '2022-08-31',
-            'document_classifiers': '2023-07-31',
-            'document_models': '2023-07-31',
-            'get_analyze_document_result': '2022-08-31',
-            'get_document_model': '2022-08-31',
-            'get_document_models': '2022-08-31',
-            'get_operation': '2022-08-31',
-            'get_operations': '2022-08-31',
-            'get_resource_details': '2022-08-31',
-            'miscellaneous': '2023-07-31',
-            'train_custom_model_async': '2.0',
-        }},
-        _PROFILE_TAG + " latest"
+    LATEST_PROFILE = ProfileDefinition(
+        {
+            _PROFILE_TAG: {
+                None: DEFAULT_API_VERSION,
+                "authorize_copy_document_model": "2022-08-31",
+                "begin_analyze_document": "2022-08-31",
+                "begin_build_document_model": "2022-08-31",
+                "begin_compose_document_model": "2022-08-31",
+                "begin_copy_document_model_to": "2022-08-31",
+                "delete_document_model": "2022-08-31",
+                "document_classifiers": "2023-07-31",
+                "document_models": "2023-07-31",
+                "get_analyze_document_result": "2022-08-31",
+                "get_document_model": "2022-08-31",
+                "get_document_models": "2022-08-31",
+                "get_operation": "2022-08-31",
+                "get_operations": "2022-08-31",
+                "get_resource_details": "2022-08-31",
+                "miscellaneous": "2023-07-31",
+                "train_custom_model_async": "2.0",
+            }
+        },
+        _PROFILE_TAG + " latest",
     )
 
     def __init__(
         self,
         credential,  # type: "TokenCredential"
         endpoint,  # type: str
-        api_version=None, # type: Optional[str]
-        profile=KnownProfiles.default, # type: KnownProfiles
+        api_version=None,  # type: Optional[str]
+        profile=KnownProfiles.default,  # type: KnownProfiles
         **kwargs  # type: Any
     ):
-        if api_version == '2022-08-31' or api_version == '2023-07-31':
-            base_url = '{endpoint}/formrecognizer'
-        elif api_version == '2.0':
-            base_url = '{endpoint}/formrecognizer/v2.0'
-        elif api_version == '2.1':
-            base_url = '{endpoint}/formrecognizer/v2.1'
+        if api_version == "2022-08-31" or api_version == "2023-07-31":
+            base_url = "{endpoint}/formrecognizer"
+        elif api_version == "2.0":
+            base_url = "{endpoint}/formrecognizer/v2.0"
+        elif api_version == "2.1":
+            base_url = "{endpoint}/formrecognizer/v2.1"
         else:
             raise ValueError("API version {} is not available".format(api_version))
         self._config = FormRecognizerClientConfiguration(credential, endpoint, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
-        super(FormRecognizerClient, self).__init__(
-            api_version=api_version,
-            profile=profile
-        )
+        super(FormRecognizerClient, self).__init__(api_version=api_version, profile=profile)
 
     @classmethod
     def _models_dict(cls, api_version):
@@ -111,22 +112,26 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin, MultiApiClientMi
     def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
-           * 2022-08-31: :mod:`v2022_08_31.models<azure.ai.formrecognizer.v2022_08_31.models>`
-           * 2023-07-31: :mod:`v2023_07_31.models<azure.ai.formrecognizer.v2023_07_31.models>`
-           * 2.0: :mod:`v2_0.models<azure.ai.formrecognizer.v2_0.models>`
-           * 2.1: :mod:`v2_1.models<azure.ai.formrecognizer.v2_1.models>`
+        * 2022-08-31: :mod:`v2022_08_31.models<azure.ai.formrecognizer.v2022_08_31.models>`
+        * 2023-07-31: :mod:`v2023_07_31.models<azure.ai.formrecognizer.v2023_07_31.models>`
+        * 2.0: :mod:`v2_0.models<azure.ai.formrecognizer.v2_0.models>`
+        * 2.1: :mod:`v2_1.models<azure.ai.formrecognizer.v2_1.models>`
         """
-        if api_version == '2022-08-31':
+        if api_version == "2022-08-31":
             from .v2022_08_31 import models
+
             return models
-        elif api_version == '2023-07-31':
+        elif api_version == "2023-07-31":
             from .v2023_07_31 import models
+
             return models
-        elif api_version == '2.0':
+        elif api_version == "2.0":
             from .v2_0 import models
+
             return models
-        elif api_version == '2.1':
+        elif api_version == "2.1":
             from .v2_1 import models
+
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
@@ -134,45 +139,62 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin, MultiApiClientMi
     def document_classifiers(self):
         """Instance depends on the API version:
 
-           * 2023-07-31: :class:`DocumentClassifiersOperations<azure.ai.formrecognizer.v2023_07_31.operations.DocumentClassifiersOperations>`
+        * 2023-07-31: :class:`DocumentClassifiersOperations<azure.ai.formrecognizer.v2023_07_31.operations.DocumentClassifiersOperations>`
         """
-        api_version = self._get_api_version('document_classifiers')
-        if api_version == '2023-07-31':
+        api_version = self._get_api_version("document_classifiers")
+        if api_version == "2023-07-31":
             from .v2023_07_31.operations import DocumentClassifiersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'document_classifiers'".format(api_version))
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(
+            self._client,
+            self._config,
+            Serializer(self._models_dict(api_version)),
+            Deserializer(self._models_dict(api_version)),
+        )
 
     @property
     def document_models(self):
         """Instance depends on the API version:
 
-           * 2023-07-31: :class:`DocumentModelsOperations<azure.ai.formrecognizer.v2023_07_31.operations.DocumentModelsOperations>`
+        * 2023-07-31: :class:`DocumentModelsOperations<azure.ai.formrecognizer.v2023_07_31.operations.DocumentModelsOperations>`
         """
-        api_version = self._get_api_version('document_models')
-        if api_version == '2023-07-31':
+        api_version = self._get_api_version("document_models")
+        if api_version == "2023-07-31":
             from .v2023_07_31.operations import DocumentModelsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'document_models'".format(api_version))
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(
+            self._client,
+            self._config,
+            Serializer(self._models_dict(api_version)),
+            Deserializer(self._models_dict(api_version)),
+        )
 
     @property
     def miscellaneous(self):
         """Instance depends on the API version:
 
-           * 2023-07-31: :class:`MiscellaneousOperations<azure.ai.formrecognizer.v2023_07_31.operations.MiscellaneousOperations>`
+        * 2023-07-31: :class:`MiscellaneousOperations<azure.ai.formrecognizer.v2023_07_31.operations.MiscellaneousOperations>`
         """
-        api_version = self._get_api_version('miscellaneous')
-        if api_version == '2023-07-31':
+        api_version = self._get_api_version("miscellaneous")
+        if api_version == "2023-07-31":
             from .v2023_07_31.operations import MiscellaneousOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'miscellaneous'".format(api_version))
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(
+            self._client,
+            self._config,
+            Serializer(self._models_dict(api_version)),
+            Deserializer(self._models_dict(api_version)),
+        )
 
     def close(self):
         self._client.close()
+
     def __enter__(self):
         self._client.__enter__()
         return self
+
     def __exit__(self, *exc_details):
         self._client.__exit__(*exc_details)

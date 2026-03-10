@@ -14,7 +14,6 @@ from preparers import FormRecognizerPreparer, get_async_client
 from asynctestcase import AsyncFormRecognizerTest
 from conftest import skip_flaky_test
 
-
 get_da_client = functools.partial(get_async_client, DocumentAnalysisClient)
 
 
@@ -27,7 +26,9 @@ class TestDACAnalyzeReadAsync(AsyncFormRecognizerTest):
     async def test_document_read_url_features_formulas(self):
         client = get_da_client()
         async with client:
-            poller = await client.begin_analyze_document_from_url("prebuilt-read", self.formula_url_jpg, features=[AnalysisFeature.FORMULAS])
+            poller = await client.begin_analyze_document_from_url(
+                "prebuilt-read", self.formula_url_jpg, features=[AnalysisFeature.FORMULAS]
+            )
             result = await poller.result()
         assert len(result.pages) > 0
         assert len(result.pages[0].formulas) == 2
@@ -59,7 +60,9 @@ class TestDACAnalyzeReadAsync(AsyncFormRecognizerTest):
             responses.append(extracted_document)
 
         async with client:
-            poller = await client.begin_analyze_document("prebuilt-read", document, features=[AnalysisFeature.LANGUAGES], cls=callback)
+            poller = await client.begin_analyze_document(
+                "prebuilt-read", document, features=[AnalysisFeature.LANGUAGES], cls=callback
+            )
             result = await poller.result()
         raw_analyze_result = responses[0].analyze_result
         returned_model = responses[1]
@@ -68,7 +71,7 @@ class TestDACAnalyzeReadAsync(AsyncFormRecognizerTest):
         assert returned_model.model_id == raw_analyze_result.model_id
         assert returned_model.api_version == raw_analyze_result.api_version
         assert returned_model.content == raw_analyze_result.content
-        
+
         self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
@@ -79,7 +82,6 @@ class TestDACAnalyzeReadAsync(AsyncFormRecognizerTest):
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
         self.assertDocumentParagraphsTransformCorrect(returned_model.paragraphs, raw_analyze_result.paragraphs)
-
 
     @pytest.mark.live_test_only
     @skip_flaky_test

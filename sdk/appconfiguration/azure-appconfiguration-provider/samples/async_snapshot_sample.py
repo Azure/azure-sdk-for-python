@@ -6,8 +6,8 @@
 import os
 import uuid
 import asyncio
-from azure.appconfiguration.aio import AzureAppConfigurationClient  # type:ignore
-from azure.appconfiguration import (  # type:ignore
+from azure.appconfiguration.aio import AzureAppConfigurationClient  # type: ignore
+from azure.appconfiguration import (  # type: ignore
     ConfigurationSettingsFilter,
     ConfigurationSetting,
     FeatureFlagConfigurationSetting,

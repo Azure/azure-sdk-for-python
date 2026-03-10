@@ -5,7 +5,6 @@ from typing import Any, Dict, List, Optional, TypedDict
 import json
 from azure.ai.evaluation._common._experimental import experimental
 
-
 # NOTE: The RedTeam* TypedDict classes below are being gradually deprecated in favor of
 # the standard EvalRun* models from azure.ai.evaluation._common.onedp.models._models.
 # New code should use EvalRunOutputItem instead of RedTeamOutputItem, etc.

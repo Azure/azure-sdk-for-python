@@ -14,7 +14,6 @@ from preparers import FormRecognizerPreparer, get_sync_client
 from testcase import FormRecognizerTest
 from conftest import skip_flaky_test
 
-
 get_da_client = functools.partial(get_sync_client, DocumentAnalysisClient)
 
 
@@ -26,7 +25,9 @@ class TestDACAnalyzeRead(FormRecognizerTest):
     @recorded_by_proxy
     def test_document_read_url_features_formulas(self):
         client = get_da_client()
-        poller = client.begin_analyze_document_from_url("prebuilt-read", self.formula_url_jpg, features=[AnalysisFeature.FORMULAS])
+        poller = client.begin_analyze_document_from_url(
+            "prebuilt-read", self.formula_url_jpg, features=[AnalysisFeature.FORMULAS]
+        )
         result = poller.result()
         assert len(result.pages) > 0
         assert len(result.pages[0].formulas) == 2
@@ -57,7 +58,9 @@ class TestDACAnalyzeRead(FormRecognizerTest):
             responses.append(analyze_result)
             responses.append(extracted_document)
 
-        poller = client.begin_analyze_document("prebuilt-read", document, features=[AnalysisFeature.LANGUAGES], cls=callback)
+        poller = client.begin_analyze_document(
+            "prebuilt-read", document, features=[AnalysisFeature.LANGUAGES], cls=callback
+        )
         result = poller.result()
         raw_analyze_result = responses[0].analyze_result
         returned_model = responses[1]
@@ -66,7 +69,7 @@ class TestDACAnalyzeRead(FormRecognizerTest):
         assert returned_model.model_id == raw_analyze_result.model_id
         assert returned_model.api_version == raw_analyze_result.api_version
         assert returned_model.content == raw_analyze_result.content
-        
+
         self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
@@ -77,7 +80,6 @@ class TestDACAnalyzeRead(FormRecognizerTest):
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
         self.assertDocumentParagraphsTransformCorrect(returned_model.paragraphs, raw_analyze_result.paragraphs)
-
 
     @pytest.mark.live_test_only
     @skip_flaky_test
@@ -104,7 +106,7 @@ class TestDACAnalyzeRead(FormRecognizerTest):
         assert returned_model.model_id == raw_analyze_result.model_id
         assert returned_model.api_version == raw_analyze_result.api_version
         assert returned_model.content == raw_analyze_result.content
-        
+
         self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 

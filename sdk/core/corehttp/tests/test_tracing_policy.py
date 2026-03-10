@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 """Tests for the distributed tracing policy."""
+
 from unittest import mock
 import pytest
 

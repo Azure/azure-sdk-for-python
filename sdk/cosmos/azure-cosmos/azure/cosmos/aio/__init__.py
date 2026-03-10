@@ -25,10 +25,4 @@ from ._database import DatabaseProxy
 from ._user import UserProxy
 from ._scripts import ScriptsProxy
 
-__all__ = (
-    "CosmosClient",
-    "DatabaseProxy",
-    "ContainerProxy",
-    "ScriptsProxy",
-    "UserProxy"
-)
+__all__ = ("CosmosClient", "DatabaseProxy", "ContainerProxy", "ScriptsProxy", "UserProxy")

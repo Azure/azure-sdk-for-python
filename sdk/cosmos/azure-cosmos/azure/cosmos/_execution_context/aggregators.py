@@ -4,6 +4,7 @@
 """Internal class for aggregation queries implementation in the Azure Cosmos
 database service.
 """
+
 from abc import abstractmethod, ABCMeta
 from azure.cosmos._execution_context.document_producer import _OrderByHelper
 

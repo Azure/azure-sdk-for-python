@@ -26,6 +26,7 @@
 """
 This module is the requests implementation of Pipeline ABC
 """
+
 import logging
 from urllib.parse import urlparse
 from typing import Optional, TypeVar, Dict, Any, Union, Type

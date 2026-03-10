@@ -18,7 +18,6 @@ from azure.identity.aio import (
 from ci_tools.variables import in_ci
 from devtools_testutils import get_credential
 
-
 # for pytest.parametrize
 GA = "2024-10-21"
 PREVIEW = "2025-03-01-preview"
@@ -76,7 +75,9 @@ def client(api_type, api_version):
     if api_type == "azure":
         client = openai.AzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
-            azure_ad_token_provider=get_bearer_token_provider(get_credential(), "https://cognitiveservices.azure.com/.default"),
+            azure_ad_token_provider=get_bearer_token_provider(
+                get_credential(), "https://cognitiveservices.azure.com/.default"
+            ),
             api_version=api_version,
         )
     elif api_type == "azure_key":
@@ -86,19 +87,21 @@ def client(api_type, api_version):
             api_version=api_version,
         )
     elif api_type in ["openai", "gpt_4_openai", "tts_openai"]:
-        client = openai.OpenAI(
-            api_key=os.getenv(ENV_OPENAI_KEY)
-        )
+        client = openai.OpenAI(api_key=os.getenv(ENV_OPENAI_KEY))
     elif api_type in ["whisper_azure", "tts_azure"]:
         client = openai.AzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT),
-            azure_ad_token_provider=get_bearer_token_provider(get_credential(), "https://cognitiveservices.azure.com/.default"),
+            azure_ad_token_provider=get_bearer_token_provider(
+                get_credential(), "https://cognitiveservices.azure.com/.default"
+            ),
             api_version=api_version,
         )
     elif api_type in ["dalle_azure", "gpt_4_azure", "asst_azure"]:
         client = openai.AzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT),
-            azure_ad_token_provider=get_bearer_token_provider(get_credential(), "https://cognitiveservices.azure.com/.default"),
+            azure_ad_token_provider=get_bearer_token_provider(
+                get_credential(), "https://cognitiveservices.azure.com/.default"
+            ),
             api_version=api_version,
         )
     return client
@@ -112,7 +115,9 @@ def client_async(api_type, api_version):
     if api_type == "azure":
         client = openai.AsyncAzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
-            azure_ad_token_provider=get_bearer_token_provider_async(get_credential(is_async=True), "https://cognitiveservices.azure.com/.default"),
+            azure_ad_token_provider=get_bearer_token_provider_async(
+                get_credential(is_async=True), "https://cognitiveservices.azure.com/.default"
+            ),
             api_version=api_version,
         )
     elif api_type == "azure_key":
@@ -122,19 +127,21 @@ def client_async(api_type, api_version):
             api_version=api_version,
         )
     elif api_type in ["openai", "gpt_4_openai", "tts_openai"]:
-        client = openai.AsyncOpenAI(
-            api_key=os.getenv(ENV_OPENAI_KEY)
-        )
+        client = openai.AsyncOpenAI(api_key=os.getenv(ENV_OPENAI_KEY))
     elif api_type in ["whisper_azure", "tts_azure"]:
         client = openai.AsyncAzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT),
-            azure_ad_token_provider=get_bearer_token_provider_async(get_credential(is_async=True), "https://cognitiveservices.azure.com/.default"),
+            azure_ad_token_provider=get_bearer_token_provider_async(
+                get_credential(is_async=True), "https://cognitiveservices.azure.com/.default"
+            ),
             api_version=api_version,
         )
     elif api_type in ["dalle_azure", "gpt_4_azure", "asst_azure"]:
         client = openai.AsyncAzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT),
-            azure_ad_token_provider=get_bearer_token_provider_async(get_credential(is_async=True), "https://cognitiveservices.azure.com/.default"),
+            azure_ad_token_provider=get_bearer_token_provider_async(
+                get_credential(is_async=True), "https://cognitiveservices.azure.com/.default"
+            ),
             api_version=api_version,
         )
     return client
@@ -152,8 +159,14 @@ def build_kwargs(args, api_type):
         elif api_type in ["tts_azure"]:
             return {"model": ENV_AZURE_OPENAI_TTS_NAME}
     if test_feature.startswith(
-        ("test_client", "test_models", "test_chat_completions",
-         "test_assistants", "test_responses", "test_vector_stores")
+        (
+            "test_client",
+            "test_models",
+            "test_chat_completions",
+            "test_assistants",
+            "test_responses",
+            "test_vector_stores",
+        )
     ):
         if api_type in ["azure", "azure_key", "asst_azure"]:
             return {"model": ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME}
@@ -224,7 +237,6 @@ def configure(f):
             raise
 
     return wrapper
-
 
 
 @contextlib.contextmanager

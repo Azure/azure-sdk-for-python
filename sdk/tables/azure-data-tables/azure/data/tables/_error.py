@@ -18,7 +18,6 @@ from azure.core.exceptions import (
 )
 from azure.core.pipeline.policies import ContentDecodePolicy
 
-
 _ERROR_UNKNOWN = "Unknown error ({0})"
 _ERROR_VALUE_NONE = "{0} should not be None."
 
@@ -52,18 +51,14 @@ def _wrap_exception(ex, desired_type):
 
 def _validate_storage_tablename(table_name):
     if _STORAGE_VALID_TABLE.match(table_name) is None:
-        raise ValueError(
-            "Storage table names must be alphanumeric, cannot begin with a number, \
-                and must be between 3-63 characters long."
-        )
+        raise ValueError("Storage table names must be alphanumeric, cannot begin with a number, \
+                and must be between 3-63 characters long.")
 
 
 def _validate_cosmos_tablename(table_name):
     if _COSMOS_VALID_TABLE.match(table_name) is None:
-        raise ValueError(
-            "Cosmos table names must contain from 1-255 characters, \
-                and they cannot contain /, \\, #, ?, or a trailing space."
-        )
+        raise ValueError("Cosmos table names must contain from 1-255 characters, \
+                and they cannot contain /, \\, #, ?, or a trailing space.")
 
 
 def _validate_tablename_error(decoded_error, table_name):

@@ -120,7 +120,7 @@ class _QueryExecutionContextBase(object):
             new_options["continuation"] = self._continuation
 
             response_headers = {}
-            (fetched_items, response_headers) = fetch_function(new_options)
+            fetched_items, response_headers = fetch_function(new_options)
             if not self._has_started:
                 self._has_started = True
 
@@ -168,16 +168,18 @@ class _QueryExecutionContextBase(object):
                         _LOGGER.error(
                             "Partition split retry: Exhausted all %d retries. "
                             "state: _has_started=%s, _continuation=%s",
-                            max_retries, self._has_started, self._continuation
+                            max_retries,
+                            self._has_started,
+                            self._continuation,
                         )
                         raise  # Exhausted retries, propagate error
 
                     _LOGGER.warning(
                         "Partition split retry: 410 error (sub_status=%s). Attempt %d of %d. "
                         "Refreshing routing map and resetting state.",
-                        getattr(e, 'sub_status', 'N/A'),
+                        getattr(e, "sub_status", "N/A"),
                         attempt,
-                        max_retries
+                        max_retries,
                     )
 
                     # Refresh routing map to get new partition key ranges
@@ -195,6 +197,7 @@ class _QueryExecutionContextBase(object):
             "This indicates a potential logic error."
         )
         return []
+
     next = __next__  # Python 2 compatibility.
 
 

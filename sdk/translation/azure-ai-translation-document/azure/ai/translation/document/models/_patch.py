@@ -20,7 +20,6 @@ from ._models import (
 )
 from ._enums import StorageInputType
 
-
 if TYPE_CHECKING:
     from .. import models as _models
 

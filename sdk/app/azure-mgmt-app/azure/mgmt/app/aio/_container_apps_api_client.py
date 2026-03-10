@@ -15,11 +15,23 @@ from msrest import Deserializer, Serializer
 
 from .. import models
 from ._configuration import ContainerAppsAPIClientConfiguration
-from .operations import CertificatesOperations, ContainerAppsAuthConfigsOperations, ContainerAppsOperations, ContainerAppsRevisionReplicasOperations, ContainerAppsRevisionsOperations, ContainerAppsSourceControlsOperations, DaprComponentsOperations, ManagedEnvironmentsOperations, ManagedEnvironmentsStoragesOperations, Operations
+from .operations import (
+    CertificatesOperations,
+    ContainerAppsAuthConfigsOperations,
+    ContainerAppsOperations,
+    ContainerAppsRevisionReplicasOperations,
+    ContainerAppsRevisionsOperations,
+    ContainerAppsSourceControlsOperations,
+    DaprComponentsOperations,
+    ManagedEnvironmentsOperations,
+    ManagedEnvironmentsStoragesOperations,
+    Operations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
+
 
 class ContainerAppsAPIClient:
     """ContainerAppsAPIClient.
@@ -67,7 +79,9 @@ class ContainerAppsAPIClient:
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = ContainerAppsAPIClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._config = ContainerAppsAPIClientConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -75,22 +89,29 @@ class ContainerAppsAPIClient:
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.container_apps = ContainerAppsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.container_apps_revisions = ContainerAppsRevisionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.container_apps_revision_replicas = ContainerAppsRevisionReplicasOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.managed_environments = ManagedEnvironmentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.container_apps_revisions = ContainerAppsRevisionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.container_apps_revision_replicas = ContainerAppsRevisionReplicasOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.managed_environments = ManagedEnvironmentsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.certificates = CertificatesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.container_apps_source_controls = ContainerAppsSourceControlsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.container_apps_source_controls = ContainerAppsSourceControlsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.dapr_components = DaprComponentsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.container_apps_auth_configs = ContainerAppsAuthConfigsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.managed_environments_storages = ManagedEnvironmentsStoragesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.container_apps_auth_configs = ContainerAppsAuthConfigsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.managed_environments_storages = ManagedEnvironmentsStoragesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest

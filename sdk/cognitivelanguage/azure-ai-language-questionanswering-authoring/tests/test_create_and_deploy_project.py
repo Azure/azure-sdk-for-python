@@ -6,7 +6,6 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient
 
 
-
 class TestCreateAndDeploy(QuestionAnsweringAuthoringTestCase):
     def test_polling_interval(self, qna_authoring_creds):
         client = QuestionAnsweringAuthoringClient(
@@ -24,7 +23,7 @@ class TestCreateAndDeploy(QuestionAnsweringAuthoringTestCase):
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
         project_name = "IsaacNewton"
-        client.create_project( # pylint: disable=no-value-for-parameter
+        client.create_project(  # pylint: disable=no-value-for-parameter
             project_name=project_name,
             options={
                 "description": "Biography of Sir Isaac Newton",
@@ -45,7 +44,7 @@ class TestCreateAndDeploy(QuestionAnsweringAuthoringTestCase):
             client,
             project_name=project_name,
             is_deployable=True,
-            polling_interval=0 if self.is_playback else None, # pylint: disable=using-constant-test
+            polling_interval=0 if self.is_playback else None,  # pylint: disable=using-constant-test
         )
         deployment_poller = client.begin_deploy_project(
             project_name=project_name,

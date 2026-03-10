@@ -15,7 +15,6 @@ from azure.ai.documentintelligence.models import (
 from testcase import DocumentIntelligenceTest
 from preparers import DocumentIntelligencePreparer, GlobalClientPreparer as _GlobalClientPreparer
 
-
 DocumentIntelligenceClientPreparer = functools.partial(_GlobalClientPreparer, DocumentIntelligenceClient)
 
 

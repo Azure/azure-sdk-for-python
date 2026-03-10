@@ -43,26 +43,32 @@ class TestStreamingFailOver(unittest.TestCase):
         connection_policy.PreferredLocations = self.preferred_regional_endpoints
         connection_policy.DisableSSLVerification = True
 
-        client = cosmos_client.CosmosClient(self.DEFAULT_ENDPOINT, self.MASTER_KEY,
-                                            consistency_level=documents.ConsistencyLevel.Eventual,
-                                            connection_policy=connection_policy)
+        client = cosmos_client.CosmosClient(
+            self.DEFAULT_ENDPOINT,
+            self.MASTER_KEY,
+            consistency_level=documents.ConsistencyLevel.Eventual,
+            connection_policy=connection_policy,
+        )
         self.original_get_database_account = client.client_connection.GetDatabaseAccount
-        self.original_get_read_endpoints = (client.client_connection._global_endpoint_manager.location_cache
-                                            .get_read_regional_routing_contexts())
-        self.original_get_write_endpoints = (client.client_connection._global_endpoint_manager.location_cache
-                                             .get_write_regional_routing_contexts())
+        self.original_get_read_endpoints = (
+            client.client_connection._global_endpoint_manager.location_cache.get_read_regional_routing_contexts()
+        )
+        self.original_get_write_endpoints = (
+            client.client_connection._global_endpoint_manager.location_cache.get_write_regional_routing_contexts()
+        )
         client.client_connection.GetDatabaseAccount = self.mock_get_database_account
         client.client_connection._global_endpoint_manager.location_cache.get_read_regional_routing_contexts = (
-            self.mock_get_read_endpoints)
+            self.mock_get_read_endpoints
+        )
         client.client_connection._global_endpoint_manager.location_cache.get_write_regional_routing_contexts = (
-            self.mock_get_write_endpoints)
+            self.mock_get_write_endpoints
+        )
         created_db = client.create_database_if_not_exists("streaming-db" + str(uuid.uuid4()))
-        created_container = created_db.create_container("streaming-container" + str(uuid.uuid4()),
-                                                        PartitionKey(path="/id"))
+        created_container = created_db.create_container(
+            "streaming-container" + str(uuid.uuid4()), PartitionKey(path="/id")
+        )
 
-        document_definition = {'id': 'doc',
-                               'name': 'sample document',
-                               'key': 'value'}
+        document_definition = {"id": "doc", "name": "sample document", "key": "value"}
 
         created_document = created_container.create_item(document_definition)
 
@@ -83,33 +89,35 @@ class TestStreamingFailOver(unittest.TestCase):
         cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount = self.original_get_database_account
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         client.client_connection._global_endpoint_manager.location_cache.get_read_regional_routing_contexts = (
-            self.original_get_read_endpoints)
+            self.original_get_read_endpoints
+        )
         client.client_connection._global_endpoint_manager.location_cache.get_write_regional_routing_contexts = (
-            self.original_get_write_endpoints)
+            self.original_get_write_endpoints
+        )
 
     def mock_get_database_account(self, url_connection=None):
         database_account = documents.DatabaseAccount()
         database_account._EnableMultipleWritableLocations = True
         database_account._WritableLocations = [
-            {'name': self.WRITE_ENDPOINT_NAME1, 'databaseAccountEndpoint': self.WRITE_ENDPOINT1},
-            {'name': self.WRITE_ENDPOINT_NAME2, 'databaseAccountEndpoint': self.WRITE_ENDPOINT2}
+            {"name": self.WRITE_ENDPOINT_NAME1, "databaseAccountEndpoint": self.WRITE_ENDPOINT1},
+            {"name": self.WRITE_ENDPOINT_NAME2, "databaseAccountEndpoint": self.WRITE_ENDPOINT2},
         ]
         database_account._ReadableLocations = [
-            {'name': self.READ_ENDPOINT_NAME1, 'databaseAccountEndpoint': self.READ_ENDPOINT1},
-            {'name': self.READ_ENDPOINT_NAME2, 'databaseAccountEndpoint': self.READ_ENDPOINT2}
+            {"name": self.READ_ENDPOINT_NAME1, "databaseAccountEndpoint": self.READ_ENDPOINT1},
+            {"name": self.READ_ENDPOINT_NAME2, "databaseAccountEndpoint": self.READ_ENDPOINT2},
         ]
         return database_account
 
     def mock_get_read_endpoints(self):
         return [
-            {'name': self.READ_ENDPOINT_NAME1, 'databaseAccountEndpoint': self.READ_ENDPOINT1},
-            {'name': self.READ_ENDPOINT_NAME2, 'databaseAccountEndpoint': self.READ_ENDPOINT2}
+            {"name": self.READ_ENDPOINT_NAME1, "databaseAccountEndpoint": self.READ_ENDPOINT1},
+            {"name": self.READ_ENDPOINT_NAME2, "databaseAccountEndpoint": self.READ_ENDPOINT2},
         ]
 
     def mock_get_write_endpoints(self):
         return [
-            {'name': self.WRITE_ENDPOINT_NAME1, 'databaseAccountEndpoint': self.WRITE_ENDPOINT1},
-            {'name': self.WRITE_ENDPOINT_NAME2, 'databaseAccountEndpoint': self.WRITE_ENDPOINT2}
+            {"name": self.WRITE_ENDPOINT_NAME1, "databaseAccountEndpoint": self.WRITE_ENDPOINT1},
+            {"name": self.WRITE_ENDPOINT_NAME2, "databaseAccountEndpoint": self.WRITE_ENDPOINT2},
         ]
 
     def _MockExecuteFunctionEndpointDiscover(self, function, *args, **kwargs):
@@ -120,9 +128,8 @@ class TestStreamingFailOver(unittest.TestCase):
             self.endpoint_sequence.append(args[1].location_endpoint_to_route)
             response = test_config.FakeResponse({HttpHeaders.SubStatus: SubStatusCodes.WRITE_FORBIDDEN})
             raise exceptions.CosmosHttpResponseError(
-                status_code=StatusCodes.FORBIDDEN,
-                message="Request is not permitted in this region",
-                response=response)
+                status_code=StatusCodes.FORBIDDEN, message="Request is not permitted in this region", response=response
+            )
 
     def test_retry_policy_does_not_mark_null_locations_unavailable(self):
         self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
@@ -131,9 +138,12 @@ class TestStreamingFailOver(unittest.TestCase):
         connection_policy.PreferredLocations = self.preferred_regional_endpoints
         connection_policy.DisableSSLVerification = True
 
-        client = cosmos_client.CosmosClient(self.DEFAULT_ENDPOINT, self.MASTER_KEY,
-                                            consistency_level=documents.ConsistencyLevel.Eventual,
-                                            connection_policy=connection_policy)
+        client = cosmos_client.CosmosClient(
+            self.DEFAULT_ENDPOINT,
+            self.MASTER_KEY,
+            consistency_level=documents.ConsistencyLevel.Eventual,
+            connection_policy=connection_policy,
+        )
         self.original_get_database_account = client.client_connection.GetDatabaseAccount
         client.client_connection.GetDatabaseAccount = self.mock_get_database_account
 
@@ -141,22 +151,26 @@ class TestStreamingFailOver(unittest.TestCase):
 
         self.original_mark_endpoint_unavailable_for_read_function = endpoint_manager.mark_endpoint_unavailable_for_read
         endpoint_manager.mark_endpoint_unavailable_for_read = self._mock_mark_endpoint_unavailable_for_read
-        self.original_mark_endpoint_unavailable_for_write_function = endpoint_manager.mark_endpoint_unavailable_for_write
+        self.original_mark_endpoint_unavailable_for_write_function = (
+            endpoint_manager.mark_endpoint_unavailable_for_write
+        )
         endpoint_manager.mark_endpoint_unavailable_for_write = self._mock_mark_endpoint_unavailable_for_write
         self.original_resolve_service_endpoint = endpoint_manager.resolve_service_endpoint_for_partition
         endpoint_manager.resolve_service_endpoint_for_partition = self._mock_resolve_service_endpoint
 
         # Read and write counters count the number of times the endpoint manager's
-        # mark_endpoint_unavailable_for_read() and mark_endpoint_unavailable_for_read() 
+        # mark_endpoint_unavailable_for_read() and mark_endpoint_unavailable_for_read()
         # functions were called. When a 'None' location is returned by resolve_service_endpoint(),
         # these functions  should not be called
         self._read_counter = 0
         self._write_counter = 0
         request = RequestObject(http_constants.ResourceType.Document, documents._OperationType.Read)
         endpoint_discovery_retry_policy = _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy(
-            documents.ConnectionPolicy(), endpoint_manager, request)
-        endpoint_discovery_retry_policy.ShouldRetry(exceptions.CosmosHttpResponseError(
-            status_code=http_constants.StatusCodes.FORBIDDEN))
+            documents.ConnectionPolicy(), endpoint_manager, request
+        )
+        endpoint_discovery_retry_policy.ShouldRetry(
+            exceptions.CosmosHttpResponseError(status_code=http_constants.StatusCodes.FORBIDDEN)
+        )
         self.assertEqual(self._read_counter, 0)
         self.assertEqual(self._write_counter, 0)
 
@@ -164,16 +178,18 @@ class TestStreamingFailOver(unittest.TestCase):
         self._write_counter = 0
         request = RequestObject(http_constants.ResourceType.Document, documents._OperationType.Create)
         endpoint_discovery_retry_policy = _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy(
-            documents.ConnectionPolicy(), endpoint_manager, request)
-        endpoint_discovery_retry_policy.ShouldRetry(exceptions.CosmosHttpResponseError(
-            status_code=http_constants.StatusCodes.FORBIDDEN))
+            documents.ConnectionPolicy(), endpoint_manager, request
+        )
+        endpoint_discovery_retry_policy.ShouldRetry(
+            exceptions.CosmosHttpResponseError(status_code=http_constants.StatusCodes.FORBIDDEN)
+        )
         self.assertEqual(self._read_counter, 0)
         self.assertEqual(self._write_counter, 0)
 
-        endpoint_manager.mark_endpoint_unavailable_for_read = (self
-                                                               .original_mark_endpoint_unavailable_for_read_function)
-        endpoint_manager.mark_endpoint_unavailable_for_write = (self.
-                                                                original_mark_endpoint_unavailable_for_write_function)
+        endpoint_manager.mark_endpoint_unavailable_for_read = self.original_mark_endpoint_unavailable_for_read_function
+        endpoint_manager.mark_endpoint_unavailable_for_write = (
+            self.original_mark_endpoint_unavailable_for_write_function
+        )
         cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount = self.original_get_database_account
 
     def _mock_mark_endpoint_unavailable_for_read(self, endpoint):
@@ -189,5 +205,5 @@ class TestStreamingFailOver(unittest.TestCase):
         return None
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

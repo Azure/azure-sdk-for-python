@@ -61,7 +61,7 @@ def AllInstanceTypes(
         def wrapper_use_instance(*args, **kwargs):
             # type: (*Any, **Any) -> T
 
-            instances = []  # type:List[str]
+            instances = []  # type: List[str]
             instances.append(kwargs.get("attestation_aad_url"))
             instances.append(kwargs.get("attestation_isolated_url"))
             if include_shared:

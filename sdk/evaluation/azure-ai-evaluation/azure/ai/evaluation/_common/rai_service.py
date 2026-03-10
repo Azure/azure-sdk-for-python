@@ -40,7 +40,6 @@ from .constants import (
 )
 from .utils import get_harm_severity_level, retrieve_content_type
 
-
 LOGGER = logging.getLogger(__name__)
 
 USER_TEXT_TEMPLATE_DICT: Dict[str, Template] = {

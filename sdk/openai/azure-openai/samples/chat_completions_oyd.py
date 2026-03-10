@@ -27,7 +27,9 @@ USAGE:
 # These lines are intentionally excluded from the sample code, we use them to configure any vars
 # or to tweak usage in ways that keep samples looking consistent when rendered in docs and tools
 import os
+
 os.environ["AZURE_OPENAI_ENDPOINT"] = os.environ["AZ_OPENAI_ENDPOINT"]
+
 
 def chat_completion_oyd_studio_viewcode() -> None:
     import os
@@ -37,9 +39,7 @@ def chat_completion_oyd_studio_viewcode() -> None:
     endpoint = os.environ["AZURE_OPENAI_ENDPOINT"]
     deployment = os.environ["AZURE_OPENAI_CHAT_DEPLOYMENT"]
 
-    token_provider = get_bearer_token_provider(
-        DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"
-    )
+    token_provider = get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default")
 
     client = AzureOpenAI(
         azure_endpoint=endpoint,

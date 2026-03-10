@@ -57,7 +57,6 @@ from azure.monitor.opentelemetry.exporter._utils import (
     PeriodicTask,
 )
 
-
 _logger = logging.getLogger(__name__)
 
 

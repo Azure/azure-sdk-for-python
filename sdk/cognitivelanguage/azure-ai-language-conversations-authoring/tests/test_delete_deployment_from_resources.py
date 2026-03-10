@@ -20,6 +20,7 @@ class TestConversations(AzureRecordedTestCase):
     def create_client(self, endpoint, key):
         return ConversationAuthoringClient(endpoint, AzureKeyCredential(key))
 
+
 @pytest.mark.playback_test_only
 class TestConversationsDeleteDeploymentSync(TestConversations):
     @ConversationsPreparer()

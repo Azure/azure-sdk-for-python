@@ -50,7 +50,6 @@ from .policies import (
     NetworkTraceLoggingPolicy,
 )
 
-
 HTTPRequestType = TypeVar("HTTPRequestType")
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", bound="AsyncContextManager")
 

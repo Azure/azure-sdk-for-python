@@ -44,7 +44,7 @@ class AccessControlClient(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        base_url = '{endpoint}'
+        base_url = "{endpoint}"
         self._config = AccessControlClientConfiguration(credential, endpoint, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
@@ -54,9 +54,11 @@ class AccessControlClient(object):
         self._deserialize = Deserializer(client_models)
 
         self.role_assignments = RoleAssignmentsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.role_definitions = RoleDefinitionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def _send_request(self, http_request, **kwargs):
         # type: (HttpRequest, Any) -> HttpResponse
@@ -69,7 +71,7 @@ class AccessControlClient(object):
         :rtype: ~azure.core.pipeline.transport.HttpResponse
         """
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
         stream = kwargs.pop("stream", True)

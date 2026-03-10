@@ -22,8 +22,8 @@ from azure.cosmos.partition_key import PartitionKey
 # Sample - demonstrates the asynchronous read_items API for Azure Cosmos DB
 # ----------------------------------------------------------------------------------------------------------
 
-HOST = config.settings['host']
-MASTER_KEY = config.settings['master_key']
+HOST = config.settings["host"]
+MASTER_KEY = config.settings["master_key"]
 DATABASE_ID = "read_items_async_db"
 CONTAINER_ID = "read_items_async_container"
 
@@ -36,7 +36,7 @@ async def create_items(container: ContainerProxy, num_items: int) -> list:
         doc_id = f"item_{i}_{uuid.uuid4()}"
         # For this sample, the partition key is the same as the item id
         pk_value = doc_id
-        item_body = {'id': doc_id, 'data': i}
+        item_body = {"id": doc_id, "data": i}
         await container.create_item(body=item_body)
         items_to_read.append((doc_id, pk_value))
     print(f"{num_items} items created.")
@@ -71,25 +71,22 @@ async def demonstrate_read_items(container: ContainerProxy) -> None:
     def response_hook(headers, results):
         """A simple hook to capture the aggregated headers and the final result list."""
         print("Response hook called!")
-        hook_captured_data['headers'] = headers
-        hook_captured_data['results'] = results
-        hook_captured_data['call_count'] = hook_captured_data.get('call_count', 0) + 1
+        hook_captured_data["headers"] = headers
+        hook_captured_data["results"] = results
+        hook_captured_data["call_count"] = hook_captured_data.get("call_count", 0) + 1
 
     items_for_hook = await create_items(container, 10)
-    hook_results = await container.read_items(
-        items=items_for_hook,
-        response_hook=response_hook
-    )
+    hook_results = await container.read_items(items=items_for_hook, response_hook=response_hook)
 
     print(f"Response hook was called {hook_captured_data.get('call_count', 0)} time(s).")
-    if 'headers' in hook_captured_data:
+    if "headers" in hook_captured_data:
         print(f"Aggregated request charge from hook: {hook_captured_data['headers'].get('x-ms-request-charge')}")
     print(f"Result list from hook is the same as returned list: {hook_captured_data['results'] is hook_results}")
 
 
 async def run_sample():
     """An asynchronous sample for the read_items API."""
-    client = CosmosClient(HOST, {'masterKey': MASTER_KEY})
+    client = CosmosClient(HOST, {"masterKey": MASTER_KEY})
     db = None
     try:
         # Create a database
@@ -98,10 +95,7 @@ async def run_sample():
 
         # Create a container with /id as the partition key
         partition_key = PartitionKey(path="/id")
-        container = await db.create_container_if_not_exists(
-            id=CONTAINER_ID,
-            partition_key=partition_key
-        )
+        container = await db.create_container_if_not_exists(id=CONTAINER_ID, partition_key=partition_key)
         print(f"Container '{CONTAINER_ID}' created or already exists.")
 
         await demonstrate_read_items(container)
@@ -121,5 +115,5 @@ async def run_sample():
         await client.close()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(run_sample())

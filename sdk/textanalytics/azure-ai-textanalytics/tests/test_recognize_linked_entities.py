@@ -22,6 +22,7 @@ from azure.ai.textanalytics import (
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
 TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
 
+
 class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
@@ -35,8 +36,10 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
     def test_all_successful_passing_dict(self, client):
-        docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
-                {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
+        docs = [
+            {"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
+            {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"},
+        ]
 
         response = client.recognize_linked_entities(docs, show_stats=True)
         for doc in response:
@@ -59,7 +62,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
     def test_all_successful_passing_text_document_input(self, client):
         docs = [
             TextDocumentInput(id="1", text="Microsoft was founded by Bill Gates and Paul Allen"),
-            TextDocumentInput(id="2", text="Microsoft fue fundado por Bill Gates y Paul Allen")
+            TextDocumentInput(id="2", text="Microsoft fue fundado por Bill Gates y Paul Allen"),
         ]
 
         response = client.recognize_linked_entities(docs)
@@ -82,7 +85,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
         docs = [
             "Microsoft was founded by Bill Gates and Paul Allen",
             "Microsoft fue fundado por Bill Gates y Paul Allen",
-            ""
+            "",
         ]
 
         response = client.recognize_linked_entities(docs)
@@ -94,8 +97,10 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
     def test_input_with_some_errors(self, client):
-        docs = [{"id": "1", "text": ""},
-                {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
+        docs = [
+            {"id": "1", "text": ""},
+            {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"},
+        ]
 
         response = client.recognize_linked_entities(docs)
         assert response[0].is_error
@@ -105,8 +110,10 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
     def test_input_with_all_errors(self, client):
-        docs = [{"id": "1", "text": ""},
-                {"id": "2", "language": "Spanish", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
+        docs = [
+            {"id": "1", "text": ""},
+            {"id": "2", "language": "Spanish", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"},
+        ]
 
         response = client.recognize_linked_entities(docs)
         assert response[0].is_error
@@ -133,7 +140,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
             TextDocumentInput(id="2", text="two"),
             TextDocumentInput(id="3", text="three"),
             TextDocumentInput(id="4", text="four"),
-            TextDocumentInput(id="5", text="five")
+            TextDocumentInput(id="5", text="five"),
         ]
 
         response = client.recognize_linked_entities(docs)
@@ -146,18 +153,14 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
     @recorded_by_proxy
     def test_empty_credential_class(self, client):
         with pytest.raises(ClientAuthenticationError):
-            response = client.recognize_linked_entities(
-                ["This is written in English."]
-            )
+            response = client.recognize_linked_entities(["This is written in English."])
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"textanalytics_test_api_key": "xxxxxxxxxxxx"})
     @recorded_by_proxy
     def test_bad_credentials(self, client):
         with pytest.raises(ClientAuthenticationError):
-            response = client.recognize_linked_entities(
-                ["This is written in English."]
-            )
+            response = client.recognize_linked_entities(["This is written in English."])
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -175,7 +178,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
         docs = [
             {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
             TextDocumentInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
-            "You cannot mix string input with the above inputs"
+            "You cannot mix string input with the above inputs",
         ]
         with pytest.raises(TypeError):
             response = client.recognize_linked_entities(docs)
@@ -184,11 +187,13 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
     def test_out_of_order_ids(self, client):
-        docs = [{"id": "56", "text": ":)"},
-                {"id": "0", "text": ":("},
-                {"id": "22", "text": ""},
-                {"id": "19", "text": ":P"},
-                {"id": "1", "text": ":D"}]
+        docs = [
+            {"id": "56", "text": ":)"},
+            {"id": "0", "text": ":("},
+            {"id": "22", "text": ""},
+            {"id": "19", "text": ":P"},
+            {"id": "1", "text": ":D"},
+        ]
 
         response = client.recognize_linked_entities(docs)
         in_order = ["56", "0", "22", "19", "1"]
@@ -208,17 +213,16 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
             assert response.statistics.valid_document_count == 4
             assert response.statistics.erroneous_document_count == 1
 
-        docs = [{"id": "56", "text": ":)"},
-                {"id": "0", "text": ":("},
-                {"id": "22", "text": ""},
-                {"id": "19", "text": ":P"},
-                {"id": "1", "text": ":D"}]
+        docs = [
+            {"id": "56", "text": ":)"},
+            {"id": "0", "text": ":("},
+            {"id": "22", "text": ""},
+            {"id": "19", "text": ":P"},
+            {"id": "1", "text": ":D"},
+        ]
 
         response = client.recognize_linked_entities(
-            docs,
-            show_stats=True,
-            model_version="latest",
-            raw_response_hook=callback
+            docs, show_stats=True, model_version="latest", raw_response_hook=callback
         )
 
     @TextAnalyticsPreparer()
@@ -234,14 +238,14 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
     @recorded_by_proxy
     def test_whole_batch_language_hint(self, client):
         def callback(resp):
-            language_str = "\"language\": \"fr\""
+            language_str = '"language": "fr"'
             language = resp.http_request.body.count(language_str)
             assert language == 3
 
         docs = [
             "This was the best day of my life.",
             "I did not like the hotel we stayed at. It was too expensive.",
-            "The restaurant was not as good as I hoped."
+            "The restaurant was not as good as I hoped.",
         ]
 
         response = client.recognize_linked_entities(docs, language="fr", raw_response_hook=callback)
@@ -251,14 +255,14 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
     @recorded_by_proxy
     def test_whole_batch_dont_use_language_hint(self, client):
         def callback(resp):
-            language_str = "\"language\": \"\""
+            language_str = '"language": ""'
             language = resp.http_request.body.count(language_str)
             assert language == 3
 
         docs = [
             "This was the best day of my life.",
             "I did not like the hotel we stayed at. It was too expensive.",
-            "The restaurant was not as good as I hoped."
+            "The restaurant was not as good as I hoped.",
         ]
 
         response = client.recognize_linked_entities(docs, language="", raw_response_hook=callback)
@@ -268,17 +272,18 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
     @recorded_by_proxy
     def test_per_item_dont_use_language_hint(self, client):
         def callback(resp):
-            language_str = "\"language\": \"\""
+            language_str = '"language": ""'
             language = resp.http_request.body.count(language_str)
             assert language == 2
-            language_str = "\"language\": \"en\""
+            language_str = '"language": "en"'
             language = resp.http_request.body.count(language_str)
             assert language == 1
 
-
-        docs = [{"id": "1", "language": "", "text": "I will go to the park."},
-                {"id": "2", "language": "", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
+        docs = [
+            {"id": "1", "language": "", "text": "I will go to the park."},
+            {"id": "2", "language": "", "text": "I did not like the hotel we stayed at."},
+            {"id": "3", "text": "The restaurant had really good food."},
+        ]
 
         response = client.recognize_linked_entities(docs, raw_response_hook=callback)
 
@@ -287,7 +292,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
     @recorded_by_proxy
     def test_whole_batch_language_hint_and_obj_input(self, client):
         def callback(resp):
-            language_str = "\"language\": \"de\""
+            language_str = '"language": "de"'
             language = resp.http_request.body.count(language_str)
             assert language == 3
 
@@ -304,10 +309,10 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
     @recorded_by_proxy
     def test_whole_batch_language_hint_and_obj_per_item_hints(self, client):
         def callback(resp):
-            language_str = "\"language\": \"es\""
+            language_str = '"language": "es"'
             language = resp.http_request.body.count(language_str)
             assert language == 2
-            language_str = "\"language\": \"en\""
+            language_str = '"language": "en"'
             language = resp.http_request.body.count(language_str)
             assert language == 1
 
@@ -324,17 +329,18 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
     @recorded_by_proxy
     def test_whole_batch_language_hint_and_dict_per_item_hints(self, client):
         def callback(resp):
-            language_str = "\"language\": \"es\""
+            language_str = '"language": "es"'
             language = resp.http_request.body.count(language_str)
             assert language == 2
-            language_str = "\"language\": \"en\""
+            language_str = '"language": "en"'
             language = resp.http_request.body.count(language_str)
             assert language == 1
 
-
-        docs = [{"id": "1", "language": "es", "text": "I will go to the park."},
-                {"id": "2", "language": "es", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
+        docs = [
+            {"id": "1", "language": "es", "text": "I will go to the park."},
+            {"id": "2", "language": "es", "text": "I did not like the hotel we stayed at."},
+            {"id": "3", "text": "The restaurant had really good food."},
+        ]
 
         response = client.recognize_linked_entities(docs, language="en", raw_response_hook=callback)
 
@@ -343,18 +349,20 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
     @recorded_by_proxy
     def test_client_passed_default_language_hint(self, client):
         def callback(resp):
-            language_str = "\"language\": \"es\""
+            language_str = '"language": "es"'
             language = resp.http_request.body.count(language_str)
             assert language == 3
 
         def callback_2(resp):
-            language_str = "\"language\": \"en\""
+            language_str = '"language": "en"'
             language = resp.http_request.body.count(language_str)
             assert language == 3
 
-        docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
+        docs = [
+            {"id": "1", "text": "I will go to the park."},
+            {"id": "2", "text": "I did not like the hotel we stayed at."},
+            {"id": "3", "text": "The restaurant had really good food."},
+        ]
 
         response = client.recognize_linked_entities(docs, raw_response_hook=callback)
         response = client.recognize_linked_entities(docs, language="en", raw_response_hook=callback_2)
@@ -367,16 +375,22 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
         response = client.recognize_linked_entities(
             ["This should fail because we're passing in an invalid language hint"], language="notalanguage"
         )
-        assert response[0].error.code == 'UnsupportedLanguageCode'
+        assert response[0].error.code == "UnsupportedLanguageCode"
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
     def test_invalid_language_hint_docs(self, client):
         response = client.recognize_linked_entities(
-            [{"id": "1", "language": "notalanguage", "text": "This should fail because we're passing in an invalid language hint"}]
+            [
+                {
+                    "id": "1",
+                    "language": "notalanguage",
+                    "text": "This should fail because we're passing in an invalid language hint",
+                }
+            ]
         )
-        assert response[0].error.code == 'UnsupportedLanguageCode'
+        assert response[0].error.code == "UnsupportedLanguageCode"
 
     @TextAnalyticsPreparer()
     @recorded_by_proxy
@@ -384,9 +398,11 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
         credential = AzureKeyCredential(textanalytics_test_api_key)
         client = TextAnalyticsClient(textanalytics_test_endpoint, credential)
 
-        docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
+        docs = [
+            {"id": "1", "text": "I will go to the park."},
+            {"id": "2", "text": "I did not like the hotel we stayed at."},
+            {"id": "3", "text": "The restaurant had really good food."},
+        ]
 
         response = client.recognize_linked_entities(docs)
         assert response is not None
@@ -404,13 +420,18 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
     @recorded_by_proxy
     def test_user_agent(self, client):
         def callback(resp):
-            assert "azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
-                VERSION, platform.python_version(), platform.platform()) in \
-                resp.http_request.headers["User-Agent"]
+            assert (
+                "azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
+                    VERSION, platform.python_version(), platform.platform()
+                )
+                in resp.http_request.headers["User-Agent"]
+            )
 
-        docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
+        docs = [
+            {"id": "1", "text": "I will go to the park."},
+            {"id": "2", "text": "I did not like the hotel we stayed at."},
+            {"id": "3", "text": "The restaurant had really good food."},
+        ]
 
         response = client.recognize_linked_entities(docs, raw_response_hook=callback)
 
@@ -430,11 +451,11 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
         try:
             entities = response[0].entities
         except AttributeError as custom_error:
-            assert custom_error.args[0] == \
-                '\'DocumentError\' object has no attribute \'entities\'. ' \
-                'The service was unable to process this document:\nDocument Id: 1\nError: ' \
-                'InvalidDocument - Document text is empty.\n'
-
+            assert (
+                custom_error.args[0] == "'DocumentError' object has no attribute 'entities'. "
+                "The service was unable to process this document:\nDocument Id: 1\nError: "
+                "InvalidDocument - Document text is empty.\n"
+            )
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -447,7 +468,9 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
         try:
             entities = response[0].attribute_not_on_result_or_error
         except AttributeError as default_behavior:
-            assert default_behavior.args[0] == '\'DocumentError\' object has no attribute \'attribute_not_on_result_or_error\''
+            assert (
+                default_behavior.args[0] == "'DocumentError' object has no attribute 'attribute_not_on_result_or_error'"
+            )
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -469,9 +492,11 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
         for _ in range(5121):
             text += "x"
 
-        docs = [{"id": "1", "text": ""},
-                {"id": "2", "language": "english", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": text}]
+        docs = [
+            {"id": "1", "text": ""},
+            {"id": "2", "language": "english", "text": "I did not like the hotel we stayed at."},
+            {"id": "3", "text": text},
+        ]
 
         doc_errors = client.recognize_linked_entities(docs)
         assert doc_errors[0].error.code == "InvalidDocument"
@@ -526,8 +551,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
     @recorded_by_proxy
     def test_duplicate_ids_error(self, client):
         # Duplicate Ids
-        docs = [{"id": "1", "text": "hello world"},
-                {"id": "1", "text": "I did not like the hotel we stayed at."}]
+        docs = [{"id": "1", "text": "hello world"}, {"id": "1", "text": "I did not like the hotel we stayed at."}]
         try:
             result = client.recognize_linked_entities(docs)
         except HttpResponseError as err:
@@ -551,7 +575,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
     @recorded_by_proxy
     def test_language_kwarg_spanish(self, client):
         def callback(response):
-            language_str = "\"language\": \"es\""
+            language_str = '"language": "es"'
             assert response.http_request.body.count(language_str) == 1
             assert response.model_version is not None
             assert response.statistics is not None
@@ -561,7 +585,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
             model_version="latest",
             show_stats=True,
             language="es",
-            raw_response_hook=callback
+            raw_response_hook=callback,
         )
 
     @TextAnalyticsPreparer()
@@ -570,10 +594,8 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
     def test_pass_cls(self, client):
         def callback(pipeline_response, deserialized, _):
             return "cls result"
-        res = client.recognize_linked_entities(
-            documents=["Test passing cls to endpoint"],
-            cls=callback
-        )
+
+        res = client.recognize_linked_entities(documents=["Test passing cls to endpoint"], cls=callback)
         assert res == "cls result"
 
     @TextAnalyticsPreparer()
@@ -629,22 +651,16 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
         def callback(response):
             assert response.http_request.query["stringIndexType"] == "UnicodeCodePoint"
 
-        res = client.recognize_linked_entities(
-            documents=["Hello world"],
-            raw_response_hook=callback
-        )
+        res = client.recognize_linked_entities(documents=["Hello world"], raw_response_hook=callback)
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
     @recorded_by_proxy
     def test_default_string_index_type_UnicodeCodePoint_body_param(self, client):
         def callback(response):
-            assert json.loads(response.http_request.body)['parameters']["stringIndexType"] == "UnicodeCodePoint"
+            assert json.loads(response.http_request.body)["parameters"]["stringIndexType"] == "UnicodeCodePoint"
 
-        res = client.recognize_linked_entities(
-            documents=["Hello world"],
-            raw_response_hook=callback
-        )
+        res = client.recognize_linked_entities(documents=["Hello world"], raw_response_hook=callback)
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
@@ -654,9 +670,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
             assert response.http_request.query["stringIndexType"] == "TextElement_v8"
 
         res = client.recognize_linked_entities(
-            documents=["Hello world"],
-            string_index_type="TextElement_v8",
-            raw_response_hook=callback
+            documents=["Hello world"], string_index_type="TextElement_v8", raw_response_hook=callback
         )
 
     @TextAnalyticsPreparer()
@@ -664,12 +678,10 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
     @recorded_by_proxy
     def test_explicit_set_string_index_type_body_param(self, client):
         def callback(response):
-            assert json.loads(response.http_request.body)['parameters']["stringIndexType"] == "TextElements_v8"
+            assert json.loads(response.http_request.body)["parameters"]["stringIndexType"] == "TextElements_v8"
 
         res = client.recognize_linked_entities(
-            documents=["Hello world"],
-            string_index_type="TextElement_v8",
-            raw_response_hook=callback
+            documents=["Hello world"], string_index_type="TextElement_v8", raw_response_hook=callback
         )
 
     @TextAnalyticsPreparer()
@@ -677,7 +689,8 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
     @recorded_by_proxy
     def test_disable_service_logs(self, client):
         def callback(resp):
-            assert resp.http_request.query['loggingOptOut']
+            assert resp.http_request.query["loggingOptOut"]
+
         client.recognize_linked_entities(
             documents=["Test for logging disable"],
             disable_service_logs=True,
@@ -689,7 +702,8 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
     @recorded_by_proxy
     def test_disable_service_logs_body_param(self, client):
         def callback(resp):
-            assert json.loads(resp.http_request.body)['parameters']['loggingOptOut']
+            assert json.loads(resp.http_request.body)["parameters"]["loggingOptOut"]
+
         client.recognize_linked_entities(
             documents=["Test for logging disable"],
             disable_service_logs=True,
@@ -703,12 +717,23 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
         with pytest.raises(ValueError) as e:
             res = client.recognize_linked_entities(["I'm tired"], string_index_type="UnicodeCodePoint")
-        assert str(e.value) == "'string_index_type' is not available in API version v3.0. Use service API version v3.1 or newer.\n"
+        assert (
+            str(e.value)
+            == "'string_index_type' is not available in API version v3.0. Use service API version v3.1 or newer.\n"
+        )
 
         with pytest.raises(ValueError) as e:
             res = client.recognize_linked_entities(["I'm tired"], disable_service_logs=True)
-        assert str(e.value) == "'disable_service_logs' is not available in API version v3.0. Use service API version v3.1 or newer.\n"
+        assert (
+            str(e.value)
+            == "'disable_service_logs' is not available in API version v3.0. Use service API version v3.1 or newer.\n"
+        )
 
         with pytest.raises(ValueError) as e:
-            res = client.recognize_linked_entities(["I'm tired"], string_index_type="UnicodeCodePoint", disable_service_logs=True)
-        assert str(e.value) == "'string_index_type' is not available in API version v3.0. Use service API version v3.1 or newer.\n'disable_service_logs' is not available in API version v3.0. Use service API version v3.1 or newer.\n"
+            res = client.recognize_linked_entities(
+                ["I'm tired"], string_index_type="UnicodeCodePoint", disable_service_logs=True
+            )
+        assert (
+            str(e.value)
+            == "'string_index_type' is not available in API version v3.0. Use service API version v3.1 or newer.\n'disable_service_logs' is not available in API version v3.0. Use service API version v3.1 or newer.\n"
+        )

@@ -9,6 +9,7 @@
 An example to show receiving events from an Event Hub partition with EventHubConsumerClient tracking
 the last enqueued event properties of specific partition.
 """
+
 import os
 from azure.eventhub import EventHubConsumerClient
 from azure.identity import DefaultAzureCredential

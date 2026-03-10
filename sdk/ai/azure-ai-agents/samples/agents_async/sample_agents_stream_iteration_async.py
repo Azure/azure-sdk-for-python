@@ -21,6 +21,7 @@ USAGE:
                           page of your Azure AI Foundry portal.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model.
 """
+
 import asyncio
 
 from azure.ai.projects.aio import AIProjectClient

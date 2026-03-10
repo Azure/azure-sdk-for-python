@@ -23,12 +23,12 @@ class TestResourceIdsAsync(unittest.IsolatedAsyncioTestCase):
 
     @classmethod
     def setUpClass(cls):
-        if (cls.masterKey == '[YOUR_KEY_HERE]' or
-                cls.host == '[YOUR_ENDPOINT_HERE]'):
+        if cls.masterKey == "[YOUR_KEY_HERE]" or cls.host == "[YOUR_ENDPOINT_HERE]":
             raise Exception(
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
-                "tests.")
+                "tests."
+            )
 
     async def asyncSetUp(self):
         self.client = CosmosClient(self.host, self.masterKey)
@@ -38,7 +38,7 @@ class TestResourceIdsAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_id_unicode_validation_async(self):
         # unicode chars in Hindi for Id which translates to: "Hindi is the national language of India"
-        resource_id1 = u'हिन्दी भारत की राष्ट्रीय भाषा है' + str(uuid.uuid4())  # cspell:disable-line
+        resource_id1 = "हिन्दी भारत की राष्ट्रीय भाषा है" + str(uuid.uuid4())  # cspell:disable-line
 
         # Special allowed chars for Id
         resource_id2 = "!@$%^&*()-~`'_[]{}|;:,.<>" + str(uuid.uuid4())
@@ -52,11 +52,11 @@ class TestResourceIdsAsync(unittest.IsolatedAsyncioTestCase):
 
         # verify that collections are created with specified IDs
         created_collection1 = await created_db1.create_container(
-            id=resource_id1,
-            partition_key=PartitionKey(path='/id', kind='Hash'))
+            id=resource_id1, partition_key=PartitionKey(path="/id", kind="Hash")
+        )
         created_collection2 = await created_db2.create_container(
-            id=resource_id2,
-            partition_key=PartitionKey(path='/id', kind='Hash'))
+            id=resource_id2, partition_key=PartitionKey(path="/id", kind="Hash")
+        )
 
         assert resource_id1 == created_collection1.id
         assert resource_id2 == created_collection2.id
@@ -80,7 +80,7 @@ class TestResourceIdsAsync(unittest.IsolatedAsyncioTestCase):
         created_container = await created_database.create_container(id=container_id, partition_key=partition_key)
 
         # Define errors returned by checks
-        error_strings = ['Id contains illegal chars.', 'Id ends with a space or newline.']
+        error_strings = ["Id contains illegal chars.", "Id ends with a space or newline."]
 
         # Define illegal strings
         illegal_strings = [
@@ -93,7 +93,7 @@ class TestResourceIdsAsync(unittest.IsolatedAsyncioTestCase):
             "ID_with_newline\n",
             "ID_with_newline\n2",
             "ID_with_more_than_255" + "_added" * 255,
-            "ID_with_trailing_spaces   "
+            "ID_with_trailing_spaces   ",
         ]
 
         # test illegal resource id's for all resources
@@ -137,5 +137,5 @@ class TestResourceIdsAsync(unittest.IsolatedAsyncioTestCase):
         await self.client.delete_database(created_database)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

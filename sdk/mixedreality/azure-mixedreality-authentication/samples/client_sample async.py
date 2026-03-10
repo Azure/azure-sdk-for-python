@@ -1,4 +1,3 @@
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -17,7 +16,6 @@ USAGE:
     2) MIXEDREALITY_ACCOUNT_ID - the Mixed Reality account identifier.
     3) MIXEDREALITY_ACCOUNT_KEY - the Mixed Reality account primary or secondary key.
 """
-
 
 import os
 import asyncio
@@ -43,6 +41,7 @@ class ClientSamplesAsync(object):
     def create_client(self):
         # [START create_client]
         from azure.mixedreality.authentication.aio import MixedRealityStsClient
+
         client = MixedRealityStsClient(self.account_id, self.account_domain, self.key_credential)
         # [END create_client]
 
@@ -50,6 +49,7 @@ class ClientSamplesAsync(object):
 
     async def get_token(self):
         from azure.mixedreality.authentication.aio import MixedRealityStsClient
+
         client = MixedRealityStsClient(self.account_id, self.account_domain, self.key_credential)
 
         async with client:
@@ -65,5 +65,6 @@ async def main():
     sample.create_client()
     await sample.get_token()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())

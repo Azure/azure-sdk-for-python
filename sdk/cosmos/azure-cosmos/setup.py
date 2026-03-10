@@ -21,9 +21,8 @@ PACKAGE_FOLDER_PATH = PACKAGE_NAME.replace("-", "/")
 NAMESPACE_NAME = PACKAGE_NAME.replace("-", ".")
 
 # Version extraction inspired from 'requests'
-with open(os.path.join(PACKAGE_FOLDER_PATH, '_version.py'), 'r') as fd:
-    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
-                        fd.read(), re.MULTILINE).group(1)
+with open(os.path.join(PACKAGE_FOLDER_PATH, "_version.py"), "r") as fd:
+    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE).group(1)
 
 if not version:
     raise RuntimeError("Cannot find version information")
@@ -76,8 +75,5 @@ setup(
         "azure.cosmos._query_advisor": ["query_advice_rules.json"],
     },
     python_requires=">=3.9",
-    install_requires=[
-        "azure-core>=1.30.0",
-        "typing-extensions>=4.6.0"
-    ],
+    install_requires=["azure-core>=1.30.0", "typing-extensions>=4.6.0"],
 )

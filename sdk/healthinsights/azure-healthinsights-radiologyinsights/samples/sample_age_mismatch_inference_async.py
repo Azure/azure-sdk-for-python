@@ -8,7 +8,7 @@ FILE: sample_age_mismatch_inference_async.py
 DESCRIPTION:
 The sample_age_mismatch_inference_async.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize an asynchronous RadiologyInsightsClient, build a Radiology Insights request with the sample document,
-submit it to the client, RadiologyInsightsClient, and display 
+submit it to the client, RadiologyInsightsClient, and display
 -the Age Mismatch patient ID,
 -the Age Mismatch url extension,
 -the Age Mismatch offset extension,

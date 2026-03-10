@@ -19,7 +19,6 @@ from asynctestcase import AsyncFormRecognizerTest
 from preparers import FormRecognizerPreparer, get_async_client
 from conftest import skip_flaky_test
 
-
 get_fr_client = functools.partial(get_async_client, FormRecognizerClient)
 
 
@@ -43,10 +42,7 @@ class TestInvoiceAsync(AsyncFormRecognizerTest):
         with open(self.invoice_pdf, "rb") as fd:
             my_file = fd.read()
         async with client:
-            poller = await client.begin_recognize_invoices(
-                my_file,
-                content_type=FormContentType.APPLICATION_PDF
-            )
+            poller = await client.begin_recognize_invoices(my_file, content_type=FormContentType.APPLICATION_PDF)
             result = await poller.result()
         assert result is not None
 
@@ -56,9 +52,7 @@ class TestInvoiceAsync(AsyncFormRecognizerTest):
         damaged_pdf = b"\x50\x44\x46\x55\x55\x55"  # doesn't match any magic file numbers
         with pytest.raises(ValueError):
             async with client:
-                poller = await client.begin_recognize_invoices(
-                    damaged_pdf
-                )
+                poller = await client.begin_recognize_invoices(damaged_pdf)
 
     @FormRecognizerPreparer()
     async def test_damaged_file_bytes_io_fails_autodetect(self, **kwargs):
@@ -66,9 +60,7 @@ class TestInvoiceAsync(AsyncFormRecognizerTest):
         damaged_pdf = BytesIO(b"\x50\x44\x46\x55\x55\x55")  # doesn't match any magic file numbers
         with pytest.raises(ValueError):
             async with client:
-                poller = await client.begin_recognize_invoices(
-                    damaged_pdf
-                )
+                poller = await client.begin_recognize_invoices(damaged_pdf)
 
     @FormRecognizerPreparer()
     async def test_passing_bad_content_type_param_passed(self, **kwargs):
@@ -77,10 +69,7 @@ class TestInvoiceAsync(AsyncFormRecognizerTest):
             my_file = fd.read()
         with pytest.raises(ValueError):
             async with client:
-                poller = await client.begin_recognize_invoices(
-                    my_file,
-                    content_type="application/jpeg"
-                )
+                poller = await client.begin_recognize_invoices(my_file, content_type="application/jpeg")
 
     @FormRecognizerPreparer()
     async def test_auto_detect_unsupported_stream_content(self, **kwargs):
@@ -90,9 +79,7 @@ class TestInvoiceAsync(AsyncFormRecognizerTest):
 
         with pytest.raises(ValueError):
             async with client:
-                poller = await client.begin_recognize_invoices(
-                    my_file
-                )
+                poller = await client.begin_recognize_invoices(my_file)
 
     @skip_flaky_test
     @FormRecognizerPreparer()
@@ -111,11 +98,7 @@ class TestInvoiceAsync(AsyncFormRecognizerTest):
             my_file = fd.read()
 
         async with client:
-            poller = await client.begin_recognize_invoices(
-                invoice=my_file,
-                include_field_elements=True,
-                cls=callback
-            )
+            poller = await client.begin_recognize_invoices(invoice=my_file, include_field_elements=True, cls=callback)
 
             result = await poller.result()
         raw_response = responses[0]
@@ -129,8 +112,8 @@ class TestInvoiceAsync(AsyncFormRecognizerTest):
         self.assertFormFieldsTransformCorrect(invoice.fields, actual, read_results)
 
         # check page range
-        assert invoice.page_range.first_page_number ==  document_results[0].page_range[0]
-        assert invoice.page_range.last_page_number ==  document_results[0].page_range[1]
+        assert invoice.page_range.first_page_number == document_results[0].page_range[0]
+        assert invoice.page_range.last_page_number == document_results[0].page_range[1]
 
         # Check page metadata
         self.assertFormPagesTransformCorrect(invoice.pages, read_results, page_results)
@@ -153,11 +136,7 @@ class TestInvoiceAsync(AsyncFormRecognizerTest):
             my_file = fd.read()
 
         async with client:
-            poller = await client.begin_recognize_invoices(
-                invoice=my_file,
-                include_field_elements=True,
-                cls=callback
-            )
+            poller = await client.begin_recognize_invoices(invoice=my_file, include_field_elements=True, cls=callback)
 
             result = await poller.result()
         raw_response = responses[0]
@@ -166,16 +145,16 @@ class TestInvoiceAsync(AsyncFormRecognizerTest):
         document_results = raw_response.analyze_result.document_results
         page_results = raw_response.analyze_result.page_results
 
-        assert 1 ==  len(returned_models)
+        assert 1 == len(returned_models)
         returned_model = returned_models[0]
-        assert 2 ==  len(returned_model.pages)
-        assert 1 ==  returned_model.page_range.first_page_number
-        assert 2 ==  returned_model.page_range.last_page_number
+        assert 2 == len(returned_model.pages)
+        assert 1 == returned_model.page_range.first_page_number
+        assert 2 == returned_model.page_range.last_page_number
 
-        assert 1 ==  len(document_results)
+        assert 1 == len(document_results)
         document_result = document_results[0]
-        assert 1 ==  document_result.page_range[0]  # checking first page number
-        assert 2 ==  document_result.page_range[1]  # checking last page number
+        assert 1 == document_result.page_range[0]  # checking first page number
+        assert 2 == document_result.page_range[1]  # checking last page number
 
         for invoice, document_result in zip(returned_models, document_results):
             self.assertFormFieldsTransformCorrect(invoice.fields, document_result.fields, read_results)
@@ -197,15 +176,15 @@ class TestInvoiceAsync(AsyncFormRecognizerTest):
         invoice = result[0]
         # check dict values
 
-        assert invoice.fields.get("VendorName").value ==  "Contoso"
-        assert invoice.fields.get("VendorAddress").value, '1 Redmond way Suite 6000 Redmond ==  WA 99243'
-        assert invoice.fields.get("CustomerAddressRecipient").value ==  "Microsoft"
-        assert invoice.fields.get("CustomerAddress").value, '1020 Enterprise Way Sunnayvale ==  CA 87659'
-        assert invoice.fields.get("CustomerName").value ==  "Microsoft"
-        assert invoice.fields.get("InvoiceId").value ==  '34278587'
-        assert invoice.fields.get("InvoiceDate").value, date(2017, 6 ==  18)
-        assert invoice.fields.get("Items").value[0].value["Amount"].value ==  56651.49
-        assert invoice.fields.get("DueDate").value, date(2017, 6 ==  24)
+        assert invoice.fields.get("VendorName").value == "Contoso"
+        assert invoice.fields.get("VendorAddress").value, "1 Redmond way Suite 6000 Redmond ==  WA 99243"
+        assert invoice.fields.get("CustomerAddressRecipient").value == "Microsoft"
+        assert invoice.fields.get("CustomerAddress").value, "1020 Enterprise Way Sunnayvale ==  CA 87659"
+        assert invoice.fields.get("CustomerName").value == "Microsoft"
+        assert invoice.fields.get("InvoiceId").value == "34278587"
+        assert invoice.fields.get("InvoiceDate").value, date(2017, 6 == 18)
+        assert invoice.fields.get("Items").value[0].value["Amount"].value == 56651.49
+        assert invoice.fields.get("DueDate").value, date(2017, 6 == 24)
 
     @pytest.mark.live_test_only
     @skip_flaky_test
@@ -222,21 +201,21 @@ class TestInvoiceAsync(AsyncFormRecognizerTest):
 
         assert len(result) == 1
         invoice = result[0]
-        assert "prebuilt:invoice" ==  invoice.form_type
-        assert 1 ==  invoice.page_range.first_page_number
-        assert 2 ==  invoice.page_range.last_page_number
+        assert "prebuilt:invoice" == invoice.form_type
+        assert 1 == invoice.page_range.first_page_number
+        assert 2 == invoice.page_range.last_page_number
 
         vendor_name = invoice.fields["VendorName"]
-        assert vendor_name.value ==  'Southridge Video'
-        assert vendor_name.value_data.page_number ==  2
+        assert vendor_name.value == "Southridge Video"
+        assert vendor_name.value_data.page_number == 2
 
         remittance_address_recipient = invoice.fields["RemittanceAddressRecipient"]
-        assert remittance_address_recipient.value ==  "Contoso Ltd."
-        assert remittance_address_recipient.value_data.page_number ==  1
+        assert remittance_address_recipient.value == "Contoso Ltd."
+        assert remittance_address_recipient.value_data.page_number == 1
 
         remittance_address = invoice.fields["RemittanceAddress"]
-        assert remittance_address.value, '2345 Dogwood Lane Birch ==  Kansas 98123'
-        assert remittance_address.value_data.page_number ==  1
+        assert remittance_address.value, "2345 Dogwood Lane Birch ==  Kansas 98123"
+        assert remittance_address.value_data.page_number == 1
 
     @skip_flaky_test
     @FormRecognizerPreparer()
@@ -261,36 +240,36 @@ class TestInvoiceAsync(AsyncFormRecognizerTest):
             self.assertFieldElementsHasValues(field.value_data.field_elements, invoice.page_range.first_page_number)
         self.assertInvoiceItemsHasValues(invoice.fields["Items"].value, invoice.page_range.first_page_number, True)
 
-        assert invoice.fields.get("AmountDue").value ==  610.0
+        assert invoice.fields.get("AmountDue").value == 610.0
         assert invoice.fields.get("BillingAddress").value, "123 Bill St, Redmond WA ==  98052"
-        assert invoice.fields.get("BillingAddressRecipient").value ==  "Microsoft Finance"
+        assert invoice.fields.get("BillingAddressRecipient").value == "Microsoft Finance"
         assert invoice.fields.get("CustomerAddress").value, "123 Other St, Redmond WA ==  98052"
-        assert invoice.fields.get("CustomerAddressRecipient").value ==  "Microsoft Corp"
-        assert invoice.fields.get("CustomerId").value ==  "CID-12345"
-        assert invoice.fields.get("CustomerName").value ==  "MICROSOFT CORPORATION"
-        assert invoice.fields.get("DueDate").value, date(2019, 12 ==  15)
-        assert invoice.fields.get("InvoiceDate").value, date(2019, 11 ==  15)
-        assert invoice.fields.get("InvoiceId").value ==  "INV-100"
-        assert invoice.fields.get("InvoiceTotal").value ==  110.0
-        assert invoice.fields.get("PreviousUnpaidBalance").value ==  500.0
-        assert invoice.fields.get("PurchaseOrder").value ==  "PO-3333"
+        assert invoice.fields.get("CustomerAddressRecipient").value == "Microsoft Corp"
+        assert invoice.fields.get("CustomerId").value == "CID-12345"
+        assert invoice.fields.get("CustomerName").value == "MICROSOFT CORPORATION"
+        assert invoice.fields.get("DueDate").value, date(2019, 12 == 15)
+        assert invoice.fields.get("InvoiceDate").value, date(2019, 11 == 15)
+        assert invoice.fields.get("InvoiceId").value == "INV-100"
+        assert invoice.fields.get("InvoiceTotal").value == 110.0
+        assert invoice.fields.get("PreviousUnpaidBalance").value == 500.0
+        assert invoice.fields.get("PurchaseOrder").value == "PO-3333"
         assert invoice.fields.get("RemittanceAddress").value, "123 Remit St New York, NY ==  10001"
-        assert invoice.fields.get("RemittanceAddressRecipient").value ==  "Contoso Billing"
+        assert invoice.fields.get("RemittanceAddressRecipient").value == "Contoso Billing"
         assert invoice.fields.get("ServiceAddress").value, "123 Service St, Redmond WA ==  98052"
-        assert invoice.fields.get("ServiceAddressRecipient").value ==  "Microsoft Services"
-        assert invoice.fields.get("ServiceEndDate").value, date(2019, 11 ==  14)
-        assert invoice.fields.get("ServiceStartDate").value, date(2019, 10 ==  14)
+        assert invoice.fields.get("ServiceAddressRecipient").value == "Microsoft Services"
+        assert invoice.fields.get("ServiceEndDate").value, date(2019, 11 == 14)
+        assert invoice.fields.get("ServiceStartDate").value, date(2019, 10 == 14)
         assert invoice.fields.get("ShippingAddress").value, "123 Ship St, Redmond WA ==  98052"
-        assert invoice.fields.get("ShippingAddressRecipient").value ==  "Microsoft Delivery"
-        assert invoice.fields.get("SubTotal").value ==  100.0
-        assert invoice.fields.get("TotalTax").value ==  10.0
-        assert invoice.fields.get("VendorName").value ==  "CONTOSO LTD."
+        assert invoice.fields.get("ShippingAddressRecipient").value == "Microsoft Delivery"
+        assert invoice.fields.get("SubTotal").value == 100.0
+        assert invoice.fields.get("TotalTax").value == 10.0
+        assert invoice.fields.get("VendorName").value == "CONTOSO LTD."
         assert invoice.fields.get("VendorAddress").value, "123 456th St New York, NY ==  10001"
-        assert invoice.fields.get("VendorAddressRecipient").value ==  "Contoso Headquarters"
-        assert invoice.fields.get("Items").value[0].value["Amount"].value ==  100.0
-        assert invoice.fields.get("Items").value[0].value["Description"].value ==  "Consulting service"
-        assert invoice.fields.get("Items").value[0].value["Quantity"].value ==  1.0
-        assert invoice.fields.get("Items").value[0].value["UnitPrice"].value ==  1.0
+        assert invoice.fields.get("VendorAddressRecipient").value == "Contoso Headquarters"
+        assert invoice.fields.get("Items").value[0].value["Amount"].value == 100.0
+        assert invoice.fields.get("Items").value[0].value["Description"].value == "Consulting service"
+        assert invoice.fields.get("Items").value[0].value["Quantity"].value == 1.0
+        assert invoice.fields.get("Items").value[0].value["UnitPrice"].value == 1.0
 
     @pytest.mark.live_test_only
     @skip_flaky_test
@@ -326,7 +305,7 @@ class TestInvoiceAsync(AsyncFormRecognizerTest):
             invoice = fd.read()
         async with client:
             poller = await client.begin_recognize_invoices(invoice, locale="en-US")
-            assert 'en-US' == poller._polling_method._initial_response.http_response.request.query['locale']
+            assert "en-US" == poller._polling_method._initial_response.http_response.request.query["locale"]
             result = await poller.result()
             assert result
 
@@ -350,6 +329,6 @@ class TestInvoiceAsync(AsyncFormRecognizerTest):
             invoice = fd.read()
         async with client:
             poller = await client.begin_recognize_invoices(invoice, pages=["1"])
-            assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
+            assert "1" == poller._polling_method._initial_response.http_response.request.query["pages"]
             result = await poller.result()
             assert result

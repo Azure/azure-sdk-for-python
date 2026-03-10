@@ -9,6 +9,7 @@ This example traces calls for receiving messages from the servicebus queue.
 The telemetry will be collected automatically and sent to Application
 Insights via the AzureMonitorTraceExporter
 """
+
 # mypy: disable-error-code="attr-defined"
 import os
 

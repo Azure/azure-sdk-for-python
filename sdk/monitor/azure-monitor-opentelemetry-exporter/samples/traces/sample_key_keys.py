@@ -3,10 +3,11 @@
 """
 Examples to show usage of the azure-core-tracing-opentelemetry
 with the KeyVault Keys SDK and exporting to Azure monitor backend.
-This example traces calls for creating an rsa/ and ec key using the 
+This example traces calls for creating an rsa/ and ec key using the
 KeyVault Secrets SDK. The telemetry will be collected automatically
 and sent to Application Insights via the AzureMonitorTraceExporter
 """
+
 # mypy: disable-error-code="attr-defined"
 import os
 

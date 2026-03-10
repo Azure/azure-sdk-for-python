@@ -14,7 +14,6 @@ from ._enums import LogsQueryStatus
 from ._exceptions import LogsQueryError
 from ._helpers import construct_iso8601, process_row
 
-
 JSON = Mapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 

@@ -16,6 +16,7 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     - AZURE_SUBSCRIPTION_KEY - your subscription key
 """
+
 import os
 
 from azure.core.exceptions import HttpResponseError

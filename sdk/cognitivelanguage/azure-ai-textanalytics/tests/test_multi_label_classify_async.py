@@ -44,9 +44,7 @@ class TestTextAnalysisCaseAsync(TestTextAnalysisAsync):
     @TextAnalysisPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_multi_label_classify_async(
-        self, text_analysis_endpoint, text_analysis_key
-    ):
+    async def test_multi_label_classify_async(self, text_analysis_endpoint, text_analysis_key):
         async with self.create_client(text_analysis_endpoint, text_analysis_key) as client:
             project_name = "multi-class-project"
             deployment_name = "multiclassdeployment"

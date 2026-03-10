@@ -16,7 +16,6 @@ from ._models import (
 )
 from ._settings_client import KeyVaultSettingsClient
 
-
 __all__ = [
     "ApiVersion",
     "KeyVaultBackupResult",
@@ -34,4 +33,5 @@ __all__ = [
 ]
 
 from ._version import VERSION
+
 __version__ = VERSION

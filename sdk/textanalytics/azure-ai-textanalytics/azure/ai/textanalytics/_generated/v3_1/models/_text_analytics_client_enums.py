@@ -11,15 +11,14 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class Association(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Describes if the entity is the subject of the text or if it describes someone else.
-    """
+    """Describes if the entity is the subject of the text or if it describes someone else."""
 
     SUBJECT = "subject"
     OTHER = "other"
 
+
 class Certainty(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Describes the entities certainty and polarity.
-    """
+    """Describes the entities certainty and polarity."""
 
     POSITIVE = "positive"
     POSITIVE_POSSIBLE = "positivePossible"
@@ -27,25 +26,25 @@ class Certainty(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NEGATIVE_POSSIBLE = "negativePossible"
     NEGATIVE = "negative"
 
+
 class Conditionality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Describes any conditionality on the entity.
-    """
+    """Describes any conditionality on the entity."""
 
     HYPOTHETICAL = "hypothetical"
     CONDITIONAL = "conditional"
 
+
 class DocumentSentimentValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Predicted sentiment for document (Negative, Neutral, Positive, or Mixed).
-    """
+    """Predicted sentiment for document (Negative, Neutral, Positive, or Mixed)."""
 
     POSITIVE = "positive"
     NEUTRAL = "neutral"
     NEGATIVE = "negative"
     MIXED = "mixed"
 
+
 class ErrorCodeValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Error code.
-    """
+    """Error code."""
 
     INVALID_REQUEST = "InvalidRequest"
     INVALID_ARGUMENT = "InvalidArgument"
@@ -53,9 +52,9 @@ class ErrorCodeValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SERVICE_UNAVAILABLE = "ServiceUnavailable"
     NOT_FOUND = "NotFound"
 
+
 class HealthcareEntityCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Healthcare Entity Category.
-    """
+    """Healthcare Entity Category."""
 
     BODY_STRUCTURE = "BodyStructure"
     AGE = "Age"
@@ -84,9 +83,9 @@ class HealthcareEntityCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FAMILY_RELATION = "FamilyRelation"
     TREATMENT_NAME = "TreatmentName"
 
+
 class InnerErrorCodeValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Error code.
-    """
+    """Error code."""
 
     INVALID_PARAMETER_VALUE = "InvalidParameterValue"
     INVALID_REQUEST_BODY_FORMAT = "InvalidRequestBodyFormat"
@@ -98,9 +97,9 @@ class InnerErrorCodeValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UNSUPPORTED_LANGUAGE_CODE = "UnsupportedLanguageCode"
     INVALID_COUNTRY_HINT = "InvalidCountryHint"
 
+
 class PiiCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """PiiCategory.
-    """
+    """PiiCategory."""
 
     ABA_ROUTING_NUMBER = "ABARoutingNumber"
     AR_NATIONAL_IDENTITY_NUMBER = "ARNationalIdentityNumber"
@@ -276,16 +275,16 @@ class PiiCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ALL = "All"
     DEFAULT = "Default"
 
+
 class PiiTaskParametersDomain(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """PiiTaskParametersDomain.
-    """
+    """PiiTaskParametersDomain."""
 
     PHI = "phi"
     NONE = "none"
 
+
 class RelationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of relation. Examples include: ``DosageOfMedication`` or 'FrequencyOfMedication', etc.
-    """
+    """Type of relation. Examples include: ``DosageOfMedication`` or 'FrequencyOfMedication', etc."""
 
     ABBREVIATION = "Abbreviation"
     DIRECTION_OF_BODY_STRUCTURE = "DirectionOfBodyStructure"
@@ -309,17 +308,17 @@ class RelationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     VALUE_OF_CONDITION = "ValueOfCondition"
     VALUE_OF_EXAMINATION = "ValueOfExamination"
 
+
 class SentenceSentimentValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The predicted Sentiment for the sentence.
-    """
+    """The predicted Sentiment for the sentence."""
 
     POSITIVE = "positive"
     NEUTRAL = "neutral"
     NEGATIVE = "negative"
 
+
 class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """State.
-    """
+    """State."""
 
     NOT_STARTED = "notStarted"
     RUNNING = "running"
@@ -329,9 +328,9 @@ class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELLED = "cancelled"
     CANCELLING = "cancelling"
 
+
 class StringIndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """StringIndexType.
-    """
+    """StringIndexType."""
 
     #: Returned offset and length values will correspond to TextElements (Graphemes and Grapheme
     #: clusters) confirming to the Unicode 8.0.0 standard. Use this option if your application is
@@ -344,24 +343,24 @@ class StringIndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: application is written in a language that support Unicode, for example Java, JavaScript.
     UTF16_CODE_UNIT = "Utf16CodeUnit"
 
+
 class TargetRelationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type related to the target.
-    """
+    """The type related to the target."""
 
     ASSESSMENT = "assessment"
     TARGET = "target"
 
+
 class TokenSentimentValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Targeted sentiment in the sentence.
-    """
+    """Targeted sentiment in the sentence."""
 
     POSITIVE = "positive"
     MIXED = "mixed"
     NEGATIVE = "negative"
 
+
 class WarningCodeValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Error code.
-    """
+    """Error code."""
 
     LONG_WORDS_IN_DOCUMENT = "LongWordsInDocument"
     DOCUMENT_TRUNCATED = "DocumentTruncated"

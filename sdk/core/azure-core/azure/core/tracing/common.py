@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 """Common functions shared by both the sync and the async decorators."""
+
 from contextlib import contextmanager
 from typing import Any, Optional, Callable, Type, Generator
 import warnings
@@ -31,7 +32,6 @@ import warnings
 from ._abstract_span import AbstractSpan
 from ..instrumentation import get_tracer
 from ..settings import settings
-
 
 __all__ = [
     "change_context",

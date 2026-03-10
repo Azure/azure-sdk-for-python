@@ -31,15 +31,15 @@ class AzureContainerInfo(Model):
     """
 
     _validation = {
-        'storage_account_credential_id': {'required': True},
-        'container_name': {'required': True},
-        'data_format': {'required': True},
+        "storage_account_credential_id": {"required": True},
+        "container_name": {"required": True},
+        "data_format": {"required": True},
     }
 
     _attribute_map = {
-        'storage_account_credential_id': {'key': 'storageAccountCredentialId', 'type': 'str'},
-        'container_name': {'key': 'containerName', 'type': 'str'},
-        'data_format': {'key': 'dataFormat', 'type': 'str'},
+        "storage_account_credential_id": {"key": "storageAccountCredentialId", "type": "str"},
+        "container_name": {"key": "containerName", "type": "str"},
+        "data_format": {"key": "dataFormat", "type": "str"},
     }
 
     def __init__(self, *, storage_account_credential_id: str, container_name: str, data_format, **kwargs) -> None:

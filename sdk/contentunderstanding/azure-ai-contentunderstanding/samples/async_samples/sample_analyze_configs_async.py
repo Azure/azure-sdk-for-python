@@ -72,9 +72,7 @@ async def main() -> None:
     key = os.getenv("CONTENTUNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(
-        endpoint=endpoint, credential=credential
-    ) as client:
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         # [START analyze_with_configs]
         file_path = "sample_files/sample_document_features.pdf"
 
@@ -82,9 +80,7 @@ async def main() -> None:
             pdf_bytes = f.read()
 
         print(f"Analyzing {file_path} with prebuilt-documentSearch...")
-        print(
-            "Note: prebuilt-documentSearch has formulas, layout, and OCR enabled by default."
-        )
+        print("Note: prebuilt-documentSearch has formulas, layout, and OCR enabled by default.")
 
         # Analyze with prebuilt-documentSearch which has formulas, layout, and OCR enabled
         poller = await client.begin_analyze_binary(
@@ -102,17 +98,13 @@ async def main() -> None:
                 if isinstance(figure, DocumentChartFigure):
                     print(f"  Chart ID: {figure.id}")
                     print(f"    Description: {figure.description or '(not available)'}")
-                    print(
-                        f"    Caption: {figure.caption.content if figure.caption else '(not available)'}"
-                    )
+                    print(f"    Caption: {figure.caption.content if figure.caption else '(not available)'}")
         # [END extract_charts]
 
         # [START extract_hyperlinks]
         # Extract hyperlinks from document content (enabled by EnableLayout config)
         doc_content = cast(DocumentContent, result.contents[0])
-        print(
-            f"Found {len(doc_content.hyperlinks) if doc_content.hyperlinks else 0} hyperlink(s)"
-        )
+        print(f"Found {len(doc_content.hyperlinks) if doc_content.hyperlinks else 0} hyperlink(s)")
         for hyperlink in doc_content.hyperlinks or []:
             print(f"  URL: {hyperlink.url or '(not available)'}")
             print(f"    Content: {hyperlink.content or '(not available)'}")
@@ -128,24 +120,18 @@ async def main() -> None:
         for formula in all_formulas:
             print(f"  Formula Kind: {formula.kind}")
             print(f"    LaTeX: {formula.value or '(not available)'}")
-            print(
-                f"    Confidence: {f'{formula.confidence:.2f}' if formula.confidence else 'N/A'}"
-            )
+            print(f"    Confidence: {f'{formula.confidence:.2f}' if formula.confidence else 'N/A'}")
         # [END extract_formulas]
 
         # [START extract_annotations]
         # Extract annotations from document content (enabled by EnableLayout config)
         document = cast(DocumentContent, result.contents[0])
-        print(
-            f"Found {len(document.annotations) if document.annotations else 0} annotation(s)"
-        )
+        print(f"Found {len(document.annotations) if document.annotations else 0} annotation(s)")
         for annotation in document.annotations or []:
             print(f"  Annotation ID: {annotation.id}")
             print(f"    Kind: {annotation.kind}")
             print(f"    Author: {annotation.author or '(not available)'}")
-            print(
-                f"    Comments: {len(annotation.comments) if annotation.comments else 0}"
-            )
+            print(f"    Comments: {len(annotation.comments) if annotation.comments else 0}")
             for comment in annotation.comments or []:
                 print(f"      - {comment.message}")
         # [END extract_annotations]

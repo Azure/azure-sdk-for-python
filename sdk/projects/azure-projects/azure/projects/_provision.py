@@ -35,7 +35,6 @@ from .resources import ResourceIdentifiers
 from .resources.appconfig.setting import ConfigSetting
 from .resources.appservice.site import AppSite
 
-
 _BICEP_PARAMS = {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",

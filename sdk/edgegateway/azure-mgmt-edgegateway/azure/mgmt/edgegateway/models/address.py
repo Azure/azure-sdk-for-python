@@ -34,29 +34,29 @@ class Address(Model):
     """
 
     _validation = {
-        'address_line1': {'required': True},
-        'postal_code': {'required': True},
-        'city': {'required': True},
-        'state': {'required': True},
-        'country': {'required': True},
+        "address_line1": {"required": True},
+        "postal_code": {"required": True},
+        "city": {"required": True},
+        "state": {"required": True},
+        "country": {"required": True},
     }
 
     _attribute_map = {
-        'address_line1': {'key': 'addressLine1', 'type': 'str'},
-        'address_line2': {'key': 'addressLine2', 'type': 'str'},
-        'address_line3': {'key': 'addressLine3', 'type': 'str'},
-        'postal_code': {'key': 'postalCode', 'type': 'str'},
-        'city': {'key': 'city', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'country': {'key': 'country', 'type': 'str'},
+        "address_line1": {"key": "addressLine1", "type": "str"},
+        "address_line2": {"key": "addressLine2", "type": "str"},
+        "address_line3": {"key": "addressLine3", "type": "str"},
+        "postal_code": {"key": "postalCode", "type": "str"},
+        "city": {"key": "city", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "country": {"key": "country", "type": "str"},
     }
 
     def __init__(self, **kwargs):
         super(Address, self).__init__(**kwargs)
-        self.address_line1 = kwargs.get('address_line1', None)
-        self.address_line2 = kwargs.get('address_line2', None)
-        self.address_line3 = kwargs.get('address_line3', None)
-        self.postal_code = kwargs.get('postal_code', None)
-        self.city = kwargs.get('city', None)
-        self.state = kwargs.get('state', None)
-        self.country = kwargs.get('country', None)
+        self.address_line1 = kwargs.get("address_line1", None)
+        self.address_line2 = kwargs.get("address_line2", None)
+        self.address_line3 = kwargs.get("address_line3", None)
+        self.postal_code = kwargs.get("postal_code", None)
+        self.city = kwargs.get("city", None)
+        self.state = kwargs.get("state", None)
+        self.country = kwargs.get("country", None)

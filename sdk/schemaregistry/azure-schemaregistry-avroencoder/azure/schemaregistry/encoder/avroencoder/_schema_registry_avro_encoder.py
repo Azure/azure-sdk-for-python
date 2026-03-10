@@ -78,7 +78,7 @@ class AvroEncoder(object):
         client: "azure.schemaregistry.SchemaRegistryClient",
         group_name: Optional[str] = None,
         auto_register: bool = False,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self._schema_registry_client = client
         self._avro_encoder = AvroObjectEncoder(codec=kwargs.get("codec"))
@@ -130,9 +130,7 @@ class AvroEncoder(object):
         :return: Schema content
         :rtype: str
         """
-        schema_str = self._schema_registry_client.get_schema(
-            schema_id, **kwargs
-        ).definition
+        schema_str = self._schema_registry_client.get_schema(schema_id, **kwargs).definition
         return schema_str
 
     @overload
@@ -144,8 +142,7 @@ class AvroEncoder(object):
         message_type: Type[MessageType],
         request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
-    ) -> MessageType:
-        ...
+    ) -> MessageType: ...
 
     @overload
     def encode(
@@ -156,8 +153,7 @@ class AvroEncoder(object):
         message_type: None = None,
         request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
-    ) -> MessageContent:
-        ...
+    ) -> MessageContent: ...
 
     def encode(
         self,
@@ -202,20 +198,12 @@ class AvroEncoder(object):
             raise TypeError("'group_name' in constructor cannot be None, if encoding.")
         schema_fullname = validate_schema(self._avro_encoder, raw_input_schema)
 
-        cache_misses = (
-            self._get_schema_id.cache_info().misses  # pylint: disable=no-value-for-parameter
-        )
+        cache_misses = self._get_schema_id.cache_info().misses  # pylint: disable=no-value-for-parameter
         request_options = request_options or {}
-        schema_id = self._get_schema_id(
-            schema_fullname, raw_input_schema, **request_options
-        )
-        new_cache_misses = (
-            self._get_schema_id.cache_info().misses  # pylint: disable=no-value-for-parameter
-        )
+        schema_id = self._get_schema_id(schema_fullname, raw_input_schema, **request_options)
+        new_cache_misses = self._get_schema_id.cache_info().misses  # pylint: disable=no-value-for-parameter
         if new_cache_misses > cache_misses:
-            cache_info = (
-                self._get_schema_id.cache_info()  # pylint: disable=no-value-for-parameter
-            )
+            cache_info = self._get_schema_id.cache_info()  # pylint: disable=no-value-for-parameter
             _LOGGER.info(
                 "New entry has been added to schema ID cache. Cache info: %s",
                 str(cache_info),
@@ -261,18 +249,12 @@ class AvroEncoder(object):
 
         """
         schema_id, content = validate_message(message)
-        cache_misses = (
-            self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter
-        )
+        cache_misses = self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter
         request_options = request_options or {}
         schema_definition = self._get_schema(schema_id, **request_options)
-        new_cache_misses = (
-            self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter
-        )
+        new_cache_misses = self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter
         if new_cache_misses > cache_misses:
-            cache_info = (
-                self._get_schema.cache_info()  # pylint: disable=no-value-for-parameter
-            )
+            cache_info = self._get_schema.cache_info()  # pylint: disable=no-value-for-parameter
             _LOGGER.info(
                 "New entry has been added to schema cache. Cache info: %s",
                 str(cache_info),

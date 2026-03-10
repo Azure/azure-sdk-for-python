@@ -22,7 +22,6 @@ from .client_assertion import ClientAssertionCredential
 from .workload_identity import WorkloadIdentityCredential
 from .azure_pipelines import AzurePipelinesCredential
 
-
 __all__ = [
     "AuthorizationCodeCredential",
     "AzureCliCredential",

@@ -87,6 +87,7 @@ def test_receive_transfer_frame_multiple():
     link._incoming_transfer(transfer_frame_two)
     assert link.current_link_credit == 1
 
+
 def test_max_message_size_negotiation_with_client_unlimited():
     """
     Test AMQP attach frame negotiation where client sends max_message_size=0 ( unlimited )
@@ -110,36 +111,36 @@ def test_max_message_size_negotiation_with_client_unlimited():
         TEST_HANDLE,
         name=TEST_LINK_NAME,
         role=False,  # Sender role
-        source_address=TEST_SOURCE_ADDRESS, 
+        source_address=TEST_SOURCE_ADDRESS,
         target_address=TEST_TARGET_ADDRESS,
         network_trace=False,
         network_trace_params={},
-        max_message_size=LINK_MAX_MESSAGE_SIZE
+        max_message_size=LINK_MAX_MESSAGE_SIZE,
     )
 
     # Verifying that client sends 0 (unlimited) in attach frame
     assert link.max_message_size == 0, f"Expected client max_message_size=0, got {link.max_message_size}"
-    
+
     # Simulating server's attach response with 20MB limit, Mock incoming attach frame from server
     mock_attach_frame = [
-        TEST_LINK_NAME,                           # 0: name
-        TEST_HANDLE,                              # 1: handle
-        False,                                    # 2: role
-        TEST_SND_SETTLE_MODE,                     # 3: snd-settle-mode
-        TEST_RCV_SETTLE_MODE,                     # 4: rcv-settle-mode
-        Source(address=TEST_SOURCE_ADDRESS),      # 5: source
-        Target(address=TEST_TARGET_ADDRESS),      # 6: target
-        None,                                     # 7: unsettled
-        False,                                    # 8: incomplete-unsettled
-        None,                                     # 9: initial-delivery-count
-        SERVER_MAX_MESSAGE_SIZE,                  # 10: max-message-size
-        None,                                     # 11: offered_capabilities
-        None,                                     # 12: desired_capabilities
-        None,                                     # 13: remote_properties
+        TEST_LINK_NAME,  # 0: name
+        TEST_HANDLE,  # 1: handle
+        False,  # 2: role
+        TEST_SND_SETTLE_MODE,  # 3: snd-settle-mode
+        TEST_RCV_SETTLE_MODE,  # 4: rcv-settle-mode
+        Source(address=TEST_SOURCE_ADDRESS),  # 5: source
+        Target(address=TEST_TARGET_ADDRESS),  # 6: target
+        None,  # 7: unsettled
+        False,  # 8: incomplete-unsettled
+        None,  # 9: initial-delivery-count
+        SERVER_MAX_MESSAGE_SIZE,  # 10: max-message-size
+        None,  # 11: offered_capabilities
+        None,  # 12: desired_capabilities
+        None,  # 13: remote_properties
     ]
 
     # Testing _outgoing_attach()
-    with patch.object(link, '_outgoing_attach') as mock_outgoing_attach:
+    with patch.object(link, "_outgoing_attach") as mock_outgoing_attach:
         # Trigger outgoing attach
         link.attach()
 
@@ -150,17 +151,22 @@ def test_max_message_size_negotiation_with_client_unlimited():
         call_args = mock_outgoing_attach.call_args
         if call_args and call_args[0]:
             attach_frame = call_args[0][0]
-            assert attach_frame.max_message_size == 0, f"Expected client to send max_message_size=0, got {attach_frame.max_message_size}"
+            assert (
+                attach_frame.max_message_size == 0
+            ), f"Expected client to send max_message_size=0, got {attach_frame.max_message_size}"
 
     # Testing _incoming_attach()
-    with patch.object(link, '_outgoing_attach') as mock_outgoing_response:
+    with patch.object(link, "_outgoing_attach") as mock_outgoing_response:
 
         # Calling _incoming_attach to process server's response
         link._incoming_attach(mock_attach_frame)
 
         expected_final_size = SERVER_MAX_MESSAGE_SIZE
         # Verifying remote_max_message_size is set correctly
-        assert link.remote_max_message_size == expected_final_size, f"Expected remote_max_message_size={expected_final_size}, got {link.remote_max_message_size}"
+        assert (
+            link.remote_max_message_size == expected_final_size
+        ), f"Expected remote_max_message_size={expected_final_size}, got {link.remote_max_message_size}"
+
 
 def test_receive_transfer_continuation_frame():
     session = None
@@ -227,22 +233,30 @@ def test_receive_transfer_and_flow():
     link._incoming_transfer(transfer_frame_three)
     assert link.current_link_credit == 98
 
+
 @pytest.mark.parametrize(
     "frame",
     [
-        [2, True, [b'amqp:link:detach-forced', b"The link is force detached. Code: publisher(link3006875). Details: AmqpMessagePublisher.IdleTimerExpired: Idle timeout: 00:10:00.", None]],
-        [2, True, [b'amqp:link:detach-forced', None, b'something random']],
-        [2, True, [b'amqp:link:detach-forced', None, None]],
-        [2, True, [b'amqp:link:detach-forced']],
-        
+        [
+            2,
+            True,
+            [
+                b"amqp:link:detach-forced",
+                b"The link is force detached. Code: publisher(link3006875). Details: AmqpMessagePublisher.IdleTimerExpired: Idle timeout: 00:10:00.",
+                None,
+            ],
+        ],
+        [2, True, [b"amqp:link:detach-forced", None, b"something random"]],
+        [2, True, [b"amqp:link:detach-forced", None, None]],
+        [2, True, [b"amqp:link:detach-forced"]],
     ],
     ids=["description and info", "info only", "description only", "no info or description"],
 )
 def test_detach_with_error(frame):
-    '''
-      A detach can optionally include an description and info field.
-      https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-error
-    '''
+    """
+    A detach can optionally include an description and info field.
+    https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-error
+    """
     session = None
     link = Link(
         session,
@@ -261,6 +275,3 @@ def test_detach_with_error(frame):
         link.get_state()
         assert ae.description == frame[2][1]
         assert ae.info == frame[2][2]
-
-
-

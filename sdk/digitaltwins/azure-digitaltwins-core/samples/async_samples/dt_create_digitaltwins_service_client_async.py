@@ -17,6 +17,7 @@ import asyncio
 from azure.identity.aio import DefaultAzureCredential
 from azure.digitaltwins.core.aio import DigitalTwinsClient
 
+
 async def create_digitaltwins_service_client():
     # DefaultAzureCredential supports different authentication mechanisms and determines
     # the appropriate credential type based of the environment it is executing in.
@@ -36,5 +37,6 @@ async def create_digitaltwins_service_client():
 
     print(service_client)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(create_digitaltwins_service_client())

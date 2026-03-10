@@ -16,7 +16,7 @@ from azure.identity.aio import DefaultAzureCredential
 # 2. azure-keyvault-administration and azure-identity libraries (pip install these)
 #
 # 3. Set environment variable MANAGED_HSM_URL with the URL of your managed HSM
-#    
+#
 # 4. Set up your environment to use azure-identity's DefaultAzureCredential. For more information about how to configure
 #    the DefaultAzureCredential, refer to https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
 #
@@ -27,6 +27,7 @@ from azure.identity.aio import DefaultAzureCredential
 #
 # 2. Update a setting (update_setting)
 # ----------------------------------------------------------------------------------------------------------
+
 
 async def run_sample():
     MANAGED_HSM_URL = os.environ["MANAGED_HSM_URL"]

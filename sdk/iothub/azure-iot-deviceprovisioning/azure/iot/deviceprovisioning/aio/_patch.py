@@ -33,9 +33,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class DeviceProvisioningClient(
-    GeneratedDeviceProvisioningClient
-):  # pylint: disable=client-accepts-api-version-keyword
+class DeviceProvisioningClient(GeneratedDeviceProvisioningClient):  # pylint: disable=client-accepts-api-version-keyword
     """
     API for connecting to, and conducting operations on a Device Provisioning Service instance
 
@@ -72,9 +70,7 @@ class DeviceProvisioningClient(
         api_version: Union[str, ApiVersion] = DEFAULT_VERSION,
         **kwargs: Any,
     ) -> None:
-        self._pipeline = self._create_pipeline(
-            credential=credential, base_url=endpoint, **kwargs
-        )
+        self._pipeline = self._create_pipeline(credential=credential, base_url=endpoint, **kwargs)
 
         # Validate endpoint
         try:
@@ -133,9 +129,7 @@ class DeviceProvisioningClient(
         )
 
         # Create credential from keys
-        credential = AzureNamedKeyCredential(
-            name=shared_access_key_name, key=shared_access_key
-        )
+        credential = AzureNamedKeyCredential(name=shared_access_key_name, key=shared_access_key)
 
         return cls(endpoint=host_name, credential=credential, api_version=api_version, **kwargs)  # type: ignore
 
@@ -176,9 +170,7 @@ class DeviceProvisioningClient(
             try:
                 from azure.core.pipeline.transport import AioHttpTransport
             except ImportError:
-                raise ImportError(
-                    "Unable to create async transport. Please check aiohttp is installed."
-                )
+                raise ImportError("Unable to create async transport. Please check aiohttp is installed.")
             transport = AioHttpTransport(**kwargs)
 
         policies = [
@@ -197,6 +189,7 @@ class DeviceProvisioningClient(
             policies.extend([kwargs.get("_additional_pipeline_policies")])
 
         return AsyncPipeline(transport, policies=policies)  # type: ignore
+
 
 __all__: List[str] = [
     "DeviceProvisioningClient"

@@ -7,10 +7,12 @@ from abc import abstractmethod
 from typing import BinaryIO, Dict, Union, Any, Mapping
 from typing_extensions import Protocol
 
+
 class AvroDataReader(Protocol):
     """
     An Avro Data Reader.
     """
+
     def __init__(self, writers_schema: Any, readers_schema: Any) -> None:
         """
         Data reader used as defined in the Avro specification.
@@ -26,6 +28,7 @@ class AvroDataReader(Protocol):
         :param decoder: The binary decoder used for reading.
         :type decoder: any
         """
+
 
 class AbstractAvroObjectEncoder(object):
     """

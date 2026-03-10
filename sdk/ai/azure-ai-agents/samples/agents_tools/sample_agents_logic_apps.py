@@ -35,7 +35,6 @@ USAGE:
     3) <RECIPIENT_EMAIL> - The email address of the recipient.
 """
 
-
 import os
 import sys
 from typing import Set

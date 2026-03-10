@@ -13,7 +13,6 @@ from azure.core.rest import HttpRequest
 from .._constants import EnvironmentVariables
 from .._internal.msal_managed_identity_client import MsalManagedIdentityClient
 
-
 SERVICE_FABRIC_ERROR_MESSAGE = (
     "Specifying a client_id or identity_config is not supported by the Service Fabric managed identity environment. "
     "The managed identity configuration is determined by the Service Fabric cluster resource configuration. "

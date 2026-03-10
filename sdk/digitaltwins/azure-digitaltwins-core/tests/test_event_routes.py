@@ -14,26 +14,19 @@ class TestDigitalTwinsEventRoute(AzureRecordedTestCase):
 
     def _get_client(self, endpoint, **kwargs):
         credential = self.get_credential(DigitalTwinsClient)
-        return self.create_client_from_credential(
-            DigitalTwinsClient,
-            credential,
-            endpoint=endpoint,
-            **kwargs)
+        return self.create_client_from_credential(DigitalTwinsClient, credential, endpoint=endpoint, **kwargs)
 
     def test_create_event_route_no_endpoint(self, recorded_test, digitaltwin):
-        event_route_id = self.create_random_name('eventRoute-')
+        event_route_id = self.create_random_name("eventRoute-")
         event_filter = "$eventType = 'DigitalTwinTelemetryMessages' or $eventType = 'DigitalTwinLifecycleNotification'"
-        endpoint = self.create_random_name('endpoint-')
-        route = DigitalTwinsEventRoute(
-            endpoint_name=endpoint,
-            filter=event_filter
-        )
+        endpoint = self.create_random_name("endpoint-")
+        route = DigitalTwinsEventRoute(endpoint_name=endpoint, filter=event_filter)
         client = self._get_client(digitaltwin["endpoint"])
         with pytest.raises(HttpResponseError):
             client.upsert_event_route(event_route_id, route)
 
     def test_get_event_route_not_existing(self, recorded_test, digitaltwin):
-        event_route_id = self.create_random_name('eventRoute-')
+        event_route_id = self.create_random_name("eventRoute-")
         client = self._get_client(digitaltwin["endpoint"])
         with pytest.raises(ResourceNotFoundError):
             client.get_event_route(event_route_id)
@@ -44,7 +37,7 @@ class TestDigitalTwinsEventRoute(AzureRecordedTestCase):
         assert all_routes == []
 
     def test_delete_event_route_not_existing(self, recorded_test, digitaltwin):
-        event_route_id = self.create_random_name('eventRoute-')
+        event_route_id = self.create_random_name("eventRoute-")
         client = self._get_client(digitaltwin["endpoint"])
         with pytest.raises(ResourceNotFoundError):
             client.delete_event_route(event_route_id)

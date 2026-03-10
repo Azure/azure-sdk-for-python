@@ -16,8 +16,9 @@ if TYPE_CHECKING:
 
 ACCOUNT_KEY_VALID_YEARS = 10
 
+
 class MixedRealityAccountKeyCredential(object):
-    """ Represents an object used for Mixed Reality account key authentication.
+    """Represents an object used for Mixed Reality account key authentication.
 
     :param str account_id: The Mixed Reality service account identifier.
     :param AzureKeyCredential account_key: The Mixed Reality service account primary or secondary key credential.
@@ -28,7 +29,7 @@ class MixedRealityAccountKeyCredential(object):
         self.account_id = account_id
         self.account_key = account_key
 
-    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken": #pylint: disable=unused-argument
+    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint: disable=unused-argument
         token = self.account_id + ":" + self.account_key.key
 
         # No way to know when an account key might expire, so we'll set the
@@ -46,6 +47,7 @@ class MixedRealityAccountKeyCredential(object):
 
     async def __aexit__(self, exc_type, exc_value, traceback) -> None:
         pass
+
 
 def _add_years(date_to_update, years):
     try:

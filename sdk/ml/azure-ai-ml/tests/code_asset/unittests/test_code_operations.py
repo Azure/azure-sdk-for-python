@@ -55,12 +55,10 @@ class TestCodeOperations:
         p = tmp_path / "code.yml"
         code_path = tmp_path / "code_asset.txt"
         code_path.write_text("hello world")
-        p.write_text(
-            f"""
+        p.write_text(f"""
         name: {code_name}
         path: code_asset.txt
-        version: 3"""
-        )
+        version: 3""")
         with patch(
             "azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore",
             return_value=ArtifactStorageInfo(code_name, "3", "path", "datastore_id", "containerName"),

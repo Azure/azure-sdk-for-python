@@ -18,7 +18,7 @@ from typing import (
     Tuple,
     Union,
 )
-from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
+from azure.appconfiguration import (  # type: ignore # pylint:disable=no-name-in-module
     ConfigurationSetting,
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
@@ -457,8 +457,8 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                         try:
                             watch_setting = await client.get_configuration_setting(
                                 key, label, headers=headers
-                            )  # type:ignore
-                            watched_settings[(key, label)] = watch_setting.etag  # type:ignore
+                            )  # type: ignore
+                            watched_settings[(key, label)] = watch_setting.etag  # type: ignore
                         except HttpResponseError as e:
                             if e.status_code == 404:
                                 # If the watched setting is not found a refresh should be triggered when it is created.

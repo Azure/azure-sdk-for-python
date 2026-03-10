@@ -42,12 +42,12 @@ This example uses DefaultAzureCredential, which requests a token from Azure Acti
 For more information on DefaultAzureCredential, see
  https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
 """
+
 import os
 import json
 
 from azure.identity import DefaultAzureCredential
 from azure.schemaregistry import SchemaRegistryClient, SchemaFormat
-
 
 SCHEMAREGISTRY_FQN = os.environ["SCHEMAREGISTRY_JSON_FULLY_QUALIFIED_NAMESPACE"]
 GROUP_NAME = os.environ["SCHEMAREGISTRY_GROUP"]

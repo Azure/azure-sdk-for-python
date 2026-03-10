@@ -11,12 +11,7 @@ from ._generated.models import DigitalTwinsModelData
 from ._generated.models import IncomingRelationship
 from ._generated.models import DigitalTwinsEventRoute
 
-__all__ = [
-    'DigitalTwinsClient',
-    'DigitalTwinsModelData',
-    'IncomingRelationship',
-    'DigitalTwinsEventRoute'
-]
+__all__ = ["DigitalTwinsClient", "DigitalTwinsModelData", "IncomingRelationship", "DigitalTwinsEventRoute"]
 
 from ._version import VERSION
 

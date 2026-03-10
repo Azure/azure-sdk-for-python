@@ -12,8 +12,9 @@ __all__ = [
     "KeyVaultSecret",
     "KeyVaultSecretIdentifier",
     "SecretProperties",
-    "DeletedSecret"
+    "DeletedSecret",
 ]
 
 from ._version import VERSION
+
 __version__ = VERSION

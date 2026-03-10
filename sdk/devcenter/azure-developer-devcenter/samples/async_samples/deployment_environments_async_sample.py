@@ -30,7 +30,7 @@ FILE: deployment_environments_async_sample.py
 
 DESCRIPTION:
     This sample demonstrates how to create and delete Environments using python DevCenterClient. For this sample,
-    you must have previously configured a DevCenter, Project, Catalog, Environment Definition and Environment Type. 
+    you must have previously configured a DevCenter, Project, Catalog, Environment Definition and Environment Type.
     More details   on how to configure those requirements at https://learn.microsoft.com/azure/deployment-environments/
 
 USAGE:
@@ -90,7 +90,9 @@ async def environment_create_and_delete_async():
 
         # List available Environment Definitions
         environment_definitions = []
-        async for environment_definition in client.list_environment_definitions_by_catalog(target_project_name, target_catalog_name):
+        async for environment_definition in client.list_environment_definitions_by_catalog(
+            target_project_name, target_catalog_name
+        ):
             environment_definitions.append(environment_definition)
         if environment_definitions:
             print("\nList of environment definitions: ")
@@ -141,8 +143,10 @@ async def environment_create_and_delete_async():
         print(f"Completed deletion for the environment with status {delete_result.status}")
     # [END environment_create_and_delete_async]
 
+
 async def main():
     await environment_create_and_delete_async()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())

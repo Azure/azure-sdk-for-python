@@ -4,7 +4,7 @@
 # ------------------------------------
 """
 DESCRIPTION:
-    This sample demonstrates how to get a chat completion streaming response 
+    This sample demonstrates how to get a chat completion streaming response
     from the service using a synchronous client.
 
     This sample assumes the AI model is hosted on a Serverless API or

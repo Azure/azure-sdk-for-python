@@ -19,7 +19,9 @@ from azure.core.credentials import AzureKeyCredential
 
 
 class TestQnAKnowledgeBase(QuestionAnsweringTestCase):
-    def test_query_knowledgebase(self, recorded_test, qna_creds):  # standard model usage # pylint: disable=unused-argument
+    def test_query_knowledgebase(
+        self, recorded_test, qna_creds
+    ):  # standard model usage # pylint: disable=unused-argument
         client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         query_params = AnswersOptions(
             question="Ports and connectors",
@@ -27,7 +29,9 @@ class TestQnAKnowledgeBase(QuestionAnsweringTestCase):
             answer_context=KnowledgeBaseAnswerContext(previous_question="Meet Surface Pro 4", previous_qna_id=4),
         )
         with client:
-            output = client.get_answers(query_params, project_name=qna_creds["qna_project"], deployment_name="production")
+            output = client.get_answers(
+                query_params, project_name=qna_creds["qna_project"], deployment_name="production"
+            )
         assert output.answers
         for answer in output.answers:
             assert answer.answer
@@ -35,7 +39,7 @@ class TestQnAKnowledgeBase(QuestionAnsweringTestCase):
             assert answer.qna_id is not None
             assert answer.source
 
-    def test_query_knowledgebase_with_answerspan(self, recorded_test, qna_creds): # pylint: disable=unused-argument
+    def test_query_knowledgebase_with_answerspan(self, recorded_test, qna_creds):  # pylint: disable=unused-argument
         client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         query_params = AnswersOptions(
             question="Ports and connectors",
@@ -52,7 +56,7 @@ class TestQnAKnowledgeBase(QuestionAnsweringTestCase):
                 assert answer.short_answer.text
                 assert answer.short_answer.confidence is not None
 
-    def test_query_knowledgebase_filter(self, recorded_test, qna_creds): # pylint: disable=unused-argument
+    def test_query_knowledgebase_filter(self, recorded_test, qna_creds):  # pylint: disable=unused-argument
         filters = QueryFilters(
             metadata_filter=MetadataFilter(
                 metadata=[
@@ -75,7 +79,7 @@ class TestQnAKnowledgeBase(QuestionAnsweringTestCase):
             )
             assert response.answers
 
-    def test_query_knowledgebase_only_id(self, recorded_test, qna_creds): # pylint: disable=unused-argument
+    def test_query_knowledgebase_only_id(self, recorded_test, qna_creds):  # pylint: disable=unused-argument
         client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         with client:
             query_params = AnswersOptions(qna_id=19)
@@ -101,4 +105,6 @@ class TestQnAKnowledgeBase(QuestionAnsweringTestCase):
             with pytest.raises(TypeError):
                 client.get_answers(options, project_name="hello", deployment_name="test")
             with pytest.raises(TypeError):
-                client.get_answers(project_name="hello", deployment_name="test") # pylint: disable=no-value-for-parameter
+                client.get_answers(
+                    project_name="hello", deployment_name="test"
+                )  # pylint: disable=no-value-for-parameter

@@ -19,8 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Internal Helper functions in the Azure Cosmos database change_feed service.
-"""
+"""Internal Helper functions in the Azure Cosmos database change_feed service."""
 
 import warnings
 from datetime import datetime
@@ -30,10 +29,8 @@ from typing import Any, Tuple
 
 CHANGE_FEED_MODES = ["LatestVersion", "AllVersionsAndDeletes"]
 
-def add_args_to_kwargs(
-        args: Tuple[Any, ...],
-        kwargs: dict[str, Any]
-    ) -> None:
+
+def add_args_to_kwargs(args: Tuple[Any, ...], kwargs: dict[str, Any]) -> None:
     """Add positional arguments(args) to keyword argument dictionary(kwargs).
     Since 'query_items_change_feed' method only allows the following 4 positional arguments in the exact order
     and types, if the order and types don't match, errors will be raised.
@@ -61,10 +58,10 @@ def add_args_to_kwargs(
 
     if len(args) > 0:
         keys = [
-            'partition_key_range_id',
-            'is_start_from_beginning',
-            'continuation',
-            'max_item_count',
+            "partition_key_range_id",
+            "is_start_from_beginning",
+            "continuation",
+            "max_item_count",
         ]
         for i, value in enumerate(args):
             key = keys[i]
@@ -74,9 +71,8 @@ def add_args_to_kwargs(
 
             kwargs[key] = value
 
-def validate_kwargs(
-        keyword_arguments: dict[str, Any]
-    ) -> None:
+
+def validate_kwargs(keyword_arguments: dict[str, Any]) -> None:
     """Validate keyword arguments for change_feed API.
     The values of keyword arguments must match the expected type and conditions. If the conditions do not match,
     errors will be raised with the proper error messages and possible ways to correct the errors.
@@ -100,46 +96,51 @@ def validate_kwargs(
         mode = keyword_arguments["mode"]
         if mode not in CHANGE_FEED_MODES:
             raise ValueError(
-                f"Invalid mode was used: '{keyword_arguments['mode']}'."
-                f" Supported modes are {CHANGE_FEED_MODES}.")
+                f"Invalid mode was used: '{keyword_arguments['mode']}'." f" Supported modes are {CHANGE_FEED_MODES}."
+            )
 
-        if mode == 'AllVersionsAndDeletes':
+        if mode == "AllVersionsAndDeletes":
             if "partition_key_range_id" in keyword_arguments:
                 raise ValueError(
                     "'AllVersionsAndDeletes' mode is not supported if 'partition_key_range_id'"
-                    " was used. Please use 'feed_range' instead.")
-            if ("is_start_from_beginning" in keyword_arguments
-                    and keyword_arguments["is_start_from_beginning"] is not False):
+                    " was used. Please use 'feed_range' instead."
+                )
+            if (
+                "is_start_from_beginning" in keyword_arguments
+                and keyword_arguments["is_start_from_beginning"] is not False
+            ):
                 raise ValueError(
                     "'AllVersionsAndDeletes' mode is only supported if 'is_start_from_beginning'"
-                    " is 'False'. Please use 'is_start_from_beginning=False' or 'continuation' instead.")
+                    " is 'False'. Please use 'is_start_from_beginning=False' or 'continuation' instead."
+                )
             if "start_time" in keyword_arguments and keyword_arguments["start_time"] != "Now":
                 raise ValueError(
                     "'AllVersionsAndDeletes' mode is only supported if 'start_time' is 'Now'."
-                    " Please use 'start_time=\"Now\"' or 'continuation' instead.")
+                    " Please use 'start_time=\"Now\"' or 'continuation' instead."
+                )
 
     if "partition_key_range_id" in keyword_arguments:
         warnings.warn(
-            "'partition_key_range_id' is deprecated. Please pass in 'feed_range' instead.",
-            DeprecationWarning
+            "'partition_key_range_id' is deprecated. Please pass in 'feed_range' instead.", DeprecationWarning
         )
 
     if "is_start_from_beginning" in keyword_arguments:
         warnings.warn(
-            "'is_start_from_beginning' is deprecated. Please pass in 'start_time' instead.",
-            DeprecationWarning
+            "'is_start_from_beginning' is deprecated. Please pass in 'start_time' instead.", DeprecationWarning
         )
 
         if not isinstance(keyword_arguments["is_start_from_beginning"], bool):
             raise TypeError(
                 f"'is_start_from_beginning' must be 'bool' type,"
-                f" but given '{type(keyword_arguments['is_start_from_beginning']).__name__}'.")
+                f" but given '{type(keyword_arguments['is_start_from_beginning']).__name__}'."
+            )
 
         if keyword_arguments["is_start_from_beginning"] is True and "start_time" in keyword_arguments:
             raise ValueError("'is_start_from_beginning' and 'start_time' are exclusive, please only set one of them.")
 
     if "start_time" in keyword_arguments:
-        if not isinstance(keyword_arguments['start_time'], datetime):
-            if keyword_arguments['start_time'].lower() not in ["now", "beginning"]:
+        if not isinstance(keyword_arguments["start_time"], datetime):
+            if keyword_arguments["start_time"].lower() not in ["now", "beginning"]:
                 raise ValueError(
-                    f"'start_time' must be either 'Now' or 'Beginning', but given '{keyword_arguments['start_time']}'.")
+                    f"'start_time' must be either 'Now' or 'Beginning', but given '{keyword_arguments['start_time']}'."
+                )

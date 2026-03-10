@@ -28,27 +28,24 @@ class ManagedPrivateEndpoint(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'ManagedPrivateEndpointProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "ManagedPrivateEndpointProperties"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ManagedPrivateEndpoint, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.properties = kwargs.get('properties', None)
+        self.properties = kwargs.get("properties", None)
 
 
 class ManagedPrivateEndpointConnectionState(msrest.serialization.Model):
@@ -65,23 +62,20 @@ class ManagedPrivateEndpointConnectionState(msrest.serialization.Model):
     """
 
     _validation = {
-        'status': {'readonly': True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "actions_required": {"key": "actionsRequired", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ManagedPrivateEndpointConnectionState, self).__init__(**kwargs)
         self.status = None
-        self.description = kwargs.get('description', None)
-        self.actions_required = kwargs.get('actions_required', None)
+        self.description = kwargs.get("description", None)
+        self.actions_required = kwargs.get("actions_required", None)
 
 
 class ManagedPrivateEndpointListResponse(msrest.serialization.Model):
@@ -97,20 +91,17 @@ class ManagedPrivateEndpointListResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ManagedPrivateEndpoint]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ManagedPrivateEndpoint]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ManagedPrivateEndpointListResponse, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs.get("value", None)
         self.next_link = None
 
 
@@ -140,31 +131,28 @@ class ManagedPrivateEndpointProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'is_reserved': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "is_reserved": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'private_link_resource_id': {'key': 'privateLinkResourceId', 'type': 'str'},
-        'group_id': {'key': 'groupId', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'connection_state': {'key': 'connectionState', 'type': 'ManagedPrivateEndpointConnectionState'},
-        'is_reserved': {'key': 'isReserved', 'type': 'bool'},
-        'fqdns': {'key': 'fqdns', 'type': '[str]'},
-        'is_compliant': {'key': 'isCompliant', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "private_link_resource_id": {"key": "privateLinkResourceId", "type": "str"},
+        "group_id": {"key": "groupId", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "connection_state": {"key": "connectionState", "type": "ManagedPrivateEndpointConnectionState"},
+        "is_reserved": {"key": "isReserved", "type": "bool"},
+        "fqdns": {"key": "fqdns", "type": "[str]"},
+        "is_compliant": {"key": "isCompliant", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ManagedPrivateEndpointProperties, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.private_link_resource_id = kwargs.get('private_link_resource_id', None)
-        self.group_id = kwargs.get('group_id', None)
+        self.name = kwargs.get("name", None)
+        self.private_link_resource_id = kwargs.get("private_link_resource_id", None)
+        self.group_id = kwargs.get("group_id", None)
         self.provisioning_state = None
-        self.connection_state = kwargs.get('connection_state', None)
+        self.connection_state = kwargs.get("connection_state", None)
         self.is_reserved = None
-        self.fqdns = kwargs.get('fqdns', None)
-        self.is_compliant = kwargs.get('is_compliant', None)
+        self.fqdns = kwargs.get("fqdns", None)
+        self.is_compliant = kwargs.get("is_compliant", None)

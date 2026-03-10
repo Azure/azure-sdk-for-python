@@ -32,7 +32,6 @@ from .types import AMQPTypes, FieldDefinition, ObjDefinition
 from .constants import FIELD
 from .performatives import _CAN_ADD_DOCSTRING
 
-
 Received = namedtuple("Received", ["section_number", "section_offset"])
 Received._code = 0x00000023  # type: ignore # pylint:disable=protected-access
 Received._definition = (  # type: ignore # pylint:disable=protected-access

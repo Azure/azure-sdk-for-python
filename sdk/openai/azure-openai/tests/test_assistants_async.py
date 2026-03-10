@@ -125,7 +125,7 @@ class AsyncEventHandler(AsyncAssistantEventHandler):
         assert text.value is not None
 
     async def on_text_done(self, text: Text):
-        assert text.value  is not None
+        assert text.value is not None
         for annotation in text.annotations:
             if annotation.type == "file_citation":
                 assert annotation.end_index is not None
@@ -191,10 +191,7 @@ class TestAssistantsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(ASST_AZURE, PREVIEW)]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(ASST_AZURE, PREVIEW)])
     async def test_assistants_crud(self, client_async, api_type, api_version, **kwargs):
         try:
             assistant = await client_async.beta.assistants.create(
@@ -221,14 +218,11 @@ class TestAssistantsAsync(AzureRecordedTestCase):
                 assert asst.id
 
             modify_assistant = await client_async.beta.assistants.update(
-                assistant_id=assistant.id,
-                metadata={"key": "value"}
+                assistant_id=assistant.id, metadata={"key": "value"}
             )
             assert modify_assistant.metadata == {"key": "value"}
         finally:
-            delete_assistant = await client_async.beta.assistants.delete(
-                assistant_id=assistant.id
-            )
+            delete_assistant = await client_async.beta.assistants.delete(assistant_id=assistant.id)
             assert delete_assistant.id == assistant.id
             assert delete_assistant.deleted is True
 
@@ -254,16 +248,11 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             assert retrieved_thread.created_at == thread.created_at
             assert retrieved_thread.metadata == thread.metadata
 
-            updated_thread = await client_async.beta.threads.update(
-                thread_id=thread.id,
-                metadata={"key": "updated"}
-            )
+            updated_thread = await client_async.beta.threads.update(thread_id=thread.id, metadata={"key": "updated"})
             assert updated_thread.metadata == {"key": "updated"}
 
         finally:
-            delete_thread = await client_async.beta.threads.delete(
-                thread_id=thread.id
-            )
+            delete_thread = await client_async.beta.threads.delete(thread_id=thread.id)
             assert delete_thread.id == thread.id
             assert delete_thread.deleted is True
 
@@ -277,10 +266,7 @@ class TestAssistantsAsync(AzureRecordedTestCase):
 
         path = pathlib.Path(file_name)
 
-        file = await client_async.files.create(
-            file=open(path, "rb"),
-            purpose="assistants"
-        )
+        file = await client_async.files.create(file=open(path, "rb"), purpose="assistants")
 
         try:
             thread = await client_async.beta.threads.create(
@@ -298,16 +284,10 @@ class TestAssistantsAsync(AzureRecordedTestCase):
                 role="user",
                 content="what is 2+2?",
                 metadata={"math": "addition"},
-                attachments=[
-                    {
-                        "file_id": file.id,
-                        "tools": [{"type": "code_interpreter"}]
-                    }
-                ]
+                attachments=[{"file_id": file.id, "tools": [{"type": "code_interpreter"}]}],
             )
             retrieved_message = await client_async.beta.threads.messages.retrieve(
-                thread_id=thread.id,
-                message_id=message.id
+                thread_id=thread.id, message_id=message.id
             )
             assert retrieved_message.id == message.id
             assert retrieved_message.created_at == message.created_at
@@ -317,24 +297,18 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             assert retrieved_message.role == message.role
             assert retrieved_message.content == message.content
 
-            list_messages = client_async.beta.threads.messages.list(
-                thread_id=thread.id
-            )
+            list_messages = client_async.beta.threads.messages.list(thread_id=thread.id)
             async for msg in list_messages:
                 assert msg.id
 
             modify_message = await client_async.beta.threads.messages.update(
-                thread_id=thread.id,
-                message_id=message.id,
-                metadata={"math": "updated"}
+                thread_id=thread.id, message_id=message.id, metadata={"math": "updated"}
             )
             assert modify_message.metadata == {"math": "updated"}
 
         finally:
             os.remove(path)
-            delete_thread = await client_async.beta.threads.delete(
-                thread_id=thread.id
-            )
+            delete_thread = await client_async.beta.threads.delete(thread_id=thread.id)
             assert delete_thread.id == thread.id
             assert delete_thread.deleted is True
             delete_file = await client_async.files.delete(file.id)
@@ -374,22 +348,16 @@ class TestAssistantsAsync(AzureRecordedTestCase):
                     assert message.content[0].text.value
 
             run = await client_async.beta.threads.runs.update(
-                thread_id=thread.id,
-                run_id=run.id,
-                metadata={"user": "user123"}
+                thread_id=thread.id, run_id=run.id, metadata={"user": "user123"}
             )
             assert run.metadata == {"user": "user123"}
 
         finally:
-            delete_assistant = await client_async.beta.assistants.delete(
-                assistant_id=assistant.id
-            )
+            delete_assistant = await client_async.beta.assistants.delete(assistant_id=assistant.id)
             assert delete_assistant.id == assistant.id
             assert delete_assistant.deleted is True
 
-            delete_thread = await client_async.beta.threads.delete(
-                thread_id=thread.id
-            )
+            delete_thread = await client_async.beta.threads.delete(thread_id=thread.id)
             assert delete_thread.id == thread.id
             assert delete_thread.deleted is True
 
@@ -407,20 +375,13 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             vector_store = await client_async.vector_stores.create(
                 name="Support FAQ",
             )
-            await client_async.vector_stores.files.upload_and_poll(
-                vector_store_id=vector_store.id,
-                file=path
-            )
+            await client_async.vector_stores.files.upload_and_poll(vector_store_id=vector_store.id, file=path)
             assistant = await client_async.beta.assistants.create(
                 name="python test",
                 instructions="You help answer questions about Contoso company policy.",
                 tools=[{"type": "file_search"}],
-                tool_resources={
-                    "file_search": {
-                        "vector_store_ids": [vector_store.id]
-                    }
-                },
-                model="gpt-4-1106-preview"
+                tool_resources={"file_search": {"vector_store_ids": [vector_store.id]}},
+                model="gpt-4-1106-preview",
             )
             thread = await client_async.beta.threads.create(
                 messages=[
@@ -437,7 +398,7 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             run_steps = client_async.beta.threads.runs.steps.list(
                 thread_id=thread.id,
                 run_id=run.id,
-                include=["step_details.tool_calls[*].file_search.results[*].content"]
+                include=["step_details.tool_calls[*].file_search.results[*].content"],
             )
             async for step in run_steps:
                 assert step
@@ -453,20 +414,14 @@ class TestAssistantsAsync(AzureRecordedTestCase):
 
         finally:
             os.remove(path)
-            delete_assistant = await client_async.beta.assistants.delete(
-                assistant_id=assistant.id
-            )
+            delete_assistant = await client_async.beta.assistants.delete(assistant_id=assistant.id)
             assert delete_assistant.id == assistant.id
             assert delete_assistant.deleted is True
 
-            delete_thread = await client_async.beta.threads.delete(
-                thread_id=run.thread_id
-            )
+            delete_thread = await client_async.beta.threads.delete(thread_id=run.thread_id)
             assert delete_thread.id
             assert delete_thread.deleted is True
-            deleted_vector_store = await client_async.vector_stores.delete(
-                vector_store_id=vector_store.id
-            )
+            deleted_vector_store = await client_async.vector_stores.delete(vector_store_id=vector_store.id)
             assert deleted_vector_store.deleted is True
 
     @configure_async
@@ -497,8 +452,8 @@ class TestAssistantsAsync(AzureRecordedTestCase):
                                     },
                                 },
                                 "required": ["location"],
-                            }
-                        }
+                            },
+                        },
                     }
                 ],
                 model="gpt-4-1106-preview",
@@ -506,11 +461,7 @@ class TestAssistantsAsync(AzureRecordedTestCase):
 
             run = await client_async.beta.threads.create_and_run_poll(
                 assistant_id=assistant.id,
-                thread={
-                    "messages": [
-                        {"role": "user", "content": "How's the weather in Seattle?"}
-                    ]
-                }
+                thread={"messages": [{"role": "user", "content": "How's the weather in Seattle?"}]},
             )
             self.handle_run_failure(run)
             if run.status == "requires_action":
@@ -520,9 +471,9 @@ class TestAssistantsAsync(AzureRecordedTestCase):
                     tool_outputs=[
                         {
                             "tool_call_id": run.required_action.submit_tool_outputs.tool_calls[0].id,
-                            "output": "{\"temperature\": \"22\", \"unit\": \"celsius\", \"description\": \"Sunny\"}"
+                            "output": '{"temperature": "22", "unit": "celsius", "description": "Sunny"}',
                         }
-                    ]
+                    ],
                 )
             self.handle_run_failure(run)
             if run.status == "completed":
@@ -531,7 +482,6 @@ class TestAssistantsAsync(AzureRecordedTestCase):
                 async for message in messages:
                     assert message.content[0].type == "text"
                     assert message.content[0].text.value
-
 
             runs = client_async.beta.threads.runs.list(thread_id=run.thread_id)
             async for r in runs:
@@ -543,17 +493,12 @@ class TestAssistantsAsync(AzureRecordedTestCase):
                 assert r.tools == run.tools
                 assert r.metadata == run.metadata
 
-                run_steps = client_async.beta.threads.runs.steps.list(
-                    thread_id=run.thread_id,
-                    run_id=r.id
-                )
+                run_steps = client_async.beta.threads.runs.steps.list(thread_id=run.thread_id, run_id=r.id)
                 async for step in run_steps:
                     assert step.id
 
                 retrieved_step = await client_async.beta.threads.runs.steps.retrieve(
-                    thread_id=run.thread_id,
-                    run_id=r.id,
-                    step_id=step.id
+                    thread_id=run.thread_id, run_id=r.id, step_id=step.id
                 )
                 assert retrieved_step.id
                 assert retrieved_step.created_at
@@ -564,15 +509,11 @@ class TestAssistantsAsync(AzureRecordedTestCase):
                 assert retrieved_step.step_details
 
         finally:
-            delete_assistant = await client_async.beta.assistants.delete(
-                assistant_id=assistant.id
-            )
+            delete_assistant = await client_async.beta.assistants.delete(assistant_id=assistant.id)
             assert delete_assistant.id == assistant.id
             assert delete_assistant.deleted is True
 
-            delete_thread = await client_async.beta.threads.delete(
-                thread_id=run.thread_id
-            )
+            delete_thread = await client_async.beta.threads.delete(thread_id=run.thread_id)
             assert delete_thread.id
             assert delete_thread.deleted is True
 
@@ -613,7 +554,7 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             name="Math Tutor",
             instructions="You are a personal math tutor. Write and run code to answer math questions.",
             tools=[{"type": "code_interpreter"}],
-            model="gpt-4-1106-preview"
+            model="gpt-4-1106-preview",
         )
 
         try:

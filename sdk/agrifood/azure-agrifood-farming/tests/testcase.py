@@ -1,4 +1,3 @@
-
 # coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,6 +7,7 @@
 import functools
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, recorded_by_proxy
 from azure.agrifood.farming import FarmBeatsClient
+
 
 class FarmBeatsTestCase(AzureRecordedTestCase):
 
@@ -19,8 +19,7 @@ class FarmBeatsTestCase(AzureRecordedTestCase):
             credential=credential,
         )
 
+
 FarmBeatsPowerShellPreparer = functools.partial(
-    PowerShellPreparer,
-    "agrifood",
-    agrifood_endpoint="https://fakeaccount.farmbeats.azure.net"
+    PowerShellPreparer, "agrifood", agrifood_endpoint="https://fakeaccount.farmbeats.azure.net"
 )

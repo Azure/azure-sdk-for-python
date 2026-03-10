@@ -9,7 +9,13 @@
 from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -19,9 +25,15 @@ from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._miscellaneous_operations import build_get_operation_request, build_get_resource_info_request, build_list_operations_request
-T = TypeVar('T')
+from ...operations._miscellaneous_operations import (
+    build_get_operation_request,
+    build_get_resource_info_request,
+    build_list_operations_request,
+)
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class MiscellaneousOperations:
     """
@@ -42,12 +54,8 @@ class MiscellaneousOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace
-    def list_operations(
-        self,
-        **kwargs: Any
-    ) -> AsyncIterable[_models.GetOperationsResponse]:
+    def list_operations(self, **kwargs: Any) -> AsyncIterable[_models.GetOperationsResponse]:
         """Lists all operations.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -60,30 +68,31 @@ class MiscellaneousOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.GetOperationsResponse]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-07-31"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.GetOperationsResponse]
 
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_operations_request(
                     api_version=api_version,
-                    template_url=self.list_operations.metadata['url'],
+                    template_url=self.list_operations.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                
+
                 request = build_list_operations_request(
                     api_version=api_version,
                     template_url=next_link,
@@ -92,12 +101,16 @@ class MiscellaneousOperations:
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.method = "GET"
             return request
@@ -113,9 +126,7 @@ class MiscellaneousOperations:
             request = prepare_request(next_link)
 
             pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -126,18 +137,12 @@ class MiscellaneousOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_operations.metadata = {'url': "/operations"}  # type: ignore
+    list_operations.metadata = {"url": "/operations"}  # type: ignore
 
     @distributed_trace_async
-    async def get_operation(
-        self,
-        operation_id: str,
-        **kwargs: Any
-    ) -> _models.OperationDetails:
+    async def get_operation(self, operation_id: str, **kwargs: Any) -> _models.OperationDetails:
         """Gets operation info.
 
         :param operation_id: Unique operation ID.
@@ -147,35 +152,30 @@ class MiscellaneousOperations:
         :rtype: ~azure.ai.formrecognizer.v2023_07_31.models.OperationDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.OperationDetails]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-07-31"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.OperationDetails]
 
-        
         request = build_get_operation_request(
             operation_id=operation_id,
             api_version=api_version,
-            template_url=self.get_operation.metadata['url'],
+            template_url=self.get_operation.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -184,21 +184,17 @@ class MiscellaneousOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('OperationDetails', pipeline_response)
+        deserialized = self._deserialize("OperationDetails", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_operation.metadata = {'url': "/operations/{operationId}"}  # type: ignore
-
+    get_operation.metadata = {"url": "/operations/{operationId}"}  # type: ignore
 
     @distributed_trace_async
-    async def get_resource_info(
-        self,
-        **kwargs: Any
-    ) -> _models.ResourceDetails:
+    async def get_resource_info(self, **kwargs: Any) -> _models.ResourceDetails:
         """Return information about the current resource.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -206,34 +202,29 @@ class MiscellaneousOperations:
         :rtype: ~azure.ai.formrecognizer.v2023_07_31.models.ResourceDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ResourceDetails]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-07-31"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ResourceDetails]
 
-        
         request = build_get_resource_info_request(
             api_version=api_version,
-            template_url=self.get_resource_info.metadata['url'],
+            template_url=self.get_resource_info.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -242,12 +233,11 @@ class MiscellaneousOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('ResourceDetails', pipeline_response)
+        deserialized = self._deserialize("ResourceDetails", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_resource_info.metadata = {'url': "/info"}  # type: ignore
-
+    get_resource_info.metadata = {"url": "/info"}  # type: ignore

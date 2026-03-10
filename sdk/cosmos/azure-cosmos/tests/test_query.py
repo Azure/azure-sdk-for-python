@@ -17,6 +17,7 @@ from azure.cosmos._execution_context.query_execution_info import _PartitionedQue
 from azure.cosmos.documents import _DistinctType
 from azure.cosmos.partition_key import PartitionKey
 
+
 @pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosQuery
 class TestQuery(unittest.TestCase):
@@ -36,91 +37,91 @@ class TestQuery(unittest.TestCase):
         use_multiple_write_locations = False
         if os.environ.get("AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER", "False") == "True":
             use_multiple_write_locations = True
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.credential, multiple_write_locations=use_multiple_write_locations)
+        cls.client = cosmos_client.CosmosClient(
+            cls.host, cls.credential, multiple_write_locations=use_multiple_write_locations
+        )
         cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
 
     def test_first_and_last_slashes_trimmed_for_query_string(self):
-        created_collection = self.created_db.create_container(
-            "test_trimmed_slashes", PartitionKey(path="/pk"))
-        doc_id = 'myId' + str(uuid.uuid4())
-        document_definition = {'pk': 'pk', 'id': doc_id}
+        created_collection = self.created_db.create_container("test_trimmed_slashes", PartitionKey(path="/pk"))
+        doc_id = "myId" + str(uuid.uuid4())
+        document_definition = {"pk": "pk", "id": doc_id}
         created_collection.create_item(body=document_definition)
 
-        query = 'SELECT * from c'
-        query_iterable = created_collection.query_items(
-            query=query,
-            partition_key='pk'
-        )
+        query = "SELECT * from c"
+        query_iterable = created_collection.query_items(query=query, partition_key="pk")
         iter_list = list(query_iterable)
-        self.assertEqual(iter_list[0]['id'], doc_id)
+        self.assertEqual(iter_list[0]["id"], doc_id)
         self.created_db.delete_container(created_collection.id)
 
     def test_populate_query_metrics(self):
-        created_collection = self.created_db.create_container("query_metrics_test",
-                                                              PartitionKey(path="/pk"))
-        doc_id = 'MyId' + str(uuid.uuid4())
-        document_definition = {'pk': 'pk', 'id': doc_id}
+        created_collection = self.created_db.create_container("query_metrics_test", PartitionKey(path="/pk"))
+        doc_id = "MyId" + str(uuid.uuid4())
+        document_definition = {"pk": "pk", "id": doc_id}
         created_collection.create_item(body=document_definition)
 
-        query = 'SELECT * from c'
-        query_iterable = created_collection.query_items(
-            query=query,
-            partition_key='pk',
-            populate_query_metrics=True
-        )
+        query = "SELECT * from c"
+        query_iterable = created_collection.query_items(query=query, partition_key="pk", populate_query_metrics=True)
 
         iter_list = list(query_iterable)
-        self.assertEqual(iter_list[0]['id'], doc_id)
+        self.assertEqual(iter_list[0]["id"], doc_id)
 
-        METRICS_HEADER_NAME = 'x-ms-documentdb-query-metrics'
+        METRICS_HEADER_NAME = "x-ms-documentdb-query-metrics"
         self.assertTrue(METRICS_HEADER_NAME in created_collection.client_connection.last_response_headers)
         metrics_header = created_collection.client_connection.last_response_headers[METRICS_HEADER_NAME]
         # Validate header is well-formed: "key1=value1;key2=value2;etc"
-        metrics = metrics_header.split(';')
+        metrics = metrics_header.split(";")
         self.assertTrue(len(metrics) > 1)
-        self.assertTrue(all(['=' in x for x in metrics]))
+        self.assertTrue(all(["=" in x for x in metrics]))
         self.created_db.delete_container(created_collection.id)
 
     def test_populate_index_metrics(self):
-        created_collection = self.created_db.create_container("query_index_test",
-                                                              PartitionKey(path="/pk"))
+        created_collection = self.created_db.create_container("query_index_test", PartitionKey(path="/pk"))
 
-        doc_id = 'MyId' + str(uuid.uuid4())
-        document_definition = {'pk': 'pk', 'id': doc_id}
+        doc_id = "MyId" + str(uuid.uuid4())
+        document_definition = {"pk": "pk", "id": doc_id}
         created_collection.create_item(body=document_definition)
 
-        query = 'SELECT * from c'
-        query_iterable = created_collection.query_items(
-            query=query,
-            partition_key='pk',
-            populate_index_metrics=True
-        )
+        query = "SELECT * from c"
+        query_iterable = created_collection.query_items(query=query, partition_key="pk", populate_index_metrics=True)
 
         iter_list = list(query_iterable)
-        self.assertEqual(iter_list[0]['id'], doc_id)
+        self.assertEqual(iter_list[0]["id"], doc_id)
 
         INDEX_HEADER_NAME = http_constants.HttpHeaders.IndexUtilization
         self.assertTrue(INDEX_HEADER_NAME in created_collection.client_connection.last_response_headers)
         index_metrics = created_collection.client_connection.last_response_headers[INDEX_HEADER_NAME]
         self.assertIsNotNone(index_metrics)
-        expected_index_metrics = {'UtilizedSingleIndexes': [{'FilterExpression': '', 'IndexSpec': '/pk/?',
-                                                             'FilterPreciseSet': True, 'IndexPreciseSet': True,
-                                                             'IndexImpactScore': 'High'}],
-                                  'PotentialSingleIndexes': [], 'UtilizedCompositeIndexes': [],
-                                  'PotentialCompositeIndexes': []}
+        expected_index_metrics = {
+            "UtilizedSingleIndexes": [
+                {
+                    "FilterExpression": "",
+                    "IndexSpec": "/pk/?",
+                    "FilterPreciseSet": True,
+                    "IndexPreciseSet": True,
+                    "IndexImpactScore": "High",
+                }
+            ],
+            "PotentialSingleIndexes": [],
+            "UtilizedCompositeIndexes": [],
+            "PotentialCompositeIndexes": [],
+        }
         self.assertDictEqual(expected_index_metrics, index_metrics)
         self.created_db.delete_container(created_collection.id)
 
     @pytest.mark.skip(reason="Emulator does not support query advisor yet")
     def test_populate_query_advice(self):
-        created_collection = self.created_db.create_container("query_advice_test",
-                                                              PartitionKey(path="/pk"))
+        created_collection = self.created_db.create_container("query_advice_test", PartitionKey(path="/pk"))
 
-        doc_id = 'MyId' + str(uuid.uuid4())
+        doc_id = "MyId" + str(uuid.uuid4())
         document_definition = {
-            'pk': 'pk', 'id': doc_id, 'name': 'test document',
-            'tags': [{'name': 'python'}, {'name': 'cosmos'}],
-            'timestamp': '2099-01-01T00:00:00Z', 'ticks': 0, 'ts': 0
+            "pk": "pk",
+            "id": doc_id,
+            "name": "test document",
+            "tags": [{"name": "python"}, {"name": "cosmos"}],
+            "timestamp": "2099-01-01T00:00:00Z",
+            "ticks": 0,
+            "ts": 0,
         }
         created_collection.create_item(body=document_definition)
 
@@ -129,7 +130,8 @@ class TestQuery(unittest.TestCase):
         # QA1000 - PartialArrayContains: ARRAY_CONTAINS with partial match
         query_iterable = created_collection.query_items(
             query='SELECT * FROM c WHERE ARRAY_CONTAINS(c.tags, {"name": "python"}, true)',
-            partition_key='pk', populate_query_advice=True
+            partition_key="pk",
+            populate_query_advice=True,
         )
         list(query_iterable)
         query_advice = created_collection.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
@@ -138,8 +140,7 @@ class TestQuery(unittest.TestCase):
 
         # QA1002 - Contains: CONTAINS usage
         query_iterable = created_collection.query_items(
-            query='SELECT * FROM c WHERE CONTAINS(c.name, "test")',
-            partition_key='pk', populate_query_advice=True
+            query='SELECT * FROM c WHERE CONTAINS(c.name, "test")', partition_key="pk", populate_query_advice=True
         )
         list(query_iterable)
         query_advice = created_collection.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
@@ -149,7 +150,8 @@ class TestQuery(unittest.TestCase):
         # QA1003 - CaseInsensitiveStartsWithOrStringEquals: case-insensitive STARTSWITH
         query_iterable = created_collection.query_items(
             query='SELECT * FROM c WHERE STARTSWITH(c.name, "test", true)',
-            partition_key='pk', populate_query_advice=True
+            partition_key="pk",
+            populate_query_advice=True,
         )
         list(query_iterable)
         query_advice = created_collection.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
@@ -159,7 +161,8 @@ class TestQuery(unittest.TestCase):
         # QA1004 - CaseInsensitiveEndsWith: case-insensitive ENDSWITH
         query_iterable = created_collection.query_items(
             query='SELECT * FROM c WHERE ENDSWITH(c.name, "document", true)',
-            partition_key='pk', populate_query_advice=True
+            partition_key="pk",
+            populate_query_advice=True,
         )
         list(query_iterable)
         query_advice = created_collection.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
@@ -168,8 +171,9 @@ class TestQuery(unittest.TestCase):
 
         # QA1007 - GetCurrentDateTime: usage of GetCurrentDateTime
         query_iterable = created_collection.query_items(
-            query='SELECT * FROM c WHERE c.timestamp < GetCurrentDateTime()',
-            partition_key='pk', populate_query_advice=True
+            query="SELECT * FROM c WHERE c.timestamp < GetCurrentDateTime()",
+            partition_key="pk",
+            populate_query_advice=True,
         )
         list(query_iterable)
         query_advice = created_collection.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
@@ -178,8 +182,7 @@ class TestQuery(unittest.TestCase):
 
         # QA1008 - GetCurrentTicks: usage of GetCurrentTicks
         query_iterable = created_collection.query_items(
-            query='SELECT * FROM c WHERE c.ticks < GetCurrentTicks()',
-            partition_key='pk', populate_query_advice=True
+            query="SELECT * FROM c WHERE c.ticks < GetCurrentTicks()", partition_key="pk", populate_query_advice=True
         )
         list(query_iterable)
         query_advice = created_collection.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
@@ -188,8 +191,7 @@ class TestQuery(unittest.TestCase):
 
         # QA1009 - GetCurrentTimestamp: usage of GetCurrentTimestamp
         query_iterable = created_collection.query_items(
-            query='SELECT * FROM c WHERE c.ts < GetCurrentTimestamp()',
-            partition_key='pk', populate_query_advice=True
+            query="SELECT * FROM c WHERE c.ts < GetCurrentTimestamp()", partition_key="pk", populate_query_advice=True
         )
         list(query_iterable)
         query_advice = created_collection.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
@@ -200,25 +202,22 @@ class TestQuery(unittest.TestCase):
     # TODO: Need to validate the query request count logic
     @pytest.mark.skip
     def test_max_item_count_honored_in_order_by_query(self):
-        created_collection = self.created_db.create_container("test-max-item-count" + str(uuid.uuid4()),
-                                                              PartitionKey(path="/pk"))
+        created_collection = self.created_db.create_container(
+            "test-max-item-count" + str(uuid.uuid4()), PartitionKey(path="/pk")
+        )
         docs = []
         for i in range(10):
-            document_definition = {'pk': 'pk', 'id': 'myId' + str(uuid.uuid4())}
+            document_definition = {"pk": "pk", "id": "myId" + str(uuid.uuid4())}
             docs.append(created_collection.create_item(body=document_definition))
 
-        query = 'SELECT * from c ORDER BY c._ts'
+        query = "SELECT * from c ORDER BY c._ts"
         query_iterable = created_collection.query_items(
-            query=query,
-            max_item_count=1,
-            enable_cross_partition_query=True
+            query=query, max_item_count=1, enable_cross_partition_query=True
         )
         self.validate_query_requests_count(query_iterable, 25)
 
         query_iterable = created_collection.query_items(
-            query=query,
-            max_item_count=100,
-            enable_cross_partition_query=True
+            query=query, max_item_count=100, enable_cross_partition_query=True
         )
 
         self.validate_query_requests_count(query_iterable, 5)
@@ -240,38 +239,45 @@ class TestQuery(unittest.TestCase):
 
     def test_get_query_plan_through_gateway(self):
         created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
-        self._validate_query_plan(query="Select top 10 value count(c.id) from c",
-                                  container_link=created_collection.container_link,
-                                  top=10,
-                                  order_by=[],
-                                  aggregate=['Count'],
-                                  select_value=True,
-                                  offset=None,
-                                  limit=None,
-                                  distinct=_DistinctType.NoneType)
+        self._validate_query_plan(
+            query="Select top 10 value count(c.id) from c",
+            container_link=created_collection.container_link,
+            top=10,
+            order_by=[],
+            aggregate=["Count"],
+            select_value=True,
+            offset=None,
+            limit=None,
+            distinct=_DistinctType.NoneType,
+        )
 
-        self._validate_query_plan(query="Select * from c order by c._ts offset 5 limit 10",
-                                  container_link=created_collection.container_link,
-                                  top=None,
-                                  order_by=['Ascending'],
-                                  aggregate=[],
-                                  select_value=False,
-                                  offset=5,
-                                  limit=10,
-                                  distinct=_DistinctType.NoneType)
+        self._validate_query_plan(
+            query="Select * from c order by c._ts offset 5 limit 10",
+            container_link=created_collection.container_link,
+            top=None,
+            order_by=["Ascending"],
+            aggregate=[],
+            select_value=False,
+            offset=5,
+            limit=10,
+            distinct=_DistinctType.NoneType,
+        )
 
-        self._validate_query_plan(query="Select distinct value c.id from c order by c.id",
-                                  container_link=created_collection.container_link,
-                                  top=None,
-                                  order_by=['Ascending'],
-                                  aggregate=[],
-                                  select_value=True,
-                                  offset=None,
-                                  limit=None,
-                                  distinct=_DistinctType.Ordered)
+        self._validate_query_plan(
+            query="Select distinct value c.id from c order by c.id",
+            container_link=created_collection.container_link,
+            top=None,
+            order_by=["Ascending"],
+            aggregate=[],
+            select_value=True,
+            offset=None,
+            limit=None,
+            distinct=_DistinctType.Ordered,
+        )
 
-    def _validate_query_plan(self, query, container_link, top, order_by, aggregate, select_value, offset, limit,
-                             distinct):
+    def _validate_query_plan(
+        self, query, container_link, top, order_by, aggregate, select_value, offset, limit, distinct
+    ):
         query_plan_dict = self.client.client_connection._GetQueryPlanThroughGateway(query, container_link)
         query_execution_info = _PartitionedQueryExecutionInfo(query_plan_dict)
         self.assertTrue(query_execution_info.has_rewritten_query())
@@ -291,7 +297,7 @@ class TestQuery(unittest.TestCase):
 
     def test_unsupported_queries(self):
         created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
-        queries = ['SELECT COUNT(1) FROM c', 'SELECT COUNT(1) + 5 FROM c', 'SELECT COUNT(1) + SUM(c) FROM c']
+        queries = ["SELECT COUNT(1) FROM c", "SELECT COUNT(1) + 5 FROM c", "SELECT COUNT(1) + SUM(c) FROM c"]
         for query in queries:
             query_iterable = created_collection.query_items(query=query, enable_cross_partition_query=True)
             try:
@@ -302,123 +308,138 @@ class TestQuery(unittest.TestCase):
 
     def test_query_with_non_overlapping_pk_ranges(self):
         created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
-        query_iterable = created_collection.query_items("select * from c where c.pk='1' or c.pk='2'",
-                                                        enable_cross_partition_query=True)
+        query_iterable = created_collection.query_items(
+            "select * from c where c.pk='1' or c.pk='2'", enable_cross_partition_query=True
+        )
         self.assertListEqual(list(query_iterable), [])
 
     def test_offset_limit(self):
-        created_collection = self.created_db.create_container("offset_limit_test_" + str(uuid.uuid4()),
-                                                              PartitionKey(path="/pk"))
+        created_collection = self.created_db.create_container(
+            "offset_limit_test_" + str(uuid.uuid4()), PartitionKey(path="/pk")
+        )
         values = []
         for i in range(10):
-            document_definition = {'pk': i, 'id': 'myId' + str(uuid.uuid4()), 'value': i // 3}
-            values.append(created_collection.create_item(body=document_definition)['pk'])
+            document_definition = {"pk": i, "id": "myId" + str(uuid.uuid4()), "value": i // 3}
+            values.append(created_collection.create_item(body=document_definition)["pk"])
 
-        self._validate_distinct_offset_limit(created_collection=created_collection,
-                                             query='SELECT DISTINCT c["value"] from c ORDER BY c.pk OFFSET 0 LIMIT 2',
-                                             results=[0, 1])
+        self._validate_distinct_offset_limit(
+            created_collection=created_collection,
+            query='SELECT DISTINCT c["value"] from c ORDER BY c.pk OFFSET 0 LIMIT 2',
+            results=[0, 1],
+        )
 
-        self._validate_distinct_offset_limit(created_collection=created_collection,
-                                             query='SELECT DISTINCT c["value"] from c ORDER BY c.pk OFFSET 2 LIMIT 2',
-                                             results=[2, 3])
+        self._validate_distinct_offset_limit(
+            created_collection=created_collection,
+            query='SELECT DISTINCT c["value"] from c ORDER BY c.pk OFFSET 2 LIMIT 2',
+            results=[2, 3],
+        )
 
-        self._validate_distinct_offset_limit(created_collection=created_collection,
-                                             query='SELECT DISTINCT c["value"] from c ORDER BY c.pk OFFSET 4 LIMIT 3',
-                                             results=[])
+        self._validate_distinct_offset_limit(
+            created_collection=created_collection,
+            query='SELECT DISTINCT c["value"] from c ORDER BY c.pk OFFSET 4 LIMIT 3',
+            results=[],
+        )
 
-        self._validate_offset_limit(created_collection=created_collection,
-                                    query='SELECT * from c ORDER BY c.pk OFFSET 0 LIMIT 5',
-                                    results=values[:5])
+        self._validate_offset_limit(
+            created_collection=created_collection,
+            query="SELECT * from c ORDER BY c.pk OFFSET 0 LIMIT 5",
+            results=values[:5],
+        )
 
-        self._validate_offset_limit(created_collection=created_collection,
-                                    query='SELECT * from c ORDER BY c.pk OFFSET 5 LIMIT 10',
-                                    results=values[5:])
+        self._validate_offset_limit(
+            created_collection=created_collection,
+            query="SELECT * from c ORDER BY c.pk OFFSET 5 LIMIT 10",
+            results=values[5:],
+        )
 
-        self._validate_offset_limit(created_collection=created_collection,
-                                    query='SELECT * from c ORDER BY c.pk OFFSET 10 LIMIT 5',
-                                    results=[])
+        self._validate_offset_limit(
+            created_collection=created_collection, query="SELECT * from c ORDER BY c.pk OFFSET 10 LIMIT 5", results=[]
+        )
 
-        self._validate_offset_limit(created_collection=created_collection,
-                                    query='SELECT * from c ORDER BY c.pk OFFSET 100 LIMIT 1',
-                                    results=[])
+        self._validate_offset_limit(
+            created_collection=created_collection, query="SELECT * from c ORDER BY c.pk OFFSET 100 LIMIT 1", results=[]
+        )
         self.created_db.delete_container(created_collection.id)
 
     def _validate_offset_limit(self, created_collection, query, results):
-        query_iterable = created_collection.query_items(
-            query=query,
-            enable_cross_partition_query=True
-        )
-        self.assertListEqual(list(map(lambda doc: doc['pk'], list(query_iterable))), results)
+        query_iterable = created_collection.query_items(query=query, enable_cross_partition_query=True)
+        self.assertListEqual(list(map(lambda doc: doc["pk"], list(query_iterable))), results)
 
     def _validate_distinct_offset_limit(self, created_collection, query, results):
-        query_iterable = created_collection.query_items(
-            query=query,
-            enable_cross_partition_query=True
-        )
+        query_iterable = created_collection.query_items(query=query, enable_cross_partition_query=True)
         self.assertListEqual(list(map(lambda doc: doc["value"], list(query_iterable))), results)
 
     def test_distinct(self):
-        distinct_field = 'distinct_field'
+        distinct_field = "distinct_field"
         pk_field = "pk"
         different_field = "different_field"
 
         created_collection = self.created_db.create_container(
-            id='collection with composite index ' + str(uuid.uuid4()),
+            id="collection with composite index " + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/pk", kind="Hash"),
             indexing_policy={
                 "compositeIndexes": [
-                    [{"path": "/" + pk_field, "order": "ascending"},
-                     {"path": "/" + distinct_field, "order": "ascending"}],
-                    [{"path": "/" + distinct_field, "order": "ascending"},
-                     {"path": "/" + pk_field, "order": "ascending"}]
+                    [
+                        {"path": "/" + pk_field, "order": "ascending"},
+                        {"path": "/" + distinct_field, "order": "ascending"},
+                    ],
+                    [
+                        {"path": "/" + distinct_field, "order": "ascending"},
+                        {"path": "/" + pk_field, "order": "ascending"},
+                    ],
                 ]
-            }
+            },
         )
         documents = []
         for i in range(5):
             j = i
             while j > i - 5:
-                document_definition = {pk_field: i, 'id': str(uuid.uuid4()), distinct_field: j}
+                document_definition = {pk_field: i, "id": str(uuid.uuid4()), distinct_field: j}
                 documents.append(created_collection.create_item(body=document_definition))
-                document_definition = {pk_field: i, 'id': str(uuid.uuid4()), distinct_field: j}
+                document_definition = {pk_field: i, "id": str(uuid.uuid4()), distinct_field: j}
                 documents.append(created_collection.create_item(body=document_definition))
-                document_definition = {pk_field: i, 'id': str(uuid.uuid4())}
+                document_definition = {pk_field: i, "id": str(uuid.uuid4())}
                 documents.append(created_collection.create_item(body=document_definition))
                 j -= 1
 
         padded_docs = self.config._pad_with_none(documents, distinct_field)
 
-        self._validate_distinct(created_collection=created_collection,  # returns {} and is right number
-                                query='SELECT distinct c.%s from c' % distinct_field,  # nosec
-                                results=self.config._get_distinct_docs(padded_docs, distinct_field, None, False),
-                                is_select=True,
-                                fields=[distinct_field])
+        self._validate_distinct(
+            created_collection=created_collection,  # returns {} and is right number
+            query="SELECT distinct c.%s from c" % distinct_field,  # nosec
+            results=self.config._get_distinct_docs(padded_docs, distinct_field, None, False),
+            is_select=True,
+            fields=[distinct_field],
+        )
 
-        self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct c.%s, c.%s from c' % (distinct_field, pk_field),  # nosec
-                                results=self.config._get_distinct_docs(padded_docs, distinct_field, pk_field, False),
-                                is_select=True,
-                                fields=[distinct_field, pk_field])
+        self._validate_distinct(
+            created_collection=created_collection,
+            query="SELECT distinct c.%s, c.%s from c" % (distinct_field, pk_field),  # nosec
+            results=self.config._get_distinct_docs(padded_docs, distinct_field, pk_field, False),
+            is_select=True,
+            fields=[distinct_field, pk_field],
+        )
 
-        self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct value c.%s from c' % distinct_field,  # nosec
-                                results=self.config._get_distinct_docs(padded_docs, distinct_field, None, True),
-                                is_select=True,
-                                fields=[distinct_field])
+        self._validate_distinct(
+            created_collection=created_collection,
+            query="SELECT distinct value c.%s from c" % distinct_field,  # nosec
+            results=self.config._get_distinct_docs(padded_docs, distinct_field, None, True),
+            is_select=True,
+            fields=[distinct_field],
+        )
 
-        self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct c.%s from c' % different_field,  # nosec
-                                results=['None'],
-                                is_select=True,
-                                fields=[different_field])
+        self._validate_distinct(
+            created_collection=created_collection,
+            query="SELECT distinct c.%s from c" % different_field,  # nosec
+            results=["None"],
+            is_select=True,
+            fields=[different_field],
+        )
 
         self.created_db.delete_container(created_collection.id)
 
     def _validate_distinct(self, created_collection, query, results, is_select, fields):
-        query_iterable = created_collection.query_items(
-            query=query,
-            enable_cross_partition_query=True
-        )
+        query_iterable = created_collection.query_items(query=query, enable_cross_partition_query=True)
         query_results = list(query_iterable)
 
         self.assertEqual(len(results), len(query_results))
@@ -436,11 +457,12 @@ class TestQuery(unittest.TestCase):
         created_collection = self.created_db.create_container(
             id="test-distinct-container-" + str(uuid.uuid4()),
             partition_key=PartitionKey("/pk"),
-            offer_throughput=self.config.THROUGHPUT_FOR_5_PARTITIONS)
+            offer_throughput=self.config.THROUGHPUT_FOR_5_PARTITIONS,
+        )
         self.payloads = [
-            {'f1': 1, 'f2': 'value', 'f3': 100000000000000000, 'f4': [1, 2, '3'], 'f5': {'f6': {'f7': 2}}},
-            {'f2': '\'value', 'f4': [1.0, 2, '3'], 'f5': {'f6': {'f7': 2.0}}, 'f1': 1.0, 'f3': 100000000000000000.00},
-            {'f3': 100000000000000000.0, 'f5': {'f6': {'f7': 2}}, 'f2': '\'value', 'f1': 1, 'f4': [1, 2.0, '3']}
+            {"f1": 1, "f2": "value", "f3": 100000000000000000, "f4": [1, 2, "3"], "f5": {"f6": {"f7": 2}}},
+            {"f2": "'value", "f4": [1.0, 2, "3"], "f5": {"f6": {"f7": 2.0}}, "f1": 1.0, "f3": 100000000000000000.00},
+            {"f3": 100000000000000000.0, "f5": {"f6": {"f7": 2}}, "f2": "'value", "f1": 1, "f4": [1, 2.0, "3"]},
         ]
         self.OriginalExecuteFunction = _QueryExecutionContextBase.__next__
         _QueryExecutionContextBase.__next__ = self._MockNextFunction
@@ -449,56 +471,56 @@ class TestQuery(unittest.TestCase):
             collection=created_collection,
             query="Select distinct value c.f1 from c",
             expected_results=[1],
-            get_mock_result=lambda x, i: (None, x[i]["f1"])
+            get_mock_result=lambda x, i: (None, x[i]["f1"]),
         )
 
         self._validate_distinct_on_different_types_and_field_orders(
             collection=created_collection,
             query="Select distinct value c.f2 from c",
-            expected_results=['value', '\'value'],
-            get_mock_result=lambda x, i: (None, x[i]["f2"])
+            expected_results=["value", "'value"],
+            get_mock_result=lambda x, i: (None, x[i]["f2"]),
         )
 
         self._validate_distinct_on_different_types_and_field_orders(
             collection=created_collection,
             query="Select distinct value c.f2 from c order by c.f2",
-            expected_results=['\'value', 'value'],
-            get_mock_result=lambda x, i: (x[i]["f2"], x[i]["f2"])
+            expected_results=["'value", "value"],
+            get_mock_result=lambda x, i: (x[i]["f2"], x[i]["f2"]),
         )
 
         self._validate_distinct_on_different_types_and_field_orders(
             collection=created_collection,
             query="Select distinct value c.f3 from c",
             expected_results=[100000000000000000],
-            get_mock_result=lambda x, i: (None, x[i]["f3"])
+            get_mock_result=lambda x, i: (None, x[i]["f3"]),
         )
 
         self._validate_distinct_on_different_types_and_field_orders(
             collection=created_collection,
             query="Select distinct value c.f4 from c",
-            expected_results=[[1, 2, '3']],
-            get_mock_result=lambda x, i: (None, x[i]["f4"])
+            expected_results=[[1, 2, "3"]],
+            get_mock_result=lambda x, i: (None, x[i]["f4"]),
         )
 
         self._validate_distinct_on_different_types_and_field_orders(
             collection=created_collection,
             query="Select distinct value c.f5.f6 from c",
-            expected_results=[{'f7': 2}],
-            get_mock_result=lambda x, i: (None, x[i]["f5"]["f6"])
+            expected_results=[{"f7": 2}],
+            get_mock_result=lambda x, i: (None, x[i]["f5"]["f6"]),
         )
 
         self._validate_distinct_on_different_types_and_field_orders(
             collection=created_collection,
             query="Select distinct c.f1, c.f2, c.f3 from c",
             expected_results=[self.payloads[0], self.payloads[1]],
-            get_mock_result=lambda x, i: (None, x[i])
+            get_mock_result=lambda x, i: (None, x[i]),
         )
 
         self._validate_distinct_on_different_types_and_field_orders(
             collection=created_collection,
             query="Select distinct c.f1, c.f2, c.f3 from c order by c.f1",
             expected_results=[self.payloads[0], self.payloads[1]],
-            get_mock_result=lambda x, i: (i, x[i])
+            get_mock_result=lambda x, i: (i, x[i]),
         )
 
         _QueryExecutionContextBase.__next__ = self.OriginalExecuteFunction
@@ -509,17 +531,13 @@ class TestQuery(unittest.TestCase):
     def test_paging_with_continuation_token(self):
         created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
 
-        document_definition = {'pk': 'pk', 'id': '1'}
+        document_definition = {"pk": "pk", "id": "1"}
         created_collection.create_item(body=document_definition)
-        document_definition = {'pk': 'pk', 'id': '2'}
+        document_definition = {"pk": "pk", "id": "2"}
         created_collection.create_item(body=document_definition)
 
-        query = 'SELECT * from c'
-        query_iterable = created_collection.query_items(
-            query=query,
-            partition_key='pk',
-            max_item_count=1
-        )
+        query = "SELECT * from c"
+        query_iterable = created_collection.query_items(query=query, partition_key="pk", max_item_count=1)
         pager = query_iterable.by_page()
         pager.next()
         token = pager.continuation_token
@@ -528,16 +546,16 @@ class TestQuery(unittest.TestCase):
         pager = query_iterable.by_page(token)
         second_page_fetched_with_continuation_token = list(pager.next())[0]
 
-        self.assertEqual(second_page['id'], second_page_fetched_with_continuation_token['id'])
+        self.assertEqual(second_page["id"], second_page_fetched_with_continuation_token["id"])
 
     def test_cross_partition_query_with_continuation_token(self):
         created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
-        document_definition = {'pk': 'pk1', 'id': str(uuid.uuid4())}
+        document_definition = {"pk": "pk1", "id": str(uuid.uuid4())}
         created_collection.create_item(body=document_definition)
-        document_definition = {'pk': 'pk2', 'id': str(uuid.uuid4())}
+        document_definition = {"pk": "pk2", "id": str(uuid.uuid4())}
         created_collection.create_item(body=document_definition)
 
-        query = 'SELECT * from c'
+        query = "SELECT * from c"
         query_iterable = created_collection.query_items(
             query=query,
             enable_cross_partition_query=True,
@@ -551,26 +569,25 @@ class TestQuery(unittest.TestCase):
         pager = query_iterable.by_page(token)
         second_page_fetched_with_continuation_token = list(pager.next())[0]
 
-        self.assertEqual(second_page['id'], second_page_fetched_with_continuation_token['id'])
+        self.assertEqual(second_page["id"], second_page_fetched_with_continuation_token["id"])
 
     def test_cross_partition_query_with_none_partition_key(self):
         created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
-        document_definition = {'pk': 'pk1', 'id': str(uuid.uuid4())}
+        document_definition = {"pk": "pk1", "id": str(uuid.uuid4())}
         created_collection.create_item(body=document_definition)
-        document_definition = {'pk': 'pk2', 'id': str(uuid.uuid4())}
+        document_definition = {"pk": "pk2", "id": str(uuid.uuid4())}
         created_collection.create_item(body=document_definition)
 
-        query = 'SELECT * from c'
+        query = "SELECT * from c"
         query_iterable = created_collection.query_items(
-            query=query,
-            partition_key=None,
-            enable_cross_partition_query=True
+            query=query, partition_key=None, enable_cross_partition_query=True
         )
 
         assert len(list(query_iterable)) >= 2
 
-    def _validate_distinct_on_different_types_and_field_orders(self, collection, query, expected_results,
-                                                               get_mock_result):
+    def _validate_distinct_on_different_types_and_field_orders(
+        self, collection, query, expected_results, get_mock_result
+    ):
         self.count = 0
         self.get_mock_result = get_mock_result
         query_iterable = collection.query_items(query, enable_cross_partition_query=True)
@@ -587,22 +604,28 @@ class TestQuery(unittest.TestCase):
     def test_value_max_query(self):
         container = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
         query = "Select value max(c.version) FROM c where c.isComplete = true and c.lookupVersion = @lookupVersion"
-        query_results = container.query_items(query, parameters=[
-            {"name": "@lookupVersion", "value": "console_csat"}  # cspell:disable-line
-        ], enable_cross_partition_query=True)
+        query_results = container.query_items(
+            query,
+            parameters=[{"name": "@lookupVersion", "value": "console_csat"}],  # cspell:disable-line
+            enable_cross_partition_query=True,
+        )
 
         self.assertListEqual(list(query_results), [None])
 
     def test_value_max_query_results(self):
         container = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
         container.upsert_item(
-            {"id": str(uuid.uuid4()), "isComplete": True, "version": 3, "lookupVersion": "console_version"})
+            {"id": str(uuid.uuid4()), "isComplete": True, "version": 3, "lookupVersion": "console_version"}
+        )
         container.upsert_item(
-            {"id": str(uuid.uuid4()), "isComplete": True, "version": 2, "lookupVersion": "console_version"})
+            {"id": str(uuid.uuid4()), "isComplete": True, "version": 2, "lookupVersion": "console_version"}
+        )
         query = "Select value max(c.version) FROM c where c.isComplete = true and c.lookupVersion = @lookupVersion"
-        query_results = container.query_items(query, parameters=[
-            {"name": "@lookupVersion", "value": "console_version"}  # cspell:disable-line
-        ], enable_cross_partition_query=True)
+        query_results = container.query_items(
+            query,
+            parameters=[{"name": "@lookupVersion", "value": "console_version"}],  # cspell:disable-line
+            enable_cross_partition_query=True,
+        )
         item_list = list(query_results)
         assert len(item_list) == 1
         assert item_list[0] == 3
@@ -610,28 +633,31 @@ class TestQuery(unittest.TestCase):
     def test_continuation_token_size_limit_query(self):
         container = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
         for i in range(1, 1000):
-            container.create_item(body=dict(pk='123', id=str(uuid.uuid4()), some_value=str(i % 3)))
+            container.create_item(body=dict(pk="123", id=str(uuid.uuid4()), some_value=str(i % 3)))
         query = "Select * from c where c.some_value='2'"
-        response_query = container.query_items(query, partition_key='123', max_item_count=100,
-                                               continuation_token_limit=1)
+        response_query = container.query_items(
+            query, partition_key="123", max_item_count=100, continuation_token_limit=1
+        )
         pager = response_query.by_page()
         pager.next()
         token = pager.continuation_token
         # Continuation token size should be below 1kb
-        self.assertLessEqual(len(token.encode('utf-8')), 1024)
+        self.assertLessEqual(len(token.encode("utf-8")), 1024)
         pager.next()
         token = pager.continuation_token
 
         # verify a second time
-        self.assertLessEqual(len(token.encode('utf-8')), 1024)
+        self.assertLessEqual(len(token.encode("utf-8")), 1024)
 
     def test_query_request_params_none_retry_policy(self):
         created_collection = self.created_db.create_container(
-            "query_request_params_none_retry_policy_" + str(uuid.uuid4()), PartitionKey(path="/pk"))
+            "query_request_params_none_retry_policy_" + str(uuid.uuid4()), PartitionKey(path="/pk")
+        )
         items = [
-            {'id': str(uuid.uuid4()), 'pk': 'test', 'val': 5},
-            {'id': str(uuid.uuid4()), 'pk': 'test', 'val': 5},
-            {'id': str(uuid.uuid4()), 'pk': 'test', 'val': 5}]
+            {"id": str(uuid.uuid4()), "pk": "test", "val": 5},
+            {"id": str(uuid.uuid4()), "pk": "test", "val": 5},
+            {"id": str(uuid.uuid4()), "pk": "test", "val": 5},
+        ]
 
         for item in items:
             created_collection.create_item(body=item)
@@ -641,10 +667,7 @@ class TestQuery(unittest.TestCase):
         retry_utility.ExecuteFunction = self._MockExecuteFunctionSessionRetry
         try:
             query = "SELECT * FROM c"
-            items = created_collection.query_items(
-                query=query,
-                enable_cross_partition_query=True
-            )
+            items = created_collection.query_items(query=query, enable_cross_partition_query=True)
             fetch_results = list(items)
         except exceptions.CosmosHttpResponseError as e:
             self.assertEqual(e.status_code, 404)
@@ -656,10 +679,7 @@ class TestQuery(unittest.TestCase):
         _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy.Retry_after_in_milliseconds = 10
         try:
             query = "SELECT * FROM c"
-            items = created_collection.query_items(
-                query=query,
-                enable_cross_partition_query=True
-            )
+            items = created_collection.query_items(query=query, enable_cross_partition_query=True)
             fetch_results = list(items)
         except exceptions.CosmosHttpResponseError as e:
             self.assertEqual(e.status_code, http_constants.StatusCodes.FORBIDDEN)
@@ -671,10 +691,7 @@ class TestQuery(unittest.TestCase):
         retry_utility.ExecuteFunction = self._MockExecuteFunctionTimeoutFailoverRetry
         try:
             query = "SELECT * FROM c"
-            items = created_collection.query_items(
-                query=query,
-                enable_cross_partition_query=True
-            )
+            items = created_collection.query_items(query=query, enable_cross_partition_query=True)
             fetch_results = list(items)
         except exceptions.CosmosHttpResponseError as e:
             self.assertEqual(e.status_code, http_constants.StatusCodes.REQUEST_TIMEOUT)
@@ -685,20 +702,16 @@ class TestQuery(unittest.TestCase):
     def test_query_pagination_with_max_item_count(self):
         """Test pagination showing per-page limits and total results counting."""
         created_collection = self.created_db.create_container(
-            "pagination_test_" + str(uuid.uuid4()),
-            PartitionKey(path="/pk"))
-        
+            "pagination_test_" + str(uuid.uuid4()), PartitionKey(path="/pk")
+        )
+
         # Create 20 items in a single partition
         total_items = 20
         partition_key_value = "test_pk"
         for i in range(total_items):
-            document_definition = {
-                'pk': partition_key_value,
-                'id': f'item_{i}',
-                'value': i
-            }
+            document_definition = {"pk": partition_key_value, "id": f"item_{i}", "value": i}
             created_collection.create_item(body=document_definition)
-        
+
         # Test pagination with max_item_count limiting items per page
         max_items_per_page = 7
         query = "SELECT * FROM c WHERE c.pk = @pk ORDER BY c['value']"
@@ -706,65 +719,59 @@ class TestQuery(unittest.TestCase):
             query=query,
             parameters=[{"name": "@pk", "value": partition_key_value}],
             partition_key=partition_key_value,
-            max_item_count=max_items_per_page
+            max_item_count=max_items_per_page,
         )
-        
+
         # Iterate through pages and verify per-page counts
         all_fetched_results = []
         page_count = 0
         item_pages = query_iterable.by_page()
-        
+
         for page in item_pages:
             page_count += 1
             items_in_page = list(page)
             all_fetched_results.extend(items_in_page)
-            
+
             # Each page should have at most max_item_count items
             # (last page may have fewer)
             self.assertLessEqual(len(items_in_page), max_items_per_page)
-        
+
         # Verify total results match expected count
         self.assertEqual(len(all_fetched_results), total_items)
-        
+
         # Verify we got the expected number of pages
         # 20 items with max 7 per page = 3 pages (7, 7, 6)
         self.assertEqual(page_count, 3)
-        
+
         # Verify ordering is maintained
         for i, item in enumerate(all_fetched_results):
-            self.assertEqual(item['value'], i)
-        
+            self.assertEqual(item["value"], i)
+
         self.created_db.delete_container(created_collection.id)
-    
+
     def test_query_pagination_without_max_item_count(self):
         """Test pagination behavior without specifying max_item_count."""
         created_collection = self.created_db.create_container(
-            "pagination_no_max_test_" + str(uuid.uuid4()),
-            PartitionKey(path="/pk"))
-        
+            "pagination_no_max_test_" + str(uuid.uuid4()), PartitionKey(path="/pk")
+        )
+
         # Create 15 items in a single partition
         total_items = 15
         partition_key_value = "test_pk_2"
         for i in range(total_items):
-            document_definition = {
-                'pk': partition_key_value,
-                'id': f'item_{i}',
-                'value': i
-            }
+            document_definition = {"pk": partition_key_value, "id": f"item_{i}", "value": i}
             created_collection.create_item(body=document_definition)
-        
+
         # Query without specifying max_item_count
         query = "SELECT * FROM c WHERE c.pk = @pk"
         query_iterable = created_collection.query_items(
-            query=query,
-            parameters=[{"name": "@pk", "value": partition_key_value}],
-            partition_key=partition_key_value
+            query=query, parameters=[{"name": "@pk", "value": partition_key_value}], partition_key=partition_key_value
         )
-        
+
         # Count total results
         all_results = list(query_iterable)
         self.assertEqual(len(all_results), total_items)
-        
+
         self.created_db.delete_container(created_collection.id)
 
     def test_query_positional_args(self):
@@ -778,8 +785,8 @@ class TestQuery(unittest.TestCase):
             for i in range(num_items):
                 item = {
                     self.config.TEST_CONTAINER_PARTITION_KEY: pk_value,
-                    'id': f"{pk_value}_{i}",
-                    'name': 'sample name'
+                    "id": f"{pk_value}_{i}",
+                    "name": "sample name",
                 }
                 new_items.append(item)
 
@@ -787,7 +794,7 @@ class TestQuery(unittest.TestCase):
             container.upsert_item(body=item)
 
         query = "SELECT * FROM root r WHERE r.name=@name"
-        parameters = [{'name': '@name', 'value': 'sample name'}]
+        parameters = [{"name": "@name", "value": "sample name"}]
         partition_key_value = partition_key_value2
         enable_cross_partition_query = True
         max_item_count = 3
@@ -808,34 +815,37 @@ class TestQuery(unittest.TestCase):
             items = list(page)
             num_items = len(items)
             for item in items:
-                assert item['pk'] == partition_key_value
-                ids.append(item['id'])
+                assert item["pk"] == partition_key_value
+                ids.append(item["id"])
             assert num_items <= max_item_count
-        assert ids == [item['id'] for item in new_items if item['pk'] == partition_key_value]
+        assert ids == [item["id"] for item in new_items if item["pk"] == partition_key_value]
 
     def _MockExecuteFunctionSessionRetry(self, function, *args, **kwargs):
         if args:
-            if args[1].operation_type == 'SqlQuery':
-                ex_to_raise = exceptions.CosmosHttpResponseError(status_code=http_constants.StatusCodes.NOT_FOUND,
-                                                                 message="Read Session is Not Available")
+            if args[1].operation_type == "SqlQuery":
+                ex_to_raise = exceptions.CosmosHttpResponseError(
+                    status_code=http_constants.StatusCodes.NOT_FOUND, message="Read Session is Not Available"
+                )
                 ex_to_raise.sub_status = http_constants.SubStatusCodes.READ_SESSION_NOTAVAILABLE
                 raise ex_to_raise
         return self.OriginalExecuteFunction(function, *args, **kwargs)
 
     def _MockExecuteFunctionEndPointRetry(self, function, *args, **kwargs):
         if args:
-            if args[1].operation_type == 'SqlQuery':
-                ex_to_raise = exceptions.CosmosHttpResponseError(status_code=http_constants.StatusCodes.FORBIDDEN,
-                                                                 message="End Point Discovery")
+            if args[1].operation_type == "SqlQuery":
+                ex_to_raise = exceptions.CosmosHttpResponseError(
+                    status_code=http_constants.StatusCodes.FORBIDDEN, message="End Point Discovery"
+                )
                 ex_to_raise.sub_status = http_constants.SubStatusCodes.WRITE_FORBIDDEN
                 raise ex_to_raise
         return self.OriginalExecuteFunction(function, *args, **kwargs)
 
     def _MockExecuteFunctionTimeoutFailoverRetry(self, function, *args, **kwargs):
         if args:
-            if args[1].operation_type == 'SqlQuery':
-                ex_to_raise = exceptions.CosmosHttpResponseError(status_code=http_constants.StatusCodes.REQUEST_TIMEOUT,
-                                                                 message="Timeout Failover")
+            if args[1].operation_type == "SqlQuery":
+                ex_to_raise = exceptions.CosmosHttpResponseError(
+                    status_code=http_constants.StatusCodes.REQUEST_TIMEOUT, message="Timeout Failover"
+                )
                 raise ex_to_raise
         return self.OriginalExecuteFunction(function, *args, **kwargs)
 
@@ -844,7 +854,7 @@ class TestQuery(unittest.TestCase):
             item, result = self.get_mock_result(self.payloads, self.count)
             self.count += 1
             if item is not None:
-                return {'orderByItems': [{'item': item}], '_rid': 'fake_rid', 'payload': result}
+                return {"orderByItems": [{"item": item}], "_rid": "fake_rid", "payload": result}
             else:
                 return result
         else:
@@ -853,50 +863,38 @@ class TestQuery(unittest.TestCase):
     def test_query_items_with_parameters_none(self):
         """Test that query_items handles parameters=None correctly (issue #43662)."""
         created_collection = self.created_db.create_container(
-            "test_params_none_" + str(uuid.uuid4()), PartitionKey(path="/pk"))
-        
+            "test_params_none_" + str(uuid.uuid4()), PartitionKey(path="/pk")
+        )
+
         # Create test documents
-        doc1_id = 'doc1_' + str(uuid.uuid4())
-        doc2_id = 'doc2_' + str(uuid.uuid4())
-        created_collection.create_item(body={'pk': 'pk1', 'id': doc1_id, 'value1': 1})
-        created_collection.create_item(body={'pk': 'pk2', 'id': doc2_id, 'value1': 2})
+        doc1_id = "doc1_" + str(uuid.uuid4())
+        doc2_id = "doc2_" + str(uuid.uuid4())
+        created_collection.create_item(body={"pk": "pk1", "id": doc1_id, "value1": 1})
+        created_collection.create_item(body={"pk": "pk2", "id": doc2_id, "value1": 2})
 
         # Test 1: Explicitly passing parameters=None should not cause TypeError
-        query = 'SELECT * FROM c'
-        query_iterable = created_collection.query_items(
-            query=query,
-            parameters=None,
-            enable_cross_partition_query=True
-        )
+        query = "SELECT * FROM c"
+        query_iterable = created_collection.query_items(query=query, parameters=None, enable_cross_partition_query=True)
         results = list(query_iterable)
         self.assertEqual(len(results), 2)
 
         # Test 2: parameters=None with partition_key should work
-        query_iterable = created_collection.query_items(
-            query=query,
-            parameters=None,
-            partition_key='pk1'
-        )
+        query_iterable = created_collection.query_items(query=query, parameters=None, partition_key="pk1")
         results = list(query_iterable)
         self.assertEqual(len(results), 1)
-        self.assertEqual(results[0]['id'], doc1_id)
+        self.assertEqual(results[0]["id"], doc1_id)
 
         # Test 3: Verify parameterized query still works with actual parameters
-        query_with_params = 'SELECT * FROM c WHERE c.value1 = @value'
+        query_with_params = "SELECT * FROM c WHERE c.value1 = @value"
         query_iterable = created_collection.query_items(
-            query=query_with_params,
-            parameters=[{'name': '@value', 'value': 2}],
-            enable_cross_partition_query=True
+            query=query_with_params, parameters=[{"name": "@value", "value": 2}], enable_cross_partition_query=True
         )
         results = list(query_iterable)
         self.assertEqual(len(results), 1)
-        self.assertEqual(results[0]['id'], doc2_id)
+        self.assertEqual(results[0]["id"], doc2_id)
 
         # Test 4: Query without parameters argument should work (default behavior)
-        query_iterable = created_collection.query_items(
-            query=query,
-            enable_cross_partition_query=True
-        )
+        query_iterable = created_collection.query_items(query=query, enable_cross_partition_query=True)
         results = list(query_iterable)
         self.assertEqual(len(results), 2)
 
@@ -905,22 +903,20 @@ class TestQuery(unittest.TestCase):
     def test_query_items_parameters_none_with_options(self):
         """Test parameters=None works with various query options."""
         created_collection = self.created_db.create_container(
-            "test_params_none_opts_" + str(uuid.uuid4()), PartitionKey(path="/pk"))
-        
+            "test_params_none_opts_" + str(uuid.uuid4()), PartitionKey(path="/pk")
+        )
+
         # Create multiple test documents
         for i in range(5):
-            doc_id = f'doc_{i}_' + str(uuid.uuid4())
-            created_collection.create_item(body={'pk': 'test', 'id': doc_id, 'index': i})
+            doc_id = f"doc_{i}_" + str(uuid.uuid4())
+            created_collection.create_item(body={"pk": "test", "id": doc_id, "index": i})
 
         # Test with parameters=None and max_item_count
-        query = 'SELECT * FROM c ORDER BY c.index'
+        query = "SELECT * FROM c ORDER BY c.index"
         query_iterable = created_collection.query_items(
-            query=query,
-            parameters=None,
-            partition_key='test',
-            max_item_count=2
+            query=query, parameters=None, partition_key="test", max_item_count=2
         )
-        
+
         # Verify pagination works
         page_count = 0
         total_items = 0
@@ -929,22 +925,19 @@ class TestQuery(unittest.TestCase):
             items = list(page)
             total_items += len(items)
             self.assertLessEqual(len(items), 2)
-        
+
         self.assertEqual(total_items, 5)
         self.assertGreaterEqual(page_count, 2)  # Should have multiple pages
 
         # Test with parameters=None and populate_query_metrics
         query_iterable = created_collection.query_items(
-            query=query,
-            parameters=None,
-            partition_key='test',
-            populate_query_metrics=True
+            query=query, parameters=None, partition_key="test", populate_query_metrics=True
         )
         results = list(query_iterable)
         self.assertEqual(len(results), 5)
-        
+
         # Verify query metrics were populated
-        metrics_header_name = 'x-ms-documentdb-query-metrics'
+        metrics_header_name = "x-ms-documentdb-query-metrics"
         self.assertTrue(metrics_header_name in created_collection.client_connection.last_response_headers)
 
         self.created_db.delete_container(created_collection.id)

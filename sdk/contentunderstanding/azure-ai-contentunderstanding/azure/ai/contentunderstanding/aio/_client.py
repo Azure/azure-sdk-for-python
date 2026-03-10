@@ -41,15 +41,10 @@ class ContentUnderstandingClient(_ContentUnderstandingClientOperationsMixin):
     """
 
     def __init__(
-        self,
-        endpoint: str,
-        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
-        **kwargs: Any
+        self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}/contentunderstanding"
-        self._config = ContentUnderstandingClientConfiguration(
-            endpoint=endpoint, credential=credential, **kwargs
-        )
+        self._config = ContentUnderstandingClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:
@@ -65,16 +60,10 @@ class ContentUnderstandingClient(_ContentUnderstandingClientOperationsMixin):
                 self._config.custom_hook_policy,
                 self._config.logging_policy,
                 policies.DistributedTracingPolicy(**kwargs),
-                (
-                    policies.SensitiveHeaderCleanupPolicy(**kwargs)
-                    if self._config.redirect_policy
-                    else None
-                ),
+                (policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None),
                 self._config.http_logging_policy,
             ]
-        self._client: AsyncPipelineClient = AsyncPipelineClient(
-            base_url=_endpoint, policies=_policies, **kwargs
-        )
+        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
@@ -102,14 +91,10 @@ class ContentUnderstandingClient(_ContentUnderstandingClientOperationsMixin):
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
-        request_copy.url = self._client.format_url(
-            request_copy.url, **path_format_arguments
-        )
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     async def close(self) -> None:

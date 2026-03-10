@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """The tests for decorators.py and common.py"""
+
 from unittest import mock
 
 import time

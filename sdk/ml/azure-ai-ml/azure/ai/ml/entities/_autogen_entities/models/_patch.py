@@ -9,6 +9,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 import json
 from typing import Any, Dict, List, Optional
 
@@ -111,13 +112,10 @@ class AzureOpenAIDeployment(_AzureOpenAIDeployment):
         return d
 
 
-AzureOpenAIDeployment.__doc__ += (
-    _AzureOpenAIDeployment.__doc__.strip()  # type: ignore
-    + """
+AzureOpenAIDeployment.__doc__ += _AzureOpenAIDeployment.__doc__.strip() + """
     :ivar system_data: System data of the deployment.
     :vartype system_data: ~azure.ai.ml.entities.SystemData
-"""
-)
+"""  # type: ignore
 
 
 @experimental
@@ -163,13 +161,10 @@ class ServerlessEndpoint(_ServerlessEndpoint, ValidationMixin):
         return d
 
 
-ServerlessEndpoint.__doc__ += (
-    _ServerlessEndpoint.__doc__.strip()  # type: ignore
-    + """
+ServerlessEndpoint.__doc__ += _ServerlessEndpoint.__doc__.strip() + """
     :ivar system_data: System data of the endpoint.
     :vartype system_data: ~azure.ai.ml.entities.SystemData
-"""
-)
+"""  # type: ignore
 
 
 @experimental
@@ -205,13 +200,10 @@ class MarketplaceSubscription(_MarketplaceSubscription, ValidationMixin):
         return d
 
 
-MarketplaceSubscription.__doc__ = (
-    _MarketplaceSubscription.__doc__.strip()  # type: ignore
-    + """
+MarketplaceSubscription.__doc__ = _MarketplaceSubscription.__doc__.strip() + """
     :ivar system_data: System data of the marketplace subscription.
     :vartype system_data: ~azure.ai.ml.entities.SystemData
-"""
-)
+"""  # type: ignore
 
 
 def patch_sdk():

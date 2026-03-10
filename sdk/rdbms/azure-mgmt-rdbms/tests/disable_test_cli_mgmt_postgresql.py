@@ -22,7 +22,7 @@ import unittest
 import azure.mgmt.rdbms.postgresql
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
-AZURE_LOCATION = 'eastus'
+AZURE_LOCATION = "eastus"
 ZERO = dt.timedelta(0)
 
 
@@ -43,9 +43,7 @@ class MgmtPostgreSQLTest(AzureMgmtTestCase):
 
     def setUp(self):
         super(MgmtPostgreSQLTest, self).setUp()
-        self.mgmt_client = self.create_mgmt_client(
-            azure.mgmt.rdbms.postgresql.PostgreSQLManagementClient
-        )
+        self.mgmt_client = self.create_mgmt_client(azure.mgmt.rdbms.postgresql.PostgreSQLManagementClient)
 
     @unittest.skip("hard to test")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
@@ -74,19 +72,12 @@ class MgmtPostgreSQLTest(AzureMgmtTestCase):
                 "storage_profile": {
                     "storage_mb": "128000",
                     "backup_retention_days": "7",
-                    "geo_redundant_backup": "Disabled"
+                    "geo_redundant_backup": "Disabled",
                 },
-                "create_mode": "Default"
+                "create_mode": "Default",
             },
-            "sku": {
-                "name": "B_Gen5_2",
-                "tier": "Basic",
-                "capacity": "2",
-                "family": "Gen5"
-            },
-            "tags": {
-                "elastic_server": "1"
-            }
+            "sku": {"name": "B_Gen5_2", "tier": "Basic", "capacity": "2", "family": "Gen5"},
+            "tags": {"elastic_server": "1"},
         }
         result = self.mgmt_client.servers.begin_create(resource_group.name, SERVER_NAME, BODY)
         result = result.result()
@@ -140,9 +131,11 @@ class MgmtPostgreSQLTest(AzureMgmtTestCase):
         #   }
         # }
         from azure.mgmt.rdbms.postgresql.models import Database
-        database = Database(charset='UTF8', collation='English_United States.1252')
-        result = self.mgmt_client.databases.begin_create_or_update(resource_group.name, SERVER_NAME, DATABASE_NAME,
-                                                                   database)
+
+        database = Database(charset="UTF8", collation="English_United States.1252")
+        result = self.mgmt_client.databases.begin_create_or_update(
+            resource_group.name, SERVER_NAME, DATABASE_NAME, database
+        )
         result = result.result()
 
         # FirewallRuleCreate[put]
@@ -153,9 +146,11 @@ class MgmtPostgreSQLTest(AzureMgmtTestCase):
         #   }
         # }
         from azure.mgmt.rdbms.postgresql.models import FirewallRule
-        firewall_rule = FirewallRule(start_ip_address='0.0.0.0', end_ip_address='255.255.255.255')
-        result = self.mgmt_client.firewall_rules.begin_create_or_update(resource_group.name, SERVER_NAME,
-                                                                        FIREWALL_RULE_NAME, firewall_rule)
+
+        firewall_rule = FirewallRule(start_ip_address="0.0.0.0", end_ip_address="255.255.255.255")
+        result = self.mgmt_client.firewall_rules.begin_create_or_update(
+            resource_group.name, SERVER_NAME, FIREWALL_RULE_NAME, firewall_rule
+        )
         result = result.result()
 
         # # ConfigurationCreateOrUpdate[put]
@@ -262,10 +257,12 @@ class MgmtPostgreSQLTest(AzureMgmtTestCase):
 
         # ServerUpdate[patch]
         from azure.mgmt.rdbms.postgresql.models import ServerPropertiesForDefaultCreate
-        serverPropertiesForDefaultCreate = ServerPropertiesForDefaultCreate(ssl_enforcement="Enabled",
-                                                                            administrator_login='cloudsa',
-                                                                            administrator_login_password='newpa$$w0rd')
+
+        serverPropertiesForDefaultCreate = ServerPropertiesForDefaultCreate(
+            ssl_enforcement="Enabled", administrator_login="cloudsa", administrator_login_password="newpa$$w0rd"
+        )
         from azure.mgmt.rdbms.postgresql.models import ServerForCreate
+
         server_for_create = ServerForCreate(properties=serverPropertiesForDefaultCreate, location=LOCATION_NAME)
         result = self.mgmt_client.servers.begin_update(resource_group.name, SERVER_NAME, server_for_create)
         result = result.result()
@@ -277,6 +274,7 @@ class MgmtPostgreSQLTest(AzureMgmtTestCase):
         # }
         NAME = self.create_random_name("name1")
         from azure.mgmt.rdbms.postgresql.models import NameAvailabilityRequest
+
         name_availability_request = NameAvailabilityRequest(name=NAME, type="Microsoft.DBforMariaDB")
         result = self.mgmt_client.check_name_availability.execute(name_availability_request)
 
@@ -298,5 +296,5 @@ class MgmtPostgreSQLTest(AzureMgmtTestCase):
 
 
 # ------------------------------------------------------------------------------
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

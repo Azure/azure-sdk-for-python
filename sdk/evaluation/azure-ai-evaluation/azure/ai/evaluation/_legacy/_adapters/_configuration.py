@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import Any, Dict, Final, Optional
 from typing_extensions import TypeAlias
 
-
 try:
     from promptflow._sdk._configuration import Configuration as _Configuration
 

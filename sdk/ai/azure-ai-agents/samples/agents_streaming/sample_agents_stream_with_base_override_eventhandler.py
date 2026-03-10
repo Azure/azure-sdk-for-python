@@ -24,6 +24,7 @@ USAGE:
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
 """
+
 import json
 from typing import Generator, Optional
 
@@ -37,7 +38,6 @@ from azure.ai.agents.models import AgentStreamEvent, BaseAgentEventHandler
 from azure.identity import DefaultAzureCredential
 
 import os
-
 
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],

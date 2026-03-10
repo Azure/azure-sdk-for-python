@@ -15,7 +15,6 @@ from ._models import (
 from ._enums import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
 from ._client import CryptographyClient
 
-
 __all__ = [
     "CryptographyClient",
     "DecryptResult",

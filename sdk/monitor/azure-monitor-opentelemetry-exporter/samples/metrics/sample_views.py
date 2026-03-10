@@ -5,6 +5,7 @@ This example shows how to customize the metrics that are output by the SDK using
 and recorded using the sdk are tracked and telemetry is exported to application insights with the
 AzureMonitorMetricExporter.
 """
+
 import os
 
 from opentelemetry import metrics

@@ -11,7 +11,6 @@ from .client_assertion import ClientAssertionCredential
 from .._constants import EnvironmentVariables
 from .._internal import within_credential_chain
 
-
 WORKLOAD_CONFIG_ERROR = (
     "WorkloadIdentityCredential authentication unavailable. The workload options are not fully "
     "configured. See the troubleshooting guide for more information: "

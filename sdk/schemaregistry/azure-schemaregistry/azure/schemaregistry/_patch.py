@@ -7,6 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 from __future__ import annotations
 from functools import partial
 from typing import (
@@ -213,7 +214,7 @@ class SchemaRegistryClient:
         http_request_kwargs = get_http_request_kwargs(kwargs)
         # ignoring return type because the generated client operations are not annotated w/ cls return type
         schema_properties: Dict[str, Union[int, str]] = (
-            self._generated_client._register_schema(  # type:ignore # pylint:disable=protected-access
+            self._generated_client._register_schema(  # type: ignore # pylint:disable=protected-access
                 group_name=group_name,
                 schema_name=name,
                 schema_content=cast(IO[Any], definition),
@@ -339,7 +340,7 @@ class SchemaRegistryClient:
             (
                 http_response,
                 schema_properties,
-            ) = self._generated_client._get_schema_by_id(  # type:ignore # pylint:disable=protected-access
+            ) = self._generated_client._get_schema_by_id(  # type: ignore # pylint:disable=protected-access
                 id=schema_id,
                 cls=prepare_schema_result,
                 headers={  # TODO: remove when multiple content types in response are supported
@@ -372,7 +373,7 @@ class SchemaRegistryClient:
                 },
                 stream=True,
                 **http_request_kwargs,
-            )  # type:ignore
+            )  # type: ignore
         http_response.read()
         properties = cast("SchemaPropertiesDict", schema_properties)
         return Schema(
@@ -424,7 +425,7 @@ class SchemaRegistryClient:
                 cls=partial(prepare_schema_properties_result, format),
                 **http_request_kwargs,
             )
-        )  # type:ignore
+        )  # type: ignore
         properties = cast("SchemaPropertiesDict", schema_properties)
         return SchemaProperties(**properties)
 

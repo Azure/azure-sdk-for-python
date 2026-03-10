@@ -27,14 +27,14 @@ class IoTDeviceInfo(Model):
     """
 
     _validation = {
-        'device_id': {'required': True},
-        'io_thost_hub': {'required': True},
+        "device_id": {"required": True},
+        "io_thost_hub": {"required": True},
     }
 
     _attribute_map = {
-        'device_id': {'key': 'deviceId', 'type': 'str'},
-        'io_thost_hub': {'key': 'ioTHostHub', 'type': 'str'},
-        'authentication': {'key': 'authentication', 'type': 'Authentication'},
+        "device_id": {"key": "deviceId", "type": "str"},
+        "io_thost_hub": {"key": "ioTHostHub", "type": "str"},
+        "authentication": {"key": "authentication", "type": "Authentication"},
     }
 
     def __init__(self, *, device_id: str, io_thost_hub: str, authentication=None, **kwargs) -> None:

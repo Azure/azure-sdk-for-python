@@ -8,7 +8,6 @@ from ._transport import SSLTransport, WebSocketTransport, AMQPS_PORT
 from .constants import SASLCode, SASL_HEADER_FRAME, WEBSOCKET_PORT
 from .performatives import SASLInit
 
-
 _SASL_FRAME_TYPE = b"\x01"
 
 

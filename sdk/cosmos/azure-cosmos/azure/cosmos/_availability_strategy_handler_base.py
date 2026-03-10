@@ -30,13 +30,16 @@ from ._request_object import RequestObject
 from .documents import _OperationType
 from .http_constants import StatusCodes, SubStatusCodes
 
-GlobalEndpointManagerType = Union['_GlobalPartitionEndpointManagerForCircuitBreaker',
-                                '_GlobalPartitionEndpointManagerForCircuitBreakerAsync']
+GlobalEndpointManagerType = Union[
+    "_GlobalPartitionEndpointManagerForCircuitBreaker", "_GlobalPartitionEndpointManagerForCircuitBreakerAsync"
+]
 
 if TYPE_CHECKING:
     from ._global_partition_endpoint_manager_circuit_breaker import _GlobalPartitionEndpointManagerForCircuitBreaker
-    from .aio._global_partition_endpoint_manager_circuit_breaker_async import \
-        _GlobalPartitionEndpointManagerForCircuitBreakerAsync
+    from .aio._global_partition_endpoint_manager_circuit_breaker_async import (
+        _GlobalPartitionEndpointManagerForCircuitBreakerAsync,
+    )
+
 
 class AvailabilityStrategyHandlerMixin:
     """Mixin class providing shared functionality for availability strategy handlers."""
@@ -45,12 +48,12 @@ class AvailabilityStrategyHandlerMixin:
         self,
         location_index: int,
         available_locations: List[str],
-        existing_excluded_locations: Optional[List[str]] = None
+        existing_excluded_locations: Optional[List[str]] = None,
     ) -> List[str]:
         """Set up excluded regions for hedging requests.
-        
+
         Excludes all regions except the target region, while preserving any existing exclusions.
-        
+
         :param location_index: Index of current target location
         :type location_index: int
         :param available_locations: List of available locations
@@ -65,7 +68,7 @@ class AvailabilityStrategyHandlerMixin:
 
         # Add additional excluded regions for hedging
         if location_index > 0:
-            excluded += available_locations[:location_index] + available_locations[location_index+1:]
+            excluded += available_locations[:location_index] + available_locations[location_index + 1 :]
 
         return excluded
 
@@ -86,17 +89,18 @@ class AvailabilityStrategyHandlerMixin:
                 StatusCodes.METHOD_NOT_ALLOWED,
                 StatusCodes.PRECONDITION_FAILED,
                 StatusCodes.REQUEST_ENTITY_TOO_LARGE,
-                StatusCodes.UNAUTHORIZED
+                StatusCodes.UNAUTHORIZED,
             ]
-            return (status_code in non_transient_status_codes or
-                    (status_code == StatusCodes.NOT_FOUND and sub_status == SubStatusCodes.UNKNOWN))
+            return status_code in non_transient_status_codes or (
+                status_code == StatusCodes.NOT_FOUND and sub_status == SubStatusCodes.UNKNOWN
+            )
         return False
 
     def _get_applicable_endpoints(
-            self,
-            request: RequestObject, global_endpoint_manager: GlobalEndpointManagerType) -> List[str]:
+        self, request: RequestObject, global_endpoint_manager: GlobalEndpointManagerType
+    ) -> List[str]:
         """Get list of applicable endpoints for hedging based on operation type.
-        
+
         :param request: Request object containing operation type and other parameters
         :type request: RequestObject
         :param global_endpoint_manager: Manager for endpoint routing and availability
@@ -113,10 +117,9 @@ class AvailabilityStrategyHandlerMixin:
 
         if regional_context_list:
             for regional_context in regional_context_list:
-                region_name = (
-                    global_endpoint_manager.get_region_name(
-                        regional_context.get_primary(),
-                        _OperationType.IsWriteOperation(request.operation_type)))
+                region_name = global_endpoint_manager.get_region_name(
+                    regional_context.get_primary(), _OperationType.IsWriteOperation(request.operation_type)
+                )
                 if region_name is not None:
                     applicable_endpoints.append(region_name)
 

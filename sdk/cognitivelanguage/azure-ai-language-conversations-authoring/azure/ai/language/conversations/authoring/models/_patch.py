@@ -7,6 +7,7 @@
 """Customize generated code here.
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 from collections.abc import MutableMapping, Awaitable  # pylint:disable=import-error
 from typing import Any, Callable, Tuple, TypeVar, cast, Mapping, Optional, List
 
@@ -55,6 +56,7 @@ from ._models import (
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
+
 
 class _JobsStrategy(LongRunningOperation):
     """Interprets job-status responses and tells the poller which URL to use."""
@@ -216,7 +218,9 @@ class _JobsPollingMethod(PollingMethod):
         return base64.b64encode(raw).decode("ascii")
 
     @classmethod
-    def from_continuation_token(cls, continuation_token: str, **kwargs: Any) -> Tuple[Any, Any, Callable[[Any], PollingReturnType_co]]:
+    def from_continuation_token(
+        cls, continuation_token: str, **kwargs: Any
+    ) -> Tuple[Any, Any, Callable[[Any], PollingReturnType_co]]:
         try:
             client = kwargs["client"]
         except KeyError as exc:
@@ -225,9 +229,7 @@ class _JobsPollingMethod(PollingMethod):
         try:
             deserialization_callback = kwargs["deserialization_callback"]
         except KeyError as exc:
-            raise ValueError(
-                "Need kwarg 'deserialization_callback' to be recreated from continuation_token"
-            ) from exc
+            raise ValueError("Need kwarg 'deserialization_callback' to be recreated from continuation_token") from exc
 
         import json
 
@@ -246,6 +248,7 @@ class _JobsPollingMethod(PollingMethod):
         state = token["data"]
         # The file_id and other state can be extracted and used to resume polling
         return client, state, deserialization_callback
+
 
 class _AsyncJobsPollingMethod(AsyncPollingMethod):
     def __init__(
@@ -382,7 +385,9 @@ class _AsyncJobsPollingMethod(AsyncPollingMethod):
         return base64.b64encode(raw).decode("ascii")
 
     @classmethod
-    def from_continuation_token(cls, continuation_token: str, **kwargs: Any) -> Tuple[Any, Any, Callable[[Any], PollingReturnType_co]]:
+    def from_continuation_token(
+        cls, continuation_token: str, **kwargs: Any
+    ) -> Tuple[Any, Any, Callable[[Any], PollingReturnType_co]]:
         try:
             client = kwargs["client"]
         except KeyError as exc:
@@ -391,9 +396,7 @@ class _AsyncJobsPollingMethod(AsyncPollingMethod):
         try:
             deserialization_callback = kwargs["deserialization_callback"]
         except KeyError as exc:
-            raise ValueError(
-                "Need kwarg 'deserialization_callback' to be recreated from continuation_token"
-            ) from exc
+            raise ValueError("Need kwarg 'deserialization_callback' to be recreated from continuation_token") from exc
 
         import json
 
@@ -412,6 +415,7 @@ class _AsyncJobsPollingMethod(AsyncPollingMethod):
         state = token["data"]
         # The file_id and other state can be extracted and used to resume polling
         return client, state, deserialization_callback
+
 
 class CreateDeploymentDetails(_GeneratedCreateDeploymentDetails):
     """Represents the options for creating or updating a project deployment.
@@ -455,9 +459,8 @@ class CreateDeploymentDetails(_GeneratedCreateDeploymentDetails):
             super().__init__(*args, azure_resource_ids=None, **kwargs)
             return
 
-        raise TypeError(
-            "azure_resource_ids must be a list of str or a list of AssignedProjectResource."
-        )
+        raise TypeError("azure_resource_ids must be a list of str or a list of AssignedProjectResource.")
+
 
 def patch_sdk():
     """Do not remove from this file.

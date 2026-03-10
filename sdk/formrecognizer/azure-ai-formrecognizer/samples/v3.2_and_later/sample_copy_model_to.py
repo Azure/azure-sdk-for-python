@@ -48,9 +48,7 @@ def sample_copy_model_to(custom_model_id):
         endpoint=target_endpoint, credential=AzureKeyCredential(target_key)
     )
 
-    target = target_client.get_copy_authorization(
-        description="model copied from other resource"
-    )
+    target = target_client.get_copy_authorization(description="model copied from other resource")
 
     source_client = DocumentModelAdministrationClient(
         endpoint=source_endpoint, credential=AzureKeyCredential(source_key)
@@ -93,9 +91,7 @@ if __name__ == "__main__":
             key = os.getenv("AZURE_FORM_RECOGNIZER_SOURCE_KEY")
 
             if not endpoint or not key:
-                raise ValueError(
-                    "Please provide endpoint and API key to run the samples."
-                )
+                raise ValueError("Please provide endpoint and API key to run the samples.")
 
             document_model_admin_client = DocumentModelAdministrationClient(
                 endpoint=endpoint, credential=AzureKeyCredential(key)

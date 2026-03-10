@@ -11,7 +11,6 @@ import os
 from io import open
 import re
 
-
 PACKAGE_NAME = "azure-projects"
 PACKAGE_PPRINT_NAME = "Projects"
 

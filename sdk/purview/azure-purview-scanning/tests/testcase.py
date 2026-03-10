@@ -21,7 +21,5 @@ class PurviewScanningTest(AzureRecordedTestCase):
 
 
 PurviewScanningPowerShellPreparer = functools.partial(
-    PowerShellPreparer,
-    "purviewscanning",
-    purviewscanning_endpoint="https://fake_account.scan.purview.azure.com"
+    PowerShellPreparer, "purviewscanning", purviewscanning_endpoint="https://fake_account.scan.purview.azure.com"
 )

@@ -142,9 +142,7 @@ def main() -> None:
     # Display classification results
     if analyze_result.contents and len(analyze_result.contents) > 0:
         document_content = cast(DocumentContent, analyze_result.contents[0])
-        print(
-            f"Pages: {document_content.start_page_number}-{document_content.end_page_number}"
-        )
+        print(f"Pages: {document_content.start_page_number}-{document_content.end_page_number}")
 
         # Display segments (classification results)
         if document_content.segments and len(document_content.segments) > 0:

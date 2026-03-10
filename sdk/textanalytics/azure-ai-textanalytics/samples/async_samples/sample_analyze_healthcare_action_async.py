@@ -48,7 +48,7 @@ async def sample_analyze_healthcare_action() -> None:
         """,
         """
         Patient needs to take 50 mg of ibuprofen, and 2 mg of Coumadin.
-        """
+        """,
     ]
 
     async with text_analytics_client:
@@ -115,5 +115,5 @@ async def main():
     await sample_analyze_healthcare_action()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

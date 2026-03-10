@@ -6,6 +6,7 @@
 """Customize generated code here.
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 from typing import Any, TYPE_CHECKING, Union, Optional
 from azure.core.credentials import AzureKeyCredential
 from ._client import ConversationAuthoringClient as AuthoringClientGenerated

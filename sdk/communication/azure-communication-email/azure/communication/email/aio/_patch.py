@@ -7,6 +7,7 @@
 """Customize generated code here.
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 from typing import List, Union
 
 from azure.core.credentials_async import AsyncTokenCredential

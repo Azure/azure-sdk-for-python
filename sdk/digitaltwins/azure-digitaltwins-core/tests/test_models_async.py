@@ -15,11 +15,7 @@ class TestDigitalTwinsModelsAsync(AzureRecordedTestCase):
 
     def _get_client(self, endpoint, **kwargs):
         credential = self.get_credential(DigitalTwinsClient, is_async=True)
-        return self.create_client_from_credential(
-            DigitalTwinsClient,
-            credential,
-            endpoint=endpoint,
-            **kwargs)
+        return self.create_client_from_credential(DigitalTwinsClient, credential, endpoint=endpoint, **kwargs)
 
     async def _clean_up_models(self, client, *models):
         models = []
@@ -46,7 +42,7 @@ class TestDigitalTwinsModelsAsync(AzureRecordedTestCase):
         return id
 
     async def _get_unique_model_id(self, client):
-        id =  "dtmi:com:samples:{};1".format(self.create_random_name("TempModel"))
+        id = "dtmi:com:samples:{};1".format(self.create_random_name("TempModel"))
         try:
             await client.get_model(id)
         except ResourceNotFoundError:
@@ -77,17 +73,9 @@ class TestDigitalTwinsModelsAsync(AzureRecordedTestCase):
             "@context": "dtmi:dtdl:context;2",
             "displayName": "Component1",
             "contents": [
-            {
-                "@type": "Property",
-                "name": "ComponentProp1",
-                "schema": "string"
-            },
-            {
-                "@type": "Telemetry",
-                "name": "ComponentTelemetry1",
-                "schema": "integer"
-            }
-            ]
+                {"@type": "Property", "name": "ComponentProp1", "schema": "string"},
+                {"@type": "Telemetry", "name": "ComponentTelemetry1", "schema": "integer"},
+            ],
         }
 
         model = {
@@ -96,22 +84,10 @@ class TestDigitalTwinsModelsAsync(AzureRecordedTestCase):
             "@context": "dtmi:dtdl:context;2",
             "displayName": "TempModel",
             "contents": [
-            {
-                "@type": "Property",
-                "name": "Prop1",
-                "schema": "string"
-            },
-            {
-                "@type": "Component",
-                "name": "Component1",
-                "schema": component_id
-            },
-            {
-                "@type": "Telemetry",
-                "name": "Telemetry1",
-                "schema": "integer"
-            }
-            ]
+                {"@type": "Property", "name": "Prop1", "schema": "string"},
+                {"@type": "Component", "name": "Component1", "schema": component_id},
+                {"@type": "Telemetry", "name": "Telemetry1", "schema": "integer"},
+            ],
         }
         models = await client.create_models([component, model])
         assert isinstance(models, list)
@@ -132,17 +108,9 @@ class TestDigitalTwinsModelsAsync(AzureRecordedTestCase):
             "@context": "dtmi:dtdl:context;2",
             "displayName": "Component1",
             "contents": [
-            {
-                "@type": "Property",
-                "name": "ComponentProp1",
-                "schema": "string"
-            },
-            {
-                "@type": "Telemetry",
-                "name": "ComponentTelemetry1",
-                "schema": "integer"
-            }
-            ]
+                {"@type": "Property", "name": "ComponentProp1", "schema": "string"},
+                {"@type": "Telemetry", "name": "ComponentTelemetry1", "schema": "integer"},
+            ],
         }
 
         model = {
@@ -151,17 +119,9 @@ class TestDigitalTwinsModelsAsync(AzureRecordedTestCase):
             "@context": "dtmi:dtdl:context;2",
             "displayName": "TempModel",
             "contents": [
-            {
-                "@type": "Property",
-                "name": "Prop1",
-                "schema": "string"
-            },
-            {
-                "@type": "Telemetry",
-                "name": "Telemetry1",
-                "schema": "integer"
-            }
-            ]
+                {"@type": "Property", "name": "Prop1", "schema": "string"},
+                {"@type": "Telemetry", "name": "Telemetry1", "schema": "integer"},
+            ],
         }
         models = await client.create_models([model])
         assert len(models) == 1
@@ -178,22 +138,10 @@ class TestDigitalTwinsModelsAsync(AzureRecordedTestCase):
             "@context": "dtmi:dtdl:context;2",
             "displayName": "TempModel",
             "contents": [
-            {
-                "@type": "Property",
-                "name": "Prop1",
-                "schema": "string"
-            },
-            {
-                "@type": "Component",
-                "name": "Component1",
-                "schema": component_id
-            },
-            {
-                "@type": "Telemetry",
-                "name": "Telemetry1",
-                "schema": "integer"
-            }
-            ]
+                {"@type": "Property", "name": "Prop1", "schema": "string"},
+                {"@type": "Component", "name": "Component1", "schema": component_id},
+                {"@type": "Telemetry", "name": "Telemetry1", "schema": "integer"},
+            ],
         }
         with pytest.raises(HttpResponseError):
             await client.create_models([model])
@@ -209,22 +157,10 @@ class TestDigitalTwinsModelsAsync(AzureRecordedTestCase):
             "@context": "dtmi:dtdl:context;2",
             "displayName": "TempModel",
             "contents": [
-            {
-                "@type": "Property",
-                "name": "Prop1",
-                "schema": "string"
-            },
-            {
-                "@type": "Component",
-                "name": "Component1",
-                "schema": component_id
-            },
-            {
-                "@type": "Telemetry",
-                "name": "Telemetry1",
-                "schema": "integer"
-            }
-            ]
+                {"@type": "Property", "name": "Prop1", "schema": "string"},
+                {"@type": "Component", "name": "Component1", "schema": component_id},
+                {"@type": "Telemetry", "name": "Telemetry1", "schema": "integer"},
+            ],
         }
         with pytest.raises(HttpResponseError):
             await client.create_models([model])
@@ -239,17 +175,9 @@ class TestDigitalTwinsModelsAsync(AzureRecordedTestCase):
             "@context": "dtmi:dtdl:context;2",
             "displayName": "Component1",
             "contents": [
-            {
-                "@type": "Property",
-                "name": "ComponentProp1",
-                "schema": "string"
-            },
-            {
-                "@type": "Telemetry",
-                "name": "ComponentTelemetry1",
-                "schema": "integer"
-            }
-            ]
+                {"@type": "Property", "name": "ComponentProp1", "schema": "string"},
+                {"@type": "Telemetry", "name": "ComponentTelemetry1", "schema": "integer"},
+            ],
         }
         models = await client.create_models([component])
         model = await client.get_model(component_id)
@@ -267,17 +195,9 @@ class TestDigitalTwinsModelsAsync(AzureRecordedTestCase):
             "@context": ["dtmi:dtdl:context;2"],
             "displayName": "Component1",
             "contents": [
-            {
-                "@type": "Property",
-                "name": "ComponentProp1",
-                "schema": "string"
-            },
-            {
-                "@type": "Telemetry",
-                "name": "ComponentTelemetry1",
-                "schema": "integer"
-            }
-            ]
+                {"@type": "Property", "name": "ComponentProp1", "schema": "string"},
+                {"@type": "Telemetry", "name": "ComponentTelemetry1", "schema": "integer"},
+            ],
         }
         models = await client.create_models([component])
         model = await client.get_model(component_id, include_model_definition=True)
@@ -302,17 +222,9 @@ class TestDigitalTwinsModelsAsync(AzureRecordedTestCase):
             "@context": ["dtmi:dtdl:context;2"],
             "displayName": "Component1",
             "contents": [
-            {
-                "@type": "Property",
-                "name": "ComponentProp1",
-                "schema": "string"
-            },
-            {
-                "@type": "Telemetry",
-                "name": "ComponentTelemetry1",
-                "schema": "integer"
-            }
-            ]
+                {"@type": "Property", "name": "ComponentProp1", "schema": "string"},
+                {"@type": "Telemetry", "name": "ComponentTelemetry1", "schema": "integer"},
+            ],
         }
         await client.create_models([component])
         listed_models = []
@@ -331,17 +243,9 @@ class TestDigitalTwinsModelsAsync(AzureRecordedTestCase):
             "@context": ["dtmi:dtdl:context;2"],
             "displayName": "Component1",
             "contents": [
-            {
-                "@type": "Property",
-                "name": "ComponentProp1",
-                "schema": "string"
-            },
-            {
-                "@type": "Telemetry",
-                "name": "ComponentTelemetry1",
-                "schema": "integer"
-            }
-            ]
+                {"@type": "Property", "name": "ComponentProp1", "schema": "string"},
+                {"@type": "Telemetry", "name": "ComponentTelemetry1", "schema": "integer"},
+            ],
         }
         await client.create_models([component])
         listed_models = []
@@ -361,17 +265,9 @@ class TestDigitalTwinsModelsAsync(AzureRecordedTestCase):
             "@context": "dtmi:dtdl:context;2",
             "displayName": "Component1",
             "contents": [
-            {
-                "@type": "Property",
-                "name": "ComponentProp1",
-                "schema": "string"
-            },
-            {
-                "@type": "Telemetry",
-                "name": "ComponentTelemetry1",
-                "schema": "integer"
-            }
-            ]
+                {"@type": "Property", "name": "ComponentProp1", "schema": "string"},
+                {"@type": "Telemetry", "name": "ComponentTelemetry1", "schema": "integer"},
+            ],
         }
         await client.create_models([component])
         model = await client.get_model(component_id)
@@ -399,17 +295,9 @@ class TestDigitalTwinsModelsAsync(AzureRecordedTestCase):
             "@context": "dtmi:dtdl:context;2",
             "displayName": "Component1",
             "contents": [
-            {
-                "@type": "Property",
-                "name": "ComponentProp1",
-                "schema": "string"
-            },
-            {
-                "@type": "Telemetry",
-                "name": "ComponentTelemetry1",
-                "schema": "integer"
-            }
-            ]
+                {"@type": "Property", "name": "ComponentProp1", "schema": "string"},
+                {"@type": "Telemetry", "name": "ComponentTelemetry1", "schema": "integer"},
+            ],
         }
         await client.create_models([component])
         model = await client.get_model(component_id)
@@ -431,17 +319,9 @@ class TestDigitalTwinsModelsAsync(AzureRecordedTestCase):
             "@context": "dtmi:dtdl:context;2",
             "displayName": "Component1",
             "contents": [
-            {
-                "@type": "Property",
-                "name": "ComponentProp1",
-                "schema": "string"
-            },
-            {
-                "@type": "Telemetry",
-                "name": "ComponentTelemetry1",
-                "schema": "integer"
-            }
-            ]
+                {"@type": "Property", "name": "ComponentProp1", "schema": "string"},
+                {"@type": "Telemetry", "name": "ComponentTelemetry1", "schema": "integer"},
+            ],
         }
         await client.create_models([component])
 
@@ -467,17 +347,9 @@ class TestDigitalTwinsModelsAsync(AzureRecordedTestCase):
             "@context": "dtmi:dtdl:context;2",
             "displayName": "Component1",
             "contents": [
-            {
-                "@type": "Property",
-                "name": "ComponentProp1",
-                "schema": "string"
-            },
-            {
-                "@type": "Telemetry",
-                "name": "ComponentTelemetry1",
-                "schema": "integer"
-            }
-            ]
+                {"@type": "Property", "name": "ComponentProp1", "schema": "string"},
+                {"@type": "Telemetry", "name": "ComponentTelemetry1", "schema": "integer"},
+            ],
         }
         await client.create_models([component])
         await client.delete_model(component_id)
@@ -495,17 +367,9 @@ class TestDigitalTwinsModelsAsync(AzureRecordedTestCase):
             "@context": "dtmi:dtdl:context;2",
             "displayName": "Component1",
             "contents": [
-            {
-                "@type": "Property",
-                "name": "ComponentProp1",
-                "schema": "string"
-            },
-            {
-                "@type": "Telemetry",
-                "name": "ComponentTelemetry1",
-                "schema": "integer"
-            }
-            ]
+                {"@type": "Property", "name": "ComponentProp1", "schema": "string"},
+                {"@type": "Telemetry", "name": "ComponentTelemetry1", "schema": "integer"},
+            ],
         }
 
         model = {
@@ -514,22 +378,10 @@ class TestDigitalTwinsModelsAsync(AzureRecordedTestCase):
             "@context": "dtmi:dtdl:context;2",
             "displayName": "TempModel",
             "contents": [
-            {
-                "@type": "Property",
-                "name": "Prop1",
-                "schema": "string"
-            },
-            {
-                "@type": "Component",
-                "name": "Component1",
-                "schema": component_id
-            },
-            {
-                "@type": "Telemetry",
-                "name": "Telemetry1",
-                "schema": "integer"
-            }
-            ]
+                {"@type": "Property", "name": "Prop1", "schema": "string"},
+                {"@type": "Component", "name": "Component1", "schema": component_id},
+                {"@type": "Telemetry", "name": "Telemetry1", "schema": "integer"},
+            ],
         }
         await client.create_models([component, model])
         with pytest.raises(ResourceExistsError):

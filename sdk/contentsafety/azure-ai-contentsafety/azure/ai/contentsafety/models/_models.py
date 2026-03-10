@@ -34,8 +34,7 @@ class AddOrUpdateTextBlocklistItemsOptions(_model_base.Model):
         self,
         *,
         blocklist_items: List["_models.TextBlocklistItem"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -65,8 +64,7 @@ class AddOrUpdateTextBlocklistItemsResult(_model_base.Model):
         self,
         *,
         blocklist_items: List["_models.TextBlocklistItem"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -110,8 +108,7 @@ class AnalyzeImageOptions(_model_base.Model):
         image: "_models.ImageData",
         categories: Optional[List[Union[str, "_models.ImageCategory"]]] = None,
         output_type: Optional[Union[str, "_models.AnalyzeImageOutputType"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -141,8 +138,7 @@ class AnalyzeImageResult(_model_base.Model):
         self,
         *,
         categories_analysis: List["_models.ImageCategoriesAnalysis"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -204,8 +200,7 @@ class AnalyzeTextOptions(_model_base.Model):
         blocklist_names: Optional[List[str]] = None,
         halt_on_blocklist_hit: Optional[bool] = None,
         output_type: Optional[Union[str, "_models.AnalyzeTextOutputType"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -240,8 +235,7 @@ class AnalyzeTextResult(_model_base.Model):
         *,
         categories_analysis: List["_models.TextCategoriesAnalysis"],
         blocklists_match: Optional[List["_models.TextBlocklistMatch"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -282,8 +276,7 @@ class ImageCategoriesAnalysis(_model_base.Model):
         *,
         category: Union[str, "_models.ImageCategory"],
         severity: Optional[int] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -318,8 +311,7 @@ class ImageData(_model_base.Model):
         *,
         content: Optional[bytes] = None,
         blob_url: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -349,8 +341,7 @@ class RemoveTextBlocklistItemsOptions(_model_base.Model):
         self,
         *,
         blocklist_item_ids: List[str],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -385,8 +376,7 @@ class TextBlocklist(_model_base.Model):
         *,
         blocklist_name: str,
         description: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -428,8 +418,7 @@ class TextBlocklistItem(_model_base.Model):
         *,
         text: str,
         description: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -469,8 +458,7 @@ class TextBlocklistMatch(_model_base.Model):
         blocklist_name: str,
         blocklist_item_id: str,
         blocklist_item_text: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -513,8 +501,7 @@ class TextCategoriesAnalysis(_model_base.Model):
         *,
         category: Union[str, "_models.TextCategory"],
         severity: Optional[int] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):

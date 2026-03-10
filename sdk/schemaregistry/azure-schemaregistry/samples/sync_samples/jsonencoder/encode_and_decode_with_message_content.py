@@ -47,6 +47,7 @@ This example uses ClientSecretCredential, which requests a token from Azure Acti
 For more information on ClientSecretCredential, see:
     https://learn.microsoft.com/python/api/azure-identity/azure.identity.clientsecretcredential?view=azure-python
 """
+
 import os
 import json
 from typing import List, cast

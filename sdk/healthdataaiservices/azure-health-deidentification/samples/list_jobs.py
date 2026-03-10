@@ -16,7 +16,6 @@ USAGE:
     1) HEALTHDATAAISERVICES_DEID_SERVICE_ENDPOINT - the service URL endpoint for a de-identification service.
 """
 
-
 from azure.health.deidentification import DeidentificationClient
 from azure.identity import DefaultAzureCredential
 import os

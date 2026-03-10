@@ -20,7 +20,7 @@ from azure.core.credentials import AzureKeyCredential
 
 class TestQueryKnowledgeBaseAsync(QuestionAnsweringTestCase):
     @pytest.mark.asyncio
-    async def test_query_knowledgebase_basic(self, recorded_test, qna_creds): # pylint: disable=unused-argument
+    async def test_query_knowledgebase_basic(self, recorded_test, qna_creds):  # pylint: disable=unused-argument
         client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         params = AnswersOptions(
             question="Ports and connectors",
@@ -28,7 +28,9 @@ class TestQueryKnowledgeBaseAsync(QuestionAnsweringTestCase):
             answer_context=KnowledgeBaseAnswerContext(previous_question="Meet Surface Pro 4", previous_qna_id=4),
         )
         async with client:
-            output = await client.get_answers(params, project_name=qna_creds["qna_project"], deployment_name="production")
+            output = await client.get_answers(
+                params, project_name=qna_creds["qna_project"], deployment_name="production"
+            )
         assert output.answers
         for answer in output.answers:
             assert answer.answer
@@ -38,7 +40,9 @@ class TestQueryKnowledgeBaseAsync(QuestionAnsweringTestCase):
             assert answer.metadata is not None
 
     @pytest.mark.asyncio
-    async def test_query_knowledgebase_with_short_answer(self, recorded_test, qna_creds): # pylint: disable=unused-argument
+    async def test_query_knowledgebase_with_short_answer(
+        self, recorded_test, qna_creds
+    ):  # pylint: disable=unused-argument
         client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         params = AnswersOptions(
             question="Ports and connectors",
@@ -55,7 +59,7 @@ class TestQueryKnowledgeBaseAsync(QuestionAnsweringTestCase):
                 assert answer.short_answer.confidence is not None
 
     @pytest.mark.asyncio
-    async def test_query_knowledgebase_filter(self, recorded_test, qna_creds): # pylint: disable=unused-argument
+    async def test_query_knowledgebase_filter(self, recorded_test, qna_creds):  # pylint: disable=unused-argument
         filters = QueryFilters(
             metadata_filter=MetadataFilter(
                 metadata=[
@@ -79,14 +83,14 @@ class TestQueryKnowledgeBaseAsync(QuestionAnsweringTestCase):
                 deployment_name="production",
             )
             assert response.answers
-            assert any( # pylint: disable=use-a-generator
+            assert any(  # pylint: disable=use-a-generator
                 [
                     a
                     for a in response.answers
                     if (a.metadata or {}).get("explicitlytaggedheading") == "check the battery level"
                 ]
             )
-            assert any( # pylint: disable=use-a-generator
+            assert any(  # pylint: disable=use-a-generator
                 [
                     a
                     for a in response.answers

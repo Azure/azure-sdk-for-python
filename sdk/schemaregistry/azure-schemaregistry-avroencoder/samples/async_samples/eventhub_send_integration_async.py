@@ -27,6 +27,7 @@ This example uses DefaultAzureCredential, which requests a token from Azure Acti
 For more information on DefaultAzureCredential, see
  https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
 """
+
 import os
 import asyncio
 from azure.eventhub import EventData
@@ -35,11 +36,11 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.schemaregistry.aio import SchemaRegistryClient
 from azure.schemaregistry.encoder.avroencoder.aio import AvroEncoder
 
-EVENTHUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+EVENTHUB_CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
+EVENTHUB_NAME = os.environ["EVENT_HUB_NAME"]
 
-SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ['SCHEMAREGISTRY_AVRO_FULLY_QUALIFIED_NAMESPACE']
-GROUP_NAME = os.environ['SCHEMAREGISTRY_GROUP']
+SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ["SCHEMAREGISTRY_AVRO_FULLY_QUALIFIED_NAMESPACE"]
+GROUP_NAME = os.environ["SCHEMAREGISTRY_GROUP"]
 
 SCHEMA_STRING = """
 {"namespace": "example.avro",
@@ -54,20 +55,19 @@ SCHEMA_STRING = """
 
 # create an EventHubProducerClient instance
 eventhub_producer = EventHubProducerClient.from_connection_string(
-    conn_str=EVENTHUB_CONNECTION_STR,
-    eventhub_name=EVENTHUB_NAME
+    conn_str=EVENTHUB_CONNECTION_STR, eventhub_name=EVENTHUB_NAME
 )
 # create a AvroEncoder instance
 azure_credential = DefaultAzureCredential()
 # create a AvroEncoder instance
 avro_encoder = AvroEncoder(
     client=SchemaRegistryClient(
-        fully_qualified_namespace=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE,
-        credential=azure_credential
+        fully_qualified_namespace=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE, credential=azure_credential
     ),
     group_name=GROUP_NAME,
-    auto_register=True
+    auto_register=True,
 )
+
 
 async def send_event_data_batch(producer, encoder):
     event_data_batch = await producer.create_batch()
@@ -76,11 +76,11 @@ async def send_event_data_batch(producer, encoder):
     # The encode method will automatically register the schema into the Schema Registry Service and
     # schema will be cached locally for future usage.
     event_data = await encoder.encode(content=dict_content, schema=SCHEMA_STRING, message_type=EventData)
-    print(f'The bytes of encoded dict content is {next(event_data.body)}.')
+    print(f"The bytes of encoded dict content is {next(event_data.body)}.")
 
     event_data_batch.add(event_data)
     await producer.send_batch(event_data_batch)
-    print('Send is done.')
+    print("Send is done.")
 
 
 async def main():
@@ -89,6 +89,7 @@ async def main():
     await avro_encoder.close()
     await azure_credential.close()
     await eventhub_producer.close()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

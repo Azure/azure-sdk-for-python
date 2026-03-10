@@ -13,10 +13,7 @@ from conftest import configure, AZURE, OPENAI, PREVIEW, GA
 class TestEmbeddings(AzureRecordedTestCase):
 
     @configure
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")])
     def test_embedding(self, client, api_type, api_version, **kwargs):
 
         embedding = client.embeddings.create(input="hello world", **kwargs)
@@ -30,10 +27,7 @@ class TestEmbeddings(AzureRecordedTestCase):
         assert len(embedding.data[0].embedding) > 0
 
     @configure
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")])
     def test_embedding_batched(self, client, api_type, api_version, **kwargs):
 
         embedding = client.embeddings.create(input=["hello world", "second input"], **kwargs)
@@ -47,10 +41,7 @@ class TestEmbeddings(AzureRecordedTestCase):
         assert len(embedding.data[0].embedding) > 0
 
     @configure
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")])
     def test_embedding_user(self, client, api_type, api_version, **kwargs):
 
         embedding = client.embeddings.create(input="hello world", user="krista", **kwargs)
@@ -64,10 +55,7 @@ class TestEmbeddings(AzureRecordedTestCase):
         assert len(embedding.data[0].embedding) > 0
 
     @configure
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")])
     def test_embedding_dimensions(self, client, api_type, api_version, **kwargs):
 
         embedding = client.embeddings.create(input="hello world", dimensions=1, model="text-embedding-3-small")
@@ -81,13 +69,12 @@ class TestEmbeddings(AzureRecordedTestCase):
         assert len(embedding.data[0].embedding) > 0
 
     @configure
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")])
     def test_embedding_encoding_format(self, client, api_type, api_version, **kwargs):
 
-        embedding = client.embeddings.create(input="hello world", encoding_format="base64", model="text-embedding-3-small")
+        embedding = client.embeddings.create(
+            input="hello world", encoding_format="base64", model="text-embedding-3-small"
+        )
         assert embedding.object == "list"
         assert embedding.model
         assert embedding.usage.prompt_tokens is not None

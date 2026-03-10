@@ -24,8 +24,7 @@ PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
 @runtime_checkable
 class AsyncTextAnalysisLROPoller(Protocol[PollingReturnType_co], Awaitable[PollingReturnType_co]):
-    """Implements a protocol which returned poller objects are consistent with.
-    """
+    """Implements a protocol which returned poller objects are consistent with."""
 
     @property
     def details(self) -> Mapping[str, Any]:
@@ -69,8 +68,7 @@ class AsyncTextAnalysisLROPoller(Protocol[PollingReturnType_co], Awaitable[Polli
         :rtype: bool
         """
 
-    def __await__(self) -> Generator[Any, None, PollingReturnType_co]:
-        ...
+    def __await__(self) -> Generator[Any, None, PollingReturnType_co]: ...
 
     async def cancel(self) -> None:
         """Cancel the operation currently being polled.
@@ -114,11 +112,7 @@ class TextAnalyticsAsyncLROPollingMethod(AsyncLROBasePolling):
         code = response.status_code
         if code in {200, 201, 202, 204}:
             return
-        raise BadStatus(
-            "Invalid return status {!r} for {!r} operation".format(
-                code, response.request.method
-            )
-        )
+        raise BadStatus("Invalid return status {!r} for {!r} operation".format(code, response.request.method))
 
     async def _poll(self):  # pylint:disable=invalid-overridden-method
         """Poll status of operation so long as operation is incomplete and
@@ -153,20 +147,17 @@ class TextAnalyticsAsyncLROPollingMethod(AsyncLROBasePolling):
             )
 
 
-class AsyncAnalyzeHealthcareEntitiesLROPollingMethod(  # pylint: disable=all
-    TextAnalyticsAsyncLROPollingMethod
-):
+class AsyncAnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):  # pylint: disable=all
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         self._text_analytics_client = kwargs.pop("text_analytics_client")
         self._doc_id_order = kwargs.pop("doc_id_order", None)
         self._show_stats = kwargs.pop("show_stats", None)
-        super().__init__(
-            *args, **kwargs
-        )
+        super().__init__(*args, **kwargs)
 
     @property
     def _current_body(self):
         from .._generated.models import JobState
+
         return JobState.deserialize(self._pipeline_response)
 
     @property
@@ -194,9 +185,7 @@ class AsyncAnalyzeHealthcareEntitiesLROPollingMethod(  # pylint: disable=all
         return self._get_id_from_headers()
 
     def _get_id_from_headers(self) -> str:
-        return self._initial_response.http_response.headers[
-            "Operation-Location"
-        ].split("/jobs/")[1].split("?")[0]
+        return self._initial_response.http_response.headers["Operation-Location"].split("/jobs/")[1].split("?")[0]
 
     @property
     def display_name(self) -> Optional[str]:
@@ -238,23 +227,14 @@ class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType_c
         }
 
     def __getattr__(self, item: str) -> Any:
-        attrs = [
-            "created_on",
-            "expires_on",
-            "display_name",
-            "last_modified_on",
-            "id"
-        ]
+        attrs = ["created_on", "expires_on", "display_name", "last_modified_on", "id"]
         if item in attrs:
             return self.details[item]
         return self.__getattribute__(item)
 
     @classmethod
     def from_continuation_token(  # type: ignore
-        cls,
-        polling_method: AsyncAnalyzeHealthcareEntitiesLROPollingMethod,
-        continuation_token: str,
-        **kwargs: Any
+        cls, polling_method: AsyncAnalyzeHealthcareEntitiesLROPollingMethod, continuation_token: str, **kwargs: Any
     ) -> "AsyncAnalyzeHealthcareEntitiesLROPoller":
         """Internal use only.
 
@@ -280,7 +260,7 @@ class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType_c
             client,
             initial_response,
             functools.partial(deserialization_callback, initial_response),
-            polling_method  # type: ignore
+            polling_method,  # type: ignore
         )
 
     @distributed_trace_async
@@ -305,9 +285,7 @@ class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType_c
         polling_interval = kwargs.pop("polling_interval", 5)
 
         try:
-            client = getattr(
-                self._polling_method, "_text_analytics_client"
-            )
+            client = getattr(self._polling_method, "_text_analytics_client")
             try:
                 return await client.begin_cancel_health_job(
                     self.id, polling=TextAnalyticsAsyncLROPollingMethod(timeout=polling_interval)
@@ -333,6 +311,7 @@ class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
     @property
     def _current_body(self):
         from .._generated.models import JobState
+
         return JobState.deserialize(self._pipeline_response)
 
     @property
@@ -390,9 +369,7 @@ class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
         return self._get_id_from_headers()
 
     def _get_id_from_headers(self) -> str:
-        return self._initial_response.http_response.headers[
-            "Operation-Location"
-        ].split("/jobs/")[1].split("?")[0]
+        return self._initial_response.http_response.headers["Operation-Location"].split("/jobs/")[1].split("?")[0]
 
     def get_continuation_token(self) -> str:
         if self._initial_response.context is not None:
@@ -402,6 +379,7 @@ class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
                 "task_id_order": self._task_id_order,
             }
         return super().get_continuation_token()
+
 
 class AsyncAnalyzeActionsLROPoller(AsyncLROPoller[PollingReturnType_co]):
     def polling_method(self) -> AsyncAnalyzeActionsLROPollingMethod:  # type: ignore
@@ -441,7 +419,7 @@ class AsyncAnalyzeActionsLROPoller(AsyncLROPoller[PollingReturnType_co]):
             "actions_succeeded_count",
             "total_actions_count",
             "last_modified_on",
-            "id"
+            "id",
         ]
         if item in attrs:
             return self.details[item]
@@ -449,10 +427,7 @@ class AsyncAnalyzeActionsLROPoller(AsyncLROPoller[PollingReturnType_co]):
 
     @classmethod
     def from_continuation_token(  # type: ignore
-        cls,
-        polling_method: AsyncAnalyzeActionsLROPollingMethod,
-        continuation_token: str,
-        **kwargs: Any
+        cls, polling_method: AsyncAnalyzeActionsLROPollingMethod, continuation_token: str, **kwargs: Any
     ) -> "AsyncAnalyzeActionsLROPoller":  # type: ignore
         """Internal use only.
 
@@ -478,7 +453,7 @@ class AsyncAnalyzeActionsLROPoller(AsyncLROPoller[PollingReturnType_co]):
             client,
             initial_response,
             functools.partial(deserialization_callback, initial_response),
-            polling_method  # type: ignore
+            polling_method,  # type: ignore
         )
 
     @distributed_trace_async
@@ -499,4 +474,5 @@ class AsyncAnalyzeActionsLROPoller(AsyncLROPoller[PollingReturnType_co]):
             raise ValueError("Cancellation not supported by API versions v3.0, v3.1.") from exc
         except HttpResponseError as error:
             from .._response_handlers import process_http_response_error
+
             process_http_response_error(error)

@@ -15,6 +15,7 @@ USAGE:
     "https://<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net/api/events".
     3) EVENTGRID_PARTNER_CHANNEL_NAME - The name of the channel to which the event should be published.
 """
+
 # [START publish_cloud_event_to_topic]
 import os
 import asyncio

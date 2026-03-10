@@ -6,6 +6,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 import sys
 import datetime
 from typing import (
@@ -440,7 +441,7 @@ class JobRouterAdministrationClientOperationsMixin(
         """Update a distribution policy.
 
         :param str distribution_policy_id: Id of the distribution policy.
-        
+
         :return: Instance of DistributionPolicy
         :rtype: ~azure.communication.jobrouter.models.DistributionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError

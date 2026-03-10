@@ -24,7 +24,6 @@ from helpers import (
     GET_TOKEN_METHODS,
 )
 
-
 WEBBROWSER_OPEN = InteractiveBrowserCredential.__module__ + ".webbrowser.open"
 
 

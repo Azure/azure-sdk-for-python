@@ -8,7 +8,7 @@ DESCRIPTION:
 
     The synchronous (blocking) `analyze` method call returns an `ImageAnalysisResult` object.
     Its `objects` property (a `ObjectsResult` object) contains a list of `DetectedObject` objects. Each has:
-    - The object name, for example: "chair", "laptop". 
+    - The object name, for example: "chair", "laptop".
     - A confidence score in the range [0, 1], with higher values indicating greater confidences in the detection.
     - A `BoundingBox` coordinates in pixels, for a rectangular surrounding the object in the image.
 
@@ -41,20 +41,14 @@ def sample_objects_image_file():
         exit()
 
     # Create an Image Analysis client
-    client = ImageAnalysisClient(
-        endpoint=endpoint,
-        credential=AzureKeyCredential(key)
-    )
+    client = ImageAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Load image to analyze into a 'bytes' object
     with open("sample.jpg", "rb") as f:
         image_data = f.read()
 
     # Detect objects in an image stream. This will be a synchronously (blocking) call.
-    result = client.analyze(
-        image_data=image_data,
-        visual_features=[VisualFeatures.OBJECTS]
-    )
+    result = client.analyze(image_data=image_data, visual_features=[VisualFeatures.OBJECTS])
 
     # Print Objects analysis results to the console
     print("Image analysis results:")

@@ -2053,8 +2053,7 @@ class EnrollmentOperations:
         x_ms_continuation: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> List[JSON]:
-        ...
+    ) -> List[JSON]: ...
 
     @overload
     def _query(
@@ -2065,8 +2064,7 @@ class EnrollmentOperations:
         x_ms_continuation: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> List[JSON]:
-        ...
+    ) -> List[JSON]: ...
 
     @distributed_trace
     def _query(
@@ -4597,8 +4595,7 @@ class EnrollmentGroupOperations:
         x_ms_continuation: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> List[JSON]:
-        ...
+    ) -> List[JSON]: ...
 
     @overload
     def _query(
@@ -4609,8 +4606,7 @@ class EnrollmentGroupOperations:
         x_ms_continuation: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> List[JSON]:
-        ...
+    ) -> List[JSON]: ...
 
     @distributed_trace
     def _query(

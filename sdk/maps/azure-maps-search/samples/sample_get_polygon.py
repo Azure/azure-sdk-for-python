@@ -16,12 +16,12 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     - AZURE_SUBSCRIPTION_KEY - your subscription key
 """
+
 import os
 
 from azure.core.exceptions import HttpResponseError
 from azure.maps.search import Resolution
 from azure.maps.search import BoundaryResultType
-
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 

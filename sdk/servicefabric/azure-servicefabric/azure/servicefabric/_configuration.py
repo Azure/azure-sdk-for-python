@@ -25,19 +25,18 @@ class ServiceFabricClientAPIsConfiguration(Configuration):
     :param str base_url: Service URL
     """
 
-    def __init__(
-            self, credentials, base_url=None):
+    def __init__(self, credentials, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if not base_url:
-            base_url = 'http://localhost:19080'
+            base_url = "http://localhost:19080"
 
         super(ServiceFabricClientAPIsConfiguration, self).__init__(base_url)
 
         # Starting Autorest.Python 4.0.64, make connection pool activated by default
         self.keep_alive = True
 
-        self.add_user_agent('azure-servicefabric/{}'.format(VERSION))
+        self.add_user_agent("azure-servicefabric/{}".format(VERSION))
 
         self.credentials = credentials

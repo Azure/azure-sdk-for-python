@@ -77,56 +77,56 @@ class DataBoxEdgeDevice(ARMBaseModel):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'serial_number': {'readonly': True},
-        'device_type': {'readonly': True},
-        'culture': {'readonly': True},
-        'device_model': {'readonly': True},
-        'device_software_version': {'readonly': True},
-        'device_local_capacity': {'readonly': True},
-        'time_zone': {'readonly': True},
-        'device_hcs_version': {'readonly': True},
-        'configured_role_types': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "serial_number": {"readonly": True},
+        "device_type": {"readonly": True},
+        "culture": {"readonly": True},
+        "device_model": {"readonly": True},
+        "device_software_version": {"readonly": True},
+        "device_local_capacity": {"readonly": True},
+        "time_zone": {"readonly": True},
+        "device_hcs_version": {"readonly": True},
+        "configured_role_types": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'data_box_edge_device_status': {'key': 'properties.dataBoxEdgeDeviceStatus', 'type': 'str'},
-        'serial_number': {'key': 'properties.serialNumber', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'model_description': {'key': 'properties.modelDescription', 'type': 'str'},
-        'device_type': {'key': 'properties.deviceType', 'type': 'str'},
-        'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
-        'culture': {'key': 'properties.culture', 'type': 'str'},
-        'device_model': {'key': 'properties.deviceModel', 'type': 'str'},
-        'device_software_version': {'key': 'properties.deviceSoftwareVersion', 'type': 'str'},
-        'device_local_capacity': {'key': 'properties.deviceLocalCapacity', 'type': 'long'},
-        'time_zone': {'key': 'properties.timeZone', 'type': 'str'},
-        'device_hcs_version': {'key': 'properties.deviceHcsVersion', 'type': 'str'},
-        'configured_role_types': {'key': 'properties.configuredRoleTypes', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "etag": {"key": "etag", "type": "str"},
+        "data_box_edge_device_status": {"key": "properties.dataBoxEdgeDeviceStatus", "type": "str"},
+        "serial_number": {"key": "properties.serialNumber", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "model_description": {"key": "properties.modelDescription", "type": "str"},
+        "device_type": {"key": "properties.deviceType", "type": "str"},
+        "friendly_name": {"key": "properties.friendlyName", "type": "str"},
+        "culture": {"key": "properties.culture", "type": "str"},
+        "device_model": {"key": "properties.deviceModel", "type": "str"},
+        "device_software_version": {"key": "properties.deviceSoftwareVersion", "type": "str"},
+        "device_local_capacity": {"key": "properties.deviceLocalCapacity", "type": "long"},
+        "time_zone": {"key": "properties.timeZone", "type": "str"},
+        "device_hcs_version": {"key": "properties.deviceHcsVersion", "type": "str"},
+        "configured_role_types": {"key": "properties.configuredRoleTypes", "type": "[str]"},
     }
 
     def __init__(self, **kwargs):
         super(DataBoxEdgeDevice, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
-        self.sku = kwargs.get('sku', None)
-        self.etag = kwargs.get('etag', None)
-        self.data_box_edge_device_status = kwargs.get('data_box_edge_device_status', None)
+        self.location = kwargs.get("location", None)
+        self.tags = kwargs.get("tags", None)
+        self.sku = kwargs.get("sku", None)
+        self.etag = kwargs.get("etag", None)
+        self.data_box_edge_device_status = kwargs.get("data_box_edge_device_status", None)
         self.serial_number = None
-        self.description = kwargs.get('description', None)
-        self.model_description = kwargs.get('model_description', None)
+        self.description = kwargs.get("description", None)
+        self.model_description = kwargs.get("model_description", None)
         self.device_type = None
-        self.friendly_name = kwargs.get('friendly_name', None)
+        self.friendly_name = kwargs.get("friendly_name", None)
         self.culture = None
         self.device_model = None
         self.device_software_version = None

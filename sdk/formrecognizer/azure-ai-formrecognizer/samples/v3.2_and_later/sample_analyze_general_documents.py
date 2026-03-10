@@ -27,10 +27,7 @@ import os
 def format_bounding_region(bounding_regions):
     if not bounding_regions:
         return "N/A"
-    return ", ".join(
-        f"Page #{region.page_number}: {format_polygon(region.polygon)}"
-        for region in bounding_regions
-    )
+    return ", ".join(f"Page #{region.page_number}: {format_polygon(region.polygon)}" for region in bounding_regions)
 
 
 def format_polygon(polygon):
@@ -56,26 +53,15 @@ def analyze_general_documents():
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
-    document_analysis_client = DocumentAnalysisClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
+    document_analysis_client = DocumentAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     with open(path_to_sample_documents, "rb") as f:
-        poller = document_analysis_client.begin_analyze_document(
-            "prebuilt-document", document=f
-        )
+        poller = document_analysis_client.begin_analyze_document("prebuilt-document", document=f)
     result = poller.result()
 
     for style in result.styles:
         if style.is_handwritten:
             print("Document contains handwritten content: ")
-            print(
-                ",".join(
-                    [
-                        result.content[span.offset : span.offset + span.length]
-                        for span in style.spans
-                    ]
-                )
-            )
+            print(",".join([result.content[span.offset : span.offset + span.length] for span in style.spans]))
 
     print("----Key-value pairs found in document----")
     for kv_pair in result.key_value_pairs:
@@ -92,9 +78,7 @@ def analyze_general_documents():
 
     for page in result.pages:
         print(f"----Analyzing document from page #{page.page_number}----")
-        print(
-            f"Page has width: {page.width} and height: {page.height}, measured with unit: {page.unit}"
-        )
+        print(f"Page has width: {page.width} and height: {page.height}, measured with unit: {page.unit}")
 
         for line_idx, line in enumerate(page.lines):
             words = line.get_words()
@@ -104,9 +88,7 @@ def analyze_general_documents():
             )
 
             for word in words:
-                print(
-                    f"......Word '{word.content}' has a confidence of {word.confidence}"
-                )
+                print(f"......Word '{word.content}' has a confidence of {word.confidence}")
 
         for selection_mark in page.selection_marks:
             print(
@@ -116,17 +98,11 @@ def analyze_general_documents():
             )
 
     for table_idx, table in enumerate(result.tables):
-        print(
-            f"Table # {table_idx} has {table.row_count} rows and {table.column_count} columns"
-        )
+        print(f"Table # {table_idx} has {table.row_count} rows and {table.column_count} columns")
         for region in table.bounding_regions:
-            print(
-                f"Table # {table_idx} location on page: {region.page_number} is {format_polygon(region.polygon)}"
-            )
+            print(f"Table # {table_idx} location on page: {region.page_number} is {format_polygon(region.polygon)}")
         for cell in table.cells:
-            print(
-                f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'"
-            )
+            print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
             for region in cell.bounding_regions:
                 print(
                     f"...content on page {region.page_number} is within bounding polygon '{format_polygon(region.polygon)}'\n"

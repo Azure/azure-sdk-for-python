@@ -31,24 +31,24 @@ import config
 # 5. Delete a Database given its Id property (DeleteDatabase)
 # ----------------------------------------------------------------------------------------------------------
 
-HOST = config.settings['host']
-MASTER_KEY = config.settings['master_key']
-DATABASE_ID = config.settings['database_id']
+HOST = config.settings["host"]
+MASTER_KEY = config.settings["master_key"]
+DATABASE_ID = config.settings["database_id"]
+
 
 def find_database(client, id):
-    print('1. Query for Database')
+    print("1. Query for Database")
 
-    databases = list(client.query_databases({
-        "query": "SELECT * FROM r WHERE r.id=@id",
-        "parameters": [
-            { "name":"@id", "value": id }
-        ]
-    }))
+    databases = list(
+        client.query_databases(
+            {"query": "SELECT * FROM r WHERE r.id=@id", "parameters": [{"name": "@id", "value": id}]}
+        )
+    )
 
     if len(databases) > 0:
-        print('Database with id \'{0}\' was found'.format(id))
+        print("Database with id '{0}' was found".format(id))
     else:
-        print('No database with id \'{0}\' was found'. format(id))
+        print("No database with id '{0}' was found".format(id))
 
 
 def create_database(client, id):
@@ -56,21 +56,21 @@ def create_database(client, id):
 
     try:
         client.create_database(id=id)
-        print('Database with id \'{0}\' created'.format(id))
+        print("Database with id '{0}' created".format(id))
 
     except exceptions.CosmosResourceExistsError:
-        print('A database with id \'{0}\' already exists'.format(id))
+        print("A database with id '{0}' already exists".format(id))
 
     print("\n2.8 Create Database - With autoscale settings")
 
     try:
         client.create_database(
-            id=id,
-            offer_throughput=ThroughputProperties(auto_scale_max_throughput=5000, auto_scale_increment_percent=0))
-        print('Database with id \'{0}\' created'.format(id))
+            id=id, offer_throughput=ThroughputProperties(auto_scale_max_throughput=5000, auto_scale_increment_percent=0)
+        )
+        print("Database with id '{0}' created".format(id))
 
     except exceptions.CosmosResourceExistsError:
-        print('A database with id \'{0}\' already exists'.format(id))
+        print("A database with id '{0}' already exists".format(id))
 
 
 def read_database(client, id):
@@ -79,16 +79,16 @@ def read_database(client, id):
     try:
         database = client.get_database_client(id)
         database.read()
-        print('Database with id \'{0}\' was found, it\'s link is {1}'.format(id, database.database_link))
+        print("Database with id '{0}' was found, it's link is {1}".format(id, database.database_link))
 
     except exceptions.CosmosResourceNotFoundError:
-        print('A database with id \'{0}\' does not exist'.format(id))
+        print("A database with id '{0}' does not exist".format(id))
 
 
 def list_databases(client):
     print("\n4. List all Databases on an account")
 
-    print('Databases:')
+    print("Databases:")
 
     databases = list(client.list_databases())
 
@@ -96,7 +96,7 @@ def list_databases(client):
         return
 
     for database in databases:
-        print(database['id'])
+        print(database["id"])
 
 
 def delete_database(client, id):
@@ -105,14 +105,14 @@ def delete_database(client, id):
     try:
         client.delete_database(id)
 
-        print('Database with id \'{0}\' was deleted'.format(id))
+        print("Database with id '{0}' was deleted".format(id))
 
     except exceptions.CosmosResourceNotFoundError:
-        print('A database with id \'{0}\' does not exist'.format(id))
+        print("A database with id '{0}' does not exist".format(id))
 
 
 def run_sample():
-    client = cosmos_client.CosmosClient(HOST, {'masterKey': MASTER_KEY} )
+    client = cosmos_client.CosmosClient(HOST, {"masterKey": MASTER_KEY})
     try:
         # query for a database
         find_database(client, DATABASE_ID)
@@ -130,10 +130,11 @@ def run_sample():
         delete_database(client, DATABASE_ID)
 
     except exceptions.CosmosHttpResponseError as e:
-        print('\nrun_sample has caught an error. {0}'.format(e.message))
+        print("\nrun_sample has caught an error. {0}".format(e.message))
 
     finally:
         print("\nrun_sample done")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     run_sample()

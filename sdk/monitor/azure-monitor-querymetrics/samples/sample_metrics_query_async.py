@@ -15,6 +15,7 @@ USAGE:
 
     In this example, storage account resources are queried for metrics.
 """
+
 import asyncio
 
 # [START send_metrics_batch_query_async]

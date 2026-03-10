@@ -116,7 +116,7 @@ def sample_conv_pii_char_mask_policy():
             print(f"  Code: {err.code} - {err.message}")
 
     # iterate results and verify redaction
-    for actions_page in paged_actions: # pylint:disable=too-many-nested-blocks
+    for actions_page in paged_actions:  # pylint:disable=too-many-nested-blocks
         for action_result in actions_page.task_results or []:
             if isinstance(action_result, ConversationPiiOperationResult):
                 for conversation in action_result.results.conversations or []:

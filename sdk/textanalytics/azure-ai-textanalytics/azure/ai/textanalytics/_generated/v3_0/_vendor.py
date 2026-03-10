@@ -18,6 +18,7 @@ if TYPE_CHECKING:
 
     from .._serialization import Deserializer, Serializer
 
+
 def _convert_request(request, files=None):
     data = request.content if not files else None
     request = HttpRequest(method=request.method, url=request.url, headers=request.headers, data=data)
@@ -25,8 +26,10 @@ def _convert_request(request, files=None):
         request.set_formdata_body(files)
     return request
 
+
 class MixinABC(ABC):
     """DO NOT use this class. It is for internal typing use only."""
+
     _client: "PipelineClient"
     _config: TextAnalyticsClientConfiguration
     _serialize: "Serializer"

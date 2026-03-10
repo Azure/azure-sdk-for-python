@@ -19,9 +19,7 @@ load_dotenv()
 async def main() -> None:
     github_token = os.getenv("GITHUB_TOKEN")
     if not github_token:
-        raise RuntimeError(
-            "GITHUB_TOKEN environment variable not set. Provide a GitHub token with MCP access."
-        )
+        raise RuntimeError("GITHUB_TOKEN environment variable not set. Provide a GitHub token with MCP access.")
 
     agent = AzureOpenAIChatClient(credential=DefaultAzureCredential()).create_agent(
         instructions="You are a helpful assistant that answers GitHub questions. Use only the exposed MCP tools.",

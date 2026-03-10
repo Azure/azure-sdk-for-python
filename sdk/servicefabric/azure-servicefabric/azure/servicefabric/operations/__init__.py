@@ -21,14 +21,14 @@ from ._mesh_gateway_operations import MeshGatewayOperations
 from ._service_fabric_client_ap_is_operations import ServiceFabricClientAPIsOperationsMixin
 
 __all__ = [
-    'MeshSecretOperations',
-    'MeshSecretValueOperations',
-    'MeshVolumeOperations',
-    'MeshNetworkOperations',
-    'MeshApplicationOperations',
-    'MeshServiceOperations',
-    'MeshCodePackageOperations',
-    'MeshServiceReplicaOperations',
-    'MeshGatewayOperations',
-    'ServiceFabricClientAPIsOperationsMixin',
+    "MeshSecretOperations",
+    "MeshSecretValueOperations",
+    "MeshVolumeOperations",
+    "MeshNetworkOperations",
+    "MeshApplicationOperations",
+    "MeshServiceOperations",
+    "MeshCodePackageOperations",
+    "MeshServiceReplicaOperations",
+    "MeshGatewayOperations",
+    "ServiceFabricClientAPIsOperationsMixin",
 ]

@@ -55,7 +55,6 @@ DECIMAL128_MAX_DIGITS = 34
 DECIMAL128_BIAS = 6176
 
 
-
 def _decode_null(buffer: memoryview) -> Tuple[memoryview, None]:
     return buffer, None
 
@@ -153,6 +152,7 @@ def _decode_binary_large(buffer: memoryview) -> Tuple[memoryview, bytes]:
     length_index = c_unsigned_long.unpack(buffer[:4])[0] + 4
     return buffer[length_index:], buffer[4:length_index].tobytes()
 
+
 def _decode_decimal128(buffer: memoryview) -> Tuple[memoryview, decimal.Decimal]:
     """
     Decode a Decimal128 value from the buffer.
@@ -183,8 +183,8 @@ def _decode_decimal128(buffer: memoryview) -> Tuple[memoryview, decimal.Decimal]
     elif dec_value[0] & 0x78 != 0:
         # Handle special values (NaN and Infinity)
         if (dec_value[0] & 0x78) == 0x78:
-            return buffer[16:], decimal.Decimal('NaN')
-        return buffer[16:], decimal.Decimal('-Infinity')
+            return buffer[16:], decimal.Decimal("NaN")
+        return buffer[16:], decimal.Decimal("-Infinity")
     else:
         # If the exponent is zero, return zero
         return buffer[16:], decimal.Decimal(0)
@@ -196,20 +196,21 @@ def _decode_decimal128(buffer: memoryview) -> Tuple[memoryview, decimal.Decimal]
     hi = c_unsigned_int.unpack(dec_value[4:8])[0]
     middle = c_unsigned_int.unpack(dec_value[8:12])[0]
     lo = c_unsigned_int.unpack(dec_value[12:16])[0]
-    digits = tuple(int(digit) for digit in f"{hi:08}{middle:08}{lo:08}".lstrip('0'))
+    digits = tuple(int(digit) for digit in f"{hi:08}{middle:08}{lo:08}".lstrip("0"))
 
     # Create a decimal context with the appropriate precision and exponent range
     decimal_ctx = decimal.Context(
-        prec = DECIMAL128_MAX_DIGITS,
-        Emin = DECIMAL128_EXPONENT_MIN,
-        Emax = DECIMAL128_EXPONENT_MAX,
-        capitals =  1,
-        clamp = 1,
+        prec=DECIMAL128_MAX_DIGITS,
+        Emin=DECIMAL128_EXPONENT_MIN,
+        Emax=DECIMAL128_EXPONENT_MAX,
+        capitals=1,
+        clamp=1,
     )
 
     # Create the decimal value using the context
     with decimal.localcontext(decimal_ctx) as ctx:
         return buffer[16:], ctx.create_decimal((sign, digits, exponent))
+
 
 def _decode_list_small(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
     count = buffer[1]

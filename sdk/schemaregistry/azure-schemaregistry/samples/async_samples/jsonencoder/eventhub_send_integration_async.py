@@ -27,6 +27,7 @@ This example uses DefaultAzureCredential, which requests a token from Azure Acti
 For more information on DefaultAzureCredential, see
     https://learn.microsoft.com/python/api/azure-identity/azure.identity.aio.defaultazurecredential?view=azure-python
 """
+
 import os
 import asyncio
 import json

@@ -22,6 +22,7 @@
 """Internal class for feed range implementation in the Azure Cosmos
 database service.
 """
+
 import base64
 import json
 from abc import ABC, abstractmethod
@@ -43,19 +44,21 @@ class FeedRangeInternal(ABC):
 
     def _to_base64_encoded_string(self) -> str:
         data_json = json.dumps(self.to_dict())
-        json_bytes = data_json.encode('utf-8')
+        json_bytes = data_json.encode("utf-8")
         # Encode the bytes to a Base64 string
         base64_bytes = base64.b64encode(json_bytes)
         # Convert the Base64 bytes to a string
-        return base64_bytes.decode('utf-8')
+        return base64_bytes.decode("utf-8")
+
 
 class FeedRangeInternalPartitionKey(FeedRangeInternal):
     type_property_name = "PK"
 
     def __init__(
-            self,
-            pk_value: Union[str, int, float, bool, list[Union[str, int, float, bool]], _Empty, _Undefined],
-            feed_range: Range) -> None:  # pylint: disable=line-too-long
+        self,
+        pk_value: Union[str, int, float, bool, list[Union[str, int, float, bool]], _Empty, _Undefined],
+        feed_range: Range,
+    ) -> None:  # pylint: disable=line-too-long
 
         if pk_value is None:
             raise ValueError("PartitionKey cannot be None")
@@ -70,16 +73,16 @@ class FeedRangeInternalPartitionKey(FeedRangeInternal):
 
     def to_dict(self) -> dict[str, Any]:
         if isinstance(self._pk_value, _Undefined):
-            return { self.type_property_name: [{}] }
+            return {self.type_property_name: [{}]}
         if isinstance(self._pk_value, _Empty):
-            return { self.type_property_name: [] }
+            return {self.type_property_name: []}
         if isinstance(self._pk_value, list):
-            return { self.type_property_name: list(self._pk_value) }
+            return {self.type_property_name: list(self._pk_value)}
 
-        return { self.type_property_name: self._pk_value }
+        return {self.type_property_name: self._pk_value}
 
     @classmethod
-    def from_json(cls, data: dict[str, Any], feed_range: Range) -> 'FeedRangeInternalPartitionKey':
+    def from_json(cls, data: dict[str, Any], feed_range: Range) -> "FeedRangeInternalPartitionKey":
         if data.get(cls.type_property_name):
             pk_value = data.get(cls.type_property_name)
             if not pk_value:
@@ -90,8 +93,10 @@ class FeedRangeInternalPartitionKey(FeedRangeInternal):
                 return cls(list(pk_value), feed_range)
             return cls(data[cls.type_property_name], feed_range)
 
-        raise ValueError(f"Can not parse FeedRangeInternalPartitionKey from the json,"
-                         f" there is no property {cls.type_property_name}")
+        raise ValueError(
+            f"Can not parse FeedRangeInternalPartitionKey from the json,"
+            f" there is no property {cls.type_property_name}"
+        )
 
 
 class FeedRangeInternalEpk(FeedRangeInternal):
@@ -108,17 +113,16 @@ class FeedRangeInternalEpk(FeedRangeInternal):
         return self._range.to_normalized_range()
 
     def to_dict(self) -> dict[str, Any]:
-        return {
-            self.type_property_name: self._range.to_dict()
-        }
+        return {self.type_property_name: self._range.to_dict()}
 
     @classmethod
-    def from_json(cls, data: dict[str, Any]) -> 'FeedRangeInternalEpk':
+    def from_json(cls, data: dict[str, Any]) -> "FeedRangeInternalEpk":
         if data.get(cls.type_property_name):
             feed_range = Range.ParseFromDict(data.get(cls.type_property_name))
             return cls(feed_range)
-        raise ValueError(f"Can not parse FeedRangeInternalEPK from the json,"
-                         f" there is no property {cls.type_property_name}")
+        raise ValueError(
+            f"Can not parse FeedRangeInternalEPK from the json," f" there is no property {cls.type_property_name}"
+        )
 
     def __str__(self) -> str:
         """Get a json representation of the feed range.

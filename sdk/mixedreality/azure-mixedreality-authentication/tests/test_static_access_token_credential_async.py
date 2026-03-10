@@ -9,6 +9,7 @@ from azure.core.credentials import AccessToken
 
 from azure.mixedreality.authentication._shared.aio.static_access_token_credential import StaticAccessTokenCredential
 
+
 class TestAsyncStaticAccessTokenCredential:
 
     @pytest.mark.asyncio

@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 """DataIndex embedding model helpers."""
+
 import re
 from typing import Optional
 

@@ -40,7 +40,6 @@ import logging
 
 from .exceptions import BaseError
 
-
 _LOGGER = logging.getLogger(__name__)
 
 ReturnType = TypeVar("ReturnType")

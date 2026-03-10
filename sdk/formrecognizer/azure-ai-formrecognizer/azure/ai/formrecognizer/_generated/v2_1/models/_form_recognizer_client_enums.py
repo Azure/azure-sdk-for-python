@@ -11,8 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class ContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Content type for upload
-    """
+    """Content type for upload"""
 
     #: Content Type 'application/pdf'.
     APPLICATION_PDF = "application/pdf"
@@ -27,16 +26,16 @@ class ContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Content Type 'application/json'.
     APPLICATION_JSON = "application/json"
 
+
 class FieldValueSelectionMark(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Selection mark value.
-    """
+    """Selection mark value."""
 
     SELECTED = "selected"
     UNSELECTED = "unselected"
 
+
 class FieldValueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Semantic data type of the field value.
-    """
+    """Semantic data type of the field value."""
 
     STRING = "string"
     DATE = "date"
@@ -49,12 +48,13 @@ class FieldValueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SELECTION_MARK = "selectionMark"
     COUNTRY_REGION = "countryRegion"
 
+
 class KeyValueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Semantic data type of the key value element.
-    """
+    """Semantic data type of the key value element."""
 
     STRING = "string"
     SELECTION_MARK = "selectionMark"
+
 
 class Language(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
@@ -132,6 +132,7 @@ class Language(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ZH_HANT = "zh-Hant"
     ZU = "zu"
 
+
 class LengthUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The unit used by the width, height and boundingBox properties. For images, the unit is "pixel".
     For PDF, the unit is "inch".
@@ -139,6 +140,7 @@ class LengthUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     PIXEL = "pixel"
     INCH = "inch"
+
 
 class Locale(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
@@ -148,45 +150,46 @@ class Locale(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     EN_IN = "en-IN"
     EN_US = "en-US"
 
+
 class ModelStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Status of the model.
-    """
+    """Status of the model."""
 
     CREATING = "creating"
     READY = "ready"
     INVALID = "invalid"
 
+
 class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Status of the queued operation.
-    """
+    """Status of the queued operation."""
 
     NOT_STARTED = "notStarted"
     RUNNING = "running"
     SUCCEEDED = "succeeded"
     FAILED = "failed"
 
+
 class ReadingOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     BASIC = "basic"
     NATURAL = "natural"
 
+
 class SelectionMarkState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """State of the selection mark.
-    """
+    """State of the selection mark."""
 
     SELECTED = "selected"
     UNSELECTED = "unselected"
 
+
 class TextStyle(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The text line style name, including handwriting and other.
-    """
+    """The text line style name, including handwriting and other."""
 
     OTHER = "other"
     HANDWRITING = "handwriting"
 
+
 class TrainStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Status of the training operation.
-    """
+    """Status of the training operation."""
 
     SUCCEEDED = "succeeded"
     PARTIALLY_SUCCEEDED = "partiallySucceeded"

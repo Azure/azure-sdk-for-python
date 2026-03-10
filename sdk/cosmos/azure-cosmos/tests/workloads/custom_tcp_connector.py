@@ -15,11 +15,11 @@ class ProxiedTCPConnector(TCPConnector):
     """
 
     def __init__(
-            self,
-            *,
-            proxy_host: str,
-            proxy_port: int,
-            **kwargs: Any,
+        self,
+        *,
+        proxy_host: str,
+        proxy_port: int,
+        **kwargs: Any,
     ) -> None:
         """
         Initialize the ProxiedTCPConnector.
@@ -34,17 +34,15 @@ class ProxiedTCPConnector(TCPConnector):
         self.__proxy_port = proxy_port
 
     async def _create_direct_connection(
-            self,
-            req: ClientRequest,
-            traces: list[tracing.Trace],
-            timeout: ClientTimeout,
-            *,
-            client_error: type[Exception] = ClientConnectorError,
+        self,
+        req: ClientRequest,
+        traces: list[tracing.Trace],
+        timeout: ClientTimeout,
+        *,
+        client_error: type[Exception] = ClientConnectorError,
     ) -> tuple[asyncio.Transport, client_proto.ResponseHandler]:
         """Override host, port, and schema to use proxy"""
-        req.url = (
-            req.url.with_host(self.__proxy_host).with_port(self.__proxy_port).with_scheme("http")
-        )
+        req.url = req.url.with_host(self.__proxy_host).with_port(self.__proxy_port).with_scheme("http")
         return await super()._create_direct_connection(
             req,
             traces,

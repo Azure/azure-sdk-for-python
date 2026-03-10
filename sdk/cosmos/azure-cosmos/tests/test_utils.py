@@ -13,26 +13,22 @@ import test_config
 from azure.cosmos import CosmosClient
 
 
-
 @pytest.mark.cosmosEmulator
 class TestsUtils(unittest.TestCase):
-    """Utils Tests
-    """
+    """Utils Tests"""
 
     def test_user_agent(self):
         user_agent = _utils.get_user_agent()
 
         expected_user_agent = "azsdk-python-cosmos/{} Python/{} ({})".format(
-            azure.cosmos.__version__,
-            platform.python_version(),
-            platform.platform()
+            azure.cosmos.__version__, platform.python_version(), platform.platform()
         )
         self.assertEqual(user_agent, expected_user_agent)
 
     def test_connection_string(self):
-        client: CosmosClient = (azure.cosmos.CosmosClient
-                                .from_connection_string(test_config.TestConfig.connection_str,
-                                                        consistency_level="Session"))
+        client: CosmosClient = azure.cosmos.CosmosClient.from_connection_string(
+            test_config.TestConfig.connection_str, consistency_level="Session"
+        )
         database_id = "connection_string_test" + str(uuid.uuid4())
         db = client.create_database(database_id)
         self.assertTrue(db is not None)
@@ -63,8 +59,10 @@ class TestsUtils(unittest.TestCase):
         args = ("arg1_val", "arg2_val", "arg3_val", "arg4_val", "arg5_val")
         with pytest.raises(ValueError) as e:
             _utils.add_args_to_kwargs(arg_names, args, kwargs)
-        assert str(e.value) == (f"Positional argument is out of range. Expected {len(arg_names)} arguments, "
-                         f"but got {len(args)} instead. Please review argument list in API documentation.")
+        assert str(e.value) == (
+            f"Positional argument is out of range. Expected {len(arg_names)} arguments, "
+            f"but got {len(args)} instead. Please review argument list in API documentation."
+        )
 
     def test_verify_exclusive_arguments(self):
         exclusive_keys = ["key1", "key2", "key3", "key4"]
@@ -95,4 +93,3 @@ class TestsUtils(unittest.TestCase):
         with pytest.raises(ValueError) as e:
             _utils.verify_exclusive_arguments(exclusive_keys, **kwargs)
         assert str(e.value) == expected_error_message
-

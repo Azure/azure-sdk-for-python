@@ -26,7 +26,7 @@ class TestResourceConnectorMgmtAppliancesOperations(AzureMgmtRecordedTestCase):
         )
         result = [r for r in response]
         assert result == []
-        
+
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_appliances_list_by_subscription(self, resource_group):
@@ -40,5 +40,3 @@ class TestResourceConnectorMgmtAppliancesOperations(AzureMgmtRecordedTestCase):
         response = self.client.appliances.list_operations()
         result = [r for r in response]
         assert response
-
-        

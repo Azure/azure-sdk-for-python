@@ -8,11 +8,11 @@
 """
 Examples to show how to create async EventHubProducerClient/EventHubConsumerClient.
 """
+
 import asyncio
 import os
 from azure.eventhub import TransportType
 from azure.eventhub.aio import EventHubProducerClient, EventHubConsumerClient, EventHubSharedKeyCredential
-
 
 CONNECTION_STRING = os.environ["EVENT_HUB_CONN_STR"]
 FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_HOSTNAME"]

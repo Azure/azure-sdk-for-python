@@ -46,10 +46,7 @@ import os
 def format_bounding_region(bounding_regions):
     if not bounding_regions:
         return "N/A"
-    return ", ".join(
-        f"Page #{region.page_number}: {format_polygon(region.polygon)}"
-        for region in bounding_regions
-    )
+    return ", ".join(f"Page #{region.page_number}: {format_polygon(region.polygon)}" for region in bounding_regions)
 
 
 def format_polygon(polygon):
@@ -76,9 +73,7 @@ async def analyze_formulas():
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
-    document_analysis_client = DocumentAnalysisClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
+    document_analysis_client = DocumentAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     async with document_analysis_client:
         # Specify which add-on capabilities to enable

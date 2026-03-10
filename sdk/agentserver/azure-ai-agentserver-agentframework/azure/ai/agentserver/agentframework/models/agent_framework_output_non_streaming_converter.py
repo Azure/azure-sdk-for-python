@@ -169,7 +169,7 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
             result = [raw]
         elif isinstance(raw, list):
             for item in raw:
-                result.append(self._coerce_result_text(item))   # type: ignore
+                result.append(self._coerce_result_text(item))  # type: ignore
         call_id = getattr(content, "call_id", None) or ""
         func_out_id = self._context.id_generator.generate_function_output_id()
         sink.append(

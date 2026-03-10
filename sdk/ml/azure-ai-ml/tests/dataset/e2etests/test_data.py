@@ -24,14 +24,12 @@ class TestData(AzureRecordedTestCase):
         data_path.write_text("hello world")
         name = randstr("name")
         version = 4
-        f.write_text(
-            f"""
+        f.write_text(f"""
         name: {name}
         version: {version}
         path: {data_path}
         type: uri_file
-    """
-        )
+    """)
 
         data_asset = load_data(source=f)
         client.data.create_or_update(data_asset)
@@ -49,15 +47,13 @@ class TestData(AzureRecordedTestCase):
         tmp_file = tmp_folder / "tmp_file.csv"
         tmp_file.write_text("hello world")
         name = randstr("name")
-        data_path.write_text(
-            f"""
+        data_path.write_text(f"""
             name: {name}
             version: 1
             description: "this is a test dataset"
             path: {tmp_folder}
             type: uri_folder
-        """
-        )
+        """)
 
         with open(data_path, "r") as f:
             config = yaml.safe_load(f)
@@ -85,15 +81,13 @@ class TestData(AzureRecordedTestCase):
         tmp_file = tmp_folder / "tmp_file.csv"
         tmp_file.write_text("hello world")
         name = randstr("name")
-        data_yaml.write_text(
-            f"""
+        data_yaml.write_text(f"""
             name: {name}
             version: 2
             description: "this is a test dataset"
             path: {tmp_file}
             type: uri_file
-        """
-        )
+        """)
 
         with open(data_yaml, "r") as f:
             config = yaml.safe_load(f)
@@ -118,8 +112,7 @@ class TestData(AzureRecordedTestCase):
         tmp_folder = tmp_path / "tmp_folder"
         tmp_folder.mkdir()
         tmp_metadata_file = tmp_folder / "MLTable"
-        tmp_metadata_file.write_text(
-            """
+        tmp_metadata_file.write_text("""
 paths:
   - file: ./tmp_file.csv
 transformations:
@@ -127,11 +120,9 @@ transformations:
       delimiter: ","
       encoding: ascii
       header: all_files_same_headers
-"""
-        )
+""")
         tmp_file = tmp_folder / "tmp_file.csv"
-        tmp_file.write_text(
-            """
+        tmp_file.write_text("""
 sepal_length,sepal_width,petal_length,petal_width,species
 101,152,123,187,Iris-setosa
 4.9,3,1.4,0.2,Iris-setosa
@@ -145,18 +136,15 @@ sepal_length,sepal_width,petal_length,petal_width,species
 4.9,3.1,1.5,0.1,Iris-setosa
 5.4,3.7,1.5,0.2,Iris-setosa
 4.8,3.4,1.6,0.2,Iris-setosa
-"""
-        )
+""")
         name = randstr("name")
-        data_path.write_text(
-            f"""
+        data_path.write_text(f"""
             name: {name}
             version: 1
             description: "this is an mltable dataset"
             path: {tmp_folder}
             type: mltable
-        """
-        )
+        """)
 
         with open(data_path, "r") as f:
             config = yaml.safe_load(f)
@@ -297,15 +285,13 @@ sepal_length,sepal_width,petal_length,petal_width,species
         data_path.write_text("hello world")
         name = randstr("name")
         version = 4
-        f.write_text(
-            f"""
+        f.write_text(f"""
         name: {name}
         version: {version}
         path: {data_path}
         type: uri_file
         datastore: workspacefilestore
-    """
-        )
+    """)
 
         data_asset = load_data(f)
         assert data_asset.datastore == "workspacefilestore"
@@ -325,8 +311,7 @@ sepal_length,sepal_width,petal_length,petal_width,species
         tmp_file = tmp_folder / "tmp_file_with_auto_delete_setting.csv"
         tmp_file.write_text("hello world")
         name = randstr("name")
-        data_path.write_text(
-            f"""
+        data_path.write_text(f"""
             name: {name}
             version: 1
             description: "this is a test dataset with auto delete setting"
@@ -335,8 +320,7 @@ sepal_length,sepal_width,petal_length,petal_width,species
             auto_delete_setting:
                 condition: created_greater_than
                 value: "30d"
-        """
-        )
+        """)
 
         data_asset = load_data(source=data_path)
         client.data.create_or_update(data_asset)

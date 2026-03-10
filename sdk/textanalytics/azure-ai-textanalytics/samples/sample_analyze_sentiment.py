@@ -52,9 +52,8 @@ def sample_analyze_sentiment() -> None:
         """This was pretty good! The sights were ok, and I had fun with my instructors! Can't complain too much about my experience""",
         """I only have one word for my experience: WOW!!! I can't believe I have had such a wonderful skydiving company right
         in my backyard this whole time! I will definitely be a repeat customer, and I want to take my grandmother skydiving too,
-        I know she'll love it!"""
+        I know she'll love it!""",
     ]
-
 
     result = text_analytics_client.analyze_sentiment(documents, show_opinion_mining=True)
     docs = [doc for doc in result if not doc.is_error]
@@ -66,7 +65,7 @@ def sample_analyze_sentiment() -> None:
     # [END analyze_sentiment]
 
     print("Now, let us extract all of the positive reviews")
-    positive_reviews = [doc for doc in docs if doc.sentiment == 'positive']
+    positive_reviews = [doc for doc in docs if doc.sentiment == "positive"]
 
     print("We want to be very confident that our reviews are positive since we'll be posting them on our website.")
     print("We're going to confirm our chosen reviews are positive using two different tests")
@@ -75,26 +74,20 @@ def sample_analyze_sentiment() -> None:
         "First, we are going to check how confident the sentiment analysis model is that a document is positive. "
         "Let's go with a 90% confidence."
     )
-    positive_reviews = [
-        review for review in positive_reviews
-        if review.confidence_scores.positive >= 0.9
-    ]
+    positive_reviews = [review for review in positive_reviews if review.confidence_scores.positive >= 0.9]
 
-    print(
-        "Finally, we also want to make sure every sentence is positive so we only showcase our best selves!"
-    )
+    print("Finally, we also want to make sure every sentence is positive so we only showcase our best selves!")
     positive_reviews_final = []
     for idx, review in enumerate(positive_reviews):
         print(f"Looking at positive review #{idx + 1}")
         any_sentence_not_positive = False
         for sentence in review.sentences:
-            print("...Sentence '{}' has sentiment '{}' with confidence scores '{}'".format(
-                sentence.text,
-                sentence.sentiment,
-                sentence.confidence_scores
+            print(
+                "...Sentence '{}' has sentiment '{}' with confidence scores '{}'".format(
+                    sentence.text, sentence.sentiment, sentence.confidence_scores
                 )
             )
-            if sentence.sentiment != 'positive':
+            if sentence.sentiment != "positive":
                 any_sentence_not_positive = True
         if not any_sentence_not_positive:
             positive_reviews_final.append(review)
@@ -102,5 +95,5 @@ def sample_analyze_sentiment() -> None:
     print("We now have the final list of positive reviews we are going to display on our website!")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample_analyze_sentiment()

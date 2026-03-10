@@ -8,7 +8,6 @@ from typing_extensions import TypedDict
 
 from ._bicep.expressions import Parameter, UniqueString, Subscription, Variable, PlaceholderParameter
 
-
 LOCATION = Parameter(
     "location", description="Primary location for all resources", min_length=1, env_var="AZURE_LOCATION", type="string"
 )

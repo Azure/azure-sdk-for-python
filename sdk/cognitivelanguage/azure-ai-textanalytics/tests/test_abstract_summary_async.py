@@ -44,9 +44,7 @@ class TestTextAnalysisCaseAsync(TestTextAnalysisAsync):
     @TextAnalysisPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_abstract_summary_async(
-        self, text_analysis_endpoint, text_analysis_key
-    ):
+    async def test_abstract_summary_async(self, text_analysis_endpoint, text_analysis_key):
         async with self.create_client(text_analysis_endpoint, text_analysis_key) as client:
             text_a = (
                 "Windows 365 was in the works before COVID-19 sent companies around the world on a scramble to secure "

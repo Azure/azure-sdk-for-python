@@ -23,15 +23,11 @@ from azure.eventhub import EventHubConsumerClient
     ],
     indirect=True,
 )
-def test_receive_partition_using_fault_injector_detach_after_delay(
-    auth_credential_senders, faultinjector
-):
+def test_receive_partition_using_fault_injector_detach_after_delay(auth_credential_senders, faultinjector):
     client_args = faultinjector
     assert client_args, "client_args is empty, fault injector wasn't started"
 
-    fully_qualified_namespace, eventhub_name, credential, senders = (
-        auth_credential_senders
-    )
+    fully_qualified_namespace, eventhub_name, credential, senders = auth_credential_senders
 
     senders[0].send(EventData("Test EventData"))
 

@@ -11,7 +11,10 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import set_bodiless_matcher
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
-from azure.ai.formrecognizer._generated.v2023_07_31.models import DocumentModelBuildOperationDetails, DocumentModelDetails as ModelDetails
+from azure.ai.formrecognizer._generated.v2023_07_31.models import (
+    DocumentModelBuildOperationDetails,
+    DocumentModelDetails as ModelDetails,
+)
 from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient, AsyncDocumentModelAdministrationLROPoller
 from azure.ai.formrecognizer import DocumentModelDetails
 from preparers import FormRecognizerPreparer, get_async_client
@@ -29,16 +32,22 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
     async def test_build_model_polling_interval(self, formrecognizer_storage_container_sas_url, **kwargs):
         client = get_dma_client()
         set_bodiless_matcher()
+
         def check_poll_value(poll):
             if self.is_live:
                 assert poll == 1
             else:
                 assert poll == 0
+
         check_poll_value(client._client._config.polling_interval)
-        poller = await client.begin_build_document_model(blob_container_url=formrecognizer_storage_container_sas_url, build_mode="template", polling_interval=6)
+        poller = await client.begin_build_document_model(
+            blob_container_url=formrecognizer_storage_container_sas_url, build_mode="template", polling_interval=6
+        )
         await poller.wait()
         assert poller._polling_method._timeout == 6
-        poller2 = await client.begin_build_document_model(blob_container_url=formrecognizer_storage_container_sas_url, build_mode="template")
+        poller2 = await client.begin_build_document_model(
+            blob_container_url=formrecognizer_storage_container_sas_url, build_mode="template"
+        )
         await poller2.wait()
         check_poll_value(poller2._polling_method._timeout)  # goes back to client default
         await client.close()
@@ -50,9 +59,9 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
         with pytest.raises(HttpResponseError):
             async with client:
                 poller = await client.begin_build_document_model(
-                blob_container_url="https://fakeuri.com/blank%20space",
-                build_mode="template",
-            )
+                    blob_container_url="https://fakeuri.com/blank%20space",
+                    build_mode="template",
+                )
                 assert "https://fakeuri.com/blank%20space" in poller._polling_method._initial_response.http_request.body
                 await poller.wait()
 
@@ -80,7 +89,7 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
                 blob_container_url=formrecognizer_storage_container_sas_url,
                 model_id=model_id,
                 description="a v3 model",
-                tags={"testkey": "testvalue"}
+                tags={"testkey": "testvalue"},
             )
             model = await poller.result()
 
@@ -106,7 +115,9 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
         client = get_dma_client()
         set_bodiless_matcher()
         async with client:
-            poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_multipage_storage_container_sas_url)
+            poller = await client.begin_build_document_model(
+                "template", blob_container_url=formrecognizer_multipage_storage_container_sas_url
+            )
             model = await poller.result()
 
         assert model.model_id
@@ -130,7 +141,9 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
         client = get_dma_client()
         set_bodiless_matcher()
         async with client:
-            poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_table_variable_rows_container_sas_url)
+            poller = await client.begin_build_document_model(
+                "template", blob_container_url=formrecognizer_table_variable_rows_container_sas_url
+            )
             model = await poller.result()
 
         assert model.model_id
@@ -161,7 +174,9 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
             raw_response.append(document_model)
 
         async with client:
-            poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url, cls=callback)
+            poller = await client.begin_build_document_model(
+                "template", blob_container_url=formrecognizer_storage_container_sas_url, cls=callback
+            )
             model = await poller.result()
 
         raw_model = raw_response[0]
@@ -190,7 +205,9 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
             raw_response.append(document_model)
 
         async with client:
-            poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_multipage_storage_container_sas_url, cls=callback)
+            poller = await client.begin_build_document_model(
+                "template", blob_container_url=formrecognizer_multipage_storage_container_sas_url, cls=callback
+            )
             model = await poller.result()
 
         raw_model = raw_response[0]
@@ -200,7 +217,9 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
     @skip_flaky_test
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
-    async def test_build_model_nested_schema_transform(self, formrecognizer_table_variable_rows_container_sas_url, **kwargs):
+    async def test_build_model_nested_schema_transform(
+        self, formrecognizer_table_variable_rows_container_sas_url, **kwargs
+    ):
         client = get_dma_client()
         set_bodiless_matcher()
         raw_response = []
@@ -213,7 +232,9 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
             raw_response.append(document_model)
 
         async with client:
-            poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_table_variable_rows_container_sas_url, cls=callback)
+            poller = await client.begin_build_document_model(
+                "template", blob_container_url=formrecognizer_table_variable_rows_container_sas_url, cls=callback
+            )
             model = await poller.result()
 
         raw_model = raw_response[0]
@@ -233,7 +254,9 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
         set_bodiless_matcher()
         with pytest.raises(HttpResponseError) as e:
             async with client:
-                poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url, prefix="testfolder")
+                poller = await client.begin_build_document_model(
+                    "template", blob_container_url=formrecognizer_storage_container_sas_url, prefix="testfolder"
+                )
                 model = await poller.result()
 
     @pytest.mark.live_test_only
@@ -243,9 +266,13 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
         client = get_dma_client()
         formrecognizer_storage_container_sas_url = kwargs.pop("formrecognizer_storage_container_sas_url")
         async with client:
-            initial_poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+            initial_poller = await client.begin_build_document_model(
+                "template", blob_container_url=formrecognizer_storage_container_sas_url
+            )
             cont_token = initial_poller.continuation_token()
-            poller = await client.begin_build_document_model("template", blob_container_url=None, continuation_token=cont_token)
+            poller = await client.begin_build_document_model(
+                "template", blob_container_url=None, continuation_token=cont_token
+            )
             result = await poller.result()
             assert result
             await initial_poller.wait()  # necessary so devtools_testutils doesn't throw assertion error
@@ -257,7 +284,9 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
         client = get_dma_client()
         set_bodiless_matcher()
         async with client:
-            poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+            poller = await client.begin_build_document_model(
+                "template", blob_container_url=formrecognizer_storage_container_sas_url
+            )
             await poller.result()
             assert isinstance(poller, AsyncDocumentModelAdministrationLROPoller)
             details = poller.details
@@ -271,14 +300,16 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
-    async def test_build_model_file_list_source(self, formrecognizer_selection_mark_storage_container_sas_url, **kwargs):
+    async def test_build_model_file_list_source(
+        self, formrecognizer_selection_mark_storage_container_sas_url, **kwargs
+    ):
         client = get_dma_client()
         set_bodiless_matcher()
         async with client:
             poller = await client.begin_build_document_model(
                 build_mode="template",
                 blob_container_url=formrecognizer_selection_mark_storage_container_sas_url,
-                file_list="filelist.jsonl"
+                file_list="filelist.jsonl",
             )
             model = await poller.result()
 

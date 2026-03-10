@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 """Traces network calls using the implementation library from the settings."""
+
 import logging
 import sys
 import urllib.parse

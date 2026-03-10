@@ -3,10 +3,11 @@
 """
 Examples to show usage of the azure-core-tracing-opentelemetry
 with the Communication SMS SDK and exporting to Azure monitor backend.
-This example traces calls for sending an SMS message using Communication 
+This example traces calls for sending an SMS message using Communication
 SMS SDK. The telemetry will be collected automatically and sent to
 Application Insights via the AzureMonitorTraceExporter
 """
+
 # mypy: disable-error-code="attr-defined"
 import os
 

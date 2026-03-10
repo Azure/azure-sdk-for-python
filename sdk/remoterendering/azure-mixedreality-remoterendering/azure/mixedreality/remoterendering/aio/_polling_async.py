@@ -12,16 +12,13 @@ from azure.core.polling import AsyncPollingMethod
 from azure.core.exceptions import HttpResponseError, ODataV4Format
 
 from .._generated.aio import RemoteRenderingRestClient
-from .._generated.models import (AssetConversion,
-                                 AssetConversionStatus,
-                                 RenderingSession,
-                                 RenderingSessionStatus)
+from .._generated.models import AssetConversion, AssetConversionStatus, RenderingSession, RenderingSessionStatus
+
 
 class RemoteRenderingPollingAsync(AsyncPollingMethod):
-    """ABC class for remote rendering operations.
-    """
+    """ABC class for remote rendering operations."""
 
-    def __init__(self, account_id: str, is_terminated: Callable, polling_interval: int=5) -> None:
+    def __init__(self, account_id: str, is_terminated: Callable, polling_interval: int = 5) -> None:
         self._account_id = account_id
         self._response: Union[AssetConversion, RenderingSession, None] = None
         self._client: Union[RemoteRenderingRestClient, None] = None
@@ -65,33 +62,31 @@ class RemoteRenderingPollingAsync(AsyncPollingMethod):
 
     def get_continuation_token(self) -> str:
         # returns a Base64 encoded string of "<version>:<account_id>:<session_id/conversion_id>"
-        token_str = "1:"+self._account_id+":"+self._response.id # type: ignore
-        encoded = token_str.encode('ascii')
+        token_str = "1:" + self._account_id + ":" + self._response.id  # type: ignore
+        encoded = token_str.encode("ascii")
         base64_endcoded = base64.b64encode(encoded)
-        return base64_endcoded.decode('ascii')
+        return base64_endcoded.decode("ascii")
 
 
 class ConversionPollingAsync(RemoteRenderingPollingAsync):
-    def __init__(self, account_id: str, polling_interval: int=5) -> None:
+    def __init__(self, account_id: str, polling_interval: int = 5) -> None:
         def is_terminated(status):
-            return status in [
-                AssetConversionStatus.FAILED,
-                AssetConversionStatus.SUCCEEDED
-            ]
-        super(ConversionPollingAsync, self).__init__(account_id=account_id,
-                                                     is_terminated=is_terminated,
-                                                     polling_interval=polling_interval)
+            return status in [AssetConversionStatus.FAILED, AssetConversionStatus.SUCCEEDED]
 
-    def initialize(self,
-                   client: RemoteRenderingRestClient,
-                   initial_response: AssetConversion,
-                   deserialization_callback: Callable) -> None:
+        super(ConversionPollingAsync, self).__init__(
+            account_id=account_id, is_terminated=is_terminated, polling_interval=polling_interval
+        )
+
+    def initialize(
+        self, client: RemoteRenderingRestClient, initial_response: AssetConversion, deserialization_callback: Callable
+    ) -> None:
         super().initialize(client, initial_response, deserialization_callback)
         if self._client is not None:
             self._query_status = partial(
                 self._client.remote_rendering.get_conversion,
                 account_id=self._account_id,
-                conversion_id=initial_response.id)
+                conversion_id=initial_response.id,
+            )
 
     def status(self) -> str:
         if self._response is None:
@@ -99,46 +94,46 @@ class ConversionPollingAsync(RemoteRenderingPollingAsync):
         return self._response.status
 
     @classmethod
-    async def initial_response_from_continuation_token(cls,
-                                                       continuation_token: str,
-                                                       client: RemoteRenderingRestClient,
-                                                       **kwargs) -> AssetConversion:
+    async def initial_response_from_continuation_token(
+        cls, continuation_token: str, client: RemoteRenderingRestClient, **kwargs
+    ) -> AssetConversion:
 
-        version, account_id, conversion_id = base64.b64decode(
-            continuation_token.encode('ascii')).decode('ascii').split(":")
+        version, account_id, conversion_id = (
+            base64.b64decode(continuation_token.encode("ascii")).decode("ascii").split(":")
+        )
 
         if version != "1":
             raise ValueError("Cannot continue from continuation token from a different/newer client version.")
 
         initial_response = await client.remote_rendering.get_conversion(
-            account_id=account_id,
-            conversion_id=conversion_id,
-            **kwargs)
+            account_id=account_id, conversion_id=conversion_id, **kwargs
+        )
 
         return initial_response
 
 
 class SessionPollingAsync(RemoteRenderingPollingAsync):
-    def __init__(self, account_id: str, polling_interval: int=2) -> None:
+    def __init__(self, account_id: str, polling_interval: int = 2) -> None:
         def is_terminated(status):
             return status in [
                 RenderingSessionStatus.EXPIRED,
                 RenderingSessionStatus.ERROR,
                 RenderingSessionStatus.STOPPED,
-                RenderingSessionStatus.READY
+                RenderingSessionStatus.READY,
             ]
-        super(SessionPollingAsync, self).__init__(account_id=account_id,
-                                                  is_terminated=is_terminated,
-                                                  polling_interval=polling_interval)
 
-    def initialize(self,
-                   client: RemoteRenderingRestClient,
-                   initial_response: RenderingSession,
-                   deserialization_callback: Callable) -> None:
+        super(SessionPollingAsync, self).__init__(
+            account_id=account_id, is_terminated=is_terminated, polling_interval=polling_interval
+        )
+
+    def initialize(
+        self, client: RemoteRenderingRestClient, initial_response: RenderingSession, deserialization_callback: Callable
+    ) -> None:
         super().initialize(client, initial_response, deserialization_callback)
         if self._client is not None:
             self._query_status = partial(
-                self._client.remote_rendering.get_session, account_id=self._account_id, session_id=initial_response.id)
+                self._client.remote_rendering.get_session, account_id=self._account_id, session_id=initial_response.id
+            )
 
     def status(self) -> str:
         if self._response is None:
@@ -146,20 +141,19 @@ class SessionPollingAsync(RemoteRenderingPollingAsync):
         return self._response.status
 
     @classmethod
-    async def initial_response_from_continuation_token(cls,
-                                                       continuation_token: str,
-                                                       client: RemoteRenderingRestClient,
-                                                       **kwargs) -> RenderingSession:
+    async def initial_response_from_continuation_token(
+        cls, continuation_token: str, client: RemoteRenderingRestClient, **kwargs
+    ) -> RenderingSession:
 
-        version, account_id, session_id = base64.b64decode(
-            continuation_token.encode('ascii')).decode('ascii').split(":")
+        version, account_id, session_id = (
+            base64.b64decode(continuation_token.encode("ascii")).decode("ascii").split(":")
+        )
 
         if version != "1":
             raise ValueError("Cannot continue from continuation token from a different/newer client version.")
 
         initial_response = await client.remote_rendering.get_session(
-            account_id=account_id,
-            session_id=session_id,
-            **kwargs)
+            account_id=account_id, session_id=session_id, **kwargs
+        )
 
         return initial_response

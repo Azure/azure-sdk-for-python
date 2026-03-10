@@ -371,17 +371,19 @@ class FormTrainingClient(FormRecognizerClientBase):
 
         return self._client.begin_copy_custom_model(  # type: ignore
             model_id=model_id,
-            copy_request=self._generated_models.CopyRequest(
-                target_resource_id=target["resourceId"],
-                target_resource_region=target["resourceRegion"],
-                copy_authorization=self._generated_models.CopyAuthorizationResult(
-                    access_token=target["accessToken"],
-                    model_id=target["modelId"],
-                    expiration_date_time_ticks=target["expirationDateTimeTicks"],
-                ),
-            )
-            if target
-            else None,
+            copy_request=(
+                self._generated_models.CopyRequest(
+                    target_resource_id=target["resourceId"],
+                    target_resource_region=target["resourceRegion"],
+                    copy_authorization=self._generated_models.CopyAuthorizationResult(
+                        access_token=target["accessToken"],
+                        model_id=target["modelId"],
+                        expiration_date_time_ticks=target["expirationDateTimeTicks"],
+                    ),
+                )
+                if target
+                else None
+            ),
             cls=kwargs.pop("cls", _copy_callback),
             polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[CopyPolling()], **kwargs),
             continuation_token=continuation_token,
@@ -433,7 +435,9 @@ class FormTrainingClient(FormRecognizerClientBase):
                 **kwargs
             )
         except ValueError:
-            raise ValueError("Method 'begin_create_composed_model' is only available for API version V2_1 and up")  # pylint: disable=raise-missing-from
+            raise ValueError(
+                "Method 'begin_create_composed_model' is only available for API version V2_1 and up"
+            )  # pylint: disable=raise-missing-from
 
     def get_form_recognizer_client(self, **kwargs: Any) -> FormRecognizerClient:
         """Get an instance of a FormRecognizerClient from FormTrainingClient.

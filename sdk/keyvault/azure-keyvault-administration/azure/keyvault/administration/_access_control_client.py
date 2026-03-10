@@ -67,15 +67,10 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         assignment_name = name or uuid4()
 
         create_parameters = RoleAssignmentCreateParameters(
-            properties=RoleAssignmentProperties(
-                principal_id=principal_id, role_definition_id=str(definition_id)
-            )
+            properties=RoleAssignmentProperties(principal_id=principal_id, role_definition_id=str(definition_id))
         )
         assignment = self._client.role_assignments.create(
-            scope=scope,
-            role_assignment_name=str(assignment_name),
-            parameters=create_parameters,
-            **kwargs
+            scope=scope, role_assignment_name=str(assignment_name), parameters=create_parameters, **kwargs
         )
         return KeyVaultRoleAssignment._from_generated(assignment)
 
@@ -95,9 +90,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :rtype: None
         """
         try:
-            self._client.role_assignments.delete(
-                scope=scope, role_assignment_name=str(name), **kwargs
-            )
+            self._client.role_assignments.delete(scope=scope, role_assignment_name=str(name), **kwargs)
         except ResourceNotFoundError:
             pass
 
@@ -116,9 +109,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :returns: The fetched role assignment.
         :rtype: ~azure.keyvault.administration.KeyVaultRoleAssignment
         """
-        assignment = self._client.role_assignments.get(
-            scope=scope, role_assignment_name=str(name), **kwargs
-        )
+        assignment = self._client.role_assignments.get(scope=scope, role_assignment_name=str(name), **kwargs)
         return KeyVaultRoleAssignment._from_generated(assignment)
 
     @distributed_trace
@@ -135,9 +126,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.administration.KeyVaultRoleAssignment]
         """
         return self._client.role_assignments.list_for_scope(
-            scope=scope,
-            cls=lambda result: [KeyVaultRoleAssignment._from_generated(a) for a in result],
-            **kwargs
+            scope=scope, cls=lambda result: [KeyVaultRoleAssignment._from_generated(a) for a in result], **kwargs
         )
 
     @distributed_trace
@@ -198,10 +187,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         parameters = RoleDefinitionCreateParameters(properties=properties)
 
         definition = self._client.role_definitions.create_or_update(
-            scope=scope,
-            role_definition_name=str(name or uuid4()),
-            parameters=parameters,
-            **kwargs
+            scope=scope, role_definition_name=str(name or uuid4()), parameters=parameters, **kwargs
         )
         return KeyVaultRoleDefinition._from_generated(definition)
 
@@ -220,9 +206,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :returns: The fetched role definition.
         :rtype: ~azure.keyvault.administration.KeyVaultRoleDefinition
         """
-        definition = self._client.role_definitions.get(
-            scope=scope, role_definition_name=str(name), **kwargs
-        )
+        definition = self._client.role_definitions.get(scope=scope, role_definition_name=str(name), **kwargs)
         return KeyVaultRoleDefinition._from_generated(definition)
 
     @distributed_trace
@@ -241,9 +225,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :rtype: None
         """
         try:
-            self._client.role_definitions.delete(
-                scope=scope, role_definition_name=str(name), **kwargs
-            )
+            self._client.role_definitions.delete(scope=scope, role_definition_name=str(name), **kwargs)
         except ResourceNotFoundError:
             pass
 
@@ -261,9 +243,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.administration.KeyVaultRoleDefinition]
         """
         return self._client.role_definitions.list(
-            scope=scope,
-            cls=lambda result: [KeyVaultRoleDefinition._from_generated(d) for d in result],
-            **kwargs
+            scope=scope, cls=lambda result: [KeyVaultRoleDefinition._from_generated(d) for d in result], **kwargs
         )
 
     def __enter__(self) -> "KeyVaultAccessControlClient":

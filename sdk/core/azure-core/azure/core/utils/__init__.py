@@ -29,6 +29,7 @@ This `utils` module provides functionality that is intended to be used by develo
 building on top of `azure-core`.
 
 """
+
 from ._connection_string_parser import parse_connection_string
 from ._utils import case_insensitive_dict, CaseInsensitiveDict
 

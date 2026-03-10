@@ -76,7 +76,7 @@ class TestRoomsClient(ACSRoomsTestCase):
     @recorded_by_proxy
     def test_create_room_only_participants(self):
         # add john and chris to room
-        participants = [self.users["john"], self.users["chris"],self.users["jordan"]]
+        participants = [self.users["john"], self.users["chris"], self.users["jordan"]]
 
         response = self.rooms_client.create_room(participants=participants)
         # delete created room
@@ -306,7 +306,7 @@ class TestRoomsClient(ACSRoomsTestCase):
     @recorded_by_proxy
     def test_add_or_update_participants(self):
         # add john and chris to room
-        create_participants = [self.users["john"], self.users["chris"],self.users["jordan"]]
+        create_participants = [self.users["john"], self.users["chris"], self.users["jordan"]]
         create_response = self.rooms_client.create_room(participants=create_participants)
 
         # update join to consumer and add fred to room

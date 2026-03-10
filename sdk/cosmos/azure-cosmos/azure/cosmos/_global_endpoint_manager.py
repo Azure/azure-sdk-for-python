@@ -22,6 +22,7 @@
 """Internal class for global endpoint manager implementation in the Azure Cosmos
 database service.
 """
+
 import logging
 import os
 import threading
@@ -37,11 +38,11 @@ from .documents import DatabaseAccount
 from ._location_cache import LocationCache, RegionalRoutingContext
 from ._utils import current_time_millis
 
-
 # pylint: disable=protected-access
 logger = logging.getLogger("azure.cosmos._GlobalEndpointManager")
 
-class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attributes
+
+class _GlobalEndpointManager(object):  # pylint: disable=too-many-instance-attributes
     """
     This internal class implements the logic for endpoint management for
     geo-replicated database accounts.
@@ -52,10 +53,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self.PreferredLocations = client.connection_policy.PreferredLocations
         self.DefaultEndpoint = client.url_connection
         self.refresh_time_interval_in_ms = self.get_refresh_time_interval_in_ms_stub()
-        self.location_cache = LocationCache(
-            self.DefaultEndpoint,
-            client.connection_policy
-        )
+        self.location_cache = LocationCache(self.DefaultEndpoint, client.connection_policy)
         self.refresh_needed = False
         self.refresh_lock = threading.RLock()
         self.last_refresh_time = 0
@@ -73,10 +71,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
     def get_read_endpoint(self):
         return self.location_cache.get_read_regional_routing_context()
 
-    def _resolve_service_endpoint(
-            self,
-            request: RequestObject
-    ) -> str:
+    def _resolve_service_endpoint(self, request: RequestObject) -> str:
         return self.location_cache.resolve_service_endpoint(request)
 
     def mark_endpoint_unavailable_for_read(self, endpoint, refresh_cache, context: str):
@@ -91,7 +86,9 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
     def get_ordered_read_locations(self):
         return self.location_cache.get_ordered_read_locations()
 
-    def get_applicable_read_regional_routing_contexts(self, request: RequestObject) -> list[RegionalRoutingContext]: # pylint: disable=name-too-long
+    def get_applicable_read_regional_routing_contexts(
+        self, request: RequestObject
+    ) -> list[RegionalRoutingContext]:  # pylint: disable=name-too-long
         """Get the list of applicable read endpoints based on request parameters and excluded locations.
 
         :param request: Request object containing operation parameters and exclusion lists
@@ -101,7 +98,9 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         """
         return self.location_cache._get_applicable_read_regional_routing_contexts(request)
 
-    def get_applicable_write_regional_routing_contexts(self, request: RequestObject) -> list[RegionalRoutingContext]: # pylint: disable=name-too-long
+    def get_applicable_write_regional_routing_contexts(
+        self, request: RequestObject
+    ) -> list[RegionalRoutingContext]:  # pylint: disable=name-too-long
         """Get the list of applicable write endpoints based on request parameters and excluded locations.
 
         :param request: Request object containing operation parameters and exclusion lists
@@ -188,13 +187,15 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         :param dict kwargs: The keyword arguments to pass to the target function.
         """
         if not (self._refresh_thread and self._refresh_thread.is_alive()):
+
             def runner():
                 try:
                     target(**kwargs)
-                except Exception as exception: #pylint: disable=broad-exception-caught
+                except Exception as exception:  # pylint: disable=broad-exception-caught
                     # background failures should not crash main thread
                     # Intentionally swallow to avoid affecting foreground; logging could be added.
                     logger.error("Health check task failed: %s", exception, exc_info=True)
+
             t = threading.Thread(target=runner, name="cosmos-endpoint-refresh", daemon=True)
             self._refresh_thread = t
             t.start()

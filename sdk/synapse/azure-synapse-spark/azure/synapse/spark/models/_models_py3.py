@@ -60,28 +60,28 @@ class SparkBatchJob(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
+        "id": {"required": True},
     }
 
     _attribute_map = {
-        'livy_info': {'key': 'livyInfo', 'type': 'SparkBatchJobState'},
-        'name': {'key': 'name', 'type': 'str'},
-        'workspace_name': {'key': 'workspaceName', 'type': 'str'},
-        'spark_pool_name': {'key': 'sparkPoolName', 'type': 'str'},
-        'submitter_name': {'key': 'submitterName', 'type': 'str'},
-        'submitter_id': {'key': 'submitterId', 'type': 'str'},
-        'artifact_id': {'key': 'artifactId', 'type': 'str'},
-        'job_type': {'key': 'jobType', 'type': 'str'},
-        'result': {'key': 'result', 'type': 'str'},
-        'scheduler': {'key': 'schedulerInfo', 'type': 'SparkScheduler'},
-        'plugin': {'key': 'pluginInfo', 'type': 'SparkServicePlugin'},
-        'errors': {'key': 'errorInfo', 'type': '[SparkServiceError]'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'id': {'key': 'id', 'type': 'int'},
-        'app_id': {'key': 'appId', 'type': 'str'},
-        'app_info': {'key': 'appInfo', 'type': '{str}'},
-        'state': {'key': 'state', 'type': 'str'},
-        'log_lines': {'key': 'log', 'type': '[str]'},
+        "livy_info": {"key": "livyInfo", "type": "SparkBatchJobState"},
+        "name": {"key": "name", "type": "str"},
+        "workspace_name": {"key": "workspaceName", "type": "str"},
+        "spark_pool_name": {"key": "sparkPoolName", "type": "str"},
+        "submitter_name": {"key": "submitterName", "type": "str"},
+        "submitter_id": {"key": "submitterId", "type": "str"},
+        "artifact_id": {"key": "artifactId", "type": "str"},
+        "job_type": {"key": "jobType", "type": "str"},
+        "result": {"key": "result", "type": "str"},
+        "scheduler": {"key": "schedulerInfo", "type": "SparkScheduler"},
+        "plugin": {"key": "pluginInfo", "type": "SparkServicePlugin"},
+        "errors": {"key": "errorInfo", "type": "[SparkServiceError]"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "id": {"key": "id", "type": "int"},
+        "app_id": {"key": "appId", "type": "str"},
+        "app_info": {"key": "appInfo", "type": "{str}"},
+        "state": {"key": "state", "type": "str"},
+        "log_lines": {"key": "log", "type": "[str]"},
     }
 
     def __init__(
@@ -142,24 +142,17 @@ class SparkBatchJobCollection(msrest.serialization.Model):
     """
 
     _validation = {
-        'from_property': {'required': True},
-        'total': {'required': True},
+        "from_property": {"required": True},
+        "total": {"required": True},
     }
 
     _attribute_map = {
-        'from_property': {'key': 'from', 'type': 'int'},
-        'total': {'key': 'total', 'type': 'int'},
-        'sessions': {'key': 'sessions', 'type': '[SparkBatchJob]'},
+        "from_property": {"key": "from", "type": "int"},
+        "total": {"key": "total", "type": "int"},
+        "sessions": {"key": "sessions", "type": "[SparkBatchJob]"},
     }
 
-    def __init__(
-        self,
-        *,
-        from_property: int,
-        total: int,
-        sessions: Optional[List["SparkBatchJob"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, from_property: int, total: int, sessions: Optional[List["SparkBatchJob"]] = None, **kwargs):
         super(SparkBatchJobCollection, self).__init__(**kwargs)
         self.from_property = from_property
         self.total = total
@@ -206,27 +199,27 @@ class SparkBatchJobOptions(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'file': {'required': True},
+        "name": {"required": True},
+        "file": {"required": True},
     }
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'artifact_id': {'key': 'artifactId', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'file': {'key': 'file', 'type': 'str'},
-        'class_name': {'key': 'className', 'type': 'str'},
-        'arguments': {'key': 'args', 'type': '[str]'},
-        'jars': {'key': 'jars', 'type': '[str]'},
-        'python_files': {'key': 'pyFiles', 'type': '[str]'},
-        'files': {'key': 'files', 'type': '[str]'},
-        'archives': {'key': 'archives', 'type': '[str]'},
-        'configuration': {'key': 'conf', 'type': '{str}'},
-        'driver_memory': {'key': 'driverMemory', 'type': 'str'},
-        'driver_cores': {'key': 'driverCores', 'type': 'int'},
-        'executor_memory': {'key': 'executorMemory', 'type': 'str'},
-        'executor_cores': {'key': 'executorCores', 'type': 'int'},
-        'executor_count': {'key': 'numExecutors', 'type': 'int'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "artifact_id": {"key": "artifactId", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "file": {"key": "file", "type": "str"},
+        "class_name": {"key": "className", "type": "str"},
+        "arguments": {"key": "args", "type": "[str]"},
+        "jars": {"key": "jars", "type": "[str]"},
+        "python_files": {"key": "pyFiles", "type": "[str]"},
+        "files": {"key": "files", "type": "[str]"},
+        "archives": {"key": "archives", "type": "[str]"},
+        "configuration": {"key": "conf", "type": "{str}"},
+        "driver_memory": {"key": "driverMemory", "type": "str"},
+        "driver_cores": {"key": "driverCores", "type": "int"},
+        "executor_memory": {"key": "executorMemory", "type": "str"},
+        "executor_cores": {"key": "executorCores", "type": "int"},
+        "executor_count": {"key": "numExecutors", "type": "int"},
     }
 
     def __init__(
@@ -293,15 +286,15 @@ class SparkBatchJobState(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'not_started_at': {'key': 'notStartedAt', 'type': 'iso-8601'},
-        'starting_at': {'key': 'startingAt', 'type': 'iso-8601'},
-        'running_at': {'key': 'runningAt', 'type': 'iso-8601'},
-        'dead_at': {'key': 'deadAt', 'type': 'iso-8601'},
-        'success_at': {'key': 'successAt', 'type': 'iso-8601'},
-        'terminated_at': {'key': 'killedAt', 'type': 'iso-8601'},
-        'recovering_at': {'key': 'recoveringAt', 'type': 'iso-8601'},
-        'current_state': {'key': 'currentState', 'type': 'str'},
-        'job_creation_request': {'key': 'jobCreationRequest', 'type': 'SparkRequest'},
+        "not_started_at": {"key": "notStartedAt", "type": "iso-8601"},
+        "starting_at": {"key": "startingAt", "type": "iso-8601"},
+        "running_at": {"key": "runningAt", "type": "iso-8601"},
+        "dead_at": {"key": "deadAt", "type": "iso-8601"},
+        "success_at": {"key": "successAt", "type": "iso-8601"},
+        "terminated_at": {"key": "killedAt", "type": "iso-8601"},
+        "recovering_at": {"key": "recoveringAt", "type": "iso-8601"},
+        "current_state": {"key": "currentState", "type": "str"},
+        "job_creation_request": {"key": "jobCreationRequest", "type": "SparkRequest"},
     }
 
     def __init__(
@@ -364,20 +357,20 @@ class SparkRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'file': {'key': 'file', 'type': 'str'},
-        'class_name': {'key': 'className', 'type': 'str'},
-        'arguments': {'key': 'args', 'type': '[str]'},
-        'jars': {'key': 'jars', 'type': '[str]'},
-        'python_files': {'key': 'pyFiles', 'type': '[str]'},
-        'files': {'key': 'files', 'type': '[str]'},
-        'archives': {'key': 'archives', 'type': '[str]'},
-        'configuration': {'key': 'conf', 'type': '{str}'},
-        'driver_memory': {'key': 'driverMemory', 'type': 'str'},
-        'driver_cores': {'key': 'driverCores', 'type': 'int'},
-        'executor_memory': {'key': 'executorMemory', 'type': 'str'},
-        'executor_cores': {'key': 'executorCores', 'type': 'int'},
-        'executor_count': {'key': 'numExecutors', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "file": {"key": "file", "type": "str"},
+        "class_name": {"key": "className", "type": "str"},
+        "arguments": {"key": "args", "type": "[str]"},
+        "jars": {"key": "jars", "type": "[str]"},
+        "python_files": {"key": "pyFiles", "type": "[str]"},
+        "files": {"key": "files", "type": "[str]"},
+        "archives": {"key": "archives", "type": "[str]"},
+        "configuration": {"key": "conf", "type": "{str}"},
+        "driver_memory": {"key": "driverMemory", "type": "str"},
+        "driver_cores": {"key": "driverCores", "type": "int"},
+        "executor_memory": {"key": "executorMemory", "type": "str"},
+        "executor_cores": {"key": "executorCores", "type": "int"},
+        "executor_count": {"key": "numExecutors", "type": "int"},
     }
 
     def __init__(
@@ -432,11 +425,11 @@ class SparkScheduler(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'submitted_at': {'key': 'submittedAt', 'type': 'iso-8601'},
-        'scheduled_at': {'key': 'scheduledAt', 'type': 'iso-8601'},
-        'ended_at': {'key': 'endedAt', 'type': 'iso-8601'},
-        'cancellation_requested_at': {'key': 'cancellationRequestedAt', 'type': 'iso-8601'},
-        'current_state': {'key': 'currentState', 'type': 'str'},
+        "submitted_at": {"key": "submittedAt", "type": "iso-8601"},
+        "scheduled_at": {"key": "scheduledAt", "type": "iso-8601"},
+        "ended_at": {"key": "endedAt", "type": "iso-8601"},
+        "cancellation_requested_at": {"key": "cancellationRequestedAt", "type": "iso-8601"},
+        "current_state": {"key": "currentState", "type": "str"},
     }
 
     def __init__(
@@ -469,9 +462,9 @@ class SparkServiceError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'message': {'key': 'message', 'type': 'str'},
-        'error_code': {'key': 'errorCode', 'type': 'str'},
-        'source': {'key': 'source', 'type': 'str'},
+        "message": {"key": "message", "type": "str"},
+        "error_code": {"key": "errorCode", "type": "str"},
+        "source": {"key": "source", "type": "str"},
     }
 
     def __init__(
@@ -507,12 +500,12 @@ class SparkServicePlugin(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'preparation_started_at': {'key': 'preparationStartedAt', 'type': 'iso-8601'},
-        'resource_acquisition_started_at': {'key': 'resourceAcquisitionStartedAt', 'type': 'iso-8601'},
-        'submission_started_at': {'key': 'submissionStartedAt', 'type': 'iso-8601'},
-        'monitoring_started_at': {'key': 'monitoringStartedAt', 'type': 'iso-8601'},
-        'cleanup_started_at': {'key': 'cleanupStartedAt', 'type': 'iso-8601'},
-        'current_state': {'key': 'currentState', 'type': 'str'},
+        "preparation_started_at": {"key": "preparationStartedAt", "type": "iso-8601"},
+        "resource_acquisition_started_at": {"key": "resourceAcquisitionStartedAt", "type": "iso-8601"},
+        "submission_started_at": {"key": "submissionStartedAt", "type": "iso-8601"},
+        "monitoring_started_at": {"key": "monitoringStartedAt", "type": "iso-8601"},
+        "cleanup_started_at": {"key": "cleanupStartedAt", "type": "iso-8601"},
+        "current_state": {"key": "currentState", "type": "str"},
     }
 
     def __init__(
@@ -580,28 +573,28 @@ class SparkSession(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
+        "id": {"required": True},
     }
 
     _attribute_map = {
-        'livy_info': {'key': 'livyInfo', 'type': 'SparkSessionState'},
-        'name': {'key': 'name', 'type': 'str'},
-        'workspace_name': {'key': 'workspaceName', 'type': 'str'},
-        'spark_pool_name': {'key': 'sparkPoolName', 'type': 'str'},
-        'submitter_name': {'key': 'submitterName', 'type': 'str'},
-        'submitter_id': {'key': 'submitterId', 'type': 'str'},
-        'artifact_id': {'key': 'artifactId', 'type': 'str'},
-        'job_type': {'key': 'jobType', 'type': 'str'},
-        'result': {'key': 'result', 'type': 'str'},
-        'scheduler': {'key': 'schedulerInfo', 'type': 'SparkScheduler'},
-        'plugin': {'key': 'pluginInfo', 'type': 'SparkServicePlugin'},
-        'errors': {'key': 'errorInfo', 'type': '[SparkServiceError]'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'id': {'key': 'id', 'type': 'int'},
-        'app_id': {'key': 'appId', 'type': 'str'},
-        'app_info': {'key': 'appInfo', 'type': '{str}'},
-        'state': {'key': 'state', 'type': 'str'},
-        'log_lines': {'key': 'log', 'type': '[str]'},
+        "livy_info": {"key": "livyInfo", "type": "SparkSessionState"},
+        "name": {"key": "name", "type": "str"},
+        "workspace_name": {"key": "workspaceName", "type": "str"},
+        "spark_pool_name": {"key": "sparkPoolName", "type": "str"},
+        "submitter_name": {"key": "submitterName", "type": "str"},
+        "submitter_id": {"key": "submitterId", "type": "str"},
+        "artifact_id": {"key": "artifactId", "type": "str"},
+        "job_type": {"key": "jobType", "type": "str"},
+        "result": {"key": "result", "type": "str"},
+        "scheduler": {"key": "schedulerInfo", "type": "SparkScheduler"},
+        "plugin": {"key": "pluginInfo", "type": "SparkServicePlugin"},
+        "errors": {"key": "errorInfo", "type": "[SparkServiceError]"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "id": {"key": "id", "type": "int"},
+        "app_id": {"key": "appId", "type": "str"},
+        "app_info": {"key": "appInfo", "type": "{str}"},
+        "state": {"key": "state", "type": "str"},
+        "log_lines": {"key": "log", "type": "[str]"},
     }
 
     def __init__(
@@ -662,24 +655,17 @@ class SparkSessionCollection(msrest.serialization.Model):
     """
 
     _validation = {
-        'from_property': {'required': True},
-        'total': {'required': True},
+        "from_property": {"required": True},
+        "total": {"required": True},
     }
 
     _attribute_map = {
-        'from_property': {'key': 'from', 'type': 'int'},
-        'total': {'key': 'total', 'type': 'int'},
-        'sessions': {'key': 'sessions', 'type': '[SparkSession]'},
+        "from_property": {"key": "from", "type": "int"},
+        "total": {"key": "total", "type": "int"},
+        "sessions": {"key": "sessions", "type": "[SparkSession]"},
     }
 
-    def __init__(
-        self,
-        *,
-        from_property: int,
-        total: int,
-        sessions: Optional[List["SparkSession"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, from_property: int, total: int, sessions: Optional[List["SparkSession"]] = None, **kwargs):
         super(SparkSessionCollection, self).__init__(**kwargs)
         self.from_property = from_property
         self.total = total
@@ -726,26 +712,26 @@ class SparkSessionOptions(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'artifact_id': {'key': 'artifactId', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'file': {'key': 'file', 'type': 'str'},
-        'class_name': {'key': 'className', 'type': 'str'},
-        'arguments': {'key': 'args', 'type': '[str]'},
-        'jars': {'key': 'jars', 'type': '[str]'},
-        'python_files': {'key': 'pyFiles', 'type': '[str]'},
-        'files': {'key': 'files', 'type': '[str]'},
-        'archives': {'key': 'archives', 'type': '[str]'},
-        'configuration': {'key': 'conf', 'type': '{str}'},
-        'driver_memory': {'key': 'driverMemory', 'type': 'str'},
-        'driver_cores': {'key': 'driverCores', 'type': 'int'},
-        'executor_memory': {'key': 'executorMemory', 'type': 'str'},
-        'executor_cores': {'key': 'executorCores', 'type': 'int'},
-        'executor_count': {'key': 'numExecutors', 'type': 'int'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "artifact_id": {"key": "artifactId", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "file": {"key": "file", "type": "str"},
+        "class_name": {"key": "className", "type": "str"},
+        "arguments": {"key": "args", "type": "[str]"},
+        "jars": {"key": "jars", "type": "[str]"},
+        "python_files": {"key": "pyFiles", "type": "[str]"},
+        "files": {"key": "files", "type": "[str]"},
+        "archives": {"key": "archives", "type": "[str]"},
+        "configuration": {"key": "conf", "type": "{str}"},
+        "driver_memory": {"key": "driverMemory", "type": "str"},
+        "driver_cores": {"key": "driverCores", "type": "int"},
+        "executor_memory": {"key": "executorMemory", "type": "str"},
+        "executor_cores": {"key": "executorCores", "type": "int"},
+        "executor_count": {"key": "numExecutors", "type": "int"},
     }
 
     def __init__(
@@ -816,17 +802,17 @@ class SparkSessionState(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'not_started_at': {'key': 'notStartedAt', 'type': 'iso-8601'},
-        'starting_at': {'key': 'startingAt', 'type': 'iso-8601'},
-        'idle_at': {'key': 'idleAt', 'type': 'iso-8601'},
-        'dead_at': {'key': 'deadAt', 'type': 'iso-8601'},
-        'shutting_down_at': {'key': 'shuttingDownAt', 'type': 'iso-8601'},
-        'terminated_at': {'key': 'killedAt', 'type': 'iso-8601'},
-        'recovering_at': {'key': 'recoveringAt', 'type': 'iso-8601'},
-        'busy_at': {'key': 'busyAt', 'type': 'iso-8601'},
-        'error_at': {'key': 'errorAt', 'type': 'iso-8601'},
-        'current_state': {'key': 'currentState', 'type': 'str'},
-        'job_creation_request': {'key': 'jobCreationRequest', 'type': 'SparkRequest'},
+        "not_started_at": {"key": "notStartedAt", "type": "iso-8601"},
+        "starting_at": {"key": "startingAt", "type": "iso-8601"},
+        "idle_at": {"key": "idleAt", "type": "iso-8601"},
+        "dead_at": {"key": "deadAt", "type": "iso-8601"},
+        "shutting_down_at": {"key": "shuttingDownAt", "type": "iso-8601"},
+        "terminated_at": {"key": "killedAt", "type": "iso-8601"},
+        "recovering_at": {"key": "recoveringAt", "type": "iso-8601"},
+        "busy_at": {"key": "busyAt", "type": "iso-8601"},
+        "error_at": {"key": "errorAt", "type": "iso-8601"},
+        "current_state": {"key": "currentState", "type": "str"},
+        "job_creation_request": {"key": "jobCreationRequest", "type": "SparkRequest"},
     }
 
     def __init__(
@@ -876,14 +862,14 @@ class SparkStatement(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
+        "id": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'int'},
-        'code': {'key': 'code', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'output': {'key': 'output', 'type': 'SparkStatementOutput'},
+        "id": {"key": "id", "type": "int"},
+        "code": {"key": "code", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "output": {"key": "output", "type": "SparkStatementOutput"},
     }
 
     def __init__(
@@ -910,15 +896,10 @@ class SparkStatementCancellationResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'message': {'key': 'msg', 'type': 'str'},
+        "message": {"key": "msg", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        message: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, message: Optional[str] = None, **kwargs):
         super(SparkStatementCancellationResult, self).__init__(**kwargs)
         self.message = message
 
@@ -935,21 +916,15 @@ class SparkStatementCollection(msrest.serialization.Model):
     """
 
     _validation = {
-        'total': {'required': True},
+        "total": {"required": True},
     }
 
     _attribute_map = {
-        'total': {'key': 'total_statements', 'type': 'int'},
-        'statements': {'key': 'statements', 'type': '[SparkStatement]'},
+        "total": {"key": "total_statements", "type": "int"},
+        "statements": {"key": "statements", "type": "[SparkStatement]"},
     }
 
-    def __init__(
-        self,
-        *,
-        total: int,
-        statements: Optional[List["SparkStatement"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, total: int, statements: Optional[List["SparkStatement"]] = None, **kwargs):
         super(SparkStatementCollection, self).__init__(**kwargs)
         self.total = total
         self.statements = statements
@@ -965,16 +940,12 @@ class SparkStatementOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        kind: Optional[Union[str, "SparkStatementLanguageType"]] = None,
-        **kwargs
+        self, *, code: Optional[str] = None, kind: Optional[Union[str, "SparkStatementLanguageType"]] = None, **kwargs
     ):
         super(SparkStatementOptions, self).__init__(**kwargs)
         self.code = code
@@ -1001,16 +972,16 @@ class SparkStatementOutput(msrest.serialization.Model):
     """
 
     _validation = {
-        'execution_count': {'required': True},
+        "execution_count": {"required": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'execution_count': {'key': 'execution_count', 'type': 'int'},
-        'data': {'key': 'data', 'type': 'object'},
-        'error_name': {'key': 'ename', 'type': 'str'},
-        'error_value': {'key': 'evalue', 'type': 'str'},
-        'traceback': {'key': 'traceback', 'type': '[str]'},
+        "status": {"key": "status", "type": "str"},
+        "execution_count": {"key": "execution_count", "type": "int"},
+        "data": {"key": "data", "type": "object"},
+        "error_name": {"key": "ename", "type": "str"},
+        "error_value": {"key": "evalue", "type": "str"},
+        "traceback": {"key": "traceback", "type": "[str]"},
     }
 
     def __init__(

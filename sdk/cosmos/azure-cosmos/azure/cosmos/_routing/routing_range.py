@@ -22,6 +22,7 @@
 """Internal class for partition key range implementation in the Azure Cosmos
 database service.
 """
+
 import base64
 import binascii
 import json
@@ -98,7 +99,7 @@ class Range(object):
             self.MinPath: self.min,
             self.MaxPath: self.max,
             self.IsMinInclusivePath: self.isMinInclusive,
-            self.IsMaxInclusivePath: self.isMaxInclusive
+            self.IsMaxInclusivePath: self.isMaxInclusive,
         }
 
     def to_normalized_range(self):
@@ -122,7 +123,7 @@ class Range(object):
 
         byte_array = self.hex_binary_to_byte_array(effective_partition_key)
         if value == 1:
-            for i in range(len(byte_array) -1, -1, -1):
+            for i in range(len(byte_array) - 1, -1, -1):
                 if byte_array[i] < 255:
                     byte_array[i] += 1
                     break
@@ -147,7 +148,7 @@ class Range(object):
     @classmethod
     def from_base64_encoded_json_string(cls, data: str):
         try:
-            feed_range_json_string = base64.b64decode(data, validate=True).decode('utf-8')
+            feed_range_json_string = base64.b64decode(data, validate=True).decode("utf-8")
             feed_range_json = json.loads(feed_range_json_string)
             return cls.ParseFromDict(feed_range_json)
         except Exception as exc:
@@ -155,11 +156,11 @@ class Range(object):
 
     def to_base64_encoded_string(self):
         data_json = json.dumps(self.to_dict())
-        json_bytes = data_json.encode('utf-8')
+        json_bytes = data_json.encode("utf-8")
         # Encode the bytes to a Base64 string
         base64_bytes = base64.b64encode(json_bytes)
         # Convert the Base64 bytes to a string
-        return base64_bytes.decode('utf-8')
+        return base64_bytes.decode("utf-8")
 
     def isSingleValue(self):
         return self.isMinInclusive and self.isMaxInclusive and self.min == self.max
@@ -211,7 +212,7 @@ class Range(object):
             return True
         return False
 
-    def can_merge(self, other: 'Range') -> bool:
+    def can_merge(self, other: "Range") -> bool:
         if self.isSingleValue() and other.isSingleValue():
             return self.min == other.min
         # if share the same boundary, they can merge
@@ -221,7 +222,7 @@ class Range(object):
             return True
         return self.overlaps(self, other)
 
-    def merge(self, other: 'Range') -> 'Range':
+    def merge(self, other: "Range") -> "Range":
         if not self.can_merge(other):
             raise ValueError("Ranges do not overlap")
         min_val = self.min if self.min < other.min else other.min
@@ -230,20 +231,21 @@ class Range(object):
         is_max_inclusive = self.isMaxInclusive if self.max > other.max else other.isMaxInclusive
         return Range(min_val, max_val, is_min_inclusive, is_max_inclusive)
 
-    def is_subset(self, parent_range: 'Range') -> bool:
+    def is_subset(self, parent_range: "Range") -> bool:
         normalized_parent_range = parent_range.to_normalized_range()
         normalized_child_range = self.to_normalized_range()
-        return (normalized_parent_range.min <= normalized_child_range.min and
-                normalized_parent_range.max >= normalized_child_range.max)
+        return (
+            normalized_parent_range.min <= normalized_child_range.min
+            and normalized_parent_range.max >= normalized_child_range.max
+        )
+
 
 class PartitionKeyRangeWrapper(object):
-    """Internal class for a representation of a unique partition for an account
-    """
+    """Internal class for a representation of a unique partition for an account"""
 
     def __init__(self, partition_key_range: Range, collection_rid: str) -> None:
         self.partition_key_range = partition_key_range
         self.collection_rid = collection_rid
-
 
     def __str__(self) -> str:
         return (

@@ -26,7 +26,7 @@ from typing import (
     ValuesView,
     TypeVar,
 )
-from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
+from azure.appconfiguration import (  # type: ignore # pylint:disable=no-name-in-module
     ConfigurationSetting,
     FeatureFlagConfigurationSetting,
 )
@@ -50,7 +50,6 @@ from ._constants import (
 )
 from ._refresh_timer import _RefreshTimer
 from ._request_tracing_context import _RequestTracingContext
-
 
 JSON = Mapping[str, Any]
 _T = TypeVar("_T")
@@ -155,7 +154,7 @@ def is_json_content_type(content_type: str) -> bool:
     if len(type_parts) != 2:
         return False
 
-    (main_type, sub_type) = type_parts
+    main_type, sub_type = type_parts
     if main_type != "application":
         return False
 
@@ -168,7 +167,7 @@ def is_json_content_type(content_type: str) -> bool:
 
 def _build_watched_setting(setting: Union[str, Tuple[str, str]]) -> Tuple[str, str]:
     try:
-        key, label = setting  # type:ignore
+        key, label = setting  # type: ignore
     except (IndexError, ValueError):
         key = str(setting)  # Ensure key is a string
         label = NULL_CHAR

@@ -19,8 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""RequestTransport allowing injection of faults between SDK and Cosmos Gateway
-"""
+"""RequestTransport allowing injection of faults between SDK and Cosmos Gateway"""
 
 import json
 import logging
@@ -43,17 +42,16 @@ from azure.cosmos.http_constants import ResourceType, HttpHeaders, StatusCodes, 
 
 ERROR_WITH_COUNTER = "error_with_counter"
 
+
 class FaultInjectionTransport(RequestsTransport):
-    logger = logging.getLogger('azure.cosmos.fault_injection_transport')
+    logger = logging.getLogger("azure.cosmos.fault_injection_transport")
     logger.setLevel(logging.DEBUG)
 
     def __init__(self, *, session: Optional[Session] = None, loop=None, session_owner: bool = True, **config):
         self.faults: list[dict[str, Any]] = []
-        self.requestTransformations: list[dict[str, Any]]  = []
+        self.requestTransformations: list[dict[str, Any]] = []
         self.responseTransformations: list[dict[str, Any]] = []
-        self.counters: dict[str, int] = {
-            ERROR_WITH_COUNTER: 0
-        }
+        self.counters: dict[str, int] = {ERROR_WITH_COUNTER: 0}
         super().__init__(session=session, loop=loop, session_owner=session_owner, **config)
 
     def reset_counters(self):
@@ -64,12 +62,14 @@ class FaultInjectionTransport(RequestsTransport):
         self.counters[ERROR_WITH_COUNTER] += 1
         return error
 
-    def add_fault(self,
-                  predicate: Callable[[HttpRequest], bool],
-                  fault_factory: Callable[[HttpRequest], Exception],
-                  max_inner_count: Optional[int] = None,
-                  after_max_count: Optional[Callable[[HttpRequest], RequestsTransportResponse]] = None):
-        """ Adds a fault to the transport that will be applied when the predicate matches the request.
+    def add_fault(
+        self,
+        predicate: Callable[[HttpRequest], bool],
+        fault_factory: Callable[[HttpRequest], Exception],
+        max_inner_count: Optional[int] = None,
+        after_max_count: Optional[Callable[[HttpRequest], RequestsTransportResponse]] = None,
+    ):
+        """Adds a fault to the transport that will be applied when the predicate matches the request.
         :param Callable predicate: A callable that takes an HttpRequest and returns True if the fault should be applied.
         :param Callable fault_factory: A callable that takes an HttpRequest and returns an Exception to be raised.
         :param int max_inner_count: Optional maximum number of times the fault can be applied for one request.
@@ -80,18 +80,30 @@ class FaultInjectionTransport(RequestsTransport):
         """
         if max_inner_count is not None:
             if after_max_count is not None:
-                self.faults.append({"predicate": predicate, "apply": fault_factory, "after_max_count": after_max_count,
-                                    "max_count": max_inner_count, "current_count": 0})
+                self.faults.append(
+                    {
+                        "predicate": predicate,
+                        "apply": fault_factory,
+                        "after_max_count": after_max_count,
+                        "max_count": max_inner_count,
+                        "current_count": 0,
+                    }
+                )
             else:
-                self.faults.append({"predicate": predicate, "apply": fault_factory,
-                                    "max_count": max_inner_count, "current_count": 0})
+                self.faults.append(
+                    {"predicate": predicate, "apply": fault_factory, "max_count": max_inner_count, "current_count": 0}
+                )
         else:
             self.faults.append({"predicate": predicate, "apply": fault_factory})
 
-    def add_response_transformation(self, predicate: Callable[[HttpRequest], bool], response_transformation: Callable[[HttpRequest, Callable[[HttpRequest], RequestsTransportResponse]], RequestsTransportResponse]):
-        self.responseTransformations.append({
-            "predicate": predicate,
-            "apply": response_transformation})
+    def add_response_transformation(
+        self,
+        predicate: Callable[[HttpRequest], bool],
+        response_transformation: Callable[
+            [HttpRequest, Callable[[HttpRequest], RequestsTransportResponse]], RequestsTransportResponse
+        ],
+    ):
+        self.responseTransformations.append({"predicate": predicate, "apply": response_transformation})
 
     @staticmethod
     def __first_item(iterable, condition=lambda x: True):
@@ -102,15 +114,21 @@ class FaultInjectionTransport(RequestsTransport):
         """
         return next((x for x in iterable if condition(x)), None)
 
-    def send(self, request: HttpRequest, *, proxies: Optional[MutableMapping[str, str]] = None, **kwargs) -> HttpResponse:
-        FaultInjectionTransport.logger.info("--> FaultInjectionTransport.Send {} {}".format(request.method, request.url))
+    def send(
+        self, request: HttpRequest, *, proxies: Optional[MutableMapping[str, str]] = None, **kwargs
+    ) -> HttpResponse:
+        FaultInjectionTransport.logger.info(
+            "--> FaultInjectionTransport.Send {} {}".format(request.method, request.url)
+        )
         # find the first fault Factory with matching predicate if any
         first_fault_factory = FaultInjectionTransport.__first_item(iter(self.faults), lambda f: f["predicate"](request))
         if first_fault_factory:
             if "max_count" in first_fault_factory:
-                FaultInjectionTransport.logger.info(f"Found fault factory with max count {first_fault_factory['max_count']}")
+                FaultInjectionTransport.logger.info(
+                    f"Found fault factory with max count {first_fault_factory['max_count']}"
+                )
                 if first_fault_factory["current_count"] >= first_fault_factory["max_count"]:
-                    first_fault_factory["current_count"] = 0 # reset counter
+                    first_fault_factory["current_count"] = 0  # reset counter
                     if "after_max_count" in first_fault_factory:
                         FaultInjectionTransport.logger.info("Max count reached, returning after_max_count")
                         return first_fault_factory["after_max_count"]
@@ -123,22 +141,28 @@ class FaultInjectionTransport(RequestsTransport):
             raise injected_error
 
         # apply the chain of request transformations with matching predicates if any
-        matching_request_transformations = filter(lambda f: f["predicate"](f["predicate"]), iter(self.requestTransformations))
+        matching_request_transformations = filter(
+            lambda f: f["predicate"](f["predicate"]), iter(self.requestTransformations)
+        )
         for currentTransformation in matching_request_transformations:
             FaultInjectionTransport.logger.info("--> FaultInjectionTransport.ApplyRequestTransformation")
             request = currentTransformation["apply"](request)
 
-        first_response_transformation = FaultInjectionTransport.__first_item(iter(self.responseTransformations), lambda f: f["predicate"](request))
+        first_response_transformation = FaultInjectionTransport.__first_item(
+            iter(self.responseTransformations), lambda f: f["predicate"](request)
+        )
 
         FaultInjectionTransport.logger.info("--> FaultInjectionTransport.BeforeGetResponseTask")
-        get_response_task =  super().send(request, proxies=proxies, **kwargs)
+        get_response_task = super().send(request, proxies=proxies, **kwargs)
         FaultInjectionTransport.logger.info("<-- FaultInjectionTransport.AfterGetResponseTask")
 
         if first_response_transformation:
             FaultInjectionTransport.logger.info(f"Invoking response transformation")
             response = first_response_transformation["apply"](request, lambda: get_response_task)
             response.headers["_request"] = request
-            FaultInjectionTransport.logger.info(f"Received response transformation result with status code {response.status_code}")
+            FaultInjectionTransport.logger.info(
+                f"Received response transformation result with status code {response.status_code}"
+            )
             return response
         else:
             FaultInjectionTransport.logger.info(f"Sending request to {request.url}")
@@ -181,13 +205,16 @@ class FaultInjectionTransport(RequestsTransport):
 
     @staticmethod
     def predicate_req_for_document_with_id(r: HttpRequest, id_value: str) -> bool:
-        return (FaultInjectionTransport.predicate_url_contains_id(r, id_value)
-                or FaultInjectionTransport.predicate_req_payload_contains_id(r, id_value))
+        return FaultInjectionTransport.predicate_url_contains_id(
+            r, id_value
+        ) or FaultInjectionTransport.predicate_req_payload_contains_id(r, id_value)
 
     @staticmethod
     def predicate_is_database_account_call(r: HttpRequest) -> bool:
-        is_db_account_read = (r.headers.get(HttpHeaders.ThinClientProxyResourceType) == ResourceType.DatabaseAccount
-                              and r.headers.get(HttpHeaders.ThinClientProxyOperationType) == documents._OperationType.Read)
+        is_db_account_read = (
+            r.headers.get(HttpHeaders.ThinClientProxyResourceType) == ResourceType.DatabaseAccount
+            and r.headers.get(HttpHeaders.ThinClientProxyOperationType) == documents._OperationType.Read
+        )
 
         return is_db_account_read
 
@@ -209,7 +236,8 @@ class FaultInjectionTransport(RequestsTransport):
     @staticmethod
     def predicate_is_write_operation(r: HttpRequest, uri_prefix: str) -> bool:
         is_write_document_operation = documents._OperationType.IsWriteOperation(
-            str(r.headers.get(HttpHeaders.ThinClientProxyOperationType)),)
+            str(r.headers.get(HttpHeaders.ThinClientProxyOperationType)),
+        )
 
         return is_write_document_operation and uri_prefix in r.url
 
@@ -230,17 +258,13 @@ class FaultInjectionTransport(RequestsTransport):
     @staticmethod
     def error_request_timeout() -> Exception:
         return CosmosHttpResponseError(
-            status_code=StatusCodes.REQUEST_TIMEOUT,
-            message="Injected request timeout error.",
-            response=None
+            status_code=StatusCodes.REQUEST_TIMEOUT, message="Injected request timeout error.", response=None
         )
 
     @staticmethod
     def error_internal_server_error() -> Exception:
         return CosmosHttpResponseError(
-            status_code=StatusCodes.INTERNAL_SERVER_ERROR,
-            message="Injected request timeout error.",
-            response=None
+            status_code=StatusCodes.INTERNAL_SERVER_ERROR, message="Injected request timeout error.", response=None
         )
 
     @staticmethod
@@ -257,10 +281,11 @@ class FaultInjectionTransport(RequestsTransport):
 
     @staticmethod
     def transform_topology_swr_mrr(
-            write_region_name: str,
-            read_region_name: str,
-            inner: Callable[[], RequestsTransportResponse],
-            enable_per_partition_failover: bool = False) -> RequestsTransportResponse:
+        write_region_name: str,
+        read_region_name: str,
+        inner: Callable[[], RequestsTransportResponse],
+        enable_per_partition_failover: bool = False,
+    ) -> RequestsTransportResponse:
 
         response = inner()
         if not FaultInjectionTransport.predicate_is_database_account_call(response.request):
@@ -274,7 +299,9 @@ class FaultInjectionTransport(RequestsTransport):
             writable_locations = result["writableLocations"]
             readable_locations[0]["name"] = write_region_name
             writable_locations[0]["name"] = write_region_name
-            readable_locations.append({"name": read_region_name, "databaseAccountEndpoint" : test_config.TestConfig.local_host})
+            readable_locations.append(
+                {"name": read_region_name, "databaseAccountEndpoint": test_config.TestConfig.local_host}
+            )
             FaultInjectionTransport.logger.info("Transformed Account Topology: {}".format(result))
             # TODO: need to verify below behavior against actual Cosmos DB service response
             if enable_per_partition_failover:
@@ -285,8 +312,9 @@ class FaultInjectionTransport(RequestsTransport):
         return response
 
     @staticmethod
-    def transform_topology_ppaf_enabled( # cspell:disable-line
-            inner: Callable[[], RequestsTransportResponse]) -> RequestsTransportResponse:
+    def transform_topology_ppaf_enabled(  # cspell:disable-line
+        inner: Callable[[], RequestsTransportResponse],
+    ) -> RequestsTransportResponse:
 
         response = inner()
         if not FaultInjectionTransport.predicate_is_database_account_call(response.request):
@@ -305,11 +333,11 @@ class FaultInjectionTransport(RequestsTransport):
 
     @staticmethod
     def transform_topology_mwr(
-            first_region_name: str,
-            second_region_name: str,
-            inner: Callable[[], RequestsTransportResponse],
-            first_region_url: str = test_config.TestConfig.local_host.replace("localhost", "127.0.0.1"),
-            second_region_url: str = test_config.TestConfig.local_host
+        first_region_name: str,
+        second_region_name: str,
+        inner: Callable[[], RequestsTransportResponse],
+        first_region_url: str = test_config.TestConfig.local_host.replace("localhost", "127.0.0.1"),
+        second_region_url: str = test_config.TestConfig.local_host,
     ) -> RequestsTransportResponse:
 
         response = inner()
@@ -325,14 +353,10 @@ class FaultInjectionTransport(RequestsTransport):
 
             if first_region_url is None:
                 first_region_url = readable_locations[0]["databaseAccountEndpoint"]
-            readable_locations[0] = \
-                {"name": first_region_name, "databaseAccountEndpoint": first_region_url}
-            writable_locations[0] = \
-                {"name": first_region_name, "databaseAccountEndpoint": first_region_url}
-            readable_locations.append(
-                {"name": second_region_name, "databaseAccountEndpoint": second_region_url})
-            writable_locations.append(
-                {"name": second_region_name, "databaseAccountEndpoint": second_region_url})
+            readable_locations[0] = {"name": first_region_name, "databaseAccountEndpoint": first_region_url}
+            writable_locations[0] = {"name": first_region_name, "databaseAccountEndpoint": first_region_url}
+            readable_locations.append({"name": second_region_name, "databaseAccountEndpoint": second_region_url})
+            writable_locations.append({"name": second_region_name, "databaseAccountEndpoint": second_region_url})
             result["enableMultipleWriteLocations"] = True
             FaultInjectionTransport.logger.info("Transformed Account Topology: {}".format(result))
             request: HttpRequest = response.request
@@ -342,20 +366,21 @@ class FaultInjectionTransport(RequestsTransport):
 
     class MockHttpRequest(HttpRequest):
         def __init__(
-                self,
-                url: str,
-                method: str = "GET",
-                headers: Optional[Mapping[str, str]] = None,
-                files: Optional[Any] = None,
-                data: Optional[Any] = None,
+            self,
+            url: str,
+            method: str = "GET",
+            headers: Optional[Mapping[str, str]] = None,
+            files: Optional[Any] = None,
+            data: Optional[Any] = None,
         ) -> None:
             self.method = method
             self.url = url
             self.headers: Optional[MutableMapping[str, str]] = headers
             self.files: Optional[Any] = files
             self.data: Optional[Any] = data
-            self.multipart_mixed_info: Optional[
-                Tuple[Sequence[Any], Sequence[Any], Optional[str], dict[str, Any]]] = None
+            self.multipart_mixed_info: Optional[Tuple[Sequence[Any], Sequence[Any], Optional[str], dict[str, Any]]] = (
+                None
+            )
 
     class MockHttpResponse(RequestsTransportResponse):
         def __init__(self, request: HttpRequest, status_code: int, content: Optional[Any] = None):
@@ -376,7 +401,6 @@ class FaultInjectionTransport(RequestsTransport):
                 self.content = content
                 self.json_text = json.dumps(content)
                 self.bytes = self.json_text.encode("utf-8")
-
 
         def body(self) -> bytes:
             return self.bytes

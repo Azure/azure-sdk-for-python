@@ -5,8 +5,12 @@ import unittest
 import uuid
 
 import pytest
-from aiohttp.client_exceptions import (ClientConnectionError, ClientConnectionResetError,
-                                       ClientOSError, ServerConnectionError)
+from aiohttp.client_exceptions import (
+    ClientConnectionError,
+    ClientConnectionResetError,
+    ClientOSError,
+    ServerConnectionError,
+)
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 
 import test_config
@@ -31,12 +35,12 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
 
     @classmethod
     def setUpClass(cls):
-        if (cls.masterKey == '[YOUR_KEY_HERE]' or
-                cls.host == '[YOUR_ENDPOINT_HERE]'):
+        if cls.masterKey == "[YOUR_KEY_HERE]" or cls.host == "[YOUR_ENDPOINT_HERE]":
             raise Exception(
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
-                "tests.")
+                "tests."
+            )
 
     async def asyncSetUp(self):
         self.client = CosmosClient(self.host, self.masterKey)
@@ -63,15 +67,19 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             original_location_cache.available_read_regional_endpoints_by_locations = {
                 self.REGION1: self.REGIONAL_ENDPOINT,
                 self.REGION2: self.REGIONAL_ENDPOINT,
-                self.REGION3: self.REGIONAL_ENDPOINT}
-            original_location_cache.read_regional_routing_contexts = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT,
-                                                                      self.REGIONAL_ENDPOINT]
+                self.REGION3: self.REGIONAL_ENDPOINT,
+            }
+            original_location_cache.read_regional_routing_contexts = [
+                self.REGIONAL_ENDPOINT,
+                self.REGIONAL_ENDPOINT,
+                self.REGIONAL_ENDPOINT,
+            ]
             expected_counter = len(original_location_cache.read_regional_routing_contexts)
             try:
                 # Mock the function to return the ServiceRequestException we retry
                 mf = self.MockExecuteServiceRequestExceptionIgnoreQuery(self.original_execute_function)
                 _retry_utility_async.ExecuteFunctionAsync = mf
-                await container.read_item(created_item['id'], created_item['pk'])
+                await container.read_item(created_item["id"], created_item["pk"])
                 pytest.fail("Exception was not raised.")
             except ServiceRequestError:
                 assert mf.counter == expected_counter
@@ -88,17 +96,23 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             original_location_cache.available_read_regional_endpoints_by_locations = {
                 self.REGION1: self.REGIONAL_ENDPOINT,
                 self.REGION2: self.REGIONAL_ENDPOINT,
-                self.REGION3: self.REGIONAL_ENDPOINT}
-            original_location_cache.read_regional_routing_contexts = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT,
-                                                                      self.REGIONAL_ENDPOINT]
+                self.REGION3: self.REGIONAL_ENDPOINT,
+            }
+            original_location_cache.read_regional_routing_contexts = [
+                self.REGIONAL_ENDPOINT,
+                self.REGIONAL_ENDPOINT,
+                self.REGIONAL_ENDPOINT,
+            ]
             expected_counter = len(original_location_cache.read_regional_routing_contexts)
 
             try:
                 # Mock the function to return the ServiceRequestException we retry
                 mf = self.MockExecuteServiceRequestException()
                 _retry_utility_async.ExecuteFunctionAsync = mf
-                items = [item async for item in container.query_items(query="SELECT * FROM c",
-                                                                      partition_key=created_item['pk'])]
+                items = [
+                    item
+                    async for item in container.query_items(query="SELECT * FROM c", partition_key=created_item["pk"])
+                ]
                 pytest.fail("Exception was not raised.")
             except ServiceRequestError:
                 assert mf.counter == expected_counter
@@ -113,7 +127,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 # Reset the function to reset the counter
                 mf = self.MockExecuteServiceRequestException()
                 _retry_utility_async.ExecuteFunctionAsync = mf
-                await container.read_item(created_item['id'], created_item['pk'])
+                await container.read_item(created_item["id"], created_item["pk"])
                 pytest.fail("Exception was not raised.")
             except ServiceRequestError:
                 assert mf.counter == expected_counter
@@ -125,7 +139,8 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             original_location_cache.write_regional_routing_contexts = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT]
             original_location_cache.available_write_regional_endpoints_by_locations = {
                 self.REGION1: self.REGIONAL_ENDPOINT,
-                self.REGION2: self.REGIONAL_ENDPOINT}
+                self.REGION2: self.REGIONAL_ENDPOINT,
+            }
             expected_counter = len(original_location_cache.write_regional_routing_contexts)
             try:
                 # Reset the function to reset the counter
@@ -155,15 +170,20 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             original_location_cache.available_read_regional_endpoints_by_locations = {
                 self.REGION1: self.REGIONAL_ENDPOINT,
                 self.REGION2: self.REGIONAL_ENDPOINT,
-                self.REGION3: self.REGIONAL_ENDPOINT}
-            original_location_cache.read_regional_routing_contexts = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT,
-                                                                      self.REGIONAL_ENDPOINT]
+                self.REGION3: self.REGIONAL_ENDPOINT,
+            }
+            original_location_cache.read_regional_routing_contexts = [
+                self.REGIONAL_ENDPOINT,
+                self.REGIONAL_ENDPOINT,
+                self.REGIONAL_ENDPOINT,
+            ]
             try:
                 # Mock the function to return the ClientConnectionError we retry
-                mf = self.MockExecuteServiceResponseExceptionIgnoreQuery(AttributeError,
-                                                                         None, self.original_execute_function)
+                mf = self.MockExecuteServiceResponseExceptionIgnoreQuery(
+                    AttributeError, None, self.original_execute_function
+                )
                 _retry_utility_async.ExecuteFunctionAsync = mf
-                await container.read_item(created_item['id'], created_item['pk'])
+                await container.read_item(created_item["id"], created_item["pk"])
                 pytest.fail("Exception was not raised.")
             except ServiceResponseError:
                 assert mf.counter == 3
@@ -177,7 +197,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 # Reset the function to reset the counter
                 mf = self.MockExecuteServiceResponseException(AttributeError, None)
                 _retry_utility_async.ExecuteFunctionAsync = mf
-                await container.read_item(created_item['id'], created_item['pk'])
+                await container.read_item(created_item["id"], created_item["pk"])
                 pytest.fail("Exception was not raised.")
             except ServiceResponseError:
                 assert mf.counter == 1
@@ -189,7 +209,8 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             original_location_cache.write_regional_routing_contexts = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT]
             original_location_cache.available_write_regional_endpoints_by_locations = {
                 self.REGION1: self.REGIONAL_ENDPOINT,
-                self.REGION2: self.REGIONAL_ENDPOINT}
+                self.REGION2: self.REGIONAL_ENDPOINT,
+            }
             try:
                 # Reset the function to reset the counter
                 mf = self.MockExecuteServiceResponseException(AttributeError, None)
@@ -209,7 +230,8 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             original_location_cache.write_regional_routing_contexts = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT]
             original_location_cache.available_write_regional_endpoints_by_locations = {
                 self.REGION1: self.REGIONAL_ENDPOINT,
-                self.REGION2: self.REGIONAL_ENDPOINT}
+                self.REGION2: self.REGIONAL_ENDPOINT,
+            }
             try:
                 # Reset the function to reset the counter
                 mf = self.MockExecuteServiceResponseException(ClientConnectionError, ClientConnectionError())
@@ -297,14 +319,19 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             original_location_cache.available_read_regional_endpoints_by_locations = {
                 self.REGION1: self.REGIONAL_ENDPOINT,
                 self.REGION2: self.REGIONAL_ENDPOINT,
-                self.REGION3: self.REGIONAL_ENDPOINT}
-            original_location_cache.read_regional_routing_contexts = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT,
-                                                                      self.REGIONAL_ENDPOINT]
+                self.REGION3: self.REGIONAL_ENDPOINT,
+            }
+            original_location_cache.read_regional_routing_contexts = [
+                self.REGIONAL_ENDPOINT,
+                self.REGIONAL_ENDPOINT,
+                self.REGIONAL_ENDPOINT,
+            ]
             original_location_cache.account_write_locations = [self.REGION1, self.REGION2]
             original_location_cache.write_regional_routing_contexts = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT]
             original_location_cache.available_write_regional_endpoints_by_locations = {
                 self.REGION1: self.REGIONAL_ENDPOINT,
-                self.REGION2: self.REGIONAL_ENDPOINT}
+                self.REGION2: self.REGIONAL_ENDPOINT,
+            }
             try:
                 # Start with a normal ServiceResponseException with no special casing
                 mf = self.MockExecuteServiceResponseException(AttributeError, AttributeError())
@@ -330,8 +357,8 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 assert len(original_location_cache.location_unavailability_info_by_endpoint) == 1
                 host_unavailable = original_location_cache.location_unavailability_info_by_endpoint.get(self.host)
                 assert host_unavailable is not None
-                assert len(host_unavailable.get('operationType')) == 1
-                assert 'Write' in host_unavailable.get('operationType')
+                assert len(host_unavailable.get("operationType")) == 1
+                assert "Write" in host_unavailable.get("operationType")
             finally:
                 _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
@@ -347,8 +374,8 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 assert mf.counter == 1
                 host_unavailable = original_location_cache.location_unavailability_info_by_endpoint.get(self.host)
                 assert host_unavailable is not None
-                assert len(host_unavailable.get('operationType')) == 1
-                assert 'Write' in host_unavailable.get('operationType')
+                assert len(host_unavailable.get("operationType")) == 1
+                assert "Write" in host_unavailable.get("operationType")
             finally:
                 _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
@@ -368,8 +395,8 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 assert len(original_location_cache.location_unavailability_info_by_endpoint) == 1
                 host_unavailable = original_location_cache.location_unavailability_info_by_endpoint.get(self.host)
                 assert host_unavailable is not None
-                assert len(host_unavailable.get('operationType')) == 1
-                assert 'Write' in host_unavailable.get('operationType')
+                assert len(host_unavailable.get("operationType")) == 1
+                assert "Write" in host_unavailable.get("operationType")
             finally:
                 _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
@@ -411,13 +438,19 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
         # - GetDatabaseAccountStub allows us to receive any number of endpoints for that call independent of account used
         exception = ServiceRequestError("mock exception")
         exception.exc_type = Exception
-        self.original_get_database_account_stub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
+        self.original_get_database_account_stub = (
+            _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
+        )
         _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.MockGetDatabaseAccountStub
         connection_policy = self.connectionPolicy
         connection_retry_policy = test_config.MockConnectionRetryPolicyAsync(resource_type="docs", error=exception)
         connection_policy.ConnectionRetryConfiguration = connection_retry_policy
-        async with CosmosClient(self.host, self.masterKey, connection_policy=connection_policy,
-                                preferred_locations=[self.REGION1, self.REGION2]) as mock_client:
+        async with CosmosClient(
+            self.host,
+            self.masterKey,
+            connection_policy=connection_policy,
+            preferred_locations=[self.REGION1, self.REGION2],
+        ) as mock_client:
             db = mock_client.get_database_client(self.TEST_DATABASE_ID)
             container = db.get_container_client(self.TEST_CONTAINER_ID)
 
@@ -431,10 +464,14 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             except CosmosHttpResponseError as e:
                 print(e)
             finally:
-                _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_get_database_account_stub
+                _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = (
+                    self.original_get_database_account_stub
+                )
 
             # Now we try with a read request - reset the policy to reset the counter
-            _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.MockGetDatabaseAccountStub
+            _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = (
+                self.MockGetDatabaseAccountStub
+            )
             connection_retry_policy.request_endpoints = []
             try:
                 await container.read_item("some_id", "some_pk")
@@ -444,7 +481,9 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 # 4 total requests in each main region (preferred read region 1 -> preferred read region 2)
                 assert len(connection_retry_policy.request_endpoints) == 8
             finally:
-                _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_get_database_account_stub
+                _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = (
+                    self.original_get_database_account_stub
+                )
 
     class MockExecuteServiceRequestException(object):
         def __init__(self):
@@ -465,8 +504,12 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
 
             if args and isinstance(args[1], RequestObject):
                 request_obj = args[1]
-                if request_obj.resource_type == "docs" and request_obj.operation_type == "Query" or\
-                    request_obj.resource_type == "pkranges" and request_obj.operation_type == "ReadFeed":
+                if (
+                    request_obj.resource_type == "docs"
+                    and request_obj.operation_type == "Query"
+                    or request_obj.resource_type == "pkranges"
+                    and request_obj.operation_type == "ReadFeed"
+                ):
                     # Ignore query requests, As an additional ReadFeed might occur during a regular Read operation
                     return self.original_execute_function(func, *args, **kwargs)
                 self.counter = self.counter + 1
@@ -499,8 +542,12 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
 
             if args and isinstance(args[1], RequestObject):
                 request_obj = args[1]
-                if request_obj.resource_type == "docs" and request_obj.operation_type == "Query" or \
-                        request_obj.resource_type == "pkranges" and request_obj.operation_type == "ReadFeed":
+                if (
+                    request_obj.resource_type == "docs"
+                    and request_obj.operation_type == "Query"
+                    or request_obj.resource_type == "pkranges"
+                    and request_obj.operation_type == "ReadFeed"
+                ):
                     # Ignore query requests, As an additional ReadFeed might occur during a regular Read operation
                     return self.original_execute_function(func, *args, **kwargs)
                 self.counter = self.counter + 1
@@ -514,12 +561,12 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
         read_regions = ["West US", "East US"]
         read_locations = []
         for loc in read_regions:
-            read_locations.append({'databaseAccountEndpoint': endpoint, 'name': loc})
+            read_locations.append({"databaseAccountEndpoint": endpoint, "name": loc})
         write_regions = ["West US"]
         write_locations = []
         for loc in write_regions:
             locational_endpoint = self.host.replace("localhost", "127.0.0.1")
-            write_locations.append({'databaseAccountEndpoint': locational_endpoint, 'name': loc})
+            write_locations.append({"databaseAccountEndpoint": locational_endpoint, "name": loc})
         multi_write = False
 
         db_acc = DatabaseAccount()

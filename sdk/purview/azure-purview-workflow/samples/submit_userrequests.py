@@ -49,11 +49,11 @@ try:
 except KeyError:
     LOG.error(
         "Missing environment variable 'WORKFLOW_ENDPOINT' or 'AZURE_CLIENT_ID' or 'AZURE_TENANT_ID' or 'USERNAME' or "
-        "'PASSWORD' - please set if before running the example")
+        "'PASSWORD' - please set if before running the example"
+    )
     exit()
 
-credential = UsernamePasswordCredential(client_id=client_id, username=username, password=password,
-                                        tenant_id=tenant_id)
+credential = UsernamePasswordCredential(client_id=client_id, username=username, password=password, tenant_id=tenant_id)
 # Build a client through AAD
 client = PurviewWorkflowClient(endpoint=endpoint, credential=credential)
 
@@ -65,16 +65,14 @@ try:
                 "payload": {
                     "glossaryTerm": {
                         "name": "term",
-                        "anchor": {
-                            "glossaryGuid": "5dae5e5b-5aa6-48f1-9e46-26fe7328de71"
-                        },
+                        "anchor": {"glossaryGuid": "5dae5e5b-5aa6-48f1-9e46-26fe7328de71"},
                         "status": "Approved",
-                        "nickName": "term"
+                        "nickName": "term",
                     }
-                }
+                },
             }
         ],
-        "comment": "Thanks!"
+        "comment": "Thanks!",
     }
     result = client.user_requests.submit(user_requests_payload)
     print(result)

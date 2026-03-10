@@ -8,8 +8,8 @@ FILE: sample_limited_order_discrepancy_inference_async.py
 DESCRIPTION:
 The sample_limited_order_discrepancy_inference_async.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize an asynchronous RadiologyInsightsClient, build a Radiology Insights request with the sample document,
-submit it to the client, RadiologyInsightsClient, and display the Order Type code, Present Body Part code and measurement.     
-    
+submit it to the client, RadiologyInsightsClient, and display the Order Type code, Present Body Part code and measurement.
+
 
 USAGE:
 
@@ -18,7 +18,7 @@ USAGE:
     - For more details how to use DefaultAzureCredential, please take a look at https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential
 
 2. python sample_limited_order_discrepancy_inference_async.py
-   
+
 """
 
 import asyncio

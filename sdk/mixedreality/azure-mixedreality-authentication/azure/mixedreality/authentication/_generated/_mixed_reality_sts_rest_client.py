@@ -33,7 +33,7 @@ class MixedRealityStsRestClient(MixedRealityStsRestClientOperationsMixin):
     ):
         # type: (...) -> None
         if not base_url:
-            base_url = 'https://sts.mixedreality.azure.com'
+            base_url = "https://sts.mixedreality.azure.com"
         self._config = MixedRealityStsRestClientConfiguration(**kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
@@ -41,7 +41,6 @@ class MixedRealityStsRestClient(MixedRealityStsRestClientOperationsMixin):
         self._serialize = Serializer(client_models)
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
-
 
     def close(self):
         # type: () -> None

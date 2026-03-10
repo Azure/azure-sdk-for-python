@@ -14,27 +14,25 @@ from devtools_testutils import AzureMgmtRecordedTestCase, ResourceGroupPreparer,
 class TestMgmtApps(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
-        self.logic_client = self.create_mgmt_client(
-            azure.mgmt.logic.LogicManagementClient
-        )
+        self.logic_client = self.create_mgmt_client(azure.mgmt.logic.LogicManagementClient)
 
     @ResourceGroupPreparer(location="West US")
     @recorded_by_proxy
     def test_logic(self, resource_group, location):
-        workflow_name = '12HourHeartBeat'
+        workflow_name = "12HourHeartBeat"
         # workflow_name1 = workflow_name+'1'
-        workflow=azure.mgmt.logic.models.Workflow(
-                location=location,
-                definition={
-                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-                    "contentVersion": "1.0.0.0",
-                    "parameters": {},
-                    "triggers": {},
-                    "actions": {},
-                    "outputs": {}
-                }
-            )
-        self.logic_client.workflows.create_or_update(resource_group.name,workflow_name,workflow)
+        workflow = azure.mgmt.logic.models.Workflow(
+            location=location,
+            definition={
+                "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                "contentVersion": "1.0.0.0",
+                "parameters": {},
+                "triggers": {},
+                "actions": {},
+                "outputs": {},
+            },
+        )
+        self.logic_client.workflows.create_or_update(resource_group.name, workflow_name, workflow)
 
         self.logic_client.workflows.get(resource_group.name, workflow_name)
 
@@ -44,5 +42,5 @@ class TestMgmtApps(AzureMgmtRecordedTestCase):
 
 
 # ------------------------------------------------------------------------------
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

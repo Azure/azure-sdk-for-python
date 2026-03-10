@@ -21,8 +21,8 @@
 
 # pylint: disable=protected-access
 
-"""Internal class for global endpoint manager for circuit breaker.
-"""
+"""Internal class for global endpoint manager for circuit breaker."""
+
 import logging
 import os
 
@@ -37,6 +37,7 @@ from azure.cosmos._constants import _Constants as Constants
 
 logger = logging.getLogger("azure.cosmos._GlobalPartitionEndpointManagerForCircuitBreakerCore")
 WARN_LEVEL_LOGGING_THRESHOLD = 10
+
 
 class _GlobalPartitionEndpointManagerForCircuitBreakerCore(object):
     """
@@ -61,66 +62,67 @@ class _GlobalPartitionEndpointManagerForCircuitBreakerCore(object):
         if not request:
             return False
 
-        circuit_breaker_enabled = os.environ.get(Constants.CIRCUIT_BREAKER_ENABLED_CONFIG,
-                                                 Constants.CIRCUIT_BREAKER_ENABLED_CONFIG_DEFAULT).lower() == "true"
+        circuit_breaker_enabled = (
+            os.environ.get(
+                Constants.CIRCUIT_BREAKER_ENABLED_CONFIG, Constants.CIRCUIT_BREAKER_ENABLED_CONFIG_DEFAULT
+            ).lower()
+            == "true"
+        )
         if not circuit_breaker_enabled and self.client._global_endpoint_manager is not None:
             if self.client._global_endpoint_manager._database_account_cache is not None:
-                circuit_breaker_enabled = self.client._global_endpoint_manager._database_account_cache._EnablePerPartitionFailoverBehavior is True # pylint: disable=line-too-long
+                circuit_breaker_enabled = (
+                    self.client._global_endpoint_manager._database_account_cache._EnablePerPartitionFailoverBehavior
+                    is True
+                )  # pylint: disable=line-too-long
         if not circuit_breaker_enabled:
             return False
 
-        if (not self.location_cache.can_use_multiple_write_locations_for_request(request)
-                and documents._OperationType.IsWriteOperation(request.operation_type)): # pylint: disable=protected-access
+        if not self.location_cache.can_use_multiple_write_locations_for_request(
+            request
+        ) and documents._OperationType.IsWriteOperation(
+            request.operation_type
+        ):  # pylint: disable=protected-access
             return False
 
-        if (request.resource_type not in (ResourceType.Document, ResourceType.PartitionKey)
-             or request.operation_type == documents._OperationType.QueryPlan): # pylint: disable=protected-access
+        if (
+            request.resource_type not in (ResourceType.Document, ResourceType.PartitionKey)
+            or request.operation_type == documents._OperationType.QueryPlan
+        ):  # pylint: disable=protected-access
             return False
 
         # this is for certain cross partition queries and read all items where we cannot discern partition information
-        if (HttpHeaders.PartitionKeyRangeID not in request.headers
-                and HttpHeaders.PartitionKey not in request.headers):
+        if HttpHeaders.PartitionKeyRangeID not in request.headers and HttpHeaders.PartitionKey not in request.headers:
             return False
 
         return True
 
-    def record_failure(
-            self,
-            request: RequestObject,
-            pk_range_wrapper: PartitionKeyRangeWrapper
-    ) -> None:
-        #convert operation_type to EndpointOperationType
-        endpoint_operation_type = (EndpointOperationType.WriteType if (
-            documents._OperationType.IsWriteOperation(request.operation_type)) # pylint: disable=protected-access
-            else EndpointOperationType.ReadType)
+    def record_failure(self, request: RequestObject, pk_range_wrapper: PartitionKeyRangeWrapper) -> None:
+        # convert operation_type to EndpointOperationType
+        endpoint_operation_type = (
+            EndpointOperationType.WriteType
+            if (documents._OperationType.IsWriteOperation(request.operation_type))  # pylint: disable=protected-access
+            else EndpointOperationType.ReadType
+        )
         location = self.location_cache.get_location_from_endpoint(str(request.location_endpoint_to_route))
         self.partition_health_tracker.add_failure(pk_range_wrapper, endpoint_operation_type, str(location))
 
-    def check_stale_partition_info(
-            self,
-            request: RequestObject,
-            pk_range_wrapper: PartitionKeyRangeWrapper
-    ) -> None:
+    def check_stale_partition_info(self, request: RequestObject, pk_range_wrapper: PartitionKeyRangeWrapper) -> None:
         self.partition_health_tracker.check_stale_partition_info(request, pk_range_wrapper)
 
-
     def add_excluded_locations_to_request(
-            self,
-            request: RequestObject,
-            pk_range_wrapper: PartitionKeyRangeWrapper
+        self, request: RequestObject, pk_range_wrapper: PartitionKeyRangeWrapper
     ) -> RequestObject:
         request.set_excluded_locations_from_circuit_breaker(
             self.partition_health_tracker.get_unhealthy_locations(request, pk_range_wrapper)
         )
         return request
 
-    def record_success(
-            self,
-            request: RequestObject,
-            pk_range_wrapper: PartitionKeyRangeWrapper
-    ) -> None:
-        #convert operation_type to either Read or Write
-        endpoint_operation_type = EndpointOperationType.WriteType if (
-            documents._OperationType.IsWriteOperation(request.operation_type)) else EndpointOperationType.ReadType # pylint: disable=protected-access
+    def record_success(self, request: RequestObject, pk_range_wrapper: PartitionKeyRangeWrapper) -> None:
+        # convert operation_type to either Read or Write
+        endpoint_operation_type = (
+            EndpointOperationType.WriteType
+            if (documents._OperationType.IsWriteOperation(request.operation_type))
+            else EndpointOperationType.ReadType
+        )  # pylint: disable=protected-access
         location = self.location_cache.get_location_from_endpoint(str(request.location_endpoint_to_route))
         self.partition_health_tracker.add_success(pk_range_wrapper, endpoint_operation_type, location)

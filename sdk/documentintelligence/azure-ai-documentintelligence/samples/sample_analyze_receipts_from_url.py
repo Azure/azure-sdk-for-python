@@ -21,7 +21,7 @@ USAGE:
 
     Set the environment variables with your own values before running the sample:
     1) DOCUMENTINTELLIGENCE_ENDPOINT - the endpoint to your Document Intelligence resource.
-	2) DOCUMENTINTELLIGENCE_API_KEY - your Document Intelligence API key.
+        2) DOCUMENTINTELLIGENCE_API_KEY - your Document Intelligence API key.
 """
 
 import os

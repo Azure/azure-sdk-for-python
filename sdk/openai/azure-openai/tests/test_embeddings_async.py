@@ -14,10 +14,7 @@ class TestEmbeddingsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")])
     async def test_embedding(self, client_async, api_type, api_version, **kwargs):
 
         embedding = await client_async.embeddings.create(input="hello world", **kwargs)
@@ -32,10 +29,7 @@ class TestEmbeddingsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")])
     async def test_embedding_batched(self, client_async, api_type, api_version, **kwargs):
 
         embedding = await client_async.embeddings.create(input=["hello world", "second input"], **kwargs)
@@ -50,10 +44,7 @@ class TestEmbeddingsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")])
     async def test_embedding_user(self, client_async, api_type, api_version, **kwargs):
 
         embedding = await client_async.embeddings.create(input="hello world", user="krista", **kwargs)
@@ -68,13 +59,12 @@ class TestEmbeddingsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")])
     async def test_embedding_dimensions(self, client_async, api_type, api_version, **kwargs):
 
-        embedding = await client_async.embeddings.create(input="hello world", dimensions=1, model="text-embedding-3-small")
+        embedding = await client_async.embeddings.create(
+            input="hello world", dimensions=1, model="text-embedding-3-small"
+        )
         assert embedding.object == "list"
         assert embedding.model
         assert embedding.usage.prompt_tokens is not None
@@ -86,13 +76,12 @@ class TestEmbeddingsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")])
     async def test_embedding_encoding_format(self, client_async, api_type, api_version, **kwargs):
 
-        embedding = await client_async.embeddings.create(input="hello world", encoding_format="base64", model="text-embedding-3-small")
+        embedding = await client_async.embeddings.create(
+            input="hello world", encoding_format="base64", model="text-embedding-3-small"
+        )
         assert embedding.object == "list"
         assert embedding.model
         assert embedding.usage.prompt_tokens is not None

@@ -1,8 +1,8 @@
 # The MIT License (MIT)
 # Copyright (c) 2024 Microsoft Corporation
 
-"""Internal class for multi execution context aggregator implementation in the Azure Cosmos database service.
-"""
+"""Internal class for multi execution context aggregator implementation in the Azure Cosmos database service."""
+
 from typing import Union
 from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context import document_producer
@@ -22,11 +22,11 @@ class _Placeholders:
 
 def _retrieve_component_scores(drained_results):
     component_scores_list = []
-    for _ in drained_results[0]['payload']['componentScores']:
+    for _ in drained_results[0]["payload"]["componentScores"]:
         component_scores_list.append([])
     undefined_components = [-999999] * len(component_scores_list)
     for index, result in enumerate(drained_results):
-        component_scores = result['payload']['componentScores']
+        component_scores = result["payload"]["componentScores"]
         # Another small fix while backend changes are released to deal with empty component score scenarios
         if len(component_scores) == 0:
             component_scores = undefined_components
@@ -44,7 +44,7 @@ def _compute_rrf_scores(ranks: list[list[int]], component_weights: list[Union[in
             rrf_score += component_weights[component_index] / (RRF_CONSTANT + ranks[component_index][index])
 
         # Add the score to the item to be returned
-        result['Score'] = rrf_score
+        result["Score"] = rrf_score
 
 
 def _compute_ranks(component_scores):
@@ -63,7 +63,7 @@ def _compute_ranks(component_scores):
 
 
 def _coalesce_duplicate_rids(query_results):
-    unique_rids = {d['_rid']: d for d in query_results}
+    unique_rids = {d["_rid"]: d for d in query_results}
     return list(unique_rids.values())
 
 
@@ -81,37 +81,37 @@ def _drain_and_coalesce_results(document_producers_to_drain):
 
 def _rewrite_query_infos(hybrid_search_query_info, global_statistics, parameters=None):
     rewritten_query_infos = []
-    for query_info in hybrid_search_query_info['componentQueryInfos']:
-        assert query_info['orderBy']
-        assert query_info['hasNonStreamingOrderBy']
+    for query_info in hybrid_search_query_info["componentQueryInfos"]:
+        assert query_info["orderBy"]
+        assert query_info["hasNonStreamingOrderBy"]
         rewritten_order_by_expressions = []
-        for order_by_expression in query_info['orderByExpressions']:
+        for order_by_expression in query_info["orderByExpressions"]:
             rewritten_order_by_expressions.append(
-                _format_component_query_workaround(order_by_expression, global_statistics,
-                                                   len(hybrid_search_query_info[
-                                                           'componentQueryInfos'])))
+                _format_component_query_workaround(
+                    order_by_expression, global_statistics, len(hybrid_search_query_info["componentQueryInfos"])
+                )
+            )
 
-        query_info['rewrittenQuery'] = _attach_parameters(query_info['rewrittenQuery'], parameters)
-        rewritten_query = _format_component_query_workaround(query_info['rewrittenQuery'],
-                                                             global_statistics,
-                                                             len(hybrid_search_query_info[
-                                                                     'componentQueryInfos']))
+        query_info["rewrittenQuery"] = _attach_parameters(query_info["rewrittenQuery"], parameters)
+        rewritten_query = _format_component_query_workaround(
+            query_info["rewrittenQuery"], global_statistics, len(hybrid_search_query_info["componentQueryInfos"])
+        )
         new_query_info = query_info.copy()
-        new_query_info['orderByExpressions'] = rewritten_order_by_expressions
-        new_query_info['rewrittenQuery'] = rewritten_query
+        new_query_info["orderByExpressions"] = rewritten_order_by_expressions
+        new_query_info["rewrittenQuery"] = rewritten_query
         rewritten_query_infos.append(new_query_info)
     return rewritten_query_infos
 
 
 def _format_component_query(format_string, global_statistics):
     format_string = format_string.replace(_Placeholders.formattable_order_by, "true")
-    query = format_string.replace(_Placeholders.total_document_count,
-                                  str(global_statistics['documentCount']))
+    query = format_string.replace(_Placeholders.total_document_count, str(global_statistics["documentCount"]))
 
-    for i in range(len(global_statistics['fullTextStatistics'])):
-        full_text_statistics = global_statistics['fullTextStatistics'][i]
-        query = query.replace(_Placeholders.formattable_total_word_count.format(i),
-                              str(full_text_statistics['totalWordCount']))
+    for i in range(len(global_statistics["fullTextStatistics"])):
+        full_text_statistics = global_statistics["fullTextStatistics"][i]
+        query = query.replace(
+            _Placeholders.formattable_total_word_count.format(i), str(full_text_statistics["totalWordCount"])
+        )
         hit_counts_array = f"[{','.join(map(str, full_text_statistics['hitCounts']))}]"
         query = query.replace(_Placeholders.formattable_hit_counts_array.format(i), hit_counts_array)
 
@@ -122,11 +122,10 @@ def _format_component_query_workaround(format_string, global_statistics, compone
     # TODO: remove this method once the fix is live and switch back to one above
     parameters = None
     if isinstance(format_string, dict):
-        parameters = format_string.get('parameters', None)
-        format_string = format_string['query']
+        parameters = format_string.get("parameters", None)
+        format_string = format_string["query"]
     format_string = format_string.replace(_Placeholders.formattable_order_by, "true")
-    query = format_string.replace(_Placeholders.total_document_count,
-                                  str(global_statistics['documentCount']))
+    query = format_string.replace(_Placeholders.total_document_count, str(global_statistics["documentCount"]))
     statistics_index = 0
     for component_index in range(component_count):
         total_word_count_placeholder = _Placeholders.formattable_total_word_count.format(component_index)
@@ -135,8 +134,8 @@ def _format_component_query_workaround(format_string, global_statistics, compone
         if total_word_count_placeholder not in query:
             continue
 
-        full_text_statistics = global_statistics['fullTextStatistics'][statistics_index]
-        query = query.replace(total_word_count_placeholder, str(full_text_statistics['totalWordCount']))
+        full_text_statistics = global_statistics["fullTextStatistics"][statistics_index]
+        query = query.replace(total_word_count_placeholder, str(full_text_statistics["totalWordCount"]))
 
         hit_counts_array = f"[{','.join(map(str, full_text_statistics['hitCounts']))}]"
         query = query.replace(hit_counts_array_placeholder, hit_counts_array)
@@ -178,8 +177,16 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
     by the user.
     """
 
-    def __init__(self, client, resource_link, options,
-                 partitioned_query_execution_info, hybrid_search_query_info, response_hook, raw_response_hook):
+    def __init__(
+        self,
+        client,
+        resource_link,
+        options,
+        partitioned_query_execution_info,
+        hybrid_search_query_info,
+        response_hook,
+        raw_response_hook,
+    ):
         super(_HybridSearchContextAggregator, self).__init__(client, options)
 
         # use the routing provider in the client
@@ -205,10 +212,10 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
 
     def _run_hybrid_search(self):  # pylint: disable=too-many-branches, too-many-statements
         # Check if we need to run global statistics queries, and if so do for every partition in the container
-        if self._hybrid_search_query_info['requiresGlobalStatistics']:
+        if self._hybrid_search_query_info["requiresGlobalStatistics"]:
             target_partition_key_ranges = self._get_target_partition_key_range(target_all_ranges=True)
             global_statistics_doc_producers = []
-            global_statistics_query = self._attach_parameters(self._hybrid_search_query_info['globalStatisticsQuery'])
+            global_statistics_query = self._attach_parameters(self._hybrid_search_query_info["globalStatisticsQuery"])
             partitioned_query_execution_context_list = []
             for partition_key_target_range in target_partition_key_ranges:
                 # create a document producer for each partition key range
@@ -221,7 +228,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
                         self._document_producer_comparator,
                         self._options,
                         self._response_hook,
-                        self._raw_response_hook
+                        self._raw_response_hook,
                     )
                 )
 
@@ -233,8 +240,9 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
                 except exceptions.CosmosHttpResponseError as e:
                     if exceptions._partition_range_is_gone(e):
                         # repairing document producer context on partition split
-                        global_statistics_doc_producers = self._repair_document_producer(global_statistics_query,
-                                                                                         target_all_ranges=True)
+                        global_statistics_doc_producers = self._repair_document_producer(
+                            global_statistics_query, target_all_ranges=True
+                        )
                     else:
                         raise
                 except StopIteration:
@@ -245,10 +253,11 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
 
         # re-write the component queries if needed
         if self._aggregated_global_statistics:
-            rewritten_query_infos = _rewrite_query_infos(self._hybrid_search_query_info,
-                                                         self._aggregated_global_statistics, self._parameters)
+            rewritten_query_infos = _rewrite_query_infos(
+                self._hybrid_search_query_info, self._aggregated_global_statistics, self._parameters
+            )
         else:
-            rewritten_query_infos = self._hybrid_search_query_info['componentQueryInfos']
+            rewritten_query_infos = self._hybrid_search_query_info["componentQueryInfos"]
 
         component_query_execution_list = []
         # for each of the query infos, run the component queries for the target partitions
@@ -257,17 +266,17 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
             for pk_range in target_partition_key_ranges:
                 # If query was given parameters we must add them back in
                 if self._parameters:
-                    rewritten_query['rewrittenQuery'] = self._attach_parameters(rewritten_query['rewrittenQuery'])
+                    rewritten_query["rewrittenQuery"] = self._attach_parameters(rewritten_query["rewrittenQuery"])
                 component_query_execution_list.append(
                     document_producer._DocumentProducer(
                         pk_range,
                         self._client,
                         self._resource_link,
-                        rewritten_query['rewrittenQuery'],
+                        rewritten_query["rewrittenQuery"],
                         self._document_producer_comparator,
                         self._options,
                         self._response_hook,
-                        self._raw_response_hook
+                        self._raw_response_hook,
                     )
                 )
         # verify all document producers have items/ no splits
@@ -281,8 +290,9 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
                     component_query_results = []
                     # repairing document producer context on partition split
                     for rewritten_query in rewritten_query_infos:
-                        component_query_results.extend(self._repair_document_producer(
-                            rewritten_query['rewrittenQuery']))
+                        component_query_results.extend(
+                            self._repair_document_producer(rewritten_query["rewrittenQuery"])
+                        )
                 else:
                     raise
             except StopIteration:
@@ -296,14 +306,14 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
             return
 
         # Get the Components weight if any
-        if self._hybrid_search_query_info.get('componentWeights'):
-            component_weights = self._hybrid_search_query_info['componentWeights']
+        if self._hybrid_search_query_info.get("componentWeights"):
+            component_weights = self._hybrid_search_query_info["componentWeights"]
         else:
             # If no weights are provided, we assume all components have equal weight
-            component_weights = [1.0] * len(self._hybrid_search_query_info['componentQueryInfos'])
+            component_weights = [1.0] * len(self._hybrid_search_query_info["componentQueryInfos"])
 
         # Sort drained results by _rid
-        drained_results.sort(key=lambda x: x['_rid'])
+        drained_results.sort(key=lambda x: x["_rid"])
 
         # Compose component scores matrix, where each tuple is (score, index)
         component_scores = _retrieve_component_scores(drained_results)
@@ -312,8 +322,8 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         for index, score_tuples in enumerate(component_scores):
             # Ordering of the component query is based on if the weight is negative or positive
             # A positive weight ordering means descending order, a negative weight ordering means ascending order
-            ordering = self._hybrid_search_query_info['componentQueryInfos'][index]['orderBy'][0]
-            comparison_factor = not ordering.lower() == 'ascending'
+            ordering = self._hybrid_search_query_info["componentQueryInfos"][index]["orderBy"][0]
+            comparison_factor = not ordering.lower() == "ascending"
             #  pylint: disable=cell-var-from-loop
             score_tuples.sort(key=lambda x: x[0], reverse=comparison_factor)
 
@@ -324,7 +334,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         _compute_rrf_scores(ranks, component_weights, drained_results)
 
         # Finally, sort on the RRF scores to build the final result to return
-        drained_results.sort(key=lambda x: x['Score'], reverse=True)
+        drained_results.sort(key=lambda x: x["Score"], reverse=True)
         self._format_final_results(drained_results)
 
     def _attach_parameters(self, query):
@@ -347,51 +357,54 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         return {"query": query, "parameters": self._parameters}
 
     def _format_final_results(self, results):
-        skip = self._hybrid_search_query_info['skip'] or 0
-        take = self._hybrid_search_query_info['take']
-        self._final_results = results[skip:skip + take]
+        skip = self._hybrid_search_query_info["skip"] or 0
+        take = self._hybrid_search_query_info["take"]
+        self._final_results = results[skip : skip + take]
         self._final_results.reverse()
         self._final_results = [item["payload"]["payload"] for item in self._final_results]
 
     def _rewrite_query_infos(self):
         rewritten_query_infos = []
-        for query_info in self._hybrid_search_query_info['componentQueryInfos']:
-            assert query_info['orderBy']
-            assert query_info['hasNonStreamingOrderBy']
+        for query_info in self._hybrid_search_query_info["componentQueryInfos"]:
+            assert query_info["orderBy"]
+            assert query_info["hasNonStreamingOrderBy"]
             rewritten_order_by_expressions = []
-            for order_by_expression in query_info['orderByExpressions']:
+            for order_by_expression in query_info["orderByExpressions"]:
                 rewritten_order_by_expressions.append(
-                    _format_component_query_workaround(order_by_expression, self._aggregated_global_statistics,
-                                                       len(self._hybrid_search_query_info[
-                                                               'componentQueryInfos'])))
-            query_info['rewrittenQuery'] = _attach_parameters(query_info['rewrittenQuery'], self._parameters)
-            rewritten_query = _format_component_query_workaround(query_info['rewrittenQuery'],
-                                                                 self._aggregated_global_statistics,
-                                                                 len(self._hybrid_search_query_info[
-                                                                         'componentQueryInfos']))
+                    _format_component_query_workaround(
+                        order_by_expression,
+                        self._aggregated_global_statistics,
+                        len(self._hybrid_search_query_info["componentQueryInfos"]),
+                    )
+                )
+            query_info["rewrittenQuery"] = _attach_parameters(query_info["rewrittenQuery"], self._parameters)
+            rewritten_query = _format_component_query_workaround(
+                query_info["rewrittenQuery"],
+                self._aggregated_global_statistics,
+                len(self._hybrid_search_query_info["componentQueryInfos"]),
+            )
             new_query_info = query_info.copy()
-            new_query_info['orderByExpressions'] = rewritten_order_by_expressions
-            new_query_info['rewrittenQuery'] = rewritten_query
+            new_query_info["orderByExpressions"] = rewritten_order_by_expressions
+            new_query_info["rewrittenQuery"] = rewritten_query
             rewritten_query_infos.append(new_query_info)
         return rewritten_query_infos
 
     def _aggregate_global_statistics(self, global_statistics_doc_producers):
-        self._aggregated_global_statistics = {"documentCount": 0,
-                                              "fullTextStatistics": None}
+        self._aggregated_global_statistics = {"documentCount": 0, "fullTextStatistics": None}
         for dp in global_statistics_doc_producers:
-            self._aggregated_global_statistics["documentCount"] += dp._cur_item['documentCount']
+            self._aggregated_global_statistics["documentCount"] += dp._cur_item["documentCount"]
             if self._aggregated_global_statistics["fullTextStatistics"] is None:
-                self._aggregated_global_statistics["fullTextStatistics"] = dp._cur_item['fullTextStatistics']
+                self._aggregated_global_statistics["fullTextStatistics"] = dp._cur_item["fullTextStatistics"]
             else:
                 all_text_statistics = self._aggregated_global_statistics["fullTextStatistics"]
-                curr_text_statistics = dp._cur_item['fullTextStatistics']
+                curr_text_statistics = dp._cur_item["fullTextStatistics"]
                 assert len(all_text_statistics) == len(curr_text_statistics)
                 for i, all_stats in enumerate(all_text_statistics):
                     curr_stats = curr_text_statistics[i]
-                    assert len(all_stats['hitCounts']) == len(curr_stats['hitCounts'])
-                    all_stats['totalWordCount'] += curr_stats['totalWordCount']
-                    for j in range(len(all_stats['hitCounts'])):
-                        all_stats['hitCounts'][j] += curr_stats['hitCounts'][j]
+                    assert len(all_stats["hitCounts"]) == len(curr_stats["hitCounts"])
+                    all_stats["totalWordCount"] += curr_stats["totalWordCount"]
+                    for j in range(len(all_stats["hitCounts"])):
+                        all_stats["hitCounts"][j] += curr_stats["hitCounts"][j]
 
     def __next__(self):
         """Returns the next item result.
@@ -426,7 +439,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
                     self._document_producer_comparator,
                     self._options,
                     self._response_hook,
-                    self._raw_response_hook
+                    self._raw_response_hook,
                 )
             )
 
@@ -446,5 +459,5 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         return self._routing_provider.get_overlapping_ranges(
             self._resource_link,
             [routing_range.Range.ParseFromDict(range_as_dict) for range_as_dict in query_ranges],
-            self._options
+            self._options,
         )

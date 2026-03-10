@@ -34,17 +34,17 @@ class OrderStatus(Model):
     """
 
     _validation = {
-        'status': {'required': True},
-        'update_date_time': {'readonly': True},
+        "status": {"required": True},
+        "update_date_time": {"readonly": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'update_date_time': {'key': 'updateDateTime', 'type': 'iso-8601'},
-        'comments': {'key': 'comments', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
+        "update_date_time": {"key": "updateDateTime", "type": "iso-8601"},
+        "comments": {"key": "comments", "type": "str"},
     }
 
-    def __init__(self, *, status, comments: str=None, **kwargs) -> None:
+    def __init__(self, *, status, comments: str = None, **kwargs) -> None:
         super(OrderStatus, self).__init__(**kwargs)
         self.status = status
         self.update_date_time = None

@@ -30,10 +30,8 @@ def sample_send_request():
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
-    client = DocumentModelAdministrationClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
-    
+    client = DocumentModelAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+
     # The `send_request` method can send custom HTTP requests that share the client's existing pipeline,
     # while adding convenience for endpoint construction and service API versioning.
     # Now let's use the `send_request` method to make a resource details fetching request.
@@ -49,7 +47,7 @@ def sample_send_request():
         f"The quota limit for custom neural document models is {response_body['customNeuralDocumentModelBuilds']['quota']} and the resource has"
         f"used {response_body['customNeuralDocumentModelBuilds']['used']}. The resource quota will reset on {response_body['customNeuralDocumentModelBuilds']['quotaResetDateTime']}"
     )
-    
+
     # pass with absolute url and override the API version
     request = HttpRequest(method="GET", url=f"{endpoint}/formrecognizer/info?api-version=2022-08-31")
     response = client.send_request(request)
@@ -59,7 +57,7 @@ def sample_send_request():
         f"Our resource has {response_body['customDocumentModels']['count']} custom models, "
         f"and we can have at most {response_body['customDocumentModels']['limit']} custom models."
     )
-    
+
     # override the API version to v2.1
     request = HttpRequest(method="GET", url="v2.1/custom/models?op=summary")
     response = client.send_request(request)
@@ -69,7 +67,7 @@ def sample_send_request():
         f"Our account has {response_body['summary']['count']} custom models, "
         f"and we can have at most {response_body['summary']['limit']} custom models."
     )
-    
+
     # pass with absolute url and override the API version to v2.1
     request = HttpRequest(method="GET", url=f"{endpoint}/formrecognizer/v2.1/custom/models?op=summary")
     response = client.send_request(request)
@@ -86,10 +84,8 @@ def sample_send_request_v2():
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
     # The default FormTrainingClient API version is v2.1
-    client = FormTrainingClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
-    
+    client = FormTrainingClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+
     # The `send_request` method can send custom HTTP requests that share the client's existing pipeline,
     # while adding convenience for endpoint construction and service API versioning.
     # Now let's use the `send_request` method to make a resource details fetching request.
@@ -103,7 +99,7 @@ def sample_send_request_v2():
         f"Our account has {response_body['summary']['count']} custom models, "
         f"and we can have at most {response_body['summary']['limit']} custom models."
     )
-    
+
     # pass with absolute url and override the API version
     request = HttpRequest(method="GET", url=f"{endpoint}/formrecognizer/v2.0/custom/models?op=summary")
     response = client.send_request(request)
@@ -113,7 +109,7 @@ def sample_send_request_v2():
         f"Our account has {response_body['summary']['count']} custom models, "
         f"and we can have at most {response_body['summary']['limit']} custom models."
     )
-    
+
     # override the API version to 2023-07-31
     request = HttpRequest(method="GET", url=f"{endpoint}/formrecognizer/info?api-version=2023-07-31")
     response = client.send_request(request)

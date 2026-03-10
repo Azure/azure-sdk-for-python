@@ -31,36 +31,31 @@ class TestFarmBeatsSatelliteJob(FarmBeatsAsyncTestCase):
         client = self.create_client(agrifood_endpoint=agrifood_endpoint)
 
         # Create party
-        party = await client.parties.create_or_update(
-            party_id=party_id,
-            party={}
-        )
+        party = await client.parties.create_or_update(party_id=party_id, party={})
 
         # Create boundary if not exists
         boundary = await client.boundaries.create_or_update(
             party_id=party_id,
             boundary_id=boundary_id,
             boundary={
-                "geometry":
-                {
+                "geometry": {
                     "type": "Polygon",
-                    "coordinates":
+                    "coordinates": [
                         [
-                            [
-                                [73.70457172393799, 20.545385304358106],
-                                [73.70457172393799, 20.545385304358106],
-                                [73.70448589324951, 20.542411534243367],
-                                [73.70877742767334, 20.541688176010233],
-                                [73.71023654937744, 20.545083911372505],
-                                [73.70663166046143, 20.546992723579137],
-                                [73.70457172393799, 20.545385304358106],
-                            ]
+                            [73.70457172393799, 20.545385304358106],
+                            [73.70457172393799, 20.545385304358106],
+                            [73.70448589324951, 20.542411534243367],
+                            [73.70877742767334, 20.541688176010233],
+                            [73.71023654937744, 20.545083911372505],
+                            [73.70663166046143, 20.546992723579137],
+                            [73.70457172393799, 20.545385304358106],
                         ]
+                    ],
                 },
                 "status": "<string>",
                 "name": "<string>",
-                "description": "<string>"
-            }
+                "description": "<string>",
+            },
         )
 
         # Create satellite job
@@ -73,18 +68,10 @@ class TestFarmBeatsSatelliteJob(FarmBeatsAsyncTestCase):
                 "startDateTime": start_date_time,
                 "provider": "Microsoft",
                 "source": "Sentinel_2_L2A",
-                "data": {
-                    "imageNames": [
-                        "NDVI"
-                    ],
-                    "imageFormats": [
-                        "TIF"
-                    ],
-                    "imageResolution": [10]
-                },
+                "data": {"imageNames": ["NDVI"], "imageFormats": ["TIF"], "imageResolution": [10]},
                 "name": "<string>",
-                "description": "<string>"
-            }
+                "description": "<string>",
+            },
         )
         await satellite_job_poller.result()
 
@@ -107,7 +94,7 @@ class TestFarmBeatsSatelliteJob(FarmBeatsAsyncTestCase):
         assert len(scenes_list) == 12
 
         # Download scene file
-        file_path = parse_qs(urlparse(scenes_list[0]["imageFiles"][0]["fileLink"]).query)['filePath'][0]
+        file_path = parse_qs(urlparse(scenes_list[0]["imageFiles"][0]["fileLink"]).query)["filePath"][0]
         file_iter = await client.scenes.download(file_path=file_path)
         file = list([byte async for byte in file_iter])
         assert len(file) == 3

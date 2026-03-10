@@ -54,9 +54,7 @@ class TestTextAnalysisCase_NewPIIThresholds(TestTextAnalysis):
         email_override = ConfidenceScoreThresholdOverride(value=0.9, entity="Email")
         confidence_threshold = ConfidenceScoreThreshold(default=0.3, overrides=[ssn_override, email_override])
         # Parameters
-        parameters = PiiActionContent(
-            pii_categories=["All"], confidence_score_threshold=confidence_threshold
-        )
+        parameters = PiiActionContent(pii_categories=["All"], confidence_score_threshold=confidence_threshold)
 
         body = TextPiiEntitiesRecognitionInput(text_input=text_input, action_content=parameters)
 

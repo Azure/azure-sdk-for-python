@@ -7,13 +7,20 @@ from workload_configs import *
 
 from azure.cosmos import CosmosClient, documents
 
+
 def run_workload(client_id, client_logger):
     connectionPolicy = documents.ConnectionPolicy()
     connectionPolicy.UseMultipleWriteLocations = USE_MULTIPLE_WRITABLE_LOCATIONS
-    with CosmosClient(COSMOS_URI, COSMOS_CREDENTIAL, connection_policy=connectionPolicy,
-                      preferred_locations=PREFERRED_LOCATIONS, excluded_locations=CLIENT_EXCLUDED_LOCATIONS,
-                      enable_diagnostics_logging=True, logger=client_logger,
-                      user_agent=get_user_agent(client_id)) as client:
+    with CosmosClient(
+        COSMOS_URI,
+        COSMOS_CREDENTIAL,
+        connection_policy=connectionPolicy,
+        preferred_locations=PREFERRED_LOCATIONS,
+        excluded_locations=CLIENT_EXCLUDED_LOCATIONS,
+        enable_diagnostics_logging=True,
+        logger=client_logger,
+        user_agent=get_user_agent(client_id),
+    ) as client:
         db = client.get_database_client(COSMOS_DATABASE)
         cont = db.get_container_client(COSMOS_CONTAINER)
         time.sleep(1)

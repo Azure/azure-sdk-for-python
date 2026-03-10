@@ -32,9 +32,7 @@ def _parse_operation_id(operation_location_header: str) -> str:
 
     match = re.search(regex, operation_location_header)
     if not match:
-        raise ValueError(
-            f"Could not extract operation ID from: {operation_location_header}"
-        )
+        raise ValueError(f"Could not extract operation ID from: {operation_location_header}")
 
     return match.group(1)
 

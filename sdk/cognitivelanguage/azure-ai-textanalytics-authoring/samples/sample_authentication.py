@@ -41,7 +41,7 @@ def sample_authentication_api_key():
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     key = os.environ["AZURE_TEXT_KEY"]
 
-    text_client = TextAuthoringClient(endpoint, AzureKeyCredential(key)) # pylint:disable=unused-variable
+    text_client = TextAuthoringClient(endpoint, AzureKeyCredential(key))  # pylint:disable=unused-variable
     # [END create_text_client_with_key]
 
 
@@ -56,7 +56,7 @@ def sample_authentication_with_aad():
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     credential = DefaultAzureCredential()
 
-    text_client = TextAuthoringClient(endpoint, credential=credential) # pylint:disable=unused-variable
+    text_client = TextAuthoringClient(endpoint, credential=credential)  # pylint:disable=unused-variable
 
 
 def main():

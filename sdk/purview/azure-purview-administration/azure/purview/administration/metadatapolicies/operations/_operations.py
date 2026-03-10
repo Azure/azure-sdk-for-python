@@ -10,7 +10,13 @@ from json import loads as _loads
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
@@ -24,7 +30,7 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
 
-    T = TypeVar('T')
+    T = TypeVar("T")
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
@@ -153,6 +159,7 @@ def build_metadata_policy_get_request(
         **kwargs
     )
 
+
 # fmt: on
 class MetadataRolesOperations(object):
     """MetadataRolesOperations operations.
@@ -174,8 +181,7 @@ class MetadataRolesOperations(object):
 
     @distributed_trace
     def list(
-        self,
-        **kwargs  # type: Any
+        self, **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Any]
         """Lists roles for Purview Account.
@@ -236,36 +242,41 @@ class MetadataRolesOperations(object):
                     ]
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_metadata_roles_list_request(
-                    template_url=self.list.metadata['url'],
+                    template_url=self.list.metadata["url"],
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                
+
                 request = build_metadata_roles_list_request(
                     template_url=next_link,
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.method = "GET"
             return request
@@ -289,11 +300,11 @@ class MetadataRolesOperations(object):
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list.metadata = {'url': '/metadataRoles'}  # type: ignore
+    list.metadata = {"url": "/metadataRoles"}  # type: ignore
+
+
 class MetadataPolicyOperations(object):
     """MetadataPolicyOperations operations.
 
@@ -314,8 +325,7 @@ class MetadataPolicyOperations(object):
 
     @distributed_trace
     def list_all(
-        self,
-        **kwargs  # type: Any
+        self, **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Any]
         """List or Get metadata policies.
@@ -393,40 +403,45 @@ class MetadataPolicyOperations(object):
                     ]
                 }
         """
-        collection_name = kwargs.pop('collection_name', None)  # type: Optional[str]
+        collection_name = kwargs.pop("collection_name", None)  # type: Optional[str]
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_metadata_policy_list_all_request(
                     collection_name=collection_name,
-                    template_url=self.list_all.metadata['url'],
+                    template_url=self.list_all.metadata["url"],
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                
+
                 request = build_metadata_policy_list_all_request(
                     collection_name=collection_name,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.method = "GET"
             return request
@@ -450,11 +465,9 @@ class MetadataPolicyOperations(object):
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list_all.metadata = {'url': '/metadataPolicies'}  # type: ignore
+    list_all.metadata = {"url": "/metadataPolicies"}  # type: ignore
 
     @distributed_trace
     def update(
@@ -593,13 +606,11 @@ class MetadataPolicyOperations(object):
                     "version": 0  # Optional. The version of policy.
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
             json = body
@@ -610,10 +621,10 @@ class MetadataPolicyOperations(object):
             policy_id=policy_id,
             content_type=content_type,
             json=json,
-            template_url=self.update.metadata['url'],
+            template_url=self.update.metadata["url"],
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
@@ -634,8 +645,7 @@ class MetadataPolicyOperations(object):
 
         return deserialized
 
-    update.metadata = {'url': '/metadataPolicies/{policyId}'}  # type: ignore
-
+    update.metadata = {"url": "/metadataPolicies/{policyId}"}  # type: ignore
 
     @distributed_trace
     def get(
@@ -713,19 +723,16 @@ class MetadataPolicyOperations(object):
                     "version": 0  # Optional. The version of policy.
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_metadata_policy_get_request(
             policy_id=policy_id,
-            template_url=self.get.metadata['url'],
+            template_url=self.get.metadata["url"],
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
@@ -746,5 +753,4 @@ class MetadataPolicyOperations(object):
 
         return deserialized
 
-    get.metadata = {'url': '/metadataPolicies/{policyId}'}  # type: ignore
-
+    get.metadata = {"url": "/metadataPolicies/{policyId}"}  # type: ignore

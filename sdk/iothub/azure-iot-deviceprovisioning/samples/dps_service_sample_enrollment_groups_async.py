@@ -35,9 +35,7 @@ class EnrollmentGroupSamples(object):
         # Instantiate a DPS Service Client using a connection string
         from azure.iot.deviceprovisioning.aio import DeviceProvisioningClient
 
-        dps_service_client = DeviceProvisioningClient.from_connection_string(
-            self.connection_string
-        )
+        dps_service_client = DeviceProvisioningClient.from_connection_string(self.connection_string)
 
         # Create an enrollment group object with "SymmetricKey" attestation mechanism
         enrollment_group = {
@@ -55,9 +53,7 @@ class EnrollmentGroupSamples(object):
         # Instantiate a DPS Service Client using a connection string
         from azure.iot.deviceprovisioning.aio import DeviceProvisioningClient
 
-        dps_service_client = DeviceProvisioningClient.from_connection_string(
-            self.connection_string
-        )
+        dps_service_client = DeviceProvisioningClient.from_connection_string(self.connection_string)
 
         # Load certificate contents from file
         certificate = open(self.x509_cert_path, "rt", encoding="utf-8")
@@ -85,14 +81,10 @@ class EnrollmentGroupSamples(object):
         # Instantiate a DPS Service Client using a connection string
         from azure.iot.deviceprovisioning.aio import DeviceProvisioningClient
 
-        dps_service_client = DeviceProvisioningClient.from_connection_string(
-            self.connection_string
-        )
+        dps_service_client = DeviceProvisioningClient.from_connection_string(self.connection_string)
 
         # Get enrollment groups
-        await dps_service_client.enrollment_group.get(
-            id=self.symmetric_enrollment_group_id
-        )
+        await dps_service_client.enrollment_group.get(id=self.symmetric_enrollment_group_id)
 
         await dps_service_client.enrollment_group.get(id=self.x509_enrollment_group_id)
 
@@ -100,31 +92,21 @@ class EnrollmentGroupSamples(object):
         # Instantiate a DPS Service Client using a connection string
         from azure.iot.deviceprovisioning.aio import DeviceProvisioningClient
 
-        dps_service_client = DeviceProvisioningClient.from_connection_string(
-            self.connection_string
-        )
+        dps_service_client = DeviceProvisioningClient.from_connection_string(self.connection_string)
 
         # Get attestations for enrollment groups
-        await dps_service_client.enrollment_group.get_attestation_mechanism(
-            id=self.x509_enrollment_group_id
-        )
+        await dps_service_client.enrollment_group.get_attestation_mechanism(id=self.x509_enrollment_group_id)
 
-        await dps_service_client.enrollment_group.get_attestation_mechanism(
-            id=self.symmetric_enrollment_group_id
-        )
+        await dps_service_client.enrollment_group.get_attestation_mechanism(id=self.symmetric_enrollment_group_id)
 
     async def update_enrollment_group_sample_async(self):
         # Instantiate a DPS Service Client using a connection string
         from azure.iot.deviceprovisioning.aio import DeviceProvisioningClient
 
-        dps_service_client = DeviceProvisioningClient.from_connection_string(
-            self.connection_string
-        )
+        dps_service_client = DeviceProvisioningClient.from_connection_string(self.connection_string)
 
         # Get enrollment group
-        sym_enrollment = await dps_service_client.enrollment_group.get(
-            id=self.symmetric_enrollment_group_id
-        )
+        sym_enrollment = await dps_service_client.enrollment_group.get(id=self.symmetric_enrollment_group_id)
 
         # Parse eTag to ensure update
         eTag = sym_enrollment["etag"]
@@ -144,9 +126,7 @@ class EnrollmentGroupSamples(object):
         # Instantiate a DPS Service Client using a connection string
         from azure.iot.deviceprovisioning.aio import DeviceProvisioningClient
 
-        dps_service_client = DeviceProvisioningClient.from_connection_string(
-            self.connection_string
-        )
+        dps_service_client = DeviceProvisioningClient.from_connection_string(self.connection_string)
 
         # Create a few more enrollment groups in bulk
         enrollment_group_id = "bulk_enrollment_group_1"
@@ -171,33 +151,23 @@ class EnrollmentGroupSamples(object):
         bulk_operation = {"mode": "create", "enrollmentGroups": enrollment_groups}
 
         # Send create operation
-        await dps_service_client.enrollment_group.run_bulk_operation(
-            bulk_operation=bulk_operation
-        )
+        await dps_service_client.enrollment_group.run_bulk_operation(bulk_operation=bulk_operation)
 
         # Modify bulk operation properties
         bulk_operation["mode"] = "delete"
 
         # Send delete operation
-        await dps_service_client.enrollment_group.run_bulk_operation(
-            bulk_operation=bulk_operation
-        )
+        await dps_service_client.enrollment_group.run_bulk_operation(bulk_operation=bulk_operation)
 
     async def delete_enrollment_groups_sample_async(self):
         # Instantiate a DPS Service Client using a connection string
         from azure.iot.deviceprovisioning.aio import DeviceProvisioningClient
 
-        dps_service_client = DeviceProvisioningClient.from_connection_string(
-            self.connection_string
-        )
+        dps_service_client = DeviceProvisioningClient.from_connection_string(self.connection_string)
 
         # Delete enrollment groups
-        await dps_service_client.enrollment_group.delete(
-            id=self.x509_enrollment_group_id
-        )
-        await dps_service_client.enrollment_group.delete(
-            id=self.symmetric_enrollment_group_id
-        )
+        await dps_service_client.enrollment_group.delete(id=self.x509_enrollment_group_id)
+        await dps_service_client.enrollment_group.delete(id=self.symmetric_enrollment_group_id)
 
 
 async def main():

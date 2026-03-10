@@ -40,11 +40,7 @@ PARTITION_KEY = PartitionKey(path="/id")
 
 
 def get_test_item(num):
-    test_item = {
-        'id': 'Item_' + str(num),
-        'test_object': True,
-        'lastName': 'Smith'
-    }
+    test_item = {"id": "Item_" + str(num), "test_object": True, "lastName": "Smith"}
     return test_item
 
 
@@ -68,9 +64,8 @@ def run_sample():
 
     # With this done, you can use your AAD service principal id and secret to create your ClientSecretCredential.
     aad_client_secret_credentials = ClientSecretCredential(
-        tenant_id=TENANT_ID,
-        client_id=CLIENT_ID,
-        client_secret=CLIENT_SECRET)
+        tenant_id=TENANT_ID, client_id=CLIENT_ID, client_secret=CLIENT_SECRET
+    )
 
     # You can also utilize DefaultAzureCredential rather than directly passing in the id's and secrets.
     # This is the recommended method of authentication, and uses environment variables rather than in-code strings.
@@ -85,11 +80,11 @@ def run_sample():
 
     print("Container info: " + str(container.read()))
     container.create_item(get_test_item(0))
-    print("Point read result: " + str(container.read_item(item='Item_0', partition_key='Item_0')))
-    query_results = list(container.query_items(query='select * from c', partition_key='Item_0'))
+    print("Point read result: " + str(container.read_item(item="Item_0", partition_key="Item_0")))
+    query_results = list(container.query_items(query="select * from c", partition_key="Item_0"))
     assert len(query_results) == 1
     print("Query result: " + str(query_results[0]))
-    container.delete_item(item='Item_0', partition_key='Item_0')
+    container.delete_item(item="Item_0", partition_key="Item_0")
 
     # Attempting to do management operations will return a 403 Forbidden exception.
     try:

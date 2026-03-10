@@ -35,6 +35,7 @@ from azure.keyvault.keys.aio import KeyClient
 # 5. Delete a key (delete_key)
 # ----------------------------------------------------------------------------------------------------------
 
+
 async def run_sample():
     # Instantiate a key client that will be used to call the service.
     # Here we use the DefaultAzureCredential, but any azure-identity credential can be used.

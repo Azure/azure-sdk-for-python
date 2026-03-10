@@ -27,6 +27,7 @@ USAGE:
     3) MCP_SERVER_URL - The URL of your MCP server endpoint.
     4) MCP_SERVER_LABEL - A label for your MCP server.
 """
+
 import asyncio
 from typing import Any
 

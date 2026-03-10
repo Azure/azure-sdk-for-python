@@ -11,7 +11,6 @@ from ._amqp_message import (
     AmqpMessageHeader,
 )
 
-
 __all__ = [
     "AmqpAnnotatedMessage",
     "AmqpMessageBodyType",

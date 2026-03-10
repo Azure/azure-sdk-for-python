@@ -7,6 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 import asyncio  # pylint: disable = do-not-import-asyncio
 import inspect
 import itertools
@@ -104,7 +105,6 @@ from ._models import ThreadMessage as ThreadMessageGenerated
 from ._models import MessageAttachment as MessageAttachmentGenerated
 
 from .. import types as _types
-
 
 # NOTE: Avoid importing RunsOperations here to prevent circular import with operations package.
 

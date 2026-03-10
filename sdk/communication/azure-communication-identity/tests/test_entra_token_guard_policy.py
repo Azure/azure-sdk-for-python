@@ -10,9 +10,7 @@ from datetime import datetime, timedelta, timezone
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.transport import HttpRequest
 from unittest.mock import MagicMock
-from azure.communication.identity._shared.entra_token_guard_policy import (
-    EntraTokenGuardPolicy
-)
+from azure.communication.identity._shared.entra_token_guard_policy import EntraTokenGuardPolicy
 
 
 class DummyResponse:
@@ -20,8 +18,7 @@ class DummyResponse:
         self.http_response = MagicMock()
         self.http_response.status_code = status_code
         self.http_response.text.return_value = (
-            '{"accessToken": {"expiresOn": "%s"}}' % expires_on
-            if expires_on else '{}'
+            '{"accessToken": {"expiresOn": "%s"}}' % expires_on if expires_on else "{}"
         )
 
 
@@ -33,8 +30,7 @@ class TestEntraTokenGuardPolicy(unittest.TestCase):
 
     def test_send_cache_miss(self):
         self.policy.next.send.return_value = DummyResponse(
-            status_code=200,
-            expires_on=(datetime.now(timezone.utc) + timedelta(minutes=5)).isoformat()
+            status_code=200, expires_on=(datetime.now(timezone.utc) + timedelta(minutes=5)).isoformat()
         )
         self.request.http_request.headers["Authorization"] = "token"
         response = self.policy.send(self.request)
@@ -45,8 +41,7 @@ class TestEntraTokenGuardPolicy(unittest.TestCase):
         # Simulate a valid cache
         self.policy._entra_token_cache = "token"
         self.policy._response_cache = DummyResponse(
-            status_code=200,
-            expires_on=(datetime.now(timezone.utc) + timedelta(minutes=5)).isoformat()
+            status_code=200, expires_on=(datetime.now(timezone.utc) + timedelta(minutes=5)).isoformat()
         )
         self.request.http_request.headers["Authorization"] = "token"
         response = self.policy.send(self.request)

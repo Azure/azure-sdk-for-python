@@ -56,9 +56,7 @@ async def main() -> None:
     key = os.getenv("CONTENTUNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(
-        endpoint=endpoint, credential=credential
-    ) as client:
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         # [START analyze_video_for_result_files]
         # Use a sample video URL to get keyframes for GetResultFile testing
         # You can replace this with your own video file URL
@@ -91,10 +89,7 @@ async def main() -> None:
         video_content = cast(AudioVisualContent, result.contents[0])
 
         # Print keyframe information
-        if (
-            video_content.key_frame_times_ms
-            and len(video_content.key_frame_times_ms) > 0
-        ):
+        if video_content.key_frame_times_ms and len(video_content.key_frame_times_ms) > 0:
             total_keyframes = len(video_content.key_frame_times_ms)
             first_frame_time_ms = video_content.key_frame_times_ms[0]
 
@@ -127,12 +122,8 @@ async def main() -> None:
             print(f"Keyframe image saved to: {output_path}")
         else:
             print("\nNote: This sample demonstrates GetResultFile API usage.")
-            print(
-                "      For video analysis with keyframes, use prebuilt-videoSearch analyzer."
-            )
-            print(
-                "      Keyframes are available in AudioVisualContent.key_frame_times_ms."
-            )
+            print("      For video analysis with keyframes, use prebuilt-videoSearch analyzer.")
+            print("      Keyframes are available in AudioVisualContent.key_frame_times_ms.")
         # [END get_result_file]
 
     if not isinstance(credential, AzureKeyCredential):

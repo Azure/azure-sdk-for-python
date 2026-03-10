@@ -10,7 +10,13 @@ from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TypeVa
 import warnings
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
@@ -22,9 +28,20 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._container_apps_operations import build_create_or_update_request_initial, build_delete_request_initial, build_get_request, build_list_by_resource_group_request, build_list_by_subscription_request, build_list_custom_host_name_analysis_request, build_list_secrets_request, build_update_request
-T = TypeVar('T')
+from ...operations._container_apps_operations import (
+    build_create_or_update_request_initial,
+    build_delete_request_initial,
+    build_get_request,
+    build_list_by_resource_group_request,
+    build_list_by_subscription_request,
+    build_list_custom_host_name_analysis_request,
+    build_list_secrets_request,
+    build_update_request,
+)
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class ContainerAppsOperations:
     """ContainerAppsOperations async operations.
@@ -49,10 +66,7 @@ class ContainerAppsOperations:
         self._config = config
 
     @distributed_trace
-    def list_by_subscription(
-        self,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.ContainerAppCollection"]:
+    def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.ContainerAppCollection"]:
         """Get the Container Apps in a given subscription.
 
         Get the Container Apps in a given subscription.
@@ -64,23 +78,22 @@ class ContainerAppsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~container_apps_api_client.models.ContainerAppCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ContainerAppCollection"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ContainerAppCollection"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
-                    template_url=self.list_by_subscription.metadata['url'],
+                    template_url=self.list_by_subscription.metadata["url"],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
-                
+
                 request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
                     template_url=next_link,
@@ -110,17 +123,13 @@ class ContainerAppsOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.App/containerApps'}  # type: ignore
+    list_by_subscription.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.App/containerApps"}  # type: ignore
 
     @distributed_trace
     def list_by_resource_group(
-        self,
-        resource_group_name: str,
-        **kwargs: Any
+        self, resource_group_name: str, **kwargs: Any
     ) -> AsyncIterable["_models.ContainerAppCollection"]:
         """Get the Container Apps in a given resource group.
 
@@ -135,24 +144,23 @@ class ContainerAppsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~container_apps_api_client.models.ContainerAppCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ContainerAppCollection"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ContainerAppCollection"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_by_resource_group_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
-                    template_url=self.list_by_resource_group.metadata['url'],
+                    template_url=self.list_by_resource_group.metadata["url"],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
-                
+
                 request = build_list_by_resource_group_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
@@ -183,19 +191,12 @@ class ContainerAppsOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps'}  # type: ignore
+    list_by_resource_group.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps"}  # type: ignore
 
     @distributed_trace_async
-    async def get(
-        self,
-        resource_group_name: str,
-        name: str,
-        **kwargs: Any
-    ) -> "_models.ContainerApp":
+    async def get(self, resource_group_name: str, name: str, **kwargs: Any) -> "_models.ContainerApp":
         """Get the properties of a Container App.
 
         Get the properties of a Container App.
@@ -209,18 +210,15 @@ class ContainerAppsOperations:
         :rtype: ~container_apps_api_client.models.ContainerApp
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ContainerApp"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ContainerApp"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_get_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             name=name,
-            template_url=self.get.metadata['url'],
+            template_url=self.get.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -233,32 +231,25 @@ class ContainerAppsOperations:
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('ContainerApp', pipeline_response)
+        deserialized = self._deserialize("ContainerApp", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{name}'}  # type: ignore
-
+    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{name}"}  # type: ignore
 
     async def _create_or_update_initial(
-        self,
-        resource_group_name: str,
-        name: str,
-        container_app_envelope: "_models.ContainerApp",
-        **kwargs: Any
+        self, resource_group_name: str, name: str, container_app_envelope: "_models.ContainerApp", **kwargs: Any
     ) -> "_models.ContainerApp":
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ContainerApp"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ContainerApp"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(container_app_envelope, 'ContainerApp')
+        _json = self._serialize.body(container_app_envelope, "ContainerApp")
 
         request = build_create_or_update_request_initial(
             subscription_id=self._config.subscription_id,
@@ -266,7 +257,7 @@ class ContainerAppsOperations:
             name=name,
             content_type=content_type,
             json=_json,
-            template_url=self._create_or_update_initial.metadata['url'],
+            template_url=self._create_or_update_initial.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -279,26 +270,21 @@ class ContainerAppsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ContainerApp', pipeline_response)
+            deserialized = self._deserialize("ContainerApp", pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('ContainerApp', pipeline_response)
+            deserialized = self._deserialize("ContainerApp", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{name}'}  # type: ignore
-
+    _create_or_update_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{name}"}  # type: ignore
 
     @distributed_trace_async
     async def begin_create_or_update(
-        self,
-        resource_group_name: str,
-        name: str,
-        container_app_envelope: "_models.ContainerApp",
-        **kwargs: Any
+        self, resource_group_name: str, name: str, container_app_envelope: "_models.ContainerApp", **kwargs: Any
     ) -> AsyncLROPoller["_models.ContainerApp"]:
         """Create or update a Container App.
 
@@ -323,66 +309,57 @@ class ContainerAppsOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[~container_apps_api_client.models.ContainerApp]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ContainerApp"]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ContainerApp"]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 name=name,
                 container_app_envelope=container_app_envelope,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = self._deserialize('ContainerApp', pipeline_response)
+            deserialized = self._deserialize("ContainerApp", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, **kwargs)
-        elif polling is False: polling_method = AsyncNoPolling()
-        else: polling_method = polling
+        if polling is True:
+            polling_method = AsyncARMPolling(lro_delay, **kwargs)
+        elif polling is False:
+            polling_method = AsyncNoPolling()
+        else:
+            polling_method = polling
         if cont_token:
             return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{name}'}  # type: ignore
+    begin_create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{name}"}  # type: ignore
 
-    async def _delete_initial(
-        self,
-        resource_group_name: str,
-        name: str,
-        **kwargs: Any
-    ) -> None:
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+    async def _delete_initial(self, resource_group_name: str, name: str, **kwargs: Any) -> None:
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_delete_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             name=name,
-            template_url=self._delete_initial.metadata['url'],
+            template_url=self._delete_initial.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -397,16 +374,10 @@ class ContainerAppsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{name}'}  # type: ignore
-
+    _delete_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{name}"}  # type: ignore
 
     @distributed_trace_async
-    async def begin_delete(
-        self,
-        resource_group_name: str,
-        name: str,
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    async def begin_delete(self, resource_group_name: str, name: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Delete a Container App.
 
         Description for Delete a Container App.
@@ -427,49 +398,41 @@ class ContainerAppsOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._delete_initial(
-                resource_group_name=resource_group_name,
-                name=name,
-                cls=lambda x,y,z: x,
-                **kwargs
+                resource_group_name=resource_group_name, name=name, cls=lambda x, y, z: x, **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             if cls:
                 return cls(pipeline_response, None, {})
 
-
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, **kwargs)
-        elif polling is False: polling_method = AsyncNoPolling()
-        else: polling_method = polling
+        if polling is True:
+            polling_method = AsyncARMPolling(lro_delay, **kwargs)
+        elif polling is False:
+            polling_method = AsyncNoPolling()
+        else:
+            polling_method = polling
         if cont_token:
             return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{name}'}  # type: ignore
+    begin_delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{name}"}  # type: ignore
 
     @distributed_trace_async
     async def update(
-        self,
-        resource_group_name: str,
-        name: str,
-        container_app_envelope: "_models.ContainerAppPatch",
-        **kwargs: Any
+        self, resource_group_name: str, name: str, container_app_envelope: "_models.ContainerAppPatch", **kwargs: Any
     ) -> "_models.ContainerApp":
         """Update properties of a Container App.
 
@@ -486,15 +449,13 @@ class ContainerAppsOperations:
         :rtype: ~container_apps_api_client.models.ContainerApp
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ContainerApp"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ContainerApp"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(container_app_envelope, 'ContainerAppPatch')
+        _json = self._serialize.body(container_app_envelope, "ContainerAppPatch")
 
         request = build_update_request(
             subscription_id=self._config.subscription_id,
@@ -502,7 +463,7 @@ class ContainerAppsOperations:
             name=name,
             content_type=content_type,
             json=_json,
-            template_url=self.update.metadata['url'],
+            template_url=self.update.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -515,23 +476,18 @@ class ContainerAppsOperations:
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('ContainerApp', pipeline_response)
+        deserialized = self._deserialize("ContainerApp", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{name}'}  # type: ignore
-
+    update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{name}"}  # type: ignore
 
     @distributed_trace_async
     async def list_custom_host_name_analysis(
-        self,
-        resource_group_name: str,
-        container_app_name: str,
-        custom_hostname: Optional[str] = None,
-        **kwargs: Any
+        self, resource_group_name: str, container_app_name: str, custom_hostname: Optional[str] = None, **kwargs: Any
     ) -> "_models.CustomHostnameAnalysisResult":
         """Analyzes a custom hostname for a Container App.
 
@@ -548,19 +504,16 @@ class ContainerAppsOperations:
         :rtype: ~container_apps_api_client.models.CustomHostnameAnalysisResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CustomHostnameAnalysisResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.CustomHostnameAnalysisResult"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_list_custom_host_name_analysis_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             container_app_name=container_app_name,
             custom_hostname=custom_hostname,
-            template_url=self.list_custom_host_name_analysis.metadata['url'],
+            template_url=self.list_custom_host_name_analysis.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -573,23 +526,17 @@ class ContainerAppsOperations:
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('CustomHostnameAnalysisResult', pipeline_response)
+        deserialized = self._deserialize("CustomHostnameAnalysisResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    list_custom_host_name_analysis.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/listCustomHostNameAnalysis'}  # type: ignore
-
+    list_custom_host_name_analysis.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/listCustomHostNameAnalysis"}  # type: ignore
 
     @distributed_trace_async
-    async def list_secrets(
-        self,
-        resource_group_name: str,
-        name: str,
-        **kwargs: Any
-    ) -> "_models.SecretsCollection":
+    async def list_secrets(self, resource_group_name: str, name: str, **kwargs: Any) -> "_models.SecretsCollection":
         """List secrets for a container app.
 
         List secrets for a container app.
@@ -603,18 +550,15 @@ class ContainerAppsOperations:
         :rtype: ~container_apps_api_client.models.SecretsCollection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecretsCollection"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.SecretsCollection"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_list_secrets_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             name=name,
-            template_url=self.list_secrets.metadata['url'],
+            template_url=self.list_secrets.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -627,12 +571,11 @@ class ContainerAppsOperations:
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('SecretsCollection', pipeline_response)
+        deserialized = self._deserialize("SecretsCollection", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    list_secrets.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{name}/listSecrets'}  # type: ignore
-
+    list_secrets.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{name}/listSecrets"}  # type: ignore

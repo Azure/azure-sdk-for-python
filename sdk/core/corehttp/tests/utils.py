@@ -12,7 +12,6 @@ from corehttp.rest import HttpRequest
 from corehttp.rest._http_response_impl import HttpResponseImpl as RestHttpResponse
 from corehttp.rest._http_response_impl_async import AsyncHttpResponseImpl as RestAsyncHttpResponse
 
-
 SYNC_TRANSPORTS = []
 ASYNC_TRANSPORTS = []
 

@@ -4286,6 +4286,7 @@ class ServerEvent(_Model):
         # pylint: disable-next=protected-access
         return cls._deserialize(payload, [])
 
+
 class ServerEventConversationItemCreated(ServerEvent, discriminator="conversation.item.created"):
     """Returned when a conversation item is created. There are several scenarios that produce this
     event:

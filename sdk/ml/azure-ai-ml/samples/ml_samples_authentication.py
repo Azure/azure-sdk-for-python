@@ -11,7 +11,7 @@ FILE: ml_samples_authentication.py
 
 DESCRIPTION:
     These samples demonstrate authenticating a client for multiple clouds.
-    
+
 USAGE:
     python ml_samples_authentication.py
 

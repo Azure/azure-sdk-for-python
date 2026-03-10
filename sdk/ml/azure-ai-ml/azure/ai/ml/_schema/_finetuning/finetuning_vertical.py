@@ -20,7 +20,6 @@ from azure.ai.ml.constants._job.finetuning import FineTuningConstants
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import AzureMLResourceType
 
-
 # This is meant to match the yaml definition NOT the models defined in _restclient
 
 

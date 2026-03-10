@@ -39,7 +39,6 @@ from azure.core.pipeline.transport import HttpTransport
 from azure.core.rest import HttpRequest as RestHttpRequest, HttpResponse as RestHttpResponse
 from azure.core.rest._http_response_impl import HttpResponseImpl
 
-
 DEFAULT_BLOCK_SIZE = 32768
 _TYPE_FIELD_VALUE = Union[str, bytes]
 _TYPE_FIELD_VALUE_TUPLE = Union[

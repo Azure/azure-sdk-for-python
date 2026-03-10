@@ -73,12 +73,8 @@ class Reviewer(Executor):
         self._chat_client = chat_client
 
     @handler
-    async def review(
-        self, request: ReviewRequest, ctx: WorkflowContext[ReviewResponse]
-    ) -> None:
-        print(
-            f"🔍 Reviewer: Evaluating response for request {request.request_id[:8]}..."
-        )
+    async def review(self, request: ReviewRequest, ctx: WorkflowContext[ReviewResponse]) -> None:
+        print(f"🔍 Reviewer: Evaluating response for request {request.request_id[:8]}...")
 
         # Use the chat client to review the message and use structured output.
         # NOTE: this can be modified to use an evaluation framework.
@@ -120,9 +116,7 @@ class Reviewer(Executor):
 
         print("🔍 Reviewer: Sending review request to LLM...")
         # Get the response from the chat client.
-        response = await self._chat_client.get_response(
-            messages=messages, response_format=_Response
-        )
+        response = await self._chat_client.get_response(messages=messages, response_format=_Response)
 
         # Parse the response.
         parsed = _Response.model_validate_json(response.messages[-1].text)
@@ -149,16 +143,12 @@ class Worker(Executor):
         self._pending_requests: dict[str, tuple[ReviewRequest, list[ChatMessage]]] = {}
 
     @handler
-    async def handle_user_messages(
-        self, user_messages: list[ChatMessage], ctx: WorkflowContext[ReviewRequest]
-    ) -> None:
+    async def handle_user_messages(self, user_messages: list[ChatMessage], ctx: WorkflowContext[ReviewRequest]) -> None:
         print("🔧 Worker: Received user messages, generating response...")
 
         # Handle user messages and prepare a review request for the reviewer.
         # Define the system prompt.
-        messages = [
-            ChatMessage(role=ChatRole.SYSTEM, text="You are a helpful assistant.")
-        ]
+        messages = [ChatMessage(role=ChatRole.SYSTEM, text="You are a helpful assistant.")]
 
         # Add user messages.
         messages.extend(user_messages)
@@ -178,9 +168,7 @@ class Worker(Executor):
             agent_messages=response.messages,
         )
 
-        print(
-            f"🔧 Worker: Generated response, sending to reviewer (ID: {request.request_id[:8]})"
-        )
+        print(f"🔧 Worker: Generated response, sending to reviewer (ID: {request.request_id[:8]})")
         # Send the review request.
         await ctx.send_message(request)
 
@@ -188,20 +176,14 @@ class Worker(Executor):
         self._pending_requests[request.request_id] = (request, messages)
 
     @handler
-    async def handle_review_response(
-        self, review: ReviewResponse, ctx: WorkflowContext[ReviewRequest]
-    ) -> None:
-        print(
-            f"🔧 Worker: Received review for request {review.request_id[:8]} - Approved: {review.approved}"
-        )
+    async def handle_review_response(self, review: ReviewResponse, ctx: WorkflowContext[ReviewRequest]) -> None:
+        print(f"🔧 Worker: Received review for request {review.request_id[:8]} - Approved: {review.approved}")
 
         # Handle the review response. Depending on the approval status,
         # either emit the approved response as AgentRunUpdateEvent, or
         # retry given the feedback.
         if review.request_id not in self._pending_requests:
-            raise ValueError(
-                f"Received review response for unknown request ID: {review.request_id}"
-            )
+            raise ValueError(f"Received review response for unknown request ID: {review.request_id}")
         # Remove the request from pending requests.
         request, messages = self._pending_requests.pop(review.request_id)
 
@@ -218,9 +200,7 @@ class Worker(Executor):
             await ctx.add_event(
                 AgentRunUpdateEvent(
                     self.id,
-                    data=AgentRunResponseUpdate(
-                        contents=contents, role=ChatRole.ASSISTANT
-                    ),
+                    data=AgentRunResponseUpdate(contents=contents, role=ChatRole.ASSISTANT),
                 )
             )
             return
@@ -242,16 +222,12 @@ class Worker(Executor):
 
         # Get the new response from the chat client.
         response = await self._chat_client.get_response(messages=messages)
-        print(
-            f"🔧 Worker: New response generated after feedback: {response.messages[-1].text}"
-        )
+        print(f"🔧 Worker: New response generated after feedback: {response.messages[-1].text}")
 
         # Process the response.
         messages.extend(response.messages)
 
-        print(
-            f"🔧 Worker: Generated improved response, sending for re-review (ID: {review.request_id[:8]})"
-        )
+        print(f"🔧 Worker: Generated improved response, sending for re-review (ID: {review.request_id[:8]})")
         # Send an updated review request.
         new_request = ReviewRequest(
             request_id=review.request_id,
@@ -269,12 +245,8 @@ def build_agent(chat_client: BaseChatClient):
     worker = Worker(chat_client=chat_client)
     return (
         WorkflowBuilder()
-        .add_edge(
-            worker, reviewer
-        )  # <--- This edge allows the worker to send requests to the reviewer
-        .add_edge(
-            reviewer, worker
-        )  # <--- This edge allows the reviewer to send feedback back to the worker
+        .add_edge(worker, reviewer)  # <--- This edge allows the worker to send requests to the reviewer
+        .add_edge(reviewer, worker)  # <--- This edge allows the reviewer to send feedback back to the worker
         .set_start_executor(worker)
         .build()
         .as_agent()  # Convert the workflow to an agent.

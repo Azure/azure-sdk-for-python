@@ -10,7 +10,7 @@
 FILE: send_reaction_notification_messages.py
 
 DESCRIPTION:
-    This sample demonstrates sending an Whatsapp message from business phone number to a single user. The NotificationMessageClient is 
+    This sample demonstrates sending an Whatsapp message from business phone number to a single user. The NotificationMessageClient is
     authenticated using a connection string.
 USAGE:
     python send_reaction_notification_messages.py
@@ -43,7 +43,7 @@ class SendWhatsAppMessageSample(object):
         video_options = ReactionNotificationContent(
             channel_registration_id=self.channel_id,
             to=[self.phone_number],
-            emoji="\uD83D\uDE00",
+            emoji="\ud83d\ude00",
             message_id="35ea6704-64af-4113-b786-815352228f17",
         )
 

@@ -32,7 +32,7 @@ def add_sanitizers(test_proxy, environment_variables):
         ENV_SUBSCRIPTION_ID: TEST_ID,
         ENV_TENANT_ID: TEST_ID,
         ENV_CLIENT_ID: TEST_ID,
-        ENV_CLIENT_SECRET: TEST_ID
+        ENV_CLIENT_SECRET: TEST_ID,
     }
     environment_variables.sanitize_batch(sanitization_mapping)
     add_remove_header_sanitizer(headers="Telemetry-Source-Time, Message-Id")

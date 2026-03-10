@@ -10,9 +10,14 @@ from typing import Callable, List, Mapping, Any
 from azure.core.rest import HttpRequest
 from _fault_injection_transport import FaultInjectionTransport, ERROR_WITH_COUNTER
 from azure.cosmos.container import ContainerProxy
-from test_excluded_locations import (L1, L2, read_item_test_data,
-                                     TestDataType, set_test_data_type,
-                                     get_test_data_with_expected_output)
+from test_excluded_locations import (
+    L1,
+    L2,
+    read_item_test_data,
+    TestDataType,
+    set_test_data_type,
+    get_test_data_with_expected_output,
+)
 from test_fault_injection_transport import TestFaultInjectionTransport
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.http_constants import ResourceType
@@ -25,39 +30,31 @@ SINGLE_PARTITION_CONTAINER_ID = CONFIG.TEST_SINGLE_PARTITION_CONTAINER_ID
 SINGLE_PARTITION_PREFIX_PK_CONTAINER_ID = CONFIG.TEST_SINGLE_PARTITION_PREFIX_PK_CONTAINER_ID
 L1_URL = CONFIG.local_host
 L2_URL = L1_URL.replace("localhost", "127.0.0.1")
-URL_TO_LOCATIONS = {
-    L1_URL: L1,
-    L2_URL: L2
-}
+URL_TO_LOCATIONS = {L1_URL: L1, L2_URL: L2}
 
 set_test_data_type(TestDataType.ALL_TESTS)
+
 
 # The output data is the number of retries that happened with different timeout region cases
 # [timeout L1, timeout L2]
 def metadata_read_with_excluded_locations_test_data() -> List[str]:
-    client_only_output_data = [
-        [1, 0],   #0
-        [0, 1],   #1
-        [1, 0],   #3
-        [1, 0]    #4
-    ]
+    client_only_output_data = [[1, 0], [0, 1], [1, 0], [1, 0]]  # 0  # 1  # 3  # 4
     client_and_request_output_data = [
-        [0, 1],   #0
-        [0, 1],   #1
-        [0, 1],   #2
-        [1, 0],   #3
-        [1, 0],   #4
-        [1, 0],   #5
-        [1, 0],   #6
-        [1, 0],   #7
+        [0, 1],  # 0
+        [0, 1],  # 1
+        [0, 1],  # 2
+        [1, 0],  # 3
+        [1, 0],  # 4
+        [1, 0],  # 5
+        [1, 0],  # 6
+        [1, 0],  # 7
     ]
     return get_test_data_with_expected_output(client_only_output_data, client_and_request_output_data)
 
-def get_location(
-        initialized_objects: Mapping[str, Any],
-        url_to_locations: Mapping[str, str] = URL_TO_LOCATIONS) -> str:
+
+def get_location(initialized_objects: Mapping[str, Any], url_to_locations: Mapping[str, str] = URL_TO_LOCATIONS) -> str:
     # get Request URL
-    header = initialized_objects['client'].client_connection.last_response_headers
+    header = initialized_objects["client"].client_connection.last_response_headers
     request_url = header["_request"].url
 
     # verify
@@ -68,10 +65,11 @@ def get_location(
             break
     return location
 
+
 @pytest.mark.unittest
 @pytest.mark.cosmosEmulator
 class TestExcludedLocationsEmulator:
-    @pytest.mark.parametrize('test_data', read_item_test_data())
+    @pytest.mark.parametrize("test_data", read_item_test_data())
     def test_delete_all_items_by_partition_key(self: "TestExcludedLocationsEmulator", test_data: List[List[str]]):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_location = test_data
@@ -79,9 +77,10 @@ class TestExcludedLocationsEmulator:
         # Inject topology transformation that would make Emulator look like a multiple write region account
         # with two read regions
         custom_transport = FaultInjectionTransport()
-        is_get_account_predicate: Callable[[HttpRequest], bool] = lambda \
-            r: FaultInjectionTransport.predicate_is_database_account_call(r)
-        emulator_as_multi_write_region_account_transformation = \
+        is_get_account_predicate: Callable[[HttpRequest], bool] = (
+            lambda r: FaultInjectionTransport.predicate_is_database_account_call(r)
+        )
+        emulator_as_multi_write_region_account_transformation = (
             lambda r, inner: FaultInjectionTransport.transform_topology_mwr(
                 first_region_name=L1,
                 second_region_name=L2,
@@ -89,9 +88,10 @@ class TestExcludedLocationsEmulator:
                 first_region_url=L1_URL,
                 second_region_url=L2_URL,
             )
+        )
         custom_transport.add_response_transformation(
-            is_get_account_predicate,
-            emulator_as_multi_write_region_account_transformation)
+            is_get_account_predicate, emulator_as_multi_write_region_account_transformation
+        )
 
         for multiple_write_locations in [True, False]:
             # Create client
@@ -109,7 +109,7 @@ class TestExcludedLocationsEmulator:
 
             # create an item
             id_value: str = str(uuid.uuid4())
-            document_definition = {'id': id_value, 'pk': id_value}
+            document_definition = {"id": id_value, "pk": id_value}
             container.create_item(body=document_definition)
 
             # API call: delete_all_items_by_partition_key
@@ -125,7 +125,7 @@ class TestExcludedLocationsEmulator:
             else:
                 assert actual_location == L1
 
-    @pytest.mark.parametrize('test_data', metadata_read_with_excluded_locations_test_data())
+    @pytest.mark.parametrize("test_data", metadata_read_with_excluded_locations_test_data())
     def test_metadata_read_with_excluded_locations(self: "TestExcludedLocationsEmulator", test_data: List[List[str]]):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_counts = test_data
@@ -135,9 +135,10 @@ class TestExcludedLocationsEmulator:
             # Inject topology transformation that would make Emulator look like a multiple write region account
             # with two read regions
             custom_transport = FaultInjectionTransport()
-            is_get_account_predicate: Callable[[HttpRequest], bool] = lambda \
-                    r: FaultInjectionTransport.predicate_is_database_account_call(r)
-            emulator_as_multi_write_region_account_transformation = \
+            is_get_account_predicate: Callable[[HttpRequest], bool] = (
+                lambda r: FaultInjectionTransport.predicate_is_database_account_call(r)
+            )
+            emulator_as_multi_write_region_account_transformation = (
                 lambda r, inner: FaultInjectionTransport.transform_topology_mwr(
                     first_region_name=L1,
                     second_region_name=L2,
@@ -145,19 +146,19 @@ class TestExcludedLocationsEmulator:
                     first_region_url=L1_URL,
                     second_region_url=L2_URL,
                 )
+            )
             custom_transport.add_response_transformation(
-                is_get_account_predicate,
-                emulator_as_multi_write_region_account_transformation)
+                is_get_account_predicate, emulator_as_multi_write_region_account_transformation
+            )
 
             # Inject rule to simulate request timeout in target region
-            is_request_to_target_region: Callable[[HttpRequest], bool] = lambda \
-                    r: (FaultInjectionTransport.predicate_targets_region(r, target_url) and
-                        FaultInjectionTransport.predicate_is_resource_type(r, ResourceType.Collection) and
-                        not FaultInjectionTransport.predicate_is_write_operation(r, target_url))
+            is_request_to_target_region: Callable[[HttpRequest], bool] = lambda r: (
+                FaultInjectionTransport.predicate_targets_region(r, target_url)
+                and FaultInjectionTransport.predicate_is_resource_type(r, ResourceType.Collection)
+                and not FaultInjectionTransport.predicate_is_write_operation(r, target_url)
+            )
             fault_factory = lambda r: custom_transport.error_with_counter(
-                CosmosHttpResponseError(
-                    status_code=408,
-                    message="Request Time Out Error.")
+                CosmosHttpResponseError(status_code=408, message="Request Time Out Error.")
             )
             custom_transport.add_fault(is_request_to_target_region, fault_factory)
 

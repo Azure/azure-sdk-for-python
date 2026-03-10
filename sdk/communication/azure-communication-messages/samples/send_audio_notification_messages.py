@@ -10,7 +10,7 @@
 FILE: send_audio_notification_messages.py
 
 DESCRIPTION:
-    This sample demonstrates sending an Whatsapp audio message from business phone number to a single user. The NotificationMessageClient is 
+    This sample demonstrates sending an Whatsapp audio message from business phone number to a single user. The NotificationMessageClient is
     authenticated using a connection string.
 USAGE:
     python send_audio_notification_messages.py

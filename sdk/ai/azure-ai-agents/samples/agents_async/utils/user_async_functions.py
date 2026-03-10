@@ -12,7 +12,6 @@ import datetime
 from typing import Any, Callable, Set, Optional
 from azure.ai.agents.telemetry import trace_function
 
-
 # Add package directory to sys.path to import user_functions
 current_dir = os.path.dirname(os.path.abspath(__file__))
 package_dir = os.path.abspath(os.path.join(current_dir, os.pardir, os.pardir, os.pardir))

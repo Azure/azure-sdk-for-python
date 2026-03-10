@@ -36,7 +36,6 @@ from decimal import Decimal
 from typing_extensions import Buffer
 
 
-
 from .types import (
     TYPE,
     VALUE,
@@ -668,7 +667,7 @@ def encode_annotations(value: Optional[Dict[Union[str, bytes], Any]]) -> Dict[st
 
 
 def encode_application_properties(
-    value: Optional[Dict[Union[str, bytes], AQMPSimpleType]]
+    value: Optional[Dict[Union[str, bytes], AQMPSimpleType]],
 ) -> Dict[Union[str, bytes], Any]:
     """The application-properties section is a part of the bare message used for structured application data.
 

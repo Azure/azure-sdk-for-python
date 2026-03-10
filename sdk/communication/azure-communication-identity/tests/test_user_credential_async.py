@@ -23,10 +23,12 @@ from azure.communication.identity._shared.utils import create_access_token
 from azure.communication.identity._shared.utils import get_current_utc_as_int
 from _shared.helper import generate_token_with_custom_expiry
 
+
 class DummyAsyncToken:
     def __init__(self, token, expires_on):
         self.token = token
         self.expires_on = expires_on
+
 
 class DummyAsyncTokenExchangeClient:
     def __init__(self, resource_endpoint, token_credential, scopes):
@@ -36,6 +38,7 @@ class DummyAsyncTokenExchangeClient:
 
     async def exchange_entra_token(self):
         return DummyAsyncToken("dummy", 9999999999)
+
 
 class DummyAsyncTokenExchangeClientSwitch:
     def __init__(self, resource_endpoint, token_credential, scopes):
@@ -283,13 +286,11 @@ class TestCommunicationTokenCredential(TestCase):
     @pytest.mark.asyncio
     async def test_all_fields_present_calls_token_exchange_async(self):
         with patch(
-                "azure.communication.identity._shared.user_credential_async.AsyncTokenExchangeClient",
-                DummyAsyncTokenExchangeClient,
+            "azure.communication.identity._shared.user_credential_async.AsyncTokenExchangeClient",
+            DummyAsyncTokenExchangeClient,
         ):
             cred = CommunicationTokenCredential(
-                resource_endpoint="https://endpoint",
-                token_credential=MagicMock(),
-                scopes=["scope"]
+                resource_endpoint="https://endpoint", token_credential=MagicMock(), scopes=["scope"]
             )
             token = await cred.get_token()
             assert token.token == "dummy"
@@ -298,13 +299,10 @@ class TestCommunicationTokenCredential(TestCase):
     @pytest.mark.asyncio
     async def test_missing_scopes_calls_token_exchange_async(self):
         with patch(
-                "azure.communication.identity._shared.user_credential_async.AsyncTokenExchangeClient",
-                DummyAsyncTokenExchangeClient,
+            "azure.communication.identity._shared.user_credential_async.AsyncTokenExchangeClient",
+            DummyAsyncTokenExchangeClient,
         ):
-            cred = CommunicationTokenCredential(
-                resource_endpoint="https://endpoint",
-                token_credential=MagicMock()
-            )
+            cred = CommunicationTokenCredential(resource_endpoint="https://endpoint", token_credential=MagicMock())
             token = await cred.get_token()
             assert token.token == "dummy"
             assert token.expires_on == 9999999999
@@ -313,13 +311,11 @@ class TestCommunicationTokenCredential(TestCase):
     async def test_token_exchange_refreshes_from_expired_to_valid_async(self):
         # First call returns expired token on initialization of _token
         with patch(
-                "azure.communication.identity._shared.user_credential_async.AsyncTokenExchangeClient",
-                DummyAsyncTokenExchangeClientSwitch,
+            "azure.communication.identity._shared.user_credential_async.AsyncTokenExchangeClient",
+            DummyAsyncTokenExchangeClientSwitch,
         ):
             cred = CommunicationTokenCredential(
-                resource_endpoint="https://endpoint",
-                token_credential=MagicMock(),
-                scopes=["scope"]
+                resource_endpoint="https://endpoint", token_credential=MagicMock(), scopes=["scope"]
             )
 
             # Second call returns valid token

@@ -9,7 +9,7 @@
 """
 FILE: send_email_to_single_recipient_sample_async.py
 DESCRIPTION:
-    This sample demonstrates sending an email to a single recipient. The Email client is 
+    This sample demonstrates sending an email to a single recipient. The Email client is
     authenticated using a connection string.
 USAGE:
     python send_email_to_single_recipient_sample_async.py

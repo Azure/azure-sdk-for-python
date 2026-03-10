@@ -53,10 +53,7 @@ class CopyModelSample(object):
         # [START get_copy_authorization]
         target_client = FormTrainingClient(endpoint=target_endpoint, credential=AzureKeyCredential(target_key))
 
-        target = target_client.get_copy_authorization(
-            resource_region=target_region,
-            resource_id=target_resource_id
-        )
+        target = target_client.get_copy_authorization(resource_region=target_region, resource_id=target_resource_id)
         # model ID that target client will use to access the model once copy is complete
         print("Model ID: {}".format(target["modelId"]))
         # [END get_copy_authorization]
@@ -65,8 +62,7 @@ class CopyModelSample(object):
         source_client = FormTrainingClient(endpoint=source_endpoint, credential=AzureKeyCredential(source_key))
 
         poller = source_client.begin_copy_model(
-            model_id=source_model_id,
-            target=target  # output from target client's call to get_copy_authorization()
+            model_id=source_model_id, target=target  # output from target client's call to get_copy_authorization()
         )
         copied_over_model = poller.result()
 
@@ -75,7 +71,7 @@ class CopyModelSample(object):
         # [END begin_copy_model]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample = CopyModelSample()
     model_id = None
     if os.getenv("CONTAINER_SAS_URL_V2"):
@@ -89,9 +85,7 @@ if __name__ == '__main__':
         if not endpoint or not key:
             raise ValueError("Please provide endpoint and API key to run the samples.")
 
-        form_training_client = FormTrainingClient(
-            endpoint=endpoint, credential=AzureKeyCredential(key)
-        )
+        form_training_client = FormTrainingClient(endpoint=endpoint, credential=AzureKeyCredential(key))
         container_sas_url = os.getenv("CONTAINER_SAS_URL_V2")
         if container_sas_url is not None:
             model = form_training_client.begin_training(container_sas_url, use_training_labels=True).result()

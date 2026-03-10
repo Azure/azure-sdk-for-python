@@ -7,7 +7,6 @@ import os
 
 from devtools_testutils import AzureRecordedTestCase
 
-
 ENV_MONITOR_ENVIRONMENT = "MONITOR_ENVIRONMENT"
 AUDIENCE_MAP = {
     "AzureCloud": "https://monitor.azure.com",

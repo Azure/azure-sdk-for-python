@@ -17,9 +17,7 @@ load_dotenv()  # Load .env with Azure + GitHub credentials
 def _get_required_env(name: str) -> str:
     value = os.getenv(name)
     if not value:
-        raise RuntimeError(
-            f"Missing required environment variable '{name}'. Please define it in your .env file."
-        )
+        raise RuntimeError(f"Missing required environment variable '{name}'. Please define it in your .env file.")
     return value
 
 

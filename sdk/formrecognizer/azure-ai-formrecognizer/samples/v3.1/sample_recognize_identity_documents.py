@@ -29,8 +29,9 @@ import os
 class RecognizeIdDocumentsSample(object):
 
     def recognize_identity_documents(self):
-        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
-                                                            "..", "..", "./sample_forms/id_documents/license.jpg"))
+        path_to_sample_forms = os.path.abspath(
+            os.path.join(os.path.abspath(__file__), "..", "..", "./sample_forms/id_documents/license.jpg")
+        )
 
         # [START recognize_identity_documents]
         from azure.core.credentials import AzureKeyCredential
@@ -39,15 +40,13 @@ class RecognizeIdDocumentsSample(object):
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
-        form_recognizer_client = FormRecognizerClient(
-            endpoint=endpoint, credential=AzureKeyCredential(key)
-        )
+        form_recognizer_client = FormRecognizerClient(endpoint=endpoint, credential=AzureKeyCredential(key))
         with open(path_to_sample_forms, "rb") as f:
             poller = form_recognizer_client.begin_recognize_identity_documents(identity_document=f)
         id_documents = poller.result()
 
         for idx, id_document in enumerate(id_documents):
-            print("--------Recognizing ID document #{}--------".format(idx+1))
+            print("--------Recognizing ID document #{}--------".format(idx + 1))
             first_name = id_document.fields.get("FirstName")
             if first_name:
                 print("First Name: {} has confidence: {}".format(first_name.value, first_name.confidence))
@@ -56,7 +55,9 @@ class RecognizeIdDocumentsSample(object):
                 print("Last Name: {} has confidence: {}".format(last_name.value, last_name.confidence))
             document_number = id_document.fields.get("DocumentNumber")
             if document_number:
-                print("Document Number: {} has confidence: {}".format(document_number.value, document_number.confidence))
+                print(
+                    "Document Number: {} has confidence: {}".format(document_number.value, document_number.confidence)
+                )
             dob = id_document.fields.get("DateOfBirth")
             if dob:
                 print("Date of Birth: {} has confidence: {}".format(dob.value, dob.confidence))
@@ -77,6 +78,7 @@ class RecognizeIdDocumentsSample(object):
                 print("Region: {} has confidence: {}".format(region.value, region.confidence))
         # [END recognize_identity_documents]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     sample = RecognizeIdDocumentsSample()
     sample.recognize_identity_documents()

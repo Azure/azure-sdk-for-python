@@ -10,7 +10,7 @@ from azure.communication.phonenumbers import (
     PhoneNumberCapabilityType,
     PhoneNumberType,
     ReservationStatus,
-    PhoneNumberAvailabilityStatus
+    PhoneNumberAvailabilityStatus,
 )
 from azure.communication.phonenumbers._generated.models import PhoneNumberOperationStatus
 from azure.communication.phonenumbers._shared.utils import parse_connection_str
@@ -61,10 +61,10 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
 
             # In live mode, generate unique reservation IDs for each test run
             # Tests that create and delete reservations will use the same ID
-            self.reservation_id = str(uuid.uuid4()) 
-            # The purchase reservation test will use a different ID, 
+            self.reservation_id = str(uuid.uuid4())
+            # The purchase reservation test will use a different ID,
             # since purchased reservations are immutable and cannot be modified after purchase
-            self.purchased_reservation_id = str(uuid.uuid4()) 
+            self.purchased_reservation_id = str(uuid.uuid4())
 
         self.phone_number_client = PhoneNumbersClient.from_connection_string(
             self.connection_str, http_logging_policy=get_http_logging_policy(), headers_policy=get_header_policy()
@@ -222,7 +222,9 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         assert release_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
 
     @recorded_by_proxy
-    def test_purchase_phone_numbers_without_agreement_to_not_resell(self,):
+    def test_purchase_phone_numbers_without_agreement_to_not_resell(
+        self,
+    ):
         capabilities = PhoneNumberCapabilities(
             calling=PhoneNumberCapabilityType.OUTBOUND, sms=PhoneNumberCapabilityType.NONE
         )
@@ -374,7 +376,9 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
     @recorded_by_proxy
     def test_list_mobile_area_codes_from_managed_identity(self):
         phone_number_client = self._get_managed_identity_phone_number_client()
-        first_locality = phone_number_client.list_available_localities("IE", phone_number_type=PhoneNumberType.MOBILE).next()
+        first_locality = phone_number_client.list_available_localities(
+            "IE", phone_number_type=PhoneNumberType.MOBILE
+        ).next()
         area_codes = self.phone_number_client.list_available_area_codes(
             "IE",
             PhoneNumberType.MOBILE,
@@ -385,7 +389,9 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
 
     @recorded_by_proxy
     def test_list_mobile_area_codes(self):
-        first_locality = self.phone_number_client.list_available_localities("IE", phone_number_type=PhoneNumberType.MOBILE).next()
+        first_locality = self.phone_number_client.list_available_localities(
+            "IE", phone_number_type=PhoneNumberType.MOBILE
+        ).next()
         area_codes = self.phone_number_client.list_available_area_codes(
             "IE",
             PhoneNumberType.MOBILE,
@@ -432,7 +438,7 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
             "US", administrative_division=first_locality.next().administrative_division.abbreviated_name
         )
         assert localities.next()
-    
+
     @recorded_by_proxy
     def test_list_localities_with_number_type(self):
         localities = self.phone_number_client.list_available_localities("IE", phone_number_type=PhoneNumberType.MOBILE)
@@ -494,8 +500,7 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
     @recorded_by_proxy
     def test_browse_available_numbers(self):
         result = self.phone_number_client.browse_available_phone_numbers(
-            country_code=self.country_code, 
-            phone_number_type=PhoneNumberType.TOLL_FREE
+            country_code=self.country_code, phone_number_type=PhoneNumberType.TOLL_FREE
         )
 
         available_phone_numbers = result.phone_numbers
@@ -509,7 +514,7 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         add_general_regex_sanitizer(
             regex=r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}",
             value=STATIC_RESERVATION_ID,
-            function_scoped=True, # This ensures the sanitizer is only applied to this test
+            function_scoped=True,  # This ensures the sanitizer is only applied to this test
         )
         reservation_id = self.reservation_id
 
@@ -522,20 +527,22 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
 
         # Test that we can add phone numbers to the reservation
         browse_result = self.phone_number_client.browse_available_phone_numbers(
-            country_code=self.country_code, 
-            phone_number_type=PhoneNumberType.TOLL_FREE
+            country_code=self.country_code, phone_number_type=PhoneNumberType.TOLL_FREE
         )
 
         phone_number_to_reserve = browse_result.phone_numbers[0]
         updated_reservation = self.phone_number_client.create_or_update_reservation(
             reservation_id=reservation_id, numbers_to_add=[phone_number_to_reserve]
         )
-        
+
         assert updated_reservation.id == reservation_id
         assert updated_reservation.status == ReservationStatus.ACTIVE
         assert updated_reservation.expires_at > created_reservation.expires_at
         assert phone_number_to_reserve.id in updated_reservation.phone_numbers
-        assert updated_reservation.phone_numbers[phone_number_to_reserve.id].status == PhoneNumberAvailabilityStatus.RESERVED
+        assert (
+            updated_reservation.phone_numbers[phone_number_to_reserve.id].status
+            == PhoneNumberAvailabilityStatus.RESERVED
+        )
 
         # Test that we can get the reservation by ID
         retrieved_reservation = self.phone_number_client.get_reservation(reservation_id)
@@ -547,7 +554,8 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
 
         # Test that we can remove numbers from the reservation
         reservation_after_remove = self.phone_number_client.create_or_update_reservation(
-            reservation_id=reservation_id, numbers_to_remove=[phone_number_to_reserve.id])
+            reservation_id=reservation_id, numbers_to_remove=[phone_number_to_reserve.id]
+        )
 
         assert reservation_after_remove.id == updated_reservation.id
         assert reservation_after_remove.status == updated_reservation.status
@@ -565,28 +573,26 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         add_general_regex_sanitizer(
             regex=r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}",
             value=STATIC_RESERVATION_ID,
-            function_scoped=True, # This ensures the sanitizer is only applied to this test
+            function_scoped=True,  # This ensures the sanitizer is only applied to this test
         )
         reservation_id = self.reservation_id
 
         # France doesn't allow reselling of phone numbers, so purchases without agreement to not resell should fail
         browse_result = self.phone_number_client.browse_available_phone_numbers(
-            country_code="FR", 
-            phone_number_type=PhoneNumberType.TOLL_FREE
+            country_code="FR", phone_number_type=PhoneNumberType.TOLL_FREE
         )
 
         # The phone number can be reserved, but not purchased without agreement to not resell
         phone_number = browse_result.phone_numbers[0]
         created_reservation = self.phone_number_client.create_or_update_reservation(
-            reservation_id=reservation_id, numbers_to_add=[phone_number])
+            reservation_id=reservation_id, numbers_to_add=[phone_number]
+        )
         assert created_reservation.phone_numbers[phone_number.id].status == PhoneNumberAvailabilityStatus.RESERVED
         assert created_reservation.status == ReservationStatus.ACTIVE
 
         # Purchase should fail without agreement to not resell
         with pytest.raises(Exception) as ex:
-            self.phone_number_client.begin_purchase_reservation(
-                reservation_id, agree_to_not_resell=False, polling=True
-            )
+            self.phone_number_client.begin_purchase_reservation(reservation_id, agree_to_not_resell=False, polling=True)
         assert is_client_error_status_code(ex.value.status_code) is True
         assert ex.value.message is not None
 
@@ -599,20 +605,20 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         add_general_regex_sanitizer(
             regex=r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}",
             value=STATIC_RESERVATION_ID,
-            function_scoped=True, # This ensures the sanitizer is only applied to this test
+            function_scoped=True,  # This ensures the sanitizer is only applied to this test
         )
         reservation_id = self.purchased_reservation_id
 
         # Test that we can purchase a reservation
         browse_result = self.phone_number_client.browse_available_phone_numbers(
-            country_code=self.country_code, 
-            phone_number_type=PhoneNumberType.TOLL_FREE
+            country_code=self.country_code, phone_number_type=PhoneNumberType.TOLL_FREE
         )
 
         phone_number = browse_result.phone_numbers[0]
         created_reservation = self.phone_number_client.create_or_update_reservation(
-            reservation_id=reservation_id, numbers_to_add=[phone_number])
-        
+            reservation_id=reservation_id, numbers_to_add=[phone_number]
+        )
+
         assert created_reservation.phone_numbers[phone_number.id].status == PhoneNumberAvailabilityStatus.RESERVED
         assert created_reservation.status == ReservationStatus.ACTIVE
 

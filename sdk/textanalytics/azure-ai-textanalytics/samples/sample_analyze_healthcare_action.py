@@ -46,7 +46,7 @@ def sample_analyze_healthcare_action() -> None:
         """,
         """
         Patient needs to take 50 mg of ibuprofen, and 2 mg of Coumadin.
-        """
+        """,
     ]
 
     poller = text_analytics_client.begin_analyze_actions(

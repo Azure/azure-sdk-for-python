@@ -38,15 +38,16 @@ def format_bounding_box(bounding_box):
 class RecognizeContentSampleAsync(object):
 
     async def recognize_content(self):
-        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
-                                                            "..", "..", "..", "./sample_forms/forms/form_selection_mark.png"))
+        path_to_sample_forms = os.path.abspath(
+            os.path.join(os.path.abspath(__file__), "..", "..", "..", "./sample_forms/forms/form_selection_mark.png")
+        )
         # [START recognize_content_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
 
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-        
+
         async with FormRecognizerClient(
             endpoint=endpoint, credential=AzureKeyCredential(key)
         ) as form_recognizer_client:
@@ -57,30 +58,30 @@ class RecognizeContentSampleAsync(object):
             form_pages = await poller.result()
 
             for idx, content in enumerate(form_pages):
-                print("----Recognizing content from page #{}----".format(idx+1))
-                print("Page has width: {} and height: {}, measured with unit: {}".format(
-                    content.width,
-                    content.height,
-                    content.unit
-                ))
+                print("----Recognizing content from page #{}----".format(idx + 1))
+                print(
+                    "Page has width: {} and height: {}, measured with unit: {}".format(
+                        content.width, content.height, content.unit
+                    )
+                )
                 for table_idx, table in enumerate(content.tables):
-                    print("Table # {} has {} rows and {} columns".format(table_idx, table.row_count, table.column_count))
+                    print(
+                        "Table # {} has {} rows and {} columns".format(table_idx, table.row_count, table.column_count)
+                    )
                     print("Table # {} location on page: {}".format(table_idx, format_bounding_box(table.bounding_box)))
                     for cell in table.cells:
-                        print("...Cell[{}][{}] has text '{}' within bounding box '{}'".format(
-                            cell.row_index,
-                            cell.column_index,
-                            cell.text,
-                            format_bounding_box(cell.bounding_box)
-                        ))
+                        print(
+                            "...Cell[{}][{}] has text '{}' within bounding box '{}'".format(
+                                cell.row_index, cell.column_index, cell.text, format_bounding_box(cell.bounding_box)
+                            )
+                        )
 
                 for line_idx, line in enumerate(content.lines):
-                    print("Line # {} has word count '{}' and text '{}' within bounding box '{}'".format(
-                        line_idx,
-                        len(line.words),
-                        line.text,
-                        format_bounding_box(line.bounding_box)
-                    ))
+                    print(
+                        "Line # {} has word count '{}' and text '{}' within bounding box '{}'".format(
+                            line_idx, len(line.words), line.text, format_bounding_box(line.bounding_box)
+                        )
+                    )
                     if line.appearance:
                         if line.appearance.style_name == "handwriting" and line.appearance.style_confidence > 0.8:
                             print("Text line '{}' is handwritten and might be a signature.".format(line.text))
@@ -88,11 +89,13 @@ class RecognizeContentSampleAsync(object):
                         print("...Word '{}' has a confidence of {}".format(word.text, word.confidence))
 
                 for selection_mark in content.selection_marks:
-                    print("Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
-                        selection_mark.state,
-                        format_bounding_box(selection_mark.bounding_box),
-                        selection_mark.confidence
-                    ))
+                    print(
+                        "Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
+                            selection_mark.state,
+                            format_bounding_box(selection_mark.bounding_box),
+                            selection_mark.confidence,
+                        )
+                    )
                 print("----------------------------------------")
 
             # [END recognize_content_async]
@@ -103,5 +106,5 @@ async def main():
     await sample.recognize_content()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

@@ -40,15 +40,11 @@ def classify_document_from_url(classifier_id):
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
     classifier_id = os.getenv("CLASSIFIER_ID", classifier_id)
 
-    document_analysis_client = DocumentAnalysisClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
+    document_analysis_client = DocumentAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/IRS-1040.pdf"
 
-    poller = document_analysis_client.begin_classify_document_from_url(
-        classifier_id, document_url=url
-    )
+    poller = document_analysis_client.begin_classify_document_from_url(classifier_id, document_url=url)
     result = poller.result()
 
     print("----Classified documents----")

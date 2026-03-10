@@ -17,7 +17,7 @@ from conftest import (
     ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME,
     ENV_AZURE_OPENAI_AUDIO_NAME,
     ENV_AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT,
-    reload
+    reload,
 )
 
 audio_test_file = pathlib.Path(__file__).parent / "./assets/hello.m4a"
@@ -45,22 +45,24 @@ class TestCLI(AzureRecordedTestCase):
                         "-m",
                         ENV_AZURE_OPENAI_COMPLETIONS_NAME,
                         "-p",
-                        "hello world"
+                        "hello world",
                     ],
-                    check=True
+                    check=True,
                 )
                 assert result.returncode == 0
             finally:
-                del os.environ['AZURE_OPENAI_ENDPOINT']
-                del os.environ['AZURE_OPENAI_API_KEY']
-                del os.environ['OPENAI_API_VERSION']
+                del os.environ["AZURE_OPENAI_ENDPOINT"]
+                del os.environ["AZURE_OPENAI_API_KEY"]
+                del os.environ["OPENAI_API_VERSION"]
                 del os.environ["OPENAI_API_TYPE"]
 
     def test_cli_env_vars_token(self):
         with reload():
             os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
             os.environ["OPENAI_API_VERSION"] = LATEST
-            os.environ["AZURE_OPENAI_AD_TOKEN"] = get_credential().get_token("https://cognitiveservices.azure.com/.default").token
+            os.environ["AZURE_OPENAI_AD_TOKEN"] = (
+                get_credential().get_token("https://cognitiveservices.azure.com/.default").token
+            )
             os.environ["OPENAI_API_TYPE"] = "azure"
 
             try:
@@ -74,15 +76,15 @@ class TestCLI(AzureRecordedTestCase):
                         "-m",
                         ENV_AZURE_OPENAI_COMPLETIONS_NAME,
                         "-p",
-                        "hello world"
+                        "hello world",
                     ],
-                    check=True
+                    check=True,
                 )
                 assert result.returncode == 0
             finally:
-                del os.environ['AZURE_OPENAI_ENDPOINT']
-                del os.environ['AZURE_OPENAI_AD_TOKEN']
-                del os.environ['OPENAI_API_VERSION']
+                del os.environ["AZURE_OPENAI_ENDPOINT"]
+                del os.environ["AZURE_OPENAI_AD_TOKEN"]
+                del os.environ["OPENAI_API_VERSION"]
                 del os.environ["OPENAI_API_TYPE"]
 
     def test_cli_api_key(self):
@@ -101,9 +103,9 @@ class TestCLI(AzureRecordedTestCase):
                     "-m",
                     ENV_AZURE_OPENAI_COMPLETIONS_NAME,
                     "-p",
-                    "hello world"
+                    "hello world",
                 ],
-                check=True
+                check=True,
             )
             assert result.returncode == 0
 
@@ -123,9 +125,9 @@ class TestCLI(AzureRecordedTestCase):
                     "-m",
                     ENV_AZURE_OPENAI_COMPLETIONS_NAME,
                     "-p",
-                    "hello world"
+                    "hello world",
                 ],
-                check=True
+                check=True,
             )
             assert result.returncode == 0
 
@@ -146,9 +148,9 @@ class TestCLI(AzureRecordedTestCase):
                     ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME,
                     "-g",
                     "user",
-                    "how do I bake a chocolate cake?"
+                    "how do I bake a chocolate cake?",
                 ],
-                check=True
+                check=True,
             )
             assert result.returncode == 0
 
@@ -168,9 +170,9 @@ class TestCLI(AzureRecordedTestCase):
                     "-m",
                     ENV_AZURE_OPENAI_AUDIO_NAME,
                     "-f",
-                    audio_test_file
+                    audio_test_file,
                 ],
-                check=True
+                check=True,
             )
             assert result.returncode == 0
 
@@ -190,9 +192,9 @@ class TestCLI(AzureRecordedTestCase):
                     "-m",
                     ENV_AZURE_OPENAI_AUDIO_NAME,
                     "-f",
-                    audio_test_file
+                    audio_test_file,
                 ],
-                check=True
+                check=True,
             )
             assert result.returncode == 0
 
@@ -210,7 +212,7 @@ class TestCLI(AzureRecordedTestCase):
                     "api",
                     "models.list",
                 ],
-                check=True
+                check=True,
             )
             assert result.returncode == 0
 
@@ -228,8 +230,8 @@ class TestCLI(AzureRecordedTestCase):
                     "api",
                     "models.retrieve",
                     "-i",
-                    ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME
+                    ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME,
                 ],
-                check=True
+                check=True,
             )
             assert result.returncode == 0

@@ -40,14 +40,8 @@ class TestResourceOperations(AzureMgmtRecordedTestCase):
         self.msi_client = self.create_mgmt_client(ManagedServiceIdentityClient)
         self.akv_client = self.create_mgmt_client(KeyVaultManagementClient)
         self.credential = self.get_credential(KeyClient)
-        self.tenant_id = (
-            os.environ.get("AZURE_TENANT_ID", None)
-            if self.is_live
-            else DEFAULT_SANITIZER
-        )
-        self.object_id = (
-            os.environ.get("CLIENT_OID", None) if self.is_live else DEFAULT_SANITIZER
-        )
+        self.tenant_id = os.environ.get("AZURE_TENANT_ID", None) if self.is_live else DEFAULT_SANITIZER
+        self.object_id = os.environ.get("CLIENT_OID", None) if self.is_live else DEFAULT_SANITIZER
 
     @ResourceGroupPreparer(name_prefix="altpysdk")
     @recorded_by_proxy
@@ -88,20 +82,16 @@ class TestResourceOperations(AzureMgmtRecordedTestCase):
                 },
             ),
             encryption=EncryptionProperties(
-                identity=EncryptionPropertiesIdentity(
-                    type="UserAssigned", resource_id=self.msi1.id
-                ),
+                identity=EncryptionPropertiesIdentity(type="UserAssigned", resource_id=self.msi1.id),
                 key_url=self.key.id,
             ),
         )
 
         # Create a load test resource create begin - returns a poller
-        loadtest_resource_poller = (
-            self.loadtestservice_client.load_tests.begin_create_or_update(
-                resource_group.name,
-                resource_group.name + "resource",
-                loadtestresource_create_payload,
-            )
+        loadtest_resource_poller = self.loadtestservice_client.load_tests.begin_create_or_update(
+            resource_group.name,
+            resource_group.name + "resource",
+            loadtestresource_create_payload,
         )
 
         # Get the result of the poller
@@ -149,12 +139,10 @@ class TestResourceOperations(AzureMgmtRecordedTestCase):
         )
 
         # load test resource update begin - returns a poller
-        loadtest_resource_patch_poller = (
-            self.loadtestservice_client.load_tests.begin_update(
-                resource_group.name,
-                resource_group.name + "resource",
-                loadtestresourcePatchdata,
-            )
+        loadtest_resource_patch_poller = self.loadtestservice_client.load_tests.begin_update(
+            resource_group.name,
+            resource_group.name + "resource",
+            loadtestresourcePatchdata,
         )
 
         # Get the result of the poller
@@ -166,29 +154,17 @@ class TestResourceOperations(AzureMgmtRecordedTestCase):
         assert loadtest_resource_patch_response.name == resource_group.name + "resource"
         assert loadtest_resource_patch_response.location == self.AZURE_LOCATION
         assert loadtest_resource_patch_response.identity
-        assert (
-            loadtest_resource_patch_response.identity.type
-            == "SystemAssigned, UserAssigned"
-        )
-        assert (
-            len(loadtest_resource_patch_response.identity.user_assigned_identities) == 1
-        )
+        assert loadtest_resource_patch_response.identity.type == "SystemAssigned, UserAssigned"
+        assert len(loadtest_resource_patch_response.identity.user_assigned_identities) == 1
         assert loadtest_resource_patch_response.encryption
         assert loadtest_resource_patch_response.encryption.key_url == self.key.id
         assert loadtest_resource_patch_response.encryption.identity
-        assert (
-            loadtest_resource_patch_response.encryption.identity.type == "UserAssigned"
-        )
-        assert (
-            loadtest_resource_patch_response.encryption.identity.resource_id
-            == self.msi1.id
-        )
+        assert loadtest_resource_patch_response.encryption.identity.type == "UserAssigned"
+        assert loadtest_resource_patch_response.encryption.identity.resource_id == self.msi1.id
 
         # Delete the load test resource - returns a poller
-        loadtest_resource_delete_poller = (
-            self.loadtestservice_client.load_tests.begin_delete(
-                resource_group.name, resource_group.name + "resource"
-            )
+        loadtest_resource_delete_poller = self.loadtestservice_client.load_tests.begin_delete(
+            resource_group.name, resource_group.name + "resource"
         )
 
 

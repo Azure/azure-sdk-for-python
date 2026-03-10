@@ -23,21 +23,14 @@ class TestFarmBeatsSmokeAsync(FarmBeatsAsyncTestCase):
             "name": "Test Party",
             "description": "Party created during testing.",
             "status": "Sample Status",
-            "properties": {
-                "foo": "bar",
-                "numeric one": 1,
-                1: "numeric key"
-            }
+            "properties": {"foo": "bar", "numeric one": 1, 1: "numeric key"},
         }
 
         # Setup client
         client = self.create_client(agrifood_endpoint=agrifood_endpoint)
 
         # Create
-        party_response = await client.parties.create_or_update(
-            party_id=party_id,
-            party=party_request
-        )
+        party_response = await client.parties.create_or_update(party_id=party_id, party=party_request)
 
         # Assert on immediate response
         assert party_response["id"] == party_id
@@ -57,7 +50,6 @@ class TestFarmBeatsSmokeAsync(FarmBeatsAsyncTestCase):
         await client.parties.delete(party_id=party_id)
         await self.close_client()
 
-
     @FarmBeatsPowerShellPreparer()
     @recorded_by_proxy_async
     async def test_boundary(self, **kwargs):
@@ -71,47 +63,35 @@ class TestFarmBeatsSmokeAsync(FarmBeatsAsyncTestCase):
             "name": "Test Party",
             "description": "Party created during testing.",
             "status": "Sample Status",
-            "properties": {
-                "foo": "bar",
-                "numeric one": 1,
-                1: "numeric key"
-            }
+            "properties": {"foo": "bar", "numeric one": 1, 1: "numeric key"},
         }
-        party = await client.parties.create_or_update(
-            party_id=party_id,
-            party=party_request
-        )
-        
+        party = await client.parties.create_or_update(party_id=party_id, party=party_request)
+
         boundary = await client.boundaries.create_or_update(
             party_id=party_id,
             boundary_id=boundary_id,
             boundary={
-                "geometry":
-                {
+                "geometry": {
                     "type": "Polygon",
-                    "coordinates":
+                    "coordinates": [
                         [
-                            [
-                                [73.70457172393799, 20.545385304358106],
-                                [73.70457172393799, 20.545385304358106],
-                                [73.70448589324951, 20.542411534243367],
-                                [73.70877742767334, 20.541688176010233],
-                                [73.71023654937744, 20.545083911372505],
-                                [73.70663166046143, 20.546992723579137],
-                                [73.70457172393799, 20.545385304358106],
-                            ]
+                            [73.70457172393799, 20.545385304358106],
+                            [73.70457172393799, 20.545385304358106],
+                            [73.70448589324951, 20.542411534243367],
+                            [73.70877742767334, 20.541688176010233],
+                            [73.71023654937744, 20.545083911372505],
+                            [73.70663166046143, 20.546992723579137],
+                            [73.70457172393799, 20.545385304358106],
                         ]
+                    ],
                 },
                 "status": "<string>",
                 "name": "<string>",
-                "description": "<string>"
-            }
+                "description": "<string>",
+            },
         )
 
-        assert boundary == await client.boundaries.get(
-            party_id=party_id,
-            boundary_id=boundary_id
-        )
+        assert boundary == await client.boundaries.get(party_id=party_id, boundary_id=boundary_id)
         await client.boundaries.delete(party_id=party_id, boundary_id=boundary_id)
         await client.parties.delete(party_id=party_id)
 

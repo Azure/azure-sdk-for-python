@@ -40,9 +40,7 @@ class ClientAuthSamples(object):
         # Instantiate a DPS Service Client using a connection string
         from azure.iot.deviceprovisioning.aio import DeviceProvisioningClient
 
-        dps_service_client = DeviceProvisioningClient.from_connection_string(
-            self.connection_string
-        )
+        dps_service_client = DeviceProvisioningClient.from_connection_string(self.connection_string)
 
     async def auth_named_key_async(self):
         # Instantiate a DPS Service Client using a named key credential
@@ -56,9 +54,7 @@ class ClientAuthSamples(object):
         # Create AzureNamedKeyCredential object
         credential = AzureNamedKeyCredential(name=policy_name, key=policy)
 
-        dps_service_client = DeviceProvisioningClient(
-            endpoint=self.endpoint, credential=credential
-        )
+        dps_service_client = DeviceProvisioningClient(endpoint=self.endpoint, credential=credential)
 
     async def auth_active_directory_async(self):
         # Instantiate a DPS Service Client using a named key credential
@@ -72,9 +68,7 @@ class ClientAuthSamples(object):
             self.active_directory_application_secret,
         )
 
-        dps_service_client = DeviceProvisioningClient(
-            endpoint=self.endpoint, credential=credential  # type: ignore
-        )
+        dps_service_client = DeviceProvisioningClient(endpoint=self.endpoint, credential=credential)  # type: ignore
 
     async def auth_sas_token_async(self):
         # Instantiate a DPS Service Client using a generated SAS token
@@ -92,9 +86,7 @@ class ClientAuthSamples(object):
         # Create AzureSasCredential object
         credential = AzureSasCredential(signature=sas_token)
 
-        dps_service_client = DeviceProvisioningClient(
-            endpoint=self.endpoint, credential=credential
-        )
+        dps_service_client = DeviceProvisioningClient(endpoint=self.endpoint, credential=credential)
 
     async def auth_default_azure_credential_async(self):
         # Default Azure Credentials attempt a chained set of authentication methods, per documentation here: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
@@ -107,9 +99,7 @@ class ClientAuthSamples(object):
         # Instantiate a DefaultAzureCredential
         credential = DefaultAzureCredential()
 
-        dps_service_client = DeviceProvisioningClient(
-            endpoint=self.endpoint, credential=credential  # type: ignore
-        )
+        dps_service_client = DeviceProvisioningClient(endpoint=self.endpoint, credential=credential)  # type: ignore
 
 
 async def main():

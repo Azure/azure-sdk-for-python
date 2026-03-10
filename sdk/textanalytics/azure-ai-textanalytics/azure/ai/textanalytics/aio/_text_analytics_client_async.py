@@ -69,7 +69,6 @@ from ._lro_async import (
     AsyncTextAnalysisLROPoller,
 )
 
-
 AsyncAnalyzeActionsResponse = AsyncTextAnalysisLROPoller[
     AsyncItemPaged[
         List[
@@ -141,20 +140,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         api_version: Optional[Union[str, TextAnalyticsApiVersion]] = None,
         **kwargs: Any,
     ) -> None:
-        super().__init__(
-            endpoint=endpoint, credential=credential, api_version=api_version, **kwargs
-        )
+        super().__init__(endpoint=endpoint, credential=credential, api_version=api_version, **kwargs)
         self._default_language = default_language if default_language is not None else "en"
         self._default_country_hint = default_country_hint if default_country_hint is not None else "US"
-        self._string_code_unit = (
-            None if api_version == "v3.0" else "UnicodeCodePoint"
-        )
+        self._string_code_unit = None if api_version == "v3.0" else "UnicodeCodePoint"
 
     @distributed_trace_async
-    @validate_multiapi_args(
-        version_method_added="v3.0",
-        args_mapping={"v3.1": ["disable_service_logs"]}
-    )
+    @validate_multiapi_args(version_method_added="v3.0", args_mapping={"v3.1": ["disable_service_logs"]})
     async def detect_language(
         self,
         documents: Union[List[str], List[DetectLanguageInput], List[Dict[str, str]]],
@@ -216,11 +208,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 :caption: Detecting language in a batch of documents.
         """
 
-        country_hint_arg = (
-            country_hint
-            if country_hint is not None
-            else self._default_country_hint
-        )
+        country_hint_arg = country_hint if country_hint is not None else self._default_country_hint
         docs = _validate_input(documents, "country_hint", country_hint_arg)
 
         try:
@@ -232,14 +220,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                         body=models.AnalyzeTextLanguageDetectionInput(
                             analysis_input={"documents": docs},
                             parameters=models.LanguageDetectionTaskParameters(
-                                logging_opt_out=disable_service_logs,
-                                model_version=model_version
-                            )
+                                logging_opt_out=disable_service_logs, model_version=model_version
+                            ),
                         ),
                         show_stats=show_stats,
                         cls=kwargs.pop("cls", language_result),
-                        **kwargs
-                    )
+                        **kwargs,
+                    ),
                 )
 
             # api_versions 3.0, 3.1
@@ -251,16 +238,15 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     show_stats=show_stats,
                     logging_opt_out=disable_service_logs,
                     cls=kwargs.pop("cls", language_result),
-                    **kwargs
-                )
+                    **kwargs,
+                ),
             )
         except HttpResponseError as error:
             return process_http_response_error(error)
 
     @distributed_trace_async
     @validate_multiapi_args(
-        version_method_added="v3.0",
-        args_mapping={"v3.1": ["string_index_type", "disable_service_logs"]}
+        version_method_added="v3.0", args_mapping={"v3.1": ["string_index_type", "disable_service_logs"]}
     )
     async def recognize_entities(
         self,
@@ -344,13 +330,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                             parameters=models.EntitiesTaskParameters(
                                 logging_opt_out=disable_service_logs,
                                 model_version=model_version,
-                                string_index_type=string_index_type_compatibility(string_index_type_arg)
-                            )
+                                string_index_type=string_index_type_compatibility(string_index_type_arg),
+                            ),
                         ),
                         show_stats=show_stats,
                         cls=kwargs.pop("cls", entities_result),
-                        **kwargs
-                    )
+                        **kwargs,
+                    ),
                 )
 
             # api_versions 3.0, 3.1
@@ -364,15 +350,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     logging_opt_out=disable_service_logs,
                     cls=kwargs.pop("cls", entities_result),
                     **kwargs,
-                )
+                ),
             )
         except HttpResponseError as error:
             return process_http_response_error(error)
 
     @distributed_trace_async
-    @validate_multiapi_args(
-        version_method_added="v3.1"
-    )
+    @validate_multiapi_args(version_method_added="v3.1")
     async def recognize_pii_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
@@ -466,13 +450,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                                 model_version=model_version,
                                 domain=domain_filter,
                                 pii_categories=categories_filter,
-                                string_index_type=string_index_type_compatibility(string_index_type_arg)
-                            )
+                                string_index_type=string_index_type_compatibility(string_index_type_arg),
+                            ),
                         ),
                         show_stats=show_stats,
                         cls=kwargs.pop("cls", pii_entities_result),
-                        **kwargs
-                    )
+                        **kwargs,
+                    ),
                 )
 
             # api_versions 3.0, 3.1
@@ -487,16 +471,15 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     logging_opt_out=disable_service_logs,
                     string_index_type=string_index_type_arg,
                     cls=kwargs.pop("cls", pii_entities_result),
-                    **kwargs
-                )
+                    **kwargs,
+                ),
             )
         except HttpResponseError as error:
             return process_http_response_error(error)
 
     @distributed_trace_async
     @validate_multiapi_args(
-        version_method_added="v3.0",
-        args_mapping={"v3.1": ["string_index_type", "disable_service_logs"]}
+        version_method_added="v3.0", args_mapping={"v3.1": ["string_index_type", "disable_service_logs"]}
     )
     async def recognize_linked_entities(
         self,
@@ -581,13 +564,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                             parameters=models.EntityLinkingTaskParameters(
                                 logging_opt_out=disable_service_logs,
                                 model_version=model_version,
-                                string_index_type=string_index_type_compatibility(string_index_type_arg)
-                            )
+                                string_index_type=string_index_type_compatibility(string_index_type_arg),
+                            ),
                         ),
                         show_stats=show_stats,
                         cls=kwargs.pop("cls", linked_entities_result),
-                        **kwargs
-                    )
+                        **kwargs,
+                    ),
                 )
 
             # api_versions 3.0, 3.1
@@ -600,17 +583,14 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     string_index_type=string_index_type_arg,
                     show_stats=show_stats,
                     cls=kwargs.pop("cls", linked_entities_result),
-                    **kwargs
-                )
+                    **kwargs,
+                ),
             )
         except HttpResponseError as error:
             return process_http_response_error(error)
 
     @distributed_trace_async
-    @validate_multiapi_args(
-        version_method_added="v3.0",
-        args_mapping={"v3.1": ["disable_service_logs"]}
-    )
+    @validate_multiapi_args(version_method_added="v3.0", args_mapping={"v3.1": ["disable_service_logs"]})
     async def extract_key_phrases(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
@@ -619,7 +599,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         language: Optional[str] = None,
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> List[Union[ExtractKeyPhrasesResult, DocumentError]]:
         """Extract key phrases from a batch of documents.
 
@@ -688,12 +668,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                             parameters=models.KeyPhraseTaskParameters(
                                 logging_opt_out=disable_service_logs,
                                 model_version=model_version,
-                            )
+                            ),
                         ),
                         show_stats=show_stats,
                         cls=kwargs.pop("cls", key_phrases_result),
-                        **kwargs
-                    )
+                        **kwargs,
+                    ),
                 )
 
             # api_versions 3.0, 3.1
@@ -705,8 +685,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     show_stats=show_stats,
                     logging_opt_out=disable_service_logs,
                     cls=kwargs.pop("cls", key_phrases_result),
-                    **kwargs
-                )
+                    **kwargs,
+                ),
             )
         except HttpResponseError as error:
             return process_http_response_error(error)
@@ -714,7 +694,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @distributed_trace_async
     @validate_multiapi_args(
         version_method_added="v3.0",
-        args_mapping={"v3.1": ["show_opinion_mining", "disable_service_logs", "string_index_type"]}
+        args_mapping={"v3.1": ["show_opinion_mining", "disable_service_logs", "string_index_type"]},
     )
     async def analyze_sentiment(
         self,
@@ -807,12 +787,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                                 model_version=model_version,
                                 string_index_type=string_index_type_compatibility(string_index_type_arg),
                                 opinion_mining=show_opinion_mining,
-                            )
+                            ),
                         ),
                         show_stats=show_stats,
                         cls=kwargs.pop("cls", sentiment_result),
-                        **kwargs
-                    )
+                        **kwargs,
+                    ),
                 )
 
             # api_versions 3.0, 3.1
@@ -826,8 +806,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     opinion_mining=show_opinion_mining,
                     show_stats=show_stats,
                     cls=kwargs.pop("cls", sentiment_result),
-                    **kwargs
-                )
+                    **kwargs,
+                ),
             )
         except HttpResponseError as error:
             return process_http_response_error(error)
@@ -838,8 +818,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     ):
         if deserialized is None:
             models = self._client.models(api_version=self._api_version)
-            response_cls = \
+            response_cls = (
                 models.AnalyzeTextJobState if is_language_api(self._api_version) else models.HealthcareJobState
+            )
             deserialized = response_cls.deserialize(raw_response)
         return healthcare_paged_result(
             doc_id_order,
@@ -850,12 +831,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         )
 
     @distributed_trace_async
-    @validate_multiapi_args(
-        version_method_added="v3.1",
-        args_mapping={
-            "2022-05-01": ["display_name"]
-        }
-    )
+    @validate_multiapi_args(version_method_added="v3.1", args_mapping={"2022-05-01": ["display_name"]})
     async def begin_analyze_healthcare_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
@@ -869,9 +845,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         show_stats: Optional[bool] = None,
         string_index_type: Optional[str] = None,
         **kwargs: Any,
-    ) -> AsyncAnalyzeHealthcareEntitiesLROPoller[
-        AsyncItemPaged[Union[AnalyzeHealthcareEntitiesResult, DocumentError]]
-    ]:
+    ) -> AsyncAnalyzeHealthcareEntitiesLROPoller[AsyncItemPaged[Union[AnalyzeHealthcareEntitiesResult, DocumentError]]]:
         """Analyze healthcare entities and identify relationships between these entities in a batch of documents.
 
         Entities are associated with references that can be found in existing knowledge bases,
@@ -951,12 +925,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     continuation_token,
                     AsyncAnalyzeHealthcareEntitiesLROPoller,
                     AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
-                        text_analytics_client=self._client,
-                        timeout=polling_interval_arg,
-                        **kwargs
+                        text_analytics_client=self._client, timeout=polling_interval_arg, **kwargs
                     ),
-                    self._healthcare_result_callback
-                )
+                    self._healthcare_result_callback,
+                ),
             )
 
         docs = _validate_input(documents, "language", language_arg)
@@ -971,9 +943,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         try:
             if is_language_api(self._api_version):
-                input_docs = models.MultiLanguageAnalysisInput(
-                    documents=docs
-                )
+                input_docs = models.MultiLanguageAnalysisInput(documents=docs)
                 return cast(
                     AsyncAnalyzeHealthcareEntitiesLROPoller[
                         AsyncItemPaged[Union[AnalyzeHealthcareEntitiesResult, DocumentError]]
@@ -989,9 +959,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                                         model_version=model_version,
                                         logging_opt_out=disable_service_logs,
                                         string_index_type=string_index_type_compatibility(string_index_type_arg),
-                                    )
+                                    ),
                                 )
-                            ]
+                            ],
                         ),
                         cls=my_cls,
                         polling=AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
@@ -1004,12 +974,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                                     show_stats=show_stats,
                                 )
                             ],
-                            **kwargs
+                            **kwargs,
                         ),
                         continuation_token=continuation_token,
                         poller_cls=AsyncAnalyzeHealthcareEntitiesLROPoller,
-                        **kwargs
-                    )
+                        **kwargs,
+                    ),
                 )
 
             # v3.1
@@ -1037,7 +1007,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     ),
                     continuation_token=continuation_token,
                     **kwargs,
-                )
+                ),
             )
         except HttpResponseError as error:
             return process_http_response_error(error)
@@ -1057,7 +1027,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             raw_response,
             deserialized,
             show_stats=show_stats,
-            bespoke=bespoke
+            bespoke=bespoke,
         )
 
     @distributed_trace_async
@@ -1200,22 +1170,19 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     continuation_token,
                     AsyncAnalyzeActionsLROPoller,
                     AsyncAnalyzeActionsLROPollingMethod(
-                        text_analytics_client=self._client,
-                        timeout=polling_interval_arg,
-                        **kwargs
+                        text_analytics_client=self._client, timeout=polling_interval_arg, **kwargs
                     ),
                     self._analyze_result_callback,
-                    bespoke
-                )
+                    bespoke,
+                ),
             )
 
         models = self._client.models(api_version=self._api_version)
 
-        input_model_cls = \
+        input_model_cls = (
             models.MultiLanguageAnalysisInput if is_language_api(self._api_version) else models.MultiLanguageBatchInput
-        docs = input_model_cls(
-            documents=_validate_input(documents, "language", language_arg)
         )
+        docs = input_model_cls(documents=_validate_input(documents, "language", language_arg))
         doc_id_order = [doc.get("id") for doc in docs.documents]
         try:
             generated_tasks = [
@@ -1228,15 +1195,14 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         response_cls = kwargs.pop(
             "cls",
-            lambda pipeline_response, deserialized, _:
-                self._analyze_result_callback(
-                    pipeline_response,
-                    deserialized,
-                    doc_id_order,
-                    task_id_order=task_order,
-                    show_stats=show_stats,
-                    bespoke=bespoke
-                ),
+            lambda pipeline_response, deserialized, _: self._analyze_result_callback(
+                pipeline_response,
+                deserialized,
+                doc_id_order,
+                task_id_order=task_order,
+                show_stats=show_stats,
+                bespoke=bespoke,
+            ),
         )
 
         try:
@@ -1245,9 +1211,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     AsyncAnalyzeActionsResponse,
                     await self._client.begin_analyze_text_submit_job(
                         body=models.AnalyzeTextJobsInput(
-                            analysis_input=docs,
-                            display_name=display_name,
-                            tasks=generated_tasks
+                            analysis_input=docs, display_name=display_name, tasks=generated_tasks
                         ),
                         cls=response_cls,
                         polling=AsyncAnalyzeActionsLROPollingMethod(
@@ -1261,39 +1225,36 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                                     show_stats=show_stats,
                                 )
                             ],
-                            **kwargs
+                            **kwargs,
                         ),
                         continuation_token=continuation_token,
-                        **kwargs
-                    )
+                        **kwargs,
+                    ),
                 )
 
             # v3.1
             analyze_tasks = models.JobManifestTasks(
                 entity_recognition_tasks=[
-                    a for a in generated_tasks
-                    if _determine_action_type(a) == _AnalyzeActionsType.RECOGNIZE_ENTITIES
+                    a for a in generated_tasks if _determine_action_type(a) == _AnalyzeActionsType.RECOGNIZE_ENTITIES
                 ],
                 entity_recognition_pii_tasks=[
-                    a for a in generated_tasks
+                    a
+                    for a in generated_tasks
                     if _determine_action_type(a) == _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
                 ],
                 key_phrase_extraction_tasks=[
-                    a for a in generated_tasks
-                    if _determine_action_type(a) == _AnalyzeActionsType.EXTRACT_KEY_PHRASES
+                    a for a in generated_tasks if _determine_action_type(a) == _AnalyzeActionsType.EXTRACT_KEY_PHRASES
                 ],
                 entity_linking_tasks=[
-                    a for a in generated_tasks
+                    a
+                    for a in generated_tasks
                     if _determine_action_type(a) == _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
                 ],
                 sentiment_analysis_tasks=[
-                    a for a in generated_tasks
-                    if _determine_action_type(a) == _AnalyzeActionsType.ANALYZE_SENTIMENT
+                    a for a in generated_tasks if _determine_action_type(a) == _AnalyzeActionsType.ANALYZE_SENTIMENT
                 ],
             )
-            analyze_body = models.AnalyzeBatchInput(
-                display_name=display_name, tasks=analyze_tasks, analysis_input=docs
-            )
+            analyze_body = models.AnalyzeBatchInput(display_name=display_name, tasks=analyze_tasks, analysis_input=docs)
             return cast(
                 AsyncAnalyzeActionsResponse,
                 await self._client.begin_analyze(
@@ -1314,7 +1275,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     ),
                     continuation_token=continuation_token,
                     **kwargs,
-                )
+                ),
             )
         except HttpResponseError as error:
             return process_http_response_error(error)
@@ -1410,20 +1371,16 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     continuation_token,
                     AsyncAnalyzeActionsLROPoller,
                     AsyncAnalyzeActionsLROPollingMethod(
-                        text_analytics_client=self._client,
-                        timeout=polling_interval_arg,
-                        **kwargs
+                        text_analytics_client=self._client, timeout=polling_interval_arg, **kwargs
                     ),
                     self._analyze_result_callback,
-                    bespoke=True
-                )
+                    bespoke=True,
+                ),
             )
 
         try:
             return cast(
-                AsyncTextAnalysisLROPoller[
-                    AsyncItemPaged[Union[RecognizeCustomEntitiesResult, DocumentError]]
-                ],
+                AsyncTextAnalysisLROPoller[AsyncItemPaged[Union[RecognizeCustomEntitiesResult, DocumentError]]],
                 await self.begin_analyze_actions(
                     documents,
                     actions=[
@@ -1431,7 +1388,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                             project_name=project_name,
                             deployment_name=deployment_name,
                             string_index_type=string_index_type_arg,
-                            disable_service_logs=disable_service_logs
+                            disable_service_logs=disable_service_logs,
                         )
                     ],
                     display_name=display_name,
@@ -1439,8 +1396,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     language=language,
                     polling_interval=polling_interval_arg,
                     bespoke=True,
-                    **kwargs
-                )
+                    **kwargs,
+                ),
             )
 
         except HttpResponseError as error:
@@ -1531,27 +1488,23 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     continuation_token,
                     AsyncAnalyzeActionsLROPoller,
                     AsyncAnalyzeActionsLROPollingMethod(
-                        text_analytics_client=self._client,
-                        timeout=polling_interval_arg,
-                        **kwargs
+                        text_analytics_client=self._client, timeout=polling_interval_arg, **kwargs
                     ),
                     self._analyze_result_callback,
-                    bespoke=True
-                )
+                    bespoke=True,
+                ),
             )
 
         try:
             return cast(
-                AsyncTextAnalysisLROPoller[
-                    AsyncItemPaged[Union[ClassifyDocumentResult, DocumentError]]
-                ],
+                AsyncTextAnalysisLROPoller[AsyncItemPaged[Union[ClassifyDocumentResult, DocumentError]]],
                 await self.begin_analyze_actions(
                     documents,
                     actions=[
                         SingleLabelClassifyAction(
                             project_name=project_name,
                             deployment_name=deployment_name,
-                            disable_service_logs=disable_service_logs
+                            disable_service_logs=disable_service_logs,
                         )
                     ],
                     polling_interval=polling_interval_arg,
@@ -1559,8 +1512,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     show_stats=show_stats,
                     language=language,
                     bespoke=True,
-                    **kwargs
-                )
+                    **kwargs,
+                ),
             )
 
         except HttpResponseError as error:
@@ -1651,27 +1604,23 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     continuation_token,
                     AsyncAnalyzeActionsLROPoller,
                     AsyncAnalyzeActionsLROPollingMethod(
-                        text_analytics_client=self._client,
-                        timeout=polling_interval_arg,
-                        **kwargs
+                        text_analytics_client=self._client, timeout=polling_interval_arg, **kwargs
                     ),
                     self._analyze_result_callback,
-                    bespoke=True
-                )
+                    bespoke=True,
+                ),
             )
 
         try:
             return cast(
-                AsyncTextAnalysisLROPoller[
-                    AsyncItemPaged[Union[ClassifyDocumentResult, DocumentError]]
-                ],
+                AsyncTextAnalysisLROPoller[AsyncItemPaged[Union[ClassifyDocumentResult, DocumentError]]],
                 await self.begin_analyze_actions(
                     documents,
                     actions=[
                         MultiLabelClassifyAction(
                             project_name=project_name,
                             deployment_name=deployment_name,
-                            disable_service_logs=disable_service_logs
+                            disable_service_logs=disable_service_logs,
                         )
                     ],
                     polling_interval=polling_interval_arg,
@@ -1679,17 +1628,15 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     show_stats=show_stats,
                     language=language,
                     bespoke=True,
-                    **kwargs
-                )
+                    **kwargs,
+                ),
             )
 
         except HttpResponseError as error:
             return process_http_response_error(error)
 
     @distributed_trace_async
-    @validate_multiapi_args(
-        version_method_added="2023-04-01"
-    )
+    @validate_multiapi_args(version_method_added="2023-04-01")
     async def begin_extract_summary(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
@@ -1778,20 +1725,16 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     continuation_token,
                     AsyncAnalyzeActionsLROPoller,
                     AsyncAnalyzeActionsLROPollingMethod(
-                        text_analytics_client=self._client,
-                        timeout=polling_interval_arg,
-                        **kwargs
+                        text_analytics_client=self._client, timeout=polling_interval_arg, **kwargs
                     ),
                     self._analyze_result_callback,
-                    bespoke=True
-                )
+                    bespoke=True,
+                ),
             )
 
         try:
             return cast(
-                AsyncTextAnalysisLROPoller[
-                    AsyncItemPaged[Union[ExtractiveSummaryResult, DocumentError]]
-                ],
+                AsyncTextAnalysisLROPoller[AsyncItemPaged[Union[ExtractiveSummaryResult, DocumentError]]],
                 await self.begin_analyze_actions(
                     documents,
                     actions=[
@@ -1808,17 +1751,15 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     show_stats=show_stats,
                     language=language,
                     bespoke=True,
-                    **kwargs
-                )
+                    **kwargs,
+                ),
             )
 
         except HttpResponseError as error:
             return process_http_response_error(error)
 
     @distributed_trace_async
-    @validate_multiapi_args(
-        version_method_added="2023-04-01"
-    )
+    @validate_multiapi_args(version_method_added="2023-04-01")
     async def begin_abstract_summary(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
@@ -1905,20 +1846,16 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     continuation_token,
                     AsyncAnalyzeActionsLROPoller,
                     AsyncAnalyzeActionsLROPollingMethod(
-                        text_analytics_client=self._client,
-                        timeout=polling_interval_arg,
-                        **kwargs
+                        text_analytics_client=self._client, timeout=polling_interval_arg, **kwargs
                     ),
                     self._analyze_result_callback,
-                    bespoke=True
-                )
+                    bespoke=True,
+                ),
             )
 
         try:
             return cast(
-                AsyncTextAnalysisLROPoller[
-                    AsyncItemPaged[Union[AbstractiveSummaryResult, DocumentError]]
-                ],
+                AsyncTextAnalysisLROPoller[AsyncItemPaged[Union[AbstractiveSummaryResult, DocumentError]]],
                 await self.begin_analyze_actions(
                     documents,
                     actions=[
@@ -1934,8 +1871,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     show_stats=show_stats,
                     language=language,
                     bespoke=True,
-                    **kwargs
-                )
+                    **kwargs,
+                ),
             )
 
         except HttpResponseError as error:

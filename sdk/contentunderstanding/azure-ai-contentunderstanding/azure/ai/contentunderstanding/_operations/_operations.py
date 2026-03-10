@@ -40,9 +40,7 @@ from .._utils.utils import ClientMixinABC
 JSON = MutableMapping[str, Any]
 _Unset: Any = object()
 T = TypeVar("T")
-ClsType = Optional[
-    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]
-]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -58,12 +56,8 @@ def build_content_understanding_analyze_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop(
-        "content_type", _headers.pop("Content-Type", None)
-    )
-    api_version: str = kwargs.pop(
-        "api_version", _params.pop("api-version", "2025-11-01")
-    )
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -75,25 +69,17 @@ def build_content_understanding_analyze_request(  # pylint: disable=name-too-lon
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["stringEncoding"] = _SERIALIZER.query(
-        "string_encoding", string_encoding, "str"
-    )
+    _params["stringEncoding"] = _SERIALIZER.query("string_encoding", string_encoding, "str")
     if processing_location is not None:
-        _params["processingLocation"] = _SERIALIZER.query(
-            "processing_location", processing_location, "str"
-        )
+        _params["processingLocation"] = _SERIALIZER.query("processing_location", processing_location, "str")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header(
-            "content_type", content_type, "str"
-        )
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST", url=_url, params=_params, headers=_headers, **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_content_understanding_analyze_binary_request(  # pylint: disable=name-too-long
@@ -108,9 +94,7 @@ def build_content_understanding_analyze_binary_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop(
-        "api_version", _params.pop("api-version", "2025-11-01")
-    )
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -122,24 +106,18 @@ def build_content_understanding_analyze_binary_request(  # pylint: disable=name-
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["stringEncoding"] = _SERIALIZER.query(
-        "string_encoding", string_encoding, "str"
-    )
+    _params["stringEncoding"] = _SERIALIZER.query("string_encoding", string_encoding, "str")
     if content_range is not None:
         _params["range"] = _SERIALIZER.query("content_range", content_range, "str")
     if processing_location is not None:
-        _params["processingLocation"] = _SERIALIZER.query(
-            "processing_location", processing_location, "str"
-        )
+        _params["processingLocation"] = _SERIALIZER.query("processing_location", processing_location, "str")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST", url=_url, params=_params, headers=_headers, **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_content_understanding_copy_analyzer_request(  # pylint: disable=name-too-long
@@ -148,12 +126,8 @@ def build_content_understanding_copy_analyzer_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop(
-        "content_type", _headers.pop("Content-Type", None)
-    )
-    api_version: str = kwargs.pop(
-        "api_version", _params.pop("api-version", "2025-11-01")
-    )
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -167,20 +141,14 @@ def build_content_understanding_copy_analyzer_request(  # pylint: disable=name-t
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if allow_replace is not None:
-        _params["allowReplace"] = _SERIALIZER.query(
-            "allow_replace", allow_replace, "bool"
-        )
+        _params["allowReplace"] = _SERIALIZER.query("allow_replace", allow_replace, "bool")
 
     # Construct headers
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header(
-            "content_type", content_type, "str"
-        )
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST", url=_url, params=_params, headers=_headers, **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_content_understanding_create_analyzer_request(  # pylint: disable=name-too-long
@@ -189,12 +157,8 @@ def build_content_understanding_create_analyzer_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop(
-        "content_type", _headers.pop("Content-Type", None)
-    )
-    api_version: str = kwargs.pop(
-        "api_version", _params.pop("api-version", "2025-11-01")
-    )
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -208,20 +172,14 @@ def build_content_understanding_create_analyzer_request(  # pylint: disable=name
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if allow_replace is not None:
-        _params["allowReplace"] = _SERIALIZER.query(
-            "allow_replace", allow_replace, "bool"
-        )
+        _params["allowReplace"] = _SERIALIZER.query("allow_replace", allow_replace, "bool")
 
     # Construct headers
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header(
-            "content_type", content_type, "str"
-        )
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="PUT", url=_url, params=_params, headers=_headers, **kwargs
-    )
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_content_understanding_delete_analyzer_request(  # pylint: disable=name-too-long
@@ -230,9 +188,7 @@ def build_content_understanding_delete_analyzer_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop(
-        "api_version", _params.pop("api-version", "2025-11-01")
-    )
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01"))
     # Construct URL
     _url = "/analyzers/{analyzerId}"
     path_format_arguments = {
@@ -246,9 +202,7 @@ def build_content_understanding_delete_analyzer_request(  # pylint: disable=name
 
     # Construct headers
 
-    return HttpRequest(
-        method="DELETE", url=_url, params=_params, headers=_headers, **kwargs
-    )
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_content_understanding_delete_result_request(  # pylint: disable=name-too-long
@@ -256,9 +210,7 @@ def build_content_understanding_delete_result_request(  # pylint: disable=name-t
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop(
-        "api_version", _params.pop("api-version", "2025-11-01")
-    )
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01"))
     # Construct URL
     _url = "/analyzerResults/{operationId}"
     path_format_arguments = {
@@ -279,9 +231,7 @@ def build_content_understanding_get_analyzer_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop(
-        "api_version", _params.pop("api-version", "2025-11-01")
-    )
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -298,9 +248,7 @@ def build_content_understanding_get_analyzer_request(  # pylint: disable=name-to
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET", url=_url, params=_params, headers=_headers, **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_content_understanding_get_defaults_request(
@@ -309,9 +257,7 @@ def build_content_understanding_get_defaults_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop(
-        "api_version", _params.pop("api-version", "2025-11-01")
-    )
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -323,9 +269,7 @@ def build_content_understanding_get_defaults_request(
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET", url=_url, params=_params, headers=_headers, **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_content_understanding_get_operation_status_request(  # pylint: disable=name-too-long
@@ -334,9 +278,7 @@ def build_content_understanding_get_operation_status_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop(
-        "api_version", _params.pop("api-version", "2025-11-01")
-    )
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -354,9 +296,7 @@ def build_content_understanding_get_operation_status_request(  # pylint: disable
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET", url=_url, params=_params, headers=_headers, **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_content_understanding_get_result_request(  # pylint: disable=name-too-long
@@ -365,9 +305,7 @@ def build_content_understanding_get_result_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop(
-        "api_version", _params.pop("api-version", "2025-11-01")
-    )
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -384,9 +322,7 @@ def build_content_understanding_get_result_request(  # pylint: disable=name-too-
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET", url=_url, params=_params, headers=_headers, **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_content_understanding_get_result_file_request(  # pylint: disable=name-too-long
@@ -395,9 +331,7 @@ def build_content_understanding_get_result_file_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop(
-        "api_version", _params.pop("api-version", "2025-11-01")
-    )
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01"))
     accept = _headers.pop("Accept", "*/*")
 
     # Construct URL
@@ -415,9 +349,7 @@ def build_content_understanding_get_result_file_request(  # pylint: disable=name
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET", url=_url, params=_params, headers=_headers, **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_content_understanding_grant_copy_authorization_request(  # pylint: disable=name-too-long
@@ -426,12 +358,8 @@ def build_content_understanding_grant_copy_authorization_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop(
-        "content_type", _headers.pop("Content-Type", None)
-    )
-    api_version: str = kwargs.pop(
-        "api_version", _params.pop("api-version", "2025-11-01")
-    )
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -447,14 +375,10 @@ def build_content_understanding_grant_copy_authorization_request(  # pylint: dis
 
     # Construct headers
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header(
-            "content_type", content_type, "str"
-        )
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST", url=_url, params=_params, headers=_headers, **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_content_understanding_list_analyzers_request(
@@ -463,9 +387,7 @@ def build_content_understanding_list_analyzers_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop(
-        "api_version", _params.pop("api-version", "2025-11-01")
-    )
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -477,9 +399,7 @@ def build_content_understanding_list_analyzers_request(
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET", url=_url, params=_params, headers=_headers, **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_content_understanding_update_analyzer_request(  # pylint: disable=name-too-long
@@ -488,12 +408,8 @@ def build_content_understanding_update_analyzer_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop(
-        "content_type", _headers.pop("Content-Type", None)
-    )
-    api_version: str = kwargs.pop(
-        "api_version", _params.pop("api-version", "2025-11-01")
-    )
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -509,14 +425,10 @@ def build_content_understanding_update_analyzer_request(  # pylint: disable=name
 
     # Construct headers
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header(
-            "content_type", content_type, "str"
-        )
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="PATCH", url=_url, params=_params, headers=_headers, **kwargs
-    )
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_content_understanding_update_defaults_request(
@@ -525,12 +437,8 @@ def build_content_understanding_update_defaults_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop(
-        "content_type", _headers.pop("Content-Type", None)
-    )
-    api_version: str = kwargs.pop(
-        "api_version", _params.pop("api-version", "2025-11-01")
-    )
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -541,14 +449,10 @@ def build_content_understanding_update_defaults_request(
 
     # Construct headers
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header(
-            "content_type", content_type, "str"
-        )
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="PATCH", url=_url, params=_params, headers=_headers, **kwargs
-    )
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 class _ContentUnderstandingClientOperationsMixin(
@@ -580,9 +484,7 @@ class _ContentUnderstandingClientOperationsMixin(
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop(
-            "content_type", _headers.pop("Content-Type", None)
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         if body is _Unset:
@@ -608,18 +510,14 @@ class _ContentUnderstandingClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
         _stream = True
-        pipeline_response: PipelineResponse = (
-            self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -629,15 +527,11 @@ class _ContentUnderstandingClientOperationsMixin(
                 response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
                 pass
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers["Operation-Location"] = self._deserialize(
-            "str", response.headers.get("Operation-Location")
-        )
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
         response_headers["x-ms-client-request-id"] = self._deserialize(
             "str", response.headers.get("x-ms-client-request-id")
         )
@@ -796,9 +690,7 @@ class _ContentUnderstandingClientOperationsMixin(
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop(
-            "content_type", _headers.pop("Content-Type", None)
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.AnalysisResult] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -830,25 +722,19 @@ class _ContentUnderstandingClientOperationsMixin(
                 "str", response.headers.get("x-ms-client-request-id")
             )
 
-            deserialized = _deserialize(
-                _models.AnalysisResult, response.json().get("result", {})
-            )
+            deserialized = _deserialize(_models.AnalysisResult, response.json().get("result", {}))
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
 
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
             polling_method: PollingMethod = cast(
                 PollingMethod,
-                LROBasePolling(
-                    lro_delay, path_format_arguments=path_format_arguments, **kwargs
-                ),
+                LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
@@ -903,18 +789,14 @@ class _ContentUnderstandingClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
         _stream = True
-        pipeline_response: PipelineResponse = (
-            self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -924,15 +806,11 @@ class _ContentUnderstandingClientOperationsMixin(
                 response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
                 pass
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers["Operation-Location"] = self._deserialize(
-            "str", response.headers.get("Operation-Location")
-        )
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
         response_headers["x-ms-client-request-id"] = self._deserialize(
             "str", response.headers.get("x-ms-client-request-id")
         )
@@ -1011,25 +889,19 @@ class _ContentUnderstandingClientOperationsMixin(
                 "str", response.headers.get("x-ms-client-request-id")
             )
 
-            deserialized = _deserialize(
-                _models.AnalysisResult, response.json().get("result", {})
-            )
+            deserialized = _deserialize(_models.AnalysisResult, response.json().get("result", {}))
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
 
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
             polling_method: PollingMethod = cast(
                 PollingMethod,
-                LROBasePolling(
-                    lro_delay, path_format_arguments=path_format_arguments, **kwargs
-                ),
+                LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
@@ -1068,9 +940,7 @@ class _ContentUnderstandingClientOperationsMixin(
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop(
-            "content_type", _headers.pop("Content-Type", None)
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         if body is _Unset:
@@ -1099,18 +969,14 @@ class _ContentUnderstandingClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
         _stream = True
-        pipeline_response: PipelineResponse = (
-            self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1120,15 +986,11 @@ class _ContentUnderstandingClientOperationsMixin(
                 response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
                 pass
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers["Operation-Location"] = self._deserialize(
-            "str", response.headers.get("Operation-Location")
-        )
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
         response_headers["x-ms-client-request-id"] = self._deserialize(
             "str", response.headers.get("x-ms-client-request-id")
         )
@@ -1269,9 +1131,7 @@ class _ContentUnderstandingClientOperationsMixin(
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop(
-            "content_type", _headers.pop("Content-Type", None)
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ContentAnalyzer] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1303,25 +1163,19 @@ class _ContentUnderstandingClientOperationsMixin(
                 "str", response.headers.get("x-ms-client-request-id")
             )
 
-            deserialized = _deserialize(
-                _models.ContentAnalyzer, response.json().get("result", {})
-            )
+            deserialized = _deserialize(_models.ContentAnalyzer, response.json().get("result", {}))
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
 
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
             polling_method: PollingMethod = cast(
                 PollingMethod,
-                LROBasePolling(
-                    lro_delay, path_format_arguments=path_format_arguments, **kwargs
-                ),
+                LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
@@ -1357,9 +1211,7 @@ class _ContentUnderstandingClientOperationsMixin(
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop(
-            "content_type", _headers.pop("Content-Type", None)
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
@@ -1379,18 +1231,14 @@ class _ContentUnderstandingClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
         _stream = True
-        pipeline_response: PipelineResponse = (
-            self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1400,15 +1248,11 @@ class _ContentUnderstandingClientOperationsMixin(
                 response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
                 pass
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers["Operation-Location"] = self._deserialize(
-            "str", response.headers.get("Operation-Location")
-        )
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
         response_headers["x-ms-client-request-id"] = self._deserialize(
             "str", response.headers.get("x-ms-client-request-id")
         )
@@ -1531,9 +1375,7 @@ class _ContentUnderstandingClientOperationsMixin(
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop(
-            "content_type", _headers.pop("Content-Type", None)
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ContentAnalyzer] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1568,17 +1410,13 @@ class _ContentUnderstandingClientOperationsMixin(
             return deserialized
 
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
             polling_method: PollingMethod = cast(
                 PollingMethod,
-                LROBasePolling(
-                    lro_delay, path_format_arguments=path_format_arguments, **kwargs
-                ),
+                LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
@@ -1627,25 +1465,19 @@ class _ContentUnderstandingClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = (
-            self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         response_headers = {}
@@ -1657,9 +1489,7 @@ class _ContentUnderstandingClientOperationsMixin(
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def delete_result(
-        self, operation_id: str, **kwargs: Any
-    ) -> None:  # pylint: disable=inconsistent-return-statements
+    def delete_result(self, operation_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Mark the result of an analysis operation for deletion.
 
         :param operation_id: Operation identifier. Required.
@@ -1688,25 +1518,19 @@ class _ContentUnderstandingClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = (
-            self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if cls:
@@ -1742,18 +1566,14 @@ class _ContentUnderstandingClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = (
-            self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1764,9 +1584,7 @@ class _ContentUnderstandingClientOperationsMixin(
                     response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         response_headers = {}
@@ -1812,18 +1630,14 @@ class _ContentUnderstandingClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = (
-            self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1834,17 +1648,13 @@ class _ContentUnderstandingClientOperationsMixin(
                     response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(
-                _models.ContentUnderstandingDefaults, response.json()
-            )
+            deserialized = _deserialize(_models.ContentUnderstandingDefaults, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1887,18 +1697,14 @@ class _ContentUnderstandingClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = (
-            self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1909,17 +1715,13 @@ class _ContentUnderstandingClientOperationsMixin(
                     response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(
-                _models.ContentAnalyzerOperationStatus, response.json()
-            )
+            deserialized = _deserialize(_models.ContentAnalyzerOperationStatus, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1927,9 +1729,7 @@ class _ContentUnderstandingClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace
-    def _get_result(
-        self, operation_id: str, **kwargs: Any
-    ) -> _models.ContentAnalyzerAnalyzeOperationStatus:
+    def _get_result(self, operation_id: str, **kwargs: Any) -> _models.ContentAnalyzerAnalyzeOperationStatus:
         """Get the result of an analysis operation.
 
         :param operation_id: The unique ID of the operation. Required.
@@ -1950,9 +1750,7 @@ class _ContentUnderstandingClientOperationsMixin(
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ContentAnalyzerAnalyzeOperationStatus] = kwargs.pop(
-            "cls", None
-        )
+        cls: ClsType[_models.ContentAnalyzerAnalyzeOperationStatus] = kwargs.pop("cls", None)
 
         _request = build_content_understanding_get_result_request(
             operation_id=operation_id,
@@ -1961,18 +1759,14 @@ class _ContentUnderstandingClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = (
-            self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1983,17 +1777,13 @@ class _ContentUnderstandingClientOperationsMixin(
                     response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(
-                _models.ContentAnalyzerAnalyzeOperationStatus, response.json()
-            )
+            deserialized = _deserialize(_models.ContentAnalyzerAnalyzeOperationStatus, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2001,9 +1791,7 @@ class _ContentUnderstandingClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_result_file(
-        self, operation_id: str, path: str, **kwargs: Any
-    ) -> Iterator[bytes]:
+    def get_result_file(self, operation_id: str, path: str, **kwargs: Any) -> Iterator[bytes]:
         """Get a file associated with the result of an analysis operation.
 
         :param operation_id: Operation identifier. Required.
@@ -2035,18 +1823,14 @@ class _ContentUnderstandingClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", True)
-        pipeline_response: PipelineResponse = (
-            self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2057,15 +1841,11 @@ class _ContentUnderstandingClientOperationsMixin(
                     response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers["content-type"] = self._deserialize(
-            "str", response.headers.get("content-type")
-        )
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
 
         deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
@@ -2183,9 +1963,7 @@ class _ContentUnderstandingClientOperationsMixin(
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop(
-            "content_type", _headers.pop("Content-Type", None)
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.CopyAuthorization] = kwargs.pop("cls", None)
 
         if body is _Unset:
@@ -2212,18 +1990,14 @@ class _ContentUnderstandingClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = (
-            self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2234,9 +2008,7 @@ class _ContentUnderstandingClientOperationsMixin(
                     response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         response_headers = {}
@@ -2291,9 +2063,7 @@ class _ContentUnderstandingClientOperationsMixin(
                         skip_quote=True,
                     ),
                 }
-                _request.url = self._client.format_url(
-                    _request.url, **path_format_arguments
-                )
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -2301,9 +2071,7 @@ class _ContentUnderstandingClientOperationsMixin(
                 _next_request_params = case_insensitive_dict(
                     {
                         key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(
-                            _parsed_next_link.query
-                        ).items()
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
@@ -2320,9 +2088,7 @@ class _ContentUnderstandingClientOperationsMixin(
                         skip_quote=True,
                     ),
                 }
-                _request.url = self._client.format_url(
-                    _request.url, **path_format_arguments
-                )
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             return _request
 
@@ -2340,10 +2106,8 @@ class _ContentUnderstandingClientOperationsMixin(
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = (
-                self._client._pipeline.run(  # pylint: disable=protected-access
-                    _request, stream=_stream, **kwargs
-                )
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2457,9 +2221,7 @@ class _ContentUnderstandingClientOperationsMixin(
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop(
-            "content_type", _headers.pop("Content-Type", None)
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ContentAnalyzer] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
@@ -2478,18 +2240,14 @@ class _ContentUnderstandingClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = (
-            self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2500,9 +2258,7 @@ class _ContentUnderstandingClientOperationsMixin(
                     response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         response_headers = {}
@@ -2619,9 +2375,7 @@ class _ContentUnderstandingClientOperationsMixin(
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop(
-            "content_type", _headers.pop("Content-Type", None)
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ContentUnderstandingDefaults] = kwargs.pop("cls", None)
 
         if body is _Unset:
@@ -2642,18 +2396,14 @@ class _ContentUnderstandingClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = (
-            self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2664,17 +2414,13 @@ class _ContentUnderstandingClientOperationsMixin(
                     response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(
-                _models.ContentUnderstandingDefaults, response.json()
-            )
+            deserialized = _deserialize(_models.ContentUnderstandingDefaults, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

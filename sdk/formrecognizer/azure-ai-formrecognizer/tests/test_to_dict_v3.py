@@ -11,9 +11,7 @@ from testcase import FormRecognizerTest
 
 class TestToDict(FormRecognizerTest):
     def test_bounding_region_to_dict(self):
-        model = _models.BoundingRegion(
-            polygon=[_models.Point(1, 2), _models.Point(3, 4)], page_number=1
-        )
+        model = _models.BoundingRegion(polygon=[_models.Point(1, 2), _models.Point(3, 4)], page_number=1)
         # d = [p.to_dict() for p in model]
         d = model.to_dict()
         final = {
@@ -56,7 +54,7 @@ class TestToDict(FormRecognizerTest):
             state_district="state_district",
             suburb="suburb",
             house="house",
-            level="level"
+            level="level",
         )
 
         d = model.to_dict()
@@ -74,23 +72,15 @@ class TestToDict(FormRecognizerTest):
             "state_district": "state_district",
             "suburb": "suburb",
             "house": "house",
-            "level": "level"
+            "level": "level",
         }
         assert d == final
 
     def test_currency_value_to_dict(self):
-        model = _models.CurrencyValue(
-            amount=5.01,
-            symbol="$",
-            code="USD"
-        )
+        model = _models.CurrencyValue(amount=5.01, symbol="$", code="USD")
 
         d = model.to_dict()
-        final = {
-            "amount": 5.01,
-            "symbol": "$",
-            "code": "USD"
-        }
+        final = {"amount": 5.01, "symbol": "$", "code": "USD"}
         assert d == final
 
     def test_analyzed_document_to_dict(self):
@@ -545,7 +535,7 @@ class TestToDict(FormRecognizerTest):
                     ),
                 ],
             ),
-            confidence=0.89
+            confidence=0.89,
         )
 
         d = model.to_dict()
@@ -593,7 +583,7 @@ class TestToDict(FormRecognizerTest):
                     },
                 ],
             },
-            "confidence": 0.89
+            "confidence": 0.89,
         }
 
         assert d == final
@@ -706,7 +696,7 @@ class TestToDict(FormRecognizerTest):
                         _models.Point(1427.0, 1698.0),
                     ],
                     span=_models.DocumentSpan(offset=5, length=2),
-                    confidence=0.8
+                    confidence=0.8,
                 )
             ],
             formulas=[
@@ -720,9 +710,9 @@ class TestToDict(FormRecognizerTest):
                         _models.Point(1427.0, 1698.0),
                     ],
                     span=_models.DocumentSpan(offset=5, length=2),
-                    confidence=0.8
+                    confidence=0.8,
                 )
-            ]
+            ],
         )
 
         d = model.to_dict()
@@ -795,14 +785,11 @@ class TestToDict(FormRecognizerTest):
                         {"x": 1427.0, "y": 1669.0},
                         {"x": 1527.0, "y": 1669.0},
                         {"x": 1527.0, "y": 1698.0},
-                        {"x": 1427.0, "y": 1698.0}
+                        {"x": 1427.0, "y": 1698.0},
                     ],
                     "confidence": 0.8,
-                    "span": {
-                        "offset": 5,
-                        "length": 2
-                    },
-                    "value": "15"
+                    "span": {"offset": 5, "length": 2},
+                    "value": "15",
                 }
             ],
             "formulas": [
@@ -812,16 +799,13 @@ class TestToDict(FormRecognizerTest):
                         {"x": 1427.0, "y": 1669.0},
                         {"x": 1527.0, "y": 1669.0},
                         {"x": 1527.0, "y": 1698.0},
-                        {"x": 1427.0, "y": 1698.0}
+                        {"x": 1427.0, "y": 1698.0},
                     ],
                     "confidence": 0.8,
-                    "span": {
-                        "offset": 5,
-                        "length": 2
-                    },
-                    "value": "2+2=4"
+                    "span": {"offset": 5, "length": 2},
+                    "value": "2+2=4",
                 }
-            ]
+            ],
         }
 
         assert d == final
@@ -875,7 +859,7 @@ class TestToDict(FormRecognizerTest):
             font_style="italic",
             font_weight="bold",
             color="#FF0000",
-            background_color="#FFFFFF"
+            background_color="#FFFFFF",
         )
 
         d = model.to_dict()
@@ -889,11 +873,11 @@ class TestToDict(FormRecognizerTest):
                 }
             ],
             "confidence": 1.0,
-            'similar_font_family': 'Arial',
-            'font_style': 'italic',
-            'font_weight': 'bold',
-            'color': '#FF0000',
-            'background_color': '#FFFFFF',
+            "similar_font_family": "Arial",
+            "font_style": "italic",
+            "font_weight": "bold",
+            "color": "#FF0000",
+            "background_color": "#FFFFFF",
         }
 
         assert d == final
@@ -1252,7 +1236,7 @@ class TestToDict(FormRecognizerTest):
                                 _models.Point(1427.0, 1698.0),
                             ],
                             span=_models.DocumentSpan(offset=5, length=2),
-                            confidence=0.8
+                            confidence=0.8,
                         )
                     ],
                     formulas=[
@@ -1266,9 +1250,9 @@ class TestToDict(FormRecognizerTest):
                                 _models.Point(1427.0, 1698.0),
                             ],
                             span=_models.DocumentSpan(offset=5, length=2),
-                            confidence=0.8
+                            confidence=0.8,
                         )
-                    ]
+                    ],
                 ),
             ],
             tables=[
@@ -1353,8 +1337,7 @@ class TestToDict(FormRecognizerTest):
                     font_style="italic",
                     font_weight="bold",
                     color="#FF0000",
-                    background_color="#FFFFFF"
-
+                    background_color="#FFFFFF",
                 ),
             ],
             documents=[
@@ -1506,14 +1489,11 @@ class TestToDict(FormRecognizerTest):
                                 {"x": 1427.0, "y": 1669.0},
                                 {"x": 1527.0, "y": 1669.0},
                                 {"x": 1527.0, "y": 1698.0},
-                                {"x": 1427.0, "y": 1698.0}
+                                {"x": 1427.0, "y": 1698.0},
                             ],
                             "confidence": 0.8,
-                            "span": {
-                                "offset": 5,
-                                "length": 2
-                            },
-                            "value": "15"
+                            "span": {"offset": 5, "length": 2},
+                            "value": "15",
                         }
                     ],
                     "formulas": [
@@ -1523,16 +1503,13 @@ class TestToDict(FormRecognizerTest):
                                 {"x": 1427.0, "y": 1669.0},
                                 {"x": 1527.0, "y": 1669.0},
                                 {"x": 1527.0, "y": 1698.0},
-                                {"x": 1427.0, "y": 1698.0}
+                                {"x": 1427.0, "y": 1698.0},
                             ],
                             "confidence": 0.8,
-                            "span": {
-                                "offset": 5,
-                                "length": 2
-                            },
-                            "value": "2+2=4"
+                            "span": {"offset": 5, "length": 2},
+                            "value": "2+2=4",
                         }
-                    ]
+                    ],
                 },
             ],
             "paragraphs": [
@@ -1655,7 +1632,7 @@ class TestToDict(FormRecognizerTest):
                             },
                         ],
                     },
-                    "confidence": 0.89
+                    "confidence": 0.89,
                 },
             ],
             "styles": [
@@ -1668,11 +1645,11 @@ class TestToDict(FormRecognizerTest):
                         }
                     ],
                     "confidence": 1.0,
-                    'similar_font_family': 'Arial',
-                    'font_style': 'italic',
-                    'font_weight': 'bold',
-                    'color': '#FF0000',
-                    'background_color': '#FFFFFF',
+                    "similar_font_family": "Arial",
+                    "font_style": "italic",
+                    "font_weight": "bold",
+                    "color": "#FF0000",
+                    "background_color": "#FFFFFF",
                 },
             ],
             "documents": [
@@ -1833,11 +1810,7 @@ class TestToDict(FormRecognizerTest):
                 code="ResourceNotFound",
                 message="Resource was not found",
                 target="resource",
-                details=[
-                    _models.DocumentAnalysisError(
-                        code="ResourceNotFound", message="Resource was not found"
-                    )
-                ],
+                details=[_models.DocumentAnalysisError(code="ResourceNotFound", message="Resource was not found")],
                 innererror=_models.DocumentAnalysisInnerError(
                     code="ResourceNotFound",
                     message="Resource was not found",
@@ -2196,14 +2169,11 @@ class TestToDict(FormRecognizerTest):
             api_version="2023-07-31",
             doc_types={
                 "form-A": _models.ClassifierDocumentTypeDetails(
-                    source=_models.BlobSource(
-                        container_url="https://myaccount.blob.core.windows.net/blob-sas-url"
-                    )
+                    source=_models.BlobSource(container_url="https://myaccount.blob.core.windows.net/blob-sas-url")
                 ),
                 "form-B": _models.ClassifierDocumentTypeDetails(
                     source=_models.BlobFileListSource(
-                        container_url="https://myaccount.blob.core.windows.net/blob-sas-url",
-                        file_list="filelist.jsonl"
+                        container_url="https://myaccount.blob.core.windows.net/blob-sas-url", file_list="filelist.jsonl"
                     )
                 ),
             },
@@ -2263,16 +2233,15 @@ class TestToDict(FormRecognizerTest):
     def test_resource_details_to_dict(self):
         model = _models.ResourceDetails(
             custom_document_models=_models.CustomDocumentModelsDetails(limit=5000, count=10),
-            neural_document_model_quota=_models.QuotaDetails(
-                used=0,
-                quota=20,
-                quota_resets_on="1994-11-05T13:15:30Z"
-            )
+            neural_document_model_quota=_models.QuotaDetails(used=0, quota=20, quota_resets_on="1994-11-05T13:15:30Z"),
         )
 
         d = model.to_dict()
 
-        final = {'custom_document_models': {'count': 10, 'limit': 5000}, 'neural_document_model_quota': {'used': 0, 'quota': 20, 'quota_resets_on': '1994-11-05T13:15:30Z'}}
+        final = {
+            "custom_document_models": {"count": 10, "limit": 5000},
+            "neural_document_model_quota": {"used": 0, "quota": 20, "quota_resets_on": "1994-11-05T13:15:30Z"},
+        }
         assert d == final
 
     def test_document_analysis_inner_error_to_dict(self):
@@ -2303,11 +2272,7 @@ class TestToDict(FormRecognizerTest):
             code="ResourceNotFound",
             message="Resource was not found",
             target="resource",
-            details=[
-                _models.DocumentAnalysisError(
-                    code="ResourceNotFound", message="Resource was not found"
-                )
-            ],
+            details=[_models.DocumentAnalysisError(code="ResourceNotFound", message="Resource was not found")],
             innererror=_models.DocumentAnalysisInnerError(
                 code="ResourceNotFound",
                 message="Resource was not found",

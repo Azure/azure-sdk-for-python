@@ -24,4 +24,3 @@ class TestServiceLinkerManagementConfigurationNamesOperations(AzureMgmtRecordedT
         response = self.client.configuration_names.list()
         result = [r for r in response]
         assert result
-        

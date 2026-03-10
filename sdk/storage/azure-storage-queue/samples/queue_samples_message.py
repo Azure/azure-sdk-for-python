@@ -22,7 +22,6 @@ USAGE:
     1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
-
 from datetime import datetime, timedelta
 import os
 import sys

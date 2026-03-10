@@ -11,7 +11,6 @@ from typing import Any, Union
 from ._core import Prompty
 from ._invoker import Invoker, InvokerFactory
 
-
 ROLES = ["assistant", "function", "system", "user"]
 
 

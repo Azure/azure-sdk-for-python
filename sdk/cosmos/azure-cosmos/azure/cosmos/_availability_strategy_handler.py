@@ -20,6 +20,7 @@
 # SOFTWARE.
 
 """Module for handling request availability strategies in Azure Cosmos DB."""
+
 import copy
 import os
 import time
@@ -36,6 +37,7 @@ from ._request_object import RequestObject
 
 ResponseType = Tuple[Dict[str, Any], Dict[str, Any]]
 
+
 class CrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
     """Handler for CrossRegionHedgingStrategy that implements cross-region request hedging."""
 
@@ -50,7 +52,7 @@ class CrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
         location_index: int,
         available_locations: List[str],
         complete_status: Event,
-        first_request_params_holder: SimpleNamespace
+        first_request_params_holder: SimpleNamespace,
     ) -> ResponseType:
         """Execute a single request.
 
@@ -86,8 +88,7 @@ class CrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
         else:
             # Subsequent requests after threshold steps
             steps = location_index - 1
-            delay = (availability_strategy.threshold_ms +
-                    (steps * availability_strategy.threshold_steps_ms))
+            delay = availability_strategy.threshold_ms + (steps * availability_strategy.threshold_steps_ms)
 
         if delay > 0:
             time.sleep(delay / 1000)
@@ -99,9 +100,7 @@ class CrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
 
         # Setup excluded regions for hedging requests
         params.excluded_locations = self._create_excluded_regions_for_hedging(
-            location_index,
-            available_locations,
-            request_params.excluded_locations
+            location_index, available_locations, request_params.excluded_locations
         )
 
         req = copy.deepcopy(request)
@@ -118,7 +117,7 @@ class CrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
         request_params: RequestObject,
         global_endpoint_manager: _GlobalPartitionEndpointManagerForCircuitBreaker,
         request: HttpRequest,
-        execute_request_fn: Callable[..., ResponseType]
+        execute_request_fn: Callable[..., ResponseType],
     ) -> ResponseType:
         """Execute request with cross-region hedging strategy.
 
@@ -155,7 +154,7 @@ class CrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
                 location_index=i,
                 available_locations=available_locations,
                 complete_status=completion_status,
-                first_request_params_holder=first_request_params_holder
+                first_request_params_holder=first_request_params_holder,
             )
             futures.append(future)
             if i == 0:
@@ -190,9 +189,8 @@ class CrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
         raise exc
 
     def _record_cancel_for_first_request(
-            self,
-            request_params_holder: SimpleNamespace,
-            global_endpoint_manager: Any) -> None:
+        self, request_params_holder: SimpleNamespace, global_endpoint_manager: Any
+    ) -> None:
         """Record failure for the first request when a subsequent hedged request succeeds.
 
         :param request_params_holder: Container holding the request parameters for the first request
@@ -207,11 +205,12 @@ class CrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
 # Global handler instance
 _cross_region_hedging_handler = CrossRegionHedgingHandler()
 
+
 def execute_with_hedging(
     request_params: RequestObject,
     global_endpoint_manager: _GlobalPartitionEndpointManagerForCircuitBreaker,
     request: HttpRequest,
-    execute_request_fn: Callable[..., ResponseType]
+    execute_request_fn: Callable[..., ResponseType],
 ) -> ResponseType:
     """Execute a request with hedging based on the availability strategy.
 
@@ -228,8 +227,5 @@ def execute_with_hedging(
     :raises: Any exceptions raised by the hedging handler's execute_request method
     """
     return _cross_region_hedging_handler.execute_request(
-        request_params,
-        global_endpoint_manager,
-        request,
-        execute_request_fn
+        request_params, global_endpoint_manager, request, execute_request_fn
     )

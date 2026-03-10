@@ -19,19 +19,23 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Class for defining internal constants in the Azure Cosmos database service.
-"""
+"""Class for defining internal constants in the Azure Cosmos database service."""
 
 from enum import IntEnum
 from typing_extensions import Literal
+
 # cspell:ignore PPAF
+
 
 class TimeoutScope:
     """Defines the scope of timeout application"""
+
     OPERATION: Literal["operation"] = "operation"  # Apply timeout to entire logical operation
     PAGE: Literal["page"] = "page"  # Apply timeout to individual page requests
 
+
 # cspell:ignore reranker
+
 
 class _Constants:
     """Constants used in the azure-cosmos package"""
@@ -47,8 +51,10 @@ class _Constants:
     ReadableLocations: Literal["readableLocations"] = "readableLocations"
     Name: Literal["name"] = "name"
     DatabaseAccountEndpoint: Literal["databaseAccountEndpoint"] = "databaseAccountEndpoint"
-    DefaultEndpointsRefreshTime: int = 5 * 60 * 1000 # milliseconds
-    EnablePerPartitionFailoverBehavior: Literal["enablePerPartitionFailoverBehavior"] = "enablePerPartitionFailoverBehavior" #pylint: disable=line-too-long
+    DefaultEndpointsRefreshTime: int = 5 * 60 * 1000  # milliseconds
+    EnablePerPartitionFailoverBehavior: Literal["enablePerPartitionFailoverBehavior"] = (
+        "enablePerPartitionFailoverBehavior"  # pylint: disable=line-too-long
+    )
 
     # ServiceDocument Resource
     EnableMultipleWritableLocations: Literal["enableMultipleWriteLocations"] = "enableMultipleWriteLocations"
@@ -100,7 +106,7 @@ class _Constants:
         413: "REQUEST_ENTITY_TOO_LARGE - Document size exceeds limit.",
         424: "FAILED_DEPENDENCY - There is a failure in the transactional batch.",
         429: "TOO_MANY_REQUESTS",
-        449: "RETRY_WITH - Conflicting request to resource has been attempted. Retry to avoid conflicts."
+        449: "RETRY_WITH - Conflicting request to resource has been attempted. Retry to avoid conflicts.",
     }
 
     class Kwargs:
@@ -128,5 +134,6 @@ class _Constants:
         Example:
             If the user agent suffix has "F3", this means that flags 1 and 2.
         """
+
         PER_PARTITION_AUTOMATIC_FAILOVER = 1
         PER_PARTITION_CIRCUIT_BREAKER = 2

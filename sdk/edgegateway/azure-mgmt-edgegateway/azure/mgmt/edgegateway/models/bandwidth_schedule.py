@@ -38,28 +38,28 @@ class BandwidthSchedule(ARMBaseModel):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'start': {'required': True},
-        'stop': {'required': True},
-        'rate_in_mbps': {'required': True},
-        'days': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "start": {"required": True},
+        "stop": {"required": True},
+        "rate_in_mbps": {"required": True},
+        "days": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'start': {'key': 'properties.start', 'type': 'str'},
-        'stop': {'key': 'properties.stop', 'type': 'str'},
-        'rate_in_mbps': {'key': 'properties.rateInMbps', 'type': 'int'},
-        'days': {'key': 'properties.days', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "start": {"key": "properties.start", "type": "str"},
+        "stop": {"key": "properties.stop", "type": "str"},
+        "rate_in_mbps": {"key": "properties.rateInMbps", "type": "int"},
+        "days": {"key": "properties.days", "type": "[str]"},
     }
 
     def __init__(self, **kwargs):
         super(BandwidthSchedule, self).__init__(**kwargs)
-        self.start = kwargs.get('start', None)
-        self.stop = kwargs.get('stop', None)
-        self.rate_in_mbps = kwargs.get('rate_in_mbps', None)
-        self.days = kwargs.get('days', None)
+        self.start = kwargs.get("start", None)
+        self.stop = kwargs.get("stop", None)
+        self.rate_in_mbps = kwargs.get("rate_in_mbps", None)
+        self.days = kwargs.get("days", None)

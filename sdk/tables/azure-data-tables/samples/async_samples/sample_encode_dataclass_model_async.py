@@ -21,6 +21,7 @@ USAGE:
     2) TABLES_COSMOS_ACCOUNT_NAME - the name of the cosmos DB account
     3) TABLES_PRIMARY_COSMOS_ACCOUNT_KEY - the cosmos DB account access key
 """
+
 import os
 import asyncio
 from datetime import datetime, timezone

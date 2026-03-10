@@ -23,8 +23,8 @@ class Sku(Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
     }
 
     def __init__(self, *, name=None, tier=None, **kwargs) -> None:

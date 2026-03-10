@@ -5,6 +5,7 @@
 """Customize generated code here.
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 from typing import List, Union, Any, Optional, Callable, Dict, TypeVar, TYPE_CHECKING
 import sys
 from azure.core.messaging import CloudEvent

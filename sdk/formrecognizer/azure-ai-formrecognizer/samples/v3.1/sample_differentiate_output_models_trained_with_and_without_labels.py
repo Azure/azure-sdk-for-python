@@ -44,6 +44,7 @@ def format_bounding_box(bounding_box):
         return "N/A"
     return ", ".join(["[{}, {}]".format(p.x, p.y) for p in bounding_box])
 
+
 class DifferentiateOutputModelsTrainedWithAndWithoutLabels(object):
 
     def recognize_custom_forms(self, labeled_model_id, unlabeled_model_id):
@@ -55,11 +56,11 @@ class DifferentiateOutputModelsTrainedWithAndWithoutLabels(object):
         model_trained_with_labels_id = os.getenv("ID_OF_MODEL_TRAINED_WITH_LABELS", labeled_model_id)
         model_trained_without_labels_id = os.getenv("ID_OF_MODEL_TRAINED_WITHOUT_LABELS", unlabeled_model_id)
 
-        form_recognizer_client = FormRecognizerClient(
-            endpoint=endpoint, credential=AzureKeyCredential(key)
-        )
+        form_recognizer_client = FormRecognizerClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./sample_forms/forms/Form_1.jpg"))
+        path_to_sample_forms = os.path.abspath(
+            os.path.join(os.path.abspath(__file__), "..", "..", "./sample_forms/forms/Form_1.jpg")
+        )
 
         with open(path_to_sample_forms, "rb") as f:
             form = f.read()
@@ -80,12 +81,11 @@ class DifferentiateOutputModelsTrainedWithAndWithoutLabels(object):
         print("---------Recognizing forms using models trained with labeled data---------")
         for labeled_form in forms_with_labeled_model:
             for name, field in labeled_form.fields.items():
-                print("...Field '{}' has value '{}' within bounding box '{}', with a confidence score of {}".format(
-                    name,
-                    field.value,
-                    format_bounding_box(field.value_data.bounding_box),
-                    field.confidence
-                ))
+                print(
+                    "...Field '{}' has value '{}' within bounding box '{}', with a confidence score of {}".format(
+                        name, field.value, format_bounding_box(field.value_data.bounding_box), field.confidence
+                    )
+                )
 
         # Find a specific labeled field. Substitute "Merchant" with your specific training-time label
         try:
@@ -103,18 +103,19 @@ class DifferentiateOutputModelsTrainedWithAndWithoutLabels(object):
         print("-------Recognizing forms using models trained with unlabeled data-------")
         for unlabeled_form in forms_with_unlabeled_model:
             for name, field in unlabeled_form.fields.items():
-                print("...Field '{}' has label '{}' within bounding box '{}', with a confidence score of {}".format(
-                    name,
-                    field.label_data.text,
-                    format_bounding_box(field.label_data.bounding_box),
-                    field.confidence
-                ))
-                print("...Field '{}' has value '{}' within bounding box '{}', with a confidence score of {}".format(
-                    name,
-                    field.value,
-                    format_bounding_box(field.value_data.bounding_box),
-                    field.confidence
-                ))
+                print(
+                    "...Field '{}' has label '{}' within bounding box '{}', with a confidence score of {}".format(
+                        name,
+                        field.label_data.text,
+                        format_bounding_box(field.label_data.bounding_box),
+                        field.confidence,
+                    )
+                )
+                print(
+                    "...Field '{}' has value '{}' within bounding box '{}', with a confidence score of {}".format(
+                        name, field.value, format_bounding_box(field.value_data.bounding_box), field.confidence
+                    )
+                )
 
         # Find the value of a specific unlabeled field. Will only be found if sample training forms used
         print("\nValue for a specific unlabeled field:")
@@ -125,7 +126,7 @@ class DifferentiateOutputModelsTrainedWithAndWithoutLabels(object):
                     print("The Vendor Name is {}\n".format(field.value))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample = DifferentiateOutputModelsTrainedWithAndWithoutLabels()
     labeled_model_id = None
     unlabeled_model_id = None
@@ -142,9 +143,7 @@ if __name__ == '__main__':
         if not endpoint or not key:
             raise ValueError("Please provide endpoint and API key to run the samples.")
 
-        form_training_client = FormTrainingClient(
-            endpoint=endpoint, credential=AzureKeyCredential(key)
-        )
+        form_training_client = FormTrainingClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
         if labeled:
             model = form_training_client.begin_training(labeled, use_training_labels=True).result()

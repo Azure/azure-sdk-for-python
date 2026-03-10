@@ -31,9 +31,7 @@ async def sample_analyze_healthcare_entities_async() -> None:
         "In this sample we will be combing through the prescriptions our pharmacy has fulfilled "
         "so we can catalog how much inventory we have"
     )
-    print(
-        "We start out with a list of prescription documents."
-    )
+    print("We start out with a list of prescription documents.")
 
     # [START analyze_healthcare_entities_async]
     import os
@@ -57,7 +55,7 @@ async def sample_analyze_healthcare_entities_async() -> None:
         """,
         """
         Patient needs to take 50 mg of ibuprofen, and 2 mg of Coumadin.
-        """
+        """,
     ]
 
     async with text_analytics_client:
@@ -94,7 +92,8 @@ async def sample_analyze_healthcare_entities_async() -> None:
     dosage_of_medication_relations = [
         entity_relation
         for doc in docs
-        for entity_relation in doc.entity_relations if entity_relation.relation_type == HealthcareEntityRelation.DOSAGE_OF_MEDICATION
+        for entity_relation in doc.entity_relations
+        if entity_relation.relation_type == HealthcareEntityRelation.DOSAGE_OF_MEDICATION
     ]
     # [END analyze_healthcare_entities_async]
 
@@ -115,16 +114,14 @@ async def sample_analyze_healthcare_entities_async() -> None:
         medication_role = next(filter(lambda x: x.name == "Medication", relation.roles))
 
         try:
-            dosage_value = int(re.findall(r"\d+", dosage_role.entity.text)[0]) # we find the numbers in the dosage
+            dosage_value = int(re.findall(r"\d+", dosage_role.entity.text)[0])  # we find the numbers in the dosage
             medication_to_dosage[medication_role.entity.text] += dosage_value
         except StopIteration:
             # Error handling for if there's no dosage in numbers.
             pass
 
     [
-        print("We have fulfilled '{}' total mg of '{}'".format(
-            dosage, medication
-        ))
+        print("We have fulfilled '{}' total mg of '{}'".format(dosage, medication))
         for medication, dosage in medication_to_dosage.items()
     ]
 
@@ -133,5 +130,5 @@ async def main():
     await sample_analyze_healthcare_entities_async()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

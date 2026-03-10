@@ -14,6 +14,7 @@ load_dotenv()
 
 _LOGGER = logging.getLogger(__name__)
 
+
 # The following code is to show how to handle exceptions in WebPubSubClient, and it
 # may not run directly
 def main():
@@ -53,7 +54,7 @@ def main():
             # may want to handle it with reference of https://learn.microsoft.com/azure/azure-web-pubsub/concept-client-protocols#ack-response
             elif err.error_detail.name == "...":
                 pass
-                
+
     client.close()
 
 

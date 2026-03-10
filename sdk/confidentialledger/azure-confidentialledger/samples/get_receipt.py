@@ -8,7 +8,7 @@
 FILE: get_receipt.py
 DESCRIPTION:
     This sample demonstrates how to retrieve Confidential Ledger receipts. In this sample, we write
-    a ledger entry and retrieve a receipt certifying that it was written correctly. 
+    a ledger entry and retrieve a receipt certifying that it was written correctly.
 USAGE:
     python get_receipt.py
     Set the environment variables with your own values before running the sample:
@@ -26,7 +26,6 @@ from azure.confidentialledger.certificate import (
 )
 from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
-
 
 logging.basicConfig(level=logging.ERROR)
 LOG = logging.getLogger()

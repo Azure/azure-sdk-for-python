@@ -16,7 +16,6 @@ from azure.ai.documentintelligence.models import (
 from preparers import DocumentIntelligencePreparer, GlobalClientPreparerAsync as _GlobalClientPreparer
 from asynctestcase import AsyncDocumentIntelligenceTest
 
-
 DocumentIntelligenceClientPreparer = functools.partial(_GlobalClientPreparer, DocumentIntelligenceClient)
 
 

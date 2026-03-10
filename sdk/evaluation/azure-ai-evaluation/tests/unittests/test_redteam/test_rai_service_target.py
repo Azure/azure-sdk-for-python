@@ -4,7 +4,6 @@ import json
 import uuid
 import asyncio
 
-
 try:
     import pyrit
 

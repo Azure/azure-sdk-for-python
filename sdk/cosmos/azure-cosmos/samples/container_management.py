@@ -49,163 +49,147 @@ import config
 # the provisioned throughput (RU/s) of that account.
 # ----------------------------------------------------------------------------------------------------------
 
-HOST = config.settings['host']
-MASTER_KEY = config.settings['master_key']
-DATABASE_ID = config.settings['database_id']
-CONTAINER_ID = config.settings['container_id']
+HOST = config.settings["host"]
+MASTER_KEY = config.settings["master_key"]
+DATABASE_ID = config.settings["database_id"]
+CONTAINER_ID = config.settings["container_id"]
 
 
 def find_container(db, id):
-    print('1. Query for Container')
+    print("1. Query for Container")
 
-    containers = list(db.query_containers(
-        {
-            "query": "SELECT * FROM r WHERE r.id=@id",
-            "parameters": [
-                { "name":"@id", "value": id }
-            ]
-        }
-    ))
+    containers = list(
+        db.query_containers({"query": "SELECT * FROM r WHERE r.id=@id", "parameters": [{"name": "@id", "value": id}]})
+    )
 
     if len(containers) > 0:
-        print('Container with id \'{0}\' was found'.format(id))
+        print("Container with id '{0}' was found".format(id))
     else:
-        print('No container with id \'{0}\' was found'. format(id))
+        print("No container with id '{0}' was found".format(id))
 
 
 def create_container(db, id):
-    """ Execute basic container creation.
-    This will create containers with 400 RUs with different indexing, partitioning, and storage options """
+    """Execute basic container creation.
+    This will create containers with 400 RUs with different indexing, partitioning, and storage options"""
 
-    partition_key = PartitionKey(path='/id', kind='Hash')
+    partition_key = PartitionKey(path="/id", kind="Hash")
     print("\n2.1 Create Container - Basic")
 
     try:
         db.create_container(id=id, partition_key=partition_key)
-        print('Container with id \'{0}\' created'.format(id))
+        print("Container with id '{0}' created".format(id))
 
     except exceptions.CosmosResourceExistsError:
-        print('A container with id \'{0}\' already exists'.format(id))
+        print("A container with id '{0}' already exists".format(id))
 
     print("\n2.2 Create Container - With custom index policy")
 
     try:
-        coll = {
-            "id": id+"_container_custom_index_policy",
-            "indexingPolicy": {
-                "automatic": False
-            }
-        }
+        coll = {"id": id + "_container_custom_index_policy", "indexingPolicy": {"automatic": False}}
 
         container = db.create_container(
-            id=coll['id'],
-            partition_key=partition_key,
-            indexing_policy=coll['indexingPolicy']
+            id=coll["id"], partition_key=partition_key, indexing_policy=coll["indexingPolicy"]
         )
         properties = container.read()
-        print('Container with id \'{0}\' created'.format(container.id))
-        print('IndexPolicy Mode - \'{0}\''.format(properties['indexingPolicy']['indexingMode']))
-        print('IndexPolicy Automatic - \'{0}\''.format(properties['indexingPolicy']['automatic']))
+        print("Container with id '{0}' created".format(container.id))
+        print("IndexPolicy Mode - '{0}'".format(properties["indexingPolicy"]["indexingMode"]))
+        print("IndexPolicy Automatic - '{0}'".format(properties["indexingPolicy"]["automatic"]))
 
     except exceptions.CosmosResourceExistsError:
-        print('A container with id \'{0}\' already exists'.format(coll['id']))
+        print("A container with id '{0}' already exists".format(coll["id"]))
 
     print("\n2.3 Create Container - With custom provisioned throughput")
 
     try:
         container = db.create_container(
-            id=id+"_container_custom_throughput",
-            partition_key=partition_key,
-            offer_throughput=400
+            id=id + "_container_custom_throughput", partition_key=partition_key, offer_throughput=400
         )
-        print('Container with id \'{0}\' created'.format(container.id))
+        print("Container with id '{0}' created".format(container.id))
 
     except exceptions.CosmosResourceExistsError:
-        print('A container with id \'{0}\' already exists'.format(coll['id']))
+        print("A container with id '{0}' already exists".format(coll["id"]))
 
     print("\n2.4 Create Container - With Unique keys")
 
     try:
         container = db.create_container(
-            id= id+"_container_unique_keys",
+            id=id + "_container_unique_keys",
             partition_key=partition_key,
-            unique_key_policy={'uniqueKeys': [{'paths': ['/field1/field2', '/field3']}]}
+            unique_key_policy={"uniqueKeys": [{"paths": ["/field1/field2", "/field3"]}]},
         )
         properties = container.read()
-        unique_key_paths = properties['uniqueKeyPolicy']['uniqueKeys'][0]['paths']
-        print('Container with id \'{0}\' created'.format(container.id))
-        print('Unique Key Paths - \'{0}\', \'{1}\''.format(unique_key_paths[0], unique_key_paths[1]))
+        unique_key_paths = properties["uniqueKeyPolicy"]["uniqueKeys"][0]["paths"]
+        print("Container with id '{0}' created".format(container.id))
+        print("Unique Key Paths - '{0}', '{1}'".format(unique_key_paths[0], unique_key_paths[1]))
 
     except exceptions.CosmosResourceExistsError:
-        print('A container with id \'container_unique_keys\' already exists')
+        print("A container with id 'container_unique_keys' already exists")
 
     print("\n2.5 Create Container - With Partition key V2 (Default)")
 
     try:
         container = db.create_container(
-            id=id+"_container_partition_key_v2",
-            partition_key=PartitionKey(path='/id', kind='Hash')
+            id=id + "_container_partition_key_v2", partition_key=PartitionKey(path="/id", kind="Hash")
         )
         properties = container.read()
-        print('Container with id \'{0}\' created'.format(container.id))
-        print('Partition Key - \'{0}\''.format(properties['partitionKey']))
+        print("Container with id '{0}' created".format(container.id))
+        print("Partition Key - '{0}'".format(properties["partitionKey"]))
 
     except exceptions.CosmosResourceExistsError:
-        print('A container with id \'container_partition_key_v2\' already exists')
+        print("A container with id 'container_partition_key_v2' already exists")
 
     print("\n2.6 Create Container - With Partition key V1")
 
     try:
         container = db.create_container(
-            id=id+"_container_partition_key_v1",
-            partition_key=PartitionKey(path='/id', kind='Hash', version=1)
+            id=id + "_container_partition_key_v1", partition_key=PartitionKey(path="/id", kind="Hash", version=1)
         )
         properties = container.read()
-        print('Container with id \'{0}\' created'.format(container.id))
-        print('Partition Key - \'{0}\''.format(properties['partitionKey']))
+        print("Container with id '{0}' created".format(container.id))
+        print("Partition Key - '{0}'".format(properties["partitionKey"]))
 
     except exceptions.CosmosResourceExistsError:
-        print('A container with id \'container_partition_key_v1\' already exists')
+        print("A container with id 'container_partition_key_v1' already exists")
 
     print("\n2.7 Create Container - With analytical store enabled")
 
     try:
         container = db.create_container(
-            id=id+"_container_analytical_store",
-            partition_key=PartitionKey(path='/id', kind='Hash'), analytical_storage_ttl=None
+            id=id + "_container_analytical_store",
+            partition_key=PartitionKey(path="/id", kind="Hash"),
+            analytical_storage_ttl=None,
         )
         """A value of None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.
         Please note that analytical storage can only be enabled on Synapse Link enabled accounts."""
 
         properties = container.read()
-        print('Container with id \'{0}\' created'.format(container.id))
-        print('Partition Key - \'{0}\''.format(properties['partitionKey']))
+        print("Container with id '{0}' created".format(container.id))
+        print("Partition Key - '{0}'".format(properties["partitionKey"]))
 
     except exceptions.CosmosResourceExistsError:
-        print('A container with id \'_container_analytical_store\' already exists')
+        print("A container with id '_container_analytical_store' already exists")
 
     print("\n2.8 Create Container - With autoscale settings")
 
     try:
         container = db.create_container(
-            id=id+"_container_auto_scale_settings",
+            id=id + "_container_auto_scale_settings",
             partition_key=partition_key,
-            offer_throughput=ThroughputProperties(auto_scale_max_throughput=5000, auto_scale_increment_percent=0)
+            offer_throughput=ThroughputProperties(auto_scale_max_throughput=5000, auto_scale_increment_percent=0),
         )
-        print('Container with id \'{0}\' created'.format(container.id))
+        print("Container with id '{0}' created".format(container.id))
 
     except exceptions.CosmosResourceExistsError:
-        print('A container with id \'{0}\' already exists'.format(coll['id']))
-
+        print("A container with id '{0}' already exists".format(coll["id"]))
 
 
 def manage_provisioned_throughput(db, id):
     print("\n3.1 Get Container provisioned throughput (RU/s)")
 
-    #A Container's Provisioned Throughput determines the performance throughput of a container.
-    #A Container is loosely coupled to Offer through the Offer's offerResourceId
-    #Offer.offerResourceId == Container._rid
-    #Offer.resource == Container._self
+    # A Container's Provisioned Throughput determines the performance throughput of a container.
+    # A Container is loosely coupled to Offer through the Offer's offerResourceId
+    # Offer.offerResourceId == Container._rid
+    # Offer.resource == Container._self
 
     try:
         # read the container, so we can get its _self
@@ -214,18 +198,22 @@ def manage_provisioned_throughput(db, id):
         # now use its _self to query for Offers
         offer = container.get_throughput()
 
-        print('Found Offer \'{0}\' for Container \'{1}\' and its throughput is \'{2}\''.format(offer.properties['id'], container.id, offer.properties['content']['offerThroughput']))
+        print(
+            "Found Offer '{0}' for Container '{1}' and its throughput is '{2}'".format(
+                offer.properties["id"], container.id, offer.properties["content"]["offerThroughput"]
+            )
+        )
 
     except exceptions.CosmosResourceExistsError:
-        print('A container with id \'{0}\' does not exist'.format(id))
+        print("A container with id '{0}' does not exist".format(id))
 
     print("\n3.2 Change Provisioned Throughput of Container")
 
-    #The Provisioned Throughput of a container controls the throughput allocated to the Container
+    # The Provisioned Throughput of a container controls the throughput allocated to the Container
 
-    #The following code shows how you can change Container's throughput
+    # The following code shows how you can change Container's throughput
     offer = container.replace_throughput(offer.offer_throughput + 100)
-    print('Replaced Offer. Provisioned Throughput is now \'{0}\''.format(offer.properties['content']['offerThroughput']))
+    print("Replaced Offer. Provisioned Throughput is now '{0}'".format(offer.properties["content"]["offerThroughput"]))
 
 
 def read_Container(db, id):
@@ -234,16 +222,16 @@ def read_Container(db, id):
     try:
         container = db.get_container_client(id)
         container.read()
-        print('Container with id \'{0}\' was found, it\'s link is {1}'.format(container.id, container.container_link))
+        print("Container with id '{0}' was found, it's link is {1}".format(container.id, container.container_link))
 
     except exceptions.CosmosResourceNotFoundError:
-        print('A container with id \'{0}\' does not exist'.format(id))
+        print("A container with id '{0}' does not exist".format(id))
 
 
 def list_Containers(db):
     print("\n5. List all Container in a Database")
 
-    print('Containers:')
+    print("Containers:")
 
     containers = list(db.list_containers())
 
@@ -251,7 +239,7 @@ def list_Containers(db):
         return
 
     for container in containers:
-        print(container['id'])
+        print(container["id"])
 
 
 def delete_Container(db, id):
@@ -260,15 +248,15 @@ def delete_Container(db, id):
     try:
         db.delete_container(id)
 
-        print('Container with id \'{0}\' was deleted'.format(id))
+        print("Container with id '{0}' was deleted".format(id))
 
     except exceptions.CosmosResourceNotFoundError:
-        print('A container with id \'{0}\' does not exist'.format(id))
+        print("A container with id '{0}' does not exist".format(id))
 
 
 def run_sample():
 
-    client = cosmos_client.CosmosClient(HOST, {'masterKey': MASTER_KEY} )
+    client = cosmos_client.CosmosClient(HOST, {"masterKey": MASTER_KEY})
     try:
         # setup database for this sample
         try:
@@ -303,12 +291,11 @@ def run_sample():
             pass
 
     except exceptions.CosmosHttpResponseError as e:
-        print('\nrun_sample has caught an error. {0}'.format(e.message))
+        print("\nrun_sample has caught an error. {0}".format(e.message))
 
     finally:
-            print("\nrun_sample done")
+        print("\nrun_sample done")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run_sample()
-

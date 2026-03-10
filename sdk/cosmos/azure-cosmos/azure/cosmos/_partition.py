@@ -25,16 +25,14 @@ database service.
 
 
 class Partition(object):
-    """A class that holds the hash value and node name for a partition.
-    """
+    """A class that holds the hash value and node name for a partition."""
 
     def __init__(self, hash_value=None, node=None):
         self.hash_value = hash_value
         self.node = node
 
     def GetNode(self):
-        """Gets the name of the node(collection) for this object.
-        """
+        """Gets the name of the node(collection) for this object."""
         return self.node
 
     def __eq__(self, other):

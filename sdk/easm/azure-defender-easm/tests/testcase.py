@@ -19,19 +19,19 @@ class EasmTest(AzureRecordedTestCase):
             endpoint=endpoint,
             resource_group_name=resource_group,
             subscription_id=subscription_id,
-            workspace_name=workspace
+            workspace_name=workspace,
         )
 
     def check_timestamp_format(self, time_format, timestamp):
         try:
             datetime.datetime.strptime(timestamp, time_format)
         except ValueError as e:
-            assert False, 'invalid timestamp format'
+            assert False, "invalid timestamp format"
 
     def check_guid_format(self, guid):
-        parts = guid.split('-')
+        parts = guid.split("-")
         lengths = [8, 4, 4, 4, 12]
-        assert all(len(seg) == l for seg, l in zip(parts, lengths)), 'invalid guid'
+        assert all(len(seg) == l for seg, l in zip(parts, lengths)), "invalid guid"
 
 
 EasmParameterProvider = functools.partial(
@@ -40,5 +40,5 @@ EasmParameterProvider = functools.partial(
     easm_endpoint="fake_endpoint.easm.defender.microsoft.com",
     easm_resource_group="fake_resource_group",
     easm_subscription_id="fake-sub-id",
-    easm_workspace="fakename"
+    easm_workspace="fakename",
 )

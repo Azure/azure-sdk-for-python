@@ -26,10 +26,10 @@ import config
 # Sample - demonstrates how to consume the Change Feed and iterate on the results.
 # ----------------------------------------------------------------------------------------------------------
 
-HOST = config.settings['host']
-MASTER_KEY = config.settings['master_key']
-DATABASE_ID = config.settings['database_id']
-CONTAINER_ID = config.settings['container_id']
+HOST = config.settings["host"]
+MASTER_KEY = config.settings["master_key"]
+DATABASE_ID = config.settings["database_id"]
+CONTAINER_ID = config.settings["container_id"]
 
 
 async def create_items(container, size, partition_key_value):
@@ -37,30 +37,34 @@ async def create_items(container, size, partition_key_value):
 
     for i in range(size):
         c = str(uuid.uuid4())
-        item_definition = {'id': 'item' + c,
-                           'address': {'street': '1 Microsoft Way' + c,
-                                       'city': 'Redmond' + c,
-                                       'state': partition_key_value,
-                                       'zip code': 98052
-                                       }
-                           }
+        item_definition = {
+            "id": "item" + c,
+            "address": {
+                "street": "1 Microsoft Way" + c,
+                "city": "Redmond" + c,
+                "state": partition_key_value,
+                "zip code": 98052,
+            },
+        }
 
         await container.create_item(body=item_definition)
 
-async def clean_up(container):
-    print('\nClean up the container\n')
 
-    async for item in container.query_items(query='SELECT * FROM c'):
+async def clean_up(container):
+    print("\nClean up the container\n")
+
+    async for item in container.query_items(query="SELECT * FROM c"):
         # Deleting the current item
-        await container.delete_item(item, partition_key=item['address']['state'])
+        await container.delete_item(item, partition_key=item["address"]["state"])
+
 
 async def read_change_feed(container):
-    print('\nReading Change Feed from the beginning\n')
+    print("\nReading Change Feed from the beginning\n")
 
     # For a particular Partition Key Range we can use partition_key_range_id]
     # 'is_start_from_beginning = True' will read from the beginning of the history of the container
     # If no is_start_from_beginning is specified, the read change feed loop will pickup the items that happen while the loop / process is active
-    await create_items(container, 10, 'WA')
+    await create_items(container, 10, "WA")
     response_iterator = container.query_items_change_feed(is_start_from_beginning=True)
 
     # Because the asynchronous client returns an asynchronous iterator object for methods using queries,
@@ -69,21 +73,21 @@ async def read_change_feed(container):
     async for doc in response_iterator:
         print(doc)
 
-    print('\nFinished reading all the change feed\n')
+    print("\nFinished reading all the change feed\n")
 
 
 async def read_change_feed_with_start_time(container):
-    print('\nReading Change Feed from the start time\n')
+    print("\nReading Change Feed from the start time\n")
     # You can read change feed from a specific time.
     # You must pass in a datetime object for the start_time field.
 
     # Create items
-    await create_items(container, 10, 'WA')
+    await create_items(container, 10, "WA")
     start_time = datetime.now(timezone.utc)
-    time = start_time.strftime('%a, %d %b %Y %H:%M:%S GMT')
-    print('\nReading Change Feed from start time of {}\n'.format(time))
-    await create_items(container, 5, 'CA')
-    await create_items(container, 5, 'OR')
+    time = start_time.strftime("%a, %d %b %Y %H:%M:%S GMT")
+    print("\nReading Change Feed from start time of {}\n".format(time))
+    await create_items(container, 5, "CA")
+    await create_items(container, 5, "OR")
 
     # Read change feed from the beginning
     response_iterator = container.query_items_change_feed(start_time="Beginning")
@@ -95,12 +99,13 @@ async def read_change_feed_with_start_time(container):
     async for doc in response_iterator:
         print(doc)
 
+
 async def read_change_feed_with_partition_key(container):
-    print('\nReading Change Feed from the beginning of the partition key\n')
+    print("\nReading Change Feed from the beginning of the partition key\n")
     # Create items
-    await create_items(container, 10, 'WA')
-    await create_items(container, 5, 'CA')
-    await create_items(container, 5, 'OR')
+    await create_items(container, 10, "WA")
+    await create_items(container, 5, "CA")
+    await create_items(container, 5, "OR")
 
     # Read change feed with partition key with LatestVersion mode.
     # Should only return change feed for the created items with 'CA' partition key
@@ -108,18 +113,19 @@ async def read_change_feed_with_partition_key(container):
     async for doc in response_iterator:
         print(doc)
 
+
 async def read_change_feed_with_continuation(container):
-    print('\nReading Change Feed from the continuation\n')
+    print("\nReading Change Feed from the continuation\n")
     # Create items
-    await create_items(container, 10, 'WA')
+    await create_items(container, 10, "WA")
     response_iterator = container.query_items_change_feed(start_time="Beginning")
     async for doc in response_iterator:
         print(doc)
-    continuation_token = container.client_connection.last_response_headers['etag']
+    continuation_token = container.client_connection.last_response_headers["etag"]
 
     # Create additional items
-    await create_items(container, 5, 'CA')
-    await create_items(container, 5, 'OR')
+    await create_items(container, 5, "CA")
+    await create_items(container, 5, "OR")
 
     # You can read change feed from a specific continuation token.
     # You must pass in a valid continuation token.
@@ -128,18 +134,19 @@ async def read_change_feed_with_continuation(container):
     async for doc in response_iterator:
         print(doc)
 
+
 async def read_change_feed_with_all_versions_and_delete_mode(container):
-    print('\nReading Change Feed with AllVersionsAndDeletes mode\n')
+    print("\nReading Change Feed with AllVersionsAndDeletes mode\n")
     # Read the initial change feed with 'AllVersionsAndDeletes' mode.
     # This initial call was made to store a point in time in a 'continuation' token
     response_iterator = container.query_items_change_feed(mode="AllVersionsAndDeletes")
     async for doc in response_iterator:
         print(doc)
-    continuation_token = container.client_connection.last_response_headers['etag']
+    continuation_token = container.client_connection.last_response_headers["etag"]
 
     # Read all change feed with 'AllVersionsAndDeletes' mode after create items from a continuation
-    await create_items(container, 10, 'CA')
-    await create_items(container, 10, 'OR')
+    await create_items(container, 10, "CA")
+    await create_items(container, 10, "OR")
     response_iterator = container.query_items_change_feed(mode="AllVersionsAndDeletes", continuation=continuation_token)
     async for doc in response_iterator:
         print(doc)
@@ -150,31 +157,33 @@ async def read_change_feed_with_all_versions_and_delete_mode(container):
     async for doc in response_iterator:
         print(doc)
 
+
 async def read_change_feed_with_all_versions_and_delete_mode_with_partition_key(container):
-    print('\nReading Change Feed with AllVersionsAndDeletes mode from the partition key\n')
+    print("\nReading Change Feed with AllVersionsAndDeletes mode from the partition key\n")
 
     # Read the initial change feed with 'AllVersionsAndDeletes' mode with partition key('CA').
     # This initial call was made to store a point in time and 'partition_key' in a 'continuation' token
     response_iterator = container.query_items_change_feed(mode="AllVersionsAndDeletes", partition_key="CA")
     async for doc in response_iterator:
         print(doc)
-    continuation_token = container.client_connection.last_response_headers['etag']
+    continuation_token = container.client_connection.last_response_headers["etag"]
 
-    await create_items(container, 10, 'CA')
-    await create_items(container, 10, 'OR')
+    await create_items(container, 10, "CA")
+    await create_items(container, 10, "OR")
     # Read change feed 'AllVersionsAndDeletes' mode with 'CA' partition key value from the previous continuation.
     # Should only print the created items with 'CA' partition key value
-    response_iterator = container.query_items_change_feed(mode='AllVersionsAndDeletes', continuation=continuation_token)
+    response_iterator = container.query_items_change_feed(mode="AllVersionsAndDeletes", continuation=continuation_token)
     async for doc in response_iterator:
         print(doc)
-    continuation_token = container.client_connection.last_response_headers['etag']
+    continuation_token = container.client_connection.last_response_headers["etag"]
 
     await clean_up(container)
     # Read change feed 'AllVersionsAndDeletes' mode with 'CA' partition key value from the previous continuation.
     # Should only print the deleted items with 'CA' partition key value
-    response_iterator = container.query_items_change_feed(mode='AllVersionsAndDeletes', continuation=continuation_token)
+    response_iterator = container.query_items_change_feed(mode="AllVersionsAndDeletes", continuation=continuation_token)
     async for doc in response_iterator:
         print(doc)
+
 
 async def run_sample():
     async with CosmosClient(HOST, MASTER_KEY) as client:
@@ -195,10 +204,10 @@ async def run_sample():
             try:
                 container = await db.create_container(
                     id=CONTAINER_ID,
-                    partition_key=partition_key.PartitionKey(path='/address/state', kind=documents.PartitionKind.Hash),
-                    offer_throughput = 11000
+                    partition_key=partition_key.PartitionKey(path="/address/state", kind=documents.PartitionKind.Hash),
+                    offer_throughput=11000,
                 )
-                print('Container with id \'{0}\' created'.format(CONTAINER_ID))
+                print("Container with id '{0}' created".format(CONTAINER_ID))
 
             except exceptions.CosmosResourceExistsError:
                 raise RuntimeError("Container with id '{}' already exists".format(CONTAINER_ID))
@@ -234,11 +243,11 @@ async def run_sample():
                 pass
 
         except exceptions.CosmosHttpResponseError as e:
-            print('\nrun_sample has caught an error. {0}'.format(e.message))
+            print("\nrun_sample has caught an error. {0}".format(e.message))
 
         finally:
             print("\nrun_sample done")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(run_sample())

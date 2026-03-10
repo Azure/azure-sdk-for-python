@@ -52,16 +52,11 @@ def sample_analyze_sentiment_with_opinion_mining() -> None:
     endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
     key = os.environ["AZURE_LANGUAGE_KEY"]
 
-    text_analytics_client = TextAnalyticsClient(
-        endpoint=endpoint,
-        credential=AzureKeyCredential(key)
-    )
+    text_analytics_client = TextAnalyticsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     print("In this sample we will be a hotel owner going through reviews of their hotel to find complaints.")
 
-    print(
-        "I first found a handful of reviews for my hotel. Let's see what we have to improve."
-    )
+    print("I first found a handful of reviews for my hotel. Let's see what we have to improve.")
 
     documents = [
         """
@@ -78,7 +73,7 @@ def sample_analyze_sentiment_with_opinion_mining() -> None:
         """
         Nice rooms! I had a great unobstructed view of the Microsoft campus but bathrooms were old and the toilet was dirty when we arrived.
         It was close to bus stops and groceries stores. If you want to be close to campus I will recommend it, otherwise, might be better to stay in a cleaner one
-        """
+        """,
     ]
 
     result = text_analytics_client.analyze_sentiment(documents, show_opinion_mining=True)
@@ -88,9 +83,11 @@ def sample_analyze_sentiment_with_opinion_mining() -> None:
     positive_reviews = [doc for doc in doc_result if doc.sentiment == "positive"]
     mixed_reviews = [doc for doc in doc_result if doc.sentiment == "mixed"]
     negative_reviews = [doc for doc in doc_result if doc.sentiment == "negative"]
-    print("...We have {} positive reviews, {} mixed reviews, and {} negative reviews. ".format(
-        len(positive_reviews), len(mixed_reviews), len(negative_reviews)
-    ))
+    print(
+        "...We have {} positive reviews, {} mixed reviews, and {} negative reviews. ".format(
+            len(positive_reviews), len(mixed_reviews), len(negative_reviews)
+        )
+    )
     print(
         "\nSince these reviews seem so mixed, and since I'm interested in finding exactly what it is about my hotel that should be improved, "
         "let's find the complaints users have about individual aspects of this hotel"
@@ -107,21 +104,22 @@ def sample_analyze_sentiment_with_opinion_mining() -> None:
             if sentence.mined_opinions:
                 for mined_opinion in sentence.mined_opinions:
                     target = mined_opinion.target
-                    if target.sentiment == 'negative':
+                    if target.sentiment == "negative":
                         target_to_complaints.setdefault(target.text, [])
                         target_to_complaints[target.text].append(mined_opinion)
 
-    print("\nLet's now go through the aspects of our hotel people have complained about and see what users have specifically said")
+    print(
+        "\nLet's now go through the aspects of our hotel people have complained about and see what users have specifically said"
+    )
 
     for target_name, complaints in target_to_complaints.items():
-        print("Users have made {} complaint(s) about '{}', specifically saying that it's '{}'".format(
-            len(complaints),
-            target_name,
-            "', '".join(
-                [assessment.text for complaint in complaints for assessment in complaint.assessments]
+        print(
+            "Users have made {} complaint(s) about '{}', specifically saying that it's '{}'".format(
+                len(complaints),
+                target_name,
+                "', '".join([assessment.text for complaint in complaints for assessment in complaint.assessments]),
             )
-        ))
-
+        )
 
     print(
         "\n\nLooking at the breakdown, I can see what aspects of my hotel need improvement, and based off of both the number and "
@@ -129,5 +127,5 @@ def sample_analyze_sentiment_with_opinion_mining() -> None:
     )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample_analyze_sentiment_with_opinion_mining()

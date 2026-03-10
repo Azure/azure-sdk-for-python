@@ -10,18 +10,13 @@ import azure.cosmos.cosmos_client as cosmos_client
 from azure.cosmos import http_constants, exceptions, PartitionKey
 from test_config import TestConfig
 
-
 # This test class serves to test user-configurable options and verify they are
 # properly set and saved into the different object instances that use these
 # user-configurable settings.
 
 
 def get_test_item():
-    item = {
-        'id': 'Async_' + str(uuid.uuid4()),
-        'test_object': True,
-        'lastName': 'Smith'
-    }
+    item = {"id": "Async_" + str(uuid.uuid4()), "test_object": True, "lastName": "Smith"}
     return item
 
 
@@ -30,18 +25,31 @@ class TestUserConfigs(unittest.TestCase):
 
     def test_invalid_connection_retry_configuration(self):
         try:
-            cosmos_client.CosmosClient(url=TestConfig.host, credential=TestConfig.masterKey,
-                                       consistency_level="Session", connection_retry_policy="Invalid Policy")
+            cosmos_client.CosmosClient(
+                url=TestConfig.host,
+                credential=TestConfig.masterKey,
+                consistency_level="Session",
+                connection_retry_policy="Invalid Policy",
+            )
         except TypeError as e:
-            self.assertTrue(str(e).startswith('Unsupported retry policy'))
+            self.assertTrue(str(e).startswith("Unsupported retry policy"))
 
     def test_enable_endpoint_discovery(self):
-        client_false = cosmos_client.CosmosClient(url=TestConfig.host, credential=TestConfig.masterKey,
-                                                  consistency_level="Session", enable_endpoint_discovery=False)
-        client_default = cosmos_client.CosmosClient(url=TestConfig.host, credential=TestConfig.masterKey,
-                                                    consistency_level="Session")
-        client_true = cosmos_client.CosmosClient(url=TestConfig.host, credential=TestConfig.masterKey,
-                                                 consistency_level="Session", enable_endpoint_discovery=True)
+        client_false = cosmos_client.CosmosClient(
+            url=TestConfig.host,
+            credential=TestConfig.masterKey,
+            consistency_level="Session",
+            enable_endpoint_discovery=False,
+        )
+        client_default = cosmos_client.CosmosClient(
+            url=TestConfig.host, credential=TestConfig.masterKey, consistency_level="Session"
+        )
+        client_true = cosmos_client.CosmosClient(
+            url=TestConfig.host,
+            credential=TestConfig.masterKey,
+            consistency_level="Session",
+            enable_endpoint_discovery=True,
+        )
 
         self.assertFalse(client_false.client_connection.connection_policy.EnableEndpointDiscovery)
         self.assertTrue(client_default.client_connection.connection_policy.EnableEndpointDiscovery)
@@ -82,22 +90,22 @@ class TestUserConfigs(unittest.TestCase):
 
         # Now testing a user-defined consistency level as opposed to using the account one
         custom_level = "Eventual"
-        eventual_consistency_client = cosmos_client.CosmosClient(url=TestConfig.host,
-                                                                 credential=TestConfig.masterKey,
-                                                                 consistency_level=custom_level)
+        eventual_consistency_client = cosmos_client.CosmosClient(
+            url=TestConfig.host, credential=TestConfig.masterKey, consistency_level=custom_level
+        )
         database_account = eventual_consistency_client.get_database_account()
         account_consistency_level = database_account.ConsistencyPolicy["defaultConsistencyLevel"]
         # Here they're not equal, since the headers being used make the client use a different level of consistency
         self.assertNotEqual(
-            eventual_consistency_client
-            .client_connection.default_headers[http_constants.HttpHeaders.ConsistencyLevel],
-            account_consistency_level)
+            eventual_consistency_client.client_connection.default_headers[http_constants.HttpHeaders.ConsistencyLevel],
+            account_consistency_level,
+        )
 
         # Test for failure when trying to set consistency to higher level than account level
         custom_level = "Strong"
-        strong_consistency_client = cosmos_client.CosmosClient(url=TestConfig.host,
-                                                               credential=TestConfig.masterKey,
-                                                               consistency_level=custom_level)
+        strong_consistency_client = cosmos_client.CosmosClient(
+            url=TestConfig.host, credential=TestConfig.masterKey, consistency_level=custom_level
+        )
         try:
             strong_consistency_client.create_database(database_id)
         except exceptions.CosmosHttpResponseError as e:

@@ -9,6 +9,7 @@ This example sets up a minimal example of sending dependency through live metric
 trace and exception telemetry to demonstrate the capabilities and collection set of live metrics.
 Live metrics is enabled by default, it can be disabled by setting `enable_live_metrics` to `False`
 """
+
 import logging
 import time
 import requests  # type: ignore[import-untyped] # pylint: disable=networking-import-outside-azure-core-transport

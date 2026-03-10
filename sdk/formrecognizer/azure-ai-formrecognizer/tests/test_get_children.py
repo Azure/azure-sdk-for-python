@@ -12,7 +12,6 @@ from preparers import FormRecognizerPreparer, get_sync_client
 from testcase import FormRecognizerTest
 from conftest import skip_flaky_test
 
-
 get_da_client = functools.partial(get_sync_client, DocumentAnalysisClient)
 
 
@@ -28,7 +27,7 @@ class TestGetChildren(FormRecognizerTest):
 
         poller = client.begin_analyze_document("prebuilt-document", document)
         result = poller.result()
-        
+
         elements = result.pages[0].lines[0].get_words()
         assert len(elements) == 1
         assert elements[0].content == "Contoso"
@@ -43,7 +42,7 @@ class TestGetChildren(FormRecognizerTest):
 
         poller = client.begin_analyze_document("prebuilt-document", document)
         result = poller.result()
-        
+
         # check the error occurs when converting a larger element that encompasses a document line
         d = result.to_dict()
         analyze_result = AnalyzeResult.from_dict(d)

@@ -2,15 +2,15 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-""" This is logger utility which will work with allowed logged filter AML policy
-    https://github.com/Azure/azure-policy/blob/master/built-in-policies/policyDefinitions/Machine%20Learning/AllowedLogFilter_EnforceSetting.json
-    You have to define the same "logFilters" while initializing the logger using  "enable_compliant_logging" method
-    e.g. 
-        log filters: ["^SystemLog:.*$"]
-        initialize : enable_compliant_logging(format_key="prefix",
-                                format_key_value="SystemLog",
-                                format=f"%(prefix)s{logging.BASIC_FORMAT}")
-    By default log message will not compliant e.g. not modified
+"""This is logger utility which will work with allowed logged filter AML policy
+https://github.com/Azure/azure-policy/blob/master/built-in-policies/policyDefinitions/Machine%20Learning/AllowedLogFilter_EnforceSetting.json
+You have to define the same "logFilters" while initializing the logger using  "enable_compliant_logging" method
+e.g.
+    log filters: ["^SystemLog:.*$"]
+    initialize : enable_compliant_logging(format_key="prefix",
+                            format_key_value="SystemLog",
+                            format=f"%(prefix)s{logging.BASIC_FORMAT}")
+By default log message will not compliant e.g. not modified
 """
 
 import logging

@@ -10,7 +10,6 @@ from typing_extensions import Required, TypedDict
 
 from ...._bicep.expressions import Expression
 
-
 VERSION = "2022-04-01"
 
 

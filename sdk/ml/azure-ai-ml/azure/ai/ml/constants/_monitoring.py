@@ -8,7 +8,6 @@ from azure.core import CaseInsensitiveEnumMeta
 
 from azure.ai.ml._utils._experimental import experimental
 
-
 ALL_FEATURES = "all_features"
 
 

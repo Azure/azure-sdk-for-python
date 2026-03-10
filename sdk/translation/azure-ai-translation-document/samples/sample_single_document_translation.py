@@ -22,7 +22,6 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.translation.document import SingleDocumentTranslationClient
 from azure.ai.translation.document.models import DocumentTranslateContent
 
-
 TEST_INPUT_FILE_NAME = os.path.abspath(
     os.path.join(os.path.abspath(__file__), "..", "../tests/TestData/test-input.txt")
 )

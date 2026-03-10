@@ -37,7 +37,7 @@ USAGE:
     - For more details how to use DefaultAzureCredential, please take a look at https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential
 
 2. python sample_followup_recommendation_inference_async.py
-   
+
 """
 
 import asyncio

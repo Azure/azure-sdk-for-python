@@ -32,14 +32,11 @@ import random
 
 async def sample_farm_hierarchy_async():
 
-    farmbeats_endpoint = os.environ['FARMBEATS_ENDPOINT']
+    farmbeats_endpoint = os.environ["FARMBEATS_ENDPOINT"]
 
     credential = DefaultAzureCredential()
 
-    client = FarmBeatsClient(
-        endpoint=farmbeats_endpoint,
-        credential=credential
-    )
+    client = FarmBeatsClient(endpoint=farmbeats_endpoint, credential=credential)
 
     party_id = f"contoso-party-{random.randint(0,1000)}"
     party_name = "contoso-party-name"
@@ -74,7 +71,7 @@ async def sample_farm_hierarchy_async():
                     [-94.05746988, 44.75751702],
                     [-94.05795157, 44.75824385],
                     [-94.05805349, 44.75863619],
-                    [-94.05807495, 44.75916947]
+                    [-94.05807495, 44.75916947],
                 ]
             ],
             [
@@ -86,22 +83,16 @@ async def sample_farm_hierarchy_async():
                     [-94.05727246, 44.75988264],
                     [-94.05752903, 44.75946416],
                     [-94.05760288, 44.75923042],
-                    [-94.05802667, 44.75929136]
+                    [-94.05802667, 44.75929136],
                 ]
-            ]
-        ]
+            ],
+        ],
     }
 
     # Step 1: Create a party.
-    print(
-        f"Creating or updating party with Id {party_id}...", end=" ", flush=True)
+    print(f"Creating or updating party with Id {party_id}...", end=" ", flush=True)
     party = await client.parties.create_or_update(
-        party_id=party_id,
-        party={
-            "name": party_name,
-            "status": "created from SDK",
-            "description": party_description
-        }
+        party_id=party_id, party={"name": party_name, "status": "created from SDK", "description": party_description}
     )
     print("Done")
 
@@ -111,15 +102,9 @@ async def sample_farm_hierarchy_async():
     print("\tDescription:", party["description"])
 
     # Step 2: Create a farm.
-    print(
-        f"Creating or updating farm with Id {farm_id}...", end=" ", flush=True)
+    print(f"Creating or updating farm with Id {farm_id}...", end=" ", flush=True)
     farm = await client.farms.create_or_update(
-        party_id=party_id,
-        farm_id= farm_id,
-        farm={
-            "name": farm_name,
-            "description": farm_description
-        }
+        party_id=party_id, farm_id=farm_id, farm={"name": farm_name, "description": farm_description}
     )
     print("Done")
     print(farm)
@@ -130,16 +115,11 @@ async def sample_farm_hierarchy_async():
     print("\tDescription:", farm["description"])
 
     # Step 3: Create a field.
-    print(
-        f"Creating or updating field with Id {field_id}...", end=" ", flush=True)
+    print(f"Creating or updating field with Id {field_id}...", end=" ", flush=True)
     field = await client.fields.create_or_update(
         party_id=party_id,
-        field_id= field_id,
-        field={
-            "farmId": farm_id,
-            "name": field_name,
-            "description": field_description
-        }
+        field_id=field_id,
+        field={"farmId": farm_id, "name": field_name, "description": field_description},
     )
     print("Done")
 
@@ -153,24 +133,15 @@ async def sample_farm_hierarchy_async():
 
     # Step 4: Create a boundary.
     try:
-        print(
-            f"Trying to fetch boundary with id {boundary_id}...", end=" ", flush=True)
-        boundary = await client.boundaries.get(
-            party_id=party_id,
-            boundary_id=boundary_id
-        )
+        print(f"Trying to fetch boundary with id {boundary_id}...", end=" ", flush=True)
+        boundary = await client.boundaries.get(party_id=party_id, boundary_id=boundary_id)
         print("Boundary already exists.")
     except ResourceNotFoundError:
-        print(
-            f"Doesn't exist. Creating boundary...", end=" ", flush=True)
+        print(f"Doesn't exist. Creating boundary...", end=" ", flush=True)
         boundary = await client.boundaries.create_or_update(
             party_id=party_id,
             boundary_id=boundary_id,
-            boundary={
-                "name": boundary_name,
-                "geometry": multi_polygon,
-                "description": boundary_description
-            }
+            boundary={"name": boundary_name, "geometry": multi_polygon, "description": boundary_description},
         )
         print("Done")
 

@@ -6,7 +6,6 @@ from typing import Any, List, Optional
 
 from ._client import CryptographyClient
 
-
 __all__ = [
     "CryptographyClient",
 ]

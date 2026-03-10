@@ -13,8 +13,8 @@ DESCRIPTION:
     shared access key, or by generating a sas token with which the returned signature
     can be used with the credential parameter of any DeviceProvisioningClient
 PREREQUISITES:
-    In order to use certain Azure Identity credential objects in this sample, 
-    you will need to install the azure-identity package: 
+    In order to use certain Azure Identity credential objects in this sample,
+    you will need to install the azure-identity package:
         `pip install azure-identity`
 USAGE:
     python dps_service_sample_client_authentication.py
@@ -43,9 +43,7 @@ class ClientAuthSamples(object):
         # Instantiate a DPS Service Client using a connection string
         from azure.iot.deviceprovisioning import DeviceProvisioningClient
 
-        dps_service_client = DeviceProvisioningClient.from_connection_string(
-            self.connection_string
-        )
+        dps_service_client = DeviceProvisioningClient.from_connection_string(self.connection_string)
 
     def auth_named_key(self):
         # Instantiate a DPS Service Client using a named key credential
@@ -59,9 +57,7 @@ class ClientAuthSamples(object):
         # Create AzureNamedKeyCredential object
         credential = AzureNamedKeyCredential(name=policy_name, key=policy)
 
-        dps_service_client = DeviceProvisioningClient(
-            endpoint=self.endpoint, credential=credential
-        )
+        dps_service_client = DeviceProvisioningClient(endpoint=self.endpoint, credential=credential)
 
     def auth_active_directory(self):
         # Instantiate a DPS Service Client using a named key credential
@@ -75,9 +71,7 @@ class ClientAuthSamples(object):
             self.active_directory_application_secret,
         )
 
-        dps_service_client = DeviceProvisioningClient(
-            endpoint=self.endpoint, credential=credential
-        )
+        dps_service_client = DeviceProvisioningClient(endpoint=self.endpoint, credential=credential)
 
     def auth_sas_token(self):
         # Instantiate a DPS Service Client using a generated SAS token
@@ -97,9 +91,7 @@ class ClientAuthSamples(object):
         # Create AzureSasCredential object
         credential = AzureSasCredential(signature=sas_token)
 
-        dps_service_client = DeviceProvisioningClient(
-            endpoint=self.endpoint, credential=credential
-        )
+        dps_service_client = DeviceProvisioningClient(endpoint=self.endpoint, credential=credential)
 
     def auth_default_azure_credential(self):
         # Default Azure Credentials attempt a chained set of authentication methods, per documentation here: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
@@ -112,9 +104,7 @@ class ClientAuthSamples(object):
         # Instantiate a DefaultAzureCredential
         credential = DefaultAzureCredential()
 
-        dps_service_client = DeviceProvisioningClient(
-            endpoint=self.endpoint, credential=credential
-        )
+        dps_service_client = DeviceProvisioningClient(endpoint=self.endpoint, credential=credential)
 
 
 if __name__ == "__main__":

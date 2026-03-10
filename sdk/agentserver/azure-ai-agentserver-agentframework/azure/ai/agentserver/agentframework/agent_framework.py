@@ -95,9 +95,7 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
             )
         self.tracer = trace.get_tracer(__name__)
 
-    async def agent_run(
-        self, context: AgentRunContext
-    ) -> Union[
+    async def agent_run(self, context: AgentRunContext) -> Union[
         OpenAIResponse,
         AsyncGenerator[ResponseStreamEvent, Any],
     ]:

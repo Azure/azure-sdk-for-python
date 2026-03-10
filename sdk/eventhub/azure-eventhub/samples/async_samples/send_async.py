@@ -90,13 +90,12 @@ async def send_event_data_list(producer):
         print("Sending error: ", eh_err)
 
 
-
 async def send_concurrent_with_shared_client_and_lock():
     """
     Example showing concurrent sending with a shared client using asyncio.Lock.
     """
     send_lock = asyncio.Lock()
-    
+
     producer = EventHubProducerClient.from_connection_string(
         conn_str=CONNECTION_STR,
         eventhub_name=EVENTHUB_NAME,
@@ -137,7 +136,6 @@ async def main():
     start_time = time.time()
     await run()
     print("Send messages in {} seconds.".format(time.time() - start_time))
-
 
     print("\nDemonstrating concurrent sending with shared client and locks...")
     await send_concurrent_with_shared_client_and_lock()

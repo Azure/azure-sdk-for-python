@@ -22,13 +22,13 @@ class RoleSinkInfo(Model):
     """
 
     _validation = {
-        'role_id': {'required': True},
+        "role_id": {"required": True},
     }
 
     _attribute_map = {
-        'role_id': {'key': 'roleId', 'type': 'str'},
+        "role_id": {"key": "roleId", "type": "str"},
     }
 
     def __init__(self, **kwargs):
         super(RoleSinkInfo, self).__init__(**kwargs)
-        self.role_id = kwargs.get('role_id', None)
+        self.role_id = kwargs.get("role_id", None)

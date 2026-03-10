@@ -15,7 +15,6 @@ from preparers import FormRecognizerPreparer, get_async_client
 from asynctestcase import AsyncFormRecognizerTest
 from conftest import skip_flaky_test
 
-
 get_dma_client = functools.partial(get_async_client, DocumentModelAdministrationClient)
 
 
@@ -40,22 +39,19 @@ class TestDACClassifyDocumentAsync(AsyncFormRecognizerTest):
                 doc_types={
                     "IRS-1040-A": ClassifierDocumentTypeDetails(
                         source=BlobSource(
-                            container_url=formrecognizer_training_data_classifier,
-                            prefix="IRS-1040-A/train"
+                            container_url=formrecognizer_training_data_classifier, prefix="IRS-1040-A/train"
                         )
                     ),
                     "IRS-1040-B": ClassifierDocumentTypeDetails(
                         source=BlobSource(
-                            container_url=formrecognizer_training_data_classifier,
-                            prefix="IRS-1040-B/train"
+                            container_url=formrecognizer_training_data_classifier, prefix="IRS-1040-B/train"
                         )
                     ),
                     "IRS-1040-C": ClassifierDocumentTypeDetails(
                         source=BlobSource(
-                            container_url=formrecognizer_training_data_classifier,
-                            prefix="IRS-1040-C/train"
+                            container_url=formrecognizer_training_data_classifier, prefix="IRS-1040-C/train"
                         )
-                    )
+                    ),
                 },
             )
             classifier = await poller.result()
@@ -66,11 +62,7 @@ class TestDACClassifyDocumentAsync(AsyncFormRecognizerTest):
                 my_file = fd.read()
 
             async with da_client:
-                poller = await da_client.begin_classify_document(
-                    classifier.classifier_id,
-                    my_file,
-                    cls=callback
-                )
+                poller = await da_client.begin_classify_document(classifier.classifier_id, my_file, cls=callback)
                 document = await poller.result()
 
             raw_analyze_result = responses[0].analyze_result
@@ -108,22 +100,19 @@ class TestDACClassifyDocumentAsync(AsyncFormRecognizerTest):
                 doc_types={
                     "IRS-1040-A": ClassifierDocumentTypeDetails(
                         source=BlobSource(
-                            container_url=formrecognizer_training_data_classifier,
-                            prefix="IRS-1040-A/train"
+                            container_url=formrecognizer_training_data_classifier, prefix="IRS-1040-A/train"
                         )
                     ),
                     "IRS-1040-B": ClassifierDocumentTypeDetails(
                         source=BlobSource(
-                            container_url=formrecognizer_training_data_classifier,
-                            prefix="IRS-1040-B/train"
+                            container_url=formrecognizer_training_data_classifier, prefix="IRS-1040-B/train"
                         )
                     ),
                     "IRS-1040-C": ClassifierDocumentTypeDetails(
                         source=BlobSource(
-                            container_url=formrecognizer_training_data_classifier,
-                            prefix="IRS-1040-C/train"
+                            container_url=formrecognizer_training_data_classifier, prefix="IRS-1040-C/train"
                         )
-                    )
+                    ),
                 },
             )
             classifier = await poller.result()
@@ -132,9 +121,7 @@ class TestDACClassifyDocumentAsync(AsyncFormRecognizerTest):
 
             async with da_client:
                 poller = await da_client.begin_classify_document_from_url(
-                    classifier_id=classifier.classifier_id,
-                    document_url=self.irs_classifier_document_url,
-                    cls=callback
+                    classifier_id=classifier.classifier_id, document_url=self.irs_classifier_document_url, cls=callback
                 )
                 document = await poller.result()
 

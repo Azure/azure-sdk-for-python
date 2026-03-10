@@ -11,8 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AnalyzeTextLROResultsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enumeration of supported Text Analysis long-running operation task results.
-    """
+    """Enumeration of supported Text Analysis long-running operation task results."""
 
     SENTIMENT_ANALYSIS_LRO_RESULTS = "SentimentAnalysisLROResults"
     ENTITY_RECOGNITION_LRO_RESULTS = "EntityRecognitionLROResults"
@@ -26,9 +25,9 @@ class AnalyzeTextLROResultsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CUSTOM_MULTI_LABEL_CLASSIFICATION_LRO_RESULTS = "CustomMultiLabelClassificationLROResults"
     ABSTRACTIVE_SUMMARIZATION_LRO_RESULTS = "AbstractiveSummarizationLROResults"
 
+
 class AnalyzeTextLROTaskKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enumeration of supported long-running Text Analysis tasks.
-    """
+    """Enumeration of supported long-running Text Analysis tasks."""
 
     SENTIMENT_ANALYSIS = "SentimentAnalysis"
     ENTITY_RECOGNITION = "EntityRecognition"
@@ -42,9 +41,9 @@ class AnalyzeTextLROTaskKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CUSTOM_MULTI_LABEL_CLASSIFICATION = "CustomMultiLabelClassification"
     ABSTRACTIVE_SUMMARIZATION = "AbstractiveSummarization"
 
+
 class AnalyzeTextTaskKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enumeration of supported Text Analysis tasks.
-    """
+    """Enumeration of supported Text Analysis tasks."""
 
     SENTIMENT_ANALYSIS = "SentimentAnalysis"
     ENTITY_RECOGNITION = "EntityRecognition"
@@ -53,9 +52,9 @@ class AnalyzeTextTaskKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LANGUAGE_DETECTION = "LanguageDetection"
     ENTITY_LINKING = "EntityLinking"
 
+
 class AnalyzeTextTaskResultsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enumeration of supported Text Analysis task results.
-    """
+    """Enumeration of supported Text Analysis task results."""
 
     SENTIMENT_ANALYSIS_RESULTS = "SentimentAnalysisResults"
     ENTITY_RECOGNITION_RESULTS = "EntityRecognitionResults"
@@ -64,25 +63,25 @@ class AnalyzeTextTaskResultsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LANGUAGE_DETECTION_RESULTS = "LanguageDetectionResults"
     ENTITY_LINKING_RESULTS = "EntityLinkingResults"
 
+
 class DocumentSentimentValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Predicted sentiment for document (Negative, Neutral, Positive, or Mixed).
-    """
+    """Predicted sentiment for document (Negative, Neutral, Positive, or Mixed)."""
 
     POSITIVE = "positive"
     NEUTRAL = "neutral"
     NEGATIVE = "negative"
     MIXED = "mixed"
 
+
 class EntityAssociation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Describes if the entity is the subject of the text or if it describes someone else.
-    """
+    """Describes if the entity is the subject of the text or if it describes someone else."""
 
     SUBJECT = "subject"
     OTHER = "other"
 
+
 class EntityCertainty(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Describes the entities certainty and polarity.
-    """
+    """Describes the entities certainty and polarity."""
 
     POSITIVE = "positive"
     POSITIVE_POSSIBLE = "positivePossible"
@@ -90,16 +89,16 @@ class EntityCertainty(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NEGATIVE_POSSIBLE = "negativePossible"
     NEGATIVE = "negative"
 
+
 class EntityConditionality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Describes any conditionality on the entity.
-    """
+    """Describes any conditionality on the entity."""
 
     HYPOTHETICAL = "hypothetical"
     CONDITIONAL = "conditional"
 
+
 class ErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Human-readable error code.
-    """
+    """Human-readable error code."""
 
     INVALID_REQUEST = "InvalidRequest"
     INVALID_ARGUMENT = "InvalidArgument"
@@ -120,9 +119,9 @@ class ErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CONFLICT = "Conflict"
     WARNING = "Warning"
 
+
 class ExtractiveSummarizationSortingCriteria(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The sorting criteria to use for the results of Extractive Summarization.
-    """
+    """The sorting criteria to use for the results of Extractive Summarization."""
 
     #: Indicates that results should be sorted in order of appearance in the text.
     OFFSET = "Offset"
@@ -130,9 +129,9 @@ class ExtractiveSummarizationSortingCriteria(str, Enum, metaclass=CaseInsensitiv
     #: the model.
     RANK = "Rank"
 
+
 class HealthcareEntityCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Healthcare Entity Category.
-    """
+    """Healthcare Entity Category."""
 
     BODY_STRUCTURE = "BodyStructure"
     AGE = "Age"
@@ -171,9 +170,9 @@ class HealthcareEntityCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SUBSTANCE_USE = "SubstanceUse"
     SUBSTANCE_USE_AMOUNT = "SubstanceUseAmount"
 
+
 class HealthcareEntityRelation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of relation. Examples include: ``DosageOfMedication`` or 'FrequencyOfMedication', etc.
-    """
+    """Type of relation. Examples include: ``DosageOfMedication`` or 'FrequencyOfMedication', etc."""
 
     ABBREVIATION = "Abbreviation"
     BODY_SITE_OF_CONDITION = "BodySiteOfCondition"
@@ -211,9 +210,9 @@ class HealthcareEntityRelation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     VALUE_OF_EXAMINATION = "ValueOfExamination"
     VARIANT_OF_GENE = "VariantOfGene"
 
+
 class InnerErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Human-readable error code.
-    """
+    """Human-readable error code."""
 
     INVALID_REQUEST = "InvalidRequest"
     INVALID_PARAMETER_VALUE = "InvalidParameterValue"
@@ -230,18 +229,18 @@ class InnerErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UNSUPPORTED_LANGUAGE_CODE = "UnsupportedLanguageCode"
     INVALID_COUNTRY_HINT = "InvalidCountryHint"
 
+
 class PiiDomain(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The PII domain used for PII Entity Recognition.
-    """
+    """The PII domain used for PII Entity Recognition."""
 
     #: Indicates that entities in the Personal Health Information domain should be redacted.
     PHI = "phi"
     #: Indicates that no domain is specified.
     NONE = "none"
 
+
 class PiiEntityCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """PiiEntityCategory.
-    """
+    """PiiEntityCategory."""
 
     ABA_ROUTING_NUMBER = "ABARoutingNumber"
     AR_NATIONAL_IDENTITY_NUMBER = "ARNationalIdentityNumber"
@@ -417,17 +416,17 @@ class PiiEntityCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ALL = "All"
     DEFAULT = "Default"
 
+
 class SentenceSentimentValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The predicted Sentiment for the sentence.
-    """
+    """The predicted Sentiment for the sentence."""
 
     POSITIVE = "positive"
     NEUTRAL = "neutral"
     NEGATIVE = "negative"
 
+
 class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """State.
-    """
+    """State."""
 
     NOT_STARTED = "notStarted"
     RUNNING = "running"
@@ -436,6 +435,7 @@ class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELLED = "cancelled"
     CANCELLING = "cancelling"
     PARTIALLY_COMPLETED = "partiallyCompleted"
+
 
 class StringIndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the method used to interpret string offsets.  Defaults to Text Elements (Graphemes)
@@ -454,24 +454,24 @@ class StringIndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: application is written in a language that support Unicode, for example Java, JavaScript.
     UTF16_CODE_UNIT = "Utf16CodeUnit"
 
+
 class TargetRelationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type related to the target.
-    """
+    """The type related to the target."""
 
     ASSESSMENT = "assessment"
     TARGET = "target"
 
+
 class TokenSentimentValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Targeted sentiment in the sentence.
-    """
+    """Targeted sentiment in the sentence."""
 
     POSITIVE = "positive"
     MIXED = "mixed"
     NEGATIVE = "negative"
 
+
 class WarningCodeValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Error code.
-    """
+    """Error code."""
 
     LONG_WORDS_IN_DOCUMENT = "LongWordsInDocument"
     DOCUMENT_TRUNCATED = "DocumentTruncated"

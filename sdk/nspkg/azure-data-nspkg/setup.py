@@ -9,12 +9,12 @@ import sys
 from setuptools import setup
 
 setup(
-    name='azure-data-nspkg',
-    version='1.0.0',
+    name="azure-data-nspkg",
+    version="1.0.0",
     description="Microsoft Azure Data Namespace Package [Internal]",
     long_description=open("README.md", "r").read(),
     long_description_content_type="text/markdown",
-    license='MIT License',
+    license="MIT License",
     author="Microsoft Corporation",
     author_email="azpysdkhelp@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables",
@@ -32,8 +32,8 @@ setup(
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
-    packages=['azure.data'],
+    packages=["azure.data"],
     install_requires=[
-        'azure-nspkg>=3.0.0',
-    ]
+        "azure-nspkg>=3.0.0",
+    ],
 )

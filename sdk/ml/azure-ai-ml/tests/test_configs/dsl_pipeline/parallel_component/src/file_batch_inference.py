@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 """This module simulate run() which can specify succeed every n items from argument."""
+
 import argparse
 from pathlib import Path
 

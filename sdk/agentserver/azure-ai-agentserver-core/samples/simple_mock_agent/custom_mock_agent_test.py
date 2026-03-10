@@ -67,9 +67,7 @@ async def agent_run(context: AgentRunContext):
     print(f"agent:{agent}")
 
     if context.stream:
-        return stream_events(
-            "I am mock agent with no intelligence in stream mode.", context
-        )
+        return stream_events("I am mock agent with no intelligence in stream mode.", context)
 
     # Build assistant output content
     output_content = [

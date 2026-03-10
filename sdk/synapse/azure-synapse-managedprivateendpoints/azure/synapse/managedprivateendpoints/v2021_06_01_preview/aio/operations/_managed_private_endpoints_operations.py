@@ -9,14 +9,21 @@ from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TypeVa
 import warnings
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
 from ... import models as _models
 
-T = TypeVar('T')
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class ManagedPrivateEndpointsOperations:
     """ManagedPrivateEndpointsOperations async operations.
@@ -41,10 +48,7 @@ class ManagedPrivateEndpointsOperations:
         self._config = config
 
     async def get(
-        self,
-        managed_private_endpoint_name: str,
-        managed_virtual_network_name: str = "default",
-        **kwargs: Any
+        self, managed_private_endpoint_name: str, managed_virtual_network_name: str = "default", **kwargs: Any
     ) -> "_models.ManagedPrivateEndpoint":
         """Get Managed Private Endpoints.
 
@@ -57,30 +61,32 @@ class ManagedPrivateEndpointsOperations:
         :rtype: ~azure.synapse.managedprivateendpoints.v2021_06_01_preview.models.ManagedPrivateEndpoint
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedPrivateEndpoint"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ManagedPrivateEndpoint"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
         api_version = "2021-06-01-preview"
         accept = "application/json"
 
         # Construct URL
-        url = self.get.metadata['url']  # type: ignore
+        url = self.get.metadata["url"]  # type: ignore
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'managedVirtualNetworkName': self._serialize.url("managed_virtual_network_name", managed_virtual_network_name, 'str'),
-            'managedPrivateEndpointName': self._serialize.url("managed_private_endpoint_name", managed_private_endpoint_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "managedVirtualNetworkName": self._serialize.url(
+                "managed_virtual_network_name", managed_virtual_network_name, "str"
+            ),
+            "managedPrivateEndpointName": self._serialize.url(
+                "managed_private_endpoint_name", managed_private_endpoint_name, "str"
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -90,13 +96,14 @@ class ManagedPrivateEndpointsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('ManagedPrivateEndpoint', pipeline_response)
+        deserialized = self._deserialize("ManagedPrivateEndpoint", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/managedVirtualNetworks/{managedVirtualNetworkName}/managedPrivateEndpoints/{managedPrivateEndpointName}'}  # type: ignore
+
+    get.metadata = {"url": "/managedVirtualNetworks/{managedVirtualNetworkName}/managedPrivateEndpoints/{managedPrivateEndpointName}"}  # type: ignore
 
     async def create(
         self,
@@ -118,11 +125,9 @@ class ManagedPrivateEndpointsOperations:
         :rtype: ~azure.synapse.managedprivateendpoints.v2021_06_01_preview.models.ManagedPrivateEndpoint
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedPrivateEndpoint"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ManagedPrivateEndpoint"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
         _managed_private_endpoint = _models.ManagedPrivateEndpoint(properties=properties)
         api_version = "2021-06-01-preview"
@@ -130,26 +135,30 @@ class ManagedPrivateEndpointsOperations:
         accept = "application/json"
 
         # Construct URL
-        url = self.create.metadata['url']  # type: ignore
+        url = self.create.metadata["url"]  # type: ignore
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'managedVirtualNetworkName': self._serialize.url("managed_virtual_network_name", managed_virtual_network_name, 'str'),
-            'managedPrivateEndpointName': self._serialize.url("managed_private_endpoint_name", managed_private_endpoint_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "managedVirtualNetworkName": self._serialize.url(
+                "managed_virtual_network_name", managed_virtual_network_name, "str"
+            ),
+            "managedPrivateEndpointName": self._serialize.url(
+                "managed_private_endpoint_name", managed_private_endpoint_name, "str"
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
+        header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_managed_private_endpoint, 'ManagedPrivateEndpoint')
-        body_content_kwargs['content'] = body_content
+        body_content = self._serialize.body(_managed_private_endpoint, "ManagedPrivateEndpoint")
+        body_content_kwargs["content"] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -158,19 +167,17 @@ class ManagedPrivateEndpointsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('ManagedPrivateEndpoint', pipeline_response)
+        deserialized = self._deserialize("ManagedPrivateEndpoint", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create.metadata = {'url': '/managedVirtualNetworks/{managedVirtualNetworkName}/managedPrivateEndpoints/{managedPrivateEndpointName}'}  # type: ignore
+
+    create.metadata = {"url": "/managedVirtualNetworks/{managedVirtualNetworkName}/managedPrivateEndpoints/{managedPrivateEndpointName}"}  # type: ignore
 
     async def delete(
-        self,
-        managed_private_endpoint_name: str,
-        managed_virtual_network_name: str = "default",
-        **kwargs: Any
+        self, managed_private_endpoint_name: str, managed_virtual_network_name: str = "default", **kwargs: Any
     ) -> None:
         """Delete Managed Private Endpoints.
 
@@ -183,25 +190,27 @@ class ManagedPrivateEndpointsOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
         api_version = "2021-06-01-preview"
 
         # Construct URL
-        url = self.delete.metadata['url']  # type: ignore
+        url = self.delete.metadata["url"]  # type: ignore
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'managedVirtualNetworkName': self._serialize.url("managed_virtual_network_name", managed_virtual_network_name, 'str'),
-            'managedPrivateEndpointName': self._serialize.url("managed_private_endpoint_name", managed_private_endpoint_name, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "managedVirtualNetworkName": self._serialize.url(
+                "managed_virtual_network_name", managed_virtual_network_name, "str"
+            ),
+            "managedPrivateEndpointName": self._serialize.url(
+                "managed_private_endpoint_name", managed_private_endpoint_name, "str"
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -217,12 +226,10 @@ class ManagedPrivateEndpointsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/managedVirtualNetworks/{managedVirtualNetworkName}/managedPrivateEndpoints/{managedPrivateEndpointName}'}  # type: ignore
+    delete.metadata = {"url": "/managedVirtualNetworks/{managedVirtualNetworkName}/managedPrivateEndpoints/{managedPrivateEndpointName}"}  # type: ignore
 
     def list(
-        self,
-        managed_virtual_network_name: str = "default",
-        **kwargs: Any
+        self, managed_virtual_network_name: str = "default", **kwargs: Any
     ) -> AsyncIterable["_models.ManagedPrivateEndpointListResponse"]:
         """List Managed Private Endpoints.
 
@@ -233,45 +240,51 @@ class ManagedPrivateEndpointsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.synapse.managedprivateendpoints.v2021_06_01_preview.models.ManagedPrivateEndpointListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedPrivateEndpointListResponse"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ManagedPrivateEndpointListResponse"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
         api_version = "2021-06-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+            header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']  # type: ignore
+                url = self.list.metadata["url"]  # type: ignore
                 path_format_arguments = {
-                    'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                    'managedVirtualNetworkName': self._serialize.url("managed_virtual_network_name", managed_virtual_network_name, 'str'),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                    "managedVirtualNetworkName": self._serialize.url(
+                        "managed_virtual_network_name", managed_virtual_network_name, "str"
+                    ),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
 
                 request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
                 path_format_arguments = {
-                    'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                    'managedVirtualNetworkName': self._serialize.url("managed_virtual_network_name", managed_virtual_network_name, 'str'),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                    "managedVirtualNetworkName": self._serialize.url(
+                        "managed_virtual_network_name", managed_virtual_network_name, "str"
+                    ),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('ManagedPrivateEndpointListResponse', pipeline_response)
+            deserialized = self._deserialize("ManagedPrivateEndpointListResponse", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -289,7 +302,6 @@ class ManagedPrivateEndpointsOperations:
 
             return pipeline_response
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list.metadata = {'url': '/managedVirtualNetworks/{managedVirtualNetworkName}/managedPrivateEndpoints'}  # type: ignore
+        return AsyncItemPaged(get_next, extract_data)
+
+    list.metadata = {"url": "/managedVirtualNetworks/{managedVirtualNetworkName}/managedPrivateEndpoints"}  # type: ignore

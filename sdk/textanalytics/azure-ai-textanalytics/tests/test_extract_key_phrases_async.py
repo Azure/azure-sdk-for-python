@@ -39,14 +39,16 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
     async def test_all_successful_passing_dict(self, client):
-        docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
-                {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
+        docs = [
+            {"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
+            {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"},
+        ]
 
         response = await client.extract_key_phrases(docs, show_stats=True)
         for phrases in response:
-            assert "Paul Allen" in  phrases.key_phrases
-            assert "Bill Gates" in  phrases.key_phrases
-            assert "Microsoft" in  phrases.key_phrases
+            assert "Paul Allen" in phrases.key_phrases
+            assert "Bill Gates" in phrases.key_phrases
+            assert "Microsoft" in phrases.key_phrases
             assert phrases.id is not None
             assert phrases.statistics is not None
 
@@ -56,14 +58,14 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
     async def test_all_successful_passing_text_document_input(self, client):
         docs = [
             TextDocumentInput(id="1", text="Microsoft was founded by Bill Gates and Paul Allen", language="en"),
-            TextDocumentInput(id="2", text="Microsoft fue fundado por Bill Gates y Paul Allen", language="es")
+            TextDocumentInput(id="2", text="Microsoft fue fundado por Bill Gates y Paul Allen", language="es"),
         ]
 
         response = await client.extract_key_phrases(docs)
         for phrases in response:
-            assert "Paul Allen" in  phrases.key_phrases
-            assert "Bill Gates" in  phrases.key_phrases
-            assert "Microsoft" in  phrases.key_phrases
+            assert "Paul Allen" in phrases.key_phrases
+            assert "Bill Gates" in phrases.key_phrases
+            assert "Microsoft" in phrases.key_phrases
             assert phrases.id is not None
 
     @TextAnalyticsPreparer()
@@ -73,7 +75,7 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         docs = [
             "Microsoft was founded by Bill Gates and Paul Allen",
             "Microsoft fue fundado por Bill Gates y Paul Allen",
-            ""
+            "",
         ]
 
         response = await client.extract_key_phrases(docs)
@@ -83,8 +85,10 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
     async def test_input_with_some_errors(self, client):
-        docs = [{"id": "1", "language": "English", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
-                {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
+        docs = [
+            {"id": "1", "language": "English", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
+            {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"},
+        ]
 
         response = await client.extract_key_phrases(docs)
         assert response[0].is_error
@@ -94,8 +98,10 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
     async def test_input_with_all_errors(self, client):
-        docs = [{"id": "1", "language": "English", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
-                {"id": "2", "language": "es", "text": ""}]
+        docs = [
+            {"id": "1", "language": "English", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
+            {"id": "2", "language": "es", "text": ""},
+        ]
 
         response = await client.extract_key_phrases(docs)
         assert response[0].is_error
@@ -122,7 +128,7 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
             TextDocumentInput(id="2", text="two"),
             TextDocumentInput(id="3", text="three"),
             TextDocumentInput(id="4", text="four"),
-            TextDocumentInput(id="5", text="five")
+            TextDocumentInput(id="5", text="five"),
         ]
 
         response = await client.extract_key_phrases(docs)
@@ -135,18 +141,14 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_empty_credential_class(self, client):
         with pytest.raises(ClientAuthenticationError):
-            response = await client.extract_key_phrases(
-                ["This is written in English."]
-            )
+            response = await client.extract_key_phrases(["This is written in English."])
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"textanalytics_test_api_key": "xxxxxxxxxxxx"})
     @recorded_by_proxy_async
     async def test_bad_credentials(self, client):
         with pytest.raises(ClientAuthenticationError):
-            response = await client.extract_key_phrases(
-                ["This is written in English."]
-            )
+            response = await client.extract_key_phrases(["This is written in English."])
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -164,7 +166,7 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         docs = [
             {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
             TextDocumentInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
-            "You cannot mix string input with the above inputs"
+            "You cannot mix string input with the above inputs",
         ]
         with pytest.raises(TypeError):
             response = await client.extract_key_phrases(docs)
@@ -173,11 +175,13 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
     async def test_out_of_order_ids(self, client):
-        docs = [{"id": "56", "text": ":)"},
-                {"id": "0", "text": ":("},
-                {"id": "22", "text": ""},
-                {"id": "19", "text": ":P"},
-                {"id": "1", "text": ":D"}]
+        docs = [
+            {"id": "56", "text": ":)"},
+            {"id": "0", "text": ":("},
+            {"id": "22", "text": ""},
+            {"id": "19", "text": ":P"},
+            {"id": "1", "text": ":D"},
+        ]
 
         response = await client.extract_key_phrases(docs)
         in_order = ["56", "0", "22", "19", "1"]
@@ -197,17 +201,16 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
             assert response.statistics.valid_document_count == 4
             assert response.statistics.erroneous_document_count == 1
 
-        docs = [{"id": "56", "text": ":)"},
-                {"id": "0", "text": ":("},
-                {"id": "22", "text": ""},
-                {"id": "19", "text": ":P"},
-                {"id": "1", "text": ":D"}]
+        docs = [
+            {"id": "56", "text": ":)"},
+            {"id": "0", "text": ":("},
+            {"id": "22", "text": ""},
+            {"id": "19", "text": ":P"},
+            {"id": "1", "text": ":D"},
+        ]
 
         response = await client.extract_key_phrases(
-            docs,
-            show_stats=True,
-            model_version="latest",
-            raw_response_hook=callback
+            docs, show_stats=True, model_version="latest", raw_response_hook=callback
         )
 
     @TextAnalyticsPreparer()
@@ -223,14 +226,14 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_whole_batch_language_hint(self, client):
         def callback(resp):
-            language_str = "\"language\": \"fr\""
+            language_str = '"language": "fr"'
             language = resp.http_request.body.count(language_str)
             assert language == 3
 
         docs = [
             "This was the best day of my life.",
             "I did not like the hotel we stayed at. It was too expensive.",
-            "The restaurant was not as good as I hoped."
+            "The restaurant was not as good as I hoped.",
         ]
 
         response = await client.extract_key_phrases(docs, language="fr", raw_response_hook=callback)
@@ -240,14 +243,14 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_whole_batch_dont_use_language_hint(self, client):
         def callback(resp):
-            language_str = "\"language\": \"\""
+            language_str = '"language": ""'
             language = resp.http_request.body.count(language_str)
             assert language == 3
 
         docs = [
             "This was the best day of my life.",
             "I did not like the hotel we stayed at. It was too expensive.",
-            "The restaurant was not as good as I hoped."
+            "The restaurant was not as good as I hoped.",
         ]
 
         response = await client.extract_key_phrases(docs, language="", raw_response_hook=callback)
@@ -257,17 +260,18 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_per_item_dont_use_language_hint(self, client):
         def callback(resp):
-            language_str = "\"language\": \"\""
+            language_str = '"language": ""'
             language = resp.http_request.body.count(language_str)
             assert language == 2
-            language_str = "\"language\": \"en\""
+            language_str = '"language": "en"'
             language = resp.http_request.body.count(language_str)
             assert language == 1
 
-
-        docs = [{"id": "1", "language": "", "text": "I will go to the park."},
-                {"id": "2", "language": "", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
+        docs = [
+            {"id": "1", "language": "", "text": "I will go to the park."},
+            {"id": "2", "language": "", "text": "I did not like the hotel we stayed at."},
+            {"id": "3", "text": "The restaurant had really good food."},
+        ]
 
         response = await client.extract_key_phrases(docs, raw_response_hook=callback)
 
@@ -276,7 +280,7 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_whole_batch_language_hint_and_obj_input(self, client):
         def callback(resp):
-            language_str = "\"language\": \"de\""
+            language_str = '"language": "de"'
             language = resp.http_request.body.count(language_str)
             assert language == 3
 
@@ -293,10 +297,10 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_whole_batch_language_hint_and_obj_per_item_hints(self, client):
         def callback(resp):
-            language_str = "\"language\": \"es\""
+            language_str = '"language": "es"'
             language = resp.http_request.body.count(language_str)
             assert language == 2
-            language_str = "\"language\": \"en\""
+            language_str = '"language": "en"'
             language = resp.http_request.body.count(language_str)
             assert language == 1
 
@@ -313,17 +317,18 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_whole_batch_language_hint_and_dict_per_item_hints(self, client):
         def callback(resp):
-            language_str = "\"language\": \"es\""
+            language_str = '"language": "es"'
             language = resp.http_request.body.count(language_str)
             assert language == 2
-            language_str = "\"language\": \"en\""
+            language_str = '"language": "en"'
             language = resp.http_request.body.count(language_str)
             assert language == 1
 
-
-        docs = [{"id": "1", "language": "es", "text": "I will go to the park."},
-                {"id": "2", "language": "es", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
+        docs = [
+            {"id": "1", "language": "es", "text": "I will go to the park."},
+            {"id": "2", "language": "es", "text": "I did not like the hotel we stayed at."},
+            {"id": "3", "text": "The restaurant had really good food."},
+        ]
 
         response = await client.extract_key_phrases(docs, language="en", raw_response_hook=callback)
 
@@ -332,18 +337,20 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_client_passed_default_language_hint(self, client):
         def callback(resp):
-            language_str = "\"language\": \"es\""
+            language_str = '"language": "es"'
             language = resp.http_request.body.count(language_str)
             assert language == 3
 
         def callback_2(resp):
-            language_str = "\"language\": \"en\""
+            language_str = '"language": "en"'
             language = resp.http_request.body.count(language_str)
             assert language == 3
 
-        docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
+        docs = [
+            {"id": "1", "text": "I will go to the park."},
+            {"id": "2", "text": "I did not like the hotel we stayed at."},
+            {"id": "3", "text": "The restaurant had really good food."},
+        ]
 
         response = await client.extract_key_phrases(docs, raw_response_hook=callback)
         response = await client.extract_key_phrases(docs, language="en", raw_response_hook=callback_2)
@@ -356,16 +363,22 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         response = await client.extract_key_phrases(
             ["This should fail because we're passing in an invalid language hint"], language="notalanguage"
         )
-        assert response[0].error.code == 'UnsupportedLanguageCode'
+        assert response[0].error.code == "UnsupportedLanguageCode"
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
     async def test_invalid_language_hint_docs(self, client):
         response = await client.extract_key_phrases(
-            [{"id": "1", "language": "notalanguage", "text": "This should fail because we're passing in an invalid language hint"}]
+            [
+                {
+                    "id": "1",
+                    "language": "notalanguage",
+                    "text": "This should fail because we're passing in an invalid language hint",
+                }
+            ]
         )
-        assert response[0].error.code == 'UnsupportedLanguageCode'
+        assert response[0].error.code == "UnsupportedLanguageCode"
 
     @TextAnalyticsPreparer()
     @recorded_by_proxy_async
@@ -373,9 +386,11 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         credential = AzureKeyCredential(textanalytics_test_api_key)
         client = TextAnalyticsClient(textanalytics_test_endpoint, credential)
 
-        docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
+        docs = [
+            {"id": "1", "text": "I will go to the park."},
+            {"id": "2", "text": "I did not like the hotel we stayed at."},
+            {"id": "3", "text": "The restaurant had really good food."},
+        ]
 
         response = await client.extract_key_phrases(docs)
         assert response is not None
@@ -393,13 +408,18 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_user_agent(self, client):
         def callback(resp):
-            assert "azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
-                VERSION, platform.python_version(), platform.platform()) in \
-                resp.http_request.headers["User-Agent"]
+            assert (
+                "azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
+                    VERSION, platform.python_version(), platform.platform()
+                )
+                in resp.http_request.headers["User-Agent"]
+            )
 
-        docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
+        docs = [
+            {"id": "1", "text": "I will go to the park."},
+            {"id": "2", "text": "I did not like the hotel we stayed at."},
+            {"id": "3", "text": "The restaurant had really good food."},
+        ]
 
         response = await client.extract_key_phrases(docs, raw_response_hook=callback)
 
@@ -419,11 +439,11 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         try:
             key_phrases = response[0].key_phrases
         except AttributeError as custom_error:
-            assert custom_error.args[0] == \
-                '\'DocumentError\' object has no attribute \'key_phrases\'. ' \
-                'The service was unable to process this document:\nDocument Id: 1\nError: ' \
-                'InvalidDocument - Document text is empty.\n'
-
+            assert (
+                custom_error.args[0] == "'DocumentError' object has no attribute 'key_phrases'. "
+                "The service was unable to process this document:\nDocument Id: 1\nError: "
+                "InvalidDocument - Document text is empty.\n"
+            )
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -436,7 +456,10 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         try:
             key_phrases = response[0].attribute_not_on_result_or_error
         except AttributeError as default_behavior:
-            assert default_behavior.args[0] == '\'DocumentError\' object has no attribute \'attribute_not_on_result_or_error\''
+            assert (
+                default_behavior.args[0] == "'DocumentError' object has no attribute 'attribute_not_on_result_or_error'"
+            )
+
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -457,9 +480,11 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         for _ in range(5121):
             text += "x"
 
-        docs = [{"id": "1", "text": ""},
-                {"id": "2", "language": "english", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": text}]
+        docs = [
+            {"id": "1", "text": ""},
+            {"id": "2", "language": "english", "text": "I did not like the hotel we stayed at."},
+            {"id": "3", "text": text},
+        ]
 
         doc_errors = await client.extract_key_phrases(docs)
         assert doc_errors[0].error.code == "InvalidDocument"
@@ -500,8 +525,7 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_duplicate_ids_error(self, client):
         # Duplicate Ids
-        docs = [{"id": "1", "text": "hello world"},
-                {"id": "1", "text": "I did not like the hotel we stayed at."}]
+        docs = [{"id": "1", "text": "hello world"}, {"id": "1", "text": "I did not like the hotel we stayed at."}]
         try:
             result = await client.extract_key_phrases(docs)
         except HttpResponseError as err:
@@ -525,7 +549,7 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_language_kwarg_spanish(self, client):
         def callback(response):
-            language_str = "\"language\": \"es\""
+            language_str = '"language": "es"'
             assert response.http_request.body.count(language_str) == 1
             assert response.model_version is not None
             assert response.statistics is not None
@@ -535,7 +559,7 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
             model_version="latest",
             show_stats=True,
             language="es",
-            raw_response_hook=callback
+            raw_response_hook=callback,
         )
 
     @TextAnalyticsPreparer()
@@ -544,10 +568,8 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
     async def test_pass_cls(self, client):
         def callback(pipeline_response, deserialized, _):
             return "cls result"
-        res = await client.extract_key_phrases(
-            documents=["Test passing cls to endpoint"],
-            cls=callback
-        )
+
+        res = await client.extract_key_phrases(documents=["Test passing cls to endpoint"], cls=callback)
         assert res == "cls result"
 
     @TextAnalyticsPreparer()
@@ -555,7 +577,8 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_disable_service_logs(self, client):
         def callback(resp):
-            assert resp.http_request.query['loggingOptOut']
+            assert resp.http_request.query["loggingOptOut"]
+
         await client.extract_key_phrases(
             documents=["Test for logging disable"],
             disable_service_logs=True,
@@ -567,7 +590,8 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_disable_service_logs_body_param(self, client):
         def callback(resp):
-            assert json.loads(resp.http_request.body)['parameters']['loggingOptOut']
+            assert json.loads(resp.http_request.body)["parameters"]["loggingOptOut"]
+
         await client.extract_key_phrases(
             documents=["Test for logging disable"],
             disable_service_logs=True,
@@ -581,4 +605,7 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
 
         with pytest.raises(ValueError) as e:
             res = await client.extract_key_phrases(["I'm tired"], disable_service_logs=True)
-        assert str(e.value) == "'disable_service_logs' is not available in API version v3.0. Use service API version v3.1 or newer.\n"
+        assert (
+            str(e.value)
+            == "'disable_service_logs' is not available in API version v3.0. Use service API version v3.1 or newer.\n"
+        )

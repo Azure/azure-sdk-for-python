@@ -8,6 +8,7 @@
 """
 An example to show receiving events from an Event Hub.
 """
+
 import os
 from azure.eventhub import EventHubConsumerClient
 from azure.identity import DefaultAzureCredential

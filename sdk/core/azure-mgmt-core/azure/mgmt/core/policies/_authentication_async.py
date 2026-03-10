@@ -42,7 +42,6 @@ from azure.core.credentials_async import AsyncTokenCredential
 
 from ._authentication import _AuxiliaryAuthenticationPolicyBase
 
-
 HTTPRequestType = Union[LegacyHttpRequest, HttpRequest]
 AsyncHTTPResponseType = Union[LegacyAsyncHttpResponse, AsyncHttpResponse]
 

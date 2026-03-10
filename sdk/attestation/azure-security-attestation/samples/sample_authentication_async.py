@@ -31,14 +31,13 @@ Usage:
     python sample_authentication_async.py
 
 This sample demonstrates establishing a connection to the attestation service
-using client secrets stored in environment variables. 
+using client secrets stored in environment variables.
 
-To verify that the connection completed successfully, it also calls the 
-`get_openidmetadata` API on the client to retrieve the OpenID metadata discovery 
+To verify that the connection completed successfully, it also calls the
+`get_openidmetadata` API on the client to retrieve the OpenID metadata discovery
 document for the attestation service instance.
 
 """
-
 
 import os
 from dotenv import find_dotenv, load_dotenv

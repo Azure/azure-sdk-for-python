@@ -71,12 +71,10 @@ async def sample_compose_model_async():
             blob_container_url=po_furniture,
             description="Purchase order-Furniture",
         )
-        cleaning_supplies_poller = (
-            await document_model_admin_client.begin_build_document_model(
-                ModelBuildMode.TEMPLATE,
-                blob_container_url=po_cleaning_supplies,
-                description="Purchase order-Cleaning Supplies",
-            )
+        cleaning_supplies_poller = await document_model_admin_client.begin_build_document_model(
+            ModelBuildMode.TEMPLATE,
+            blob_container_url=po_cleaning_supplies,
+            description="Purchase order-Cleaning Supplies",
         )
         supplies_model = await supplies_poller.result()
         equipment_model = await equipment_poller.result()

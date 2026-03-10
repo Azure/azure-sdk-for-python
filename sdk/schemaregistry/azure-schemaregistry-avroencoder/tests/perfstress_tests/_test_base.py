@@ -21,9 +21,7 @@ class _SchemaRegistryAvroTest(PerfStressTest):
     def __init__(self, arguments):
         super().__init__(arguments)
 
-        self.fully_qualified_namespace = self.get_from_env(
-            "SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE"
-        )
+        self.fully_qualified_namespace = self.get_from_env("SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE")
         self.group_name = self.get_from_env("SCHEMAREGISTRY_GROUP")
         self.definition, num_fields = self._create_schema_definition()
         self.content = self._create_content(num_fields)
@@ -33,7 +31,7 @@ class _SchemaRegistryAvroTest(PerfStressTest):
 
         # random string to avoid conflicting requests
         letters = string.ascii_lowercase
-        randletters = ''.join(random.choice(letters) for i in range(10))
+        randletters = "".join(random.choice(letters) for i in range(10))
 
         fields = []
         schema = {
@@ -94,9 +92,7 @@ class _EncodeTest(_SchemaRegistryAvroTest):
             fully_qualified_namespace=self.fully_qualified_namespace,
             credential=self.sync_credential,
         )
-        self.sync_encoder = AvroEncoder(
-            client=self.sync_client, group_name=self.group_name, auto_register_schemas=True
-        )
+        self.sync_encoder = AvroEncoder(client=self.sync_client, group_name=self.group_name, auto_register_schemas=True)
         self.async_credential = AsyncDefaultAzureCredential()
         self.async_client = AsyncSchemaRegistryClient(
             fully_qualified_namespace=self.fully_qualified_namespace,
@@ -127,9 +123,7 @@ class _DecodeTest(_SchemaRegistryAvroTest):
             fully_qualified_namespace=self.fully_qualified_namespace,
             credential=self.sync_credential,
         )
-        self.sync_encoder = AvroEncoder(
-            client=self.sync_client, group_name=self.group_name, auto_register_schemas=True
-        )
+        self.sync_encoder = AvroEncoder(client=self.sync_client, group_name=self.group_name, auto_register_schemas=True)
         self.async_credential = AsyncDefaultAzureCredential()
         self.async_client = AsyncSchemaRegistryClient(
             fully_qualified_namespace=self.fully_qualified_namespace,

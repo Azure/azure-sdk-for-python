@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for the custom hook policy."""
+
 try:
     from unittest import mock
 except ImportError:

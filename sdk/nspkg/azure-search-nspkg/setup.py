@@ -12,7 +12,7 @@ PACKAGES = []
 # https://github.com/Azure/azure-sdk-for-python/issues/3447
 # https://github.com/Azure/azure-sdk-for-python/issues/3481
 if sys.version_info[0] < 3:
-    PACKAGES = ['azure.search']
+    PACKAGES = ["azure.search"]
 
 setup(
     name="azure-search-nspkg",

@@ -6,10 +6,8 @@
 
 from typing import Optional
 from azure.core import MatchConditions
-from azure.core.exceptions import (
-    ResourceExistsError,
-    ResourceModifiedError,
-    ResourceNotModifiedError)
+from azure.core.exceptions import ResourceExistsError, ResourceModifiedError, ResourceNotModifiedError
+
 
 def prep_if_match(etag: str, match_condition: MatchConditions) -> tuple[Optional[str], dict]:
     error_map = {}
@@ -25,6 +23,7 @@ def prep_if_match(etag: str, match_condition: MatchConditions) -> tuple[Optional
     if match_condition != MatchConditions.Unconditionally:
         raise ValueError("Unsupported match condition: {}".format(match_condition))
     return None, error_map
+
 
 def prep_if_none_match(etag: str, match_condition: MatchConditions) -> tuple[Optional[str], dict]:
     error_map = {}

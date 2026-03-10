@@ -18,6 +18,7 @@ class TestConversations(AzureRecordedTestCase):
     def create_client(self, endpoint, key):
         return TextAuthoringClient(endpoint, AzureKeyCredential(key))
 
+
 @pytest.mark.playback_test_only
 class TestConversationsCancelTrainingSync(TestConversations):
     @ConversationsPreparer()

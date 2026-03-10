@@ -7,7 +7,6 @@ from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.constants._common import IndexInputType
 
-
 # General todo: need to determine which args are required or optional when parsed out into groups like this.
 # General todo: move these to more permanent locations?
 

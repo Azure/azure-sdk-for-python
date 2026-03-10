@@ -21,20 +21,26 @@ from test_effective_preferred_locations import REGION_1, REGION_2, REGION_3, ACC
 
 @pytest_asyncio.fixture()
 async def setup():
-    if (TestPreferredLocationsAsync.master_key == '[YOUR_KEY_HERE]' or
-            TestPreferredLocationsAsync.host == '[YOUR_ENDPOINT_HERE]'):
+    if (
+        TestPreferredLocationsAsync.master_key == "[YOUR_KEY_HERE]"
+        or TestPreferredLocationsAsync.host == "[YOUR_ENDPOINT_HERE]"
+    ):
         raise Exception(
             "You must specify your Azure Cosmos account values for "
             "'masterKey' and 'host' at the top of this class to run the "
-            "tests.")
+            "tests."
+        )
 
-    client = CosmosClient(TestPreferredLocationsAsync.host, TestPreferredLocationsAsync.master_key, consistency_level="Session")
+    client = CosmosClient(
+        TestPreferredLocationsAsync.host, TestPreferredLocationsAsync.master_key, consistency_level="Session"
+    )
     created_database = client.get_database_client(TestPreferredLocationsAsync.TEST_DATABASE_ID)
-    created_collection = created_database.get_container_client(TestPreferredLocationsAsync.TEST_CONTAINER_SINGLE_PARTITION_ID)
-    yield {
-        COLLECTION: created_collection
-    }
+    created_collection = created_database.get_container_client(
+        TestPreferredLocationsAsync.TEST_CONTAINER_SINGLE_PARTITION_ID
+    )
+    yield {COLLECTION: created_collection}
     await client.close()
+
 
 def preferred_locations():
     host = test_config.TestConfig.host
@@ -49,8 +55,9 @@ def preferred_locations():
         ([REGION_2], locational_endpoint),
         ([REGION_3, REGION_1], locational_endpoint),
         ([REGION_1, REGION_3], locational_endpoint),
-        ([REGION_1, REGION_2, REGION_3], locational_endpoint)
+        ([REGION_1, REGION_2, REGION_3], locational_endpoint),
     ]
+
 
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup")
@@ -63,15 +70,17 @@ class TestPreferredLocationsAsync:
 
     async def setup_method_with_custom_transport(self, custom_transport, error_lambda, default_endpoint=host, **kwargs):
         uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
-        predicate = lambda r: (FaultInjectionTransportAsync.predicate_is_document_operation(r) and
-                               (FaultInjectionTransportAsync.predicate_targets_region(r, uri_down) or
-                               FaultInjectionTransportAsync.predicate_targets_region(r, self.host)))
-        custom_transport.add_fault(predicate,
-                                   error_lambda)
-        client = CosmosClient(default_endpoint,
-                              self.master_key,
-                              multiple_write_locations=True,
-                              transport=custom_transport, **kwargs)
+        predicate = lambda r: (
+            FaultInjectionTransportAsync.predicate_is_document_operation(r)
+            and (
+                FaultInjectionTransportAsync.predicate_targets_region(r, uri_down)
+                or FaultInjectionTransportAsync.predicate_targets_region(r, self.host)
+            )
+        )
+        custom_transport.add_fault(predicate, error_lambda)
+        client = CosmosClient(
+            default_endpoint, self.master_key, multiple_write_locations=True, transport=custom_transport, **kwargs
+        )
         db = client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(self.TEST_CONTAINER_SINGLE_PARTITION_ID)
         return {"client": client, "db": db, "col": container}
@@ -80,16 +89,24 @@ class TestPreferredLocationsAsync:
     @pytest.mark.parametrize("preferred_location, default_endpoint", preferred_locations())
     async def test_effective_preferred_regions_async(self, setup, preferred_location, default_endpoint):
 
-        self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
+        self.original_getDatabaseAccountStub = (
+            _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
+        )
         self.original_getDatabaseAccountCheck = _cosmos_client_connection_async.CosmosClientConnection.health_check
-        _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.MockGetDatabaseAccount(ACCOUNT_REGIONS)
-        _cosmos_client_connection_async.CosmosClientConnection.health_check = self.MockGetDatabaseAccount(ACCOUNT_REGIONS)
+        _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.MockGetDatabaseAccount(
+            ACCOUNT_REGIONS
+        )
+        _cosmos_client_connection_async.CosmosClientConnection.health_check = self.MockGetDatabaseAccount(
+            ACCOUNT_REGIONS
+        )
         try:
             client = CosmosClient(default_endpoint, self.master_key, preferred_locations=preferred_location)
             # this will setup the location cache
             await client.__aenter__()
         finally:
-            _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
+            _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = (
+                self.original_getDatabaseAccountStub
+            )
             _cosmos_client_connection_async.CosmosClientConnection.health_check = self.original_getDatabaseAccountCheck
         expected_endpoints = []
 
@@ -120,21 +137,26 @@ class TestPreferredLocationsAsync:
         # setup fault injection so that first account region fails
         custom_transport = FaultInjectionTransportAsync()
         expected = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
-        error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
-            0,
-            error
-        ))
+        error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(0, error))
         try:
-            fault_setup = await self.setup_method_with_custom_transport(custom_transport=custom_transport, error_lambda=error_lambda)
+            fault_setup = await self.setup_method_with_custom_transport(
+                custom_transport=custom_transport, error_lambda=error_lambda
+            )
             fault_container = fault_setup["col"]
-            response = await fault_container.read_item(item=item_to_read["id"], partition_key=item_to_read[self.partition_key])
+            response = await fault_container.read_item(
+                item=item_to_read["id"], partition_key=item_to_read[self.partition_key]
+            )
             request = response.get_response_headers()["_request"]
             # Validate the response comes from another region meaning that the account locations were used
             assert request.url.startswith(expected)
 
             # should fail if using excluded locations because no where to failover to
             with pytest.raises(CosmosHttpResponseError):
-                await fault_container.read_item(item=item_to_read["id"], partition_key=item_to_read[self.partition_key], excluded_locations=[REGION_2])
+                await fault_container.read_item(
+                    item=item_to_read["id"],
+                    partition_key=item_to_read[self.partition_key],
+                    excluded_locations=[REGION_2],
+                )
 
         finally:
             await fault_setup["client"].close()
@@ -147,7 +169,9 @@ class TestPreferredLocationsAsync:
         error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_region_down())
 
         try:
-            fault_setup = await self.setup_method_with_custom_transport(custom_transport=custom_transport, error_lambda=error_lambda)
+            fault_setup = await self.setup_method_with_custom_transport(
+                custom_transport=custom_transport, error_lambda=error_lambda
+            )
             fault_container = fault_setup["col"]
             response = await fault_container.create_item(body=construct_item())
             request = response.get_response_headers()["_request"]
@@ -163,8 +187,8 @@ class TestPreferredLocationsAsync:
 
     class MockGetDatabaseAccount(object):
         def __init__(
-                self,
-                regions: List[str],
+            self,
+            regions: List[str],
         ):
             self.regions = regions
 
@@ -173,14 +197,18 @@ class TestPreferredLocationsAsync:
             read_locations = []
             counter = 0
             for loc in read_regions:
-                locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(TestPreferredLocationsAsync.host, loc)
-                read_locations.append({'databaseAccountEndpoint': locational_endpoint, 'name': loc})
+                locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(
+                    TestPreferredLocationsAsync.host, loc
+                )
+                read_locations.append({"databaseAccountEndpoint": locational_endpoint, "name": loc})
                 counter += 1
             write_regions = [self.regions[0]]
             write_locations = []
             for loc in write_regions:
-                locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(TestPreferredLocationsAsync.host, loc)
-                write_locations.append({'databaseAccountEndpoint': locational_endpoint, 'name': loc})
+                locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(
+                    TestPreferredLocationsAsync.host, loc
+                )
+                write_locations.append({"databaseAccountEndpoint": locational_endpoint, "name": loc})
             multi_write = False
 
             db_acc = DatabaseAccount()

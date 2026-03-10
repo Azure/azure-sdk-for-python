@@ -37,7 +37,7 @@ from .._generated.models import (
     PhoneNumbersReservation,
     PhoneNumbersBrowseRequest,
     PhoneNumberAssignmentType,
-    PhoneNumbersBrowseResult
+    PhoneNumbersBrowseResult,
 )
 from .._shared.auth_policy_utils import get_authentication_policy
 from .._shared.utils import parse_connection_str
@@ -78,8 +78,7 @@ class PhoneNumbersClient:
             raise ValueError("Account URL must be a string.") from e
 
         if not credential:
-            raise ValueError(
-                "You need to provide account shared key to authenticate.")
+            raise ValueError("You need to provide account shared key to authenticate.")
 
         self._endpoint = endpoint
         self._accepted_language = kwargs.pop("accepted_language", None)
@@ -87,10 +86,9 @@ class PhoneNumbersClient:
         self._phone_number_client = PhoneNumbersClientGen(
             self._endpoint,
             api_version=self._api_version,
-            authentication_policy=get_authentication_policy(
-                endpoint, credential, is_async=True),
+            authentication_policy=get_authentication_policy(endpoint, credential, is_async=True),
             sdk_moniker=SDK_MONIKER,
-            **kwargs
+            **kwargs,
         )
 
     @classmethod
@@ -108,14 +106,15 @@ class PhoneNumbersClient:
 
     @distributed_trace_async
     async def begin_purchase_phone_numbers(
-            self,
-            search_id: str,
-            *,
-            agree_to_not_resell: bool = False,
-            continuation_token: Optional[str] = None,
-            polling: Union[bool, "PollingMethod"] = True,
-            polling_interval: int = _DEFAULT_POLLING_INTERVAL_IN_SECONDS,
-            **kwargs: Any) -> AsyncLROPoller[None]:
+        self,
+        search_id: str,
+        *,
+        agree_to_not_resell: bool = False,
+        continuation_token: Optional[str] = None,
+        polling: Union[bool, "PollingMethod"] = True,
+        polling_interval: int = _DEFAULT_POLLING_INTERVAL_IN_SECONDS,
+        **kwargs: Any,
+    ) -> AsyncLROPoller[None]:
         """Purchases phone numbers.
 
         :param search_id: The search id.
@@ -134,15 +133,14 @@ class PhoneNumbersClient:
         :returns: A poller to wait on the purchase operation.
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         """
-        purchase_request = PhoneNumberPurchaseRequest(
-            search_id=search_id, agree_to_not_resell=agree_to_not_resell)
+        purchase_request = PhoneNumberPurchaseRequest(search_id=search_id, agree_to_not_resell=agree_to_not_resell)
 
         return await self._phone_number_client.phone_numbers.begin_purchase_phone_numbers(
             body=purchase_request,
             polling_interval=polling_interval,
             continuation_token=continuation_token,
             polling=polling,
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace_async
@@ -153,7 +151,8 @@ class PhoneNumbersClient:
         continuation_token: Optional[str] = None,
         polling: Union[bool, "PollingMethod"] = True,
         polling_interval: int = _DEFAULT_POLLING_INTERVAL_IN_SECONDS,
-        **kwargs: Any) -> AsyncLROPoller[None]:
+        **kwargs: Any,
+    ) -> AsyncLROPoller[None]:
         """Releases an purchased phone number.
 
         :param phone_number: Phone number to be released, e.g. +11234567890.
@@ -174,7 +173,7 @@ class PhoneNumbersClient:
             polling_interval=polling_interval,
             continuation_token=continuation_token,
             polling=polling,
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace_async
@@ -190,7 +189,7 @@ class PhoneNumbersClient:
         continuation_token: Optional[str] = None,
         polling: Union[bool, "PollingMethod"] = True,
         polling_interval: int = _DEFAULT_POLLING_INTERVAL_IN_SECONDS,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> AsyncLROPoller[PhoneNumberSearchResult]:
         """Search for available phone numbers to purchase.
 
@@ -237,7 +236,7 @@ class PhoneNumbersClient:
             polling_interval=polling_interval,
             continuation_token=continuation_token,
             polling=polling,
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace_async
@@ -250,7 +249,7 @@ class PhoneNumbersClient:
         continuation_token: Optional[str] = None,
         polling: Union[bool, "PollingMethod"] = True,
         polling_interval: int = _DEFAULT_POLLING_INTERVAL_IN_SECONDS,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> AsyncLROPoller[PurchasedPhoneNumber]:
         """Updates the capabilities of a phone number.
 
@@ -272,8 +271,7 @@ class PhoneNumbersClient:
         :returns: A poller to wait on the update operation.
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.communication.phonenumbers.PurchasedPhoneNumber]
         """
-        capabilities_request = PhoneNumberCapabilitiesRequest(
-            calling=calling, sms=sms)
+        capabilities_request = PhoneNumberCapabilitiesRequest(calling=calling, sms=sms)
 
         if not phone_number:
             raise ValueError("phone_number can't be empty")
@@ -283,7 +281,7 @@ class PhoneNumbersClient:
             polling_interval=polling_interval,
             continuation_token=continuation_token,
             polling=polling,
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace_async
@@ -300,11 +298,7 @@ class PhoneNumbersClient:
 
     @distributed_trace
     def list_purchased_phone_numbers(
-        self,
-        *,
-        skip: int = 0,
-        top: int = 100,
-        **kwargs: Any
+        self, *, skip: int = 0, top: int = 100, **kwargs: Any
     ) -> AsyncItemPaged[PurchasedPhoneNumber]:
         """Gets the list of all purchased phone numbers.
 
@@ -324,12 +318,7 @@ class PhoneNumbersClient:
         return self._phone_number_client.phone_numbers.list_phone_numbers(skip=skip, top=top, **kwargs)
 
     @distributed_trace
-    def list_available_countries(
-        self,
-        *,
-        skip: int = 0,
-        **kwargs: Any
-    ) -> AsyncItemPaged[PhoneNumberCountry]:
+    def list_available_countries(self, *, skip: int = 0, **kwargs: Any) -> AsyncItemPaged[PhoneNumberCountry]:
         """Gets the list of supported countries.
 
         Gets the list of supported countries.
@@ -354,7 +343,7 @@ class PhoneNumbersClient:
         phone_number_type: Optional[Union[PhoneNumberType, str]] = None,
         administrative_division: Optional[str] = None,
         skip: int = 0,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> AsyncItemPaged[PhoneNumberLocality]:
         """Gets the list of cities or towns with available phone numbers.
 
@@ -362,7 +351,7 @@ class PhoneNumbersClient:
 
         :param country_code: The ISO 3166-2 country/region code, e.g. US. Required.
         :type country_code: str
-        :keyword phone_number_type: An optional parameter for the type of phone numbers, 
+        :keyword phone_number_type: An optional parameter for the type of phone numbers,
          e.g. geographic, tollFree, mobile. Default value is None.
         :paramtype phone_number_type: str or ~azure.communication.phonenumbers.PhoneNumberType
         :keyword administrative_division: An optional parameter for the name of the state or province
@@ -382,7 +371,7 @@ class PhoneNumbersClient:
             accept_language=self._accepted_language,
             phone_number_type=phone_number_type,
             skip=skip,
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace
@@ -393,7 +382,7 @@ class PhoneNumbersClient:
         phone_number_type: Optional[Union[PhoneNumberType, str]] = None,
         assignment_type: Optional[Union[PhoneNumberAssignmentType, str]] = None,
         skip: int = 0,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> AsyncItemPaged[PhoneNumberOffering]:
         """List available offerings of capabilities with rates for the given country/region.
 
@@ -421,7 +410,7 @@ class PhoneNumbersClient:
             assignment_type=assignment_type,
             accept_language=self._accepted_language,
             skip=skip,
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace
@@ -434,7 +423,7 @@ class PhoneNumbersClient:
         assignment_type: Optional[Union[PhoneNumberAssignmentType, str]] = None,
         locality: Optional[str] = None,
         skip: int = 0,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> AsyncItemPaged[PhoneNumberAreaCode]:
         """Gets the list of available area codes.
 
@@ -467,7 +456,7 @@ class PhoneNumbersClient:
             locality=locality,
             administrative_division=administrative_division,
             skip=skip,
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace_async
@@ -476,7 +465,7 @@ class PhoneNumbersClient:
         phone_numbers: Union[str, List[str]],
         *,
         options: Optional[OperatorInformationOptions] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> OperatorInformationResult:
         """Searches for operator information for a given list of phone numbers.
 
@@ -490,10 +479,8 @@ class PhoneNumbersClient:
         if not isinstance(phone_numbers, list):
             phone_numbers = [phone_numbers]
         if options is None:
-            options = OperatorInformationOptions(
-                include_additional_operator_details=False)
-        request = OperatorInformationRequest(
-            phone_numbers=phone_numbers, options=options)
+            options = OperatorInformationOptions(include_additional_operator_details=False)
+        request = OperatorInformationRequest(phone_numbers=phone_numbers, options=options)
         return await self._phone_number_client.phone_numbers.operator_information_search(request, **kwargs)
 
     async def __aenter__(self) -> "PhoneNumbersClient":
@@ -510,9 +497,7 @@ class PhoneNumbersClient:
         await self._phone_number_client.__aexit__()
 
     @distributed_trace_async
-    async def get_reservation(
-        self, reservation_id: str, **kwargs: Any
-    ) -> PhoneNumbersReservation:
+    async def get_reservation(self, reservation_id: str, **kwargs: Any) -> PhoneNumbersReservation:
         """Gets a reservation by its ID.
 
         Retrieves the reservation with the given ID, including all of the phone numbers associated with
@@ -523,14 +508,10 @@ class PhoneNumbersClient:
         :return: PhoneNumbersReservation
         :rtype: ~azure.communication.phonenumbers.PhoneNumbersReservation
         """
-        return await self._phone_number_client.phone_numbers.get_reservation(
-            reservation_id, **kwargs
-        )
+        return await self._phone_number_client.phone_numbers.get_reservation(reservation_id, **kwargs)
 
     @distributed_trace
-    def list_reservations(
-        self, *, max_page_size: int = 100, **kwargs: Any
-    ) -> AsyncItemPaged[PhoneNumbersReservation]:
+    def list_reservations(self, *, max_page_size: int = 100, **kwargs: Any) -> AsyncItemPaged[PhoneNumbersReservation]:
         """Lists all reservations.
 
         Retrieves a paginated list of all phone number reservations. Note that the reservations will
@@ -544,17 +525,16 @@ class PhoneNumbersClient:
          ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.PhoneNumbersReservation]
         """
 
-        return self._phone_number_client.phone_numbers.list_reservations(
-            max_page_size=max_page_size,
-            **kwargs)
+        return self._phone_number_client.phone_numbers.list_reservations(max_page_size=max_page_size, **kwargs)
 
     @distributed_trace_async
     async def create_or_update_reservation(
-        self, *,
+        self,
+        *,
         reservation_id: str,
         numbers_to_add: Optional[List[AvailablePhoneNumber]] = None,
         numbers_to_remove: Optional[List[str]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> PhoneNumbersReservation:
         """Creates or updates a reservation by its ID.
 
@@ -593,16 +573,15 @@ class PhoneNumbersClient:
 
         # Cast to satisfy type checker - merge-patch operations allow None values
         reservation = PhoneNumbersReservation(
-            phone_numbers=cast(Optional[Dict[str, AvailablePhoneNumber]], phone_numbers))
+            phone_numbers=cast(Optional[Dict[str, AvailablePhoneNumber]], phone_numbers)
+        )
 
         return await self._phone_number_client.phone_numbers.create_or_update_reservation(
             reservation_id, reservation, **kwargs
         )
 
     @distributed_trace_async
-    async def delete_reservation(
-        self, reservation_id: str, **kwargs: Any
-    ) -> None:
+    async def delete_reservation(self, reservation_id: str, **kwargs: Any) -> None:
         """Deletes a reservation by its ID.
 
         Deletes the reservation with the given ID. Any phone number in the reservation will be released
@@ -625,7 +604,7 @@ class PhoneNumbersClient:
         continuation_token: Optional[str] = None,
         polling: Union[bool, "PollingMethod"] = True,
         polling_interval: int = _DEFAULT_POLLING_INTERVAL_IN_SECONDS,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> AsyncLROPoller[None]:
         """Starts the purchase of all phone numbers in the reservation.
 
@@ -654,8 +633,7 @@ class PhoneNumbersClient:
         :return: A poller to wait on the purchase operation.
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         """
-        reservation_purchase_request = PhoneNumbersReservationPurchaseRequest(
-            agree_to_not_resell=agree_to_not_resell)
+        reservation_purchase_request = PhoneNumbersReservationPurchaseRequest(agree_to_not_resell=agree_to_not_resell)
 
         return await self._phone_number_client.phone_numbers.begin_purchase_reservation(
             reservation_id,
@@ -663,20 +641,20 @@ class PhoneNumbersClient:
             polling_interval=polling_interval,
             continuation_token=continuation_token,
             polling=polling,
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace_async
     async def browse_available_phone_numbers(
-            self,
-            *,
-            country_code: str,
-            phone_number_type: Union[str, PhoneNumberType],
-            sms_capability: Optional[Union[str, PhoneNumberCapabilityType]] = None,
-            calling_capability: Optional[Union[str, PhoneNumberCapabilityType]] = None,
-            assignment_type: Optional[Union[str, PhoneNumberAssignmentType]] = None,
-            phone_number_prefixes: Optional[List[str]] = None,
-            **kwargs: Any,
+        self,
+        *,
+        country_code: str,
+        phone_number_type: Union[str, PhoneNumberType],
+        sms_capability: Optional[Union[str, PhoneNumberCapabilityType]] = None,
+        calling_capability: Optional[Union[str, PhoneNumberCapabilityType]] = None,
+        assignment_type: Optional[Union[str, PhoneNumberAssignmentType]] = None,
+        phone_number_prefixes: Optional[List[str]] = None,
+        **kwargs: Any,
     ) -> PhoneNumbersBrowseResult:
         """Browses for available phone numbers to purchase.
 
@@ -720,10 +698,8 @@ class PhoneNumbersClient:
             phone_number_type=phone_number_type,
             capabilities=browse_capabilities,
             assignment_type=assignment_type,
-            phone_number_prefixes=phone_number_prefixes
+            phone_number_prefixes=phone_number_prefixes,
         )
         return await self._phone_number_client.phone_numbers.browse_available_numbers(
-            country_code,
-            browse_request,
-            **kwargs
+            country_code, browse_request, **kwargs
         )

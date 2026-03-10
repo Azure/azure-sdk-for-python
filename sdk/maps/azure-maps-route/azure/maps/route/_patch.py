@@ -46,9 +46,7 @@ def _authentication_policy(credential):
 # pylint: disable=C4748
 class MapsRouteClient(MapsRouteClientGenerated):
     def __init__(
-            self,
-            credential: Union[AzureKeyCredential, AzureSasCredential, TokenCredential],
-            **kwargs: Any
+        self, credential: Union[AzureKeyCredential, AzureSasCredential, TokenCredential], **kwargs: Any
     ) -> None:
         super().__init__(
             credential=credential,  # type: ignore

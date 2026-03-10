@@ -26,7 +26,6 @@
 # pylint:disable=undefined-all-variable
 from typing import List
 
-
 __all__ = [
     "PyodideTransport",
     "HttpXTransport",

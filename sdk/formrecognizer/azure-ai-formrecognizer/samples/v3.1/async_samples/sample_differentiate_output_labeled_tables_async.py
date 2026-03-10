@@ -53,12 +53,13 @@ class TestDifferentiateOutputLabeledTablesAsync(object):
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
         model_id_fixed_rows_table = os.getenv("MODEL_ID_FIXED_ROW_TABLES", custom_model_id)
 
-        form_recognizer_client = FormRecognizerClient(
-            endpoint=endpoint, credential=AzureKeyCredential(key)
-        )
+        form_recognizer_client = FormRecognizerClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
-                                                            "..", "..", "..", "./sample_forms/forms/label_table_fixed_rows1.pdf"))
+        path_to_sample_forms = os.path.abspath(
+            os.path.join(
+                os.path.abspath(__file__), "..", "..", "..", "./sample_forms/forms/label_table_fixed_rows1.pdf"
+            )
+        )
         with open(path_to_sample_forms, "rb") as f:
             form = f.read()
 
@@ -78,15 +79,17 @@ class TestDifferentiateOutputLabeledTablesAsync(object):
                     for row_name, column in field.value.items():
                         print("Row '{}' has columns:".format(row_name))
                         for column_name, column_value in column.value.items():
-                            print("...Column '{}' with value '{}' and a confidence score of {}".format(
-                                column_name, column_value.value, column_value.confidence
-                            ))
+                            print(
+                                "...Column '{}' with value '{}' and a confidence score of {}".format(
+                                    column_name, column_value.value, column_value.confidence
+                                )
+                            )
                 else:  # non-table tagged FormField
-                    print("...Field '{}' has value '{}' with a confidence score of {}".format(
-                        name,
-                        field.value,
-                        field.confidence
-                    ))
+                    print(
+                        "...Field '{}' has value '{}' with a confidence score of {}".format(
+                            name, field.value, field.confidence
+                        )
+                    )
 
     async def test_recognize_tables_dynamic_rows_async(self, custom_model_id):
         from azure.core.credentials import AzureKeyCredential
@@ -97,12 +100,13 @@ class TestDifferentiateOutputLabeledTablesAsync(object):
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
         model_id_dynamic_rows_table = os.getenv("MODEL_ID_DYNAMIC_ROW_TABLES", custom_model_id)
 
-        form_recognizer_client = FormRecognizerClient(
-            endpoint=endpoint, credential=AzureKeyCredential(key)
-        )
+        form_recognizer_client = FormRecognizerClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
-                                                            "..", "..", "..", "./sample_forms/forms/label_table_dynamic_rows1.pdf"))
+        path_to_sample_forms = os.path.abspath(
+            os.path.join(
+                os.path.abspath(__file__), "..", "..", "..", "./sample_forms/forms/label_table_dynamic_rows1.pdf"
+            )
+        )
         with open(path_to_sample_forms, "rb") as f:
             form = f.read()
 
@@ -120,17 +124,19 @@ class TestDifferentiateOutputLabeledTablesAsync(object):
                 # (if different than sample training docs)
                 if name == "table":
                     for idx, row in enumerate(field.value):
-                        print("Row {}".format(idx+1))
+                        print("Row {}".format(idx + 1))
                         for column_name, row_value in row.value.items():
-                            print("...Column '{}' with value '{}' and a confidence score of {}".format(
-                                column_name, row_value.value, row_value.confidence
-                            ))
+                            print(
+                                "...Column '{}' with value '{}' and a confidence score of {}".format(
+                                    column_name, row_value.value, row_value.confidence
+                                )
+                            )
                 else:  # non-table tagged FormField
-                    print("...Field '{}' has value '{}' with a confidence score of {}".format(
-                        name,
-                        field.value,
-                        field.confidence
-                    ))
+                    print(
+                        "...Field '{}' has value '{}' with a confidence score of {}".format(
+                            name, field.value, field.confidence
+                        )
+                    )
 
 
 async def main():
@@ -150,9 +156,7 @@ async def main():
         if not endpoint or not key:
             raise ValueError("Please provide endpoint and API key to run the samples.")
 
-        form_training_client = FormTrainingClient(
-            endpoint=endpoint, credential=AzureKeyCredential(key)
-        )
+        form_training_client = FormTrainingClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
         async with form_training_client:
             if fixed:
@@ -166,5 +170,5 @@ async def main():
     await sample.test_recognize_tables_dynamic_rows_async(dynamic_model_id)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

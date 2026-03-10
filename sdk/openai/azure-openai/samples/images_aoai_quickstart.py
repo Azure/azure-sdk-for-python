@@ -25,8 +25,10 @@ USAGE:
 """
 
 import os
+
 os.environ["AZURE_OPENAI_ENDPOINT"] = os.environ["AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT"]
 os.environ["AZURE_OPENAI_IMAGE_DEPLOYMENT"] = "dall-e-3"
+
 
 def images_aoai_quickstart() -> None:
     import os
@@ -35,31 +37,27 @@ def images_aoai_quickstart() -> None:
     from PIL import Image
     from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
-    token_provider = get_bearer_token_provider(
-        DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"
-    )
+    token_provider = get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default")
 
     client = AzureOpenAI(
         azure_ad_token_provider=token_provider,
         azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT"],
-        api_version=os.environ["API_VERSION_GA"]
+        api_version=os.environ["API_VERSION_GA"],
     )
 
     result = client.images.generate(
-        model=os.environ["AZURE_OPENAI_IMAGE_DEPLOYMENT"],
-        prompt="a close-up of a bear walking through the forest",
-        n=1
+        model=os.environ["AZURE_OPENAI_IMAGE_DEPLOYMENT"], prompt="a close-up of a bear walking through the forest", n=1
     )
 
     # Set the directory for the stored image
-    image_dir = os.path.join(os.curdir, 'images')
+    image_dir = os.path.join(os.curdir, "images")
 
     # If the directory doesn't exist, create it
     if not os.path.isdir(image_dir):
         os.mkdir(image_dir)
 
     # Initialize the image path (note the filetype should be png)
-    image_path = os.path.join(image_dir, 'generated_image.png')
+    image_path = os.path.join(image_dir, "generated_image.png")
 
     # Retrieve the generated image
     image_url = result.data[0].url  # extract image URL from response
@@ -72,6 +70,7 @@ def images_aoai_quickstart() -> None:
         # Display the image in the default image viewer
         image = Image.open(image_path)
         image.show()
+
 
 if __name__ == "__main__":
     images_aoai_quickstart()

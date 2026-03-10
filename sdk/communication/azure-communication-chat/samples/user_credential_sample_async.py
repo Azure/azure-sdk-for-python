@@ -18,7 +18,6 @@ USAGE:
     1) COMMUNICATION_SAMPLES_CONNECTION_STRING - the connection string in your Communication Services resource
 """
 
-
 import os
 import asyncio
 from azure.communication.chat.aio import CommunicationTokenCredential

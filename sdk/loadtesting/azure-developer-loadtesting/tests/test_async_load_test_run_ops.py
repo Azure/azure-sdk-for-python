@@ -23,9 +23,7 @@ class TestLoadTestRunOperations(LoadTestingAsyncTest):
     # Pre-requisite: Test creation is needed for test run related tests
     @LoadTestingPreparer()
     @recorded_by_proxy_async
-    async def test_create_or_update_load_test(
-        self, loadtesting_endpoint, loadtesting_test_id
-    ):
+    async def test_create_or_update_load_test(self, loadtesting_endpoint, loadtesting_test_id):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
@@ -121,9 +119,7 @@ class TestLoadTestRunOperations(LoadTestingAsyncTest):
 
     @LoadTestingPreparer()
     @recorded_by_proxy_async
-    async def test_begin_test_run(
-        self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id
-    ):
+    async def test_begin_test_run(self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id):
         set_bodiless_matcher()
 
         run_client = self.create_run_client(loadtesting_endpoint)
@@ -158,9 +154,7 @@ class TestLoadTestRunOperations(LoadTestingAsyncTest):
 
     @LoadTestingPreparer()
     @recorded_by_proxy_async
-    async def test_get_test_run_file(
-        self, loadtesting_endpoint, loadtesting_test_run_id
-    ):
+    async def test_get_test_run_file(self, loadtesting_endpoint, loadtesting_test_run_id):
         set_bodiless_matcher()
 
         run_client = self.create_run_client(loadtesting_endpoint)
@@ -197,9 +191,7 @@ class TestLoadTestRunOperations(LoadTestingAsyncTest):
         test_run_response = await run_client.get_test_run(loadtesting_test_run_id)
         assert test_run_response is not None
 
-        metric_namespaces = await run_client.get_metric_namespaces(
-            loadtesting_test_run_id
-        )
+        metric_namespaces = await run_client.get_metric_namespaces(loadtesting_test_run_id)
         assert metric_namespaces is not None
 
         metric_definitions = await run_client.get_metric_definitions(
@@ -212,9 +204,7 @@ class TestLoadTestRunOperations(LoadTestingAsyncTest):
             test_run_id=loadtesting_test_run_id,
             metric_name=metric_definitions["value"][0]["name"],
             metric_namespace=metric_namespaces["value"][0]["name"],
-            time_interval=test_run_response["startDateTime"]
-            + "/"
-            + test_run_response["executionEndDateTime"],
+            time_interval=test_run_response["startDateTime"] + "/" + test_run_response["executionEndDateTime"],
         )
         assert metrics is not None
 
@@ -251,9 +241,7 @@ class TestLoadTestRunOperations(LoadTestingAsyncTest):
 
     @LoadTestingPreparer()
     @recorded_by_proxy_async
-    async def test_get_app_component(
-        self, loadtesting_endpoint, loadtesting_test_run_id
-    ):
+    async def test_get_app_component(self, loadtesting_endpoint, loadtesting_test_run_id):
         set_bodiless_matcher()
 
         run_client = self.create_run_client(loadtesting_endpoint)
@@ -297,9 +285,7 @@ class TestLoadTestRunOperations(LoadTestingAsyncTest):
 
     @LoadTestingPreparer()
     @recorded_by_proxy_async
-    async def test_get_server_metrics_config(
-        self, loadtesting_endpoint, loadtesting_test_run_id
-    ):
+    async def test_get_server_metrics_config(self, loadtesting_endpoint, loadtesting_test_run_id):
         set_bodiless_matcher()
 
         run_client = self.create_run_client(loadtesting_endpoint)
@@ -330,16 +316,12 @@ class TestLoadTestRunOperations(LoadTestingAsyncTest):
 
     @LoadTestingPreparer()
     @recorded_by_proxy_async
-    async def test_begin_generate_test_run_insights(
-        self, loadtesting_endpoint, loadtesting_completed_test_run_id
-    ):
+    async def test_begin_generate_test_run_insights(self, loadtesting_endpoint, loadtesting_completed_test_run_id):
         set_bodiless_matcher()
 
         run_client = self.create_run_client(loadtesting_endpoint)
 
-        poller = await run_client.begin_generate_test_run_insights(
-            loadtesting_completed_test_run_id
-        )
+        poller = await run_client.begin_generate_test_run_insights(loadtesting_completed_test_run_id)
         await poller.result()
         assert poller.done() is True
 
@@ -347,17 +329,13 @@ class TestLoadTestRunOperations(LoadTestingAsyncTest):
 
     @LoadTestingPreparer()
     @recorded_by_proxy_async
-    async def test_get_latest_test_run_insights(
-        self, loadtesting_endpoint, loadtesting_completed_test_run_id
-    ):
+    async def test_get_latest_test_run_insights(self, loadtesting_endpoint, loadtesting_completed_test_run_id):
         set_bodiless_matcher()
 
         run_client = self.create_run_client(loadtesting_endpoint)
 
         # Get insights only if test run completed successfully
-        insights = await run_client.get_latest_test_run_insights(
-            loadtesting_completed_test_run_id
-        )
+        insights = await run_client.get_latest_test_run_insights(loadtesting_completed_test_run_id)
         assert insights is not None
 
         await self.close_run_client()

@@ -25,17 +25,17 @@ USAGE:
 # These lines are intentionally excluded from the sample code, we use them to configure any vars
 # or to tweak usage in ways that keep samples looking consistent when rendered in docs and tools
 import os
+
 os.environ["AZURE_OPENAI_ENDPOINT"] = os.environ["AZ_OPENAI_ENDPOINT"]
 
+
 def chat_completions_aoai_quickstart() -> None:
-    #[START chat_completions_aoai_quickstart]
+    # [START chat_completions_aoai_quickstart]
     import os
     from openai import AzureOpenAI
     from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
-    token_provider = get_bearer_token_provider(
-        DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"
-    )
+    token_provider = get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default")
 
     client = AzureOpenAI(
         azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT"],
@@ -60,7 +60,7 @@ def chat_completions_aoai_quickstart() -> None:
     )
 
     print(response.to_json())
-    #[END chat_completions_aoai_quickstart]
+    # [END chat_completions_aoai_quickstart]
 
 
 if __name__ == "__main__":

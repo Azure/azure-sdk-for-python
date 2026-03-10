@@ -40,27 +40,27 @@ class PeriodicTimerEventTrigger(Trigger):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'kind': {'required': True},
-        'source_info': {'required': True},
-        'sink_info': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "kind": {"required": True},
+        "source_info": {"required": True},
+        "sink_info": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'source_info': {'key': 'properties.sourceInfo', 'type': 'PeriodicTimerSourceInfo'},
-        'sink_info': {'key': 'properties.sinkInfo', 'type': 'RoleSinkInfo'},
-        'custom_context_tag': {'key': 'properties.customContextTag', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "source_info": {"key": "properties.sourceInfo", "type": "PeriodicTimerSourceInfo"},
+        "sink_info": {"key": "properties.sinkInfo", "type": "RoleSinkInfo"},
+        "custom_context_tag": {"key": "properties.customContextTag", "type": "str"},
     }
 
-    def __init__(self, *, source_info, sink_info, custom_context_tag: str=None, **kwargs) -> None:
+    def __init__(self, *, source_info, sink_info, custom_context_tag: str = None, **kwargs) -> None:
         super(PeriodicTimerEventTrigger, self).__init__(**kwargs)
         self.source_info = source_info
         self.sink_info = sink_info
         self.custom_context_tag = custom_context_tag
-        self.kind = 'PeriodicTimerEvent'
+        self.kind = "PeriodicTimerEvent"

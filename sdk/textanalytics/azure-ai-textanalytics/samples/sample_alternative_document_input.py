@@ -31,12 +31,18 @@ def sample_alternative_document_input() -> None:
     text_analytics_client = TextAnalyticsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     documents = [
-        {"id": "0", "country_hint": "US", "text": "I had the best day of my life. I decided to go sky-diving and it made me appreciate my whole life so much more. I developed a deep-connection with my instructor as well."},
-        {"id": "1", "country_hint": "GB",
-         "text": "This was a waste of my time. The speaker put me to sleep."},
+        {
+            "id": "0",
+            "country_hint": "US",
+            "text": "I had the best day of my life. I decided to go sky-diving and it made me appreciate my whole life so much more. I developed a deep-connection with my instructor as well.",
+        },
+        {"id": "1", "country_hint": "GB", "text": "This was a waste of my time. The speaker put me to sleep."},
         {"id": "2", "country_hint": "MX", "text": "No tengo dinero ni nada que dar..."},
-        {"id": "3", "country_hint": "FR",
-         "text": "L'hôtel n'était pas très confortable. L'éclairage était trop sombre."}
+        {
+            "id": "3",
+            "country_hint": "FR",
+            "text": "L'hôtel n'était pas très confortable. L'éclairage était trop sombre.",
+        },
     ]
 
     result = text_analytics_client.detect_language(documents)
@@ -51,5 +57,5 @@ def sample_alternative_document_input() -> None:
             print(doc.id, doc.error)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample_alternative_document_input()

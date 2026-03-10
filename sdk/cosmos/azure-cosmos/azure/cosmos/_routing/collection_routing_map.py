@@ -137,9 +137,9 @@ class CollectionRoutingMap(object):
 
             for i in range(minIndex, maxIndex + 1):
                 if routing_range.Range.overlaps(self._orderedRanges[i], providedRange):
-                    minToPartitionRange[
-                        self._orderedPartitionKeyRanges[i][PartitionKeyRange.MinInclusive]
-                    ] = self._orderedPartitionKeyRanges[i]
+                    minToPartitionRange[self._orderedPartitionKeyRanges[i][PartitionKeyRange.MinInclusive]] = (
+                        self._orderedPartitionKeyRanges[i]
+                    )
 
         overlapping_partition_key_ranges = list(minToPartitionRange.values())
 

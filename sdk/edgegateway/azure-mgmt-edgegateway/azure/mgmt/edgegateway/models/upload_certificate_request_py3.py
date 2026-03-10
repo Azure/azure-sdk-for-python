@@ -26,12 +26,12 @@ class UploadCertificateRequest(Model):
     """
 
     _validation = {
-        'certificate': {'required': True},
+        "certificate": {"required": True},
     }
 
     _attribute_map = {
-        'authentication_type': {'key': 'properties.authenticationType', 'type': 'str'},
-        'certificate': {'key': 'properties.certificate', 'type': 'str'},
+        "authentication_type": {"key": "properties.authenticationType", "type": "str"},
+        "certificate": {"key": "properties.certificate", "type": "str"},
     }
 
     def __init__(self, *, certificate: str, authentication_type=None, **kwargs) -> None:

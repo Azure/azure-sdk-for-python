@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 from typing import Mapping, Any, Dict
-from azure.appconfiguration import SecretReferenceConfigurationSetting  # type:ignore # pylint:disable=no-name-in-module
+from azure.appconfiguration import SecretReferenceConfigurationSetting  # type: ignore # pylint:disable=no-name-in-module
 from azure.keyvault.secrets import SecretClient, KeyVaultSecretIdentifier
 from azure.core.exceptions import ServiceRequestError
 from ._secret_provider_base import _SecretProviderBase

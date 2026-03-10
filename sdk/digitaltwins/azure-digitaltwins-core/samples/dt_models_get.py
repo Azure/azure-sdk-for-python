@@ -42,7 +42,7 @@ try:
     model_id = "<MODEL_ID>"
 
     # Create logger
-    logger = logging.getLogger('azure')
+    logger = logging.getLogger("azure")
     logger.setLevel(logging.DEBUG)
     handler = logging.StreamHandler(stream=sys.stdout)
     logger.addHandler(handler)

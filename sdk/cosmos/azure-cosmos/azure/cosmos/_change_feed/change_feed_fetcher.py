@@ -22,6 +22,7 @@
 """Internal class for processing change feed implementation in the Azure Cosmos
 database service.
 """
+
 import base64
 import json
 from abc import ABC, abstractmethod
@@ -34,24 +35,27 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 
 # pylint: disable=protected-access
 
+
 class ChangeFeedFetcher(ABC):
 
     @abstractmethod
     def fetch_next_block(self):
         pass
 
+
 class ChangeFeedFetcherV1(ChangeFeedFetcher):
     """Internal class for change feed fetch v1 implementation.
-     This is used when partition key range id is used or when the supplied continuation token is in just simple etag.
-     Please note v1 does not support split or merge.
+    This is used when partition key range id is used or when the supplied continuation token is in just simple etag.
+    Please note v1 does not support split or merge.
 
     """
+
     def __init__(
-            self,
-            client,
-            resource_link: str,
-            feed_options: dict[str, Any],
-            fetch_function: Callable[[dict[str, Any]], Tuple[list[dict[str, Any]], dict[str, Any]]]
+        self,
+        client,
+        resource_link: str,
+        feed_options: dict[str, Any],
+        fetch_function: Callable[[dict[str, Any]], Tuple[list[dict[str, Any]], dict[str, Any]]],
     ) -> None:
 
         self._client = client
@@ -59,8 +63,9 @@ class ChangeFeedFetcherV1(ChangeFeedFetcher):
 
         self._change_feed_state: ChangeFeedStateV1 = self._feed_options.pop("changeFeedState")
         if self._change_feed_state.version != ChangeFeedStateVersion.V1:
-            raise ValueError(f"ChangeFeedFetcherV1 can not handle change feed state version"
-                             f" {type(self._change_feed_state)}")
+            raise ValueError(
+                f"ChangeFeedFetcherV1 can not handle change feed state version" f" {type(self._change_feed_state)}"
+            )
 
         self._resource_link = resource_link
         self._fetch_function = fetch_function
@@ -71,6 +76,7 @@ class ChangeFeedFetcherV1(ChangeFeedFetcher):
         :return: List of results.
         :rtype: list
         """
+
         def callback():
             return self.fetch_change_feed_items()
 
@@ -82,21 +88,23 @@ class ChangeFeedFetcherV1(ChangeFeedFetcher):
         self._change_feed_state.populate_feed_options(self._feed_options)
         is_s_time_first_fetch = self._change_feed_state._continuation is None
         while True:
-            (fetched_items, response_headers) = self._fetch_function(self._feed_options)
+            fetched_items, response_headers = self._fetch_function(self._feed_options)
             continuation_key = http_constants.HttpHeaders.ETag
             # In change feed queries, the continuation token is always populated. The hasNext() test is whether
             # there is any items in the response or not.
             self._change_feed_state.apply_server_response_continuation(
-                cast(str, response_headers.get(continuation_key)),
-                bool(fetched_items))
+                cast(str, response_headers.get(continuation_key)), bool(fetched_items)
+            )
 
             if fetched_items:
                 break
 
             # When processing from point in time, there will be no initial results being returned,
             # so we will retry with the new continuation token again
-            if (self._change_feed_state._change_feed_start_from.version == ChangeFeedStartFromType.POINT_IN_TIME
-                    and is_s_time_first_fetch):
+            if (
+                self._change_feed_state._change_feed_start_from.version == ChangeFeedStartFromType.POINT_IN_TIME
+                and is_s_time_first_fetch
+            ):
                 is_s_time_first_fetch = False
             else:
                 break
@@ -104,23 +112,24 @@ class ChangeFeedFetcherV1(ChangeFeedFetcher):
 
 
 class ChangeFeedFetcherV2(object):
-    """Internal class for change feed fetch v2 implementation.
-    """
+    """Internal class for change feed fetch v2 implementation."""
 
     def __init__(
-            self,
-            client,
-            resource_link: str,
-            feed_options: dict[str, Any],
-            fetch_function: Callable[[dict[str, Any]], Tuple[list[dict[str, Any]], dict[str, Any]]]):
+        self,
+        client,
+        resource_link: str,
+        feed_options: dict[str, Any],
+        fetch_function: Callable[[dict[str, Any]], Tuple[list[dict[str, Any]], dict[str, Any]]],
+    ):
 
         self._client = client
         self._feed_options = feed_options
 
         self._change_feed_state: ChangeFeedStateV2 = self._feed_options.pop("changeFeedState")
         if self._change_feed_state.version != ChangeFeedStateVersion.V2:
-            raise ValueError(f"ChangeFeedFetcherV2 can not handle change feed state version "
-                             f"{type(self._change_feed_state)}")
+            raise ValueError(
+                f"ChangeFeedFetcherV2 can not handle change feed state version " f"{type(self._change_feed_state)}"
+            )
 
         self._resource_link = resource_link
         self._fetch_function = fetch_function
@@ -142,9 +151,10 @@ class ChangeFeedFetcherV2(object):
                 # refresh change feed state
                 options = None
                 if "excludedLocations" in self._feed_options:
-                    options = {'excludedLocations': self._feed_options["excludedLocations"]}
-                self._change_feed_state.handle_feed_range_gone(self._client._routing_map_provider, self._resource_link,
-                                                               options)
+                    options = {"excludedLocations": self._feed_options["excludedLocations"]}
+                self._change_feed_state.handle_feed_range_gone(
+                    self._client._routing_map_provider, self._resource_link, options
+                )
             else:
                 raise e
 
@@ -157,13 +167,13 @@ class ChangeFeedFetcherV2(object):
 
         is_s_time_first_fetch = self._change_feed_state._continuation.current_token.token is None
         while True:
-            (fetched_items, response_headers) = self._fetch_function(self._feed_options)
+            fetched_items, response_headers = self._fetch_function(self._feed_options)
 
             continuation_key = http_constants.HttpHeaders.ETag
             # In change feed queries, the continuation token is always populated.
             self._change_feed_state.apply_server_response_continuation(
-                cast(str, response_headers.get(continuation_key)),
-                bool(fetched_items))
+                cast(str, response_headers.get(continuation_key)), bool(fetched_items)
+            )
 
             if fetched_items:
                 self._change_feed_state._continuation._move_to_next_token()
@@ -175,8 +185,10 @@ class ChangeFeedFetcherV2(object):
             # so we will retry with the new continuation token
             # 2. if the feed range of the changeFeedState span multiple physical partitions
             # then we will read from the next feed range until we have looped through all physical partitions
-            if (self._change_feed_state._change_feed_start_from.version == ChangeFeedStartFromType.POINT_IN_TIME
-                    and is_s_time_first_fetch):
+            if (
+                self._change_feed_state._change_feed_start_from.version == ChangeFeedStartFromType.POINT_IN_TIME
+                and is_s_time_first_fetch
+            ):
                 response_headers[continuation_key] = self._get_base64_encoded_continuation()
                 is_s_time_first_fetch = False
                 should_retry = True
@@ -193,8 +205,8 @@ class ChangeFeedFetcherV2(object):
 
     def _get_base64_encoded_continuation(self) -> str:
         continuation_json = json.dumps(self._change_feed_state.to_dict())
-        json_bytes = continuation_json.encode('utf-8')
+        json_bytes = continuation_json.encode("utf-8")
         # Encode the bytes to a Base64 string
         base64_bytes = base64.b64encode(json_bytes)
         # Convert the Base64 bytes to a string
-        return base64_bytes.decode('utf-8')
+        return base64_bytes.decode("utf-8")

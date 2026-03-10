@@ -8,6 +8,7 @@ from testcase import PurviewScanningPowerShellPreparer
 from testcase_async import PurviewScanningTestAsync
 from devtools_testutils.aio import recorded_by_proxy_async
 
+
 class TestPurviewScanningSmokeAsync(PurviewScanningTestAsync):
 
     @PurviewScanningPowerShellPreparer()

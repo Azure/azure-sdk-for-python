@@ -46,7 +46,6 @@ import xml.etree.ElementTree as ET
 from ..serialization import CoreJSONEncoder
 from ..utils._utils import get_file_items
 
-
 ################################### TYPES SECTION #########################
 
 binary_type = str

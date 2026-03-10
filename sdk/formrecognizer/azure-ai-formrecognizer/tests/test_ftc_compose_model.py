@@ -13,7 +13,6 @@ from testcase import FormRecognizerTest
 from preparers import FormRecognizerPreparer, get_sync_client
 from conftest import skip_flaky_test
 
-
 get_ft_client = functools.partial(get_sync_client, FormTrainingClient)
 
 
@@ -23,14 +22,18 @@ class TestTraining(FormRecognizerTest):
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_compose_model_v21(self, formrecognizer_storage_container_sas_url_v2, **kwargs):
-        client = get_ft_client(api_version="2.1")        
+        client = get_ft_client(api_version="2.1")
         poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=True)
         model_1 = poller.result()
 
-        poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=True, model_name="second-labeled-model")
+        poller = client.begin_training(
+            formrecognizer_storage_container_sas_url_v2, use_training_labels=True, model_name="second-labeled-model"
+        )
         model_2 = poller.result()
 
-        poller = client.begin_create_composed_model([model_1.model_id, model_2.model_id], model_name="my composed model")
+        poller = client.begin_create_composed_model(
+            [model_1.model_id, model_2.model_id], model_name="my composed model"
+        )
 
         composed_model = poller.result()
 
@@ -59,6 +62,10 @@ class TestTraining(FormRecognizerTest):
     def test_compose_model_bad_api_version(self, **kwargs):
         client = get_ft_client(api_version="2.0")
         with pytest.raises(ValueError) as excinfo:
-            poller = client.begin_create_composed_model(["00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000000"])
+            poller = client.begin_create_composed_model(
+                ["00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000000"]
+            )
             result = poller.result()
-        assert "Method 'begin_create_composed_model' is only available for API version V2_1 and up" in str(excinfo.value)
+        assert "Method 'begin_create_composed_model' is only available for API version V2_1 and up" in str(
+            excinfo.value
+        )

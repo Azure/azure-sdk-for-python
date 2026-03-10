@@ -9,6 +9,7 @@
 from enum import Enum, EnumMeta
 from six import with_metaclass
 
+
 class _CaseInsensitiveEnumMeta(EnumMeta):
     def __getitem__(self, name):
         return super().__getitem__(name.upper())
@@ -27,14 +28,14 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
 
 
 class AssetConversionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The status of the conversion. Terminal states are 'Cancelled', 'Failed', and 'Succeeded'.
-    """
+    """The status of the conversion. Terminal states are 'Cancelled', 'Failed', and 'Succeeded'."""
 
     NOT_STARTED = "NotStarted"  #: The conversion was created but hasn't started.
     RUNNING = "Running"  #: The conversion is running.
     CANCELLED = "Cancelled"  #: The conversion was cancelled. This is a terminal state.
     FAILED = "Failed"  #: The conversion has failed. Check the 'error' field for more details. This is a terminal state.
     SUCCEEDED = "Succeeded"  #: The conversion has succeeded. Check the 'output' field for output asset location. This is a terminal state.
+
 
 class RenderingSessionSize(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The size of the server used for the rendering session. The size impacts the number of polygons
@@ -45,9 +46,9 @@ class RenderingSessionSize(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     STANDARD = "Standard"  #: Standard rendering session size.
     PREMIUM = "Premium"  #: Premium rendering session size.
 
+
 class RenderingSessionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The status of the rendering session. Terminal states are 'Error', 'Expired', and 'Stopped'.
-    """
+    """The status of the rendering session. Terminal states are 'Error', 'Expired', and 'Stopped'."""
 
     ERROR = "Error"  #: The rendering session has encountered an error, and is unusable. This is a terminal state.
     EXPIRED = "Expired"  #: The rendering session enters the 'Expired' state when it has been in the 'Ready' state longer than its lease time. This is a terminal state.

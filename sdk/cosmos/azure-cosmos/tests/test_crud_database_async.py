@@ -2,8 +2,8 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
-"""End-to-end test.
-"""
+"""End-to-end test."""
+
 import json
 import logging
 import os.path
@@ -49,8 +49,8 @@ class TimeoutTransport(AsyncioRequestsTransport):
 
 @pytest.mark.cosmosLong
 class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
-    """Python CRUD Tests.
-    """
+    """Python CRUD Tests."""
+
     client: CosmosClient = None
     configs = test_config.TestConfig
     host = configs.host
@@ -68,18 +68,18 @@ class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
         """
         try:
             await func(*args, **kwargs)
-            self.fail('function should fail.')
+            self.fail("function should fail.")
         except exceptions.CosmosHttpResponseError as inst:
             assert inst.status_code == status_code
 
     @classmethod
     def setUpClass(cls):
-        if (cls.masterKey == '[YOUR_KEY_HERE]' or
-                cls.host == '[YOUR_ENDPOINT_HERE]'):
+        if cls.masterKey == "[YOUR_KEY_HERE]" or cls.host == "[YOUR_ENDPOINT_HERE]":
             raise Exception(
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
-                "tests.")
+                "tests."
+            )
 
     async def asyncSetUp(self):
         self.client = CosmosClient(self.host, self.masterKey)
@@ -93,12 +93,12 @@ class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
         created_db = await self.client.create_database(database_id)
         assert created_db.id == database_id
         # query databases.
-        databases = [database async for database in self.client.query_databases(
-            query='SELECT * FROM root r WHERE r.id=@id',
-            parameters=[
-                {'name': '@id', 'value': database_id}
-            ]
-        )]
+        databases = [
+            database
+            async for database in self.client.query_databases(
+                query="SELECT * FROM root r WHERE r.id=@id", parameters=[{"name": "@id", "value": database_id}]
+            )
+        ]
 
         assert len(databases) > 0
 
@@ -129,10 +129,7 @@ class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
         # Create a database with throughput
         offer_throughput = 1000
         database_id = str(uuid.uuid4())
-        created_db = await self.client.create_database(
-            id=database_id,
-            offer_throughput=offer_throughput
-        )
+        created_db = await self.client.create_database(id=database_id, offer_throughput=offer_throughput)
         assert created_db.id == database_id
 
         # Verify offer throughput for database
@@ -148,28 +145,30 @@ class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_sql_query_crud_async(self):
         # create two databases.
-        db1 = await self.client.create_database('database 1' + str(uuid.uuid4()))
-        db2 = await self.client.create_database('database 2' + str(uuid.uuid4()))
+        db1 = await self.client.create_database("database 1" + str(uuid.uuid4()))
+        db2 = await self.client.create_database("database 2" + str(uuid.uuid4()))
 
         # query with parameters.
-        databases = [database async for database in self.client.query_databases(
-            query='SELECT * FROM root r WHERE r.id=@id',
-            parameters=[
-                {'name': '@id', 'value': db1.id}
-            ]
-        )]
+        databases = [
+            database
+            async for database in self.client.query_databases(
+                query="SELECT * FROM root r WHERE r.id=@id", parameters=[{"name": "@id", "value": db1.id}]
+            )
+        ]
         assert 1 == len(databases)
 
         # query without parameters.
-        databases = [database async for database in self.client.query_databases(
-            query='SELECT * FROM root r WHERE r.id="database non-existing"'
-        )]
+        databases = [
+            database
+            async for database in self.client.query_databases(
+                query='SELECT * FROM root r WHERE r.id="database non-existing"'
+            )
+        ]
         assert 0 == len(databases)
 
         # query with a string.
         query_string = 'SELECT * FROM root r WHERE r.id="' + db2.id + '"'
-        databases = [database async for database in
-                     self.client.query_databases(query=query_string)]
+        databases = [database async for database in self.client.query_databases(query=query_string)]
         assert 1 == len(databases)
 
         await self.client.delete_database(db1.id)
@@ -178,19 +177,20 @@ class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
     async def test_database_account_functionality_async(self):
         # Validate database account functionality.
         database_account = await self.client._get_database_account()
-        assert database_account.DatabasesLink == '/dbs/'
-        assert database_account.MediaLink == '/media/'
-        if (HttpHeaders.MaxMediaStorageUsageInMB in
-                self.client.client_connection.last_response_headers):
-            assert database_account.MaxMediaStorageUsageInMB == self.client.client_connection.last_response_headers[
-                HttpHeaders.MaxMediaStorageUsageInMB]
-        if (HttpHeaders.CurrentMediaStorageUsageInMB in
-                self.client.client_connection.last_response_headers):
-            assert database_account.CurrentMediaStorageUsageInMB == self.client.client_connection.last_response_headers[
-                HttpHeaders.CurrentMediaStorageUsageInMB]
-        assert database_account.ConsistencyPolicy['defaultConsistencyLevel'] is not None
+        assert database_account.DatabasesLink == "/dbs/"
+        assert database_account.MediaLink == "/media/"
+        if HttpHeaders.MaxMediaStorageUsageInMB in self.client.client_connection.last_response_headers:
+            assert (
+                database_account.MaxMediaStorageUsageInMB
+                == self.client.client_connection.last_response_headers[HttpHeaders.MaxMediaStorageUsageInMB]
+            )
+        if HttpHeaders.CurrentMediaStorageUsageInMB in self.client.client_connection.last_response_headers:
+            assert (
+                database_account.CurrentMediaStorageUsageInMB
+                == self.client.client_connection.last_response_headers[HttpHeaders.CurrentMediaStorageUsageInMB]
+            )
+        assert database_account.ConsistencyPolicy["defaultConsistencyLevel"] is not None
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

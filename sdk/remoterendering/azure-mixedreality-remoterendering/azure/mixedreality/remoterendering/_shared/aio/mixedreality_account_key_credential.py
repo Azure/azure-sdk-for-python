@@ -9,12 +9,11 @@ from datetime import date, datetime
 
 from azure.core.credentials import AzureKeyCredential, AccessToken
 
-
 ACCOUNT_KEY_VALID_YEARS = 10
 
 
 class MixedRealityAccountKeyCredential(object):
-    """ Represents an object used for Mixed Reality account key authentication.
+    """Represents an object used for Mixed Reality account key authentication.
 
     :param str account_id: The Mixed Reality service account identifier.
     :param AzureKeyCredential account_key: The Mixed Reality service account primary or secondary key credential.

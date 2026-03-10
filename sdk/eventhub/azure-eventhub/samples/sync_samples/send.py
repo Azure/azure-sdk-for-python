@@ -101,7 +101,7 @@ def send_concurrent_with_shared_client_and_lock():
     Note: Native async APIs should be used instead of running in a ThreadPoolExecutor, if possible.
     """
     send_lock = threading.Lock()
-    
+
     producer = EventHubProducerClient.from_connection_string(
         conn_str=CONNECTION_STR,
         eventhub_name=EVENTHUB_NAME,

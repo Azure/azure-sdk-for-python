@@ -25,9 +25,7 @@ import asyncio
 
 
 async def sample_extract_key_phrases_async() -> None:
-    print(
-        "In this sample, we want to find the articles that mention Microsoft to read."
-    )
+    print("In this sample, we want to find the articles that mention Microsoft to read.")
 
     # [START extract_key_phrases_async]
     import os
@@ -51,7 +49,7 @@ async def sample_extract_key_phrases_async() -> None:
         """
         Redmond, WA. Employees at Microsoft can be excited about the new coffee shop that will open on campus
         once workers no longer have to work remotely...
-        """
+        """,
     ]
 
     async with text_analytics_client:
@@ -60,11 +58,8 @@ async def sample_extract_key_phrases_async() -> None:
     articles_that_mention_microsoft = []
     for idx, doc in enumerate(result):
         if not doc.is_error:
-            print("Key phrases in article #{}: {}".format(
-                idx + 1,
-                ", ".join(doc.key_phrases)
-            ))
-    # [END extract_key_phrases_async]
+            print("Key phrases in article #{}: {}".format(idx + 1, ", ".join(doc.key_phrases)))
+            # [END extract_key_phrases_async]
             if "Microsoft" in doc.key_phrases:
                 articles_that_mention_microsoft.append(str(idx + 1))
 
@@ -79,5 +74,5 @@ async def main():
     await sample_extract_key_phrases_async()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

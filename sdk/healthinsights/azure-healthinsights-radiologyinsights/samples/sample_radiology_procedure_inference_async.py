@@ -9,9 +9,9 @@ DESCRIPTION:
 The sample_radiology_procedure_inference_async.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize an asynchronous RadiologyInsightsClient, build a Radiology Insights request with the sample document,
 submit it to the client, RadiologyInsightsClient, and display
-- the Procedure code, 
-- the Imaging Procedure anatomy and modality, 
-- Ordered Procedure code and description  
+- the Procedure code,
+- the Imaging Procedure anatomy and modality,
+- Ordered Procedure code and description
 
 
 USAGE:
@@ -21,8 +21,9 @@ USAGE:
     - For more details how to use DefaultAzureCredential, please take a look at https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential
 
 2. python sample_radiology_procedure_inference_async.py
-   
+
 """
+
 import asyncio
 import datetime
 import os

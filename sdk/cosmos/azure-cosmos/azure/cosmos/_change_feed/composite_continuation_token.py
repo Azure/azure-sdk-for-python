@@ -22,6 +22,7 @@
 """Internal class for change feed composite continuation token in the Azure Cosmos
 database service.
 """
+
 from typing import Optional, Any
 
 from azure.cosmos._routing.routing_range import Range
@@ -39,10 +40,7 @@ class CompositeContinuationToken:
         self._feed_range = feed_range
 
     def to_dict(self) -> dict[str, Any]:
-        return {
-            self.token_property_name: self._token,
-            self.feed_range_property_name: self.feed_range.to_dict()
-        }
+        return {self.token_property_name: self._token, self.feed_range_property_name: self.feed_range.to_dict()}
 
     @property
     def feed_range(self) -> Range:
@@ -56,7 +54,7 @@ class CompositeContinuationToken:
         self._token = etag
 
     @classmethod
-    def from_json(cls, data) -> 'CompositeContinuationToken':
+    def from_json(cls, data) -> "CompositeContinuationToken":
         token = data.get(cls.token_property_name)
         if token is None:
             raise ValueError(f"Invalid composite token [Missing {cls.token_property_name}]")

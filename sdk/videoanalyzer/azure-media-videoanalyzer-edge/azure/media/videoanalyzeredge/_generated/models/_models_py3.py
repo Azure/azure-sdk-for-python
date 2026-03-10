@@ -27,23 +27,17 @@ class CertificateSource(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
     }
 
-    _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.PemCertificateList': 'PemCertificateList'}
-    }
+    _subtype_map = {"type": {"#Microsoft.VideoAnalyzer.PemCertificateList": "PemCertificateList"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(CertificateSource, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
 
@@ -66,28 +60,29 @@ class ProcessorNodeBase(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
-        'inputs': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
+        "inputs": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'inputs': {'key': 'inputs', 'type': '[NodeInput]'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "inputs": {"key": "inputs", "type": "[NodeInput]"},
     }
 
     _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.CognitiveServicesVisionProcessor': 'CognitiveServicesVisionProcessor', '#Microsoft.VideoAnalyzer.ExtensionProcessorBase': 'ExtensionProcessorBase', '#Microsoft.VideoAnalyzer.LineCrossingProcessor': 'LineCrossingProcessor', '#Microsoft.VideoAnalyzer.MotionDetectionProcessor': 'MotionDetectionProcessor', '#Microsoft.VideoAnalyzer.ObjectTrackingProcessor': 'ObjectTrackingProcessor', '#Microsoft.VideoAnalyzer.SignalGateProcessor': 'SignalGateProcessor'}
+        "type": {
+            "#Microsoft.VideoAnalyzer.CognitiveServicesVisionProcessor": "CognitiveServicesVisionProcessor",
+            "#Microsoft.VideoAnalyzer.ExtensionProcessorBase": "ExtensionProcessorBase",
+            "#Microsoft.VideoAnalyzer.LineCrossingProcessor": "LineCrossingProcessor",
+            "#Microsoft.VideoAnalyzer.MotionDetectionProcessor": "MotionDetectionProcessor",
+            "#Microsoft.VideoAnalyzer.ObjectTrackingProcessor": "ObjectTrackingProcessor",
+            "#Microsoft.VideoAnalyzer.SignalGateProcessor": "SignalGateProcessor",
+        }
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        inputs: List["NodeInput"],
-        **kwargs
-    ):
+    def __init__(self, *, name: str, inputs: List["NodeInput"], **kwargs):
         """
         :keyword name: Required. Node name. Must be unique within the topology.
         :paramtype name: str
@@ -126,21 +121,21 @@ class CognitiveServicesVisionProcessor(ProcessorNodeBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
-        'inputs': {'required': True},
-        'endpoint': {'required': True},
-        'operation': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
+        "inputs": {"required": True},
+        "endpoint": {"required": True},
+        "operation": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'inputs': {'key': 'inputs', 'type': '[NodeInput]'},
-        'endpoint': {'key': 'endpoint', 'type': 'EndpointBase'},
-        'image': {'key': 'image', 'type': 'ImageProperties'},
-        'sampling_options': {'key': 'samplingOptions', 'type': 'SamplingOptions'},
-        'operation': {'key': 'operation', 'type': 'SpatialAnalysisOperationBase'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "inputs": {"key": "inputs", "type": "[NodeInput]"},
+        "endpoint": {"key": "endpoint", "type": "EndpointBase"},
+        "image": {"key": "image", "type": "ImageProperties"},
+        "sampling_options": {"key": "samplingOptions", "type": "SamplingOptions"},
+        "operation": {"key": "operation", "type": "SpatialAnalysisOperationBase"},
     }
 
     def __init__(
@@ -172,7 +167,7 @@ class CognitiveServicesVisionProcessor(ProcessorNodeBase):
         :paramtype operation: ~azure.media.videoanalyzer.edge.models.SpatialAnalysisOperationBase
         """
         super(CognitiveServicesVisionProcessor, self).__init__(name=name, inputs=inputs, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.CognitiveServicesVisionProcessor'  # type: str
+        self.type = "#Microsoft.VideoAnalyzer.CognitiveServicesVisionProcessor"  # type: str
         self.endpoint = endpoint
         self.image = image
         self.sampling_options = sampling_options
@@ -192,23 +187,23 @@ class CredentialsBase(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
     }
 
     _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.HttpHeaderCredentials': 'HttpHeaderCredentials', '#Microsoft.VideoAnalyzer.SymmetricKeyCredentials': 'SymmetricKeyCredentials', '#Microsoft.VideoAnalyzer.UsernamePasswordCredentials': 'UsernamePasswordCredentials'}
+        "type": {
+            "#Microsoft.VideoAnalyzer.HttpHeaderCredentials": "HttpHeaderCredentials",
+            "#Microsoft.VideoAnalyzer.SymmetricKeyCredentials": "SymmetricKeyCredentials",
+            "#Microsoft.VideoAnalyzer.UsernamePasswordCredentials": "UsernamePasswordCredentials",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(CredentialsBase, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
 
@@ -230,10 +225,10 @@ class DiscoveredOnvifDevice(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'service_identifier': {'key': 'serviceIdentifier', 'type': 'str'},
-        'remote_ip_address': {'key': 'remoteIPAddress', 'type': 'str'},
-        'scopes': {'key': 'scopes', 'type': '[str]'},
-        'endpoints': {'key': 'endpoints', 'type': '[str]'},
+        "service_identifier": {"key": "serviceIdentifier", "type": "str"},
+        "remote_ip_address": {"key": "remoteIPAddress", "type": "str"},
+        "scopes": {"key": "scopes", "type": "[str]"},
+        "endpoints": {"key": "endpoints", "type": "[str]"},
     }
 
     def __init__(
@@ -275,15 +270,10 @@ class DiscoveredOnvifDeviceCollection(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[DiscoveredOnvifDevice]'},
+        "value": {"key": "value", "type": "[DiscoveredOnvifDevice]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["DiscoveredOnvifDevice"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["DiscoveredOnvifDevice"]] = None, **kwargs):
         """
         :keyword value: An array of ONVIF devices that have been discovered in the same subnet as the
          IoT Edge device.
@@ -310,27 +300,24 @@ class EndpointBase(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
-        'url': {'required': True},
+        "type": {"required": True},
+        "url": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'credentials': {'key': 'credentials', 'type': 'CredentialsBase'},
-        'url': {'key': 'url', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "credentials": {"key": "credentials", "type": "CredentialsBase"},
+        "url": {"key": "url", "type": "str"},
     }
 
     _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.TlsEndpoint': 'TlsEndpoint', '#Microsoft.VideoAnalyzer.UnsecuredEndpoint': 'UnsecuredEndpoint'}
+        "type": {
+            "#Microsoft.VideoAnalyzer.TlsEndpoint": "TlsEndpoint",
+            "#Microsoft.VideoAnalyzer.UnsecuredEndpoint": "UnsecuredEndpoint",
+        }
     }
 
-    def __init__(
-        self,
-        *,
-        url: str,
-        credentials: Optional["CredentialsBase"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, url: str, credentials: Optional["CredentialsBase"] = None, **kwargs):
         """
         :keyword credentials: Credentials to be presented to the endpoint.
         :paramtype credentials: ~azure.media.videoanalyzer.edge.models.CredentialsBase
@@ -369,24 +356,27 @@ class ExtensionProcessorBase(ProcessorNodeBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
-        'inputs': {'required': True},
-        'endpoint': {'required': True},
-        'image': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
+        "inputs": {"required": True},
+        "endpoint": {"required": True},
+        "image": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'inputs': {'key': 'inputs', 'type': '[NodeInput]'},
-        'endpoint': {'key': 'endpoint', 'type': 'EndpointBase'},
-        'image': {'key': 'image', 'type': 'ImageProperties'},
-        'sampling_options': {'key': 'samplingOptions', 'type': 'SamplingOptions'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "inputs": {"key": "inputs", "type": "[NodeInput]"},
+        "endpoint": {"key": "endpoint", "type": "EndpointBase"},
+        "image": {"key": "image", "type": "ImageProperties"},
+        "sampling_options": {"key": "samplingOptions", "type": "SamplingOptions"},
     }
 
     _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.GrpcExtension': 'GrpcExtension', '#Microsoft.VideoAnalyzer.HttpExtension': 'HttpExtension'}
+        "type": {
+            "#Microsoft.VideoAnalyzer.GrpcExtension": "GrpcExtension",
+            "#Microsoft.VideoAnalyzer.HttpExtension": "HttpExtension",
+        }
     }
 
     def __init__(
@@ -415,7 +405,7 @@ class ExtensionProcessorBase(ProcessorNodeBase):
         :paramtype sampling_options: ~azure.media.videoanalyzer.edge.models.SamplingOptions
         """
         super(ExtensionProcessorBase, self).__init__(name=name, inputs=inputs, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.ExtensionProcessorBase'  # type: str
+        self.type = "#Microsoft.VideoAnalyzer.ExtensionProcessorBase"  # type: str
         self.endpoint = endpoint
         self.image = image
         self.sampling_options = sampling_options
@@ -439,28 +429,26 @@ class SinkNodeBase(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
-        'inputs': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
+        "inputs": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'inputs': {'key': 'inputs', 'type': '[NodeInput]'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "inputs": {"key": "inputs", "type": "[NodeInput]"},
     }
 
     _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.FileSink': 'FileSink', '#Microsoft.VideoAnalyzer.IotHubMessageSink': 'IotHubMessageSink', '#Microsoft.VideoAnalyzer.VideoSink': 'VideoSink'}
+        "type": {
+            "#Microsoft.VideoAnalyzer.FileSink": "FileSink",
+            "#Microsoft.VideoAnalyzer.IotHubMessageSink": "IotHubMessageSink",
+            "#Microsoft.VideoAnalyzer.VideoSink": "VideoSink",
+        }
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        inputs: List["NodeInput"],
-        **kwargs
-    ):
+    def __init__(self, *, name: str, inputs: List["NodeInput"], **kwargs):
         """
         :keyword name: Required. Node name. Must be unique within the topology.
         :paramtype name: str
@@ -498,21 +486,21 @@ class FileSink(SinkNodeBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
-        'inputs': {'required': True},
-        'base_directory_path': {'required': True},
-        'file_name_pattern': {'required': True},
-        'maximum_size_mi_b': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
+        "inputs": {"required": True},
+        "base_directory_path": {"required": True},
+        "file_name_pattern": {"required": True},
+        "maximum_size_mi_b": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'inputs': {'key': 'inputs', 'type': '[NodeInput]'},
-        'base_directory_path': {'key': 'baseDirectoryPath', 'type': 'str'},
-        'file_name_pattern': {'key': 'fileNamePattern', 'type': 'str'},
-        'maximum_size_mi_b': {'key': 'maximumSizeMiB', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "inputs": {"key": "inputs", "type": "[NodeInput]"},
+        "base_directory_path": {"key": "baseDirectoryPath", "type": "str"},
+        "file_name_pattern": {"key": "fileNamePattern", "type": "str"},
+        "maximum_size_mi_b": {"key": "maximumSizeMiB", "type": "str"},
     }
 
     def __init__(
@@ -543,7 +531,7 @@ class FileSink(SinkNodeBase):
         :paramtype maximum_size_mi_b: str
         """
         super(FileSink, self).__init__(name=name, inputs=inputs, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.FileSink'  # type: str
+        self.type = "#Microsoft.VideoAnalyzer.FileSink"  # type: str
         self.base_directory_path = base_directory_path
         self.file_name_pattern = file_name_pattern
         self.maximum_size_mi_b = maximum_size_mi_b
@@ -578,23 +566,23 @@ class GrpcExtension(ExtensionProcessorBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
-        'inputs': {'required': True},
-        'endpoint': {'required': True},
-        'image': {'required': True},
-        'data_transfer': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
+        "inputs": {"required": True},
+        "endpoint": {"required": True},
+        "image": {"required": True},
+        "data_transfer": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'inputs': {'key': 'inputs', 'type': '[NodeInput]'},
-        'endpoint': {'key': 'endpoint', 'type': 'EndpointBase'},
-        'image': {'key': 'image', 'type': 'ImageProperties'},
-        'sampling_options': {'key': 'samplingOptions', 'type': 'SamplingOptions'},
-        'data_transfer': {'key': 'dataTransfer', 'type': 'GrpcExtensionDataTransfer'},
-        'extension_configuration': {'key': 'extensionConfiguration', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "inputs": {"key": "inputs", "type": "[NodeInput]"},
+        "endpoint": {"key": "endpoint", "type": "EndpointBase"},
+        "image": {"key": "image", "type": "ImageProperties"},
+        "sampling_options": {"key": "samplingOptions", "type": "SamplingOptions"},
+        "data_transfer": {"key": "dataTransfer", "type": "GrpcExtensionDataTransfer"},
+        "extension_configuration": {"key": "extensionConfiguration", "type": "str"},
     }
 
     def __init__(
@@ -631,8 +619,10 @@ class GrpcExtension(ExtensionProcessorBase):
          for details.
         :paramtype extension_configuration: str
         """
-        super(GrpcExtension, self).__init__(name=name, inputs=inputs, endpoint=endpoint, image=image, sampling_options=sampling_options, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.GrpcExtension'  # type: str
+        super(GrpcExtension, self).__init__(
+            name=name, inputs=inputs, endpoint=endpoint, image=image, sampling_options=sampling_options, **kwargs
+        )
+        self.type = "#Microsoft.VideoAnalyzer.GrpcExtension"  # type: str
         self.data_transfer = data_transfer
         self.extension_configuration = extension_configuration
 
@@ -651,12 +641,12 @@ class GrpcExtensionDataTransfer(msrest.serialization.Model):
     """
 
     _validation = {
-        'mode': {'required': True},
+        "mode": {"required": True},
     }
 
     _attribute_map = {
-        'shared_memory_size_mi_b': {'key': 'sharedMemorySizeMiB', 'type': 'str'},
-        'mode': {'key': 'mode', 'type': 'str'},
+        "shared_memory_size_mi_b": {"key": "sharedMemorySizeMiB", "type": "str"},
+        "mode": {"key": "mode", "type": "str"},
     }
 
     def __init__(
@@ -690,16 +680,12 @@ class H264Configuration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'gov_length': {'key': 'govLength', 'type': 'float'},
-        'profile': {'key': 'profile', 'type': 'str'},
+        "gov_length": {"key": "govLength", "type": "float"},
+        "profile": {"key": "profile", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        gov_length: Optional[float] = None,
-        profile: Optional[Union[str, "H264Profile"]] = None,
-        **kwargs
+        self, *, gov_length: Optional[float] = None, profile: Optional[Union[str, "H264Profile"]] = None, **kwargs
     ):
         """
         :keyword gov_length: Group of Video frames length.
@@ -736,20 +722,20 @@ class HttpExtension(ExtensionProcessorBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
-        'inputs': {'required': True},
-        'endpoint': {'required': True},
-        'image': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
+        "inputs": {"required": True},
+        "endpoint": {"required": True},
+        "image": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'inputs': {'key': 'inputs', 'type': '[NodeInput]'},
-        'endpoint': {'key': 'endpoint', 'type': 'EndpointBase'},
-        'image': {'key': 'image', 'type': 'ImageProperties'},
-        'sampling_options': {'key': 'samplingOptions', 'type': 'SamplingOptions'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "inputs": {"key": "inputs", "type": "[NodeInput]"},
+        "endpoint": {"key": "endpoint", "type": "EndpointBase"},
+        "image": {"key": "image", "type": "ImageProperties"},
+        "sampling_options": {"key": "samplingOptions", "type": "SamplingOptions"},
     }
 
     def __init__(
@@ -777,8 +763,10 @@ class HttpExtension(ExtensionProcessorBase):
          to the extension plugin.
         :paramtype sampling_options: ~azure.media.videoanalyzer.edge.models.SamplingOptions
         """
-        super(HttpExtension, self).__init__(name=name, inputs=inputs, endpoint=endpoint, image=image, sampling_options=sampling_options, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.HttpExtension'  # type: str
+        super(HttpExtension, self).__init__(
+            name=name, inputs=inputs, endpoint=endpoint, image=image, sampling_options=sampling_options, **kwargs
+        )
+        self.type = "#Microsoft.VideoAnalyzer.HttpExtension"  # type: str
 
 
 class HttpHeaderCredentials(CredentialsBase):
@@ -797,24 +785,18 @@ class HttpHeaderCredentials(CredentialsBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'header_name': {'required': True},
-        'header_value': {'required': True},
+        "type": {"required": True},
+        "header_name": {"required": True},
+        "header_value": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'header_name': {'key': 'headerName', 'type': 'str'},
-        'header_value': {'key': 'headerValue', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "header_name": {"key": "headerName", "type": "str"},
+        "header_value": {"key": "headerValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        header_name: str,
-        header_value: str,
-        **kwargs
-    ):
+    def __init__(self, *, header_name: str, header_value: str, **kwargs):
         """
         :keyword header_name: Required. HTTP header name.
         :paramtype header_name: str
@@ -824,7 +806,7 @@ class HttpHeaderCredentials(CredentialsBase):
         :paramtype header_value: str
         """
         super(HttpHeaderCredentials, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.HttpHeaderCredentials'  # type: str
+        self.type = "#Microsoft.VideoAnalyzer.HttpHeaderCredentials"  # type: str
         self.header_name = header_name
         self.header_value = header_value
 
@@ -842,23 +824,24 @@ class ImageFormatProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
     }
 
     _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.ImageFormatBmp': 'ImageFormatBmp', '#Microsoft.VideoAnalyzer.ImageFormatJpeg': 'ImageFormatJpeg', '#Microsoft.VideoAnalyzer.ImageFormatPng': 'ImageFormatPng', '#Microsoft.VideoAnalyzer.ImageFormatRaw': 'ImageFormatRaw'}
+        "type": {
+            "#Microsoft.VideoAnalyzer.ImageFormatBmp": "ImageFormatBmp",
+            "#Microsoft.VideoAnalyzer.ImageFormatJpeg": "ImageFormatJpeg",
+            "#Microsoft.VideoAnalyzer.ImageFormatPng": "ImageFormatPng",
+            "#Microsoft.VideoAnalyzer.ImageFormatRaw": "ImageFormatRaw",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(ImageFormatProperties, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
 
@@ -873,21 +856,17 @@ class ImageFormatBmp(ImageFormatProperties):
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(ImageFormatBmp, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.ImageFormatBmp'  # type: str
+        self.type = "#Microsoft.VideoAnalyzer.ImageFormatBmp"  # type: str
 
 
 class ImageFormatJpeg(ImageFormatProperties):
@@ -902,26 +881,21 @@ class ImageFormatJpeg(ImageFormatProperties):
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'quality': {'key': 'quality', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "quality": {"key": "quality", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        quality: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, quality: Optional[str] = None, **kwargs):
         """
         :keyword quality: Image quality value between 0 to 100 (best quality).
         :paramtype quality: str
         """
         super(ImageFormatJpeg, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.ImageFormatJpeg'  # type: str
+        self.type = "#Microsoft.VideoAnalyzer.ImageFormatJpeg"  # type: str
         self.quality = quality
 
 
@@ -935,21 +909,17 @@ class ImageFormatPng(ImageFormatProperties):
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(ImageFormatPng, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.ImageFormatPng'  # type: str
+        self.type = "#Microsoft.VideoAnalyzer.ImageFormatPng"  # type: str
 
 
 class ImageFormatRaw(ImageFormatProperties):
@@ -966,21 +936,16 @@ class ImageFormatRaw(ImageFormatProperties):
     """
 
     _validation = {
-        'type': {'required': True},
-        'pixel_format': {'required': True},
+        "type": {"required": True},
+        "pixel_format": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'pixel_format': {'key': 'pixelFormat', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "pixel_format": {"key": "pixelFormat", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        pixel_format: Union[str, "ImageFormatRawPixelFormat"],
-        **kwargs
-    ):
+    def __init__(self, *, pixel_format: Union[str, "ImageFormatRawPixelFormat"], **kwargs):
         """
         :keyword pixel_format: Required. Pixel format to be applied to the raw image. Possible values
          include: "yuv420p", "rgb565be", "rgb565le", "rgb555be", "rgb555le", "rgb24", "bgr24", "argb",
@@ -989,7 +954,7 @@ class ImageFormatRaw(ImageFormatProperties):
          ~azure.media.videoanalyzer.edge.models.ImageFormatRawPixelFormat
         """
         super(ImageFormatRaw, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.ImageFormatRaw'  # type: str
+        self.type = "#Microsoft.VideoAnalyzer.ImageFormatRaw"  # type: str
         self.pixel_format = pixel_format
 
 
@@ -1003,16 +968,12 @@ class ImageProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'scale': {'key': 'scale', 'type': 'ImageScale'},
-        'format': {'key': 'format', 'type': 'ImageFormatProperties'},
+        "scale": {"key": "scale", "type": "ImageScale"},
+        "format": {"key": "format", "type": "ImageFormatProperties"},
     }
 
     def __init__(
-        self,
-        *,
-        scale: Optional["ImageScale"] = None,
-        format: Optional["ImageFormatProperties"] = None,
-        **kwargs
+        self, *, scale: Optional["ImageScale"] = None, format: Optional["ImageFormatProperties"] = None, **kwargs
     ):
         """
         :keyword scale: Image scaling mode.
@@ -1038,9 +999,9 @@ class ImageScale(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'width': {'key': 'width', 'type': 'str'},
-        'height': {'key': 'height', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "width": {"key": "width", "type": "str"},
+        "height": {"key": "height", "type": "str"},
     }
 
     def __init__(
@@ -1080,21 +1041,15 @@ class IotHubDeviceConnection(msrest.serialization.Model):
     """
 
     _validation = {
-        'device_id': {'required': True},
+        "device_id": {"required": True},
     }
 
     _attribute_map = {
-        'device_id': {'key': 'deviceId', 'type': 'str'},
-        'credentials': {'key': 'credentials', 'type': 'CredentialsBase'},
+        "device_id": {"key": "deviceId", "type": "str"},
+        "credentials": {"key": "credentials", "type": "CredentialsBase"},
     }
 
-    def __init__(
-        self,
-        *,
-        device_id: str,
-        credentials: Optional["CredentialsBase"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, device_id: str, credentials: Optional["CredentialsBase"] = None, **kwargs):
         """
         :keyword device_id: Required. The name of the IoT device configured and managed in IoT Hub.
          (case-sensitive).
@@ -1126,27 +1081,20 @@ class IotHubMessageSink(SinkNodeBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
-        'inputs': {'required': True},
-        'hub_output_name': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
+        "inputs": {"required": True},
+        "hub_output_name": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'inputs': {'key': 'inputs', 'type': '[NodeInput]'},
-        'hub_output_name': {'key': 'hubOutputName', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "inputs": {"key": "inputs", "type": "[NodeInput]"},
+        "hub_output_name": {"key": "hubOutputName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        inputs: List["NodeInput"],
-        hub_output_name: str,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, inputs: List["NodeInput"], hub_output_name: str, **kwargs):
         """
         :keyword name: Required. Node name. Must be unique within the topology.
         :paramtype name: str
@@ -1158,7 +1106,7 @@ class IotHubMessageSink(SinkNodeBase):
         :paramtype hub_output_name: str
         """
         super(IotHubMessageSink, self).__init__(name=name, inputs=inputs, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.IotHubMessageSink'  # type: str
+        self.type = "#Microsoft.VideoAnalyzer.IotHubMessageSink"  # type: str
         self.hub_output_name = hub_output_name
 
 
@@ -1177,25 +1125,23 @@ class SourceNodeBase(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
     _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.IotHubMessageSource': 'IotHubMessageSource', '#Microsoft.VideoAnalyzer.RtspSource': 'RtspSource'}
+        "type": {
+            "#Microsoft.VideoAnalyzer.IotHubMessageSource": "IotHubMessageSource",
+            "#Microsoft.VideoAnalyzer.RtspSource": "RtspSource",
+        }
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, **kwargs):
         """
         :keyword name: Required. Node name. Must be unique within the topology.
         :paramtype name: str
@@ -1219,23 +1165,17 @@ class IotHubMessageSource(SourceNodeBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'hub_input_name': {'key': 'hubInputName', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "hub_input_name": {"key": "hubInputName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        hub_input_name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, hub_input_name: Optional[str] = None, **kwargs):
         """
         :keyword name: Required. Node name. Must be unique within the topology.
         :paramtype name: str
@@ -1243,7 +1183,7 @@ class IotHubMessageSource(SourceNodeBase):
         :paramtype hub_input_name: str
         """
         super(IotHubMessageSource, self).__init__(name=name, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.IotHubMessageSource'  # type: str
+        self.type = "#Microsoft.VideoAnalyzer.IotHubMessageSource"  # type: str
         self.hub_input_name = hub_input_name
 
 
@@ -1264,27 +1204,20 @@ class LineCrossingProcessor(ProcessorNodeBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
-        'inputs': {'required': True},
-        'lines': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
+        "inputs": {"required": True},
+        "lines": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'inputs': {'key': 'inputs', 'type': '[NodeInput]'},
-        'lines': {'key': 'lines', 'type': '[NamedLineBase]'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "inputs": {"key": "inputs", "type": "[NodeInput]"},
+        "lines": {"key": "lines", "type": "[NamedLineBase]"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        inputs: List["NodeInput"],
-        lines: List["NamedLineBase"],
-        **kwargs
-    ):
+    def __init__(self, *, name: str, inputs: List["NodeInput"], lines: List["NamedLineBase"], **kwargs):
         """
         :keyword name: Required. Node name. Must be unique within the topology.
         :paramtype name: str
@@ -1295,7 +1228,7 @@ class LineCrossingProcessor(ProcessorNodeBase):
         :paramtype lines: list[~azure.media.videoanalyzer.edge.models.NamedLineBase]
         """
         super(LineCrossingProcessor, self).__init__(name=name, inputs=inputs, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.LineCrossingProcessor'  # type: str
+        self.type = "#Microsoft.VideoAnalyzer.LineCrossingProcessor"  # type: str
         self.lines = lines
 
 
@@ -1313,13 +1246,13 @@ class LivePipeline(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'properties': {'key': 'properties', 'type': 'LivePipelineProperties'},
+        "name": {"key": "name", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "LivePipelineProperties"},
     }
 
     def __init__(
@@ -1362,24 +1295,32 @@ class MethodRequest(msrest.serialization.Model):
     """
 
     _validation = {
-        'method_name': {'required': True, 'readonly': True},
+        "method_name": {"required": True, "readonly": True},
     }
 
     _attribute_map = {
-        'method_name': {'key': 'methodName', 'type': 'str'},
-        'api_version': {'key': '@apiVersion', 'type': 'str'},
+        "method_name": {"key": "methodName", "type": "str"},
+        "api_version": {"key": "@apiVersion", "type": "str"},
     }
 
     _subtype_map = {
-        'method_name': {'LivePipelineSetRequestBody': 'LivePipelineSetRequestBody', 'MethodRequestEmptyBodyBase': 'MethodRequestEmptyBodyBase', 'PipelineTopologySetRequestBody': 'PipelineTopologySetRequestBody', 'RemoteDeviceAdapterSetRequestBody': 'RemoteDeviceAdapterSetRequestBody', 'livePipelineList': 'LivePipelineListRequest', 'livePipelineSet': 'LivePipelineSetRequest', 'onvifDeviceDiscover': 'OnvifDeviceDiscoverRequest', 'onvifDeviceGet': 'OnvifDeviceGetRequest', 'pipelineTopologyList': 'PipelineTopologyListRequest', 'pipelineTopologySet': 'PipelineTopologySetRequest', 'remoteDeviceAdapterList': 'RemoteDeviceAdapterListRequest', 'remoteDeviceAdapterSet': 'RemoteDeviceAdapterSetRequest'}
+        "method_name": {
+            "LivePipelineSetRequestBody": "LivePipelineSetRequestBody",
+            "MethodRequestEmptyBodyBase": "MethodRequestEmptyBodyBase",
+            "PipelineTopologySetRequestBody": "PipelineTopologySetRequestBody",
+            "RemoteDeviceAdapterSetRequestBody": "RemoteDeviceAdapterSetRequestBody",
+            "livePipelineList": "LivePipelineListRequest",
+            "livePipelineSet": "LivePipelineSetRequest",
+            "onvifDeviceDiscover": "OnvifDeviceDiscoverRequest",
+            "onvifDeviceGet": "OnvifDeviceGetRequest",
+            "pipelineTopologyList": "PipelineTopologyListRequest",
+            "pipelineTopologySet": "PipelineTopologySetRequest",
+            "remoteDeviceAdapterList": "RemoteDeviceAdapterListRequest",
+            "remoteDeviceAdapterSet": "RemoteDeviceAdapterSetRequest",
+        }
     }
 
-    def __init__(
-        self,
-        *,
-        api_version: Optional[str] = "1.1",
-        **kwargs
-    ):
+    def __init__(self, *, api_version: Optional[str] = "1.1", **kwargs):
         """
         :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
          None and "1.1". The default value is "1.1".
@@ -1410,27 +1351,30 @@ class MethodRequestEmptyBodyBase(MethodRequest):
     """
 
     _validation = {
-        'method_name': {'required': True, 'readonly': True},
-        'name': {'required': True},
+        "method_name": {"required": True, "readonly": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'method_name': {'key': 'methodName', 'type': 'str'},
-        'api_version': {'key': '@apiVersion', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "method_name": {"key": "methodName", "type": "str"},
+        "api_version": {"key": "@apiVersion", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
     _subtype_map = {
-        'method_name': {'livePipelineActivate': 'LivePipelineActivateRequest', 'livePipelineDeactivate': 'LivePipelineDeactivateRequest', 'livePipelineDelete': 'LivePipelineDeleteRequest', 'livePipelineGet': 'LivePipelineGetRequest', 'pipelineTopologyDelete': 'PipelineTopologyDeleteRequest', 'pipelineTopologyGet': 'PipelineTopologyGetRequest', 'remoteDeviceAdapterDelete': 'RemoteDeviceAdapterDeleteRequest', 'remoteDeviceAdapterGet': 'RemoteDeviceAdapterGetRequest'}
+        "method_name": {
+            "livePipelineActivate": "LivePipelineActivateRequest",
+            "livePipelineDeactivate": "LivePipelineDeactivateRequest",
+            "livePipelineDelete": "LivePipelineDeleteRequest",
+            "livePipelineGet": "LivePipelineGetRequest",
+            "pipelineTopologyDelete": "PipelineTopologyDeleteRequest",
+            "pipelineTopologyGet": "PipelineTopologyGetRequest",
+            "remoteDeviceAdapterDelete": "RemoteDeviceAdapterDeleteRequest",
+            "remoteDeviceAdapterGet": "RemoteDeviceAdapterGetRequest",
+        }
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        api_version: Optional[str] = "1.1",
-        **kwargs
-    ):
+    def __init__(self, *, name: str, api_version: Optional[str] = "1.1", **kwargs):
         """
         :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
          None and "1.1". The default value is "1.1".
@@ -1439,7 +1383,7 @@ class MethodRequestEmptyBodyBase(MethodRequest):
         :paramtype name: str
         """
         super(MethodRequestEmptyBodyBase, self).__init__(api_version=api_version, **kwargs)
-        self.method_name = 'MethodRequestEmptyBodyBase'  # type: str
+        self.method_name = "MethodRequestEmptyBodyBase"  # type: str
         self.name = name
 
 
@@ -1460,23 +1404,17 @@ class LivePipelineActivateRequest(MethodRequestEmptyBodyBase):
     """
 
     _validation = {
-        'method_name': {'required': True, 'readonly': True},
-        'name': {'required': True},
+        "method_name": {"required": True, "readonly": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'method_name': {'key': 'methodName', 'type': 'str'},
-        'api_version': {'key': '@apiVersion', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "method_name": {"key": "methodName", "type": "str"},
+        "api_version": {"key": "@apiVersion", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        api_version: Optional[str] = "1.1",
-        **kwargs
-    ):
+    def __init__(self, *, name: str, api_version: Optional[str] = "1.1", **kwargs):
         """
         :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
          None and "1.1". The default value is "1.1".
@@ -1485,7 +1423,7 @@ class LivePipelineActivateRequest(MethodRequestEmptyBodyBase):
         :paramtype name: str
         """
         super(LivePipelineActivateRequest, self).__init__(api_version=api_version, name=name, **kwargs)
-        self.method_name = 'livePipelineActivate'  # type: str
+        self.method_name = "livePipelineActivate"  # type: str
 
 
 class LivePipelineCollection(msrest.serialization.Model):
@@ -1500,16 +1438,12 @@ class LivePipelineCollection(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[LivePipeline]'},
-        'continuation_token': {'key': '@continuationToken', 'type': 'str'},
+        "value": {"key": "value", "type": "[LivePipeline]"},
+        "continuation_token": {"key": "@continuationToken", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["LivePipeline"]] = None,
-        continuation_token: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["LivePipeline"]] = None, continuation_token: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: List of live pipelines.
@@ -1541,23 +1475,17 @@ class LivePipelineDeactivateRequest(MethodRequestEmptyBodyBase):
     """
 
     _validation = {
-        'method_name': {'required': True, 'readonly': True},
-        'name': {'required': True},
+        "method_name": {"required": True, "readonly": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'method_name': {'key': 'methodName', 'type': 'str'},
-        'api_version': {'key': '@apiVersion', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "method_name": {"key": "methodName", "type": "str"},
+        "api_version": {"key": "@apiVersion", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        api_version: Optional[str] = "1.1",
-        **kwargs
-    ):
+    def __init__(self, *, name: str, api_version: Optional[str] = "1.1", **kwargs):
         """
         :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
          None and "1.1". The default value is "1.1".
@@ -1566,7 +1494,7 @@ class LivePipelineDeactivateRequest(MethodRequestEmptyBodyBase):
         :paramtype name: str
         """
         super(LivePipelineDeactivateRequest, self).__init__(api_version=api_version, name=name, **kwargs)
-        self.method_name = 'livePipelineDeactivate'  # type: str
+        self.method_name = "livePipelineDeactivate"  # type: str
 
 
 class LivePipelineDeleteRequest(MethodRequestEmptyBodyBase):
@@ -1586,23 +1514,17 @@ class LivePipelineDeleteRequest(MethodRequestEmptyBodyBase):
     """
 
     _validation = {
-        'method_name': {'required': True, 'readonly': True},
-        'name': {'required': True},
+        "method_name": {"required": True, "readonly": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'method_name': {'key': 'methodName', 'type': 'str'},
-        'api_version': {'key': '@apiVersion', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "method_name": {"key": "methodName", "type": "str"},
+        "api_version": {"key": "@apiVersion", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        api_version: Optional[str] = "1.1",
-        **kwargs
-    ):
+    def __init__(self, *, name: str, api_version: Optional[str] = "1.1", **kwargs):
         """
         :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
          None and "1.1". The default value is "1.1".
@@ -1611,7 +1533,7 @@ class LivePipelineDeleteRequest(MethodRequestEmptyBodyBase):
         :paramtype name: str
         """
         super(LivePipelineDeleteRequest, self).__init__(api_version=api_version, name=name, **kwargs)
-        self.method_name = 'livePipelineDelete'  # type: str
+        self.method_name = "livePipelineDelete"  # type: str
 
 
 class LivePipelineGetRequest(MethodRequestEmptyBodyBase):
@@ -1631,23 +1553,17 @@ class LivePipelineGetRequest(MethodRequestEmptyBodyBase):
     """
 
     _validation = {
-        'method_name': {'required': True, 'readonly': True},
-        'name': {'required': True},
+        "method_name": {"required": True, "readonly": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'method_name': {'key': 'methodName', 'type': 'str'},
-        'api_version': {'key': '@apiVersion', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "method_name": {"key": "methodName", "type": "str"},
+        "api_version": {"key": "@apiVersion", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        api_version: Optional[str] = "1.1",
-        **kwargs
-    ):
+    def __init__(self, *, name: str, api_version: Optional[str] = "1.1", **kwargs):
         """
         :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
          None and "1.1". The default value is "1.1".
@@ -1656,7 +1572,7 @@ class LivePipelineGetRequest(MethodRequestEmptyBodyBase):
         :paramtype name: str
         """
         super(LivePipelineGetRequest, self).__init__(api_version=api_version, name=name, **kwargs)
-        self.method_name = 'livePipelineGet'  # type: str
+        self.method_name = "livePipelineGet"  # type: str
 
 
 class LivePipelineListRequest(MethodRequest):
@@ -1674,27 +1590,22 @@ class LivePipelineListRequest(MethodRequest):
     """
 
     _validation = {
-        'method_name': {'required': True, 'readonly': True},
+        "method_name": {"required": True, "readonly": True},
     }
 
     _attribute_map = {
-        'method_name': {'key': 'methodName', 'type': 'str'},
-        'api_version': {'key': '@apiVersion', 'type': 'str'},
+        "method_name": {"key": "methodName", "type": "str"},
+        "api_version": {"key": "@apiVersion", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        api_version: Optional[str] = "1.1",
-        **kwargs
-    ):
+    def __init__(self, *, api_version: Optional[str] = "1.1", **kwargs):
         """
         :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
          None and "1.1". The default value is "1.1".
         :paramtype api_version: str
         """
         super(LivePipelineListRequest, self).__init__(api_version=api_version, **kwargs)
-        self.method_name = 'livePipelineList'  # type: str
+        self.method_name = "livePipelineList"  # type: str
 
 
 class LivePipelineProperties(msrest.serialization.Model):
@@ -1717,10 +1628,10 @@ class LivePipelineProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'topology_name': {'key': 'topologyName', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': '[ParameterDefinition]'},
-        'state': {'key': 'state', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "topology_name": {"key": "topologyName", "type": "str"},
+        "parameters": {"key": "parameters", "type": "[ParameterDefinition]"},
+        "state": {"key": "state", "type": "str"},
     }
 
     def __init__(
@@ -1773,23 +1684,17 @@ class LivePipelineSetRequest(MethodRequest):
     """
 
     _validation = {
-        'method_name': {'required': True, 'readonly': True},
-        'live_pipeline': {'required': True},
+        "method_name": {"required": True, "readonly": True},
+        "live_pipeline": {"required": True},
     }
 
     _attribute_map = {
-        'method_name': {'key': 'methodName', 'type': 'str'},
-        'api_version': {'key': '@apiVersion', 'type': 'str'},
-        'live_pipeline': {'key': 'livePipeline', 'type': 'LivePipeline'},
+        "method_name": {"key": "methodName", "type": "str"},
+        "api_version": {"key": "@apiVersion", "type": "str"},
+        "live_pipeline": {"key": "livePipeline", "type": "LivePipeline"},
     }
 
-    def __init__(
-        self,
-        *,
-        live_pipeline: "LivePipeline",
-        api_version: Optional[str] = "1.1",
-        **kwargs
-    ):
+    def __init__(self, *, live_pipeline: "LivePipeline", api_version: Optional[str] = "1.1", **kwargs):
         """
         :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
          None and "1.1". The default value is "1.1".
@@ -1799,7 +1704,7 @@ class LivePipelineSetRequest(MethodRequest):
         :paramtype live_pipeline: ~azure.media.videoanalyzer.edge.models.LivePipeline
         """
         super(LivePipelineSetRequest, self).__init__(api_version=api_version, **kwargs)
-        self.method_name = 'livePipelineSet'  # type: str
+        self.method_name = "livePipelineSet"  # type: str
         self.live_pipeline = live_pipeline
 
 
@@ -1824,16 +1729,16 @@ class LivePipelineSetRequestBody(LivePipeline, MethodRequest):
     """
 
     _validation = {
-        'method_name': {'required': True, 'readonly': True},
-        'name': {'required': True},
+        "method_name": {"required": True, "readonly": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'method_name': {'key': 'methodName', 'type': 'str'},
-        'api_version': {'key': '@apiVersion', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'properties': {'key': 'properties', 'type': 'LivePipelineProperties'},
+        "method_name": {"key": "methodName", "type": "str"},
+        "api_version": {"key": "@apiVersion", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "LivePipelineProperties"},
     }
 
     def __init__(
@@ -1856,10 +1761,12 @@ class LivePipelineSetRequestBody(LivePipeline, MethodRequest):
         :keyword properties: Live pipeline properties.
         :paramtype properties: ~azure.media.videoanalyzer.edge.models.LivePipelineProperties
         """
-        super(LivePipelineSetRequestBody, self).__init__(name=name, system_data=system_data, properties=properties, api_version=api_version, **kwargs)
-        self.method_name = 'LivePipelineSetRequestBody'  # type: str
+        super(LivePipelineSetRequestBody, self).__init__(
+            name=name, system_data=system_data, properties=properties, api_version=api_version, **kwargs
+        )
+        self.method_name = "LivePipelineSetRequestBody"  # type: str
         self.api_version = api_version
-        self.method_name = 'LivePipelineSetRequestBody'  # type: str
+        self.method_name = "LivePipelineSetRequestBody"  # type: str
         self.name = name
         self.system_data = system_data
         self.properties = properties
@@ -1878,9 +1785,9 @@ class MediaProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'media_uri': {'key': 'mediaUri', 'type': 'object'},
-        'video_encoder_configuration': {'key': 'videoEncoderConfiguration', 'type': 'VideoEncoderConfiguration'},
+        "name": {"key": "name", "type": "str"},
+        "media_uri": {"key": "mediaUri", "type": "object"},
+        "video_encoder_configuration": {"key": "videoEncoderConfiguration", "type": "VideoEncoderConfiguration"},
     }
 
     def __init__(
@@ -1915,15 +1822,10 @@ class MediaUri(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'uri': {'key': 'uri', 'type': 'str'},
+        "uri": {"key": "uri", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        uri: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, uri: Optional[str] = None, **kwargs):
         """
         :keyword uri: URI that can be used for media streaming.
         :paramtype uri: str
@@ -1957,18 +1859,18 @@ class MotionDetectionProcessor(ProcessorNodeBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
-        'inputs': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
+        "inputs": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'inputs': {'key': 'inputs', 'type': '[NodeInput]'},
-        'sensitivity': {'key': 'sensitivity', 'type': 'str'},
-        'output_motion_region': {'key': 'outputMotionRegion', 'type': 'bool'},
-        'event_aggregation_window': {'key': 'eventAggregationWindow', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "inputs": {"key": "inputs", "type": "[NodeInput]"},
+        "sensitivity": {"key": "sensitivity", "type": "str"},
+        "output_motion_region": {"key": "outputMotionRegion", "type": "bool"},
+        "event_aggregation_window": {"key": "eventAggregationWindow", "type": "str"},
     }
 
     def __init__(
@@ -2000,7 +1902,7 @@ class MotionDetectionProcessor(ProcessorNodeBase):
         :paramtype event_aggregation_window: str
         """
         super(MotionDetectionProcessor, self).__init__(name=name, inputs=inputs, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.MotionDetectionProcessor'  # type: str
+        self.type = "#Microsoft.VideoAnalyzer.MotionDetectionProcessor"  # type: str
         self.sensitivity = sensitivity
         self.output_motion_region = output_motion_region
         self.event_aggregation_window = event_aggregation_window
@@ -2016,16 +1918,12 @@ class MPEG4Configuration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'gov_length': {'key': 'govLength', 'type': 'float'},
-        'profile': {'key': 'profile', 'type': 'str'},
+        "gov_length": {"key": "govLength", "type": "float"},
+        "profile": {"key": "profile", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        gov_length: Optional[float] = None,
-        profile: Optional[Union[str, "MPEG4Profile"]] = None,
-        **kwargs
+        self, *, gov_length: Optional[float] = None, profile: Optional[Union[str, "MPEG4Profile"]] = None, **kwargs
     ):
         """
         :keyword gov_length: Group of Video frames length.
@@ -2053,25 +1951,18 @@ class NamedLineBase(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
-    _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.NamedLineString': 'NamedLineString'}
-    }
+    _subtype_map = {"type": {"#Microsoft.VideoAnalyzer.NamedLineString": "NamedLineString"}}
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, **kwargs):
         """
         :keyword name: Required. Line name. Must be unique within the node.
         :paramtype name: str
@@ -2098,24 +1989,18 @@ class NamedLineString(NamedLineBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
-        'line': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
+        "line": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'line': {'key': 'line', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "line": {"key": "line", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        line: str,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, line: str, **kwargs):
         """
         :keyword name: Required. Line name. Must be unique within the node.
         :paramtype name: str
@@ -2126,7 +2011,7 @@ class NamedLineString(NamedLineBase):
         :paramtype line: str
         """
         super(NamedLineString, self).__init__(name=name, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.NamedLineString'  # type: str
+        self.type = "#Microsoft.VideoAnalyzer.NamedLineString"  # type: str
         self.line = line
 
 
@@ -2145,25 +2030,18 @@ class NamedPolygonBase(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
-    _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.NamedPolygonString': 'NamedPolygonString'}
-    }
+    _subtype_map = {"type": {"#Microsoft.VideoAnalyzer.NamedPolygonString": "NamedPolygonString"}}
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, **kwargs):
         """
         :keyword name: Required. Polygon name. Must be unique within the node.
         :paramtype name: str
@@ -2189,24 +2067,18 @@ class NamedPolygonString(NamedPolygonBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
-        'polygon': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
+        "polygon": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'polygon': {'key': 'polygon', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "polygon": {"key": "polygon", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        polygon: str,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, polygon: str, **kwargs):
         """
         :keyword name: Required. Polygon name. Must be unique within the node.
         :paramtype name: str
@@ -2216,7 +2088,7 @@ class NamedPolygonString(NamedPolygonBase):
         :paramtype polygon: str
         """
         super(NamedPolygonString, self).__init__(name=name, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.NamedPolygonString'  # type: str
+        self.type = "#Microsoft.VideoAnalyzer.NamedPolygonString"  # type: str
         self.polygon = polygon
 
 
@@ -2234,21 +2106,15 @@ class NodeInput(msrest.serialization.Model):
     """
 
     _validation = {
-        'node_name': {'required': True},
+        "node_name": {"required": True},
     }
 
     _attribute_map = {
-        'node_name': {'key': 'nodeName', 'type': 'str'},
-        'output_selectors': {'key': 'outputSelectors', 'type': '[OutputSelector]'},
+        "node_name": {"key": "nodeName", "type": "str"},
+        "output_selectors": {"key": "outputSelectors", "type": "[OutputSelector]"},
     }
 
-    def __init__(
-        self,
-        *,
-        node_name: str,
-        output_selectors: Optional[List["OutputSelector"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, node_name: str, output_selectors: Optional[List["OutputSelector"]] = None, **kwargs):
         """
         :keyword node_name: Required. The name of the upstream node in the pipeline which output is
          used as input of the current node.
@@ -2280,16 +2146,16 @@ class ObjectTrackingProcessor(ProcessorNodeBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
-        'inputs': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
+        "inputs": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'inputs': {'key': 'inputs', 'type': '[NodeInput]'},
-        'accuracy': {'key': 'accuracy', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "inputs": {"key": "inputs", "type": "[NodeInput]"},
+        "accuracy": {"key": "accuracy", "type": "str"},
     }
 
     def __init__(
@@ -2311,7 +2177,7 @@ class ObjectTrackingProcessor(ProcessorNodeBase):
         :paramtype accuracy: str or ~azure.media.videoanalyzer.edge.models.ObjectTrackingAccuracy
         """
         super(ObjectTrackingProcessor, self).__init__(name=name, inputs=inputs, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.ObjectTrackingProcessor'  # type: str
+        self.type = "#Microsoft.VideoAnalyzer.ObjectTrackingProcessor"  # type: str
         self.accuracy = accuracy
 
 
@@ -2329,10 +2195,10 @@ class OnvifDevice(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'hostname': {'key': 'hostname', 'type': 'OnvifHostName'},
-        'system_date_time': {'key': 'systemDateTime', 'type': 'OnvifSystemDateTime'},
-        'dns': {'key': 'dns', 'type': 'OnvifDns'},
-        'media_profiles': {'key': 'mediaProfiles', 'type': '[MediaProfile]'},
+        "hostname": {"key": "hostname", "type": "OnvifHostName"},
+        "system_date_time": {"key": "systemDateTime", "type": "OnvifSystemDateTime"},
+        "dns": {"key": "dns", "type": "OnvifDns"},
+        "media_profiles": {"key": "mediaProfiles", "type": "[MediaProfile]"},
     }
 
     def __init__(
@@ -2379,22 +2245,16 @@ class OnvifDeviceDiscoverRequest(MethodRequest):
     """
 
     _validation = {
-        'method_name': {'required': True, 'readonly': True},
+        "method_name": {"required": True, "readonly": True},
     }
 
     _attribute_map = {
-        'method_name': {'key': 'methodName', 'type': 'str'},
-        'api_version': {'key': '@apiVersion', 'type': 'str'},
-        'discovery_duration': {'key': 'discoveryDuration', 'type': 'str'},
+        "method_name": {"key": "methodName", "type": "str"},
+        "api_version": {"key": "@apiVersion", "type": "str"},
+        "discovery_duration": {"key": "discoveryDuration", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        api_version: Optional[str] = "1.1",
-        discovery_duration: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, api_version: Optional[str] = "1.1", discovery_duration: Optional[str] = None, **kwargs):
         """
         :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
          None and "1.1". The default value is "1.1".
@@ -2404,7 +2264,7 @@ class OnvifDeviceDiscoverRequest(MethodRequest):
         :paramtype discovery_duration: str
         """
         super(OnvifDeviceDiscoverRequest, self).__init__(api_version=api_version, **kwargs)
-        self.method_name = 'onvifDeviceDiscover'  # type: str
+        self.method_name = "onvifDeviceDiscover"  # type: str
         self.discovery_duration = discovery_duration
 
 
@@ -2425,23 +2285,17 @@ class OnvifDeviceGetRequest(MethodRequest):
     """
 
     _validation = {
-        'method_name': {'required': True, 'readonly': True},
-        'endpoint': {'required': True},
+        "method_name": {"required": True, "readonly": True},
+        "endpoint": {"required": True},
     }
 
     _attribute_map = {
-        'method_name': {'key': 'methodName', 'type': 'str'},
-        'api_version': {'key': '@apiVersion', 'type': 'str'},
-        'endpoint': {'key': 'endpoint', 'type': 'EndpointBase'},
+        "method_name": {"key": "methodName", "type": "str"},
+        "api_version": {"key": "@apiVersion", "type": "str"},
+        "endpoint": {"key": "endpoint", "type": "EndpointBase"},
     }
 
-    def __init__(
-        self,
-        *,
-        endpoint: "EndpointBase",
-        api_version: Optional[str] = "1.1",
-        **kwargs
-    ):
+    def __init__(self, *, endpoint: "EndpointBase", api_version: Optional[str] = "1.1", **kwargs):
         """
         :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
          None and "1.1". The default value is "1.1".
@@ -2450,7 +2304,7 @@ class OnvifDeviceGetRequest(MethodRequest):
         :paramtype endpoint: ~azure.media.videoanalyzer.edge.models.EndpointBase
         """
         super(OnvifDeviceGetRequest, self).__init__(api_version=api_version, **kwargs)
-        self.method_name = 'onvifDeviceGet'  # type: str
+        self.method_name = "onvifDeviceGet"  # type: str
         self.endpoint = endpoint
 
 
@@ -2466,9 +2320,9 @@ class OnvifDns(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'from_dhcp': {'key': 'fromDhcp', 'type': 'bool'},
-        'ipv4_address': {'key': 'ipv4Address', 'type': '[str]'},
-        'ipv6_address': {'key': 'ipv6Address', 'type': '[str]'},
+        "from_dhcp": {"key": "fromDhcp", "type": "bool"},
+        "ipv4_address": {"key": "ipv4Address", "type": "[str]"},
+        "ipv6_address": {"key": "ipv6Address", "type": "[str]"},
     }
 
     def __init__(
@@ -2503,17 +2357,11 @@ class OnvifHostName(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'from_dhcp': {'key': 'fromDhcp', 'type': 'bool'},
-        'hostname': {'key': 'hostname', 'type': 'str'},
+        "from_dhcp": {"key": "fromDhcp", "type": "bool"},
+        "hostname": {"key": "hostname", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        from_dhcp: Optional[bool] = None,
-        hostname: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, from_dhcp: Optional[bool] = None, hostname: Optional[str] = None, **kwargs):
         """
         :keyword from_dhcp: Result value showing if the ONVIF device is configured to use DHCP.
         :paramtype from_dhcp: bool
@@ -2538,9 +2386,9 @@ class OnvifSystemDateTime(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'time': {'key': 'time', 'type': 'str'},
-        'time_zone': {'key': 'timeZone', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "time": {"key": "time", "type": "str"},
+        "time_zone": {"key": "timeZone", "type": "str"},
     }
 
     def __init__(
@@ -2579,9 +2427,9 @@ class OutputSelector(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'property': {'key': 'property', 'type': 'str'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "property": {"key": "property", "type": "str"},
+        "operator": {"key": "operator", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
     def __init__(
@@ -2626,15 +2474,15 @@ class ParameterDeclaration(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True, 'max_length': 64, 'min_length': 0},
-        'type': {'required': True},
+        "name": {"required": True, "max_length": 64, "min_length": 0},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'default': {'key': 'default', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "default": {"key": "default", "type": "str"},
     }
 
     def __init__(
@@ -2677,21 +2525,15 @@ class ParameterDefinition(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, value: Optional[str] = None, **kwargs):
         """
         :keyword name: Required. Name of the parameter declared in the pipeline topology.
         :paramtype name: str
@@ -2715,27 +2557,22 @@ class PemCertificateList(CertificateSource):
     """
 
     _validation = {
-        'type': {'required': True},
-        'certificates': {'required': True},
+        "type": {"required": True},
+        "certificates": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'certificates': {'key': 'certificates', 'type': '[str]'},
+        "type": {"key": "@type", "type": "str"},
+        "certificates": {"key": "certificates", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        certificates: List[str],
-        **kwargs
-    ):
+    def __init__(self, *, certificates: List[str], **kwargs):
         """
         :keyword certificates: Required. PEM formatted public certificates. One certificate per entry.
         :paramtype certificates: list[str]
         """
         super(PemCertificateList, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.PemCertificateList'  # type: str
+        self.type = "#Microsoft.VideoAnalyzer.PemCertificateList"  # type: str
         self.certificates = certificates
 
 
@@ -2743,29 +2580,29 @@ class PipelineTopology(msrest.serialization.Model):
     """Pipeline topology describes the processing steps to be applied when processing media for a particular outcome. The topology should be defined according to the scenario to be achieved and can be reused across many pipeline instances which share the same processing characteristics. For instance, a pipeline topology which acquires data from a RTSP camera, process it with an specific AI model and stored the data on the cloud can be reused across many different cameras, as long as the same processing should be applied across all the cameras. Individual instance properties can be defined through the use of user-defined parameters, which allow for a topology to be parameterized, thus allowing individual pipelines to refer to different values, such as individual cameras RTSP endpoints and credentials. Overall a topology is composed of the following:
 
 
-* Parameters: list of user defined parameters that can be references across the topology nodes.
-* Sources: list of one or more data sources nodes such as an RTSP source which allows for media to be ingested from cameras.
-* Processors: list of nodes which perform data analysis or transformations.
-  -Sinks: list of one or more data sinks which allow for data to be stored or exported to other destinations.
+    * Parameters: list of user defined parameters that can be references across the topology nodes.
+    * Sources: list of one or more data sources nodes such as an RTSP source which allows for media to be ingested from cameras.
+    * Processors: list of nodes which perform data analysis or transformations.
+      -Sinks: list of one or more data sinks which allow for data to be stored or exported to other destinations.
 
-    All required parameters must be populated in order to send to Azure.
+        All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. Pipeline topology unique identifier.
-    :vartype name: str
-    :ivar system_data: Read-only system metadata associated with this object.
-    :vartype system_data: ~azure.media.videoanalyzer.edge.models.SystemData
-    :ivar properties: Pipeline topology properties.
-    :vartype properties: ~azure.media.videoanalyzer.edge.models.PipelineTopologyProperties
+        :ivar name: Required. Pipeline topology unique identifier.
+        :vartype name: str
+        :ivar system_data: Read-only system metadata associated with this object.
+        :vartype system_data: ~azure.media.videoanalyzer.edge.models.SystemData
+        :ivar properties: Pipeline topology properties.
+        :vartype properties: ~azure.media.videoanalyzer.edge.models.PipelineTopologyProperties
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'properties': {'key': 'properties', 'type': 'PipelineTopologyProperties'},
+        "name": {"key": "name", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "PipelineTopologyProperties"},
     }
 
     def __init__(
@@ -2802,16 +2639,12 @@ class PipelineTopologyCollection(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PipelineTopology]'},
-        'continuation_token': {'key': '@continuationToken', 'type': 'str'},
+        "value": {"key": "value", "type": "[PipelineTopology]"},
+        "continuation_token": {"key": "@continuationToken", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["PipelineTopology"]] = None,
-        continuation_token: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["PipelineTopology"]] = None, continuation_token: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: List of pipeline topologies.
@@ -2843,23 +2676,17 @@ class PipelineTopologyDeleteRequest(MethodRequestEmptyBodyBase):
     """
 
     _validation = {
-        'method_name': {'required': True, 'readonly': True},
-        'name': {'required': True},
+        "method_name": {"required": True, "readonly": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'method_name': {'key': 'methodName', 'type': 'str'},
-        'api_version': {'key': '@apiVersion', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "method_name": {"key": "methodName", "type": "str"},
+        "api_version": {"key": "@apiVersion", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        api_version: Optional[str] = "1.1",
-        **kwargs
-    ):
+    def __init__(self, *, name: str, api_version: Optional[str] = "1.1", **kwargs):
         """
         :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
          None and "1.1". The default value is "1.1".
@@ -2868,7 +2695,7 @@ class PipelineTopologyDeleteRequest(MethodRequestEmptyBodyBase):
         :paramtype name: str
         """
         super(PipelineTopologyDeleteRequest, self).__init__(api_version=api_version, name=name, **kwargs)
-        self.method_name = 'pipelineTopologyDelete'  # type: str
+        self.method_name = "pipelineTopologyDelete"  # type: str
 
 
 class PipelineTopologyGetRequest(MethodRequestEmptyBodyBase):
@@ -2888,23 +2715,17 @@ class PipelineTopologyGetRequest(MethodRequestEmptyBodyBase):
     """
 
     _validation = {
-        'method_name': {'required': True, 'readonly': True},
-        'name': {'required': True},
+        "method_name": {"required": True, "readonly": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'method_name': {'key': 'methodName', 'type': 'str'},
-        'api_version': {'key': '@apiVersion', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "method_name": {"key": "methodName", "type": "str"},
+        "api_version": {"key": "@apiVersion", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        api_version: Optional[str] = "1.1",
-        **kwargs
-    ):
+    def __init__(self, *, name: str, api_version: Optional[str] = "1.1", **kwargs):
         """
         :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
          None and "1.1". The default value is "1.1".
@@ -2913,7 +2734,7 @@ class PipelineTopologyGetRequest(MethodRequestEmptyBodyBase):
         :paramtype name: str
         """
         super(PipelineTopologyGetRequest, self).__init__(api_version=api_version, name=name, **kwargs)
-        self.method_name = 'pipelineTopologyGet'  # type: str
+        self.method_name = "pipelineTopologyGet"  # type: str
 
 
 class PipelineTopologyListRequest(MethodRequest):
@@ -2931,27 +2752,22 @@ class PipelineTopologyListRequest(MethodRequest):
     """
 
     _validation = {
-        'method_name': {'required': True, 'readonly': True},
+        "method_name": {"required": True, "readonly": True},
     }
 
     _attribute_map = {
-        'method_name': {'key': 'methodName', 'type': 'str'},
-        'api_version': {'key': '@apiVersion', 'type': 'str'},
+        "method_name": {"key": "methodName", "type": "str"},
+        "api_version": {"key": "@apiVersion", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        api_version: Optional[str] = "1.1",
-        **kwargs
-    ):
+    def __init__(self, *, api_version: Optional[str] = "1.1", **kwargs):
         """
         :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
          None and "1.1". The default value is "1.1".
         :paramtype api_version: str
         """
         super(PipelineTopologyListRequest, self).__init__(api_version=api_version, **kwargs)
-        self.method_name = 'pipelineTopologyList'  # type: str
+        self.method_name = "pipelineTopologyList"  # type: str
 
 
 class PipelineTopologyProperties(msrest.serialization.Model):
@@ -2977,11 +2793,11 @@ class PipelineTopologyProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': '[ParameterDeclaration]'},
-        'sources': {'key': 'sources', 'type': '[SourceNodeBase]'},
-        'processors': {'key': 'processors', 'type': '[ProcessorNodeBase]'},
-        'sinks': {'key': 'sinks', 'type': '[SinkNodeBase]'},
+        "description": {"key": "description", "type": "str"},
+        "parameters": {"key": "parameters", "type": "[ParameterDeclaration]"},
+        "sources": {"key": "sources", "type": "[SourceNodeBase]"},
+        "processors": {"key": "processors", "type": "[ProcessorNodeBase]"},
+        "sinks": {"key": "sinks", "type": "[SinkNodeBase]"},
     }
 
     def __init__(
@@ -3043,8 +2859,8 @@ class PipelineTopologySetRequest(MethodRequest):
      user-defined parameters, which allow for a topology to be parameterized, thus allowing
      individual pipelines to refer to different values, such as individual cameras RTSP endpoints
      and credentials. Overall a topology is composed of the following:
-    
-    
+
+
      * Parameters: list of user defined parameters that can be references across the topology
      nodes.
      * Sources: list of one or more data sources nodes such as an RTSP source which allows for
@@ -3056,23 +2872,17 @@ class PipelineTopologySetRequest(MethodRequest):
     """
 
     _validation = {
-        'method_name': {'required': True, 'readonly': True},
-        'pipeline_topology': {'required': True},
+        "method_name": {"required": True, "readonly": True},
+        "pipeline_topology": {"required": True},
     }
 
     _attribute_map = {
-        'method_name': {'key': 'methodName', 'type': 'str'},
-        'api_version': {'key': '@apiVersion', 'type': 'str'},
-        'pipeline_topology': {'key': 'pipelineTopology', 'type': 'PipelineTopology'},
+        "method_name": {"key": "methodName", "type": "str"},
+        "api_version": {"key": "@apiVersion", "type": "str"},
+        "pipeline_topology": {"key": "pipelineTopology", "type": "PipelineTopology"},
     }
 
-    def __init__(
-        self,
-        *,
-        pipeline_topology: "PipelineTopology",
-        api_version: Optional[str] = "1.1",
-        **kwargs
-    ):
+    def __init__(self, *, pipeline_topology: "PipelineTopology", api_version: Optional[str] = "1.1", **kwargs):
         """
         :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
          None and "1.1". The default value is "1.1".
@@ -3087,8 +2897,8 @@ class PipelineTopologySetRequest(MethodRequest):
          user-defined parameters, which allow for a topology to be parameterized, thus allowing
          individual pipelines to refer to different values, such as individual cameras RTSP endpoints
          and credentials. Overall a topology is composed of the following:
-        
-        
+
+
          * Parameters: list of user defined parameters that can be references across the topology
          nodes.
          * Sources: list of one or more data sources nodes such as an RTSP source which allows for
@@ -3099,7 +2909,7 @@ class PipelineTopologySetRequest(MethodRequest):
         :paramtype pipeline_topology: ~azure.media.videoanalyzer.edge.models.PipelineTopology
         """
         super(PipelineTopologySetRequest, self).__init__(api_version=api_version, **kwargs)
-        self.method_name = 'pipelineTopologySet'  # type: str
+        self.method_name = "pipelineTopologySet"  # type: str
         self.pipeline_topology = pipeline_topology
 
 
@@ -3107,39 +2917,39 @@ class PipelineTopologySetRequestBody(PipelineTopology, MethodRequest):
     """Pipeline topology describes the processing steps to be applied when processing media for a particular outcome. The topology should be defined according to the scenario to be achieved and can be reused across many pipeline instances which share the same processing characteristics. For instance, a pipeline topology which acquires data from a RTSP camera, process it with an specific AI model and stored the data on the cloud can be reused across many different cameras, as long as the same processing should be applied across all the cameras. Individual instance properties can be defined through the use of user-defined parameters, which allow for a topology to be parameterized, thus allowing individual pipelines to refer to different values, such as individual cameras RTSP endpoints and credentials. Overall a topology is composed of the following:
 
 
-* Parameters: list of user defined parameters that can be references across the topology nodes.
-* Sources: list of one or more data sources nodes such as an RTSP source which allows for media to be ingested from cameras.
-* Processors: list of nodes which perform data analysis or transformations.
-  -Sinks: list of one or more data sinks which allow for data to be stored or exported to other destinations.
+    * Parameters: list of user defined parameters that can be references across the topology nodes.
+    * Sources: list of one or more data sources nodes such as an RTSP source which allows for media to be ingested from cameras.
+    * Processors: list of nodes which perform data analysis or transformations.
+      -Sinks: list of one or more data sinks which allow for data to be stored or exported to other destinations.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+        Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+        All required parameters must be populated in order to send to Azure.
 
-    :ivar method_name: Required. Direct method method name.Constant filled by server.
-    :vartype method_name: str
-    :ivar api_version: Video Analyzer API version. The only acceptable values to pass in are None
-     and "1.1". The default value is "1.1".
-    :vartype api_version: str
-    :ivar name: Required. Pipeline topology unique identifier.
-    :vartype name: str
-    :ivar system_data: Read-only system metadata associated with this object.
-    :vartype system_data: ~azure.media.videoanalyzer.edge.models.SystemData
-    :ivar properties: Pipeline topology properties.
-    :vartype properties: ~azure.media.videoanalyzer.edge.models.PipelineTopologyProperties
+        :ivar method_name: Required. Direct method method name.Constant filled by server.
+        :vartype method_name: str
+        :ivar api_version: Video Analyzer API version. The only acceptable values to pass in are None
+         and "1.1". The default value is "1.1".
+        :vartype api_version: str
+        :ivar name: Required. Pipeline topology unique identifier.
+        :vartype name: str
+        :ivar system_data: Read-only system metadata associated with this object.
+        :vartype system_data: ~azure.media.videoanalyzer.edge.models.SystemData
+        :ivar properties: Pipeline topology properties.
+        :vartype properties: ~azure.media.videoanalyzer.edge.models.PipelineTopologyProperties
     """
 
     _validation = {
-        'method_name': {'required': True, 'readonly': True},
-        'name': {'required': True},
+        "method_name": {"required": True, "readonly": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'method_name': {'key': 'methodName', 'type': 'str'},
-        'api_version': {'key': '@apiVersion', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'properties': {'key': 'properties', 'type': 'PipelineTopologyProperties'},
+        "method_name": {"key": "methodName", "type": "str"},
+        "api_version": {"key": "@apiVersion", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "PipelineTopologyProperties"},
     }
 
     def __init__(
@@ -3162,10 +2972,12 @@ class PipelineTopologySetRequestBody(PipelineTopology, MethodRequest):
         :keyword properties: Pipeline topology properties.
         :paramtype properties: ~azure.media.videoanalyzer.edge.models.PipelineTopologyProperties
         """
-        super(PipelineTopologySetRequestBody, self).__init__(name=name, system_data=system_data, properties=properties, api_version=api_version, **kwargs)
-        self.method_name = 'PipelineTopologySetRequestBody'  # type: str
+        super(PipelineTopologySetRequestBody, self).__init__(
+            name=name, system_data=system_data, properties=properties, api_version=api_version, **kwargs
+        )
+        self.method_name = "PipelineTopologySetRequestBody"  # type: str
         self.api_version = api_version
-        self.method_name = 'PipelineTopologySetRequestBody'  # type: str
+        self.method_name = "PipelineTopologySetRequestBody"  # type: str
         self.name = name
         self.system_data = system_data
         self.properties = properties
@@ -3187,10 +2999,10 @@ class RateControl(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'bit_rate_limit': {'key': 'bitRateLimit', 'type': 'float'},
-        'encoding_interval': {'key': 'encodingInterval', 'type': 'float'},
-        'frame_rate_limit': {'key': 'frameRateLimit', 'type': 'float'},
-        'guaranteed_frame_rate': {'key': 'guaranteedFrameRate', 'type': 'bool'},
+        "bit_rate_limit": {"key": "bitRateLimit", "type": "float"},
+        "encoding_interval": {"key": "encodingInterval", "type": "float"},
+        "frame_rate_limit": {"key": "frameRateLimit", "type": "float"},
+        "guaranteed_frame_rate": {"key": "guaranteedFrameRate", "type": "bool"},
     }
 
     def __init__(
@@ -3235,13 +3047,13 @@ class RemoteDeviceAdapter(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'properties': {'key': 'properties', 'type': 'RemoteDeviceAdapterProperties'},
+        "name": {"key": "name", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "RemoteDeviceAdapterProperties"},
     }
 
     def __init__(
@@ -3278,16 +3090,12 @@ class RemoteDeviceAdapterCollection(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[RemoteDeviceAdapter]'},
-        'continuation_token': {'key': '@continuationToken', 'type': 'str'},
+        "value": {"key": "value", "type": "[RemoteDeviceAdapter]"},
+        "continuation_token": {"key": "@continuationToken", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["RemoteDeviceAdapter"]] = None,
-        continuation_token: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["RemoteDeviceAdapter"]] = None, continuation_token: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: An array of remote device adapters.
@@ -3319,23 +3127,17 @@ class RemoteDeviceAdapterDeleteRequest(MethodRequestEmptyBodyBase):
     """
 
     _validation = {
-        'method_name': {'required': True, 'readonly': True},
-        'name': {'required': True},
+        "method_name": {"required": True, "readonly": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'method_name': {'key': 'methodName', 'type': 'str'},
-        'api_version': {'key': '@apiVersion', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "method_name": {"key": "methodName", "type": "str"},
+        "api_version": {"key": "@apiVersion", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        api_version: Optional[str] = "1.1",
-        **kwargs
-    ):
+    def __init__(self, *, name: str, api_version: Optional[str] = "1.1", **kwargs):
         """
         :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
          None and "1.1". The default value is "1.1".
@@ -3344,7 +3146,7 @@ class RemoteDeviceAdapterDeleteRequest(MethodRequestEmptyBodyBase):
         :paramtype name: str
         """
         super(RemoteDeviceAdapterDeleteRequest, self).__init__(api_version=api_version, name=name, **kwargs)
-        self.method_name = 'remoteDeviceAdapterDelete'  # type: str
+        self.method_name = "remoteDeviceAdapterDelete"  # type: str
 
 
 class RemoteDeviceAdapterGetRequest(MethodRequestEmptyBodyBase):
@@ -3364,23 +3166,17 @@ class RemoteDeviceAdapterGetRequest(MethodRequestEmptyBodyBase):
     """
 
     _validation = {
-        'method_name': {'required': True, 'readonly': True},
-        'name': {'required': True},
+        "method_name": {"required": True, "readonly": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'method_name': {'key': 'methodName', 'type': 'str'},
-        'api_version': {'key': '@apiVersion', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "method_name": {"key": "methodName", "type": "str"},
+        "api_version": {"key": "@apiVersion", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        api_version: Optional[str] = "1.1",
-        **kwargs
-    ):
+    def __init__(self, *, name: str, api_version: Optional[str] = "1.1", **kwargs):
         """
         :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
          None and "1.1". The default value is "1.1".
@@ -3389,7 +3185,7 @@ class RemoteDeviceAdapterGetRequest(MethodRequestEmptyBodyBase):
         :paramtype name: str
         """
         super(RemoteDeviceAdapterGetRequest, self).__init__(api_version=api_version, name=name, **kwargs)
-        self.method_name = 'remoteDeviceAdapterGet'  # type: str
+        self.method_name = "remoteDeviceAdapterGet"  # type: str
 
 
 class RemoteDeviceAdapterListRequest(MethodRequest):
@@ -3407,27 +3203,22 @@ class RemoteDeviceAdapterListRequest(MethodRequest):
     """
 
     _validation = {
-        'method_name': {'required': True, 'readonly': True},
+        "method_name": {"required": True, "readonly": True},
     }
 
     _attribute_map = {
-        'method_name': {'key': 'methodName', 'type': 'str'},
-        'api_version': {'key': '@apiVersion', 'type': 'str'},
+        "method_name": {"key": "methodName", "type": "str"},
+        "api_version": {"key": "@apiVersion", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        api_version: Optional[str] = "1.1",
-        **kwargs
-    ):
+    def __init__(self, *, api_version: Optional[str] = "1.1", **kwargs):
         """
         :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
          None and "1.1". The default value is "1.1".
         :paramtype api_version: str
         """
         super(RemoteDeviceAdapterListRequest, self).__init__(api_version=api_version, **kwargs)
-        self.method_name = 'remoteDeviceAdapterList'  # type: str
+        self.method_name = "remoteDeviceAdapterList"  # type: str
 
 
 class RemoteDeviceAdapterProperties(msrest.serialization.Model):
@@ -3447,14 +3238,14 @@ class RemoteDeviceAdapterProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'target': {'required': True},
-        'iot_hub_device_connection': {'required': True},
+        "target": {"required": True},
+        "iot_hub_device_connection": {"required": True},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'RemoteDeviceAdapterTarget'},
-        'iot_hub_device_connection': {'key': 'iotHubDeviceConnection', 'type': 'IotHubDeviceConnection'},
+        "description": {"key": "description", "type": "str"},
+        "target": {"key": "target", "type": "RemoteDeviceAdapterTarget"},
+        "iot_hub_device_connection": {"key": "iotHubDeviceConnection", "type": "IotHubDeviceConnection"},
     }
 
     def __init__(
@@ -3502,23 +3293,17 @@ class RemoteDeviceAdapterSetRequest(MethodRequest):
     """
 
     _validation = {
-        'method_name': {'required': True, 'readonly': True},
-        'remote_device_adapter': {'required': True},
+        "method_name": {"required": True, "readonly": True},
+        "remote_device_adapter": {"required": True},
     }
 
     _attribute_map = {
-        'method_name': {'key': 'methodName', 'type': 'str'},
-        'api_version': {'key': '@apiVersion', 'type': 'str'},
-        'remote_device_adapter': {'key': 'remoteDeviceAdapter', 'type': 'RemoteDeviceAdapter'},
+        "method_name": {"key": "methodName", "type": "str"},
+        "api_version": {"key": "@apiVersion", "type": "str"},
+        "remote_device_adapter": {"key": "remoteDeviceAdapter", "type": "RemoteDeviceAdapter"},
     }
 
-    def __init__(
-        self,
-        *,
-        remote_device_adapter: "RemoteDeviceAdapter",
-        api_version: Optional[str] = "1.1",
-        **kwargs
-    ):
+    def __init__(self, *, remote_device_adapter: "RemoteDeviceAdapter", api_version: Optional[str] = "1.1", **kwargs):
         """
         :keyword api_version: Video Analyzer API version. The only acceptable values to pass in are
          None and "1.1". The default value is "1.1".
@@ -3530,7 +3315,7 @@ class RemoteDeviceAdapterSetRequest(MethodRequest):
         :paramtype remote_device_adapter: ~azure.media.videoanalyzer.edge.models.RemoteDeviceAdapter
         """
         super(RemoteDeviceAdapterSetRequest, self).__init__(api_version=api_version, **kwargs)
-        self.method_name = 'remoteDeviceAdapterSet'  # type: str
+        self.method_name = "remoteDeviceAdapterSet"  # type: str
         self.remote_device_adapter = remote_device_adapter
 
 
@@ -3555,16 +3340,16 @@ class RemoteDeviceAdapterSetRequestBody(RemoteDeviceAdapter, MethodRequest):
     """
 
     _validation = {
-        'method_name': {'required': True, 'readonly': True},
-        'name': {'required': True},
+        "method_name": {"required": True, "readonly": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'method_name': {'key': 'methodName', 'type': 'str'},
-        'api_version': {'key': '@apiVersion', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'properties': {'key': 'properties', 'type': 'RemoteDeviceAdapterProperties'},
+        "method_name": {"key": "methodName", "type": "str"},
+        "api_version": {"key": "@apiVersion", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "RemoteDeviceAdapterProperties"},
     }
 
     def __init__(
@@ -3587,10 +3372,12 @@ class RemoteDeviceAdapterSetRequestBody(RemoteDeviceAdapter, MethodRequest):
         :keyword properties: Properties of the remote device adapter.
         :paramtype properties: ~azure.media.videoanalyzer.edge.models.RemoteDeviceAdapterProperties
         """
-        super(RemoteDeviceAdapterSetRequestBody, self).__init__(name=name, system_data=system_data, properties=properties, api_version=api_version, **kwargs)
-        self.method_name = 'RemoteDeviceAdapterSetRequestBody'  # type: str
+        super(RemoteDeviceAdapterSetRequestBody, self).__init__(
+            name=name, system_data=system_data, properties=properties, api_version=api_version, **kwargs
+        )
+        self.method_name = "RemoteDeviceAdapterSetRequestBody"  # type: str
         self.api_version = api_version
-        self.method_name = 'RemoteDeviceAdapterSetRequestBody'  # type: str
+        self.method_name = "RemoteDeviceAdapterSetRequestBody"  # type: str
         self.name = name
         self.system_data = system_data
         self.properties = properties
@@ -3606,19 +3393,14 @@ class RemoteDeviceAdapterTarget(msrest.serialization.Model):
     """
 
     _validation = {
-        'host': {'required': True},
+        "host": {"required": True},
     }
 
     _attribute_map = {
-        'host': {'key': 'host', 'type': 'str'},
+        "host": {"key": "host", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        host: str,
-        **kwargs
-    ):
+    def __init__(self, *, host: str, **kwargs):
         """
         :keyword host: Required. Hostname or IP address of the remote device.
         :paramtype host: str
@@ -3649,25 +3431,20 @@ class RtspSource(SourceNodeBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
-        'endpoint': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
+        "endpoint": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'transport': {'key': 'transport', 'type': 'str'},
-        'endpoint': {'key': 'endpoint', 'type': 'EndpointBase'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "transport": {"key": "transport", "type": "str"},
+        "endpoint": {"key": "endpoint", "type": "EndpointBase"},
     }
 
     def __init__(
-        self,
-        *,
-        name: str,
-        endpoint: "EndpointBase",
-        transport: Optional[Union[str, "RtspTransport"]] = None,
-        **kwargs
+        self, *, name: str, endpoint: "EndpointBase", transport: Optional[Union[str, "RtspTransport"]] = None, **kwargs
     ):
         """
         :keyword name: Required. Node name. Must be unique within the topology.
@@ -3684,7 +3461,7 @@ class RtspSource(SourceNodeBase):
         :paramtype endpoint: ~azure.media.videoanalyzer.edge.models.EndpointBase
         """
         super(RtspSource, self).__init__(name=name, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.RtspSource'  # type: str
+        self.type = "#Microsoft.VideoAnalyzer.RtspSource"  # type: str
         self.transport = transport
         self.endpoint = endpoint
 
@@ -3704,8 +3481,8 @@ class SamplingOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'skip_samples_without_annotation': {'key': 'skipSamplesWithoutAnnotation', 'type': 'str'},
-        'maximum_samples_per_second': {'key': 'maximumSamplesPerSecond', 'type': 'str'},
+        "skip_samples_without_annotation": {"key": "skipSamplesWithoutAnnotation", "type": "str"},
+        "maximum_samples_per_second": {"key": "maximumSamplesPerSecond", "type": "str"},
     }
 
     def __init__(
@@ -3764,19 +3541,19 @@ class SignalGateProcessor(ProcessorNodeBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
-        'inputs': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
+        "inputs": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'inputs': {'key': 'inputs', 'type': '[NodeInput]'},
-        'activation_evaluation_window': {'key': 'activationEvaluationWindow', 'type': 'str'},
-        'activation_signal_offset': {'key': 'activationSignalOffset', 'type': 'str'},
-        'minimum_activation_time': {'key': 'minimumActivationTime', 'type': 'str'},
-        'maximum_activation_time': {'key': 'maximumActivationTime', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "inputs": {"key": "inputs", "type": "[NodeInput]"},
+        "activation_evaluation_window": {"key": "activationEvaluationWindow", "type": "str"},
+        "activation_signal_offset": {"key": "activationSignalOffset", "type": "str"},
+        "minimum_activation_time": {"key": "minimumActivationTime", "type": "str"},
+        "maximum_activation_time": {"key": "maximumActivationTime", "type": "str"},
     }
 
     def __init__(
@@ -3816,7 +3593,7 @@ class SignalGateProcessor(ProcessorNodeBase):
         :paramtype maximum_activation_time: str
         """
         super(SignalGateProcessor, self).__init__(name=name, inputs=inputs, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.SignalGateProcessor'  # type: str
+        self.type = "#Microsoft.VideoAnalyzer.SignalGateProcessor"  # type: str
         self.activation_evaluation_window = activation_evaluation_window
         self.activation_signal_offset = activation_signal_offset
         self.minimum_activation_time = minimum_activation_time
@@ -3836,23 +3613,22 @@ class SpatialAnalysisOperationBase(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
     }
 
     _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.SpatialAnalysisCustomOperation': 'SpatialAnalysisCustomOperation', 'SpatialAnalysisTypedOperationBase': 'SpatialAnalysisTypedOperationBase'}
+        "type": {
+            "#Microsoft.VideoAnalyzer.SpatialAnalysisCustomOperation": "SpatialAnalysisCustomOperation",
+            "SpatialAnalysisTypedOperationBase": "SpatialAnalysisTypedOperationBase",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(SpatialAnalysisOperationBase, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
 
@@ -3870,28 +3646,23 @@ class SpatialAnalysisCustomOperation(SpatialAnalysisOperationBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'extension_configuration': {'required': True},
+        "type": {"required": True},
+        "extension_configuration": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'extension_configuration': {'key': 'extensionConfiguration', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "extension_configuration": {"key": "extensionConfiguration", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        extension_configuration: str,
-        **kwargs
-    ):
+    def __init__(self, *, extension_configuration: str, **kwargs):
         """
         :keyword extension_configuration: Required. Custom configuration to pass to the Azure Cognitive
          Services Spatial Analysis module.
         :paramtype extension_configuration: str
         """
         super(SpatialAnalysisCustomOperation, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.SpatialAnalysisCustomOperation'  # type: str
+        self.type = "#Microsoft.VideoAnalyzer.SpatialAnalysisCustomOperation"  # type: str
         self.extension_configuration = extension_configuration
 
 
@@ -3906,8 +3677,8 @@ class SpatialAnalysisOperationEventBase(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'threshold': {'key': 'threshold', 'type': 'str'},
-        'focus': {'key': 'focus', 'type': 'str'},
+        "threshold": {"key": "threshold", "type": "str"},
+        "focus": {"key": "focus", "type": "str"},
     }
 
     def __init__(
@@ -3945,10 +3716,10 @@ class SpatialAnalysisPersonCountEvent(SpatialAnalysisOperationEventBase):
     """
 
     _attribute_map = {
-        'threshold': {'key': 'threshold', 'type': 'str'},
-        'focus': {'key': 'focus', 'type': 'str'},
-        'trigger': {'key': 'trigger', 'type': 'str'},
-        'output_frequency': {'key': 'outputFrequency', 'type': 'str'},
+        "threshold": {"key": "threshold", "type": "str"},
+        "focus": {"key": "focus", "type": "str"},
+        "trigger": {"key": "trigger", "type": "str"},
+        "output_frequency": {"key": "outputFrequency", "type": "str"},
     }
 
     def __init__(
@@ -4005,22 +3776,27 @@ class SpatialAnalysisTypedOperationBase(SpatialAnalysisOperationBase):
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'debug': {'key': 'debug', 'type': 'str'},
-        'calibration_configuration': {'key': 'calibrationConfiguration', 'type': 'str'},
-        'camera_configuration': {'key': 'cameraConfiguration', 'type': 'str'},
-        'camera_calibrator_node_configuration': {'key': 'cameraCalibratorNodeConfiguration', 'type': 'str'},
-        'detector_node_configuration': {'key': 'detectorNodeConfiguration', 'type': 'str'},
-        'tracker_node_configuration': {'key': 'trackerNodeConfiguration', 'type': 'str'},
-        'enable_face_mask_classifier': {'key': 'enableFaceMaskClassifier', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "debug": {"key": "debug", "type": "str"},
+        "calibration_configuration": {"key": "calibrationConfiguration", "type": "str"},
+        "camera_configuration": {"key": "cameraConfiguration", "type": "str"},
+        "camera_calibrator_node_configuration": {"key": "cameraCalibratorNodeConfiguration", "type": "str"},
+        "detector_node_configuration": {"key": "detectorNodeConfiguration", "type": "str"},
+        "tracker_node_configuration": {"key": "trackerNodeConfiguration", "type": "str"},
+        "enable_face_mask_classifier": {"key": "enableFaceMaskClassifier", "type": "str"},
     }
 
     _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.SpatialAnalysisPersonCountOperation': 'SpatialAnalysisPersonCountOperation', '#Microsoft.VideoAnalyzer.SpatialAnalysisPersonDistanceOperation': 'SpatialAnalysisPersonDistanceOperation', '#Microsoft.VideoAnalyzer.SpatialAnalysisPersonLineCrossingOperation': 'SpatialAnalysisPersonLineCrossingOperation', '#Microsoft.VideoAnalyzer.SpatialAnalysisPersonZoneCrossingOperation': 'SpatialAnalysisPersonZoneCrossingOperation'}
+        "type": {
+            "#Microsoft.VideoAnalyzer.SpatialAnalysisPersonCountOperation": "SpatialAnalysisPersonCountOperation",
+            "#Microsoft.VideoAnalyzer.SpatialAnalysisPersonDistanceOperation": "SpatialAnalysisPersonDistanceOperation",
+            "#Microsoft.VideoAnalyzer.SpatialAnalysisPersonLineCrossingOperation": "SpatialAnalysisPersonLineCrossingOperation",
+            "#Microsoft.VideoAnalyzer.SpatialAnalysisPersonZoneCrossingOperation": "SpatialAnalysisPersonZoneCrossingOperation",
+        }
     }
 
     def __init__(
@@ -4053,7 +3829,7 @@ class SpatialAnalysisTypedOperationBase(SpatialAnalysisOperationBase):
         :paramtype enable_face_mask_classifier: str
         """
         super(SpatialAnalysisTypedOperationBase, self).__init__(**kwargs)
-        self.type = 'SpatialAnalysisTypedOperationBase'  # type: str
+        self.type = "SpatialAnalysisTypedOperationBase"  # type: str
         self.debug = debug
         self.calibration_configuration = calibration_configuration
         self.camera_configuration = camera_configuration
@@ -4091,20 +3867,20 @@ class SpatialAnalysisPersonCountOperation(SpatialAnalysisTypedOperationBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'zones': {'required': True},
+        "type": {"required": True},
+        "zones": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'debug': {'key': 'debug', 'type': 'str'},
-        'calibration_configuration': {'key': 'calibrationConfiguration', 'type': 'str'},
-        'camera_configuration': {'key': 'cameraConfiguration', 'type': 'str'},
-        'camera_calibrator_node_configuration': {'key': 'cameraCalibratorNodeConfiguration', 'type': 'str'},
-        'detector_node_configuration': {'key': 'detectorNodeConfiguration', 'type': 'str'},
-        'tracker_node_configuration': {'key': 'trackerNodeConfiguration', 'type': 'str'},
-        'enable_face_mask_classifier': {'key': 'enableFaceMaskClassifier', 'type': 'str'},
-        'zones': {'key': 'zones', 'type': '[SpatialAnalysisPersonCountZoneEvents]'},
+        "type": {"key": "@type", "type": "str"},
+        "debug": {"key": "debug", "type": "str"},
+        "calibration_configuration": {"key": "calibrationConfiguration", "type": "str"},
+        "camera_configuration": {"key": "cameraConfiguration", "type": "str"},
+        "camera_calibrator_node_configuration": {"key": "cameraCalibratorNodeConfiguration", "type": "str"},
+        "detector_node_configuration": {"key": "detectorNodeConfiguration", "type": "str"},
+        "tracker_node_configuration": {"key": "trackerNodeConfiguration", "type": "str"},
+        "enable_face_mask_classifier": {"key": "enableFaceMaskClassifier", "type": "str"},
+        "zones": {"key": "zones", "type": "[SpatialAnalysisPersonCountZoneEvents]"},
     }
 
     def __init__(
@@ -4140,8 +3916,17 @@ class SpatialAnalysisPersonCountOperation(SpatialAnalysisTypedOperationBase):
         :paramtype zones:
          list[~azure.media.videoanalyzer.edge.models.SpatialAnalysisPersonCountZoneEvents]
         """
-        super(SpatialAnalysisPersonCountOperation, self).__init__(debug=debug, calibration_configuration=calibration_configuration, camera_configuration=camera_configuration, camera_calibrator_node_configuration=camera_calibrator_node_configuration, detector_node_configuration=detector_node_configuration, tracker_node_configuration=tracker_node_configuration, enable_face_mask_classifier=enable_face_mask_classifier, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.SpatialAnalysisPersonCountOperation'  # type: str
+        super(SpatialAnalysisPersonCountOperation, self).__init__(
+            debug=debug,
+            calibration_configuration=calibration_configuration,
+            camera_configuration=camera_configuration,
+            camera_calibrator_node_configuration=camera_calibrator_node_configuration,
+            detector_node_configuration=detector_node_configuration,
+            tracker_node_configuration=tracker_node_configuration,
+            enable_face_mask_classifier=enable_face_mask_classifier,
+            **kwargs
+        )
+        self.type = "#Microsoft.VideoAnalyzer.SpatialAnalysisPersonCountOperation"  # type: str
         self.zones = zones
 
 
@@ -4157,20 +3942,16 @@ class SpatialAnalysisPersonCountZoneEvents(msrest.serialization.Model):
     """
 
     _validation = {
-        'zone': {'required': True},
+        "zone": {"required": True},
     }
 
     _attribute_map = {
-        'zone': {'key': 'zone', 'type': 'NamedPolygonBase'},
-        'events': {'key': 'events', 'type': '[SpatialAnalysisPersonCountEvent]'},
+        "zone": {"key": "zone", "type": "NamedPolygonBase"},
+        "events": {"key": "events", "type": "[SpatialAnalysisPersonCountEvent]"},
     }
 
     def __init__(
-        self,
-        *,
-        zone: "NamedPolygonBase",
-        events: Optional[List["SpatialAnalysisPersonCountEvent"]] = None,
-        **kwargs
+        self, *, zone: "NamedPolygonBase", events: Optional[List["SpatialAnalysisPersonCountEvent"]] = None, **kwargs
     ):
         """
         :keyword zone: Required. The named zone.
@@ -4203,12 +3984,12 @@ class SpatialAnalysisPersonDistanceEvent(SpatialAnalysisOperationEventBase):
     """
 
     _attribute_map = {
-        'threshold': {'key': 'threshold', 'type': 'str'},
-        'focus': {'key': 'focus', 'type': 'str'},
-        'trigger': {'key': 'trigger', 'type': 'str'},
-        'output_frequency': {'key': 'outputFrequency', 'type': 'str'},
-        'minimum_distance_threshold': {'key': 'minimumDistanceThreshold', 'type': 'str'},
-        'maximum_distance_threshold': {'key': 'maximumDistanceThreshold', 'type': 'str'},
+        "threshold": {"key": "threshold", "type": "str"},
+        "focus": {"key": "focus", "type": "str"},
+        "trigger": {"key": "trigger", "type": "str"},
+        "output_frequency": {"key": "outputFrequency", "type": "str"},
+        "minimum_distance_threshold": {"key": "minimumDistanceThreshold", "type": "str"},
+        "maximum_distance_threshold": {"key": "maximumDistanceThreshold", "type": "str"},
     }
 
     def __init__(
@@ -4273,20 +4054,20 @@ class SpatialAnalysisPersonDistanceOperation(SpatialAnalysisTypedOperationBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'zones': {'required': True},
+        "type": {"required": True},
+        "zones": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'debug': {'key': 'debug', 'type': 'str'},
-        'calibration_configuration': {'key': 'calibrationConfiguration', 'type': 'str'},
-        'camera_configuration': {'key': 'cameraConfiguration', 'type': 'str'},
-        'camera_calibrator_node_configuration': {'key': 'cameraCalibratorNodeConfiguration', 'type': 'str'},
-        'detector_node_configuration': {'key': 'detectorNodeConfiguration', 'type': 'str'},
-        'tracker_node_configuration': {'key': 'trackerNodeConfiguration', 'type': 'str'},
-        'enable_face_mask_classifier': {'key': 'enableFaceMaskClassifier', 'type': 'str'},
-        'zones': {'key': 'zones', 'type': '[SpatialAnalysisPersonDistanceZoneEvents]'},
+        "type": {"key": "@type", "type": "str"},
+        "debug": {"key": "debug", "type": "str"},
+        "calibration_configuration": {"key": "calibrationConfiguration", "type": "str"},
+        "camera_configuration": {"key": "cameraConfiguration", "type": "str"},
+        "camera_calibrator_node_configuration": {"key": "cameraCalibratorNodeConfiguration", "type": "str"},
+        "detector_node_configuration": {"key": "detectorNodeConfiguration", "type": "str"},
+        "tracker_node_configuration": {"key": "trackerNodeConfiguration", "type": "str"},
+        "enable_face_mask_classifier": {"key": "enableFaceMaskClassifier", "type": "str"},
+        "zones": {"key": "zones", "type": "[SpatialAnalysisPersonDistanceZoneEvents]"},
     }
 
     def __init__(
@@ -4322,8 +4103,17 @@ class SpatialAnalysisPersonDistanceOperation(SpatialAnalysisTypedOperationBase):
         :paramtype zones:
          list[~azure.media.videoanalyzer.edge.models.SpatialAnalysisPersonDistanceZoneEvents]
         """
-        super(SpatialAnalysisPersonDistanceOperation, self).__init__(debug=debug, calibration_configuration=calibration_configuration, camera_configuration=camera_configuration, camera_calibrator_node_configuration=camera_calibrator_node_configuration, detector_node_configuration=detector_node_configuration, tracker_node_configuration=tracker_node_configuration, enable_face_mask_classifier=enable_face_mask_classifier, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.SpatialAnalysisPersonDistanceOperation'  # type: str
+        super(SpatialAnalysisPersonDistanceOperation, self).__init__(
+            debug=debug,
+            calibration_configuration=calibration_configuration,
+            camera_configuration=camera_configuration,
+            camera_calibrator_node_configuration=camera_calibrator_node_configuration,
+            detector_node_configuration=detector_node_configuration,
+            tracker_node_configuration=tracker_node_configuration,
+            enable_face_mask_classifier=enable_face_mask_classifier,
+            **kwargs
+        )
+        self.type = "#Microsoft.VideoAnalyzer.SpatialAnalysisPersonDistanceOperation"  # type: str
         self.zones = zones
 
 
@@ -4340,20 +4130,16 @@ class SpatialAnalysisPersonDistanceZoneEvents(msrest.serialization.Model):
     """
 
     _validation = {
-        'zone': {'required': True},
+        "zone": {"required": True},
     }
 
     _attribute_map = {
-        'zone': {'key': 'zone', 'type': 'NamedPolygonBase'},
-        'events': {'key': 'events', 'type': '[SpatialAnalysisPersonDistanceEvent]'},
+        "zone": {"key": "zone", "type": "NamedPolygonBase"},
+        "events": {"key": "events", "type": "[SpatialAnalysisPersonDistanceEvent]"},
     }
 
     def __init__(
-        self,
-        *,
-        zone: "NamedPolygonBase",
-        events: Optional[List["SpatialAnalysisPersonDistanceEvent"]] = None,
-        **kwargs
+        self, *, zone: "NamedPolygonBase", events: Optional[List["SpatialAnalysisPersonDistanceEvent"]] = None, **kwargs
     ):
         """
         :keyword zone: Required. The named zone.
@@ -4378,8 +4164,8 @@ class SpatialAnalysisPersonLineCrossingEvent(SpatialAnalysisOperationEventBase):
     """
 
     _attribute_map = {
-        'threshold': {'key': 'threshold', 'type': 'str'},
-        'focus': {'key': 'focus', 'type': 'str'},
+        "threshold": {"key": "threshold", "type": "str"},
+        "focus": {"key": "focus", "type": "str"},
     }
 
     def __init__(
@@ -4412,12 +4198,12 @@ class SpatialAnalysisPersonLineCrossingLineEvents(msrest.serialization.Model):
     """
 
     _validation = {
-        'line': {'required': True},
+        "line": {"required": True},
     }
 
     _attribute_map = {
-        'line': {'key': 'line', 'type': 'NamedLineBase'},
-        'events': {'key': 'events', 'type': '[SpatialAnalysisPersonLineCrossingEvent]'},
+        "line": {"key": "line", "type": "NamedLineBase"},
+        "events": {"key": "events", "type": "[SpatialAnalysisPersonLineCrossingEvent]"},
     }
 
     def __init__(
@@ -4467,20 +4253,20 @@ class SpatialAnalysisPersonLineCrossingOperation(SpatialAnalysisTypedOperationBa
     """
 
     _validation = {
-        'type': {'required': True},
-        'lines': {'required': True},
+        "type": {"required": True},
+        "lines": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'debug': {'key': 'debug', 'type': 'str'},
-        'calibration_configuration': {'key': 'calibrationConfiguration', 'type': 'str'},
-        'camera_configuration': {'key': 'cameraConfiguration', 'type': 'str'},
-        'camera_calibrator_node_configuration': {'key': 'cameraCalibratorNodeConfiguration', 'type': 'str'},
-        'detector_node_configuration': {'key': 'detectorNodeConfiguration', 'type': 'str'},
-        'tracker_node_configuration': {'key': 'trackerNodeConfiguration', 'type': 'str'},
-        'enable_face_mask_classifier': {'key': 'enableFaceMaskClassifier', 'type': 'str'},
-        'lines': {'key': 'lines', 'type': '[SpatialAnalysisPersonLineCrossingLineEvents]'},
+        "type": {"key": "@type", "type": "str"},
+        "debug": {"key": "debug", "type": "str"},
+        "calibration_configuration": {"key": "calibrationConfiguration", "type": "str"},
+        "camera_configuration": {"key": "cameraConfiguration", "type": "str"},
+        "camera_calibrator_node_configuration": {"key": "cameraCalibratorNodeConfiguration", "type": "str"},
+        "detector_node_configuration": {"key": "detectorNodeConfiguration", "type": "str"},
+        "tracker_node_configuration": {"key": "trackerNodeConfiguration", "type": "str"},
+        "enable_face_mask_classifier": {"key": "enableFaceMaskClassifier", "type": "str"},
+        "lines": {"key": "lines", "type": "[SpatialAnalysisPersonLineCrossingLineEvents]"},
     }
 
     def __init__(
@@ -4516,8 +4302,17 @@ class SpatialAnalysisPersonLineCrossingOperation(SpatialAnalysisTypedOperationBa
         :paramtype lines:
          list[~azure.media.videoanalyzer.edge.models.SpatialAnalysisPersonLineCrossingLineEvents]
         """
-        super(SpatialAnalysisPersonLineCrossingOperation, self).__init__(debug=debug, calibration_configuration=calibration_configuration, camera_configuration=camera_configuration, camera_calibrator_node_configuration=camera_calibrator_node_configuration, detector_node_configuration=detector_node_configuration, tracker_node_configuration=tracker_node_configuration, enable_face_mask_classifier=enable_face_mask_classifier, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.SpatialAnalysisPersonLineCrossingOperation'  # type: str
+        super(SpatialAnalysisPersonLineCrossingOperation, self).__init__(
+            debug=debug,
+            calibration_configuration=calibration_configuration,
+            camera_configuration=camera_configuration,
+            camera_calibrator_node_configuration=camera_calibrator_node_configuration,
+            detector_node_configuration=detector_node_configuration,
+            tracker_node_configuration=tracker_node_configuration,
+            enable_face_mask_classifier=enable_face_mask_classifier,
+            **kwargs
+        )
+        self.type = "#Microsoft.VideoAnalyzer.SpatialAnalysisPersonLineCrossingOperation"  # type: str
         self.lines = lines
 
 
@@ -4535,9 +4330,9 @@ class SpatialAnalysisPersonZoneCrossingEvent(SpatialAnalysisOperationEventBase):
     """
 
     _attribute_map = {
-        'threshold': {'key': 'threshold', 'type': 'str'},
-        'focus': {'key': 'focus', 'type': 'str'},
-        'event_type': {'key': 'eventType', 'type': 'str'},
+        "threshold": {"key": "threshold", "type": "str"},
+        "focus": {"key": "focus", "type": "str"},
+        "event_type": {"key": "eventType", "type": "str"},
     }
 
     def __init__(
@@ -4590,20 +4385,20 @@ class SpatialAnalysisPersonZoneCrossingOperation(SpatialAnalysisTypedOperationBa
     """
 
     _validation = {
-        'type': {'required': True},
-        'zones': {'required': True},
+        "type": {"required": True},
+        "zones": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'debug': {'key': 'debug', 'type': 'str'},
-        'calibration_configuration': {'key': 'calibrationConfiguration', 'type': 'str'},
-        'camera_configuration': {'key': 'cameraConfiguration', 'type': 'str'},
-        'camera_calibrator_node_configuration': {'key': 'cameraCalibratorNodeConfiguration', 'type': 'str'},
-        'detector_node_configuration': {'key': 'detectorNodeConfiguration', 'type': 'str'},
-        'tracker_node_configuration': {'key': 'trackerNodeConfiguration', 'type': 'str'},
-        'enable_face_mask_classifier': {'key': 'enableFaceMaskClassifier', 'type': 'str'},
-        'zones': {'key': 'zones', 'type': '[SpatialAnalysisPersonZoneCrossingZoneEvents]'},
+        "type": {"key": "@type", "type": "str"},
+        "debug": {"key": "debug", "type": "str"},
+        "calibration_configuration": {"key": "calibrationConfiguration", "type": "str"},
+        "camera_configuration": {"key": "cameraConfiguration", "type": "str"},
+        "camera_calibrator_node_configuration": {"key": "cameraCalibratorNodeConfiguration", "type": "str"},
+        "detector_node_configuration": {"key": "detectorNodeConfiguration", "type": "str"},
+        "tracker_node_configuration": {"key": "trackerNodeConfiguration", "type": "str"},
+        "enable_face_mask_classifier": {"key": "enableFaceMaskClassifier", "type": "str"},
+        "zones": {"key": "zones", "type": "[SpatialAnalysisPersonZoneCrossingZoneEvents]"},
     }
 
     def __init__(
@@ -4639,8 +4434,17 @@ class SpatialAnalysisPersonZoneCrossingOperation(SpatialAnalysisTypedOperationBa
         :paramtype zones:
          list[~azure.media.videoanalyzer.edge.models.SpatialAnalysisPersonZoneCrossingZoneEvents]
         """
-        super(SpatialAnalysisPersonZoneCrossingOperation, self).__init__(debug=debug, calibration_configuration=calibration_configuration, camera_configuration=camera_configuration, camera_calibrator_node_configuration=camera_calibrator_node_configuration, detector_node_configuration=detector_node_configuration, tracker_node_configuration=tracker_node_configuration, enable_face_mask_classifier=enable_face_mask_classifier, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.SpatialAnalysisPersonZoneCrossingOperation'  # type: str
+        super(SpatialAnalysisPersonZoneCrossingOperation, self).__init__(
+            debug=debug,
+            calibration_configuration=calibration_configuration,
+            camera_configuration=camera_configuration,
+            camera_calibrator_node_configuration=camera_calibrator_node_configuration,
+            detector_node_configuration=detector_node_configuration,
+            tracker_node_configuration=tracker_node_configuration,
+            enable_face_mask_classifier=enable_face_mask_classifier,
+            **kwargs
+        )
+        self.type = "#Microsoft.VideoAnalyzer.SpatialAnalysisPersonZoneCrossingOperation"  # type: str
         self.zones = zones
 
 
@@ -4657,12 +4461,12 @@ class SpatialAnalysisPersonZoneCrossingZoneEvents(msrest.serialization.Model):
     """
 
     _validation = {
-        'zone': {'required': True},
+        "zone": {"required": True},
     }
 
     _attribute_map = {
-        'zone': {'key': 'zone', 'type': 'NamedPolygonBase'},
-        'events': {'key': 'events', 'type': '[SpatialAnalysisPersonZoneCrossingEvent]'},
+        "zone": {"key": "zone", "type": "NamedPolygonBase"},
+        "events": {"key": "events", "type": "[SpatialAnalysisPersonZoneCrossingEvent]"},
     }
 
     def __init__(
@@ -4696,27 +4500,22 @@ class SymmetricKeyCredentials(CredentialsBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'key': {'required': True},
+        "type": {"required": True},
+        "key": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'key': {'key': 'key', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "key": {"key": "key", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        key: str,
-        **kwargs
-    ):
+    def __init__(self, *, key: str, **kwargs):
         """
         :keyword key: Required. Symmetric key credential.
         :paramtype key: str
         """
         super(SymmetricKeyCredentials, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.SymmetricKeyCredentials'  # type: str
+        self.type = "#Microsoft.VideoAnalyzer.SymmetricKeyCredentials"  # type: str
         self.key = key
 
 
@@ -4732,8 +4531,8 @@ class SystemData(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
@@ -4777,16 +4576,16 @@ class TlsEndpoint(EndpointBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'url': {'required': True},
+        "type": {"required": True},
+        "url": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'credentials': {'key': 'credentials', 'type': 'CredentialsBase'},
-        'url': {'key': 'url', 'type': 'str'},
-        'trusted_certificates': {'key': 'trustedCertificates', 'type': 'CertificateSource'},
-        'validation_options': {'key': 'validationOptions', 'type': 'TlsValidationOptions'},
+        "type": {"key": "@type", "type": "str"},
+        "credentials": {"key": "credentials", "type": "CredentialsBase"},
+        "url": {"key": "url", "type": "str"},
+        "trusted_certificates": {"key": "trustedCertificates", "type": "CertificateSource"},
+        "validation_options": {"key": "validationOptions", "type": "TlsValidationOptions"},
     }
 
     def __init__(
@@ -4812,7 +4611,7 @@ class TlsEndpoint(EndpointBase):
         :paramtype validation_options: ~azure.media.videoanalyzer.edge.models.TlsValidationOptions
         """
         super(TlsEndpoint, self).__init__(credentials=credentials, url=url, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.TlsEndpoint'  # type: str
+        self.type = "#Microsoft.VideoAnalyzer.TlsEndpoint"  # type: str
         self.trusted_certificates = trusted_certificates
         self.validation_options = validation_options
 
@@ -4829,17 +4628,11 @@ class TlsValidationOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'ignore_hostname': {'key': 'ignoreHostname', 'type': 'str'},
-        'ignore_signature': {'key': 'ignoreSignature', 'type': 'str'},
+        "ignore_hostname": {"key": "ignoreHostname", "type": "str"},
+        "ignore_signature": {"key": "ignoreSignature", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        ignore_hostname: Optional[str] = None,
-        ignore_signature: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, ignore_hostname: Optional[str] = None, ignore_signature: Optional[str] = None, **kwargs):
         """
         :keyword ignore_hostname: When set to 'true' causes the certificate subject name validation to
          be skipped. Default is 'false'.
@@ -4867,23 +4660,17 @@ class UnsecuredEndpoint(EndpointBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'url': {'required': True},
+        "type": {"required": True},
+        "url": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'credentials': {'key': 'credentials', 'type': 'CredentialsBase'},
-        'url': {'key': 'url', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "credentials": {"key": "credentials", "type": "CredentialsBase"},
+        "url": {"key": "url", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        url: str,
-        credentials: Optional["CredentialsBase"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, url: str, credentials: Optional["CredentialsBase"] = None, **kwargs):
         """
         :keyword credentials: Credentials to be presented to the endpoint.
         :paramtype credentials: ~azure.media.videoanalyzer.edge.models.CredentialsBase
@@ -4891,7 +4678,7 @@ class UnsecuredEndpoint(EndpointBase):
         :paramtype url: str
         """
         super(UnsecuredEndpoint, self).__init__(credentials=credentials, url=url, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.UnsecuredEndpoint'  # type: str
+        self.type = "#Microsoft.VideoAnalyzer.UnsecuredEndpoint"  # type: str
 
 
 class UsernamePasswordCredentials(CredentialsBase):
@@ -4910,24 +4697,18 @@ class UsernamePasswordCredentials(CredentialsBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'username': {'required': True},
-        'password': {'required': True},
+        "type": {"required": True},
+        "username": {"required": True},
+        "password": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'username': {'key': 'username', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "username": {"key": "username", "type": "str"},
+        "password": {"key": "password", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        username: str,
-        password: str,
-        **kwargs
-    ):
+    def __init__(self, *, username: str, password: str, **kwargs):
         """
         :keyword username: Required. Username to be presented as part of the credentials.
         :paramtype username: str
@@ -4937,7 +4718,7 @@ class UsernamePasswordCredentials(CredentialsBase):
         :paramtype password: str
         """
         super(UsernamePasswordCredentials, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.UsernamePasswordCredentials'  # type: str
+        self.type = "#Microsoft.VideoAnalyzer.UsernamePasswordCredentials"  # type: str
         self.username = username
         self.password = password
 
@@ -4965,10 +4746,10 @@ class VideoCreationProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'title': {'key': 'title', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'segment_length': {'key': 'segmentLength', 'type': 'str'},
-        'retention_period': {'key': 'retentionPeriod', 'type': 'str'},
+        "title": {"key": "title", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "segment_length": {"key": "segmentLength", "type": "str"},
+        "retention_period": {"key": "retentionPeriod", "type": "str"},
     }
 
     def __init__(
@@ -5026,12 +4807,12 @@ class VideoEncoderConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'encoding': {'key': 'encoding', 'type': 'str'},
-        'quality': {'key': 'quality', 'type': 'float'},
-        'resolution': {'key': 'resolution', 'type': 'VideoResolution'},
-        'rate_control': {'key': 'rateControl', 'type': 'RateControl'},
-        'h264': {'key': 'h264', 'type': 'H264Configuration'},
-        'mpeg4': {'key': 'mpeg4', 'type': 'MPEG4Configuration'},
+        "encoding": {"key": "encoding", "type": "str"},
+        "quality": {"key": "quality", "type": "float"},
+        "resolution": {"key": "resolution", "type": "VideoResolution"},
+        "rate_control": {"key": "rateControl", "type": "RateControl"},
+        "h264": {"key": "h264", "type": "H264Configuration"},
+        "mpeg4": {"key": "mpeg4", "type": "MPEG4Configuration"},
     }
 
     def __init__(
@@ -5078,15 +4859,10 @@ class VideoPublishingOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'enable_video_preview_image': {'key': 'enableVideoPreviewImage', 'type': 'str'},
+        "enable_video_preview_image": {"key": "enableVideoPreviewImage", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        enable_video_preview_image: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, enable_video_preview_image: Optional[str] = None, **kwargs):
         """
         :keyword enable_video_preview_image: When set to 'true' the video will publish preview images.
          Default is 'false'.
@@ -5106,17 +4882,11 @@ class VideoResolution(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'width': {'key': 'width', 'type': 'float'},
-        'height': {'key': 'height', 'type': 'float'},
+        "width": {"key": "width", "type": "float"},
+        "height": {"key": "height", "type": "float"},
     }
 
-    def __init__(
-        self,
-        *,
-        width: Optional[float] = None,
-        height: Optional[float] = None,
-        **kwargs
-    ):
+    def __init__(self, *, width: Optional[float] = None, height: Optional[float] = None, **kwargs):
         """
         :keyword width: The number of columns of the Video image.
         :paramtype width: float
@@ -5163,23 +4933,23 @@ class VideoSink(SinkNodeBase):
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
-        'inputs': {'required': True},
-        'video_name': {'required': True},
-        'local_media_cache_path': {'required': True},
-        'local_media_cache_maximum_size_mi_b': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
+        "inputs": {"required": True},
+        "video_name": {"required": True},
+        "local_media_cache_path": {"required": True},
+        "local_media_cache_maximum_size_mi_b": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'inputs': {'key': 'inputs', 'type': '[NodeInput]'},
-        'video_name': {'key': 'videoName', 'type': 'str'},
-        'video_creation_properties': {'key': 'videoCreationProperties', 'type': 'VideoCreationProperties'},
-        'video_publishing_options': {'key': 'videoPublishingOptions', 'type': 'VideoPublishingOptions'},
-        'local_media_cache_path': {'key': 'localMediaCachePath', 'type': 'str'},
-        'local_media_cache_maximum_size_mi_b': {'key': 'localMediaCacheMaximumSizeMiB', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "inputs": {"key": "inputs", "type": "[NodeInput]"},
+        "video_name": {"key": "videoName", "type": "str"},
+        "video_creation_properties": {"key": "videoCreationProperties", "type": "VideoCreationProperties"},
+        "video_publishing_options": {"key": "videoPublishingOptions", "type": "VideoPublishingOptions"},
+        "local_media_cache_path": {"key": "localMediaCachePath", "type": "str"},
+        "local_media_cache_maximum_size_mi_b": {"key": "localMediaCacheMaximumSizeMiB", "type": "str"},
     }
 
     def __init__(
@@ -5222,7 +4992,7 @@ class VideoSink(SinkNodeBase):
         :paramtype local_media_cache_maximum_size_mi_b: str
         """
         super(VideoSink, self).__init__(name=name, inputs=inputs, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.VideoSink'  # type: str
+        self.type = "#Microsoft.VideoAnalyzer.VideoSink"  # type: str
         self.video_name = video_name
         self.video_creation_properties = video_creation_properties
         self.video_publishing_options = video_publishing_options

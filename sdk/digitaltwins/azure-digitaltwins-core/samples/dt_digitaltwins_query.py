@@ -23,7 +23,7 @@ try:
     url = os.getenv("AZURE_URL")
     if url is None:
         raise ValueError("AZURE_URL environment variable is not set")
-    
+
     # DefaultAzureCredential expects the following three environment variables:
     # - AZURE_TENANT_ID: The tenant ID in Azure Active Directory
     # - AZURE_CLIENT_ID: The application (client) ID registered in the AAD tenant
@@ -32,9 +32,9 @@ try:
     service_client = DigitalTwinsClient(url, credential)
 
     # Query digital twins
-    query_expression = 'SELECT * FROM digitaltwins'
+    query_expression = "SELECT * FROM digitaltwins"
     query_result = service_client.query_twins(query_expression)
-    print('DigitalTwins:')
+    print("DigitalTwins:")
     for twin in query_result:
         print(twin)
 

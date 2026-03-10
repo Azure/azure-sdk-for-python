@@ -70,23 +70,31 @@ async def test_link_should_not_detach(state):
     await link.detach()
     link._outgoing_detach.assert_not_called()
 
+
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
     "frame",
     [
-        [2, True, [b'amqp:link:detach-forced', b"The link is force detached. Code: publisher(link3006875). Details: AmqpMessagePublisher.IdleTimerExpired: Idle timeout: 00:10:00.", None]],
-        [2, True, [b'amqp:link:detach-forced', None, b'something random']],
-        [2, True, [b'amqp:link:detach-forced', None, None]],
-        [2, True, [b'amqp:link:detach-forced']],
-        
+        [
+            2,
+            True,
+            [
+                b"amqp:link:detach-forced",
+                b"The link is force detached. Code: publisher(link3006875). Details: AmqpMessagePublisher.IdleTimerExpired: Idle timeout: 00:10:00.",
+                None,
+            ],
+        ],
+        [2, True, [b"amqp:link:detach-forced", None, b"something random"]],
+        [2, True, [b"amqp:link:detach-forced", None, None]],
+        [2, True, [b"amqp:link:detach-forced"]],
     ],
     ids=["description and info", "info only", "description only", "no info or description"],
 )
 async def test_detach_with_error(frame):
-    '''
-      A detach can optionally include an description and info field.
-      https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-error
-    '''
+    """
+    A detach can optionally include an description and info field.
+    https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-error
+    """
     session = None
     link = Link(
         session,

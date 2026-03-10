@@ -9,6 +9,7 @@ import os
 from azure.keyvault.secrets.aio import SecretClient
 from azure.identity.aio import DefaultAzureCredential
 
+
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
 # 1. An Azure Key Vault (https://learn.microsoft.com/azure/key-vault/quick-create-cli)

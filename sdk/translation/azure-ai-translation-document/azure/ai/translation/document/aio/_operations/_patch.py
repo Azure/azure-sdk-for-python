@@ -7,6 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 import sys
 from typing import AsyncIterator, Callable, Dict, Type, TypeVar, overload, Any, IO, List, Optional, Union, cast, Tuple
 from azure.core.polling import AsyncNoPolling, AsyncPollingMethod
@@ -239,7 +240,10 @@ class DocumentTranslationClientOperationsMixin(GeneratedDocumentTranslationClien
                 deserialization_callback=get_long_running_output,
             )
         return AsyncDocumentTranslationLROPoller[_models.TranslationStatus](
-            self._client, raw_result, get_long_running_output, polling_method # pylint: disable=possibly-used-before-assignment
+            self._client,
+            raw_result,
+            get_long_running_output,
+            polling_method,  # pylint: disable=possibly-used-before-assignment
         )
 
 

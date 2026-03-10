@@ -10,7 +10,7 @@ DESCRIPTION:
     The asynchronous `analyze` method call returns an `ImageAnalysisResult` object.
     Its `read` property (a `ReadResult` object) includes a list of `TextBlock` objects. Currently, the
     list will always contain one element only, as the service does not yet support grouping text lines
-    into separate blocks. The `TextBlock` object contains a list of `DocumentLine` object. Each one includes: 
+    into separate blocks. The `TextBlock` object contains a list of `DocumentLine` object. Each one includes:
     - The text content of the line.
     - A `BoundingPolygon` coordinates in pixels, for a polygon surrounding the line of text in the image.
     - A list of `DocumentWord` objects.
@@ -18,7 +18,7 @@ DESCRIPTION:
     - The text content of the word.
     - A `BoundingPolygon` coordinates in pixels, for a polygon surrounding the word in the image.
     - A confidence score in the range [0, 1], with higher values indicating greater confidences in
-      the recognition of the word. 
+      the recognition of the word.
 
 USAGE:
     python sample_ocr_image_url_entra_id_auth_async.py
@@ -27,6 +27,7 @@ USAGE:
     VISION_ENDPOINT - Your endpoint URL, in the form https://your-resource-name.cognitiveservices.azure.com
                       where `your-resource-name` is your unique Azure Computer Vision resource name.
 """
+
 import asyncio
 
 
@@ -52,8 +53,7 @@ async def sample_ocr_image_url_entra_id_auth_async():
 
     # Extract text (OCR) from an image URL, asynchronously.
     result = await client.analyze_from_url(
-        image_url="https://aka.ms/azsdk/image-analysis/sample.jpg",
-        visual_features=[VisualFeatures.READ]
+        image_url="https://aka.ms/azsdk/image-analysis/sample.jpg", visual_features=[VisualFeatures.READ]
     )
 
     await client.close()
@@ -65,7 +65,9 @@ async def sample_ocr_image_url_entra_id_auth_async():
         for line in result.read.blocks[0].lines:
             print(f"   Line: '{line.text}', Bounding box {line.bounding_polygon}")
             for word in line.words:
-                print(f"     Word: '{word.text}', Bounding polygon {word.bounding_polygon}, Confidence {word.confidence:.4f}")
+                print(
+                    f"     Word: '{word.text}', Bounding polygon {word.bounding_polygon}, Confidence {word.confidence:.4f}"
+                )
     print(f" Image height: {result.metadata.height}")
     print(f" Image width: {result.metadata.width}")
     print(f" Model version: {result.model_version}")

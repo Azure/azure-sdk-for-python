@@ -13,6 +13,7 @@ DESCRIPTION:
 USAGE: python rank_actions_and_reward_events.py
 Environment variables PERSONALIZER_ENDPOINT and PERSONALIZER_API_KEY must be set as per your personalizer instance.
 """
+
 import os
 import sys
 from azure.ai.personalizer import PersonalizerClient

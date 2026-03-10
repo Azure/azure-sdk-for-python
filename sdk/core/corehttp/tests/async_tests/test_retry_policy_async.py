@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 """Tests for the retry policy."""
+
 from io import BytesIO
 import tempfile
 import os

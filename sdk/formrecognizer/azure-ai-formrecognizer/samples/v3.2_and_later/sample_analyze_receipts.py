@@ -44,13 +44,9 @@ def analyze_receipts():
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
-    document_analysis_client = DocumentAnalysisClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
+    document_analysis_client = DocumentAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     with open(path_to_sample_documents, "rb") as f:
-        poller = document_analysis_client.begin_analyze_document(
-            "prebuilt-receipt", document=f, locale="en-US"
-        )
+        poller = document_analysis_client.begin_analyze_document("prebuilt-receipt", document=f, locale="en-US")
     receipts = poller.result()
 
     for idx, receipt in enumerate(receipts.documents):
@@ -58,16 +54,10 @@ def analyze_receipts():
         print(f"Receipt type: {receipt.doc_type if receipt.doc_type else 'N/A'}")
         merchant_name = receipt.fields.get("MerchantName")
         if merchant_name:
-            print(
-                f"Merchant Name: {merchant_name.value} has confidence: "
-                f"{merchant_name.confidence}"
-            )
+            print(f"Merchant Name: {merchant_name.value} has confidence: " f"{merchant_name.confidence}")
         transaction_date = receipt.fields.get("TransactionDate")
         if transaction_date:
-            print(
-                f"Transaction Date: {transaction_date.value} has confidence: "
-                f"{transaction_date.confidence}"
-            )
+            print(f"Transaction Date: {transaction_date.value} has confidence: " f"{transaction_date.confidence}")
         if receipt.fields.get("Items"):
             print("Receipt items:")
             for idx, item in enumerate(receipt.fields.get("Items").value):
@@ -80,15 +70,11 @@ def analyze_receipts():
                     )
                 item_quantity = item.value.get("Quantity")
                 if item_quantity:
-                    print(
-                        f"......Item Quantity: {item_quantity.value} has confidence: "
-                        f"{item_quantity.confidence}"
-                    )
+                    print(f"......Item Quantity: {item_quantity.value} has confidence: " f"{item_quantity.confidence}")
                 item_price = item.value.get("Price")
                 if item_price:
                     print(
-                        f"......Individual Item Price: {item_price.value} has confidence: "
-                        f"{item_price.confidence}"
+                        f"......Individual Item Price: {item_price.value} has confidence: " f"{item_price.confidence}"
                     )
                 item_total_price = item.value.get("TotalPrice")
                 if item_total_price:

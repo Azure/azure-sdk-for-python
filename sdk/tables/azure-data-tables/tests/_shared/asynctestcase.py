@@ -19,7 +19,6 @@ from devtools_testutils import is_live, get_credential
 
 from .testcase import TableTestCase
 
-
 TEST_TABLE_PREFIX = "pytableasync"
 
 

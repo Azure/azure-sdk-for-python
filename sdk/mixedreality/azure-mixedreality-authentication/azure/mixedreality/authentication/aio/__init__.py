@@ -6,6 +6,4 @@
 
 from ._client_async import MixedRealityStsClient
 
-__all__ = [
-    'MixedRealityStsClient'
-]
+__all__ = ["MixedRealityStsClient"]

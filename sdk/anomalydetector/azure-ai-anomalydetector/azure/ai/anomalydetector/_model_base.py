@@ -308,12 +308,10 @@ class _MyMutableMapping(MutableMapping):
             return default
 
     @typing.overload
-    def pop(self, key: str) -> typing.Any:
-        ...
+    def pop(self, key: str) -> typing.Any: ...
 
     @typing.overload
-    def pop(self, key: str, default: typing.Any) -> typing.Any:
-        ...
+    def pop(self, key: str, default: typing.Any) -> typing.Any: ...
 
     def pop(self, key: typing.Any, default: typing.Any = _UNSET) -> typing.Any:
         if default is _UNSET:
@@ -330,12 +328,10 @@ class _MyMutableMapping(MutableMapping):
         self._data.update(*args, **kwargs)
 
     @typing.overload
-    def setdefault(self, key: str) -> typing.Any:
-        ...
+    def setdefault(self, key: str) -> typing.Any: ...
 
     @typing.overload
-    def setdefault(self, key: str, default: typing.Any) -> typing.Any:
-        ...
+    def setdefault(self, key: str, default: typing.Any) -> typing.Any: ...
 
     def setdefault(self, key: typing.Any, default: typing.Any = _UNSET) -> typing.Any:
         if default is _UNSET:
@@ -514,7 +510,7 @@ def _get_deserialize_callable_from_annotation(
                 return _deserialize_with_callable(if_obj_deserializer, obj)
 
             return functools.partial(_deserialize_with_optional, if_obj_deserializer)
-    except (AttributeError):
+    except AttributeError:
         pass
 
     # is it a forward ref / in quotes?

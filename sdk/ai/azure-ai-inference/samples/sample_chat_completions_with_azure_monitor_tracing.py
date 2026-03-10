@@ -26,14 +26,12 @@ USAGE:
         for detailed traces, including chat request and response messages.
 """
 
-
 import os
 from opentelemetry import trace
 from azure.ai.inference import ChatCompletionsClient
 from azure.ai.inference.models import SystemMessage, UserMessage, CompletionsFinishReason
 from azure.core.credentials import AzureKeyCredential
 from azure.monitor.opentelemetry import configure_azure_monitor
-
 
 # [START trace_function]
 from opentelemetry.trace import get_tracer

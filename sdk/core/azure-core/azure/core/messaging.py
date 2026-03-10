@@ -13,7 +13,6 @@ from .utils._utils import _convert_to_isoformat, TZ_UTC
 from .utils._messaging_shared import _get_json_content
 from .serialization import NULL
 
-
 __all__ = ["CloudEvent"]
 
 

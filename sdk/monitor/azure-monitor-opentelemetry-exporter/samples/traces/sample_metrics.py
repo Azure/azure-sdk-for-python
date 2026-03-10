@@ -2,11 +2,12 @@
 # Licensed under the MIT License.
 """
 An example to show an application instrumented with the OpenTelemetry instrumentations that collect metrics.
-Only certain instrumentations support metrics collection, 
+Only certain instrumentations support metrics collection,
 refer to https://github.com/open-telemetry/opentelemetry-python-contrib/blob/main/instrumentation/README.md
 for the full list. Calls made with the underlying instrumented libraries will track metrics information in the
 metrics explorer view in Application Insights.
 """
+
 # mypy: disable-error-code="attr-defined"
 # mypy: disable-error-code="import-untyped"
 import os

@@ -5,6 +5,7 @@
 """
 Requests transport class for WorkloadIdentityCredential with token proxy support.
 """
+
 import ssl
 from typing import Any, Optional
 

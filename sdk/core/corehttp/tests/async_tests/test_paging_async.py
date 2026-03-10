@@ -9,7 +9,6 @@ import pytest
 from corehttp.paging import AsyncItemPaged, AsyncList
 from corehttp.exceptions import HttpResponseError
 
-
 T = TypeVar("T")
 
 

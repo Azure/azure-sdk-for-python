@@ -10,10 +10,11 @@ from ._purview_account_client import PurviewAccountClient
 from ._version import VERSION
 
 __version__ = VERSION
-__all__ = ['PurviewAccountClient']
+__all__ = ["PurviewAccountClient"]
 
 try:
     from ._patch import patch_sdk  # type: ignore
+
     patch_sdk()
 except ImportError:
     pass

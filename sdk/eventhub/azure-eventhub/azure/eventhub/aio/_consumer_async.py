@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 from __future__ import annotations
 import uuid
-import asyncio # pylint: disable=do-not-import-asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 from collections import deque
 from typing import TYPE_CHECKING, Callable, Awaitable, Dict, Optional, Union, List, Any, Deque
@@ -135,8 +135,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             event_position_selector(self._offset, self._offset_inclusive),
         )
         desired_capabilities = (
-            [RECEIVER_RUNTIME_METRIC_SYMBOL,
-            GEOREPLICATION_SYMBOL]
+            [RECEIVER_RUNTIME_METRIC_SYMBOL, GEOREPLICATION_SYMBOL]
             if self._track_last_enqueued_event_properties
             else [GEOREPLICATION_SYMBOL]
         )

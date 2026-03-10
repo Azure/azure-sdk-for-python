@@ -19,8 +19,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Session Consistency Tracking in the Azure Cosmos database service.
-"""
+"""Session Consistency Tracking in the Azure Cosmos database service."""
+
 import os
 
 from . import exceptions
@@ -118,15 +118,21 @@ class VectorSessionToken(object):
     def merge(self, other: "VectorSessionToken"):
         if other is None:
             raise ValueError("Invalid Session Token (should not be None)")
-        false_progress_merge_enabled = (os.environ.get(_Constants.SESSION_TOKEN_FALSE_PROGRESS_MERGE_CONFIG,
-                                                       _Constants.SESSION_TOKEN_FALSE_PROGRESS_MERGE_CONFIG_DEFAULT)
-                                        .lower() == "true")
+        false_progress_merge_enabled = (
+            os.environ.get(
+                _Constants.SESSION_TOKEN_FALSE_PROGRESS_MERGE_CONFIG,
+                _Constants.SESSION_TOKEN_FALSE_PROGRESS_MERGE_CONFIG_DEFAULT,
+            ).lower()
+            == "true"
+        )
 
         if self.version == other.version and len(self.local_lsn_by_region) != len(other.local_lsn_by_region):
             raise exceptions.CosmosHttpResponseError(
                 status_code=_StatusCodes.INTERNAL_SERVER_ERROR,
-                message=("Compared session tokens '%s' and '%s' have unexpected regions."
-                         % (self.session_token, other.session_token))
+                message=(
+                    "Compared session tokens '%s' and '%s' have unexpected regions."
+                    % (self.session_token, other.session_token)
+                ),
             )
 
         if self.version < other.version:
@@ -152,8 +158,10 @@ class VectorSessionToken(object):
             elif self.version == other.version:
                 raise exceptions.CosmosHttpResponseError(
                     status_code=_StatusCodes.INTERNAL_SERVER_ERROR,
-                    message=("Compared session tokens '%s' and '%s' have unexpected regions."
-                             % (self.session_token, other.session_token))
+                    message=(
+                        "Compared session tokens '%s' and '%s' have unexpected regions."
+                        % (self.session_token, other.session_token)
+                    ),
                 )
             else:
                 highest_local_lsn_by_region[region_id] = local_lsn1
@@ -161,9 +169,7 @@ class VectorSessionToken(object):
         if false_progress_merge_enabled and self.version != other.version:
             global_lsn = session_token_with_higher_version.global_lsn
 
-        return VectorSessionToken(
-            max(self.version, other.version), global_lsn, highest_local_lsn_by_region
-        )
+        return VectorSessionToken(max(self.version, other.version), global_lsn, highest_local_lsn_by_region)
 
     def convert_to_string(self):
         return self.session_token

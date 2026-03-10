@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 """Tests for the CosmosHttpLoggingPolicy."""
+
 import logging
 import unittest
 import uuid
@@ -26,18 +27,17 @@ except ImportError:  # python < 3.3
 
 class FilterStatusCode(logging.Filter):
     def filter(self, record):
-        if hasattr(record, 'status_code') and record.status_code >= 400:
+        if hasattr(record, "status_code") and record.status_code >= 400:
             return True
         return False
+
 
 CONFIG = test_config.TestConfig
 L1 = "Location1"
 L2 = "Location2"
 L1_URL = test_config.TestConfig.local_host
 L2_URL = L1_URL.replace("localhost", "127.0.0.1")
-URL_TO_LOCATIONS = {
-    L1_URL: L1,
-    L2_URL: L2}
+URL_TO_LOCATIONS = {L1_URL: L1, L2_URL: L2}
 
 
 def create_logger(name: str, mock_handler: test_config.MockHandler, level: int = logging.INFO) -> logging.Logger:
@@ -47,15 +47,17 @@ def create_logger(name: str, mock_handler: test_config.MockHandler, level: int =
 
     return logger
 
+
 def get_locations_list(msg: str) -> List[str]:
-    msg = msg.replace(' ', '')
-    msg = msg.replace('\'', '')
+    msg = msg.replace(" ", "")
+    msg = msg.replace("'", "")
     # Find the substring between the first '[' and the last ']'
-    start = msg.find('[') + 1
-    end = msg.rfind(']')
+    start = msg.find("[") + 1
+    end = msg.rfind("]")
     # Extract the substring and convert it to a list using ast.literal_eval
     msg = msg[start:end]
-    return msg.split(',')
+    return msg.split(",")
+
 
 @pytest.mark.cosmosEmulator
 class TestCosmosHttpLogger(unittest.TestCase):
@@ -70,12 +72,12 @@ class TestCosmosHttpLogger(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        if (cls.masterKey == '[YOUR_KEY_HERE]' or
-                cls.host == '[YOUR_ENDPOINT_HERE]'):
+        if cls.masterKey == "[YOUR_KEY_HERE]" or cls.host == "[YOUR_ENDPOINT_HERE]":
             raise Exception(
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
-                "tests.")
+                "tests."
+            )
         cls.mock_handler_default = test_config.MockHandler()
         cls.mock_handler_diagnostic = test_config.MockHandler()
         cls.mock_handler_filtered_diagnostic = test_config.MockHandler()
@@ -85,22 +87,32 @@ class TestCosmosHttpLogger(unittest.TestCase):
         cls.mock_handler_filtered_diagnostic.addFilter(FilterStatusCode())
         cls.logger_default = create_logger("testloggerdefault", cls.mock_handler_default)
         cls.logger_diagnostic = create_logger("testloggerdiagnostic", cls.mock_handler_diagnostic)
-        cls.logger_filtered_diagnostic = create_logger("testloggerfiltereddiagnostic",
-                                                       cls.mock_handler_filtered_diagnostic)
-        cls.client_default = cosmos_client.CosmosClient(cls.host, cls.masterKey,
-                                                        consistency_level="Session",
-                                                        connection_policy=cls.connectionPolicy,
-                                                        logger=cls.logger_default)
-        cls.client_diagnostic = cosmos_client.CosmosClient(cls.host, cls.masterKey,
-                                                           consistency_level="Session",
-                                                           connection_policy=cls.connectionPolicy,
-                                                           logger=cls.logger_diagnostic,
-                                                           enable_diagnostics_logging=True)
-        cls.client_filtered_diagnostic = cosmos_client.CosmosClient(cls.host, cls.masterKey,
-                                                                    consistency_level="Session",
-                                                                    connection_policy=cls.connectionPolicy,
-                                                                    logger=cls.logger_filtered_diagnostic,
-                                                                    enable_diagnostics_logging=True)
+        cls.logger_filtered_diagnostic = create_logger(
+            "testloggerfiltereddiagnostic", cls.mock_handler_filtered_diagnostic
+        )
+        cls.client_default = cosmos_client.CosmosClient(
+            cls.host,
+            cls.masterKey,
+            consistency_level="Session",
+            connection_policy=cls.connectionPolicy,
+            logger=cls.logger_default,
+        )
+        cls.client_diagnostic = cosmos_client.CosmosClient(
+            cls.host,
+            cls.masterKey,
+            consistency_level="Session",
+            connection_policy=cls.connectionPolicy,
+            logger=cls.logger_diagnostic,
+            enable_diagnostics_logging=True,
+        )
+        cls.client_filtered_diagnostic = cosmos_client.CosmosClient(
+            cls.host,
+            cls.masterKey,
+            consistency_level="Session",
+            connection_policy=cls.connectionPolicy,
+            logger=cls.logger_filtered_diagnostic,
+            enable_diagnostics_logging=True,
+        )
 
         # Create a root logger with a mock handler and a filter for status codes above 400
         cls.root_mock_handler = test_config.MockHandler()
@@ -118,21 +130,21 @@ class TestCosmosHttpLogger(unittest.TestCase):
             consistency_level="Session",
             connection_policy=cls.connectionPolicy,
             logger=cls.root_logger_grandchild,
-            enable_diagnostics_logging=True
+            enable_diagnostics_logging=True,
         )
 
     def test_default_http_logging_policy(self):
         # Test if we can log into from creating a database
         database_id = "database_test-" + str(uuid.uuid4())
         self.client_default.create_database(id=database_id)
-        assert all(m.levelname == 'INFO' for m in self.mock_handler_default.messages)
+        assert all(m.levelname == "INFO" for m in self.mock_handler_default.messages)
         messages_request = self.mock_handler_default.messages[0].message.split("\n")
         messages_response = self.mock_handler_default.messages[1].message.split("\n")
         assert messages_request[1] == "Request method: 'GET'"
-        assert 'Request headers:' in messages_request[2]
-        assert messages_request[-1] == 'No body was attached to the request'
-        assert messages_response[0] == 'Response status: 200'
-        assert 'Response headers:' in messages_response[1]
+        assert "Request headers:" in messages_request[2]
+        assert messages_request[-1] == "No body was attached to the request"
+        assert messages_response[0] == "Response status: 200"
+        assert "Response headers:" in messages_response[1]
 
         self.mock_handler_default.reset()
 
@@ -143,7 +155,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         # Test if we can log info from reading a database
         database_id = "database_test-" + str(uuid.uuid4())
         self.client_diagnostic.create_database(id=database_id)
-        assert all(m.levelname == 'INFO' for m in self.mock_handler_diagnostic.messages)
+        assert all(m.levelname == "INFO" for m in self.mock_handler_diagnostic.messages)
         # Check that we made a databaseaccount read request only once and that we only logged it once
         messages_request = self.mock_handler_diagnostic.messages[0]
         messages_response = self.mock_handler_diagnostic.messages[1]
@@ -174,14 +186,14 @@ class TestCosmosHttpLogger(unittest.TestCase):
             self.client_diagnostic.create_database(id=database_id)
         except:
             pass
-        assert all(m.levelname == 'INFO' for m in self.mock_handler_diagnostic.messages)
+        assert all(m.levelname == "INFO" for m in self.mock_handler_diagnostic.messages)
         messages_request = self.mock_handler_diagnostic.messages[0]
         messages_response = self.mock_handler_diagnostic.messages[1]
         elapsed_time = messages_response.duration
         assert "dbs" == messages_request.resource_type
         assert messages_request.operation_type == "Create"
-        assert 'Request headers:' in messages_request.msg
-        assert 'A body is sent with the request' in messages_request.msg
+        assert "Request headers:" in messages_request.msg
+        assert "A body is sent with the request" in messages_request.msg
         assert messages_response.status_code == 409
         assert elapsed_time is not None
         assert "Response headers" in messages_response.msg
@@ -245,9 +257,10 @@ class TestCosmosHttpLogger(unittest.TestCase):
         logger = create_logger("test_logger_client_settings", mock_handler)
 
         custom_transport = FaultInjectionTransport()
-        is_get_account_predicate: Callable[[HttpRequest], bool] = lambda \
-                r: FaultInjectionTransport.predicate_is_database_account_call(r)
-        emulator_as_multi_write_region_account_transformation = \
+        is_get_account_predicate: Callable[[HttpRequest], bool] = (
+            lambda r: FaultInjectionTransport.predicate_is_database_account_call(r)
+        )
+        emulator_as_multi_write_region_account_transformation = (
             lambda r, inner: FaultInjectionTransport.transform_topology_mwr(
                 first_region_name=L1,
                 second_region_name=L2,
@@ -255,9 +268,10 @@ class TestCosmosHttpLogger(unittest.TestCase):
                 first_region_url=L1_URL,
                 second_region_url=L2_URL,
             )
+        )
         custom_transport.add_response_transformation(
-            is_get_account_predicate,
-            emulator_as_multi_write_region_account_transformation)
+            is_get_account_predicate, emulator_as_multi_write_region_account_transformation
+        )
 
         initialized_objects = TestFaultInjectionTransport.setup_method_with_custom_transport(
             custom_transport,
@@ -268,13 +282,13 @@ class TestCosmosHttpLogger(unittest.TestCase):
             preferred_locations=all_locations,
             excluded_locations=client_excluded_locations,
             multiple_write_locations=multiple_write_locations,
-            custom_logger=logger
+            custom_logger=logger,
         )
         mock_handler.reset()
 
         # create an item
         id_value: str = str(uuid.uuid4())
-        document_definition = {'id': id_value, 'pk': id_value}
+        document_definition = {"id": id_value, "pk": id_value}
         container: ContainerProxy = initialized_objects["col"]
         container.create_item(body=document_definition)
 
@@ -306,7 +320,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
             consistency_level="Session",
             connection_policy=self.connectionPolicy,
             logger=self.logger_activity_id,
-            enable_diagnostics_logging=True
+            enable_diagnostics_logging=True,
         )
 
         # Generate a custom activity ID
@@ -354,19 +368,17 @@ class TestCosmosHttpLogger(unittest.TestCase):
 
         # Set up FaultInjectionTransport to inject a 502 error
         id_value = str(uuid.uuid4())
-        document_definition = {'id': id_value,
-                               'pk': id_value,
-                               'name': 'sample document',
-                               'key': 'value'}
+        document_definition = {"id": id_value, "pk": id_value, "name": "sample document", "key": "value"}
         custom_transport = FaultInjectionTransport()
         predicate: Callable[[HttpRequest], bool] = lambda r: FaultInjectionTransport.predicate_req_for_document_with_id(
-            r, id_value)
-        custom_transport.add_fault(predicate, lambda r: FaultInjectionTransport.error_after_delay(
-            1000,
-            CosmosHttpResponseError(
-                status_code=502,
-                message="Some random reverse proxy error.")))
-
+            r, id_value
+        )
+        custom_transport.add_fault(
+            predicate,
+            lambda r: FaultInjectionTransport.error_after_delay(
+                1000, CosmosHttpResponseError(status_code=502, message="Some random reverse proxy error.")
+            ),
+        )
 
         # Initialize the client with the custom transport and logger
         initialized_objects = TestFaultInjectionTransport.setup_method_with_custom_transport(
@@ -378,7 +390,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
             preferred_locations=[L1, L2],
             excluded_locations=[],
             multiple_write_locations=True,
-            custom_logger=logger
+            custom_logger=logger,
         )
         mock_handler.reset()
 
@@ -419,6 +431,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         # Clean up
         self.client_grandchild_logger.delete_database(database_id)
         self.root_mock_handler.reset()
+
 
 if __name__ == "__main__":
     unittest.main()

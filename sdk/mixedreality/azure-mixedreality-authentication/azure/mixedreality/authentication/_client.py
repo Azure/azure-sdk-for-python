@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 try:
     from urllib.parse import urlparse
 except ImportError:
-    from urlparse import urlparse # type: ignore
+    from urlparse import urlparse  # type: ignore
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator import distributed_trace
@@ -28,8 +28,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import AccessToken
 
 
-class MixedRealityStsClient(object): # pylint: disable=client-accepts-api-version-keyword
-    """ A client to interact with the Mixed Reality STS service.
+class MixedRealityStsClient(object):  # pylint: disable=client-accepts-api-version-keyword
+    """A client to interact with the Mixed Reality STS service.
 
     :param str account_id:
         The Mixed Reality service account identifier.
@@ -60,27 +60,25 @@ class MixedRealityStsClient(object): # pylint: disable=client-accepts-api-versio
 
         self._credential = credential
 
-        endpoint_url = kwargs.pop('custom_endpoint_url', construct_endpoint_url(account_domain))
+        endpoint_url = kwargs.pop("custom_endpoint_url", construct_endpoint_url(account_domain))
 
         try:
-            if not endpoint_url.lower().startswith('http'):
+            if not endpoint_url.lower().startswith("http"):
                 endpoint_url = "https://" + endpoint_url
         except AttributeError as e:
             raise ValueError("Host URL must be a string.") from e
 
-        parsed_url = urlparse(endpoint_url.rstrip('/'))
+        parsed_url = urlparse(endpoint_url.rstrip("/"))
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(endpoint_url))
 
         self._endpoint_url = endpoint_url
 
-        authentication_policy = BearerTokenCredentialPolicy(credential, endpoint_url + '/.default')
+        authentication_policy = BearerTokenCredentialPolicy(credential, endpoint_url + "/.default")
 
         self._client = MixedRealityStsRestClient(
-            base_url=endpoint_url,
-            authentication_policy=authentication_policy,
-            sdk_moniker=SDK_MONIKER,
-            **kwargs)
+            base_url=endpoint_url, authentication_policy=authentication_policy, sdk_moniker=SDK_MONIKER, **kwargs
+        )
 
     @distributed_trace
     def get_token(self, **kwargs):
@@ -93,10 +91,7 @@ class MixedRealityStsClient(object): # pylint: disable=client-accepts-api-versio
         token_request_options = TokenRequestOptions()
         token_request_options.client_request_id = generate_cv_base()
 
-        response = self._client.get_token(
-            self._account_id,
-            token_request_options=token_request_options,
-            **kwargs)
+        response = self._client.get_token(self._account_id, token_request_options=token_request_options, **kwargs)
         return convert_to_access_token(response)
 
     def close(self):

@@ -5,12 +5,13 @@ from multiprocessing.pool import ThreadPool
 import azure.cosmos.documents as documents
 from azure.cosmos import CosmosClient
 
+
 class MultiMasterScenario(object):
     def __init__(self):
         self.account_endpoint = Configurations.ENDPOINT
         self.account_key = Configurations.ACCOUNT_KEY
 
-        self.regions = Configurations.REGIONS.split(';')
+        self.regions = Configurations.REGIONS.split(";")
 
         self.database_name = Configurations.DATABASE_NAME
         self.manual_collection_name = Configurations.MANUAL_COLLECTION_NAME
@@ -19,8 +20,14 @@ class MultiMasterScenario(object):
         self.basic_collection_name = Configurations.BASIC_COLLECTION_NAME
 
         self.workers = []
-        self.conflict_worker = ConflictWorker(self.database_name, self.basic_collection_name, self.manual_collection_name, self.lww_collection_name, self.udp_collection_name)
-        self.pool = ThreadPool(processes = len(self.regions))
+        self.conflict_worker = ConflictWorker(
+            self.database_name,
+            self.basic_collection_name,
+            self.manual_collection_name,
+            self.lww_collection_name,
+            self.udp_collection_name,
+        )
+        self.pool = ThreadPool(processes=len(self.regions))
 
         for region in self.regions:
             connection_policy = documents.ConnectionPolicy()
@@ -31,7 +38,8 @@ class MultiMasterScenario(object):
                 url=self.account_endpoint,
                 credential=self.account_key,
                 consistency_level=documents.ConsistencyLevel.Session,
-                connection_policy=connection_policy)
+                connection_policy=connection_policy,
+            )
 
             self.workers.append(Worker(client, self.database_name, self.basic_collection_name))
 

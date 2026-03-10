@@ -5,6 +5,7 @@
 
 This includes enums and classes for exceptions.
 """
+
 import logging
 from enum import Enum
 from typing import Optional, Union

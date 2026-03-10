@@ -28,10 +28,7 @@ import os
 def format_bounding_region(bounding_regions):
     if not bounding_regions:
         return "N/A"
-    return ", ".join(
-        f"Page #{region.page_number}: {format_polygon(region.polygon)}"
-        for region in bounding_regions
-    )
+    return ", ".join(f"Page #{region.page_number}: {format_polygon(region.polygon)}" for region in bounding_regions)
 
 
 def format_polygon(polygon):
@@ -56,20 +53,14 @@ def get_words_on_document_line():
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
-    document_analysis_client = DocumentAnalysisClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
+    document_analysis_client = DocumentAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     with open(path_to_sample_documents, "rb") as f:
-        poller = document_analysis_client.begin_analyze_document(
-            "prebuilt-document", document=f
-        )
+        poller = document_analysis_client.begin_analyze_document("prebuilt-document", document=f)
     result = poller.result()
 
     for page in result.pages:
         print(f"----Analyzing lines and words from page #{page.page_number}----")
-        print(
-            f"Page has width: {page.width} and height: {page.height}, measured with unit: {page.unit}"
-        )
+        print(f"Page has width: {page.width} and height: {page.height}, measured with unit: {page.unit}")
 
         if page.lines is not None:
             for line_idx, line in enumerate(page.lines):
@@ -80,9 +71,7 @@ def get_words_on_document_line():
                 )
 
                 for word in words:
-                    print(
-                        f"......Word '{word.content}' has a confidence of {word.confidence}"
-                    )
+                    print(f"......Word '{word.content}' has a confidence of {word.confidence}")
 
     print("----------------------------------------")
 

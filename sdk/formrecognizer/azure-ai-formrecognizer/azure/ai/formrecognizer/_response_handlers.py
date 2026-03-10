@@ -35,9 +35,11 @@ def prepare_prebuilt_models(response):
             ),
             pages=form_page[page.page_range[0] - 1 : page.page_range[1]],
             form_type=page.doc_type,
-            fields={key: FormField._from_generated(key, value, read_result) for key, value in page.fields.items()}
-            if page.fields
-            else None,
+            fields=(
+                {key: FormField._from_generated(key, value, read_result) for key, value in page.fields.items()}
+                if page.fields
+                else None
+            ),
             form_type_confidence=doc_type_confidence,
             model_id=model_id,
         )

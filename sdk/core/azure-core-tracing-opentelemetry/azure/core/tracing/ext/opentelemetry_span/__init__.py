@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Implements azure.core.tracing.AbstractSpan to wrap OpenTelemetry spans."""
+
 from typing import Any, ContextManager, Dict, Optional, Union, Callable, Sequence, cast, List
 import warnings
 
@@ -223,11 +224,9 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         try:
             self._span_instance._kind = kind  # type: ignore[attr-defined] # pylint: disable=protected-access
         except AttributeError:
-            warnings.warn(
-                """Kind must be set while creating the span for OpenTelemetry. It might be possible
+            warnings.warn("""Kind must be set while creating the span for OpenTelemetry. It might be possible
                 that one of the packages you are using doesn't follow the latest Opentelemetry Spec.
-                Try updating the azure packages to the latest versions."""
-            )
+                Try updating the azure packages to the latest versions.""")
 
     def __enter__(self) -> "OpenTelemetrySpan":
         self._current_ctxt_manager = _SuppressionContextManager(self)
@@ -327,11 +326,9 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         try:
             current_span._links.append(OpenTelemetryLink(span_ctx, attributes))  # type: ignore # pylint: disable=protected-access
         except AttributeError:
-            warnings.warn(
-                """Link must be added while creating the span for OpenTelemetry. It might be possible
+            warnings.warn("""Link must be added while creating the span for OpenTelemetry. It might be possible
                 that one of the packages you are using doesn't follow the latest Opentelemetry Spec.
-                Try updating the azure packages to the latest versions."""
-            )
+                Try updating the azure packages to the latest versions.""")
 
     @classmethod
     def get_current_span(cls) -> Span:

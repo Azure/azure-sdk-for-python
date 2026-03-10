@@ -7,10 +7,12 @@
 # --------------------------------------------------------------------------
 
 from ._source_control_configuration_client import SourceControlConfigurationClient
-__all__ = ['SourceControlConfigurationClient']
+
+__all__ = ["SourceControlConfigurationClient"]
 
 try:
     from ._patch import patch_sdk  # type: ignore
+
     patch_sdk()
 except ImportError:
     pass

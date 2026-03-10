@@ -35,35 +35,32 @@ import random
 
 # Helper to retrive local file path from FarmBeats data store path.
 def parse_file_path_from_file_link(file_link):
-    return parse_qs(urlparse(file_link).query)['filePath'][0]
+    return parse_qs(urlparse(file_link).query)["filePath"][0]
+
 
 # Helper to download a given scene file path and store it to
 # the specified out path.
 def download_image(client, file_link, root_dir):
-        file_path = parse_file_path_from_file_link(file_link)
-        out_path = Path(os.path.join(root_dir, file_path))
-        out_path.parent.mkdir(parents=True, exist_ok=True)
+    file_path = parse_file_path_from_file_link(file_link)
+    out_path = Path(os.path.join(root_dir, file_path))
+    out_path.parent.mkdir(parents=True, exist_ok=True)
 
-        print(
-            f"Downloading image to {out_path.resolve()}... ", end="", flush=True)
-        with open(out_path, 'wb') as tif_file:
-            file_stream = client.scenes.download(file_path=file_path)
-            for bits in file_stream:
-                tif_file.write(bits)
-        print("Done")
-        return str(out_path.resolve())
+    print(f"Downloading image to {out_path.resolve()}... ", end="", flush=True)
+    with open(out_path, "wb") as tif_file:
+        file_stream = client.scenes.download(file_path=file_path)
+        for bits in file_stream:
+            tif_file.write(bits)
+    print("Done")
+    return str(out_path.resolve())
 
 
 def sample_satellite_download():
 
-    farmbeats_endpoint = os.environ['FARMBEATS_ENDPOINT']
+    farmbeats_endpoint = os.environ["FARMBEATS_ENDPOINT"]
 
     credential = DefaultAzureCredential()
 
-    client = FarmBeatsClient(
-        endpoint=farmbeats_endpoint,
-        credential=credential
-    )
+    client = FarmBeatsClient(endpoint=farmbeats_endpoint, credential=credential)
 
     party_id = f"contoso-party-{random.randint(0,1000)}"
     boundary_id = "contoso-boundary"
@@ -73,24 +70,16 @@ def sample_satellite_download():
     data_root_dir = "./data"
 
     # Create or update a party within FarmBeats.
-    print(
-        f"Ensure party with id {party_id} exists... ", end="", flush=True)
-    party = client.parties.create_or_update(
-        party_id=party_id,
-        party={}
-    )
+    print(f"Ensure party with id {party_id} exists... ", end="", flush=True)
+    party = client.parties.create_or_update(party_id=party_id, party={})
     print("Done")
 
     # Create a boundary if the boundary does not exist.
     try:
-        print(
-            f"Checking if boundary with id {boundary_id} exists... ", end="", flush=True)
-        boundary = client.boundaries.get(
-            party_id=party_id,
-            boundary_id=boundary_id
-        )
+        print(f"Checking if boundary with id {boundary_id} exists... ", end="", flush=True)
+        boundary = client.boundaries.get(party_id=party_id, boundary_id=boundary_id)
         print("Exists")
-        
+
     except ResourceNotFoundError as e:
         print("Boundary doesn't exist. Creating... ", end="", flush=True)
         # Creating a boundary.
@@ -98,26 +87,24 @@ def sample_satellite_download():
             party_id=party_id,
             boundary_id=boundary_id,
             boundary={
-                "geometry":
-                {
+                "geometry": {
                     "type": "Polygon",
-                    "coordinates":
+                    "coordinates": [
                         [
-                            [
-                                [73.70457172393799, 20.545385304358106],
-                                [73.70457172393799, 20.545385304358106],
-                                [73.70448589324951, 20.542411534243367],
-                                [73.70877742767334, 20.541688176010233],
-                                [73.71023654937744, 20.545083911372505],
-                                [73.70663166046143, 20.546992723579137],
-                                [73.70457172393799, 20.545385304358106],
-                            ]
+                            [73.70457172393799, 20.545385304358106],
+                            [73.70457172393799, 20.545385304358106],
+                            [73.70448589324951, 20.542411534243367],
+                            [73.70877742767334, 20.541688176010233],
+                            [73.71023654937744, 20.545083911372505],
+                            [73.70663166046143, 20.546992723579137],
+                            [73.70457172393799, 20.545385304358106],
                         ]
+                    ],
                 },
                 "status": "<string>",
                 "name": "<string>",
-                "description": "<string>"
-            }
+                "description": "<string>",
+            },
         )
         print("Created")
 
@@ -133,18 +120,10 @@ def sample_satellite_download():
             "startDateTime": start_date_time,
             "provider": "Microsoft",
             "source": "Sentinel_2_L2A",
-            "data": {
-                "imageNames": [
-                    "NDVI"
-                ],
-                "imageFormats": [
-                    "TIF"
-                ],
-                "imageResolution": [10]
-            },
+            "data": {"imageNames": ["NDVI"], "imageFormats": ["TIF"], "imageResolution": [10]},
             "name": "<string>",
-            "description": "<string>"
-        }
+            "description": "<string>",
+        },
     )
     print("Queued. Waiting for completion... ", end="", flush=True)
     satellite_job_poller.result()
@@ -158,9 +137,9 @@ def sample_satellite_download():
         start_date_time=start_date_time,
         end_date_time=end_date_time,
         provider="Microsoft",
-        source="Sentinel_2_L2A"
+        source="Sentinel_2_L2A",
     )
-    print("Done")        
+    print("Done")
 
     for scene in scenes:
         for image_file in scene["imageFiles"]:

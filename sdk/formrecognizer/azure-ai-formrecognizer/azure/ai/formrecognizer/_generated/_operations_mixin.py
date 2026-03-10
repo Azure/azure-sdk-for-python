@@ -43,11 +43,13 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: ~azure.ai.formrecognizer.v2022_08_31.models.CopyAuthorization
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('authorize_copy_document_model')
-        if api_version == '2022-08-31':
+        api_version = self._get_api_version("authorize_copy_document_model")
+        if api_version == "2022-08-31":
             from .v2022_08_31.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
-            raise ValueError("API version {} does not have operation 'authorize_copy_document_model'".format(api_version))
+            raise ValueError(
+                "API version {} does not have operation 'authorize_copy_document_model'".format(api_version)
+            )
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
@@ -101,18 +103,22 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('begin_analyze_business_card_async')
-        if api_version == '2.1':
+        api_version = self._get_api_version("begin_analyze_business_card_async")
+        if api_version == "2.1":
             from .v2_1.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
-            raise ValueError("API version {} does not have operation 'begin_analyze_business_card_async'".format(api_version))
+            raise ValueError(
+                "API version {} does not have operation 'begin_analyze_business_card_async'".format(api_version)
+            )
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.begin_analyze_business_card_async(include_text_details, locale, pages, file_stream, **kwargs)
+        return mixin_instance.begin_analyze_business_card_async(
+            include_text_details, locale, pages, file_stream, **kwargs
+        )
 
     def begin_analyze_document(  # pylint: disable=inconsistent-return-statements
         self,
@@ -156,8 +162,8 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('begin_analyze_document')
-        if api_version == '2022-08-31':
+        api_version = self._get_api_version("begin_analyze_document")
+        if api_version == "2022-08-31":
             from .v2022_08_31.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_analyze_document'".format(api_version))
@@ -167,7 +173,9 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.begin_analyze_document(model_id, pages, locale, string_index_type, analyze_request, **kwargs)
+        return mixin_instance.begin_analyze_document(
+            model_id, pages, locale, string_index_type, analyze_request, **kwargs
+        )
 
     def begin_analyze_id_document_async(  # pylint: disable=inconsistent-return-statements
         self,
@@ -210,11 +218,13 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('begin_analyze_id_document_async')
-        if api_version == '2.1':
+        api_version = self._get_api_version("begin_analyze_id_document_async")
+        if api_version == "2.1":
             from .v2_1.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
-            raise ValueError("API version {} does not have operation 'begin_analyze_id_document_async'".format(api_version))
+            raise ValueError(
+                "API version {} does not have operation 'begin_analyze_id_document_async'".format(api_version)
+            )
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
@@ -268,8 +278,8 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('begin_analyze_invoice_async')
-        if api_version == '2.1':
+        api_version = self._get_api_version("begin_analyze_invoice_async")
+        if api_version == "2.1":
             from .v2_1.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_analyze_invoice_async'".format(api_version))
@@ -342,10 +352,10 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('begin_analyze_layout_async')
-        if api_version == '2.0':
+        api_version = self._get_api_version("begin_analyze_layout_async")
+        if api_version == "2.0":
             from .v2_0.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2.1':
+        elif api_version == "2.1":
             from .v2_1.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_analyze_layout_async'".format(api_version))
@@ -356,9 +366,9 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         # FIXME: this is handwritten
-        if api_version == '2.0':
+        if api_version == "2.0":
             return mixin_instance.begin_analyze_layout_async(file_stream, **kwargs)
-        elif api_version == '2.1':
+        elif api_version == "2.1":
             return mixin_instance.begin_analyze_layout_async(pages, language, reading_order, file_stream, **kwargs)
 
     def begin_analyze_receipt_async(  # pylint: disable=inconsistent-return-statements
@@ -406,10 +416,10 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('begin_analyze_receipt_async')
-        if api_version == '2.0':
+        api_version = self._get_api_version("begin_analyze_receipt_async")
+        if api_version == "2.0":
             from .v2_0.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2.1':
+        elif api_version == "2.1":
             from .v2_1.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_analyze_receipt_async'".format(api_version))
@@ -420,10 +430,12 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         # FIXME: this is handwritten
-        if api_version == '2.0':
+        if api_version == "2.0":
             return mixin_instance.begin_analyze_receipt_async(include_text_details, file_stream, **kwargs)
-        elif api_version == '2.1':
-            return mixin_instance.begin_analyze_receipt_async(include_text_details, locale, pages, file_stream, **kwargs)
+        elif api_version == "2.1":
+            return mixin_instance.begin_analyze_receipt_async(
+                include_text_details, locale, pages, file_stream, **kwargs
+            )
 
     def begin_analyze_with_custom_model(  # pylint: disable=inconsistent-return-statements
         self,
@@ -469,13 +481,15 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('begin_analyze_with_custom_model')
-        if api_version == '2.0':
+        api_version = self._get_api_version("begin_analyze_with_custom_model")
+        if api_version == "2.0":
             from .v2_0.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2.1':
+        elif api_version == "2.1":
             from .v2_1.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
-            raise ValueError("API version {} does not have operation 'begin_analyze_with_custom_model'".format(api_version))
+            raise ValueError(
+                "API version {} does not have operation 'begin_analyze_with_custom_model'".format(api_version)
+            )
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
@@ -483,10 +497,12 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         # FIXME: this is handwritten
-        if api_version == '2.0':
+        if api_version == "2.0":
             return mixin_instance.begin_analyze_with_custom_model(model_id, include_text_details, file_stream, **kwargs)
-        elif api_version == '2.1':
-            return mixin_instance.begin_analyze_with_custom_model(model_id, include_text_details, pages, file_stream, **kwargs)
+        elif api_version == "2.1":
+            return mixin_instance.begin_analyze_with_custom_model(
+                model_id, include_text_details, pages, file_stream, **kwargs
+            )
 
     def begin_build_document_model(  # pylint: disable=inconsistent-return-statements
         self,
@@ -513,8 +529,8 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: ~...._polling.DocumentModelAdministrationClientLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('begin_build_document_model')
-        if api_version == '2022-08-31':
+        api_version = self._get_api_version("begin_build_document_model")
+        if api_version == "2022-08-31":
             from .v2022_08_31.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_build_document_model'".format(api_version))
@@ -552,11 +568,13 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('begin_compose_custom_models_async')
-        if api_version == '2.1':
+        api_version = self._get_api_version("begin_compose_custom_models_async")
+        if api_version == "2.1":
             from .v2_1.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
-            raise ValueError("API version {} does not have operation 'begin_compose_custom_models_async'".format(api_version))
+            raise ValueError(
+                "API version {} does not have operation 'begin_compose_custom_models_async'".format(api_version)
+            )
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
@@ -590,11 +608,13 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: ~...._polling.DocumentModelAdministrationClientLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('begin_compose_document_model')
-        if api_version == '2022-08-31':
+        api_version = self._get_api_version("begin_compose_document_model")
+        if api_version == "2022-08-31":
             from .v2022_08_31.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
-            raise ValueError("API version {} does not have operation 'begin_compose_document_model'".format(api_version))
+            raise ValueError(
+                "API version {} does not have operation 'begin_compose_document_model'".format(api_version)
+            )
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
@@ -631,10 +651,10 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('begin_copy_custom_model')
-        if api_version == '2.0':
+        api_version = self._get_api_version("begin_copy_custom_model")
+        if api_version == "2.0":
             from .v2_0.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2.1':
+        elif api_version == "2.1":
             from .v2_1.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_copy_custom_model'".format(api_version))
@@ -674,11 +694,13 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: ~...._polling.DocumentModelAdministrationClientLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('begin_copy_document_model_to')
-        if api_version == '2022-08-31':
+        api_version = self._get_api_version("begin_copy_document_model_to")
+        if api_version == "2022-08-31":
             from .v2022_08_31.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
-            raise ValueError("API version {} does not have operation 'begin_copy_document_model_to'".format(api_version))
+            raise ValueError(
+                "API version {} does not have operation 'begin_copy_document_model_to'".format(api_version)
+            )
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
@@ -719,11 +741,13 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('begin_train_custom_model_async')
-        if api_version == '2.1':
+        api_version = self._get_api_version("begin_train_custom_model_async")
+        if api_version == "2.1":
             from .v2_1.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
-            raise ValueError("API version {} does not have operation 'begin_train_custom_model_async'".format(api_version))
+            raise ValueError(
+                "API version {} does not have operation 'begin_train_custom_model_async'".format(api_version)
+            )
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
@@ -750,10 +774,10 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('delete_custom_model')
-        if api_version == '2.0':
+        api_version = self._get_api_version("delete_custom_model")
+        if api_version == "2.0":
             from .v2_0.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2.1':
+        elif api_version == "2.1":
             from .v2_1.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'delete_custom_model'".format(api_version))
@@ -782,8 +806,8 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('delete_document_model')
-        if api_version == '2022-08-31':
+        api_version = self._get_api_version("delete_document_model")
+        if api_version == "2022-08-31":
             from .v2022_08_31.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'delete_document_model'".format(api_version))
@@ -796,8 +820,7 @@ class FormRecognizerClientOperationsMixin(object):
         return mixin_instance.delete_document_model(model_id, **kwargs)
 
     def generate_model_copy_authorization(
-        self,
-        **kwargs  # type: Any
+        self, **kwargs  # type: Any
     ):
         # type: (...) -> _models.CopyAuthorizationResult
         """Generate Copy Authorization.
@@ -809,13 +832,15 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: ~azure.ai.formrecognizer.v2_1.models.CopyAuthorizationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('generate_model_copy_authorization')
-        if api_version == '2.0':
+        api_version = self._get_api_version("generate_model_copy_authorization")
+        if api_version == "2.0":
             from .v2_0.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2.1':
+        elif api_version == "2.1":
             from .v2_1.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
-            raise ValueError("API version {} does not have operation 'generate_model_copy_authorization'".format(api_version))
+            raise ValueError(
+                "API version {} does not have operation 'generate_model_copy_authorization'".format(api_version)
+            )
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
@@ -841,11 +866,13 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: ~azure.ai.formrecognizer.v2_1.models.AnalyzeOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('get_analyze_business_card_result')
-        if api_version == '2.1':
+        api_version = self._get_api_version("get_analyze_business_card_result")
+        if api_version == "2.1":
             from .v2_1.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
-            raise ValueError("API version {} does not have operation 'get_analyze_business_card_result'".format(api_version))
+            raise ValueError(
+                "API version {} does not have operation 'get_analyze_business_card_result'".format(api_version)
+            )
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
@@ -874,8 +901,8 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: ~azure.ai.formrecognizer.v2022_08_31.models.AnalyzeResultOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('get_analyze_document_result')
-        if api_version == '2022-08-31':
+        api_version = self._get_api_version("get_analyze_document_result")
+        if api_version == "2022-08-31":
             from .v2022_08_31.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_analyze_document_result'".format(api_version))
@@ -907,10 +934,10 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: ~azure.ai.formrecognizer.v2_1.models.AnalyzeOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('get_analyze_form_result')
-        if api_version == '2.0':
+        api_version = self._get_api_version("get_analyze_form_result")
+        if api_version == "2.0":
             from .v2_0.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2.1':
+        elif api_version == "2.1":
             from .v2_1.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_analyze_form_result'".format(api_version))
@@ -939,11 +966,13 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: ~azure.ai.formrecognizer.v2_1.models.AnalyzeOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('get_analyze_id_document_result')
-        if api_version == '2.1':
+        api_version = self._get_api_version("get_analyze_id_document_result")
+        if api_version == "2.1":
             from .v2_1.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
-            raise ValueError("API version {} does not have operation 'get_analyze_id_document_result'".format(api_version))
+            raise ValueError(
+                "API version {} does not have operation 'get_analyze_id_document_result'".format(api_version)
+            )
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
@@ -969,8 +998,8 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: ~azure.ai.formrecognizer.v2_1.models.AnalyzeOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('get_analyze_invoice_result')
-        if api_version == '2.1':
+        api_version = self._get_api_version("get_analyze_invoice_result")
+        if api_version == "2.1":
             from .v2_1.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_analyze_invoice_result'".format(api_version))
@@ -999,10 +1028,10 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: ~azure.ai.formrecognizer.v2_1.models.AnalyzeOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('get_analyze_layout_result')
-        if api_version == '2.0':
+        api_version = self._get_api_version("get_analyze_layout_result")
+        if api_version == "2.0":
             from .v2_0.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2.1':
+        elif api_version == "2.1":
             from .v2_1.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_analyze_layout_result'".format(api_version))
@@ -1031,10 +1060,10 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: ~azure.ai.formrecognizer.v2_1.models.AnalyzeOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('get_analyze_receipt_result')
-        if api_version == '2.0':
+        api_version = self._get_api_version("get_analyze_receipt_result")
+        if api_version == "2.0":
             from .v2_0.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2.1':
+        elif api_version == "2.1":
             from .v2_1.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_analyze_receipt_result'".format(api_version))
@@ -1067,10 +1096,10 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: ~azure.ai.formrecognizer.v2_1.models.Model
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('get_custom_model')
-        if api_version == '2.0':
+        api_version = self._get_api_version("get_custom_model")
+        if api_version == "2.0":
             from .v2_0.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2.1':
+        elif api_version == "2.1":
             from .v2_1.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_custom_model'".format(api_version))
@@ -1102,13 +1131,15 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: ~azure.ai.formrecognizer.v2_1.models.CopyOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('get_custom_model_copy_result')
-        if api_version == '2.0':
+        api_version = self._get_api_version("get_custom_model_copy_result")
+        if api_version == "2.0":
             from .v2_0.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2.1':
+        elif api_version == "2.1":
             from .v2_1.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
-            raise ValueError("API version {} does not have operation 'get_custom_model_copy_result'".format(api_version))
+            raise ValueError(
+                "API version {} does not have operation 'get_custom_model_copy_result'".format(api_version)
+            )
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
@@ -1118,8 +1149,7 @@ class FormRecognizerClientOperationsMixin(object):
         return mixin_instance.get_custom_model_copy_result(model_id, result_id, **kwargs)
 
     def get_custom_models(
-        self,
-        **kwargs  # type: Any
+        self, **kwargs  # type: Any
     ):
         # type: (...) -> _models.Models
         """Get Custom Models.
@@ -1134,10 +1164,10 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: ~azure.ai.formrecognizer.v2_1.models.Models
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('get_custom_models')
-        if api_version == '2.0':
+        api_version = self._get_api_version("get_custom_models")
+        if api_version == "2.0":
             from .v2_0.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2.1':
+        elif api_version == "2.1":
             from .v2_1.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_custom_models'".format(api_version))
@@ -1166,8 +1196,8 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: ~azure.ai.formrecognizer.v2022_08_31.models.DocumentModelDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('get_document_model')
-        if api_version == '2022-08-31':
+        api_version = self._get_api_version("get_document_model")
+        if api_version == "2022-08-31":
             from .v2022_08_31.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_document_model'".format(api_version))
@@ -1180,8 +1210,7 @@ class FormRecognizerClientOperationsMixin(object):
         return mixin_instance.get_document_model(model_id, **kwargs)
 
     def get_document_models(
-        self,
-        **kwargs  # type: Any
+        self, **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[_models.GetDocumentModelsResponse]
         """List document models.
@@ -1195,8 +1224,8 @@ class FormRecognizerClientOperationsMixin(object):
          ~azure.core.paging.ItemPaged[~azure.ai.formrecognizer.v2022_08_31.models.GetDocumentModelsResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('get_document_models')
-        if api_version == '2022-08-31':
+        api_version = self._get_api_version("get_document_models")
+        if api_version == "2022-08-31":
             from .v2022_08_31.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_document_models'".format(api_version))
@@ -1225,8 +1254,8 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: ~azure.ai.formrecognizer.v2022_08_31.models.OperationDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('get_operation')
-        if api_version == '2022-08-31':
+        api_version = self._get_api_version("get_operation")
+        if api_version == "2022-08-31":
             from .v2022_08_31.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_operation'".format(api_version))
@@ -1239,8 +1268,7 @@ class FormRecognizerClientOperationsMixin(object):
         return mixin_instance.get_operation(operation_id, **kwargs)
 
     def get_operations(
-        self,
-        **kwargs  # type: Any
+        self, **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[_models.GetOperationsResponse]
         """List operations.
@@ -1254,8 +1282,8 @@ class FormRecognizerClientOperationsMixin(object):
          ~azure.core.paging.ItemPaged[~azure.ai.formrecognizer.v2022_08_31.models.GetOperationsResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('get_operations')
-        if api_version == '2022-08-31':
+        api_version = self._get_api_version("get_operations")
+        if api_version == "2022-08-31":
             from .v2022_08_31.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_operations'".format(api_version))
@@ -1268,8 +1296,7 @@ class FormRecognizerClientOperationsMixin(object):
         return mixin_instance.get_operations(**kwargs)
 
     def get_resource_details(
-        self,
-        **kwargs  # type: Any
+        self, **kwargs  # type: Any
     ):
         # type: (...) -> _models.ResourceDetails
         """Get resource info.
@@ -1281,8 +1308,8 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: ~azure.ai.formrecognizer.v2022_08_31.models.ResourceDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('get_resource_details')
-        if api_version == '2022-08-31':
+        api_version = self._get_api_version("get_resource_details")
+        if api_version == "2022-08-31":
             from .v2022_08_31.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_resource_details'".format(api_version))
@@ -1295,8 +1322,7 @@ class FormRecognizerClientOperationsMixin(object):
         return mixin_instance.get_resource_details(**kwargs)
 
     def list_custom_models(
-        self,
-        **kwargs  # type: Any
+        self, **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[_models.Models]
         """List Custom Models.
@@ -1311,10 +1337,10 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.formrecognizer.v2_1.models.Models]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('list_custom_models')
-        if api_version == '2.0':
+        api_version = self._get_api_version("list_custom_models")
+        if api_version == "2.0":
             from .v2_0.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2.1':
+        elif api_version == "2.1":
             from .v2_1.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'list_custom_models'".format(api_version))
@@ -1351,8 +1377,8 @@ class FormRecognizerClientOperationsMixin(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = self._get_api_version('train_custom_model_async')
-        if api_version == '2.0':
+        api_version = self._get_api_version("train_custom_model_async")
+        if api_version == "2.0":
             from .v2_0.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'train_custom_model_async'".format(api_version))

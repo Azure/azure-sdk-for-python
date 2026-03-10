@@ -22,6 +22,7 @@ from ._dict_mixin import DictMixin
 
 STRING_INDEX_TYPE_DEFAULT = "UnicodeCodePoint"
 
+
 def _get_indices(relation):
     return [int(s) for s in re.findall(r"\d+", relation)]
 
@@ -49,9 +50,7 @@ class TextAnalysisKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class PiiEntityDomain(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The different domains of PII entities that users can filter by"""
 
-    PROTECTED_HEALTH_INFORMATION = (
-        "phi"  # See https://aka.ms/azsdk/language/pii for more information.
-    )
+    PROTECTED_HEALTH_INFORMATION = "phi"  # See https://aka.ms/azsdk/language/pii for more information.
 
 
 class DetectedLanguage(DictMixin):
@@ -215,13 +214,10 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
     @classmethod
     def _from_generated(cls, healthcare_result):
         entities = [
-            HealthcareEntity._from_generated(e)  # pylint: disable=protected-access
-            for e in healthcare_result.entities
+            HealthcareEntity._from_generated(e) for e in healthcare_result.entities  # pylint: disable=protected-access
         ]
         relations = [
-            HealthcareRelation._from_generated(  # pylint: disable=protected-access
-                r, entities
-            )
+            HealthcareRelation._from_generated(r, entities)  # pylint: disable=protected-access
             for r in healthcare_result.relations
         ]
         return cls(
@@ -229,9 +225,7 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
             entities=entities,
             entity_relations=relations,
             warnings=[
-                TextAnalyticsWarning._from_generated(  # pylint: disable=protected-access
-                    w
-                )
+                TextAnalyticsWarning._from_generated(w)  # pylint: disable=protected-access
                 for w in healthcare_result.warnings
             ],
             statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
@@ -275,13 +269,14 @@ class HealthcareRelation(DictMixin):
     @classmethod
     def _from_generated(cls, healthcare_relation_result, entities):
         roles = [
-            HealthcareRelationRole._from_generated(  # pylint: disable=protected-access
-                r, entities
-            )
+            HealthcareRelationRole._from_generated(r, entities)  # pylint: disable=protected-access
             for r in healthcare_relation_result.entities
         ]
-        confidence_score = healthcare_relation_result.confidence_score \
-            if hasattr(healthcare_relation_result, "confidence_score") else None
+        confidence_score = (
+            healthcare_relation_result.confidence_score
+            if hasattr(healthcare_relation_result, "confidence_score")
+            else None
+        )
         return cls(
             relation_type=healthcare_relation_result.relation_type,
             roles=roles,
@@ -289,8 +284,10 @@ class HealthcareRelation(DictMixin):
         )
 
     def __repr__(self) -> str:
-        return f"HealthcareRelation(relation_type={self.relation_type}, roles={repr(self.roles)}, " \
-               f"confidence_score={self.confidence_score})"[:1024]
+        return (
+            f"HealthcareRelation(relation_type={self.relation_type}, roles={repr(self.roles)}, "
+            f"confidence_score={self.confidence_score})"[:1024]
+        )
 
 
 class HealthcareRelationRole(DictMixin):
@@ -317,9 +314,7 @@ class HealthcareRelationRole(DictMixin):
     @staticmethod
     def _get_entity(healthcare_role_result, entities):
         numbers = _get_indices(healthcare_role_result.ref)
-        entity_index = numbers[
-            1
-        ]  # first number parsed from index is document #, second is entity index
+        entity_index = numbers[1]  # first number parsed from index is document #, second is entity index
         return entities[entity_index]
 
     @classmethod
@@ -483,8 +478,7 @@ class PiiEntity(DictMixin):
 
 
 class HealthcareEntity(DictMixin):
-    """HealthcareEntity contains information about a Healthcare entity found in text.
-    """
+    """HealthcareEntity contains information about a Healthcare entity found in text."""
 
     text: str
     """Entity text as appears in the document."""
@@ -545,12 +539,11 @@ class HealthcareEntity(DictMixin):
             length=healthcare_entity.length,
             offset=healthcare_entity.offset,
             confidence_score=healthcare_entity.confidence_score,
-            data_sources=[
-                HealthcareEntityDataSource(entity_id=l.id, name=l.data_source)
-                for l in healthcare_entity.links
-            ]
-            if healthcare_entity.links
-            else None,
+            data_sources=(
+                [HealthcareEntityDataSource(entity_id=l.id, name=l.data_source) for l in healthcare_entity.links]
+                if healthcare_entity.links
+                else None
+            ),
         )
 
     def __hash__(self) -> int:
@@ -603,8 +596,10 @@ class HealthcareEntityAssertion(DictMixin):
         )
 
     def __repr__(self) -> str:
-        return f"HealthcareEntityAssertion(conditionality={self.conditionality}, certainty={self.certainty}, " \
-               f"association={self.association})"[:1024]
+        return (
+            f"HealthcareEntityAssertion(conditionality={self.conditionality}, certainty={self.certainty}, "
+            f"association={self.association})"[:1024]
+        )
 
 
 class HealthcareEntityDataSource(DictMixin):
@@ -622,9 +617,7 @@ class HealthcareEntityDataSource(DictMixin):
         self.name = kwargs.get("name", None)
 
     def __repr__(self) -> str:
-        return (
-            f"HealthcareEntityDataSource(entity_id={self.entity_id}, name={self.name})"[:1024]
-        )
+        return f"HealthcareEntityDataSource(entity_id={self.entity_id}, name={self.name})"[:1024]
 
 
 class TextAnalyticsError(DictMixin):
@@ -844,8 +837,10 @@ class TextDocumentStatistics(DictMixin):
         )
 
     def __repr__(self) -> str:
-        return f"TextDocumentStatistics(character_count={self.character_count}, " \
-               f"transaction_count={self.transaction_count})"[:1024]
+        return (
+            f"TextDocumentStatistics(character_count={self.character_count}, "
+            f"transaction_count={self.transaction_count})"[:1024]
+        )
 
 
 class DocumentError(DictMixin):
@@ -890,26 +885,22 @@ class DocumentError(DictMixin):
         if attr in result_attrs:
             raise AttributeError(
                 "'DocumentError' object has no attribute '{}'. The service was unable to process this document:\n"
-                "Document Id: {}\nError: {} - {}\n".format(
-                    attr, self.id, self.error.code, self.error.message
-                )
+                "Document Id: {}\nError: {} - {}\n".format(attr, self.id, self.error.code, self.error.message)
             )
-        raise AttributeError(
-            f"'DocumentError' object has no attribute '{attr}'"
-        )
+        raise AttributeError(f"'DocumentError' object has no attribute '{attr}'")
 
     @classmethod
     def _from_generated(cls, doc_err):
         return cls(
             id=doc_err.id,
-            error=TextAnalyticsError._from_generated(  # pylint: disable=protected-access
-                doc_err.error
-            ),
+            error=TextAnalyticsError._from_generated(doc_err.error),  # pylint: disable=protected-access
         )
 
     def __repr__(self) -> str:
-        return f"DocumentError(id={self.id}, error={repr(self.error)}, " \
-               f"is_error={self.is_error}, kind={self.kind})"[:1024]
+        return (
+            f"DocumentError(id={self.id}, error={repr(self.error)}, "
+            f"is_error={self.is_error}, kind={self.kind})"[:1024]
+        )
 
 
 class DetectLanguageInput(LanguageInput):
@@ -939,7 +930,7 @@ class DetectLanguageInput(LanguageInput):
         id: str,  # pylint: disable=redefined-builtin
         text: str,
         country_hint: Optional[str] = None,
-        **kwargs: Any  # pylint: disable=unused-argument
+        **kwargs: Any,  # pylint: disable=unused-argument
     ) -> None:
         super().__init__(id=id, text=text, country_hint=country_hint)
         self.id = id
@@ -989,15 +980,10 @@ class LinkedEntity(DictMixin):
 
     @classmethod
     def _from_generated(cls, entity):
-        bing_entity_search_api_id = (
-            entity.bing_id if hasattr(entity, "bing_id") else None
-        )
+        bing_entity_search_api_id = entity.bing_id if hasattr(entity, "bing_id") else None
         return cls(
             name=entity.name,
-            matches=[
-                LinkedEntityMatch._from_generated(e)  # pylint: disable=protected-access
-                for e in entity.matches
-            ],
+            matches=[LinkedEntityMatch._from_generated(e) for e in entity.matches],  # pylint: disable=protected-access
             language=entity.language,
             data_source_entity_id=entity.id,
             url=entity.url,
@@ -1059,8 +1045,10 @@ class LinkedEntityMatch(DictMixin):
         )
 
     def __repr__(self) -> str:
-        return f"LinkedEntityMatch(confidence_score={self.confidence_score}, text={self.text}, " \
-               f"length={self.length}, offset={self.offset})"[:1024]
+        return (
+            f"LinkedEntityMatch(confidence_score={self.confidence_score}, text={self.text}, "
+            f"length={self.length}, offset={self.offset})"[:1024]
+        )
 
 
 class TextDocumentInput(DictMixin, MultiLanguageInput):
@@ -1088,7 +1076,7 @@ class TextDocumentInput(DictMixin, MultiLanguageInput):
         id: str,  # pylint: disable=redefined-builtin
         text: str,
         language: Optional[str] = None,
-        **kwargs: Any  # pylint: disable=unused-argument
+        **kwargs: Any,  # pylint: disable=unused-argument
     ) -> None:
         super().__init__(id=id, text=text, language=language)
         self.id = id
@@ -1193,9 +1181,7 @@ class SentenceSentiment(DictMixin):
         if hasattr(sentence, "targets"):
             mined_opinions = (
                 [
-                    MinedOpinion._from_generated(  # pylint: disable=protected-access
-                        target, results, sentiment
-                    )
+                    MinedOpinion._from_generated(target, results, sentiment)  # pylint: disable=protected-access
                     for target in sentence.targets
                 ]
                 if sentence.targets
@@ -1238,37 +1224,25 @@ class MinedOpinion(DictMixin):
         self.assessments = kwargs.get("assessments", None)
 
     @staticmethod
-    def _get_assessments(
-        relations, results, sentiment
-    ):  # pylint: disable=unused-argument
+    def _get_assessments(relations, results, sentiment):  # pylint: disable=unused-argument
         if not relations:
             return []
-        assessment_relations = [
-            r.ref for r in relations if r.relation_type == "assessment"
-        ]
+        assessment_relations = [r.ref for r in relations if r.relation_type == "assessment"]
         assessments = []
         for assessment_relation in assessment_relations:
             numbers = _get_indices(assessment_relation)
             sentence_index = numbers[1]
             assessment_index = numbers[2]
-            assessments.append(
-                sentiment.sentences[sentence_index].assessments[assessment_index]
-            )
+            assessments.append(sentiment.sentences[sentence_index].assessments[assessment_index])
         return assessments
 
     @classmethod
     def _from_generated(cls, target, results, sentiment):
         return cls(
-            target=TargetSentiment._from_generated(  # pylint: disable=protected-access
-                target
-            ),
+            target=TargetSentiment._from_generated(target),  # pylint: disable=protected-access
             assessments=[
-                AssessmentSentiment._from_generated(  # pylint: disable=protected-access
-                    assessment
-                )
-                for assessment in cls._get_assessments(
-                    target.relations, results, sentiment
-                )
+                AssessmentSentiment._from_generated(assessment)  # pylint: disable=protected-access
+                for assessment in cls._get_assessments(target.relations, results, sentiment)
             ],
         )
 
@@ -1411,21 +1385,19 @@ class SentimentConfidenceScores(DictMixin):
         )
 
     def __repr__(self) -> str:
-        return f"SentimentConfidenceScores(positive={self.positive}, " \
-               f"neutral={self.neutral}, negative={self.negative})"[:1024]
+        return (
+            f"SentimentConfidenceScores(positive={self.positive}, "
+            f"neutral={self.neutral}, negative={self.negative})"[:1024]
+        )
 
 
 class _AnalyzeActionsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of action that was applied to the documents"""
 
     RECOGNIZE_ENTITIES = "recognize_entities"  #: Entities Recognition action.
-    RECOGNIZE_PII_ENTITIES = (
-        "recognize_pii_entities"  #: PII Entities Recognition action.
-    )
+    RECOGNIZE_PII_ENTITIES = "recognize_pii_entities"  #: PII Entities Recognition action.
     EXTRACT_KEY_PHRASES = "extract_key_phrases"  #: Key Phrase Extraction action.
-    RECOGNIZE_LINKED_ENTITIES = (
-        "recognize_linked_entities"  #: Linked Entities Recognition action.
-    )
+    RECOGNIZE_LINKED_ENTITIES = "recognize_linked_entities"  #: Linked Entities Recognition action.
     ANALYZE_SENTIMENT = "analyze_sentiment"  #: Sentiment Analysis action.
     RECOGNIZE_CUSTOM_ENTITIES = "recognize_custom_entities"
     SINGLE_LABEL_CLASSIFY = "single_label_classify"
@@ -1437,6 +1409,7 @@ class _AnalyzeActionsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class ActionPointerKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """v3.1 only"""
+
     RECOGNIZE_ENTITIES = "entityRecognitionTasks"
     RECOGNIZE_PII_ENTITIES = "piiEntityRecognitionTasks"
     EXTRACT_KEY_PHRASES = "keyPhraseExtractionTasks"
@@ -1493,16 +1466,18 @@ class RecognizeEntitiesAction(DictMixin):
         model_version: Optional[str] = None,
         string_index_type: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self.model_version = model_version
         self.string_index_type: str = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
         self.disable_service_logs = disable_service_logs
 
     def __repr__(self) -> str:
-        return f"RecognizeEntitiesAction(model_version={self.model_version}, " \
-               f"string_index_type={self.string_index_type}, " \
-               f"disable_service_logs={self.disable_service_logs})"[:1024]
+        return (
+            f"RecognizeEntitiesAction(model_version={self.model_version}, "
+            f"string_index_type={self.string_index_type}, "
+            f"disable_service_logs={self.disable_service_logs})"[:1024]
+        )
 
     def _to_generated(self, api_version, task_id):
         if is_language_api(api_version):
@@ -1512,7 +1487,7 @@ class RecognizeEntitiesAction(DictMixin):
                     model_version=self.model_version,
                     string_index_type=string_index_type_compatibility(self.string_index_type),
                     logging_opt_out=self.disable_service_logs,
-                )
+                ),
             )
 
         return _v3_1_models.EntitiesTask(
@@ -1521,7 +1496,7 @@ class RecognizeEntitiesAction(DictMixin):
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs,
             ),
-            task_name=task_id
+            task_name=task_id,
         )
 
 
@@ -1587,7 +1562,7 @@ class AnalyzeSentimentAction(DictMixin):
         model_version: Optional[str] = None,
         string_index_type: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self.model_version = model_version
         self.show_opinion_mining = show_opinion_mining
@@ -1611,7 +1586,7 @@ class AnalyzeSentimentAction(DictMixin):
                     opinion_mining=self.show_opinion_mining,
                     string_index_type=string_index_type_compatibility(self.string_index_type),
                     logging_opt_out=self.disable_service_logs,
-                )
+                ),
             )
         return _v3_1_models.SentimentAnalysisTask(
             parameters=_v3_1_models.SentimentAnalysisTaskParameters(
@@ -1620,7 +1595,7 @@ class AnalyzeSentimentAction(DictMixin):
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs,
             ),
-            task_name=task_id
+            task_name=task_id,
         )
 
 
@@ -1689,7 +1664,7 @@ class RecognizePiiEntitiesAction(DictMixin):
         model_version: Optional[str] = None,
         string_index_type: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self.model_version = model_version
         self.domain_filter = domain_filter
@@ -1715,7 +1690,7 @@ class RecognizePiiEntitiesAction(DictMixin):
                     pii_categories=self.categories_filter,
                     string_index_type=string_index_type_compatibility(self.string_index_type),
                     logging_opt_out=self.disable_service_logs,
-                )
+                ),
             )
 
         return _v3_1_models.PiiTask(
@@ -1726,7 +1701,7 @@ class RecognizePiiEntitiesAction(DictMixin):
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs,
             ),
-            task_name=task_id
+            task_name=task_id,
         )
 
 
@@ -1766,18 +1741,16 @@ class ExtractKeyPhrasesAction(DictMixin):
         https://www.microsoft.com/ai/responsible-ai."""
 
     def __init__(
-        self,
-        *,
-        model_version: Optional[str] = None,
-        disable_service_logs: Optional[bool] = None,
-        **kwargs: Any
+        self, *, model_version: Optional[str] = None, disable_service_logs: Optional[bool] = None, **kwargs: Any
     ) -> None:
         self.model_version = model_version
         self.disable_service_logs = disable_service_logs
 
     def __repr__(self) -> str:
-        return f"ExtractKeyPhrasesAction(model_version={self.model_version}, " \
-               f"disable_service_logs={self.disable_service_logs})"[:1024]
+        return (
+            f"ExtractKeyPhrasesAction(model_version={self.model_version}, "
+            f"disable_service_logs={self.disable_service_logs})"[:1024]
+        )
 
     def _to_generated(self, api_version, task_id):
         if is_language_api(api_version):
@@ -1786,7 +1759,7 @@ class ExtractKeyPhrasesAction(DictMixin):
                 parameters=_v2023_04_01_models.KeyPhraseTaskParameters(
                     model_version=self.model_version,
                     logging_opt_out=self.disable_service_logs,
-                )
+                ),
             )
 
         return _v3_1_models.KeyPhrasesTask(
@@ -1794,7 +1767,7 @@ class ExtractKeyPhrasesAction(DictMixin):
                 model_version=self.model_version,
                 logging_opt_out=self.disable_service_logs,
             ),
-            task_name=task_id
+            task_name=task_id,
         )
 
 
@@ -1848,7 +1821,7 @@ class RecognizeLinkedEntitiesAction(DictMixin):
         model_version: Optional[str] = None,
         string_index_type: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self.model_version = model_version
         self.string_index_type: str = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
@@ -1869,7 +1842,7 @@ class RecognizeLinkedEntitiesAction(DictMixin):
                     model_version=self.model_version,
                     string_index_type=string_index_type_compatibility(self.string_index_type),
                     logging_opt_out=self.disable_service_logs,
-                )
+                ),
             )
 
         return _v3_1_models.EntityLinkingTask(
@@ -1878,7 +1851,7 @@ class RecognizeLinkedEntitiesAction(DictMixin):
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs,
             ),
-            task_name=task_id
+            task_name=task_id,
         )
 
 
@@ -1932,7 +1905,7 @@ class RecognizeCustomEntitiesAction(DictMixin):
         *,
         string_index_type: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self.project_name = project_name
         self.deployment_name = deployment_name
@@ -1954,7 +1927,7 @@ class RecognizeCustomEntitiesAction(DictMixin):
                 deployment_name=self.deployment_name,
                 string_index_type=string_index_type_compatibility(self.string_index_type),
                 logging_opt_out=self.disable_service_logs,
-            )
+            ),
         )
 
 
@@ -2000,18 +1973,12 @@ class RecognizeCustomEntitiesResult(DictMixin):
         return cls(
             id=result.id,
             entities=[
-                CategorizedEntity._from_generated(e)  # pylint: disable=protected-access
-                for e in result.entities
+                CategorizedEntity._from_generated(e) for e in result.entities  # pylint: disable=protected-access
             ],
             warnings=[
-                TextAnalyticsWarning._from_generated(  # pylint: disable=protected-access
-                    w
-                )
-                for w in result.warnings
+                TextAnalyticsWarning._from_generated(w) for w in result.warnings  # pylint: disable=protected-access
             ],
-            statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
-                result.statistics
-            ),
+            statistics=TextDocumentStatistics._from_generated(result.statistics),  # pylint: disable=protected-access
         )
 
 
@@ -2050,12 +2017,7 @@ class MultiLabelClassifyAction(DictMixin):
         https://www.microsoft.com/ai/responsible-ai."""
 
     def __init__(
-        self,
-        project_name: str,
-        deployment_name: str,
-        *,
-        disable_service_logs: Optional[bool] = None,
-        **kwargs: Any
+        self, project_name: str, deployment_name: str, *, disable_service_logs: Optional[bool] = None, **kwargs: Any
     ) -> None:
         self.project_name = project_name
         self.deployment_name = deployment_name
@@ -2074,7 +2036,7 @@ class MultiLabelClassifyAction(DictMixin):
                 project_name=self.project_name,
                 deployment_name=self.deployment_name,
                 logging_opt_out=self.disable_service_logs,
-            )
+            ),
         )
 
 
@@ -2099,10 +2061,10 @@ class ClassifyDocumentResult(DictMixin):
     """The text analysis kind - "CustomDocumentClassification"."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.id = kwargs.get('id', None)
-        self.classifications = kwargs.get('classifications', None)
-        self.warnings = kwargs.get('warnings', [])
-        self.statistics = kwargs.get('statistics', None)
+        self.id = kwargs.get("id", None)
+        self.classifications = kwargs.get("classifications", None)
+        self.warnings = kwargs.get("warnings", [])
+        self.statistics = kwargs.get("statistics", None)
         self.is_error: Literal[False] = False
         self.kind: Literal["CustomDocumentClassification"] = "CustomDocumentClassification"
 
@@ -2122,14 +2084,9 @@ class ClassifyDocumentResult(DictMixin):
                 for e in result.class_property
             ],
             warnings=[
-                TextAnalyticsWarning._from_generated(  # pylint: disable=protected-access
-                    w
-                )
-                for w in result.warnings
+                TextAnalyticsWarning._from_generated(w) for w in result.warnings  # pylint: disable=protected-access
             ],
-            statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
-                result.statistics
-            ),
+            statistics=TextDocumentStatistics._from_generated(result.statistics),  # pylint: disable=protected-access
         )
 
 
@@ -2168,12 +2125,7 @@ class SingleLabelClassifyAction(DictMixin):
         https://www.microsoft.com/ai/responsible-ai."""
 
     def __init__(
-        self,
-        project_name: str,
-        deployment_name: str,
-        *,
-        disable_service_logs: Optional[bool] = None,
-        **kwargs: Any
+        self, project_name: str, deployment_name: str, *, disable_service_logs: Optional[bool] = None, **kwargs: Any
     ) -> None:
         self.project_name = project_name
         self.deployment_name = deployment_name
@@ -2192,13 +2144,12 @@ class SingleLabelClassifyAction(DictMixin):
                 project_name=self.project_name,
                 deployment_name=self.deployment_name,
                 logging_opt_out=self.disable_service_logs,
-            )
+            ),
         )
 
 
 class ClassificationCategory(DictMixin):
-    """ClassificationCategory represents a classification of the input document.
-    """
+    """ClassificationCategory represents a classification of the input document."""
 
     category: str
     """Classification category for the document."""
@@ -2206,19 +2157,15 @@ class ClassificationCategory(DictMixin):
     """Confidence score between 0 and 1 of the recognized classification."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.category = kwargs.get('category', None)
-        self.confidence_score = kwargs.get('confidence_score', None)
+        self.category = kwargs.get("category", None)
+        self.confidence_score = kwargs.get("confidence_score", None)
 
     def __repr__(self) -> str:
-        return f"ClassificationCategory(category={self.category}, " \
-               f"confidence_score={self.confidence_score})"[:1024]
+        return f"ClassificationCategory(category={self.category}, " f"confidence_score={self.confidence_score})"[:1024]
 
     @classmethod
     def _from_generated(cls, result):
-        return cls(
-            category=result.category,
-            confidence_score=result.confidence_score
-        )
+        return cls(category=result.category, confidence_score=result.confidence_score)
 
 
 class AnalyzeHealthcareEntitiesAction(DictMixin):
@@ -2274,7 +2221,7 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
         model_version: Optional[str] = None,
         string_index_type: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self.model_version = model_version
         self.string_index_type: str = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
@@ -2294,7 +2241,7 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
                 model_version=self.model_version,
                 string_index_type=string_index_type_compatibility(self.string_index_type),
                 logging_opt_out=self.disable_service_logs,
-            )
+            ),
         )
 
 
@@ -2356,7 +2303,7 @@ class ExtractiveSummaryAction(DictMixin):
         disable_service_logs: Optional[bool] = None,
         max_sentence_count: Optional[int] = None,
         order_by: Optional[Literal["Rank", "Offset"]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self.model_version = model_version
         self.string_index_type: str = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
@@ -2380,7 +2327,7 @@ class ExtractiveSummaryAction(DictMixin):
                 logging_opt_out=self.disable_service_logs,
                 sentence_count=self.max_sentence_count,
                 sort_by=self.order_by,
-            )
+            ),
         )
 
 
@@ -2424,20 +2371,13 @@ class ExtractiveSummaryResult(DictMixin):
         return cls(
             id=summary.id,
             sentences=[
-                SummarySentence._from_generated(  # pylint: disable=protected-access
-                    sentence
-                )
+                SummarySentence._from_generated(sentence)  # pylint: disable=protected-access
                 for sentence in summary.sentences
             ],
             warnings=[
-                TextAnalyticsWarning._from_generated(  # pylint: disable=protected-access
-                    w
-                )
-                for w in summary.warnings
+                TextAnalyticsWarning._from_generated(w) for w in summary.warnings  # pylint: disable=protected-access
             ],
-            statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
-                summary.statistics
-            ),
+            statistics=TextDocumentStatistics._from_generated(summary.statistics),  # pylint: disable=protected-access
         )
 
 
@@ -2469,8 +2409,10 @@ class SummarySentence(DictMixin):
         self.length = kwargs.get("length", None)
 
     def __repr__(self) -> str:
-        return f"SummarySentence(text={self.text}, rank_score={self.rank_score}, " \
-               f"offset={self.offset}, length={self.length})"[:1024]
+        return (
+            f"SummarySentence(text={self.text}, rank_score={self.rank_score}, "
+            f"offset={self.offset}, length={self.length})"[:1024]
+        )
 
     @classmethod
     def _from_generated(cls, sentence):
@@ -2526,14 +2468,9 @@ class AbstractiveSummaryResult(DictMixin):
         return cls(
             id=result.id,
             warnings=[
-                TextAnalyticsWarning._from_generated(  # pylint: disable=protected-access
-                    w
-                )
-                for w in result.warnings
+                TextAnalyticsWarning._from_generated(w) for w in result.warnings  # pylint: disable=protected-access
             ],
-            statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
-                result.statistics
-            ),
+            statistics=TextDocumentStatistics._from_generated(result.statistics),  # pylint: disable=protected-access
             summaries=[
                 AbstractiveSummary._from_generated(summary)  # pylint: disable=protected-access
                 for summary in result.summaries
@@ -2564,10 +2501,14 @@ class AbstractiveSummary(DictMixin):
     def _from_generated(cls, result):
         return cls(
             text=result.text,
-            contexts=[
-                SummaryContext._from_generated(context)  # pylint: disable=protected-access
-                for context in result.contexts
-            ] if result.contexts else []
+            contexts=(
+                [
+                    SummaryContext._from_generated(context)  # pylint: disable=protected-access
+                    for context in result.contexts
+                ]
+                if result.contexts
+                else []
+            ),
         )
 
 
@@ -2594,10 +2535,7 @@ class SummaryContext(DictMixin):
 
     @classmethod
     def _from_generated(cls, summary):
-        return cls(
-            offset=summary.offset,
-            length=summary.length
-        )
+        return cls(offset=summary.offset, length=summary.length)
 
 
 class AbstractiveSummaryAction(DictMixin):
@@ -2660,7 +2598,7 @@ class AbstractiveSummaryAction(DictMixin):
         model_version: Optional[str] = None,
         string_index_type: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self.sentence_count = sentence_count
         self.model_version = model_version
@@ -2682,5 +2620,5 @@ class AbstractiveSummaryAction(DictMixin):
                 string_index_type=string_index_type_compatibility(self.string_index_type),
                 logging_opt_out=self.disable_service_logs,
                 sentence_count=self.sentence_count,
-            )
+            ),
         )

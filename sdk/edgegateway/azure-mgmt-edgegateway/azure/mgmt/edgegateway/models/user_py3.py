@@ -35,17 +35,17 @@ class User(ARMBaseModel):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'encrypted_password': {'key': 'properties.encryptedPassword', 'type': 'AsymmetricEncryptedSecret'},
-        'share_access_rights': {'key': 'properties.shareAccessRights', 'type': '[ShareAccessRight]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "encrypted_password": {"key": "properties.encryptedPassword", "type": "AsymmetricEncryptedSecret"},
+        "share_access_rights": {"key": "properties.shareAccessRights", "type": "[ShareAccessRight]"},
     }
 
     def __init__(self, *, encrypted_password=None, share_access_rights=None, **kwargs) -> None:

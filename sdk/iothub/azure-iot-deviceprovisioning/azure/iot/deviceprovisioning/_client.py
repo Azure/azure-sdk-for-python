@@ -55,9 +55,7 @@ class DeviceProvisioningClient:  # pylint: disable=client-accepts-api-version-ke
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.enrollment = EnrollmentOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.enrollment = EnrollmentOperations(self._client, self._config, self._serialize, self._deserialize)
         self.enrollment_group = EnrollmentGroupOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

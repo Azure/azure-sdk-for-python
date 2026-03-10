@@ -27,15 +27,15 @@ class AlertErrorDetails(Model):
     """
 
     _validation = {
-        'error_code': {'readonly': True},
-        'error_message': {'readonly': True},
-        'occurrences': {'readonly': True},
+        "error_code": {"readonly": True},
+        "error_message": {"readonly": True},
+        "occurrences": {"readonly": True},
     }
 
     _attribute_map = {
-        'error_code': {'key': 'errorCode', 'type': 'str'},
-        'error_message': {'key': 'errorMessage', 'type': 'str'},
-        'occurrences': {'key': 'occurrences', 'type': 'int'},
+        "error_code": {"key": "errorCode", "type": "str"},
+        "error_message": {"key": "errorMessage", "type": "str"},
+        "occurrences": {"key": "occurrences", "type": "int"},
     }
 
     def __init__(self, **kwargs) -> None:

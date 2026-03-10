@@ -57,7 +57,8 @@ class HealthInsightsSamples:
         registry_filters.sources = [models.ClinicalTrialSource.CLINICALTRIALS_GOV]
         # Limit the clinical trial to a certain location, in this case California, USA
         registry_filters.facility_locations = [
-            models.GeographicLocation(country_or_region="United States", city="Gilbert", state="Arizona")]
+            models.GeographicLocation(country_or_region="United States", city="Gilbert", state="Arizona")
+        ]
         # Limit the trial to a specific study type, interventional
         registry_filters.study_types = [models.ClinicalTrialStudyType.INTERVENTIONAL]
 
@@ -96,19 +97,21 @@ class HealthInsightsSamples:
 
     def get_patient_from_fhir_patient(self) -> models.PatientRecord:
         patient_info = models.PatientInfo(sex=models.PatientInfoSex.MALE, birth_date=datetime.date(1965, 12, 26))
-        patient_data = models.PatientDocument(type=models.DocumentType.FHIR_BUNDLE,
-                                              id="Consultation-14-Demo",
-                                              content=models.DocumentContent(
-                                                  source_type=models.DocumentContentSourceType.INLINE,
-                                                  value=self.get_patient_doc_content()),
-                                              clinical_type=models.ClinicalDocumentType.CONSULTATION)
+        patient_data = models.PatientDocument(
+            type=models.DocumentType.FHIR_BUNDLE,
+            id="Consultation-14-Demo",
+            content=models.DocumentContent(
+                source_type=models.DocumentContentSourceType.INLINE, value=self.get_patient_doc_content()
+            ),
+            clinical_type=models.ClinicalDocumentType.CONSULTATION,
+        )
         return models.PatientRecord(id="patient_id", info=patient_info, data=[patient_data])
 
     @staticmethod
     def get_patient_doc_content() -> str:
         samples_dir = os.path.dirname(os.path.realpath(__file__))
         data_location = os.path.join(samples_dir, "sample_data/match_trial_fhir_data.json")
-        with open(data_location, 'r', encoding='utf-8-sig') as f:
+        with open(data_location, "r", encoding="utf-8-sig") as f:
             content = f.read()
         return content
 

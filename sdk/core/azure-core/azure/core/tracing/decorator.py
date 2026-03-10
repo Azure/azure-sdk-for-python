@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 """The decorator to apply if you want the given function traced."""
+
 from contextvars import ContextVar
 import functools
 

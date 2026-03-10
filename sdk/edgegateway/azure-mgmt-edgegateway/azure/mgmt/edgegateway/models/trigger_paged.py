@@ -18,8 +18,8 @@ class TriggerPaged(Paged):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Trigger]'}
+        "next_link": {"key": "nextLink", "type": "str"},
+        "current_page": {"key": "value", "type": "[Trigger]"},
     }
 
     def __init__(self, *args, **kwargs):

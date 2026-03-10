@@ -14,9 +14,7 @@ class TestMgmtRelay(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
 
-        self.relay_client = self.create_mgmt_client(
-            azure.mgmt.relay.RelayAPI
-        )
+        self.relay_client = self.create_mgmt_client(azure.mgmt.relay.RelayAPI)
 
     def process(self, result):
         pass
@@ -24,12 +22,12 @@ class TestMgmtRelay(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_eh_namespace_available(self):
         # Check the namespace availability
-        availabilityresult = self.relay_client.namespaces.check_name_availability({
-            "name": "Testingehnamespaceavailabilityforpython"
-        })
+        availabilityresult = self.relay_client.namespaces.check_name_availability(
+            {"name": "Testingehnamespaceavailabilityforpython"}
+        )
         assert availabilityresult.name_available == True
 
 
 # ------------------------------------------------------------------------------
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

@@ -9,5 +9,5 @@
 from ._monitoring_operations import MonitoringOperations
 
 __all__ = [
-    'MonitoringOperations',
+    "MonitoringOperations",
 ]

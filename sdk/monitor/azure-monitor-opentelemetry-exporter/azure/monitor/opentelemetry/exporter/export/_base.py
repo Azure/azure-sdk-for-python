@@ -70,7 +70,6 @@ from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
     get_customer_stats_manager,
 )
 
-
 logger = logging.getLogger(__name__)
 
 _AZURE_TEMPDIR_PREFIX = "Microsoft-AzureMonitor-"

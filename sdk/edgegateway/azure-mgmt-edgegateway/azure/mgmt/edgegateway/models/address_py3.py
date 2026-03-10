@@ -34,24 +34,35 @@ class Address(Model):
     """
 
     _validation = {
-        'address_line1': {'required': True},
-        'postal_code': {'required': True},
-        'city': {'required': True},
-        'state': {'required': True},
-        'country': {'required': True},
+        "address_line1": {"required": True},
+        "postal_code": {"required": True},
+        "city": {"required": True},
+        "state": {"required": True},
+        "country": {"required": True},
     }
 
     _attribute_map = {
-        'address_line1': {'key': 'addressLine1', 'type': 'str'},
-        'address_line2': {'key': 'addressLine2', 'type': 'str'},
-        'address_line3': {'key': 'addressLine3', 'type': 'str'},
-        'postal_code': {'key': 'postalCode', 'type': 'str'},
-        'city': {'key': 'city', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'country': {'key': 'country', 'type': 'str'},
+        "address_line1": {"key": "addressLine1", "type": "str"},
+        "address_line2": {"key": "addressLine2", "type": "str"},
+        "address_line3": {"key": "addressLine3", "type": "str"},
+        "postal_code": {"key": "postalCode", "type": "str"},
+        "city": {"key": "city", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "country": {"key": "country", "type": "str"},
     }
 
-    def __init__(self, *, address_line1: str, postal_code: str, city: str, state: str, country: str, address_line2: str=None, address_line3: str=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        address_line1: str,
+        postal_code: str,
+        city: str,
+        state: str,
+        country: str,
+        address_line2: str = None,
+        address_line3: str = None,
+        **kwargs
+    ) -> None:
         super(Address, self).__init__(**kwargs)
         self.address_line1 = address_line1
         self.address_line2 = address_line2

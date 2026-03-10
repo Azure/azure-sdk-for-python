@@ -18,8 +18,7 @@ MOCK_STORAGE_PATH = (
 class TestIndexSchema:
     def test_deserialize(self) -> None:
         """Validate that load_index can deserialize a YAML file."""
-        yaml_file = io.StringIO(
-            f"""
+        yaml_file = io.StringIO(f"""
         name: "foo"
         version: "2"
         stage: "Development"
@@ -27,8 +26,7 @@ class TestIndexSchema:
         tags: {{"tag1": "foo", "tag2": "bar"}}
         properties: {{"prop1": "foo", "prop2": "bar"}}
         path: {MOCK_STORAGE_PATH!r}
-        """
-        )
+        """)
 
         index = load_index(source=yaml_file)
 
@@ -45,11 +43,9 @@ class TestIndexSchema:
 
     def test_missing_name(self) -> None:
         """Validate that load_index fails when no name is provided."""
-        yaml_file = io.StringIO(
-            f"""
+        yaml_file = io.StringIO(f"""
         path: {MOCK_STORAGE_PATH!r}
-        """
-        )
+        """)
 
         with pytest.raises(
             ValidationError, match=re.compile(r'"name"[^\n]+\n\s+"Missing data for required field."', re.MULTILINE)
@@ -58,11 +54,9 @@ class TestIndexSchema:
 
     def test_missing_path(self) -> None:
         """Validate that load_index fails when no path is provided."""
-        yaml_file = io.StringIO(
-            """
+        yaml_file = io.StringIO("""
         name: "foo"
-        """
-        )
+        """)
 
         with pytest.raises(
             ValidationError, match=re.compile(r'"path"[^\n]+\n\s+"Missing data for required field."', re.MULTILINE)
@@ -71,12 +65,10 @@ class TestIndexSchema:
 
     def test_minimal(self) -> None:
         """Validate that load_index succeeds when only provided the required fields."""
-        yaml_file = io.StringIO(
-            f"""
+        yaml_file = io.StringIO(f"""
         name: "foo"
         path: {MOCK_STORAGE_PATH!r}
-        """
-        )
+        """)
 
         index = load_index(source=yaml_file)
 

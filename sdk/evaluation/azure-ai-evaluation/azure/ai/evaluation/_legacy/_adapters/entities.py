@@ -4,7 +4,6 @@
 
 from typing_extensions import TypeAlias
 
-
 try:
     from promptflow._sdk.entities import Run as _Run
 except ImportError:

@@ -8,7 +8,7 @@ FILE: sample_finding_inference.py
 DESCRIPTION:
 The sample_finding_inference.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize a RadiologyInsightsClient, build a Radiology Insights request with the sample document,
-submit it to the client, RadiologyInsightsClient, and display 
+submit it to the client, RadiologyInsightsClient, and display
 -the Finding resource type,
 -the Finding ID,
 -the Finding status,
@@ -24,7 +24,7 @@ submit it to the client, RadiologyInsightsClient, and display
 -the Inference extensions,
 -the Inference extension URL,
 -the Inference extension value string,
--the Inference extension section   
+-the Inference extension section
 
 
 USAGE:
@@ -34,7 +34,7 @@ USAGE:
     - For more details how to use DefaultAzureCredential, please take a look at https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential
 
 2. python sample_finding_inference.py
-   
+
 """
 
 import datetime

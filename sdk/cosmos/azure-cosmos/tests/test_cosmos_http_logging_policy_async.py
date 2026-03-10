@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 """Tests for the CosmosHttpLoggingPolicy."""
+
 import asyncio
 import unittest
 import uuid
@@ -17,13 +18,13 @@ import test_config
 from _fault_injection_transport_async import FaultInjectionTransportAsync
 from test_fault_injection_transport_async import TestFaultInjectionTransportAsync
 
-from test_cosmos_http_logging_policy import create_logger, L1, L2, CONFIG, \
-    get_locations_list, FilterStatusCode
+from test_cosmos_http_logging_policy import create_logger, L1, L2, CONFIG, get_locations_list, FilterStatusCode
 
 try:
     from unittest.mock import Mock
 except ImportError:  # python < 3.3
     from mock import Mock  # type: ignore
+
 
 @pytest.mark.cosmosEmulator
 class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
@@ -36,12 +37,12 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
 
     @classmethod
     def setUpClass(cls):
-        if (cls.masterKey == '[YOUR_KEY_HERE]' or
-                cls.host == '[YOUR_ENDPOINT_HERE]'):
+        if cls.masterKey == "[YOUR_KEY_HERE]" or cls.host == "[YOUR_ENDPOINT_HERE]":
             raise Exception(
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
-                "tests.")
+                "tests."
+            )
 
     async def asyncSetUp(self):
         self.mock_handler_default = test_config.MockHandler()
@@ -76,21 +77,22 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
     async def test_default_http_logging_policy_async(self):
         self.logger.addHandler(self.mock_handler_default)
         # Create a client with the default logging policy
-        self.client_default = cosmos_client.CosmosClient(self.host, self.masterKey,
-                                                         consistency_level="Session", logger=self.logger)
+        self.client_default = cosmos_client.CosmosClient(
+            self.host, self.masterKey, consistency_level="Session", logger=self.logger
+        )
         await self.client_default.__aenter__()
         # Test if we can log info from creating a database
         database_id = "database_test-" + str(uuid.uuid4())
         await self.client_default.create_database(id=database_id)
 
-        assert all(m.levelname == 'INFO' for m in self.mock_handler_default.messages)
+        assert all(m.levelname == "INFO" for m in self.mock_handler_default.messages)
         messages_request = self.mock_handler_default.messages[0].message.split("\n")
         messages_response = self.mock_handler_default.messages[1].message.split("\n")
         assert messages_request[1] == "Request method: 'GET'"
-        assert 'Request headers:' in messages_request[2]
-        assert messages_request[-1] == 'No body was attached to the request'
-        assert messages_response[0] == 'Response status: 200'
-        assert 'Response headers:' in messages_response[1]
+        assert "Request headers:" in messages_request[2]
+        assert messages_request[-1] == "No body was attached to the request"
+        assert messages_response[0] == "Response status: 200"
+        assert "Response headers:" in messages_response[1]
 
         self.mock_handler_default.reset()
         self.logger.removeHandler(self.mock_handler_default)
@@ -101,16 +103,16 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
     async def test_cosmos_http_logging_policy_async(self):
         self.logger.addHandler(self.mock_handler_diagnostic)
         # Create a client with the diagnostic logging policy
-        self.client_diagnostic = cosmos_client.CosmosClient(self.host, self.masterKey,
-                                                            consistency_level="Session", logger=self.logger,
-                                                            enable_diagnostics_logging=True)
+        self.client_diagnostic = cosmos_client.CosmosClient(
+            self.host, self.masterKey, consistency_level="Session", logger=self.logger, enable_diagnostics_logging=True
+        )
         await self.client_diagnostic.__aenter__()
         # give time to background health check to run
         await asyncio.sleep(1)
         # Test if we can log into from reading a database
         database_id = "database_test-" + str(uuid.uuid4())
         await self.client_diagnostic.create_database(id=database_id)
-        assert all(m.levelname == 'INFO' for m in self.mock_handler_diagnostic.messages)
+        assert all(m.levelname == "INFO" for m in self.mock_handler_diagnostic.messages)
         # Check that we made a databaseaccount read request only once and that we only logged it once
         messages_request = self.mock_handler_diagnostic.messages[0]
         messages_response = self.mock_handler_diagnostic.messages[1]
@@ -141,14 +143,14 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
             await self.client_diagnostic.create_database(id=database_id)
         except:
             pass
-        assert all(m.levelname == 'INFO' for m in self.mock_handler_diagnostic.messages)
+        assert all(m.levelname == "INFO" for m in self.mock_handler_diagnostic.messages)
         messages_request = self.mock_handler_diagnostic.messages[0]
         messages_response = self.mock_handler_diagnostic.messages[1]
         elapsed_time = messages_response.duration
         assert "dbs" == messages_request.resource_type
         assert messages_request.operation_type == "Create"
-        assert 'Request headers:' in messages_request.msg
-        assert 'A body is sent with the request' in messages_request.msg
+        assert "Request headers:" in messages_request.msg
+        assert "A body is sent with the request" in messages_request.msg
         assert messages_response.status_code == 409
         assert elapsed_time is not None
         assert "Response headers" in messages_response.msg
@@ -162,10 +164,9 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
     async def test_filtered_diagnostics_logging_policy_async(self):
         self.logger.addHandler(self.mock_handler_filtered_diagnostic)
         # Create a client with the filtered diagnostics logging policy
-        self.client_filtered_diagnostic = cosmos_client.CosmosClient(self.host, self.masterKey,
-                                                                     consistency_level="Session",
-                                                                     logger=self.logger,
-                                                                     enable_diagnostics_logging=True)
+        self.client_filtered_diagnostic = cosmos_client.CosmosClient(
+            self.host, self.masterKey, consistency_level="Session", logger=self.logger, enable_diagnostics_logging=True
+        )
         # Test if we can log errors with the filtered diagnostics logger
         database_id = "database_test_" + str(uuid.uuid4())
         container_id = "diagnostics_container_test_" + str(uuid.uuid4())
@@ -221,15 +222,16 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
 
         custom_transport = FaultInjectionTransportAsync()
         is_get_account_predicate = lambda r: FaultInjectionTransportAsync.predicate_is_database_account_call(r)
-        emulator_as_multi_write_region_account_transformation = \
+        emulator_as_multi_write_region_account_transformation = (
             lambda r, inner: FaultInjectionTransportAsync.transform_topology_mwr(
                 first_region_name=L1,
                 second_region_name=L2,
                 inner=inner,
             )
+        )
         custom_transport.add_response_transformation(
-            is_get_account_predicate,
-            emulator_as_multi_write_region_account_transformation)
+            is_get_account_predicate, emulator_as_multi_write_region_account_transformation
+        )
 
         initialized_objects = await TestFaultInjectionTransportAsync.setup_method_with_custom_transport(
             custom_transport,
@@ -240,13 +242,13 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
             custom_logger=logger,
             preferred_locations=all_locations,
             excluded_locations=client_excluded_locations,
-            multiple_write_locations=multiple_write_locations
+            multiple_write_locations=multiple_write_locations,
         )
         mock_handler.reset()
 
         # create an item
         id_value = str(uuid.uuid4())
-        document_definition = {'id': id_value, 'pk': id_value}
+        document_definition = {"id": id_value, "pk": id_value}
         container = initialized_objects["col"]
         await container.create_item(body=document_definition)
 
@@ -273,11 +275,7 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
 
         # Create a new client with the logger and enable diagnostics logging
         self.client_activity_id = cosmos_client.CosmosClient(
-            self.host,
-            self.masterKey,
-            consistency_level="Session",
-            logger=self.logger,
-            enable_diagnostics_logging=True
+            self.host, self.masterKey, consistency_level="Session", logger=self.logger, enable_diagnostics_logging=True
         )
         # Generate a custom activity ID
         custom_activity_id = str(uuid.uuid4())
@@ -326,17 +324,15 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
 
         # Set up FaultInjectionTransportAsync to inject a 502 error
         id_value = str(uuid.uuid4())
-        document_definition = {'id': id_value,
-                               'pk': id_value,
-                               'name': 'sample document',
-                               'key': 'value'}
+        document_definition = {"id": id_value, "pk": id_value, "name": "sample document", "key": "value"}
         custom_transport = FaultInjectionTransportAsync()
         predicate = lambda r: FaultInjectionTransportAsync.predicate_req_for_document_with_id(r, id_value)
-        custom_transport.add_fault(predicate, lambda r: FaultInjectionTransportAsync.error_after_delay(
-            1000,
-            CosmosHttpResponseError(
-                status_code=502,
-                message="Some random reverse proxy error.")))
+        custom_transport.add_fault(
+            predicate,
+            lambda r: FaultInjectionTransportAsync.error_after_delay(
+                1000, CosmosHttpResponseError(status_code=502, message="Some random reverse proxy error.")
+            ),
+        )
 
         # Initialize the client with the custom transport and logger
         initialized_objects = await TestFaultInjectionTransportAsync.setup_method_with_custom_transport(
@@ -348,7 +344,7 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
             preferred_locations=[L1, L2],
             excluded_locations=[],
             multiple_write_locations=True,
-            custom_logger=logger
+            custom_logger=logger,
         )
         mock_handler.reset()
 
@@ -382,7 +378,7 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
             self.masterKey,
             consistency_level="Session",
             logger=root_logger_grandchild,
-            enable_diagnostics_logging=True
+            enable_diagnostics_logging=True,
         )
 
         # Reset the mock handler before the test

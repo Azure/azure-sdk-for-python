@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 import logging
-import asyncio # pylint: disable=do-not-import-asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 import time
 import functools
 from typing import TYPE_CHECKING, Any, Dict, List, Callable, Optional, Union, cast
@@ -303,9 +303,7 @@ class ClientBaseAsync(ClientBase):
             self._config.backoff_max,
             retried_times,
         )
-        if backoff <= self._config.backoff_max and (
-            timeout_time is None or time.time() + backoff <= timeout_time
-        ):
+        if backoff <= self._config.backoff_max and (timeout_time is None or time.time() + backoff <= timeout_time):
             await asyncio.sleep(backoff, **self._internal_kwargs)
             _LOGGER.info(
                 "%r has an exception (%r). Retrying...",

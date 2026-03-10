@@ -49,9 +49,7 @@ class TestQueryResponseHeaders(unittest.TestCase):
 
             query = "SELECT * FROM c WHERE c.pk = @pk"
             query_iterable = created_collection.query_items(
-                query=query,
-                parameters=[{"name": "@pk", "value": "test"}],
-                partition_key="test"
+                query=query, parameters=[{"name": "@pk", "value": "test"}], partition_key="test"
             )
 
             # Iterate through items using for loop (pagination)
@@ -97,7 +95,7 @@ class TestQueryResponseHeaders(unittest.TestCase):
                 query=query,
                 parameters=[{"name": "@pk", "value": "test"}],
                 partition_key="test",
-                max_item_count=5  # Force pagination with 5 items per page
+                max_item_count=5,  # Force pagination with 5 items per page
             )
 
             # Iterate through items using for loop (pagination)
@@ -138,9 +136,7 @@ class TestQueryResponseHeaders(unittest.TestCase):
 
             query = "SELECT * FROM c WHERE c.pk = @pk"
             query_iterable = created_collection.query_items(
-                query=query,
-                parameters=[{"name": "@pk", "value": "nonexistent"}],
-                partition_key="nonexistent"
+                query=query, parameters=[{"name": "@pk", "value": "nonexistent"}], partition_key="nonexistent"
             )
 
             # Iterate through items (should be empty)
@@ -179,7 +175,7 @@ class TestQueryResponseHeaders(unittest.TestCase):
                 query=query,
                 parameters=[{"name": "@pk", "value": "test"}],
                 partition_key="test",
-                populate_query_metrics=True
+                populate_query_metrics=True,
             )
 
             # Iterate through items
@@ -223,7 +219,7 @@ class TestQueryResponseHeaders(unittest.TestCase):
                 query=query,
                 parameters=[{"name": "@pk", "value": "test"}],
                 partition_key="test",
-                max_item_count=3  # Force multiple pages
+                max_item_count=3,  # Force multiple pages
             )
 
             # Iterate by page
@@ -258,10 +254,7 @@ class TestQueryResponseHeaders(unittest.TestCase):
             created_collection.create_item(body={"pk": "test", "id": "item_1"})
 
             query = "SELECT * FROM c"
-            query_iterable = created_collection.query_items(
-                query=query,
-                partition_key="test"
-            )
+            query_iterable = created_collection.query_items(query=query, partition_key="test")
 
             # Iterate
             for item in query_iterable:
@@ -283,7 +276,7 @@ class TestQueryResponseHeaders(unittest.TestCase):
 
     def test_query_response_headers_thread_safety(self):
         """Test that response headers are captured correctly when multiple queries run concurrently.
-        
+
         This test verifies that each query operation captures its own headers independently,
         without interference from concurrent queries. This is the key thread-safety guarantee.
         """
@@ -314,7 +307,7 @@ class TestQueryResponseHeaders(unittest.TestCase):
                         parameters=[{"name": "@pk", "value": partition_key}],
                         partition_key=partition_key,
                         max_item_count=2,  # Small page size to ensure multiple pages
-                        populate_query_metrics=True
+                        populate_query_metrics=True,
                     )
 
                     # Consume all items
@@ -326,7 +319,7 @@ class TestQueryResponseHeaders(unittest.TestCase):
                             "partition_key": partition_key,
                             "item_count": len(items),
                             "header_count": len(headers),
-                            "headers": headers
+                            "headers": headers,
                         }
                 except Exception as e:
                     with lock:
@@ -339,7 +332,7 @@ class TestQueryResponseHeaders(unittest.TestCase):
                 for i in range(num_threads):
                     partition_key = f"partition_{i % num_partitions}"
                     futures.append(executor.submit(run_query, partition_key, i))
-                
+
                 # Wait for all to complete
                 for future in as_completed(futures):
                     future.result()  # This will raise if the thread raised
@@ -352,15 +345,14 @@ class TestQueryResponseHeaders(unittest.TestCase):
 
             # Verify each thread captured headers correctly
             for thread_id, result in results.items():
-                self.assertEqual(result["item_count"], items_per_partition,
-                    f"Thread {thread_id} got wrong item count")
-                self.assertGreater(result["header_count"], 0,
-                    f"Thread {thread_id} should have captured headers")
-                
+                self.assertEqual(result["item_count"], items_per_partition, f"Thread {thread_id} got wrong item count")
+                self.assertGreater(result["header_count"], 0, f"Thread {thread_id} should have captured headers")
+
                 # Verify headers contain expected keys (basic sanity check)
                 for header_dict in result["headers"]:
-                    self.assertIn("x-ms-request-charge", header_dict,
-                        f"Thread {thread_id} headers missing x-ms-request-charge")
+                    self.assertIn(
+                        "x-ms-request-charge", header_dict, f"Thread {thread_id} headers missing x-ms-request-charge"
+                    )
 
             # Verify that different threads have independent header lists
             # (modifying one doesn't affect others)
@@ -368,7 +360,7 @@ class TestQueryResponseHeaders(unittest.TestCase):
                 thread_ids = list(results.keys())
                 headers_0 = results[thread_ids[0]]["headers"]
                 headers_1 = results[thread_ids[1]]["headers"]
-                
+
                 # They should be different objects
                 self.assertIsNot(headers_0, headers_1)
                 if len(headers_0) > 0 and len(headers_1) > 0:
@@ -379,7 +371,7 @@ class TestQueryResponseHeaders(unittest.TestCase):
 
     def test_query_response_headers_concurrent_same_container(self):
         """Test concurrent queries on the same container with overlapping execution.
-        
+
         This test specifically targets the race condition that would occur if headers
         were captured from a shared client.last_response_headers after fetch_next_block().
         """
@@ -402,7 +394,7 @@ class TestQueryResponseHeaders(unittest.TestCase):
                     parameters=[{"name": "@pk", "value": "shared"}],
                     partition_key="shared",
                     max_item_count=5,  # Small pages = more fetches
-                    populate_query_metrics=True
+                    populate_query_metrics=True,
                 )
 
                 # Wait for all threads to be ready
@@ -416,9 +408,7 @@ class TestQueryResponseHeaders(unittest.TestCase):
                     results[thread_id] = {
                         "item_count": len(items),
                         "header_count": len(headers),
-                        "request_charges": [
-                            float(h.get("x-ms-request-charge", 0)) for h in headers
-                        ]
+                        "request_charges": [float(h.get("x-ms-request-charge", 0)) for h in headers],
                     }
 
             threads = []
@@ -433,14 +423,11 @@ class TestQueryResponseHeaders(unittest.TestCase):
             # Verify all threads completed and got correct results
             self.assertEqual(len(results), 5)
             for thread_id, result in results.items():
-                self.assertEqual(result["item_count"], 50,
-                    f"Thread {thread_id} should have gotten all 50 items")
-                self.assertGreater(result["header_count"], 0,
-                    f"Thread {thread_id} should have captured headers")
+                self.assertEqual(result["item_count"], 50, f"Thread {thread_id} should have gotten all 50 items")
+                self.assertGreater(result["header_count"], 0, f"Thread {thread_id} should have captured headers")
                 # Each request should have a positive request charge
                 for charge in result["request_charges"]:
-                    self.assertGreater(charge, 0,
-                        f"Thread {thread_id} should have positive request charges")
+                    self.assertGreater(charge, 0, f"Thread {thread_id} should have positive request charges")
 
         finally:
             self.created_db.delete_container(created_collection.id)

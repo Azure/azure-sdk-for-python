@@ -6,6 +6,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 from typing import List, Any, Optional, Union, TypeVar, Callable, Dict, cast
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
@@ -13,10 +14,13 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.core.rest import HttpRequest
-from ._text_analytics_client_operations import TextAnalyticsClientOperationsMixin as GeneratedTextAnalyticsClientOperationsMixin
+from ._text_analytics_client_operations import (
+    TextAnalyticsClientOperationsMixin as GeneratedTextAnalyticsClientOperationsMixin,
+)
 from ...._lro import AnalyzeActionsLROPoller, AnalyzeActionsLROPollingMethod
 from .. import models as _models
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 
@@ -24,9 +28,7 @@ class TextAnalyticsClientOperationsMixin(GeneratedTextAnalyticsClientOperationsM
 
     @distributed_trace
     def begin_analyze_text_submit_job(
-            self,
-            body: _models.AnalyzeTextJobsInput,
-            **kwargs: Any
+        self, body: _models.AnalyzeTextJobsInput, **kwargs: Any
     ) -> AnalyzeActionsLROPoller[_models.AnalyzeTextJobState]:
         """Submit text analysis job.
 
@@ -54,45 +56,39 @@ class TextAnalyticsClientOperationsMixin(GeneratedTextAnalyticsClientOperationsM
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-04-01"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AnalyzeTextJobState]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AnalyzeTextJobState]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._analyze_text_submit_job_initial(  # type: ignore
                 body=body,
                 api_version=api_version,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('AnalyzeTextJobState', pipeline_response)
+            deserialized = self._deserialize("AnalyzeTextJobState", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, AnalyzeActionsLROPollingMethod(
-                lro_delay,
-
-                path_format_arguments=path_format_arguments,
-                **kwargs
-            ))  # type: PollingMethod
+            polling_method = cast(
+                PollingMethod,
+                AnalyzeActionsLROPollingMethod(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            )  # type: PollingMethod
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -102,14 +98,17 @@ class TextAnalyticsClientOperationsMixin(GeneratedTextAnalyticsClientOperationsM
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return poller_cls(self._client, raw_result, get_long_running_output, polling_method)  # Handwritten
 
-    begin_analyze_text_submit_job.metadata = {'url': "/analyze-text/jobs"}  # type: ignore
+    begin_analyze_text_submit_job.metadata = {"url": "/analyze-text/jobs"}  # type: ignore
 
 
-__all__: List[str] = ["TextAnalyticsClientOperationsMixin"]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = [
+    "TextAnalyticsClientOperationsMixin"
+]  # Add all objects you want publicly available to users at this package level
+
 
 def patch_sdk():
     """Do not remove from this file.

@@ -12,7 +12,6 @@
 from .data_box_edge_management_client import DataBoxEdgeManagementClient
 from .version import VERSION
 
-__all__ = ['DataBoxEdgeManagementClient']
+__all__ = ["DataBoxEdgeManagementClient"]
 
 __version__ = VERSION
-

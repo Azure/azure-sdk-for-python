@@ -29,9 +29,7 @@ def _authentication_policy(credential):
 
 class AsyncMapsGeolocationClientBase:
     def __init__(
-            self,
-            credential: Union[AzureKeyCredential, AzureSasCredential, AsyncTokenCredential],
-            **kwargs: Any
+        self, credential: Union[AzureKeyCredential, AzureSasCredential, AsyncTokenCredential], **kwargs: Any
     ) -> None:
         self._maps_client = _MapsGeolocationClient(
             credential=credential,  # type: ignore

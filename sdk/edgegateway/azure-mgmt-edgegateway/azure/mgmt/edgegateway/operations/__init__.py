@@ -23,16 +23,16 @@ from .triggers_operations import TriggersOperations
 from .users_operations import UsersOperations
 
 __all__ = [
-    'Operations',
-    'DevicesOperations',
-    'AlertsOperations',
-    'BandwidthSchedulesOperations',
-    'JobsOperations',
-    'OperationsStatusOperations',
-    'OrdersOperations',
-    'RolesOperations',
-    'SharesOperations',
-    'StorageAccountCredentialsOperations',
-    'TriggersOperations',
-    'UsersOperations',
+    "Operations",
+    "DevicesOperations",
+    "AlertsOperations",
+    "BandwidthSchedulesOperations",
+    "JobsOperations",
+    "OperationsStatusOperations",
+    "OrdersOperations",
+    "RolesOperations",
+    "SharesOperations",
+    "StorageAccountCredentialsOperations",
+    "TriggersOperations",
+    "UsersOperations",
 ]

@@ -39,6 +39,7 @@ This example uses DefaultAzureCredential, which requests a token from Azure Acti
 For more information on DefaultAzureCredential, see
  https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
 """
+
 import os
 import json
 

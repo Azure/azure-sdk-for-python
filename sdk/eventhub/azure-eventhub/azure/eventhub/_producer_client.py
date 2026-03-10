@@ -209,7 +209,8 @@ class EventHubProducerClient(ClientBase):  # pylint: disable=client-accepts-api-
                 "to use the pure Python AMQP transport. "
                 "If you rely on this, please comment on [this issue]"
                 "(https://github.com/Azure/azure-sdk-for-python/issues/40347) ",
-                DeprecationWarning, stacklevel=2
+                DeprecationWarning,
+                stacklevel=2,
             )
         self._auth_uri = f"sb://{self._address.hostname}{self._address.path}"
         self._keep_alive = kwargs.get("keep_alive", None)

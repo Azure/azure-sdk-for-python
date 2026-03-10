@@ -27,9 +27,9 @@ class TestReadItemsPartitionSplitScenariosSync(unittest.TestCase):
 
     def test_read_items_with_partition_split(self):
         """Tests that read_items works correctly after a partition split."""
-        container = self.database.create_container("read_items_split_test_" + str(uuid.uuid4()),
-                                                   PartitionKey(path="/pk"),
-                                                   offer_throughput=400)
+        container = self.database.create_container(
+            "read_items_split_test_" + str(uuid.uuid4()), PartitionKey(path="/pk"), offer_throughput=400
+        )
         # 1. Create 5 items to read
         items_to_read = []
         item_ids = []
@@ -37,7 +37,7 @@ class TestReadItemsPartitionSplitScenariosSync(unittest.TestCase):
             doc_id = f"item_split_{i}_{uuid.uuid4()}"
             item_ids.append(doc_id)
             # Add the partition key field 'pk' to the item body
-            container.create_item({'id': doc_id, 'pk': doc_id, 'data': i})
+            container.create_item({"id": doc_id, "pk": doc_id, "data": i})
             items_to_read.append((doc_id, doc_id))
 
         # 2. Initial read_items call before the split
@@ -55,10 +55,11 @@ class TestReadItemsPartitionSplitScenariosSync(unittest.TestCase):
 
         # 5. Verify the results
         self.assertEqual(len(final_read_items), len(items_to_read))
-        final_read_ids = {item['id'] for item in final_read_items}
+        final_read_ids = {item["id"] for item in final_read_items}
         self.assertSetEqual(final_read_ids, set(item_ids))
         print("Post-split call successful.")
         self.database.delete_container(container.id)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

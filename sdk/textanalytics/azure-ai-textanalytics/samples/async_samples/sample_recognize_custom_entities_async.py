@@ -56,9 +56,7 @@ async def sample_recognize_custom_entities_async() -> None:
 
     async with text_analytics_client:
         poller = await text_analytics_client.begin_recognize_custom_entities(
-            document,
-            project_name=project_name,
-            deployment_name=deployment_name
+            document, project_name=project_name, deployment_name=deployment_name
         )
 
         document_results = await poller.result()
@@ -72,8 +70,9 @@ async def sample_recognize_custom_entities_async() -> None:
                         )
                     )
             elif custom_entities_result.is_error is True:
-                print("...Is an error with code '{}' and message '{}'".format(
-                    custom_entities_result.error.code, custom_entities_result.error.message
+                print(
+                    "...Is an error with code '{}' and message '{}'".format(
+                        custom_entities_result.error.code, custom_entities_result.error.message
                     )
                 )
     # [END recognize_custom_entities_async]
@@ -83,5 +82,5 @@ async def main():
     await sample_recognize_custom_entities_async()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

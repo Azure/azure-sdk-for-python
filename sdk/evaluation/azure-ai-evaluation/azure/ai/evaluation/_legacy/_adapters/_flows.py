@@ -4,7 +4,6 @@
 
 from typing_extensions import TypeAlias
 
-
 try:
     from promptflow.core._flow import AsyncPrompty as _AsyncPrompty
     from promptflow._sdk.entities._flows import FlexFlow as _FlexFlow

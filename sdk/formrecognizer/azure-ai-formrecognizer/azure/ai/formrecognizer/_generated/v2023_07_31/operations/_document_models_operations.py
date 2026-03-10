@@ -11,7 +11,13 @@ from typing import Any, Callable, Dict, IO, Iterable, List, Optional, TypeVar, U
 from msrest import Serializer
 
 from ...._polling import DocumentModelAdministrationClientLROPoller
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
@@ -23,11 +29,13 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
+
 
 def build_analyze_document_request_initial(
     model_id: str,
@@ -43,317 +51,241 @@ def build_analyze_document_request_initial(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[Union[str, "_models.ContentType"]]
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-07-31"))  # type: str
+    content_type = kwargs.pop(
+        "content_type", _headers.pop("Content-Type", None)
+    )  # type: Optional[Union[str, "_models.ContentType"]]
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/documentModels/{modelId}:analyze")
     path_format_arguments = {
-        "modelId": _SERIALIZER.url("model_id", model_id, 'str', max_length=64, min_length=0, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}$'),
+        "modelId": _SERIALIZER.url(
+            "model_id", model_id, "str", max_length=64, min_length=0, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}$"
+        ),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if pages is not None:
-        _params['pages'] = _SERIALIZER.query("pages", pages, 'str', pattern=r'^(\d+(-\d+)?)(,\s*(\d+(-\d+)?))*$')
+        _params["pages"] = _SERIALIZER.query("pages", pages, "str", pattern=r"^(\d+(-\d+)?)(,\s*(\d+(-\d+)?))*$")
     if locale is not None:
-        _params['locale'] = _SERIALIZER.query("locale", locale, 'str')
+        _params["locale"] = _SERIALIZER.query("locale", locale, "str")
     if string_index_type is not None:
-        _params['stringIndexType'] = _SERIALIZER.query("string_index_type", string_index_type, 'str')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["stringIndexType"] = _SERIALIZER.query("string_index_type", string_index_type, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if features is not None:
-        _params['features'] = _SERIALIZER.query("features", features, '[str]', div=',')
+        _params["features"] = _SERIALIZER.query("features", features, "[str]", div=",")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, content=content, **kwargs)
 
 
-def build_get_analyze_result_request(
-    model_id: str,
-    result_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_get_analyze_result_request(model_id: str, result_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-07-31"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/documentModels/{modelId}/analyzeResults/{resultId}")
     path_format_arguments = {
-        "modelId": _SERIALIZER.url("model_id", model_id, 'str', max_length=64, min_length=0, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}$'),
-        "resultId": _SERIALIZER.url("result_id", result_id, 'str'),
+        "modelId": _SERIALIZER.url(
+            "model_id", model_id, "str", max_length=64, min_length=0, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}$"
+        ),
+        "resultId": _SERIALIZER.url("result_id", result_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_build_model_request_initial(
-    *,
-    json: Optional[_models.BuildDocumentModelRequest] = None,
-    content: Any = None,
-    **kwargs: Any
+    *, json: Optional[_models.BuildDocumentModelRequest] = None, content: Any = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-07-31"))  # type: str
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/documentModels:build")
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, content=content, **kwargs)
 
 
 def build_compose_model_request_initial(
-    *,
-    json: Optional[_models.ComposeDocumentModelRequest] = None,
-    content: Any = None,
-    **kwargs: Any
+    *, json: Optional[_models.ComposeDocumentModelRequest] = None, content: Any = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-07-31"))  # type: str
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/documentModels:compose")
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, content=content, **kwargs)
 
 
 def build_authorize_model_copy_request(
-    *,
-    json: Optional[_models.AuthorizeCopyRequest] = None,
-    content: Any = None,
-    **kwargs: Any
+    *, json: Optional[_models.AuthorizeCopyRequest] = None, content: Any = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-07-31"))  # type: str
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/documentModels:authorizeCopy")
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, content=content, **kwargs)
 
 
 def build_copy_model_to_request_initial(
-    model_id: str,
-    *,
-    json: Optional[_models.CopyAuthorization] = None,
-    content: Any = None,
-    **kwargs: Any
+    model_id: str, *, json: Optional[_models.CopyAuthorization] = None, content: Any = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-07-31"))  # type: str
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/documentModels/{modelId}:copyTo")
     path_format_arguments = {
-        "modelId": _SERIALIZER.url("model_id", model_id, 'str', max_length=64, min_length=0, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}$'),
+        "modelId": _SERIALIZER.url(
+            "model_id", model_id, "str", max_length=64, min_length=0, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}$"
+        ),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, content=content, **kwargs)
 
 
-def build_list_models_request(
-    **kwargs: Any
-) -> HttpRequest:
+def build_list_models_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-07-31"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/documentModels")
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_model_request(
-    model_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_get_model_request(model_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-07-31"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/documentModels/{modelId}")
     path_format_arguments = {
-        "modelId": _SERIALIZER.url("model_id", model_id, 'str', max_length=64, min_length=0, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}$'),
+        "modelId": _SERIALIZER.url(
+            "model_id", model_id, "str", max_length=64, min_length=0, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}$"
+        ),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_delete_model_request(
-    model_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_delete_model_request(model_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-07-31"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/documentModels/{modelId}")
     path_format_arguments = {
-        "modelId": _SERIALIZER.url("model_id", model_id, 'str', max_length=64, min_length=0, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}$'),
+        "modelId": _SERIALIZER.url(
+            "model_id", model_id, "str", max_length=64, min_length=0, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}$"
+        ),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="DELETE",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
 
 class DocumentModelsOperations:
     """
@@ -374,7 +306,6 @@ class DocumentModelsOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     def _analyze_document_initial(  # pylint: disable=inconsistent-return-statements
         self,
         model_id: str,
@@ -387,28 +318,40 @@ class DocumentModelsOperations:
         content_type: Optional[Union[str, "_models.ContentType"]] = "application/json",
         **kwargs: Any
     ) -> None:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-07-31"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = None
         _content = None
         content_type = content_type or ""
-        if content_type.split(";")[0] in ['application/json']:
+        if content_type.split(";")[0] in ["application/json"]:
             _json = analyze_request
-        elif content_type.split(";")[0] in ['application/octet-stream', 'application/pdf', 'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/bmp', 'image/heif', 'image/jpeg', 'image/png', 'image/tiff', 'text/html']:
+        elif content_type.split(";")[0] in [
+            "application/octet-stream",
+            "application/pdf",
+            "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "image/bmp",
+            "image/heif",
+            "image/jpeg",
+            "image/png",
+            "image/tiff",
+            "text/html",
+        ]:
             _content = analyze_request
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
-                "['application/octet-stream', 'application/pdf', 'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/bmp', 'image/heif', 'image/jpeg', 'image/png', 'image/tiff', 'text/html', 'application/json']".format(content_type)
+                "['application/octet-stream', 'application/pdf', 'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/bmp', 'image/heif', 'image/jpeg', 'image/png', 'image/tiff', 'text/html', 'application/json']".format(
+                    content_type
+                )
             )
 
         request = build_analyze_document_request_initial(
@@ -421,20 +364,18 @@ class DocumentModelsOperations:
             locale=locale,
             string_index_type=string_index_type,
             features=features,
-            template_url=self._analyze_document_initial.metadata['url'],
+            template_url=self._analyze_document_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -443,14 +384,12 @@ class DocumentModelsOperations:
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    _analyze_document_initial.metadata = {'url': "/documentModels/{modelId}:analyze"}  # type: ignore
-
+    _analyze_document_initial.metadata = {"url": "/documentModels/{modelId}:analyze"}  # type: ignore
 
     @distributed_trace
     def begin_analyze_document(  # pylint: disable=inconsistent-return-statements
@@ -506,14 +445,11 @@ class DocumentModelsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-07-31"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._analyze_document_initial(  # type: ignore
                 model_id=model_id,
@@ -524,49 +460,42 @@ class DocumentModelsOperations:
                 analyze_request=analyze_request,
                 content_type=content_type,
                 api_version=api_version,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             if cls:
                 return cls(pipeline_response, None, {})
 
-
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, LROBasePolling(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_analyze_document.metadata = {'url': "/documentModels/{modelId}:analyze"}  # type: ignore
+    begin_analyze_document.metadata = {"url": "/documentModels/{modelId}:analyze"}  # type: ignore
 
     @distributed_trace
-    def get_analyze_result(
-        self,
-        model_id: str,
-        result_id: str,
-        **kwargs: Any
-    ) -> _models.AnalyzeResultOperation:
+    def get_analyze_result(self, model_id: str, result_id: str, **kwargs: Any) -> _models.AnalyzeResultOperation:
         """Gets the result of document analysis.
 
         :param model_id: Unique document model name.
@@ -578,36 +507,31 @@ class DocumentModelsOperations:
         :rtype: ~azure.ai.formrecognizer.v2023_07_31.models.AnalyzeResultOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AnalyzeResultOperation]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-07-31"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AnalyzeResultOperation]
 
-        
         request = build_get_analyze_result_request(
             model_id=model_id,
             result_id=result_id,
             api_version=api_version,
-            template_url=self.get_analyze_result.metadata['url'],
+            template_url=self.get_analyze_result.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -616,53 +540,48 @@ class DocumentModelsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('AnalyzeResultOperation', pipeline_response)
+        deserialized = self._deserialize("AnalyzeResultOperation", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_analyze_result.metadata = {'url': "/documentModels/{modelId}/analyzeResults/{resultId}"}  # type: ignore
-
+    get_analyze_result.metadata = {"url": "/documentModels/{modelId}/analyzeResults/{resultId}"}  # type: ignore
 
     def _build_model_initial(  # pylint: disable=inconsistent-return-statements
-        self,
-        build_request: _models.BuildDocumentModelRequest,
-        **kwargs: Any
+        self, build_request: _models.BuildDocumentModelRequest, **kwargs: Any
     ) -> None:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-07-31"))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        _json = self._serialize.body(build_request, 'BuildDocumentModelRequest')
+        _json = self._serialize.body(build_request, "BuildDocumentModelRequest")
 
         request = build_build_model_request_initial(
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._build_model_initial.metadata['url'],
+            template_url=self._build_model_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -671,20 +590,16 @@ class DocumentModelsOperations:
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    _build_model_initial.metadata = {'url': "/documentModels:build"}  # type: ignore
-
+    _build_model_initial.metadata = {"url": "/documentModels:build"}  # type: ignore
 
     @distributed_trace
     def begin_build_model(  # pylint: disable=inconsistent-return-statements
-        self,
-        build_request: _models.BuildDocumentModelRequest,
-        **kwargs: Any
+        self, build_request: _models.BuildDocumentModelRequest, **kwargs: Any
     ) -> DocumentModelAdministrationClientLROPoller[None]:
         """Builds a custom document analysis model.
 
@@ -706,93 +621,88 @@ class DocumentModelsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-07-31"))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._build_model_initial(  # type: ignore
                 build_request=build_request,
                 api_version=api_version,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             if cls:
                 return cls(pipeline_response, None, {})
 
-
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, LROBasePolling(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return DocumentModelAdministrationClientLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
-        return DocumentModelAdministrationClientLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return DocumentModelAdministrationClientLROPoller(
+            self._client, raw_result, get_long_running_output, polling_method
+        )
 
-    begin_build_model.metadata = {'url': "/documentModels:build"}  # type: ignore
+    begin_build_model.metadata = {"url": "/documentModels:build"}  # type: ignore
 
     def _compose_model_initial(  # pylint: disable=inconsistent-return-statements
-        self,
-        compose_request: _models.ComposeDocumentModelRequest,
-        **kwargs: Any
+        self, compose_request: _models.ComposeDocumentModelRequest, **kwargs: Any
     ) -> None:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-07-31"))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        _json = self._serialize.body(compose_request, 'ComposeDocumentModelRequest')
+        _json = self._serialize.body(compose_request, "ComposeDocumentModelRequest")
 
         request = build_compose_model_request_initial(
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._compose_model_initial.metadata['url'],
+            template_url=self._compose_model_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -801,20 +711,16 @@ class DocumentModelsOperations:
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    _compose_model_initial.metadata = {'url': "/documentModels:compose"}  # type: ignore
-
+    _compose_model_initial.metadata = {"url": "/documentModels:compose"}  # type: ignore
 
     @distributed_trace
     def begin_compose_model(  # pylint: disable=inconsistent-return-statements
-        self,
-        compose_request: _models.ComposeDocumentModelRequest,
-        **kwargs: Any
+        self, compose_request: _models.ComposeDocumentModelRequest, **kwargs: Any
     ) -> DocumentModelAdministrationClientLROPoller[None]:
         """Creates a new document model from document types of existing document models.
 
@@ -836,61 +742,58 @@ class DocumentModelsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-07-31"))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._compose_model_initial(  # type: ignore
                 compose_request=compose_request,
                 api_version=api_version,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             if cls:
                 return cls(pipeline_response, None, {})
 
-
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, LROBasePolling(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return DocumentModelAdministrationClientLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
-        return DocumentModelAdministrationClientLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return DocumentModelAdministrationClientLROPoller(
+            self._client, raw_result, get_long_running_output, polling_method
+        )
 
-    begin_compose_model.metadata = {'url': "/documentModels:compose"}  # type: ignore
+    begin_compose_model.metadata = {"url": "/documentModels:compose"}  # type: ignore
 
     @distributed_trace
     def authorize_model_copy(
-        self,
-        authorize_copy_request: _models.AuthorizeCopyRequest,
-        **kwargs: Any
+        self, authorize_copy_request: _models.AuthorizeCopyRequest, **kwargs: Any
     ) -> _models.CopyAuthorization:
         """Generates authorization to copy a document model to this location with specified modelId and
         optional description.
@@ -902,38 +805,36 @@ class DocumentModelsOperations:
         :rtype: ~azure.ai.formrecognizer.v2023_07_31.models.CopyAuthorization
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.CopyAuthorization]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-07-31"))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CopyAuthorization]
 
-        _json = self._serialize.body(authorize_copy_request, 'AuthorizeCopyRequest')
+        _json = self._serialize.body(authorize_copy_request, "AuthorizeCopyRequest")
 
         request = build_authorize_model_copy_request(
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self.authorize_model_copy.metadata['url'],
+            template_url=self.authorize_model_copy.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -942,55 +843,49 @@ class DocumentModelsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('CopyAuthorization', pipeline_response)
+        deserialized = self._deserialize("CopyAuthorization", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    authorize_model_copy.metadata = {'url': "/documentModels:authorizeCopy"}  # type: ignore
-
+    authorize_model_copy.metadata = {"url": "/documentModels:authorizeCopy"}  # type: ignore
 
     def _copy_model_to_initial(  # pylint: disable=inconsistent-return-statements
-        self,
-        model_id: str,
-        copy_to_request: _models.CopyAuthorization,
-        **kwargs: Any
+        self, model_id: str, copy_to_request: _models.CopyAuthorization, **kwargs: Any
     ) -> None:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-07-31"))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        _json = self._serialize.body(copy_to_request, 'CopyAuthorization')
+        _json = self._serialize.body(copy_to_request, "CopyAuthorization")
 
         request = build_copy_model_to_request_initial(
             model_id=model_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._copy_model_to_initial.metadata['url'],
+            template_url=self._copy_model_to_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -999,21 +894,16 @@ class DocumentModelsOperations:
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    _copy_model_to_initial.metadata = {'url': "/documentModels/{modelId}:copyTo"}  # type: ignore
-
+    _copy_model_to_initial.metadata = {"url": "/documentModels/{modelId}:copyTo"}  # type: ignore
 
     @distributed_trace
     def begin_copy_model_to(  # pylint: disable=inconsistent-return-statements
-        self,
-        model_id: str,
-        copy_to_request: _models.CopyAuthorization,
-        **kwargs: Any
+        self, model_id: str, copy_to_request: _models.CopyAuthorization, **kwargs: Any
     ) -> DocumentModelAdministrationClientLROPoller[None]:
         """Copies document model to the target resource, region, and modelId.
 
@@ -1037,62 +927,58 @@ class DocumentModelsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-07-31"))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._copy_model_to_initial(  # type: ignore
                 model_id=model_id,
                 copy_to_request=copy_to_request,
                 api_version=api_version,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             if cls:
                 return cls(pipeline_response, None, {})
 
-
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, LROBasePolling(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return DocumentModelAdministrationClientLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
-        return DocumentModelAdministrationClientLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return DocumentModelAdministrationClientLROPoller(
+            self._client, raw_result, get_long_running_output, polling_method
+        )
 
-    begin_copy_model_to.metadata = {'url': "/documentModels/{modelId}:copyTo"}  # type: ignore
+    begin_copy_model_to.metadata = {"url": "/documentModels/{modelId}:copyTo"}  # type: ignore
 
     @distributed_trace
-    def list_models(
-        self,
-        **kwargs: Any
-    ) -> Iterable[_models.GetDocumentModelsResponse]:
+    def list_models(self, **kwargs: Any) -> Iterable[_models.GetDocumentModelsResponse]:
         """List all document models.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -1105,30 +991,31 @@ class DocumentModelsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.GetDocumentModelsResponse]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-07-31"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.GetDocumentModelsResponse]
 
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_models_request(
                     api_version=api_version,
-                    template_url=self.list_models.metadata['url'],
+                    template_url=self.list_models.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                
+
                 request = build_list_models_request(
                     api_version=api_version,
                     template_url=next_link,
@@ -1137,12 +1024,16 @@ class DocumentModelsOperations:
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.method = "GET"
             return request
@@ -1158,9 +1049,7 @@ class DocumentModelsOperations:
             request = prepare_request(next_link)
 
             pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1171,18 +1060,12 @@ class DocumentModelsOperations:
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list_models.metadata = {'url': "/documentModels"}  # type: ignore
+    list_models.metadata = {"url": "/documentModels"}  # type: ignore
 
     @distributed_trace
-    def get_model(
-        self,
-        model_id: str,
-        **kwargs: Any
-    ) -> _models.DocumentModelDetails:
+    def get_model(self, model_id: str, **kwargs: Any) -> _models.DocumentModelDetails:
         """Gets detailed document model information.
 
         :param model_id: Unique document model name.
@@ -1192,35 +1075,30 @@ class DocumentModelsOperations:
         :rtype: ~azure.ai.formrecognizer.v2023_07_31.models.DocumentModelDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DocumentModelDetails]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-07-31"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DocumentModelDetails]
 
-        
         request = build_get_model_request(
             model_id=model_id,
             api_version=api_version,
-            template_url=self.get_model.metadata['url'],
+            template_url=self.get_model.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -1229,22 +1107,17 @@ class DocumentModelsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('DocumentModelDetails', pipeline_response)
+        deserialized = self._deserialize("DocumentModelDetails", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_model.metadata = {'url': "/documentModels/{modelId}"}  # type: ignore
-
+    get_model.metadata = {"url": "/documentModels/{modelId}"}  # type: ignore
 
     @distributed_trace
-    def delete_model(  # pylint: disable=inconsistent-return-statements
-        self,
-        model_id: str,
-        **kwargs: Any
-    ) -> None:
+    def delete_model(self, model_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Deletes document model.
 
         :param model_id: Unique document model name.
@@ -1254,35 +1127,30 @@ class DocumentModelsOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-07-31"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        
         request = build_delete_model_request(
             model_id=model_id,
             api_version=api_version,
-            template_url=self.delete_model.metadata['url'],
+            template_url=self.delete_model.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -1294,5 +1162,4 @@ class DocumentModelsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete_model.metadata = {'url': "/documentModels/{modelId}"}  # type: ignore
-
+    delete_model.metadata = {"url": "/documentModels/{modelId}"}  # type: ignore

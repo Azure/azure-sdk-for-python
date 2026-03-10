@@ -23,9 +23,7 @@ USAGE:
 
 
 def sample_extract_key_phrases() -> None:
-    print(
-        "In this sample, we want to find the articles that mention Microsoft to read."
-    )
+    print("In this sample, we want to find the articles that mention Microsoft to read.")
     articles_that_mention_microsoft = []
     # [START extract_key_phrases]
     import os
@@ -49,17 +47,14 @@ def sample_extract_key_phrases() -> None:
         """
         Redmond, WA. Employees at Microsoft can be excited about the new coffee shop that will open on campus
         once workers no longer have to work remotely...
-        """
+        """,
     ]
 
     result = text_analytics_client.extract_key_phrases(articles)
     for idx, doc in enumerate(result):
         if not doc.is_error:
-            print("Key phrases in article #{}: {}".format(
-                idx + 1,
-                ", ".join(doc.key_phrases)
-            ))
-    # [END extract_key_phrases]
+            print("Key phrases in article #{}: {}".format(idx + 1, ", ".join(doc.key_phrases)))
+            # [END extract_key_phrases]
             if "Microsoft" in doc.key_phrases:
                 articles_that_mention_microsoft.append(str(idx + 1))
 
@@ -70,5 +65,5 @@ def sample_extract_key_phrases() -> None:
     )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample_extract_key_phrases()

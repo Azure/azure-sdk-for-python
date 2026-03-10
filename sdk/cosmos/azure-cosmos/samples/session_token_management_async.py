@@ -41,14 +41,14 @@ from azure.cosmos.http_constants import HttpHeaders
 # the provisioned throughput (RU/s) of that account.
 # ----------------------------------------------------------------------------------------------------------
 
-HOST = config.settings['host']
+HOST = config.settings["host"]
 CREDENTIAL = DefaultAzureCredential()
-DATABASE_ID = config.settings['database_id']
-CONTAINER_ID = config.settings['container_id']
+DATABASE_ID = config.settings["database_id"]
+CONTAINER_ID = config.settings["container_id"]
+
 
 async def storing_session_tokens_pk(container):
-    print('1. Storing session tokens in a cache by feed range from the partition key.')
-
+    print("1. Storing session tokens in a cache by feed range from the partition key.")
 
     cache: Dict[str, Any] = {}
 
@@ -59,17 +59,16 @@ async def storing_session_tokens_pk(container):
 
     # populating cache with session tokens
     for i in range(5):
-        item = {
-            'id': 'item' + str(uuid.uuid4()),
-            'name': 'sample',
-            'pk': 'A' + str(random.randint(1, 10))
-        }
-        target_feed_range = await container.feed_range_from_partition_key(item['pk'])
-        await perform_create_item_with_cached_session_token(cache, container, feed_ranges_and_session_tokens, item,
-                                                            target_feed_range)
+        item = {"id": "item" + str(uuid.uuid4()), "name": "sample", "pk": "A" + str(random.randint(1, 10))}
+        target_feed_range = await container.feed_range_from_partition_key(item["pk"])
+        await perform_create_item_with_cached_session_token(
+            cache, container, feed_ranges_and_session_tokens, item, target_feed_range
+        )
 
-async def perform_create_item_with_cached_session_token(cache, container, feed_ranges_and_session_tokens, item,
-                                                        target_feed_range):
+
+async def perform_create_item_with_cached_session_token(
+    cache, container, feed_ranges_and_session_tokens, item, target_feed_range
+):
     # only doing this for the key to be immutable
     feed_range_json = json.dumps(target_feed_range)
     session_token = cache[feed_range_json] if feed_range_json in cache else None
@@ -85,7 +84,7 @@ async def perform_create_item_with_cached_session_token(cache, container, feed_r
 
 
 async def storing_session_tokens_container_feed_ranges(container):
-    print('2. Storing session tokens in a cache by feed range from the container.')
+    print("2. Storing session tokens in a cache by feed range from the container.")
 
     # The cache is a dictionary here for simplicity but in a real-world scenario, it would be some service.
     cache: Dict[str, Any] = {}
@@ -97,25 +96,23 @@ async def storing_session_tokens_container_feed_ranges(container):
 
     # populating cache with session tokens
     for i in range(5):
-        item = {
-            'id': 'item' + str(uuid.uuid4()),
-            'name': 'sample',
-            'pk': 'A' + str(random.randint(1, 10))
-        }
-        feed_range_from_pk = await container.feed_range_from_partition_key(item['pk'])
+        item = {"id": "item" + str(uuid.uuid4()), "name": "sample", "pk": "A" + str(random.randint(1, 10))}
+        feed_range_from_pk = await container.feed_range_from_partition_key(item["pk"])
         target_feed_range = {}
         for feed_range in feed_ranges:
             if await container.is_feed_range_subset(feed_range, feed_range_from_pk):
                 target_feed_range = feed_range
                 break
-        await perform_create_item_with_cached_session_token(cache, container, feed_ranges_and_session_tokens, item, target_feed_range)
+        await perform_create_item_with_cached_session_token(
+            cache, container, feed_ranges_and_session_tokens, item, target_feed_range
+        )
 
 
 async def run_sample():
     async with CosmosClient(HOST, CREDENTIAL) as client:
         try:
             db = await client.create_database_if_not_exists(id=DATABASE_ID)
-            container = await db.create_container_if_not_exists(id=CONTAINER_ID, partition_key=PartitionKey('/pk'))
+            container = await db.create_container_if_not_exists(id=CONTAINER_ID, partition_key=PartitionKey("/pk"))
 
             # example of storing session tokens in cache by feed range from the partition key
             await storing_session_tokens_pk(container)
@@ -131,11 +128,11 @@ async def run_sample():
                 pass
 
         except exceptions.CosmosHttpResponseError as e:
-            print('\nrun_sample has caught an error. {0}'.format(e.message))
+            print("\nrun_sample has caught an error. {0}".format(e.message))
 
         finally:
             print("\nrun_sample done")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(run_sample())

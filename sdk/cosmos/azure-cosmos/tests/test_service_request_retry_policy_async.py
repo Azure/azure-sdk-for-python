@@ -27,8 +27,9 @@ class TestServiceRequestRetryPoliciesAsync(unittest.TestCase):
     async def asyncSetUp(self):
         self.client = CosmosClient(self.host, self.masterKey)
         self.database = self.client.get_database_client(self.TEST_DATABASE_ID)
-        self.container = await self.database.create_container("service_request_mrr_test_" + str(uuid.uuid4()),
-                                                              PartitionKey(path="/id"))
+        self.container = await self.database.create_container(
+            "service_request_mrr_test_" + str(uuid.uuid4()), PartitionKey(path="/id")
+        )
 
     async def asyncTearDown(self):
         await self.client.close()
@@ -48,7 +49,7 @@ class TestServiceRequestRetryPoliciesAsync(unittest.TestCase):
         write_locations = list(write_locations_map.values())
 
         account_name = self.host.split(".")[0].split("//")[1]
-        region_to_fail_slug = write_endpoints[1].split('/')[2].replace(f"{account_name}-", "").split('.')[0]
+        region_to_fail_slug = write_endpoints[1].split("/")[2].replace(f"{account_name}-", "").split(".")[0]
 
         region_to_exclude = write_locations[0]  # Use the display name for ExcludedLocations
 
@@ -60,14 +61,14 @@ class TestServiceRequestRetryPoliciesAsync(unittest.TestCase):
         fault_injection_transport = FaultInjectionTransport()
 
         async with CosmosClient(
-                self.host,
-                self.masterKey,
-                connection_policy=policy,
-                transport=fault_injection_transport,
-
+            self.host,
+            self.masterKey,
+            connection_policy=policy,
+            transport=fault_injection_transport,
         ) as client_with_faults:
             container_with_faults = client_with_faults.get_database_client(self.database.id).get_container_client(
-                self.container.id)
+                self.container.id
+            )
 
         # 3. Configure fault injection to fail requests to the second write region with a ServiceRequestError.
         error_to_inject = ServiceRequestError(message="Simulated Service Request Error")
@@ -85,11 +86,10 @@ class TestServiceRequestRetryPoliciesAsync(unittest.TestCase):
 
         # 4. Execute a write operation. It should fail with ServiceRequestError as no regions are available.
         with self.assertRaises(ServiceRequestError) as context:
-            await container_with_faults.create_item(body={'id': 'failover_test_id', 'pk': 'pk_value'})
+            await container_with_faults.create_item(body={"id": "failover_test_id", "pk": "pk_value"})
 
         self.assertIn("Simulated Service Request Error", str(context.exception))
 
 
 if __name__ == "__main__":
     unittest.main()
-

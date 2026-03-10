@@ -7,6 +7,7 @@
 
 from azure.core.pipeline.transport import HttpRequest
 
+
 def _convert_request(request, files=None):
     data = request.content if not files else None
     request = HttpRequest(method=request.method, url=request.url, headers=request.headers, data=data)

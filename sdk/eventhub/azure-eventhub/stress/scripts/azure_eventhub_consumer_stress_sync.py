@@ -131,7 +131,9 @@ else:
     log_filename += ".log"
 logdir = os.environ.get("DEBUG_SHARE")
 logfilepath = f"{logdir}/{log_filename}"
-LOGGER = get_logger(logfilepath, "stress_receive_sync", level=debug_level, print_console=print_console, rotating_logs=rotating_logs)
+LOGGER = get_logger(
+    logfilepath, "stress_receive_sync", level=debug_level, print_console=print_console, rotating_logs=rotating_logs
+)
 LOG_PER_COUNT = args.output_interval
 
 start_time = time.perf_counter()

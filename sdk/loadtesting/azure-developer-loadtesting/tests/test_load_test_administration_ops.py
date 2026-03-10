@@ -195,7 +195,7 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
         result = client.delete_test_file(loadtesting_test_id, "sample.jmx")
         assert result is None
 
-# Trigger CRUD Tests
+    # Trigger CRUD Tests
     @LoadTestingPreparer()
     @recorded_by_proxy
     def test_create_or_update_trigger(self, loadtesting_endpoint, loadtesting_test_id):
@@ -254,7 +254,9 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
     # Notification Rule CRUD Tests
     @LoadTestingPreparer()
     @recorded_by_proxy
-    def test_create_or_update_notification_rule(self, loadtesting_endpoint, loadtesting_test_id, loadtesting_action_group_id):
+    def test_create_or_update_notification_rule(
+        self, loadtesting_endpoint, loadtesting_test_id, loadtesting_action_group_id
+    ):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
@@ -320,7 +322,7 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
         client = self.create_administration_client(loadtesting_endpoint)
         result = client.begin_generate_test_plan_recommendations(loadtesting_recording_test_id)
         assert result is not None
-        
+
     @LoadTestingPreparer()
     @recorded_by_proxy
     def test_begin_clone_test(self, loadtesting_endpoint, loadtesting_test_id):
@@ -328,14 +330,14 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
 
         client = self.create_administration_client(loadtesting_endpoint)
         new_test_id = "new-cloned-test-id-sync"
-        
+
         poller = client.begin_clone_test(
             loadtesting_test_id,
             new_test_id=new_test_id,
             display_name="Cloned Test",
             description="Cloned test for pytest",
         )
-        
+
         result = poller.result()
         assert result is not None
         assert poller.done() is True

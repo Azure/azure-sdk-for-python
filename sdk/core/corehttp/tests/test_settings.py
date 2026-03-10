@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 """Tests for the global settings."""
+
 from unittest import mock
 
 import pytest

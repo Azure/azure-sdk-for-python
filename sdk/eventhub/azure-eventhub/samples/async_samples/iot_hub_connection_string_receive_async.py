@@ -13,6 +13,7 @@ receive events.
 More information about the built-in messaging endpoint can be found at:
 https://learn.microsoft.com/azure/iot-hub/iot-hub-devguide-messages-read-builtin
 """
+
 from typing import cast
 import os
 import re

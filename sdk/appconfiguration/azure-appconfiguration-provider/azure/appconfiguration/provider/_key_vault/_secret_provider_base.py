@@ -11,7 +11,7 @@ from typing import (
     Dict,
     Tuple,
 )
-from azure.appconfiguration import SecretReferenceConfigurationSetting  # type:ignore # pylint:disable=no-name-in-module
+from azure.appconfiguration import SecretReferenceConfigurationSetting  # type: ignore # pylint:disable=no-name-in-module
 from azure.keyvault.secrets import KeyVaultSecretIdentifier
 from .._azureappconfigurationproviderbase import _RefreshTimer
 
@@ -50,12 +50,10 @@ class _SecretProviderBase:
         self, config: SecretReferenceConfigurationSetting
     ) -> Tuple[KeyVaultSecretIdentifier, str]:
         if not self.uses_key_vault:
-            raise ValueError(
-                """
+            raise ValueError("""
                 Either a credential to Key Vault, custom Key Vault client, or a secret resolver must be set to resolve
                 Key Vault references.
-                """
-            )
+                """)
 
         if config.secret_id is None:
             raise ValueError("Key Vault reference must have a uri value.")

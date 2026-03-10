@@ -36,19 +36,20 @@ DATABASE_ID = config.settings["database_id"]
 CONTAINER_ID = config.settings["container_id"]
 PARTITION_KEY = PartitionKey(path="/pk")
 
+
 def get_test_item(num: int) -> dict:
     return {
         "id": f"Item_{num}",
         "pk": "partition1",
         "name": "Item 1",
         "description": "This is item 1",
-        "runId": str(uuid.uuid4())
+        "runId": str(uuid.uuid4()),
     }
 
 
 def run_sample():
     # if you want to override scope for AAD authentication.
-    #os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"] = "https://cosmos.azure.com/.default"
+    # os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"] = "https://cosmos.azure.com/.default"
 
     # AAD auth works with az login
     aad_credentials = InteractiveBrowserCredential()

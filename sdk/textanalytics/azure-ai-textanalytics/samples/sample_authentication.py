@@ -35,22 +35,22 @@ def sample_authentication_with_api_key_credential() -> None:
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import TextAnalyticsClient
+
     endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
     key = os.environ["AZURE_LANGUAGE_KEY"]
 
     text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
     # [END create_ta_client_with_key]
 
-    doc = [
-        """
+    doc = ["""
         I need to take my cat to the veterinarian. She's been coughing for a while and I thought it was just a hairball,
         but now I'm now worried it might be something else. She's still very healthy so I'm not too worried though.
-        """
-    ]
+        """]
     result = text_analytics_client.detect_language(doc)
 
     print(f"Language detected: {result[0].primary_language.name}")
     print(f"Confidence score: {result[0].primary_language.confidence_score}")
+
 
 def sample_authentication_with_azure_active_directory() -> None:
     """DefaultAzureCredential will use the values from these environment
@@ -68,18 +68,16 @@ def sample_authentication_with_azure_active_directory() -> None:
     text_analytics_client = TextAnalyticsClient(endpoint, credential=credential)
     # [END create_ta_client_with_aad]
 
-    doc = [
-        """
+    doc = ["""
         I need to take my cat to the veterinarian. She's been coughing for a while and I thought it was just a hairball,
         but now I'm now worried it might be something else. She's still very healthy so I'm not too worried though.
-        """
-    ]
+        """]
     result = text_analytics_client.detect_language(doc)
 
     print(f"Language detected: {result[0].primary_language.name}")
     print(f"Confidence score: {result[0].primary_language.confidence_score}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample_authentication_with_api_key_credential()
     sample_authentication_with_azure_active_directory()

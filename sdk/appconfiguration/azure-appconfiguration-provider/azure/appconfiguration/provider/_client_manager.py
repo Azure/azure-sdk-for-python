@@ -13,7 +13,7 @@ from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import TokenCredential
-from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
+from azure.appconfiguration import (  # type: ignore # pylint:disable=no-name-in-module
     ConfigurationSetting,
     AzureAppConfigurationClient,
     FeatureFlagConfigurationSetting,

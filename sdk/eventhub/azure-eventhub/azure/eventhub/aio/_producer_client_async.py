@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-import asyncio # pylint:disable=do-not-import-asyncio
+import asyncio  # pylint:disable=do-not-import-asyncio
 import logging
 import time
 import warnings
@@ -194,7 +194,8 @@ class EventHubProducerClient(ClientBaseAsync):  # pylint: disable=client-accepts
                 "to use the pure Python AMQP transport. "
                 "If you rely on this, please comment on [this issue]"
                 "(https://github.com/Azure/azure-sdk-for-python/issues/40347) ",
-                DeprecationWarning, stacklevel=2
+                DeprecationWarning,
+                stacklevel=2,
             )
 
         self._auth_uri = f"sb://{self._address.hostname}{self._address.path}"

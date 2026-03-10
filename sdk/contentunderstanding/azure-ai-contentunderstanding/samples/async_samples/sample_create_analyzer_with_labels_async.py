@@ -114,9 +114,7 @@ async def main() -> None:
     key = os.getenv("CONTENTUNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(
-        endpoint=endpoint, credential=credential
-    ) as client:
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         # [START create_analyzer_with_labels]
         analyzer_id = f"receipt_analyzer_{int(time.time())}"
 
@@ -176,9 +174,7 @@ async def main() -> None:
 
         # Option B: upload local label files and auto-generate a SAS URL
         if not training_data_sas_url:
-            storage_account = os.getenv(
-                "CONTENTUNDERSTANDING_TRAINING_DATA_STORAGE_ACCOUNT"
-            )
+            storage_account = os.getenv("CONTENTUNDERSTANDING_TRAINING_DATA_STORAGE_ACCOUNT")
             container = os.getenv("CONTENTUNDERSTANDING_TRAINING_DATA_CONTAINER")
             if storage_account and container:
                 from azure.core.exceptions import ResourceExistsError
@@ -212,16 +208,10 @@ async def main() -> None:
                 prefix = os.getenv("CONTENTUNDERSTANDING_TRAINING_DATA_PREFIX")
                 for file_path in local_label_dir.iterdir():
                     if file_path.is_file() and file_path.name != "README.md":
-                        blob_name = (
-                            file_path.name
-                            if not prefix
-                            else prefix.rstrip("/") + "/" + file_path.name
-                        )
+                        blob_name = file_path.name if not prefix else prefix.rstrip("/") + "/" + file_path.name
                         print(f"Uploading {file_path.name} -> {blob_name}")
                         with open(file_path, "rb") as data:
-                            await container_client.upload_blob(
-                                name=blob_name, data=data, overwrite=True
-                            )
+                            await container_client.upload_blob(name=blob_name, data=data, overwrite=True)
 
                 # Generate a User Delegation SAS URL (Read + List) for the container
                 blob_service_client = BlobServiceClient(
@@ -284,9 +274,7 @@ async def main() -> None:
         print(
             f"  Fields: {len(result.field_schema.fields) if result.field_schema and result.field_schema.fields else 0}"
         )
-        print(
-            f"  Knowledge sources: {len(result.knowledge_sources) if result.knowledge_sources else 0}"
-        )
+        print(f"  Knowledge sources: {len(result.knowledge_sources) if result.knowledge_sources else 0}")
         # [END create_analyzer_with_labels]
 
         # Clean up - delete the analyzer

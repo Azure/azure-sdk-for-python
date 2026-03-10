@@ -49,7 +49,9 @@ class TestConversationsCase(TestConversations):
     @ConversationsPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_conversation_pii_async(self, conversations_endpoint, conversations_key): # pylint: disable=too-many-statements
+    async def test_conversation_pii_async(
+        self, conversations_endpoint, conversations_key
+    ):  # pylint: disable=too-many-statements
         client = await self.create_client(conversations_endpoint, conversations_key)
 
         try:
@@ -116,7 +118,7 @@ class TestConversationsCase(TestConversations):
                     f"Failed: {actions_page.failed}, "
                     f"Total: {actions_page.total}"
                 )
-                for action_result in actions_page.task_results or []: # pylint: disable=too-many-nested-blocks
+                for action_result in actions_page.task_results or []:  # pylint: disable=too-many-nested-blocks
                     ar = cast(AnalyzeConversationOperationResult, action_result)
                     print(f"\nAction Name: {getattr(ar, 'name', None)}")
                     print(f"Action Status: {getattr(ar, 'status', None)}")

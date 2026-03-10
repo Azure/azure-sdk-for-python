@@ -24,27 +24,28 @@ class TestMgmtPartner(AzureMgmtRecordedTestCase):
         self.managementpartner_client = self.create_basic_client(ACEProvisioningManagementPartnerAPI)
 
     def test_managementpartner_get(self):
-        self.partner_id="123456"
+        self.partner_id = "123456"
         managment_partner = self.managementpartner_client.partner.get(self.partner_id)
         self.assertIsNotNone(managment_partner)
         self._validate_partner(managment_partner)
 
     def test_managementpartner_create(self):
-        self.partner_id="123456"
+        self.partner_id = "123456"
         managment_partner = self.managementpartner_client.partner.create(self.partner_id)
         self.assertIsNotNone(managment_partner)
         self._validate_partner(managment_partner)
 
     def test_managementpartner_update(self):
-        self.partner_id="123457"
+        self.partner_id = "123457"
         managment_partner = self.managementpartner_client.partner.update(self.partner_id)
         self.assertIsNotNone(managment_partner)
         self._validate_partner(managment_partner)
 
     def test_managementpartner_delete(self):
-        self.partner_id="123456"
+        self.partner_id = "123456"
         self.managementpartner_client.partner.delete(self.partner_id)
 
-#------------------------------------------------------------------------------
-if __name__ == '__main__':
+
+# ------------------------------------------------------------------------------
+if __name__ == "__main__":
     unittest.main()

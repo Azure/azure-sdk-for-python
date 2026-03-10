@@ -29,7 +29,6 @@ class TestServiceLinkerManagementConnectorOperations(AzureMgmtRecordedTestCase):
         result = [r for r in response]
         assert result == []
 
-
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_list(self, resource_group):

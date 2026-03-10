@@ -7,6 +7,7 @@
 """Customize generated code here.
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 from ._models import (
     AssignDeploymentResourcesDetails,
     UnassignDeploymentResourcesDetails,

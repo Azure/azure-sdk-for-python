@@ -17,6 +17,7 @@ USAGE: python conditional_operation_sample.py
     Set the environment variables with your own values before running the sample:
     1) APPCONFIGURATION_CONNECTION_STRING: Connection String used to access the Azure App Configuration.
 """
+
 import os
 from azure.core import MatchConditions
 from azure.core.exceptions import ResourceModifiedError

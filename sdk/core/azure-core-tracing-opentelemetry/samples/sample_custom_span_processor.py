@@ -32,7 +32,6 @@ from opentelemetry import trace
 from opentelemetry.sdk.trace import ReadableSpan, TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
 
-
 settings.tracing_implementation = "opentelemetry"
 
 # In the below example, we use a simple console exporter, uncomment these lines to use

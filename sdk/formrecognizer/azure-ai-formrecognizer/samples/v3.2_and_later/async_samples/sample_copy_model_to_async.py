@@ -49,9 +49,7 @@ async def sample_copy_model_to_async(custom_model_id):
         endpoint=target_endpoint, credential=AzureKeyCredential(target_key)
     )
     async with target_client:
-        target = await target_client.get_copy_authorization(
-            description="model copied from other resource"
-        )
+        target = await target_client.get_copy_authorization(description="model copied from other resource")
 
     source_client = DocumentModelAdministrationClient(
         endpoint=source_endpoint, credential=AzureKeyCredential(source_key)

@@ -34,7 +34,6 @@ from azure.storage.blob import BlobServiceClient
 from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
 from azure.storage.blob.aio import BlobServiceClient as AsyncBlobServiceClient
 
-
 # =============================================================================
 # Synchronous Example
 # =============================================================================

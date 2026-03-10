@@ -11,8 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AnalyzeResultOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Operation status.
-    """
+    """Operation status."""
 
     #: The operation has not started yet.
     NOT_STARTED = "notStarted"
@@ -23,20 +22,26 @@ class AnalyzeResultOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     #: The operation has succeeded.
     SUCCEEDED = "succeeded"
 
+
 class ContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Content type for upload
-    """
+    """Content type for upload"""
 
     #: Content Type 'application/octet-stream'.
     APPLICATION_OCTET_STREAM = "application/octet-stream"
     #: Content Type 'application/pdf'.
     APPLICATION_PDF = "application/pdf"
     #: Content Type 'application/vnd.openxmlformats-officedocument.presentationml.presentation'.
-    APPLICATION_VND_OPENXMLFORMATS_OFFICEDOCUMENT_PRESENTATIONML_PRESENTATION = "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+    APPLICATION_VND_OPENXMLFORMATS_OFFICEDOCUMENT_PRESENTATIONML_PRESENTATION = (
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+    )
     #: Content Type 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'.
-    APPLICATION_VND_OPENXMLFORMATS_OFFICEDOCUMENT_SPREADSHEETML_SHEET = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    APPLICATION_VND_OPENXMLFORMATS_OFFICEDOCUMENT_SPREADSHEETML_SHEET = (
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
     #: Content Type 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'.
-    APPLICATION_VND_OPENXMLFORMATS_OFFICEDOCUMENT_WORDPROCESSINGML_DOCUMENT = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    APPLICATION_VND_OPENXMLFORMATS_OFFICEDOCUMENT_WORDPROCESSINGML_DOCUMENT = (
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    )
     #: Content Type 'image/bmp'.
     IMAGE_BMP = "image/bmp"
     #: Content Type 'image/heif'.
@@ -49,6 +54,7 @@ class ContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     IMAGE_TIFF = "image/tiff"
     #: Content Type 'text/html'.
     TEXT_HTML = "text/html"
+
 
 class DocumentAnalysisFeature(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
@@ -65,9 +71,9 @@ class DocumentAnalysisFeature(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Enable the recognition of various font styles.
     STYLE_FONT = "styleFont"
 
+
 class DocumentBarcodeKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Barcode kind.
-    """
+    """Barcode kind."""
 
     #: QR code, as defined in ISO/IEC 18004:2015.
     QR_CODE = "QRCode"
@@ -104,18 +110,18 @@ class DocumentBarcodeKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: MaxiCode, as defined in ISO/IEC 16023:2000.
     MAXI_CODE = "MaxiCode"
 
+
 class DocumentBuildMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Custom document model build mode.
-    """
+    """Custom document model build mode."""
 
     #: Target documents with similar visual templates.
     TEMPLATE = "template"
     #: Support documents with diverse visual templates.
     NEURAL = "neural"
 
+
 class DocumentFieldType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Semantic data type of the field value.
-    """
+    """Semantic data type of the field value."""
 
     #: Plain text.
     STRING = "string"
@@ -146,27 +152,27 @@ class DocumentFieldType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Boolean value, normalized to true or false.
     BOOLEAN = "boolean"
 
+
 class DocumentFormulaKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Formula kind.
-    """
+    """Formula kind."""
 
     #: A formula embedded within the content of a paragraph.
     INLINE = "inline"
     #: A formula in display mode that takes up an entire line.
     DISPLAY = "display"
 
+
 class DocumentSignatureType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Presence of signature.
-    """
+    """Presence of signature."""
 
     #: A signature is detected.
     SIGNED = "signed"
     #: No signatures are detected.
     UNSIGNED = "unsigned"
 
+
 class DocumentTableCellKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Table cell kind.
-    """
+    """Table cell kind."""
 
     #: Contains the main content/data.
     CONTENT = "content"
@@ -179,23 +185,24 @@ class DocumentTableCellKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Describes the content in (parts of) the table.
     DESCRIPTION = "description"
 
+
 class FontStyle(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Font style.
-    """
+    """Font style."""
 
     #: Characters are represented normally.
     NORMAL = "normal"
     #: Characters are visually slanted to the right.
     ITALIC = "italic"
 
+
 class FontWeight(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Font weight.
-    """
+    """Font weight."""
 
     #: Characters are represented normally.
     NORMAL = "normal"
     #: Characters are represented with thicker strokes.
     BOLD = "bold"
+
 
 class LengthUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The unit used by the width, height, and polygon properties. For images, the unit is "pixel".
@@ -207,9 +214,9 @@ class LengthUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Length unit for PDF files.
     INCH = "inch"
 
+
 class OperationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of operation.
-    """
+    """Type of operation."""
 
     #: Build a new custom document model.
     DOCUMENT_MODEL_BUILD = "documentModelBuild"
@@ -220,9 +227,9 @@ class OperationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Build a new custom classifier model.
     DOCUMENT_CLASSIFIER_BUILD = "documentClassifierBuild"
 
+
 class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Operation status.
-    """
+    """Operation status."""
 
     #: The operation has not started yet.
     NOT_STARTED = "notStarted"
@@ -235,9 +242,9 @@ class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: The operation has been canceled.
     CANCELED = "canceled"
 
+
 class ParagraphRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Semantic role of the paragraph.
-    """
+    """Semantic role of the paragraph."""
 
     #: Text near the top edge of the page.
     PAGE_HEADER = "pageHeader"
@@ -254,9 +261,9 @@ class ParagraphRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: A block of formulas, often with shared alignment.
     FORMULA_BLOCK = "formulaBlock"
 
+
 class SelectionMarkState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """State of the selection mark.
-    """
+    """State of the selection mark."""
 
     #: The selection mark is selected, often indicated by a check ✓ or cross X inside the selection
     #: mark.
@@ -264,9 +271,9 @@ class SelectionMarkState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: The selection mark is not selected.
     UNSELECTED = "unselected"
 
+
 class StringIndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Method used to compute string offset and length.
-    """
+    """Method used to compute string offset and length."""
 
     #: User-perceived display character, or grapheme cluster, as defined by Unicode 8.0.0.
     TEXT_ELEMENTS = "textElements"

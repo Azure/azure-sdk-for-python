@@ -19,12 +19,13 @@ USAGE:
     python sample_chat_completions_from_input_dict.py
 
     Set these two environment variables before running the sample:
-    1) AZURE_AI_CHAT_ENDPOINT - Your endpoint URL, in the form 
+    1) AZURE_AI_CHAT_ENDPOINT - Your endpoint URL, in the form
         https://<your-deployment-name>.<your-azure-region>.models.ai.azure.com
         where `your-deployment-name` is your unique AI Model deployment name, and
         `your-azure-region` is the Azure region where your model is deployed.
     2) AZURE_AI_CHAT_KEY - Your model key. Keep it secret.
 """
+
 # mypy: disable-error-code="union-attr"
 # pyright: reportAttributeAccessIssue=false
 

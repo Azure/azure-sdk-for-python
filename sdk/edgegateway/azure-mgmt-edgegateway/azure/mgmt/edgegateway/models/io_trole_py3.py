@@ -46,33 +46,35 @@ class IoTRole(Role):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'kind': {'required': True},
-        'host_platform': {'required': True},
-        'io_tdevice_details': {'required': True},
-        'io_tedge_device_details': {'required': True},
-        'role_status': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "kind": {"required": True},
+        "host_platform": {"required": True},
+        "io_tdevice_details": {"required": True},
+        "io_tedge_device_details": {"required": True},
+        "role_status": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'host_platform': {'key': 'properties.hostPlatform', 'type': 'str'},
-        'io_tdevice_details': {'key': 'properties.ioTDeviceDetails', 'type': 'IoTDeviceInfo'},
-        'io_tedge_device_details': {'key': 'properties.ioTEdgeDeviceDetails', 'type': 'IoTDeviceInfo'},
-        'share_mappings': {'key': 'properties.shareMappings', 'type': '[MountPointMap]'},
-        'role_status': {'key': 'properties.roleStatus', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "host_platform": {"key": "properties.hostPlatform", "type": "str"},
+        "io_tdevice_details": {"key": "properties.ioTDeviceDetails", "type": "IoTDeviceInfo"},
+        "io_tedge_device_details": {"key": "properties.ioTEdgeDeviceDetails", "type": "IoTDeviceInfo"},
+        "share_mappings": {"key": "properties.shareMappings", "type": "[MountPointMap]"},
+        "role_status": {"key": "properties.roleStatus", "type": "str"},
     }
 
-    def __init__(self, *, host_platform, io_tdevice_details, io_tedge_device_details, role_status, share_mappings=None, **kwargs) -> None:
+    def __init__(
+        self, *, host_platform, io_tdevice_details, io_tedge_device_details, role_status, share_mappings=None, **kwargs
+    ) -> None:
         super(IoTRole, self).__init__(**kwargs)
         self.host_platform = host_platform
         self.io_tdevice_details = io_tdevice_details
         self.io_tedge_device_details = io_tedge_device_details
         self.share_mappings = share_mappings
         self.role_status = role_status
-        self.kind = 'IOT'
+        self.kind = "IOT"

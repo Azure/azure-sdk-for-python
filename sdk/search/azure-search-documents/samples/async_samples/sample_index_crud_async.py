@@ -18,7 +18,6 @@ USAGE:
     2) AZURE_SEARCH_API_KEY - the admin key for your search service
 """
 
-
 import os
 import asyncio
 from typing import List

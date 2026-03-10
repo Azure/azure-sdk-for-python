@@ -40,20 +40,23 @@ SchemaRegistryEnvironmentVariableLoader = functools.partial(
     EnvironmentVariableLoader,
     "schemaregistry",
     schemaregistry_avro_fully_qualified_namespace="fake_resource_avro.servicebus.windows.net",
-    schemaregistry_group="fakegroup"
+    schemaregistry_group="fakegroup",
 )
+
 
 class TestAvroEncoder(AzureRecordedTestCase):
 
     def create_client(self, **kwargs):
         fully_qualified_namespace = kwargs.pop("fully_qualified_namespace")
         credential = self.get_credential(SchemaRegistryClient)
-        return self.create_client_from_credential(SchemaRegistryClient, credential, fully_qualified_namespace=fully_qualified_namespace)
+        return self.create_client_from_credential(
+            SchemaRegistryClient, credential, fully_qualified_namespace=fully_qualified_namespace
+        )
 
     def test_raw_avro_encoder(self):
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         schema = avro.schema.parse(schema_str)
-        dict_content = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
+        dict_content = {"name": "Ben", "favorite_number": 7, "favorite_color": "red"}
 
         raw_avro_object_encoder = AvroObjectEncoder()
 
@@ -64,16 +67,16 @@ class TestAvroEncoder(AzureRecordedTestCase):
         reader = raw_avro_object_encoder.get_schema_reader(schema_str)
         decoded_content = raw_avro_object_encoder.decode(encoded_payload, reader)
 
-        assert decoded_content["name"] == u"Ben"
+        assert decoded_content["name"] == "Ben"
         assert decoded_content["favorite_number"] == 7
-        assert decoded_content["favorite_color"] == u"red"
+        assert decoded_content["favorite_color"] == "red"
 
-        dict_content_missing_optional_fields = {"name": u"Alice"}
+        dict_content_missing_optional_fields = {"name": "Alice"}
         encoded_payload = raw_avro_object_encoder.encode(dict_content_missing_optional_fields, schema_str)
         reader = raw_avro_object_encoder.get_schema_reader(schema_str)
         decoded_content = raw_avro_object_encoder.decode(encoded_payload, reader)
 
-        assert decoded_content["name"] == u"Alice"
+        assert decoded_content["name"] == "Alice"
         assert not decoded_content["favorite_number"]
         assert not decoded_content["favorite_color"]
 
@@ -82,12 +85,12 @@ class TestAvroEncoder(AzureRecordedTestCase):
         schema = avro.schema.parse(schema_str)
 
         raw_avro_object_encoder = AvroObjectEncoder()
-        dict_content_wrong_type = {"name": u"Ben", "favorite_number": u"something", "favorite_color": u"red"}
-        with pytest.raises(AvroTypeException): # avro.io.AvroTypeException
+        dict_content_wrong_type = {"name": "Ben", "favorite_number": "something", "favorite_color": "red"}
+        with pytest.raises(AvroTypeException):  # avro.io.AvroTypeException
             raw_avro_object_encoder.encode(dict_content_wrong_type, schema_str)
 
-        dict_content_missing_required_field = {"favorite_number": 7, "favorite_color": u"red"}
-        with pytest.raises(AvroTypeException): # avro.io.AvroTypeException
+        dict_content_missing_required_field = {"favorite_number": 7, "favorite_color": "red"}
+        with pytest.raises(AvroTypeException):  # avro.io.AvroTypeException
             raw_avro_object_encoder.encode(dict_content_missing_required_field, schema_str)
 
     @SchemaRegistryEnvironmentVariableLoader()
@@ -101,26 +104,26 @@ class TestAvroEncoder(AzureRecordedTestCase):
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         schema = avro.schema.parse(schema_str)
 
-        dict_content = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
+        dict_content = {"name": "Ben", "favorite_number": 7, "favorite_color": "red"}
         encoded_message_content = sr_avro_encoder.encode(dict_content, schema=schema_str)
         content_type = encoded_message_content["content_type"]
         encoded_content = encoded_message_content["content"]
 
         # wrong data type
-        dict_content_bad = {"name": u"Ben", "favorite_number": 7, "favorite_color": 7}
+        dict_content_bad = {"name": "Ben", "favorite_number": 7, "favorite_color": 7}
         with pytest.raises(InvalidContentError) as e:
             encoded_message_content = sr_avro_encoder.encode(dict_content_bad, schema=schema_str)
         assert "schema_id" in e.value.details
 
-        assert content_type.split("+")[0] == 'avro/binary'
+        assert content_type.split("+")[0] == "avro/binary"
         schema_id = sr_client.get_schema_properties(schemaregistry_group, schema.fullname, str(schema), "Avro").id
         assert content_type.split("+")[1] == schema_id
 
         encoded_content_dict = {"content": encoded_content, "content_type": content_type}
         decoded_content = sr_avro_encoder.decode(encoded_content_dict)
-        assert decoded_content["name"] == u"Ben"
+        assert decoded_content["name"] == "Ben"
         assert decoded_content["favorite_number"] == 7
-        assert decoded_content["favorite_color"] == u"red"
+        assert decoded_content["favorite_color"] == "red"
 
         # bad content type
         mime_type, schema_id = encoded_content_dict["content_type"].split("+")
@@ -128,7 +131,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
         with pytest.raises(InvalidContentError) as e:
             decoded_content = sr_avro_encoder.decode(encoded_content_dict)
 
-        encoded_content_dict["content_type"] = 'a+b+c'
+        encoded_content_dict["content_type"] = "a+b+c"
         with pytest.raises(InvalidContentError) as e:
             decoded_content = sr_avro_encoder.decode(encoded_content_dict)
 
@@ -138,12 +141,12 @@ class TestAvroEncoder(AzureRecordedTestCase):
                 self.not_content = not_content
 
         with pytest.raises(TypeError) as e:
-            sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_str, message_type=BadExample) 
+            sr_avro_encoder.encode({"name": "Ben"}, schema=schema_str, message_type=BadExample)
         assert "subtype of the MessageType" in (str(e.value))
 
-        bad_ex = BadExample('fake')
-        with pytest.raises(TypeError) as e:    # caught TypeError
-            sr_avro_encoder.decode(message=bad_ex) 
+        bad_ex = BadExample("fake")
+        with pytest.raises(TypeError) as e:  # caught TypeError
+            sr_avro_encoder.decode(message=bad_ex)
         assert "subtype of the MessageType" in (str(e.value))
 
         # check that AvroEncoder will work with message types that follow protocols
@@ -151,8 +154,8 @@ class TestAvroEncoder(AzureRecordedTestCase):
             def __init__(self, content, **kwargs):
                 self.content = content
                 self.content_type = None
-                self.extra = kwargs.pop('extra', None)
-            
+                self.extra = kwargs.pop("extra", None)
+
             @classmethod
             def from_message_content(cls, content: bytes, content_type: str, **kwargs):
                 ge = cls(content)
@@ -162,12 +165,12 @@ class TestAvroEncoder(AzureRecordedTestCase):
             def __message_content__(self):
                 return {"content": self.content, "content_type": self.content_type}
 
-        good_ex_obj = sr_avro_encoder.encode(dict_content, schema=schema_str, message_type=GoodExample, extra='val') 
+        good_ex_obj = sr_avro_encoder.encode(dict_content, schema=schema_str, message_type=GoodExample, extra="val")
         decoded_content_obj = sr_avro_encoder.decode(message=good_ex_obj)
 
-        assert decoded_content_obj["name"] == u"Ben"
+        assert decoded_content_obj["name"] == "Ben"
         assert decoded_content_obj["favorite_number"] == 7
-        assert decoded_content_obj["favorite_color"] == u"red"
+        assert decoded_content_obj["favorite_color"] == "red"
         sr_client.close()
         sr_avro_encoder.close()
 
@@ -175,14 +178,13 @@ class TestAvroEncoder(AzureRecordedTestCase):
         extra_sr_client = self.create_client(fully_qualified_namespace=schemaregistry_avro_fully_qualified_namespace)
         sr_avro_encoder_no_group = AvroEncoder(client=extra_sr_client, auto_register=True)
         decoded_content = sr_avro_encoder_no_group.decode(encoded_message_content)
-        assert decoded_content["name"] == u"Ben"
+        assert decoded_content["name"] == "Ben"
         assert decoded_content["favorite_number"] == 7
-        assert decoded_content["favorite_color"] == u"red"
+        assert decoded_content["favorite_color"] == "red"
         with pytest.raises(TypeError):
             encoded_message_content = sr_avro_encoder_no_group.encode(dict_content, schema=schema_str)
         sr_avro_encoder_no_group.close()
         extra_sr_client.close()
-
 
     @SchemaRegistryEnvironmentVariableLoader()
     @recorded_by_proxy
@@ -195,23 +197,23 @@ class TestAvroEncoder(AzureRecordedTestCase):
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         schema = avro.schema.parse(schema_str)
 
-        dict_content = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
+        dict_content = {"name": "Ben", "favorite_number": 7, "favorite_color": "red"}
         encoded_message_content = sr_avro_encoder.encode(dict_content, schema=schema_str)
         content_type = encoded_message_content["content_type"]
         encoded_content = encoded_message_content["content"]
 
-        assert content_type.split("+")[0] == 'avro/binary'
+        assert content_type.split("+")[0] == "avro/binary"
         schema_id = sr_client.get_schema_properties(schemaregistry_group, schema.fullname, str(schema), "Avro").id
         assert content_type.split("+")[1] == schema_id
 
         encoded_content_dict = {"content": encoded_content, "content_type": content_type}
         decoded_content = sr_avro_encoder.decode(encoded_content_dict)
-        assert decoded_content["name"] == u"Ben"
+        assert decoded_content["name"] == "Ben"
         assert decoded_content["favorite_number"] == 7
-        assert decoded_content["favorite_color"] == u"red"
+        assert decoded_content["favorite_color"] == "red"
 
         sr_avro_encoder.close()
-    
+
     @SchemaRegistryEnvironmentVariableLoader()
     @recorded_by_proxy
     def test_basic_sr_avro_encoder_decode_readers_schema(self, **kwargs):
@@ -222,7 +224,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
 
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
 
-        dict_content = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
+        dict_content = {"name": "Ben", "favorite_number": 7, "favorite_color": "red"}
         encoded_message_content = sr_avro_encoder.encode(dict_content, schema=schema_str)
         content_type = encoded_message_content["content_type"]
         encoded_content = encoded_message_content["content"]
@@ -231,13 +233,13 @@ class TestAvroEncoder(AzureRecordedTestCase):
         readers_schema_remove_field = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]}]}"""
         encoded_content_dict = {"content": encoded_content, "content_type": content_type}
         decoded_content = sr_avro_encoder.decode(encoded_content_dict, readers_schema=readers_schema_remove_field)
-        assert decoded_content["name"] == u"Ben"
+        assert decoded_content["name"] == "Ben"
         assert decoded_content["favorite_number"] == 7
 
         # readers_schema with extra field with default
         readers_schema_extra_field = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}, {"name":"favorite_city","type":["string","null"], "default": "Redmond"}]}"""
         decoded_content = sr_avro_encoder.decode(encoded_content_dict, readers_schema=readers_schema_extra_field)
-        assert decoded_content["name"] == u"Ben"
+        assert decoded_content["name"] == "Ben"
         assert decoded_content["favorite_number"] == 7
         assert decoded_content["favorite_color"] == "red"
         assert decoded_content["favorite_city"] == "Redmond"
@@ -252,10 +254,10 @@ class TestAvroEncoder(AzureRecordedTestCase):
 
         # invalid readers_schema
         invalid_schema = {
-            "name":"User",
-            "type":"record",
-            "namespace":"example.avro",
-            "fields":[{"name":"name","type":"string"}]
+            "name": "User",
+            "type": "record",
+            "namespace": "example.avro",
+            "fields": [{"name": "name", "type": "string"}],
         }
         invalid_schema_string = "{}".format(invalid_schema)
         with pytest.raises(InvalidSchemaError) as e:
@@ -263,7 +265,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
         assert "Invalid schema" in e.value.message
         assert "schema_id" in e.value.details
         assert "schema_definition" in e.value.details
-    
+
     @SchemaRegistryEnvironmentVariableLoader()
     @recorded_by_proxy
     def test_basic_sr_avro_encoder_with_request_options(self, **kwargs):
@@ -274,22 +276,25 @@ class TestAvroEncoder(AzureRecordedTestCase):
 
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
 
-        dict_content = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
+        dict_content = {"name": "Ben", "favorite_number": 7, "favorite_color": "red"}
         # if fake kwargs/incorrectly formatted request keyword passed in, should raise TypeError
         with pytest.raises(TypeError) as e:
-            encoded_message_content = sr_avro_encoder.encode(dict_content, schema=schema_str, request_options={"fake_kwarg": True, "files": frozenset({'a': False})})
+            encoded_message_content = sr_avro_encoder.encode(
+                dict_content, schema=schema_str, request_options={"fake_kwarg": True, "files": frozenset({"a": False})}
+            )
         encoded_message_content = sr_avro_encoder.encode(dict_content, schema=schema_str)
         content_type = encoded_message_content["content_type"]
         encoded_content = encoded_message_content["content"]
 
         encoded_content_dict = {"content": encoded_content, "content_type": content_type}
         with pytest.raises(TypeError) as e:
-            decoded_content = sr_avro_encoder.decode(encoded_content_dict, request_options={"fake_kwarg": True, "files": (False)})
+            decoded_content = sr_avro_encoder.decode(
+                encoded_content_dict, request_options={"fake_kwarg": True, "files": (False)}
+            )
 
-
-    ################################################################# 
+    #################################################################
     ######################### PARSE SCHEMAS #########################
-    ################################################################# 
+    #################################################################
 
     @SchemaRegistryEnvironmentVariableLoader()
     @recorded_by_proxy
@@ -299,14 +304,14 @@ class TestAvroEncoder(AzureRecordedTestCase):
         sr_client = self.create_client(fully_qualified_namespace=schemaregistry_avro_fully_qualified_namespace)
         sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group, auto_register=True)
         invalid_schema = {
-            "name":"User",
-            "type":"record",
-            "namespace":"example.avro",
-            "fields":[{"name":"name","type":"string"}]
+            "name": "User",
+            "type": "record",
+            "namespace": "example.avro",
+            "fields": [{"name": "name", "type": "string"}],
         }
         invalid_schema_string = "{}".format(invalid_schema)
-        with pytest.raises(InvalidSchemaError):    # caught avro InvalidSchemaError
-            sr_avro_encoder.encode({"name": u"Ben"}, schema=invalid_schema_string) 
+        with pytest.raises(InvalidSchemaError):  # caught avro InvalidSchemaError
+            sr_avro_encoder.encode({"name": "Ben"}, schema=invalid_schema_string)
 
     ######################### PRIMITIVES #########################
 
@@ -320,7 +325,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
 
         primitive_string = "string"
         with pytest.raises(InvalidSchemaError) as e:
-            sr_avro_encoder.encode("hello", schema=primitive_string) 
+            sr_avro_encoder.encode("hello", schema=primitive_string)
 
     ######################### type fixed #########################
 
@@ -333,24 +338,24 @@ class TestAvroEncoder(AzureRecordedTestCase):
         sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group, auto_register=True)
 
         # avro bug: should give warning from IgnoredLogicalType error since precision < 0
-        #fixed_type_ignore_logical_type_error = """{"type": "fixed", "size": 4, "namespace":"example.avro", "name":"User", "precision": -1}"""
-        #sr_avro_encoder.encode({}, schema=fixed_type_ignore_logical_type_error) 
+        # fixed_type_ignore_logical_type_error = """{"type": "fixed", "size": 4, "namespace":"example.avro", "name":"User", "precision": -1}"""
+        # sr_avro_encoder.encode({}, schema=fixed_type_ignore_logical_type_error)
 
         schema_no_size = """{"type": "fixed", "name":"User"}"""
-        with pytest.raises(InvalidSchemaError):    # caught AvroException
-            sr_avro_encoder.encode({}, schema=schema_no_size) 
+        with pytest.raises(InvalidSchemaError):  # caught AvroException
+            sr_avro_encoder.encode({}, schema=schema_no_size)
 
         schema_no_name = """{"type": "fixed", "size": 3}"""
-        with pytest.raises(InvalidSchemaError):    # caught InvalidSchemaError
-            sr_avro_encoder.encode({}, schema=schema_no_name) 
+        with pytest.raises(InvalidSchemaError):  # caught InvalidSchemaError
+            sr_avro_encoder.encode({}, schema=schema_no_name)
 
         schema_wrong_name = """{"type": "fixed", "name": 1, "size": 3}"""
-        with pytest.raises(InvalidSchemaError):    # caught InvalidSchemaError
-            sr_avro_encoder.encode({}, schema=schema_wrong_name) 
+        with pytest.raises(InvalidSchemaError):  # caught InvalidSchemaError
+            sr_avro_encoder.encode({}, schema=schema_wrong_name)
 
         schema_wrong_namespace = """{"type": "fixed", "name": "User", "size": 3, "namespace": 1}"""
-        with pytest.raises(InvalidSchemaError):    # caught InvalidSchemaError
-            sr_avro_encoder.encode({}, schema=schema_wrong_namespace) 
+        with pytest.raises(InvalidSchemaError):  # caught InvalidSchemaError
+            sr_avro_encoder.encode({}, schema=schema_wrong_namespace)
 
     ######################### type unspecified #########################
 
@@ -367,8 +372,8 @@ class TestAvroEncoder(AzureRecordedTestCase):
             "namespace":"example.avro",
             "fields":[{"name":"name","type":"string"}]
         }"""
-        with pytest.raises(InvalidSchemaError):    # caught avro InvalidSchemaError
-            sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_no_type) 
+        with pytest.raises(InvalidSchemaError):  # caught avro InvalidSchemaError
+            sr_avro_encoder.encode({"name": "Ben"}, schema=schema_no_type)
 
         schema_wrong_type_type = """{
             "name":"User",
@@ -377,7 +382,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
             "fields":[{"name":"name","type":"string"}]
         }"""
         with pytest.raises(InvalidSchemaError):
-            sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_wrong_type_type) 
+            sr_avro_encoder.encode({"name": "Ben"}, schema=schema_wrong_type_type)
 
     ######################### RECORD SCHEMA #########################
 
@@ -395,7 +400,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
             "type":"record",
             "fields":[{"name":"name","type":"string"}]
         }"""
-        encoded_schema = sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_name_has_dot) 
+        encoded_schema = sr_avro_encoder.encode({"name": "Ben"}, schema=schema_name_has_dot)
         schema_id = encoded_schema["content_type"].split("+")[1]
         registered_schema = sr_client.get_schema(schema_id)
         decoded_registered_schema = json.loads(registered_schema.definition)
@@ -409,7 +414,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
             "type":"record",
             "fields":[{"name":"name","type":"string"}]
         }"""
-        encoded_schema = sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_name_no_namespace) 
+        encoded_schema = sr_avro_encoder.encode({"name": "Ben"}, schema=schema_name_no_namespace)
         schema_id = encoded_schema["content_type"].split("+")[1]
         registered_schema = sr_client.get_schema(schema_id)
         decoded_registered_schema = json.loads(registered_schema.definition)
@@ -424,7 +429,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
             "fields":[{"name":"name","type":"string"}]
         }"""
         with pytest.raises(InvalidSchemaError):
-            sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_invalid_fullname) 
+            sr_avro_encoder.encode({"name": "Ben"}, schema=schema_invalid_fullname)
 
         schema_invalid_name_in_fullname = """{
             "name":"1abc",
@@ -432,7 +437,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
             "fields":[{"name":"name","type":"string"}]
         }"""
         with pytest.raises(InvalidSchemaError):
-            sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_invalid_name_in_fullname) 
+            sr_avro_encoder.encode({"name": "Ben"}, schema=schema_invalid_name_in_fullname)
 
         schema_invalid_name_reserved_type = """{
             "name":"long",
@@ -440,7 +445,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
             "fields":[{"name":"name","type":"string"}]
         }"""
         with pytest.raises(InvalidSchemaError):
-            sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_invalid_name_reserved_type)
+            sr_avro_encoder.encode({"name": "Ben"}, schema=schema_invalid_name_reserved_type)
 
         schema_wrong_type_name = """{
             "name":1,
@@ -449,7 +454,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
             "fields":[{"name":"name","type":"string"}]
         }"""
         with pytest.raises(InvalidSchemaError):
-            sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_wrong_type_name) 
+            sr_avro_encoder.encode({"name": "Ben"}, schema=schema_wrong_type_name)
 
         schema_no_name = """{
             "namespace":"example.avro",
@@ -457,7 +462,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
             "fields":[{"name":"name","type":"string"}]
         }"""
         with pytest.raises(InvalidSchemaError):
-            sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_no_name) 
+            sr_avro_encoder.encode({"name": "Ben"}, schema=schema_no_name)
 
     @SchemaRegistryEnvironmentVariableLoader()
     @recorded_by_proxy
@@ -473,7 +478,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
             "type":"error",
             "fields":[{"name":"name","type":"string"}]
         }"""
-        encoded_message_content = sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_error_type) 
+        encoded_message_content = sr_avro_encoder.encode({"name": "Ben"}, schema=schema_error_type)
         schema_id = encoded_message_content["content_type"].split("+")[1]
         registered_schema = sr_client.get_schema(schema_id)
         decoded_registered_schema = json.loads(registered_schema.definition)
@@ -493,7 +498,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
             "type":"record"
         }"""
         with pytest.raises(InvalidSchemaError):
-            sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_no_fields) 
+            sr_avro_encoder.encode({"name": "Ben"}, schema=schema_no_fields)
 
         schema_wrong_type_fields = """{
             "name":"User",
@@ -502,7 +507,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
             "fields": "hello"
         }"""
         with pytest.raises(InvalidSchemaError):
-            sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_wrong_type_fields) 
+            sr_avro_encoder.encode({"name": "Ben"}, schema=schema_wrong_type_fields)
 
         schema_wrong_field_item_type = """{
             "name":"User",
@@ -511,25 +516,25 @@ class TestAvroEncoder(AzureRecordedTestCase):
             "fields": ["hello"]
         }"""
         with pytest.raises(InvalidSchemaError):
-            sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_wrong_field_item_type) 
+            sr_avro_encoder.encode({"name": "Ben"}, schema=schema_wrong_field_item_type)
 
-        schema_record_field_no_name= """{
+        schema_record_field_no_name = """{
             "name":"User",
             "namespace":"example.avro",
             "type":"record",
             "fields":[{"type":"string"}]
         }"""
         with pytest.raises(InvalidSchemaError):
-            sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_record_field_no_name) 
+            sr_avro_encoder.encode({"name": "Ben"}, schema=schema_record_field_no_name)
 
-        schema_record_field_wrong_type_name= """{
+        schema_record_field_wrong_type_name = """{
             "name":"User",
             "namespace":"example.avro",
             "type":"record",
             "fields":[{"name": 1, "type":"string"}]
         }"""
         with pytest.raises(InvalidSchemaError):
-            sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_record_field_wrong_type_name) 
+            sr_avro_encoder.encode({"name": "Ben"}, schema=schema_record_field_wrong_type_name)
 
         schema_record_field_with_invalid_order = """{
             "name":"User",
@@ -538,7 +543,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
             "fields":[{"name":"name","type":"string","order":"fake_order"}]
         }"""
         with pytest.raises(InvalidSchemaError):
-            sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_record_field_with_invalid_order) 
+            sr_avro_encoder.encode({"name": "Ben"}, schema=schema_record_field_with_invalid_order)
 
         schema_record_duplicate_fields = """{
             "name":"User",
@@ -547,7 +552,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
             "fields":[{"name":"name","type":"string"}, {"name":"name","type":"string"}]
         }"""
         with pytest.raises(InvalidSchemaError):
-            sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_record_duplicate_fields) 
+            sr_avro_encoder.encode({"name": "Ben"}, schema=schema_record_duplicate_fields)
 
         schema_field_type_invalid = """{
             "name":"User",
@@ -556,11 +561,11 @@ class TestAvroEncoder(AzureRecordedTestCase):
             "fields":[{"name":"name","type":1}]
         }"""
         with pytest.raises(InvalidSchemaError):
-            sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_field_type_invalid) 
+            sr_avro_encoder.encode({"name": "Ben"}, schema=schema_field_type_invalid)
 
-    ################################################################# 
+    #################################################################
     #################### SERIALIZE AND DESERIALIZE ##################
-    ################################################################# 
+    #################################################################
 
     @SchemaRegistryEnvironmentVariableLoader()
     @recorded_by_proxy
@@ -571,8 +576,8 @@ class TestAvroEncoder(AzureRecordedTestCase):
         sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group, auto_register=True)
 
         null_type = """{"type": "null"}"""
-        encoded_message_content = sr_avro_encoder.encode(None, schema=null_type) 
-        assert len(encoded_message_content["content"]) == 0 # assert no content encoded
+        encoded_message_content = sr_avro_encoder.encode(None, schema=null_type)
+        assert len(encoded_message_content["content"]) == 0  # assert no content encoded
 
     @SchemaRegistryEnvironmentVariableLoader()
     @recorded_by_proxy
@@ -600,6 +605,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
                 {"name":"randb","type":"bytes"}
             ]
         }"""
+        # fmt: off
         content = {
             "name": u"Ben",
             "age": 3,
@@ -607,7 +613,8 @@ class TestAvroEncoder(AzureRecordedTestCase):
             "height": 13.5,
             "randb": b"\u00FF"
         }
+        # fmt: on
 
         encoded_message_content = sr_avro_encoder.encode(content, schema=schema_record)
         decoded_content = sr_avro_encoder.decode(encoded_message_content)
-        assert decoded_content == content 
+        assert decoded_content == content

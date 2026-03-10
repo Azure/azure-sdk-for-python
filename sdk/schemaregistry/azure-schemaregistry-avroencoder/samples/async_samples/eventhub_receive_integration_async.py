@@ -27,6 +27,7 @@ This example uses DefaultAzureCredential, which requests a token from Azure Acti
 For more information on DefaultAzureCredential, see
  https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
 """
+
 import os
 import asyncio
 from azure.eventhub.aio import EventHubConsumerClient
@@ -34,41 +35,41 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.schemaregistry.aio import SchemaRegistryClient
 from azure.schemaregistry.encoder.avroencoder.aio import AvroEncoder
 
-EVENTHUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+EVENTHUB_CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
+EVENTHUB_NAME = os.environ["EVENT_HUB_NAME"]
 
-SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ['SCHEMAREGISTRY_AVRO_FULLY_QUALIFIED_NAMESPACE']
-GROUP_NAME = os.environ['SCHEMAREGISTRY_GROUP']
+SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ["SCHEMAREGISTRY_AVRO_FULLY_QUALIFIED_NAMESPACE"]
+GROUP_NAME = os.environ["SCHEMAREGISTRY_GROUP"]
 
 
 # create an EventHubConsumerClient instance
 eventhub_consumer = EventHubConsumerClient.from_connection_string(
     conn_str=EVENTHUB_CONNECTION_STR,
-    consumer_group='$Default',
+    consumer_group="$Default",
     eventhub_name=EVENTHUB_NAME,
 )
 # create a AvroEncoder instance
 azure_credential = DefaultAzureCredential()
 avro_encoder = AvroEncoder(
     client=SchemaRegistryClient(
-        fully_qualified_namespace=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE,
-        credential=azure_credential
+        fully_qualified_namespace=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE, credential=azure_credential
     ),
     group_name=GROUP_NAME,
-    auto_register=True
+    auto_register=True,
 )
+
 
 async def on_event(partition_context, event):
     print(f"Received event from partition: {partition_context.partition_id}.")
 
     bytes_payload = b"".join(b for b in event.body)
-    print(f'The received bytes of the EventData is {bytes_payload!r}.')
+    print(f"The received bytes of the EventData is {bytes_payload!r}.")
 
     # Use the decode method to decode the payload of the event.
     # The decode method will extract the schema id from the content_type, and automatically retrieve the Avro Schema
     # from the Schema Registry Service. The schema will be cached locally for future usage.
-    decoded_content= await avro_encoder.decode(event)
-    print(f'The dict content after decoding is {decoded_content}')
+    decoded_content = await avro_encoder.decode(event)
+    print(f"The dict content after decoding is {decoded_content}")
 
 
 async def main():
@@ -79,11 +80,12 @@ async def main():
                 starting_position="-1",  # "-1" is from the beginning of the partition.
             )
     except KeyboardInterrupt:
-        print('Stopped receiving.')
+        print("Stopped receiving.")
     finally:
         await avro_encoder.close()
         await azure_credential.close()
         await eventhub_consumer.close()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())

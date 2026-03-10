@@ -2,8 +2,8 @@ from azure.cosmos.aio import CosmosClient
 import config
 import asyncio
 
-HOST = config.settings['host']
-MASTER_KEY = config.settings['master_key']
+HOST = config.settings["host"]
+MASTER_KEY = config.settings["master_key"]
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites -
@@ -39,12 +39,21 @@ MASTER_KEY = config.settings['master_key']
 # While these options can be configured, the SDK by default already has retry mechanisms and we recommend to use those.
 # ----------------------------------------------------------------------------------------------------------
 
+
 async def change_connection_retry_policy_configs():
-    async with CosmosClient(url=HOST, credential=MASTER_KEY, retry_total=10, retry_connect=3,
-                               retry_read=3, retry_status=3,
-                               retry_on_status_codes=([]),
-                               retry_backoff_factor=.08, retry_backoff_max=120, retry_fixed_interval=None) as client:
-        print('Client initialized with custom retry options')
+    async with CosmosClient(
+        url=HOST,
+        credential=MASTER_KEY,
+        retry_total=10,
+        retry_connect=3,
+        retry_read=3,
+        retry_status=3,
+        retry_on_status_codes=([]),
+        retry_backoff_factor=0.08,
+        retry_backoff_max=120,
+        retry_fixed_interval=None,
+    ) as client:
+        print("Client initialized with custom retry options")
 
 
 if __name__ == "__main__":

@@ -11,5 +11,6 @@ from azure.ai.ml._utils._experimental import experimental
 @experimental
 class IPProtectionLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     "Intellectual property protection level."
+
     ALL = "all"
     NONE = "none"

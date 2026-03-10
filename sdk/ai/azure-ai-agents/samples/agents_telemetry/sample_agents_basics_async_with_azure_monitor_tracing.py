@@ -27,6 +27,7 @@ USAGE:
        from AIProjectClient using the `telemetry.get_application_insights_connection_string()` method. A code sample showing
        how to do this can be found in the `sample_telemetry_async.py` file in the azure-ai-projects telemetry samples.
 """
+
 import asyncio
 import time
 from azure.ai.projects.aio import AIProjectClient

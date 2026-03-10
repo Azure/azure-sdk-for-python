@@ -12,7 +12,6 @@ from _async_test_case import AsyncCertificatesClientPreparer
 from _test_case import get_decorator
 from devtools_testutils.aio import recorded_by_proxy_async
 
-
 all_api_versions = get_decorator(is_async=True)
 exclude_2016_10_01 = get_decorator(is_async=True, api_versions=[v for v in ApiVersion if v != ApiVersion.V2016_10_01])
 

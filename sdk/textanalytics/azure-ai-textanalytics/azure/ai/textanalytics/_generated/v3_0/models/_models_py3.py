@@ -32,9 +32,9 @@ class DetectedLanguage(_serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'iso6391_name': {'required': True},
-        'confidence_score': {'required': True},
+        "name": {"required": True},
+        "iso6391_name": {"required": True},
+        "confidence_score": {"required": True},
     }
 
     _attribute_map = {
@@ -43,14 +43,7 @@ class DetectedLanguage(_serialization.Model):
         "confidence_score": {"key": "confidenceScore", "type": "float"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        iso6391_name: str,
-        confidence_score: float,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, iso6391_name: str, confidence_score: float, **kwargs):
         """
         :keyword name: Long name of a detected language (e.g. English, French). Required.
         :paramtype name: str
@@ -84,9 +77,9 @@ class DocumentEntities(_serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
-        'entities': {'required': True},
-        'warnings': {'required': True},
+        "id": {"required": True},
+        "entities": {"required": True},
+        "warnings": {"required": True},
     }
 
     _attribute_map = {
@@ -135,8 +128,8 @@ class DocumentError(_serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
-        'error': {'required': True},
+        "id": {"required": True},
+        "error": {"required": True},
     }
 
     _attribute_map = {
@@ -144,13 +137,7 @@ class DocumentError(_serialization.Model):
         "error": {"key": "error", "type": "TextAnalyticsError"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        error: "_models.TextAnalyticsError",
-        **kwargs
-    ):
+    def __init__(self, *, id: str, error: "_models.TextAnalyticsError", **kwargs):  # pylint: disable=redefined-builtin
         """
         :keyword id: Document Id. Required.
         :paramtype id: str
@@ -180,9 +167,9 @@ class DocumentKeyPhrases(_serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
-        'key_phrases': {'required': True},
-        'warnings': {'required': True},
+        "id": {"required": True},
+        "key_phrases": {"required": True},
+        "warnings": {"required": True},
     }
 
     _attribute_map = {
@@ -237,9 +224,9 @@ class DocumentLanguage(_serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
-        'detected_language': {'required': True},
-        'warnings': {'required': True},
+        "id": {"required": True},
+        "detected_language": {"required": True},
+        "warnings": {"required": True},
     }
 
     _attribute_map = {
@@ -293,9 +280,9 @@ class DocumentLinkedEntities(_serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
-        'entities': {'required': True},
-        'warnings': {'required': True},
+        "id": {"required": True},
+        "entities": {"required": True},
+        "warnings": {"required": True},
     }
 
     _attribute_map = {
@@ -356,11 +343,11 @@ class DocumentSentiment(_serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
-        'sentiment': {'required': True},
-        'confidence_scores': {'required': True},
-        'sentences': {'required': True},
-        'warnings': {'required': True},
+        "id": {"required": True},
+        "sentiment": {"required": True},
+        "confidence_scores": {"required": True},
+        "sentences": {"required": True},
+        "warnings": {"required": True},
     }
 
     _attribute_map = {
@@ -422,8 +409,8 @@ class DocumentStatistics(_serialization.Model):
     """
 
     _validation = {
-        'characters_count': {'required': True},
-        'transactions_count': {'required': True},
+        "characters_count": {"required": True},
+        "transactions_count": {"required": True},
     }
 
     _attribute_map = {
@@ -431,13 +418,7 @@ class DocumentStatistics(_serialization.Model):
         "transactions_count": {"key": "transactionsCount", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        characters_count: int,
-        transactions_count: int,
-        **kwargs
-    ):
+    def __init__(self, *, characters_count: int, transactions_count: int, **kwargs):
         """
         :keyword characters_count: Number of text elements recognized in the document. Required.
         :paramtype characters_count: int
@@ -466,9 +447,9 @@ class EntitiesResult(_serialization.Model):
     """
 
     _validation = {
-        'documents': {'required': True},
-        'errors': {'required': True},
-        'model_version': {'required': True},
+        "documents": {"required": True},
+        "errors": {"required": True},
+        "model_version": {"required": True},
     }
 
     _attribute_map = {
@@ -525,11 +506,11 @@ class Entity(_serialization.Model):
     """
 
     _validation = {
-        'text': {'required': True},
-        'category': {'required': True},
-        'offset': {'required': True},
-        'length': {'required': True},
-        'confidence_score': {'required': True},
+        "text": {"required": True},
+        "category": {"required": True},
+        "offset": {"required": True},
+        "length": {"required": True},
+        "confidence_score": {"required": True},
     }
 
     _attribute_map = {
@@ -592,9 +573,9 @@ class EntityLinkingResult(_serialization.Model):
     """
 
     _validation = {
-        'documents': {'required': True},
-        'errors': {'required': True},
-        'model_version': {'required': True},
+        "documents": {"required": True},
+        "errors": {"required": True},
+        "model_version": {"required": True},
     }
 
     _attribute_map = {
@@ -641,19 +622,14 @@ class ErrorResponse(_serialization.Model):
     """
 
     _validation = {
-        'error': {'required': True},
+        "error": {"required": True},
     }
 
     _attribute_map = {
         "error": {"key": "error", "type": "TextAnalyticsError"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: "_models.TextAnalyticsError",
-        **kwargs
-    ):
+    def __init__(self, *, error: "_models.TextAnalyticsError", **kwargs):
         """
         :keyword error: Document Error. Required.
         :paramtype error: ~azure.ai.textanalytics.v3_0.models.TextAnalyticsError
@@ -683,8 +659,8 @@ class InnerError(_serialization.Model):
     """
 
     _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
+        "code": {"required": True},
+        "message": {"required": True},
     }
 
     _attribute_map = {
@@ -745,9 +721,9 @@ class KeyPhraseResult(_serialization.Model):
     """
 
     _validation = {
-        'documents': {'required': True},
-        'errors': {'required': True},
-        'model_version': {'required': True},
+        "documents": {"required": True},
+        "errors": {"required": True},
+        "model_version": {"required": True},
     }
 
     _attribute_map = {
@@ -794,19 +770,14 @@ class LanguageBatchInput(_serialization.Model):
     """
 
     _validation = {
-        'documents': {'required': True},
+        "documents": {"required": True},
     }
 
     _attribute_map = {
         "documents": {"key": "documents", "type": "[LanguageInput]"},
     }
 
-    def __init__(
-        self,
-        *,
-        documents: List["_models.LanguageInput"],
-        **kwargs
-    ):
+    def __init__(self, *, documents: List["_models.LanguageInput"], **kwargs):
         """
         :keyword documents: Required.
         :paramtype documents: list[~azure.ai.textanalytics.v3_0.models.LanguageInput]
@@ -829,8 +800,8 @@ class LanguageInput(_serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
-        'text': {'required': True},
+        "id": {"required": True},
+        "text": {"required": True},
     }
 
     _attribute_map = {
@@ -840,12 +811,7 @@ class LanguageInput(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        text: str,
-        country_hint: Optional[str] = None,
-        **kwargs
+        self, *, id: str, text: str, country_hint: Optional[str] = None, **kwargs  # pylint: disable=redefined-builtin
     ):
         """
         :keyword id: Unique, non-empty document identifier. Required.
@@ -878,9 +844,9 @@ class LanguageResult(_serialization.Model):
     """
 
     _validation = {
-        'documents': {'required': True},
-        'errors': {'required': True},
-        'model_version': {'required': True},
+        "documents": {"required": True},
+        "errors": {"required": True},
+        "model_version": {"required": True},
     }
 
     _attribute_map = {
@@ -937,11 +903,11 @@ class LinkedEntity(_serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'matches': {'required': True},
-        'language': {'required': True},
-        'url': {'required': True},
-        'data_source': {'required': True},
+        "name": {"required": True},
+        "matches": {"required": True},
+        "language": {"required": True},
+        "url": {"required": True},
+        "data_source": {"required": True},
     }
 
     _attribute_map = {
@@ -1005,10 +971,10 @@ class Match(_serialization.Model):
     """
 
     _validation = {
-        'confidence_score': {'required': True},
-        'text': {'required': True},
-        'offset': {'required': True},
-        'length': {'required': True},
+        "confidence_score": {"required": True},
+        "text": {"required": True},
+        "offset": {"required": True},
+        "length": {"required": True},
     }
 
     _attribute_map = {
@@ -1018,15 +984,7 @@ class Match(_serialization.Model):
         "length": {"key": "length", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        confidence_score: float,
-        text: str,
-        offset: int,
-        length: int,
-        **kwargs
-    ):
+    def __init__(self, *, confidence_score: float, text: str, offset: int, length: int, **kwargs):
         """
         :keyword confidence_score: If a well-known item is recognized, a decimal number denoting the
          confidence level between 0 and 1 will be returned. Required.
@@ -1055,19 +1013,14 @@ class MultiLanguageBatchInput(_serialization.Model):
     """
 
     _validation = {
-        'documents': {'required': True},
+        "documents": {"required": True},
     }
 
     _attribute_map = {
         "documents": {"key": "documents", "type": "[MultiLanguageInput]"},
     }
 
-    def __init__(
-        self,
-        *,
-        documents: List["_models.MultiLanguageInput"],
-        **kwargs
-    ):
+    def __init__(self, *, documents: List["_models.MultiLanguageInput"], **kwargs):
         """
         :keyword documents: The set of documents to process as part of this batch. Required.
         :paramtype documents: list[~azure.ai.textanalytics.v3_0.models.MultiLanguageInput]
@@ -1092,8 +1045,8 @@ class MultiLanguageInput(_serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
-        'text': {'required': True},
+        "id": {"required": True},
+        "text": {"required": True},
     }
 
     _attribute_map = {
@@ -1103,12 +1056,7 @@ class MultiLanguageInput(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        text: str,
-        language: Optional[str] = None,
-        **kwargs
+        self, *, id: str, text: str, language: Optional[str] = None, **kwargs  # pylint: disable=redefined-builtin
     ):
         """
         :keyword id: A unique, non-empty document identifier. Required.
@@ -1144,10 +1092,10 @@ class RequestStatistics(_serialization.Model):
     """
 
     _validation = {
-        'documents_count': {'required': True},
-        'valid_documents_count': {'required': True},
-        'erroneous_documents_count': {'required': True},
-        'transactions_count': {'required': True},
+        "documents_count": {"required": True},
+        "valid_documents_count": {"required": True},
+        "erroneous_documents_count": {"required": True},
+        "transactions_count": {"required": True},
     }
 
     _attribute_map = {
@@ -1206,11 +1154,11 @@ class SentenceSentiment(_serialization.Model):
     """
 
     _validation = {
-        'text': {'required': True},
-        'sentiment': {'required': True},
-        'confidence_scores': {'required': True},
-        'offset': {'required': True},
-        'length': {'required': True},
+        "text": {"required": True},
+        "sentiment": {"required": True},
+        "confidence_scores": {"required": True},
+        "offset": {"required": True},
+        "length": {"required": True},
     }
 
     _attribute_map = {
@@ -1268,9 +1216,9 @@ class SentimentConfidenceScorePerLabel(_serialization.Model):
     """
 
     _validation = {
-        'positive': {'required': True},
-        'neutral': {'required': True},
-        'negative': {'required': True},
+        "positive": {"required": True},
+        "neutral": {"required": True},
+        "negative": {"required": True},
     }
 
     _attribute_map = {
@@ -1279,14 +1227,7 @@ class SentimentConfidenceScorePerLabel(_serialization.Model):
         "negative": {"key": "negative", "type": "float"},
     }
 
-    def __init__(
-        self,
-        *,
-        positive: float,
-        neutral: float,
-        negative: float,
-        **kwargs
-    ):
+    def __init__(self, *, positive: float, neutral: float, negative: float, **kwargs):
         """
         :keyword positive: Required.
         :paramtype positive: float
@@ -1318,9 +1259,9 @@ class SentimentResponse(_serialization.Model):
     """
 
     _validation = {
-        'documents': {'required': True},
-        'errors': {'required': True},
-        'model_version': {'required': True},
+        "documents": {"required": True},
+        "errors": {"required": True},
+        "model_version": {"required": True},
     }
 
     _attribute_map = {
@@ -1376,8 +1317,8 @@ class TextAnalyticsError(_serialization.Model):
     """
 
     _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
+        "code": {"required": True},
+        "message": {"required": True},
     }
 
     _attribute_map = {
@@ -1434,8 +1375,8 @@ class TextAnalyticsWarning(_serialization.Model):
     """
 
     _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
+        "code": {"required": True},
+        "message": {"required": True},
     }
 
     _attribute_map = {
@@ -1445,12 +1386,7 @@ class TextAnalyticsWarning(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        code: Union[str, "_models.WarningCodeValue"],
-        message: str,
-        target_ref: Optional[str] = None,
-        **kwargs
+        self, *, code: Union[str, "_models.WarningCodeValue"], message: str, target_ref: Optional[str] = None, **kwargs
     ):
         """
         :keyword code: Error code. Required. Known values are: "LongWordsInDocument" and

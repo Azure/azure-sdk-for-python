@@ -8,18 +8,20 @@ from workload_configs import *
 from azure.cosmos.aio import CosmosClient as AsyncClient
 import asyncio
 
+
 async def run_workload(client_id, client_logger):
     session = create_custom_session()
-    async with AsyncClient(COSMOS_URI,
-                           COSMOS_CREDENTIAL,
-                           multiple_write_locations=USE_MULTIPLE_WRITABLE_LOCATIONS,
-                           preferred_locations=PREFERRED_LOCATIONS,
-                           transport=AioHttpTransport(session=session, session_owner=False),
-                           excluded_locations=CLIENT_EXCLUDED_LOCATIONS,
-                           enable_diagnostics_logging=True,
-                           logger=client_logger,
-                           user_agent=get_user_agent(client_id)
-                           ) as client:
+    async with AsyncClient(
+        COSMOS_URI,
+        COSMOS_CREDENTIAL,
+        multiple_write_locations=USE_MULTIPLE_WRITABLE_LOCATIONS,
+        preferred_locations=PREFERRED_LOCATIONS,
+        transport=AioHttpTransport(session=session, session_owner=False),
+        excluded_locations=CLIENT_EXCLUDED_LOCATIONS,
+        enable_diagnostics_logging=True,
+        logger=client_logger,
+        user_agent=get_user_agent(client_id),
+    ) as client:
         db = client.get_database_client(COSMOS_DATABASE)
         cont = db.get_container_client(COSMOS_CONTAINER)
         await asyncio.sleep(1)

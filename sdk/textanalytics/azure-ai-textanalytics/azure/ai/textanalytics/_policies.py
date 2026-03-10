@@ -17,18 +17,14 @@ class TextAnalyticsResponseHookPolicy(SansIOHTTPPolicy):
         super().__init__()
 
     def on_request(self, request):
-        self._response_callback = request.context.options.pop(
-            "raw_response_hook", self._response_callback
-        )
+        self._response_callback = request.context.options.pop("raw_response_hook", self._response_callback)
 
     def on_response(self, request, response):
         if self._is_lro is None:
             # determine LRO based off of initial response. If 202, we say it's an LRO
             self._is_lro = response.http_response.status_code == 202
         if self._response_callback:
-            data = ContentDecodePolicy.deserialize_from_http_generics(
-                response.http_response
-            )
+            data = ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
             if self._is_lro and (not data or data.get("status", "").lower() not in _FINISHED):
                 return
             if response.http_response.status_code == 429:
@@ -61,6 +57,8 @@ class QuotaExceededPolicy(SansIOHTTPPolicy):
         :type response: ~azure.core.pipeline.PipelineResponse
         """
         http_response = response.http_response
-        if http_response.status_code == 403 and \
-                "Out of call volume quota for TextAnalytics F0 pricing tier" in http_response.text():
+        if (
+            http_response.status_code == 403
+            and "Out of call volume quota for TextAnalytics F0 pricing tier" in http_response.text()
+        ):
             raise HttpResponseError(http_response.text(), response=http_response)

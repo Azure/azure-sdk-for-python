@@ -1,12 +1,18 @@
 # The MIT License (MIT)
 # Copyright (c) 2024 Microsoft Corporation
 
-"""Internal class for multi execution context aggregator implementation in the Azure Cosmos database service.
-"""
+"""Internal class for multi execution context aggregator implementation in the Azure Cosmos database service."""
+
 from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.aio import document_producer
-from azure.cosmos._execution_context.hybrid_search_aggregator import _retrieve_component_scores, _rewrite_query_infos, \
-    _compute_rrf_scores, _compute_ranks, _coalesce_duplicate_rids, _attach_parameters
+from azure.cosmos._execution_context.hybrid_search_aggregator import (
+    _retrieve_component_scores,
+    _rewrite_query_infos,
+    _compute_rrf_scores,
+    _compute_ranks,
+    _coalesce_duplicate_rids,
+    _attach_parameters,
+)
 from azure.cosmos._routing import routing_range
 from azure.cosmos import exceptions
 
@@ -43,8 +49,16 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
     by the user.
     """
 
-    def __init__(self, client, resource_link, options, partitioned_query_execution_info,
-                 hybrid_search_query_info, response_hook, raw_response_hook):
+    def __init__(
+        self,
+        client,
+        resource_link,
+        options,
+        partitioned_query_execution_info,
+        hybrid_search_query_info,
+        response_hook,
+        raw_response_hook,
+    ):
         super(_HybridSearchContextAggregator, self).__init__(client, options)
 
         # use the routing provider in the client
@@ -70,10 +84,10 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
 
     async def _run_hybrid_search(self):  # pylint: disable=too-many-branches, too-many-statements
         # Check if we need to run global statistics queries, and if so do for every partition in the container
-        if self._hybrid_search_query_info['requiresGlobalStatistics']:
+        if self._hybrid_search_query_info["requiresGlobalStatistics"]:
             target_partition_key_ranges = await self._get_target_partition_key_range(target_all_ranges=True)
             global_statistics_doc_producers = []
-            global_statistics_query = self._attach_parameters(self._hybrid_search_query_info['globalStatisticsQuery'])
+            global_statistics_query = self._attach_parameters(self._hybrid_search_query_info["globalStatisticsQuery"])
 
             partitioned_query_execution_context_list = []
             for partition_key_target_range in target_partition_key_ranges:
@@ -87,7 +101,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
                         self._document_producer_comparator,
                         self._options,
                         self._response_hook,
-                        self._raw_response_hook
+                        self._raw_response_hook,
                     )
                 )
 
@@ -99,8 +113,9 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
                 except exceptions.CosmosHttpResponseError as e:
                     if exceptions._partition_range_is_gone(e):
                         # repairing document producer context on partition split
-                        global_statistics_doc_producers = await self._repair_document_producer(global_statistics_query,
-                                                                                               target_all_ranges=True)
+                        global_statistics_doc_producers = await self._repair_document_producer(
+                            global_statistics_query, target_all_ranges=True
+                        )
                     else:
                         raise
                 except StopAsyncIteration:
@@ -110,10 +125,11 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
             self._aggregate_global_statistics(global_statistics_doc_producers)
 
         # re-write the component queries if needed
-        component_query_infos = self._hybrid_search_query_info['componentQueryInfos']
+        component_query_infos = self._hybrid_search_query_info["componentQueryInfos"]
         if self._aggregated_global_statistics:
-            rewritten_query_infos = _rewrite_query_infos(self._hybrid_search_query_info,
-                                                         self._aggregated_global_statistics, self._parameters)
+            rewritten_query_infos = _rewrite_query_infos(
+                self._hybrid_search_query_info, self._aggregated_global_statistics, self._parameters
+            )
         else:
             rewritten_query_infos = component_query_infos
 
@@ -123,18 +139,19 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         for rewritten_query in rewritten_query_infos:
             for pk_range in target_partition_key_ranges:
                 if self._parameters:
-                    rewritten_query['rewrittenQuery'] = _attach_parameters(rewritten_query['rewrittenQuery'],
-                                                                           self._parameters)
+                    rewritten_query["rewrittenQuery"] = _attach_parameters(
+                        rewritten_query["rewrittenQuery"], self._parameters
+                    )
                 component_query_execution_list.append(
                     document_producer._DocumentProducer(
                         pk_range,
                         self._client,
                         self._resource_link,
-                        rewritten_query['rewrittenQuery'],
+                        rewritten_query["rewrittenQuery"],
                         self._document_producer_comparator,
                         self._options,
                         self._response_hook,
-                        self._raw_response_hook
+                        self._raw_response_hook,
                     )
                 )
         # verify all document producers have items/ no splits
@@ -148,8 +165,9 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
                     component_query_results = []
                     # repairing document producer context on partition split
                     for rewritten_query in rewritten_query_infos:
-                        component_query_results.extend(await self._repair_document_producer(
-                            rewritten_query['rewrittenQuery']))
+                        component_query_results.extend(
+                            await self._repair_document_producer(rewritten_query["rewrittenQuery"])
+                        )
                 else:
                     raise
             except StopAsyncIteration:
@@ -163,14 +181,14 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
             return
 
         # Get the Components weights if any
-        if self._hybrid_search_query_info.get('componentWeights'):
-            component_weights = self._hybrid_search_query_info['componentWeights']
+        if self._hybrid_search_query_info.get("componentWeights"):
+            component_weights = self._hybrid_search_query_info["componentWeights"]
         else:
             # If no weights are provided, we default to 1.0 for all components
-            component_weights = [1.0] * len(self._hybrid_search_query_info['componentQueryInfos'])
+            component_weights = [1.0] * len(self._hybrid_search_query_info["componentQueryInfos"])
 
         # Sort drained results by _rid
-        drained_results.sort(key=lambda x: x['_rid'])
+        drained_results.sort(key=lambda x: x["_rid"])
 
         # Compose component scores matrix, where each tuple is (score, index)
         component_scores = _retrieve_component_scores(drained_results)
@@ -178,8 +196,8 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         # Sort by scores using component weights
         for index, score_tuples in enumerate(component_scores):
             # Negative Weights will change sorting from Descending to Ascending
-            ordering = self._hybrid_search_query_info['componentQueryInfos'][index]['orderBy'][0]
-            comparison_factor = not ordering.lower() == 'ascending'
+            ordering = self._hybrid_search_query_info["componentQueryInfos"][index]["orderBy"][0]
+            comparison_factor = not ordering.lower() == "ascending"
             #  pylint: disable=cell-var-from-loop
             score_tuples.sort(key=lambda x: x[0], reverse=comparison_factor)
 
@@ -190,7 +208,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         _compute_rrf_scores(ranks, component_weights, drained_results)
 
         # Finally, sort on the RRF scores to build the final result to return
-        drained_results.sort(key=lambda x: x['Score'], reverse=True)
+        drained_results.sort(key=lambda x: x["Score"], reverse=True)
         self._format_final_results(drained_results)
 
     def _attach_parameters(self, query):
@@ -214,30 +232,28 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         return {"query": query, "parameters": self._parameters}
 
     def _format_final_results(self, results):
-        skip = self._hybrid_search_query_info['skip'] or 0
-        take = self._hybrid_search_query_info['take']
-        self._final_results = results[skip:skip + take]
+        skip = self._hybrid_search_query_info["skip"] or 0
+        take = self._hybrid_search_query_info["take"]
+        self._final_results = results[skip : skip + take]
         self._final_results.reverse()
         self._final_results = [item["payload"]["payload"] for item in self._final_results]
 
     def _aggregate_global_statistics(self, global_statistics_doc_producers):
-        self._aggregated_global_statistics = {"documentCount": 0,
-                                              "fullTextStatistics": None}
+        self._aggregated_global_statistics = {"documentCount": 0, "fullTextStatistics": None}
         for dp in global_statistics_doc_producers:
-            self._aggregated_global_statistics["documentCount"] += dp._cur_item['documentCount']
+            self._aggregated_global_statistics["documentCount"] += dp._cur_item["documentCount"]
             if self._aggregated_global_statistics["fullTextStatistics"] is None:
-                self._aggregated_global_statistics["fullTextStatistics"] = dp._cur_item[
-                    'fullTextStatistics']
+                self._aggregated_global_statistics["fullTextStatistics"] = dp._cur_item["fullTextStatistics"]
             else:
                 all_text_statistics = self._aggregated_global_statistics["fullTextStatistics"]
-                curr_text_statistics = dp._cur_item['fullTextStatistics']
+                curr_text_statistics = dp._cur_item["fullTextStatistics"]
                 assert len(all_text_statistics) == len(curr_text_statistics)
                 for i, all_stats in enumerate(all_text_statistics):
                     curr_stats = curr_text_statistics[i]
-                    assert len(all_stats['hitCounts']) == len(curr_stats['hitCounts'])
-                    all_stats['totalWordCount'] += curr_stats['totalWordCount']
-                    for j in range(len(all_text_statistics[i]['hitCounts'])):
-                        all_text_statistics[i]['hitCounts'][j] += curr_text_statistics[i]['hitCounts'][j]
+                    assert len(all_stats["hitCounts"]) == len(curr_stats["hitCounts"])
+                    all_stats["totalWordCount"] += curr_stats["totalWordCount"]
+                    for j in range(len(all_text_statistics[i]["hitCounts"])):
+                        all_text_statistics[i]["hitCounts"][j] += curr_text_statistics[i]["hitCounts"][j]
 
     async def __anext__(self):
         """Returns the next item result.
@@ -272,7 +288,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
                     self._document_producer_comparator,
                     self._options,
                     self._response_hook,
-                    self._raw_response_hook
+                    self._raw_response_hook,
                 )
             )
 
@@ -292,5 +308,5 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         return await self._routing_provider.get_overlapping_ranges(
             self._resource_link,
             [routing_range.Range.ParseFromDict(range_as_dict) for range_as_dict in query_ranges],
-            self._options
+            self._options,
         )

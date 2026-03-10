@@ -7,7 +7,7 @@ DESCRIPTION:
     This sample demonstrates how to do chat completions with streaming,
     using a synchronous client, with an Entra ID authentication.
     It also shows how to set the optional HTTP request header `azureml-model-deployment`,
-    which is supported when you deploy a model using "Managed Compute Endpoints". 
+    which is supported when you deploy a model using "Managed Compute Endpoints".
     It can be used to target test deployment during staging,
     instead of the default production deployment.
 
@@ -15,7 +15,7 @@ USAGE:
     python sample_chat_completions_streaming_with_entra_id_auth.py
 
     Set one or two of these environment variables before running the sample:
-    1) AZURE_AI_CHAT_ENDPOINT - Your endpoint URL, in the form 
+    1) AZURE_AI_CHAT_ENDPOINT - Your endpoint URL, in the form
         https://<your-deployment-name>.<your-azure-region>.models.ai.azure.com
         where `your-deployment-name` is your unique AI Model deployment name, and
         `your-azure-region` is the Azure region where your model is deployed.

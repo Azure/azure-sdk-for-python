@@ -22,6 +22,7 @@
 """Internal class for partition key range cache implementation in the Azure
 Cosmos database service.
 """
+
 import logging
 from typing import Any, Optional
 
@@ -70,11 +71,7 @@ class PartitionKeyRangeCache(object):
         return self._collection_routing_map_by_item[collection_id].get_overlapping_ranges(partition_key_ranges)
 
     async def init_collection_routing_map_if_needed(
-            self,
-            collection_link: str,
-            collection_id: str,
-            feed_options: dict[str, Any],
-            **kwargs: dict[str, Any]
+        self, collection_link: str, collection_id: str, feed_options: dict[str, Any], **kwargs: dict[str, Any]
     ):
         collection_routing_map = self._collection_routing_map_by_item.get(collection_id)
         if collection_routing_map is None:
@@ -86,13 +83,15 @@ class PartitionKeyRangeCache(object):
             _LOGGER.debug(
                 "PK range cache (async): Initializing routing map for collection_id=%s with "
                 "_internal_pk_range_fetch=True to prevent recursive 410 retry.",
-                collection_id
+                collection_id,
             )
             pk_range_kwargs = {**kwargs, "_internal_pk_range_fetch": True}
-            collection_pk_ranges = [pk async for pk in
-                                    self._documentClient._ReadPartitionKeyRanges(collection_link,
-                                                                                 feed_options,
-                                                                                 **pk_range_kwargs)]
+            collection_pk_ranges = [
+                pk
+                async for pk in self._documentClient._ReadPartitionKeyRanges(
+                    collection_link, feed_options, **pk_range_kwargs
+                )
+            ]
             # for large collections, a split may complete between the read partition key ranges query page responses,
             # causing the partitionKeyRanges to have both the children ranges and their parents. Therefore, we need
             # to discard the parent ranges to have a valid routing map.
@@ -103,22 +102,20 @@ class PartitionKeyRangeCache(object):
             self._collection_routing_map_by_item[collection_id] = collection_routing_map
             _LOGGER.debug(
                 "PK range cache (async): Cached routing map for collection_id=%s with %d ranges",
-                collection_id, len(collection_pk_ranges)
+                collection_id,
+                len(collection_pk_ranges),
             )
 
     async def get_range_by_partition_key_range_id(
-            self,
-            collection_link: str,
-            partition_key_range_id: int,
-            feed_options: dict[str, Any],
-            **kwargs: dict[str, Any]
+        self, collection_link: str, partition_key_range_id: int, feed_options: dict[str, Any], **kwargs: dict[str, Any]
     ) -> Optional[dict[str, Any]]:
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
         pk_range_options = _base.format_pk_range_options(feed_options)
         await self.init_collection_routing_map_if_needed(collection_link, collection_id, pk_range_options, **kwargs)
 
         return self._collection_routing_map_by_item[collection_id].get_range_by_partition_key_range_id(
-            partition_key_range_id)
+            partition_key_range_id
+        )
 
     @staticmethod
     def _discard_parent_ranges(partitionKeyRanges):
@@ -176,7 +173,7 @@ class SmartRoutingMapProvider(PartitionKeyRangeCache):
     invocation of CollectionRoutingMap.get_overlapping_ranges()
     """
 
-    async def get_overlapping_ranges(self, collection_link, partition_key_ranges, feed_options = None, **kwargs):
+    async def get_overlapping_ranges(self, collection_link, partition_key_ranges, feed_options=None, **kwargs):
         """
         Given the sorted ranges and a collection,
         Returns the list of overlapping partition key ranges
@@ -211,13 +208,9 @@ class SmartRoutingMapProvider(PartitionKeyRangeCache):
                 else:
                     queryRange = currentProvidedRange
 
-                overlappingRanges =\
-                    await PartitionKeyRangeCache.get_overlapping_ranges(
-                        self,
-                        collection_link,
-                        [queryRange],
-                        feed_options,
-                        **kwargs)
+                overlappingRanges = await PartitionKeyRangeCache.get_overlapping_ranges(
+                    self, collection_link, [queryRange], feed_options, **kwargs
+                )
                 assert overlappingRanges, "code bug: returned overlapping ranges for queryRange {} is empty".format(
                     queryRange
                 )

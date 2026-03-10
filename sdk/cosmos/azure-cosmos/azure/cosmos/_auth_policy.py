@@ -17,6 +17,7 @@ from ._constants import _Constants as Constants
 
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
+
 # NOTE: This class accesses protected members (_scopes, _token) of the parent class
 # to implement fallback and scope-switching logic not exposed by the public API.
 # Composition was considered, but still required accessing protected members, so inheritance is retained
@@ -56,10 +57,10 @@ class CosmosBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
             except HttpResponseError as ex:
                 # Only fallback if not using override, not already tried, and error is AADSTS500011
                 if (
-                        not self._override_scope and
-                        not tried_fallback and
-                        self._current_scope != self.AadDefaultScope and
-                        "AADSTS500011" in str(ex)
+                    not self._override_scope
+                    and not tried_fallback
+                    and self._current_scope != self.AadDefaultScope
+                    and "AADSTS500011" in str(ex)
                 ):
                     self._scopes = (self.AadDefaultScope,)
                     self._current_scope = self.AadDefaultScope

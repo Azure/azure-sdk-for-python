@@ -19,8 +19,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Iterable query results in the Azure Cosmos database service.
-"""
+"""Iterable query results in the Azure Cosmos database service."""
+
 import time
 
 from azure.core.paging import PageIterator  # type: ignore
@@ -74,22 +74,30 @@ class QueryIterable(PageIterator):  # pylint: disable=too-many-instance-attribut
         self._query = query
         self._options = options
         if continuation_token:
-            options['continuation'] = continuation_token
+            options["continuation"] = continuation_token
         self._fetch_function = fetch_function
         self._collection_link = collection_link
         self._database_link = database_link
         self._partition_key = partition_key
         self._ex_context = execution_dispatcher._ProxyQueryExecutionContext(
-            self._client, self._collection_link, self._query, self._options, self._fetch_function,
-            response_hook, raw_response_hook, resource_type)
+            self._client,
+            self._collection_link,
+            self._query,
+            self._options,
+            self._fetch_function,
+            response_hook,
+            raw_response_hook,
+            resource_type,
+        )
 
         super(QueryIterable, self).__init__(self._fetch_next, self._unpack, continuation_token=continuation_token)
 
     def _unpack(self, block):
         continuation = None
         if self._client.last_response_headers:
-            continuation = self._client.last_response_headers.get("x-ms-continuation") or \
-                self._client.last_response_headers.get('etag')
+            continuation = self._client.last_response_headers.get(
+                "x-ms-continuation"
+            ) or self._client.last_response_headers.get("etag")
         if block:
             self._did_a_call_already = False
         return continuation, block
@@ -104,7 +112,7 @@ class QueryIterable(PageIterator):  # pylint: disable=too-many-instance-attribut
         :return: List of results.
         :rtype: list
         """
-        timeout = self._options.get('timeout')
+        timeout = self._options.get("timeout")
         # reset the operation start time if it's a paged request
         if timeout and self._options.get(_Constants.TimeoutScope) != TimeoutScope.OPERATION:
             self._options[_Constants.OperationStartTime] = time.time()

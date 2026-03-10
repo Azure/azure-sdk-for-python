@@ -30,26 +30,27 @@ from azure.cosmos import _base, exceptions
 from azure.cosmos._query_builder import _QueryBuilder
 from azure.cosmos.partition_key import _get_partition_key_from_partition_key_definition
 from azure.cosmos import CosmosList
-if TYPE_CHECKING:
-    from azure.cosmos._cosmos_client_connection import PartitionKeyType , CosmosClientConnection
 
+if TYPE_CHECKING:
+    from azure.cosmos._cosmos_client_connection import PartitionKeyType, CosmosClientConnection
 
 
 class ReadItemsHelperSync:
     """Helper class for handling synchronous read many items operations."""
+
     logger = logging.getLogger("azure.cosmos.ReadManyItemsHelperSync")
 
     def __init__(
-            self,
-            client: 'CosmosClientConnection',
-            collection_link: str,
-            items: Sequence[Tuple[str, "PartitionKeyType"]],
-            options: Optional[Mapping[str, Any]],
-            partition_key_definition: dict[str, Any],
-            *,
-            executor: Optional[ThreadPoolExecutor] = None,
-            max_concurrency: Optional[int] = None,
-            **kwargs: Any
+        self,
+        client: "CosmosClientConnection",
+        collection_link: str,
+        items: Sequence[Tuple[str, "PartitionKeyType"]],
+        options: Optional[Mapping[str, Any]],
+        partition_key_definition: dict[str, Any],
+        *,
+        executor: Optional[ThreadPoolExecutor] = None,
+        max_concurrency: Optional[int] = None,
+        **kwargs: Any,
     ):
         self.client = client
         self.collection_link = collection_link
@@ -86,9 +87,7 @@ class ReadItemsHelperSync:
             return self._execute_with_executor(executor, query_chunks)
 
     def _execute_with_executor(
-            self,
-            executor: ThreadPoolExecutor,
-            query_chunks: list[dict[str, list[Tuple[int, str, "PartitionKeyType"]]]]
+        self, executor: ThreadPoolExecutor, query_chunks: list[dict[str, list[Tuple[int, str, "PartitionKeyType"]]]]
     ) -> CosmosList:
         """Execute the queries using the provided executor with improved error handling.
 
@@ -132,13 +131,13 @@ class ReadItemsHelperSync:
         results = [item[1] for item in indexed_results]
 
         final_headers = CaseInsensitiveDict()
-        final_headers['x-ms-request-charge'] = str(total_request_charge)
+        final_headers["x-ms-request-charge"] = str(total_request_charge)
 
         cosmos_list = CosmosList(results, response_headers=final_headers)
 
         # Call the original response hook with the final results if provided
-        if 'response_hook' in self.kwargs:
-            self.kwargs['response_hook'](final_headers, cosmos_list)
+        if "response_hook" in self.kwargs:
+            self.kwargs["response_hook"](final_headers, cosmos_list)
 
         return cosmos_list
 
@@ -178,10 +177,8 @@ class ReadItemsHelperSync:
 
         return items_by_partition
 
-
     def _create_query_chunks(
-            self,
-            items_by_partition: dict[str, list[Tuple[int, str, "PartitionKeyType"]]]
+        self, items_by_partition: dict[str, list[Tuple[int, str, "PartitionKeyType"]]]
     ) -> list[dict[str, list[Tuple[int, str, "PartitionKeyType"]]]]:
         """Create query chunks for concurrency control while preserving original indices.
 
@@ -194,12 +191,12 @@ class ReadItemsHelperSync:
         for partition_id, partition_items in items_by_partition.items():
             # Split large partitions into chunks of self.max_items_per_query
             for i in range(0, len(partition_items), self.max_items_per_query):
-                chunk = partition_items[i:i + self.max_items_per_query]
+                chunk = partition_items[i : i + self.max_items_per_query]
                 query_chunks.append({partition_id: chunk})
         return query_chunks
 
     def _execute_query_chunk_worker(
-            self, partition_id: str, chunk_partition_items: Sequence[Tuple[int, str, "PartitionKeyType"]]
+        self, partition_id: str, chunk_partition_items: Sequence[Tuple[int, str, "PartitionKeyType"]]
     ) -> Tuple[list[Tuple[int, dict[str, Any]]], float]:
         """Synchronous worker to build and execute a query for a chunk of items.
 
@@ -220,7 +217,7 @@ class ReadItemsHelperSync:
             chunk_results, headers = self._execute_query(partition_id, items_for_query, id_to_idx, request_kwargs)
 
         total_ru_charge = 0.0
-        charge = headers.get('x-ms-request-charge')
+        charge = headers.get("x-ms-request-charge")
         if charge:
             try:
                 total_ru_charge = float(charge)
@@ -230,11 +227,11 @@ class ReadItemsHelperSync:
         return chunk_results, total_ru_charge
 
     def _execute_query(
-            self,
-            partition_id: str,
-            items_for_query: Sequence[Tuple[str, "PartitionKeyType"]],
-            id_to_idx: dict[str, int],
-            request_kwargs: dict[str, Any]
+        self,
+        partition_id: str,
+        items_for_query: Sequence[Tuple[str, "PartitionKeyType"]],
+        id_to_idx: dict[str, int],
+        request_kwargs: dict[str, Any],
     ) -> Tuple[list[Tuple[int, Any]], CaseInsensitiveDict]:
         """
         Builds and executes a query for a chunk of items.
@@ -255,7 +252,7 @@ class ReadItemsHelperSync:
         def local_response_hook(hook_headers, _):
             captured_headers.update(hook_headers)
 
-        request_kwargs['response_hook'] = local_response_hook
+        request_kwargs["response_hook"] = local_response_hook
 
         if _QueryBuilder.is_id_partition_key_query(items_for_query, self.partition_key_definition):
             query_obj = _QueryBuilder.build_id_in_query(items_for_query)
@@ -264,14 +261,15 @@ class ReadItemsHelperSync:
         else:
             partition_items_dict = {partition_id: items_for_query}
             query_obj = _QueryBuilder.build_parameterized_query_for_items(
-                partition_items_dict, self.partition_key_definition)
+                partition_items_dict, self.partition_key_definition
+            )
 
         query_iterator = self.client.QueryItems(self.collection_link, query_obj, self.options, **request_kwargs)
         results = list(query_iterator)
 
         chunk_indexed_results = []
         for item in results:
-            doc_id = item.get('id')
+            doc_id = item.get("id")
             if doc_id in id_to_idx:
                 chunk_indexed_results.append((id_to_idx[doc_id], item))
             else:
@@ -280,10 +278,7 @@ class ReadItemsHelperSync:
         return chunk_indexed_results, CaseInsensitiveDict(captured_headers)
 
     def _execute_point_read(
-            self,
-            item_id: str,
-            pk_value: "PartitionKeyType",
-            request_kwargs: dict[str, Any]
+        self, item_id: str, pk_value: "PartitionKeyType", request_kwargs: dict[str, Any]
     ) -> Tuple[Optional[Any], CaseInsensitiveDict]:
         """
         Executes a point read for a single item.
@@ -305,7 +300,7 @@ class ReadItemsHelperSync:
         def local_response_hook(hook_headers, _):
             captured_headers.update(hook_headers)
 
-        request_kwargs['response_hook'] = local_response_hook
+        request_kwargs["response_hook"] = local_response_hook
         request_kwargs.pop("containerProperties", None)
 
         try:

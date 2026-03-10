@@ -8,14 +8,21 @@
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar
 import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
 from ... import models as _models
 
-T = TypeVar('T')
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class RoleDefinitionsOperations:
     """RoleDefinitionsOperations async operations.
@@ -40,10 +47,7 @@ class RoleDefinitionsOperations:
         self._config = config
 
     async def list_role_definitions(
-        self,
-        is_built_in: Optional[bool] = None,
-        scope: Optional[str] = None,
-        **kwargs: Any
+        self, is_built_in: Optional[bool] = None, scope: Optional[str] = None, **kwargs: Any
     ) -> List["_models.SynapseRoleDefinition"]:
         """List role definitions.
 
@@ -56,32 +60,30 @@ class RoleDefinitionsOperations:
         :rtype: list[~azure.synapse.accesscontrol.models.SynapseRoleDefinition]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.SynapseRoleDefinition"]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[List["_models.SynapseRoleDefinition"]]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-12-01"
         accept = "application/json, text/json"
 
         # Construct URL
-        url = self.list_role_definitions.metadata['url']  # type: ignore
+        url = self.list_role_definitions.metadata["url"]  # type: ignore
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if is_built_in is not None:
-            query_parameters['isBuiltIn'] = self._serialize.query("is_built_in", is_built_in, 'bool')
+            query_parameters["isBuiltIn"] = self._serialize.query("is_built_in", is_built_in, "bool")
         if scope is not None:
-            query_parameters['scope'] = self._serialize.query("scope", scope, 'str')
+            query_parameters["scope"] = self._serialize.query("scope", scope, "str")
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -92,18 +94,17 @@ class RoleDefinitionsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorContract, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('[SynapseRoleDefinition]', pipeline_response)
+        deserialized = self._deserialize("[SynapseRoleDefinition]", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list_role_definitions.metadata = {'url': '/roleDefinitions'}  # type: ignore
+
+    list_role_definitions.metadata = {"url": "/roleDefinitions"}  # type: ignore
 
     async def get_role_definition_by_id(
-        self,
-        role_definition_id: str,
-        **kwargs: Any
+        self, role_definition_id: str, **kwargs: Any
     ) -> "_models.SynapseRoleDefinition":
         """Get role definition by role definition Id.
 
@@ -114,29 +115,27 @@ class RoleDefinitionsOperations:
         :rtype: ~azure.synapse.accesscontrol.models.SynapseRoleDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SynapseRoleDefinition"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.SynapseRoleDefinition"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-12-01"
         accept = "application/json, text/json"
 
         # Construct URL
-        url = self.get_role_definition_by_id.metadata['url']  # type: ignore
+        url = self.get_role_definition_by_id.metadata["url"]  # type: ignore
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'roleDefinitionId': self._serialize.url("role_definition_id", role_definition_id, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "roleDefinitionId": self._serialize.url("role_definition_id", role_definition_id, "str"),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -147,18 +146,16 @@ class RoleDefinitionsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorContract, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('SynapseRoleDefinition', pipeline_response)
+        deserialized = self._deserialize("SynapseRoleDefinition", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_role_definition_by_id.metadata = {'url': '/roleDefinitions/{roleDefinitionId}'}  # type: ignore
 
-    async def list_scopes(
-        self,
-        **kwargs: Any
-    ) -> List[str]:
+    get_role_definition_by_id.metadata = {"url": "/roleDefinitions/{roleDefinitionId}"}  # type: ignore
+
+    async def list_scopes(self, **kwargs: Any) -> List[str]:
         """List rbac scopes.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -166,28 +163,26 @@ class RoleDefinitionsOperations:
         :rtype: list[str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List[str]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[List[str]]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-12-01"
         accept = "application/json, text/json"
 
         # Construct URL
-        url = self.list_scopes.metadata['url']  # type: ignore
+        url = self.list_scopes.metadata["url"]  # type: ignore
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -198,10 +193,11 @@ class RoleDefinitionsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorContract, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('[str]', pipeline_response)
+        deserialized = self._deserialize("[str]", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list_scopes.metadata = {'url': '/rbacScopes'}  # type: ignore
+
+    list_scopes.metadata = {"url": "/rbacScopes"}  # type: ignore

@@ -8,7 +8,6 @@ import logging
 from marshmallow import fields, post_load
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 
-
 module_logger = logging.getLogger(__name__)
 
 

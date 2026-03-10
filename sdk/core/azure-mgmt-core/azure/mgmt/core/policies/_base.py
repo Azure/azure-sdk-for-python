@@ -39,7 +39,6 @@ from azure.core.pipeline.transport import (
 )
 from azure.core.rest import HttpRequest, HttpResponse, AsyncHttpResponse
 
-
 _LOGGER = logging.getLogger(__name__)
 
 HTTPRequestType = Union[LegacyHttpRequest, HttpRequest]

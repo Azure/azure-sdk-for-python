@@ -45,9 +45,7 @@ def authentication_with_api_key_credential_document_analysis_client():
 
     document_analysis_client = DocumentAnalysisClient(endpoint, AzureKeyCredential(key))
     # [END create_da_client_with_key]
-    poller = document_analysis_client.begin_analyze_document_from_url(
-        "prebuilt-layout", url
-    )
+    poller = document_analysis_client.begin_analyze_document_from_url("prebuilt-layout", url)
     result = poller.result()
 
 
@@ -64,9 +62,7 @@ def authentication_with_azure_active_directory_document_analysis_client():
 
     document_analysis_client = DocumentAnalysisClient(endpoint, credential)
     # [END create_da_client_with_aad]
-    poller = document_analysis_client.begin_analyze_document_from_url(
-        "prebuilt-layout", url
-    )
+    poller = document_analysis_client.begin_analyze_document_from_url("prebuilt-layout", url)
     result = poller.result()
 
 
@@ -78,9 +74,7 @@ def authentication_with_api_key_credential_document_model_admin_client():
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
-    document_model_admin_client = DocumentModelAdministrationClient(
-        endpoint, AzureKeyCredential(key)
-    )
+    document_model_admin_client = DocumentModelAdministrationClient(endpoint, AzureKeyCredential(key))
     # [END create_dt_client_with_key]
     info = document_model_admin_client.get_resource_details()
 
@@ -96,9 +90,7 @@ def authentication_with_azure_active_directory_document_model_admin_client():
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     credential = DefaultAzureCredential()
 
-    document_model_admin_client = DocumentModelAdministrationClient(
-        endpoint, credential
-    )
+    document_model_admin_client = DocumentModelAdministrationClient(endpoint, credential)
     # [END create_dt_client_with_aad]
     info = document_model_admin_client.get_resource_details()
 

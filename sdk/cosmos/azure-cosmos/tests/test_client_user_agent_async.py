@@ -22,8 +22,12 @@ class TestClientUserAgentAsync(unittest.IsolatedAsyncioTestCase):
             self.assertTrue(client_async.client_connection._user_agent != client_sync.client_connection._user_agent)
 
     async def test_client_user_agent_suffix(self):
-        async with async_client(url=TestConfig.host, credential=TestConfig.masterKey, user_agent_suffix="testAsyncSuffix") as client_async:
-            client_sync = sync_client(url=TestConfig.host, credential=TestConfig.masterKey, user_agent_suffix="testSyncSuffix")
+        async with async_client(
+            url=TestConfig.host, credential=TestConfig.masterKey, user_agent_suffix="testAsyncSuffix"
+        ) as client_async:
+            client_sync = sync_client(
+                url=TestConfig.host, credential=TestConfig.masterKey, user_agent_suffix="testSyncSuffix"
+            )
 
             self.assertTrue(client_sync.client_connection._user_agent.endswith(" testSyncSuffix"))
             self.assertTrue(client_async.client_connection._user_agent.endswith(" testAsyncSuffix"))

@@ -14,6 +14,7 @@ USAGE:
     python ml_samples_genAI_monitors_configuration.py
 
 """
+
 import os
 from azure.ai.ml import MLClient
 from azure.ai.ml.entities import (
@@ -122,7 +123,7 @@ class GenAIMonitoringSamples(object):
         monitor_settings = MonitorDefinition(
             compute=spark_compute,
             monitoring_target=monitoring_target,
-            monitoring_signals=monitoring_signals,  # type:ignore
+            monitoring_signals=monitoring_signals,  # type: ignore
             alert_notification=alert_notification,
         )
 

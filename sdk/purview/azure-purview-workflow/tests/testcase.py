@@ -23,7 +23,5 @@ class WorkflowTest(AzureRecordedTestCase):
 
 
 WorkflowPowerShellPreparer = functools.partial(
-    PowerShellPreparer,
-    "workflow",
-    workflow_endpoint="https://test-create-account.purview.azure.com"
+    PowerShellPreparer, "workflow", workflow_endpoint="https://test-create-account.purview.azure.com"
 )

@@ -23,8 +23,10 @@ try:
     update_name = os.environ["DEVICEUPDATE_UPDATE_NAME"]
     update_version = "2022.812.234.42"  # os.environ["DEVICEUPDATE_UPDATE_VERSION"]
 except KeyError:
-    print("Missing one of environment variables: DEVICEUPDATE_ENDPOINT, DEVICEUPDATE_INSTANCE_ID, "
-          "DEVICEUPDATE_UPDATE_PROVIDER, DEVICEUPDATE_UPDATE_NAME, DEVICEUPDATE_UPDATE_VERSION")
+    print(
+        "Missing one of environment variables: DEVICEUPDATE_ENDPOINT, DEVICEUPDATE_INSTANCE_ID, "
+        "DEVICEUPDATE_UPDATE_PROVIDER, DEVICEUPDATE_UPDATE_NAME, DEVICEUPDATE_UPDATE_VERSION"
+    )
     exit()
 
 # Build a client through AAD
@@ -35,4 +37,4 @@ try:
     response.wait
 
 except HttpResponseError as e:
-    print('Failed to delete update: {}'.format(e))
+    print("Failed to delete update: {}".format(e))

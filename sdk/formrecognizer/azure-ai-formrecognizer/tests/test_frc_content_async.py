@@ -51,10 +51,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         with open(self.invoice_pdf, "rb") as fd:
             my_file = fd.read()
         async with client:
-            poller = await client.begin_recognize_content(
-                my_file,
-                content_type=FormContentType.APPLICATION_PDF
-            )
+            poller = await client.begin_recognize_content(my_file, content_type=FormContentType.APPLICATION_PDF)
             result = await poller.result()
         assert result is not None
 
@@ -78,10 +75,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
             my_file = fd.read()
         with pytest.raises(ValueError):
             async with client:
-                poller = await client.begin_recognize_content(
-                    my_file,
-                    content_type="application/jpeg"
-                )
+                poller = await client.begin_recognize_content(my_file, content_type="application/jpeg")
                 result = await poller.result()
 
     @FormRecognizerPreparer()
@@ -92,9 +86,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
 
         with pytest.raises(ValueError):
             async with client:
-                poller = await client.begin_recognize_content(
-                    my_file
-                )
+                poller = await client.begin_recognize_content(my_file)
                 result = await poller.result()
 
     @pytest.mark.live_test_only
@@ -170,11 +162,11 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         assert layout.page_number == 1
         self.assertFormPagesHasValues(result)
         assert layout.tables[0].row_count == 5
-        assert layout.tables[0].column_count== 4
+        assert layout.tables[0].column_count == 4
         assert layout.tables[1].row_count == 4
-        assert layout.tables[1].column_count== 2
+        assert layout.tables[1].column_count == 2
         assert layout.tables[0].page_number == 1
-        assert layout.tables[1].page_number== 1
+        assert layout.tables[1].page_number == 1
 
     @pytest.mark.live_test_only
     @skip_flaky_test
@@ -234,7 +226,6 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
             assert result is not None
             await initial_poller.wait()  # necessary so devtools_testutils doesn't throw assertion error
 
-
     @pytest.mark.live_test_only
     @skip_flaky_test
     @FormRecognizerPreparer()
@@ -251,16 +242,16 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         assert layout.page_number == 1
         assert len(layout.tables) == 2
         assert layout.tables[0].row_count == 29
-        assert layout.tables[0].column_count== 4
+        assert layout.tables[0].column_count == 4
         assert layout.tables[0].page_number == 1
         assert layout.tables[1].row_count == 6
-        assert layout.tables[1].column_count== 5
-        assert layout.tables[1].page_number== 1
+        assert layout.tables[1].column_count == 5
+        assert layout.tables[1].page_number == 1
         layout = result[1]
         assert len(layout.tables) == 1
         assert layout.page_number == 2
         assert layout.tables[0].row_count == 23
-        assert layout.tables[0].column_count== 5
+        assert layout.tables[0].column_count == 5
         assert layout.tables[0].page_number == 2
         self.assertFormPagesHasValues(result)
 
@@ -337,7 +328,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         async with client:
             poller = await client.begin_recognize_content(form, reading_order="natural")
 
-            assert 'natural' == poller._polling_method._initial_response.http_response.request.query['readingOrder']
+            assert "natural" == poller._polling_method._initial_response.http_response.request.query["readingOrder"]
             result = await poller.result()
             assert result
 
@@ -351,7 +342,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
             my_file = fd.read()
         async with client:
             poller = await client.begin_recognize_content(my_file, language="de")
-            assert 'de' == poller._polling_method._initial_response.http_response.request.query['language']
+            assert "de" == poller._polling_method._initial_response.http_response.request.query["language"]
             result = await poller.result()
             assert result
 

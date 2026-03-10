@@ -67,14 +67,14 @@ class HealthInsightsSamples:
                     Findings are suggestive of a working diagnosis of pneumonia. The patient is referred to a
                     follow-up CXR in 2 weeks."""
 
-        patient_document1 = models.PatientDocument(type=models.DocumentType.NOTE,
-                                                   id="doc1",
-                                                   content=models.DocumentContent(
-                                                       source_type=models.DocumentContentSourceType.INLINE,
-                                                       value=doc_content1),
-                                                   clinical_type=models.ClinicalDocumentType.IMAGING,
-                                                   language="en",
-                                                   created_date_time=datetime.datetime(2021, 8, 15))
+        patient_document1 = models.PatientDocument(
+            type=models.DocumentType.NOTE,
+            id="doc1",
+            content=models.DocumentContent(source_type=models.DocumentContentSourceType.INLINE, value=doc_content1),
+            clinical_type=models.ClinicalDocumentType.IMAGING,
+            language="en",
+            created_date_time=datetime.datetime(2021, 8, 15),
+        )
 
         doc_content2 = """
                     Oncology Clinic
@@ -104,14 +104,14 @@ class HealthInsightsSamples:
                     Could benefit from biological therapy.
                     Different treatment options were explained- the patient wants to get a second opinion."""
 
-        patient_document2 = models.PatientDocument(type=models.DocumentType.NOTE,
-                                                   id="doc2",
-                                                   content=models.DocumentContent(
-                                                       source_type=models.DocumentContentSourceType.INLINE,
-                                                       value=doc_content2),
-                                                   clinical_type=models.ClinicalDocumentType.PATHOLOGY,
-                                                   language="en",
-                                                   created_date_time=datetime.datetime(2021, 10, 20))
+        patient_document2 = models.PatientDocument(
+            type=models.DocumentType.NOTE,
+            id="doc2",
+            content=models.DocumentContent(source_type=models.DocumentContentSourceType.INLINE, value=doc_content2),
+            clinical_type=models.ClinicalDocumentType.PATHOLOGY,
+            language="en",
+            created_date_time=datetime.datetime(2021, 10, 20),
+        )
 
         doc_content3 = """
                     PATHOLOGY REPORT
@@ -135,14 +135,14 @@ class HealthInsightsSamples:
                     Blocks with invasive carcinoma:  A1
                     Special studies: Pending"""
 
-        patient_document3 = models.PatientDocument(type=models.DocumentType.NOTE,
-                                                   id="doc3",
-                                                   content=models.DocumentContent(
-                                                       source_type=models.DocumentContentSourceType.INLINE,
-                                                       value=doc_content3),
-                                                   clinical_type=models.ClinicalDocumentType.PATHOLOGY,
-                                                   language="en",
-                                                   created_date_time=datetime.datetime(2022, 1, 1))
+        patient_document3 = models.PatientDocument(
+            type=models.DocumentType.NOTE,
+            id="doc3",
+            content=models.DocumentContent(source_type=models.DocumentContentSourceType.INLINE, value=doc_content3),
+            clinical_type=models.ClinicalDocumentType.PATHOLOGY,
+            language="en",
+            created_date_time=datetime.datetime(2022, 1, 1),
+        )
 
         patient_doc_list = [patient_document1, patient_document2, patient_document3]
         patient1.data = patient_doc_list
@@ -171,16 +171,12 @@ class HealthInsightsSamples:
             for patient_result in results.patients:
                 print(f"\n==== Inferences of Patient {patient_result.id} ====")
                 for inference in patient_result.inferences:
-                    print(
-                        f"\n=== Clinical Type: {str(inference.type)} Value: {inference.value}\
-                            ConfidenceScore: {inference.confidence_score} ==="
-                    )
+                    print(f"\n=== Clinical Type: {str(inference.type)} Value: {inference.value}\
+                            ConfidenceScore: {inference.confidence_score} ===")
                     for evidence in inference.evidence:
                         data_evidence = evidence.patient_data_evidence
-                        print(
-                            f"Evidence {data_evidence.id} {data_evidence.offset} {data_evidence.length}\
-                                {data_evidence.text}"
-                        )
+                        print(f"Evidence {data_evidence.id} {data_evidence.offset} {data_evidence.length}\
+                                {data_evidence.text}")
         else:
             errors = cancer_profiling_result.errors
             if errors is not None:

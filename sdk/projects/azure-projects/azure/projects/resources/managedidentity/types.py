@@ -9,7 +9,6 @@ from typing_extensions import TypedDict
 
 from ..._bicep.expressions import Parameter
 
-
 VERSION = "2023-07-31-preview"
 
 

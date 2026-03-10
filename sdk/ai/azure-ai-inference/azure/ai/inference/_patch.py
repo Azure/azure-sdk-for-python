@@ -19,10 +19,11 @@ Why do we patch auto-generated code? Below is a summary of the changes made in a
 9. Simplify how chat completions "response_format" is set. Define "response_format" as a flat Union of strings and
    JsonSchemaFormat object, instead of using auto-generated base/derived classes named
    ChatCompletionsResponseFormatXxxInternal.
-10. Allow UserMessage("my message") in addition to UserMessage(content="my message"). Same applies to 
+10. Allow UserMessage("my message") in addition to UserMessage(content="my message"). Same applies to
 AssistantMessage, SystemMessage, DeveloperMessage and ToolMessage.
 
 """
+
 import json
 import logging
 import sys
@@ -73,7 +74,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def _get_internal_response_format(
-    response_format: Optional[Union[Literal["text", "json_object"], _models.JsonSchemaFormat]]
+    response_format: Optional[Union[Literal["text", "json_object"], _models.JsonSchemaFormat]],
 ) -> Optional[_models._models.ChatCompletionsResponseFormat]:
     """
     Internal helper method to convert between the public response format type that's supported in the `complete` method,

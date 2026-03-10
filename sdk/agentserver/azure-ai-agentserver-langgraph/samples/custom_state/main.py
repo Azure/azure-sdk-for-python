@@ -137,9 +137,7 @@ class RAGStateConverter(LanggraphStateConverter):
         print("initial state:", res)
         return res
 
-    def state_to_response(
-        self, state: Dict[str, Any], context: AgentRunContext
-    ) -> Response:  # noqa: D401
+    def state_to_response(self, state: Dict[str, Any], context: AgentRunContext) -> Response:  # noqa: D401
         final_answer = state.get("final_answer") or "(no answer generated)"
         print(f"convert state to response, state: {state}")
         citations = state.get("retrieved", [])

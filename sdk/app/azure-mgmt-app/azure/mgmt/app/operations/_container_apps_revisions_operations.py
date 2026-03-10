@@ -9,7 +9,13 @@ import functools
 from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
 import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
@@ -20,193 +26,172 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
+
 def build_list_revisions_request(
-    subscription_id: str,
-    resource_group_name: str,
-    container_app_name: str,
-    **kwargs: Any
+    subscription_id: str, resource_group_name: str, container_app_name: str, **kwargs: Any
 ) -> HttpRequest:
     api_version = "2022-01-01-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions')
+    url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions",
+    )
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "containerAppName": _SERIALIZER.url("container_app_name", container_app_name, 'str'),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "containerAppName": _SERIALIZER.url("container_app_name", container_app_name, "str"),
     }
 
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
 def build_get_revision_request(
-    subscription_id: str,
-    resource_group_name: str,
-    container_app_name: str,
-    name: str,
-    **kwargs: Any
+    subscription_id: str, resource_group_name: str, container_app_name: str, name: str, **kwargs: Any
 ) -> HttpRequest:
     api_version = "2022-01-01-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}')
+    url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}",
+    )
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "containerAppName": _SERIALIZER.url("container_app_name", container_app_name, 'str'),
-        "name": _SERIALIZER.url("name", name, 'str'),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "containerAppName": _SERIALIZER.url("container_app_name", container_app_name, "str"),
+        "name": _SERIALIZER.url("name", name, "str"),
     }
 
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
 def build_activate_revision_request(
-    subscription_id: str,
-    resource_group_name: str,
-    container_app_name: str,
-    name: str,
-    **kwargs: Any
+    subscription_id: str, resource_group_name: str, container_app_name: str, name: str, **kwargs: Any
 ) -> HttpRequest:
     api_version = "2022-01-01-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}/activate')
+    url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}/activate",
+    )
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "containerAppName": _SERIALIZER.url("container_app_name", container_app_name, 'str'),
-        "name": _SERIALIZER.url("name", name, 'str'),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "containerAppName": _SERIALIZER.url("container_app_name", container_app_name, "str"),
+        "name": _SERIALIZER.url("name", name, "str"),
     }
 
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
 def build_deactivate_revision_request(
-    subscription_id: str,
-    resource_group_name: str,
-    container_app_name: str,
-    name: str,
-    **kwargs: Any
+    subscription_id: str, resource_group_name: str, container_app_name: str, name: str, **kwargs: Any
 ) -> HttpRequest:
     api_version = "2022-01-01-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}/deactivate')
+    url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}/deactivate",
+    )
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "containerAppName": _SERIALIZER.url("container_app_name", container_app_name, 'str'),
-        "name": _SERIALIZER.url("name", name, 'str'),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "containerAppName": _SERIALIZER.url("container_app_name", container_app_name, "str"),
+        "name": _SERIALIZER.url("name", name, "str"),
     }
 
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
 def build_restart_revision_request(
-    subscription_id: str,
-    resource_group_name: str,
-    container_app_name: str,
-    name: str,
-    **kwargs: Any
+    subscription_id: str, resource_group_name: str, container_app_name: str, name: str, **kwargs: Any
 ) -> HttpRequest:
     api_version = "2022-01-01-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}/restart')
+    url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}/restart",
+    )
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "containerAppName": _SERIALIZER.url("container_app_name", container_app_name, 'str'),
-        "name": _SERIALIZER.url("name", name, 'str'),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "containerAppName": _SERIALIZER.url("container_app_name", container_app_name, "str"),
+        "name": _SERIALIZER.url("name", name, "str"),
     }
 
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=url, params=query_parameters, headers=header_parameters, **kwargs)
+
 
 class ContainerAppsRevisionsOperations(object):
     """ContainerAppsRevisionsOperations operations.
@@ -232,10 +217,7 @@ class ContainerAppsRevisionsOperations(object):
 
     @distributed_trace
     def list_revisions(
-        self,
-        resource_group_name: str,
-        container_app_name: str,
-        **kwargs: Any
+        self, resource_group_name: str, container_app_name: str, **kwargs: Any
     ) -> Iterable["_models.RevisionCollection"]:
         """Get the Revisions for a given Container App.
 
@@ -250,25 +232,24 @@ class ContainerAppsRevisionsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~container_apps_api_client.models.RevisionCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RevisionCollection"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.RevisionCollection"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_revisions_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     container_app_name=container_app_name,
-                    template_url=self.list_revisions.metadata['url'],
+                    template_url=self.list_revisions.metadata["url"],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
-                
+
                 request = build_list_revisions_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
@@ -300,19 +281,13 @@ class ContainerAppsRevisionsOperations(object):
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list_revisions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions'}  # type: ignore
+    list_revisions.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions"}  # type: ignore
 
     @distributed_trace
     def get_revision(
-        self,
-        resource_group_name: str,
-        container_app_name: str,
-        name: str,
-        **kwargs: Any
+        self, resource_group_name: str, container_app_name: str, name: str, **kwargs: Any
     ) -> "_models.Revision":
         """Get a revision of a Container App.
 
@@ -329,19 +304,16 @@ class ContainerAppsRevisionsOperations(object):
         :rtype: ~container_apps_api_client.models.Revision
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Revision"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Revision"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_get_revision_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             container_app_name=container_app_name,
             name=name,
-            template_url=self.get_revision.metadata['url'],
+            template_url=self.get_revision.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -354,24 +326,17 @@ class ContainerAppsRevisionsOperations(object):
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Revision', pipeline_response)
+        deserialized = self._deserialize("Revision", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_revision.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}'}  # type: ignore
-
+    get_revision.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}"}  # type: ignore
 
     @distributed_trace
-    def activate_revision(
-        self,
-        resource_group_name: str,
-        container_app_name: str,
-        name: str,
-        **kwargs: Any
-    ) -> None:
+    def activate_revision(self, resource_group_name: str, container_app_name: str, name: str, **kwargs: Any) -> None:
         """Activates a revision for a Container App.
 
         Activates a revision for a Container App.
@@ -387,19 +352,16 @@ class ContainerAppsRevisionsOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_activate_revision_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             container_app_name=container_app_name,
             name=name,
-            template_url=self.activate_revision.metadata['url'],
+            template_url=self.activate_revision.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -415,17 +377,10 @@ class ContainerAppsRevisionsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    activate_revision.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}/activate'}  # type: ignore
-
+    activate_revision.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}/activate"}  # type: ignore
 
     @distributed_trace
-    def deactivate_revision(
-        self,
-        resource_group_name: str,
-        container_app_name: str,
-        name: str,
-        **kwargs: Any
-    ) -> None:
+    def deactivate_revision(self, resource_group_name: str, container_app_name: str, name: str, **kwargs: Any) -> None:
         """Deactivates a revision for a Container App.
 
         Deactivates a revision for a Container App.
@@ -441,19 +396,16 @@ class ContainerAppsRevisionsOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_deactivate_revision_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             container_app_name=container_app_name,
             name=name,
-            template_url=self.deactivate_revision.metadata['url'],
+            template_url=self.deactivate_revision.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -469,17 +421,10 @@ class ContainerAppsRevisionsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    deactivate_revision.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}/deactivate'}  # type: ignore
-
+    deactivate_revision.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}/deactivate"}  # type: ignore
 
     @distributed_trace
-    def restart_revision(
-        self,
-        resource_group_name: str,
-        container_app_name: str,
-        name: str,
-        **kwargs: Any
-    ) -> None:
+    def restart_revision(self, resource_group_name: str, container_app_name: str, name: str, **kwargs: Any) -> None:
         """Restarts a revision for a Container App.
 
         Restarts a revision for a Container App.
@@ -495,19 +440,16 @@ class ContainerAppsRevisionsOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_restart_revision_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             container_app_name=container_app_name,
             name=name,
-            template_url=self.restart_revision.metadata['url'],
+            template_url=self.restart_revision.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -523,5 +465,4 @@ class ContainerAppsRevisionsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    restart_revision.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}/restart'}  # type: ignore
-
+    restart_revision.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}/restart"}  # type: ignore

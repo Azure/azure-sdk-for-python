@@ -6,7 +6,6 @@
 
 from enum import Enum
 
-
 TYPE = "TYPE"
 VALUE = "VALUE"
 
@@ -75,18 +74,18 @@ class ConstructorBytes(object):
     double = b"\x82"
     timestamp = b"\x83"
     uuid = b"\x98"
-    binary_small = b"\xA0"
-    binary_large = b"\xB0"
-    string_small = b"\xA1"
-    string_large = b"\xB1"
-    symbol_small = b"\xA3"
-    symbol_large = b"\xB3"
+    binary_small = b"\xa0"
+    binary_large = b"\xb0"
+    string_small = b"\xa1"
+    string_large = b"\xb1"
+    symbol_small = b"\xa3"
+    symbol_large = b"\xb3"
     list_0 = b"\x45"
-    list_small = b"\xC0"
-    list_large = b"\xD0"
-    map_small = b"\xC1"
-    map_large = b"\xD1"
-    array_small = b"\xE0"
-    array_large = b"\xF0"
+    list_small = b"\xc0"
+    list_large = b"\xd0"
+    map_small = b"\xc1"
+    map_large = b"\xd1"
+    array_small = b"\xe0"
+    array_large = b"\xf0"
     descriptor = b"\x00"
     decimal128 = b"\x94"

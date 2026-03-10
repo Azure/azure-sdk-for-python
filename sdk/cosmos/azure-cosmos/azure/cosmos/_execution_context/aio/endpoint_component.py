@@ -22,6 +22,7 @@
 """Internal class for query execution endpoint component implementation in the
 Azure Cosmos database service.
 """
+
 import numbers
 import copy
 import hashlib
@@ -53,17 +54,21 @@ class _QueryExecutionOrderByEndpointComponent(_QueryExecutionEndpointComponent):
 
     For each processed orderby result it returns 'payload' item of the result.
     """
+
     async def __anext__(self):
         payload = await self._execution_context.__anext__()
         return payload["payload"]
+
 
 class _QueryExecutionNonStreamingEndpointComponent(_QueryExecutionEndpointComponent):
     """Represents an endpoint in handling a non-streaming order by query results.
     For each processed orderby result it returns the item result.
     """
+
     async def __anext__(self):
         payload = await self._execution_context.__anext__()
         return payload._item_result["payload"]
+
 
 class _QueryExecutionTopEndpointComponent(_QueryExecutionEndpointComponent):
     """Represents an endpoint in handling top query.
@@ -88,6 +93,7 @@ class _QueryExecutionDistinctOrderedEndpointComponent(_QueryExecutionEndpointCom
 
     It returns only those values not already returned.
     """
+
     def __init__(self, execution_context):
         super(_QueryExecutionDistinctOrderedEndpointComponent, self).__init__(execution_context)
         self.last_result = None
@@ -105,6 +111,7 @@ class _QueryExecutionDistinctUnorderedEndpointComponent(_QueryExecutionEndpointC
 
     It returns only those values not already returned.
     """
+
     def __init__(self, execution_context):
         super(_QueryExecutionDistinctUnorderedEndpointComponent, self).__init__(execution_context)
         self.last_result = set()
@@ -127,14 +134,14 @@ class _QueryExecutionDistinctUnorderedEndpointComponent(_QueryExecutionEndpointC
 
         json_repr = json.dumps(self.make_hash(res)).encode("utf-8")
 
-        hash_object = hashlib.sha1(json_repr)   # nosec
+        hash_object = hashlib.sha1(json_repr)  # nosec
         hashed_result = hash_object.hexdigest()
 
         while hashed_result in self.last_result:
             res = await self._execution_context.__anext__()
             json_repr = json.dumps(self.make_hash(res)).encode("utf-8")
 
-            hash_object = hashlib.sha1(json_repr)   # nosec
+            hash_object = hashlib.sha1(json_repr)  # nosec
             hashed_result = hash_object.hexdigest()
         self.last_result.add(hashed_result)
         return res
@@ -145,6 +152,7 @@ class _QueryExecutionOffsetEndpointComponent(_QueryExecutionEndpointComponent):
 
     It returns results offset by as many results as offset arg specified.
     """
+
     def __init__(self, execution_context, offset_count):
         super(_QueryExecutionOffsetEndpointComponent, self).__init__(execution_context)
         self._offset_count = offset_count
@@ -184,7 +192,7 @@ class _QueryExecutionAggregateEndpointComponent(_QueryExecutionEndpointComponent
 
     async def __anext__(self):
         async for res in self._execution_context:
-            for item in res: #TODO check on this being an async loop
+            for item in res:  # TODO check on this being an async loop
                 for operator in self._local_aggregators:
                     if isinstance(item, dict) and item:
                         try:

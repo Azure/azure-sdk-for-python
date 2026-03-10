@@ -23,12 +23,14 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
+
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
         """This is a fake class to support current implementation of MultiApiClientMixin."
         Will be removed in final version of multiapi azure-core based client
         """
         pass
+
 
 class VnetClient(MultiApiClientMixin, _SDKClient):
     """VnetClient.
@@ -51,13 +53,15 @@ class VnetClient(MultiApiClientMixin, _SDKClient):
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION = '2020-12-01'
+    DEFAULT_API_VERSION = "2020-12-01"
     _PROFILE_TAG = "azure.synapse.managedprivateendpoints.VnetClient"
-    LATEST_PROFILE = ProfileDefinition({
-        _PROFILE_TAG: {
-            None: DEFAULT_API_VERSION,
-        }},
-        _PROFILE_TAG + " latest"
+    LATEST_PROFILE = ProfileDefinition(
+        {
+            _PROFILE_TAG: {
+                None: DEFAULT_API_VERSION,
+            }
+        },
+        _PROFILE_TAG + " latest",
     )
 
     def __init__(
@@ -68,16 +72,13 @@ class VnetClient(MultiApiClientMixin, _SDKClient):
         profile: KnownProfiles = KnownProfiles.default,
         **kwargs  # type: Any
     ) -> None:
-        if api_version == '2020-12-01' or api_version == '2021-06-01-preview':
-            base_url = '{endpoint}'
+        if api_version == "2020-12-01" or api_version == "2021-06-01-preview":
+            base_url = "{endpoint}"
         else:
             raise ValueError("API version {} is not available".format(api_version))
         self._config = VnetClientConfiguration(credential, endpoint, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
-        super(VnetClient, self).__init__(
-            api_version=api_version,
-            profile=profile
-        )
+        super(VnetClient, self).__init__(api_version=api_version, profile=profile)
 
     @classmethod
     def _models_dict(cls, api_version):
@@ -87,14 +88,16 @@ class VnetClient(MultiApiClientMixin, _SDKClient):
     def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
-           * 2020-12-01: :mod:`v2020_12_01.models<azure.synapse.managedprivateendpoints.v2020_12_01.models>`
-           * 2021-06-01-preview: :mod:`v2021_06_01_preview.models<azure.synapse.managedprivateendpoints.v2021_06_01_preview.models>`
+        * 2020-12-01: :mod:`v2020_12_01.models<azure.synapse.managedprivateendpoints.v2020_12_01.models>`
+        * 2021-06-01-preview: :mod:`v2021_06_01_preview.models<azure.synapse.managedprivateendpoints.v2021_06_01_preview.models>`
         """
-        if api_version == '2020-12-01':
+        if api_version == "2020-12-01":
             from ..v2020_12_01 import models
+
             return models
-        elif api_version == '2021-06-01-preview':
+        elif api_version == "2021-06-01-preview":
             from ..v2021_06_01_preview import models
+
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
@@ -102,22 +105,31 @@ class VnetClient(MultiApiClientMixin, _SDKClient):
     def managed_private_endpoints(self):
         """Instance depends on the API version:
 
-           * 2020-12-01: :class:`ManagedPrivateEndpointsOperations<azure.synapse.managedprivateendpoints.v2020_12_01.aio.operations.ManagedPrivateEndpointsOperations>`
-           * 2021-06-01-preview: :class:`ManagedPrivateEndpointsOperations<azure.synapse.managedprivateendpoints.v2021_06_01_preview.aio.operations.ManagedPrivateEndpointsOperations>`
+        * 2020-12-01: :class:`ManagedPrivateEndpointsOperations<azure.synapse.managedprivateendpoints.v2020_12_01.aio.operations.ManagedPrivateEndpointsOperations>`
+        * 2021-06-01-preview: :class:`ManagedPrivateEndpointsOperations<azure.synapse.managedprivateendpoints.v2021_06_01_preview.aio.operations.ManagedPrivateEndpointsOperations>`
         """
-        api_version = self._get_api_version('managed_private_endpoints')
-        if api_version == '2020-12-01':
+        api_version = self._get_api_version("managed_private_endpoints")
+        if api_version == "2020-12-01":
             from ..v2020_12_01.aio.operations import ManagedPrivateEndpointsOperations as OperationClass
-        elif api_version == '2021-06-01-preview':
+        elif api_version == "2021-06-01-preview":
             from ..v2021_06_01_preview.aio.operations import ManagedPrivateEndpointsOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'managed_private_endpoints'".format(api_version))
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError(
+                "API version {} does not have operation group 'managed_private_endpoints'".format(api_version)
+            )
+        return OperationClass(
+            self._client,
+            self._config,
+            Serializer(self._models_dict(api_version)),
+            Deserializer(self._models_dict(api_version)),
+        )
 
     async def close(self):
         await self._client.close()
+
     async def __aenter__(self):
         await self._client.__aenter__()
         return self
+
     async def __aexit__(self, *exc_details):
         await self._client.__aexit__(*exc_details)

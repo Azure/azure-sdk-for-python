@@ -36,7 +36,6 @@ from azure.ai.agents.models import (
     MessageInputImageUrlBlock,
 )
 
-
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),

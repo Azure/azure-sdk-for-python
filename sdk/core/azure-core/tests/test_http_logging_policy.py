@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for the HttpLoggingPolicy."""
+
 import pytest
 import logging
 import types

@@ -19,8 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Authorization helper functions in the Azure Cosmos database service.
-"""
+"""Authorization helper functions in the Azure Cosmos database service."""
 
 import base64
 from hashlib import sha256
@@ -31,17 +30,19 @@ from . import http_constants
 
 
 def GetAuthorizationHeader(
-        cosmos_client_connection, verb, path, resource_id_or_fullname, is_name_based, resource_type, headers
+    cosmos_client_connection, verb, path, resource_id_or_fullname, is_name_based, resource_type, headers
 ):
-    warnings.warn("This method has been deprecated and will be removed from the SDK in a future release.",
-                  DeprecationWarning)
+    warnings.warn(
+        "This method has been deprecated and will be removed from the SDK in a future release.", DeprecationWarning
+    )
 
     return _get_authorization_header(
-        cosmos_client_connection, verb, path, resource_id_or_fullname, is_name_based, resource_type, headers)
+        cosmos_client_connection, verb, path, resource_id_or_fullname, is_name_based, resource_type, headers
+    )
 
 
 def _get_authorization_header(
-        cosmos_client_connection, verb, path, resource_id_or_fullname, is_name_based, resource_type, headers
+    cosmos_client_connection, verb, path, resource_id_or_fullname, is_name_based, resource_type, headers
 ):
     """Gets the authorization header.
 

@@ -26,14 +26,14 @@ class TestIdDocumentsFromUrl(FormRecognizerTest):
     @recorded_by_proxy
     def test_polling_interval(self, **kwargs):
         client = get_fr_client(polling_interval=7)
-        assert client._client._config.polling_interval ==  7
+        assert client._client._config.polling_interval == 7
 
         poller = client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg, polling_interval=6)
         poller.wait()
-        assert poller._polling_method._timeout ==  6
+        assert poller._polling_method._timeout == 6
         poller2 = client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg)
         poller2.wait()
-        assert poller2._polling_method._timeout ==  7  # goes back to client default
+        assert poller2._polling_method._timeout == 7  # goes back to client default
 
     @skip_flaky_test
     @FormRecognizerPreparer()
@@ -49,9 +49,7 @@ class TestIdDocumentsFromUrl(FormRecognizerTest):
             responses.append(extracted_id_document)
 
         poller = client.begin_recognize_identity_documents_from_url(
-            identity_document_url=self.identity_document_url_jpg,
-            include_field_elements=True,
-            cls=callback
+            identity_document_url=self.identity_document_url_jpg, include_field_elements=True, cls=callback
         )
 
         result = poller.result()
@@ -66,8 +64,8 @@ class TestIdDocumentsFromUrl(FormRecognizerTest):
         self.assertFormFieldsTransformCorrect(id_document.fields, actual, read_results)
 
         # check page range
-        assert id_document.page_range.first_page_number ==  document_results[0].page_range[0]
-        assert id_document.page_range.last_page_number ==  document_results[0].page_range[1]
+        assert id_document.page_range.first_page_number == document_results[0].page_range[0]
+        assert id_document.page_range.last_page_number == document_results[0].page_range[1]
 
         # Check page metadata
         self.assertFormPagesTransformCorrect(id_document.pages, read_results, page_results)
@@ -77,7 +75,9 @@ class TestIdDocumentsFromUrl(FormRecognizerTest):
     @recorded_by_proxy
     def test_identity_document_jpg_include_field_elements(self):
         client = get_fr_client()
-        poller = client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg, include_field_elements=True)
+        poller = client.begin_recognize_identity_documents_from_url(
+            self.identity_document_url_jpg, include_field_elements=True
+        )
 
         result = poller.result()
         assert len(result) == 1
@@ -87,12 +87,14 @@ class TestIdDocumentsFromUrl(FormRecognizerTest):
 
         for field in id_document.fields.values():
             if field.name == "CountryRegion":
-                assert field.value ==  "USA"
+                assert field.value == "USA"
                 continue
             elif field.name == "Region":
-                assert field.value ==  "Washington"
+                assert field.value == "Washington"
             else:
-                self.assertFieldElementsHasValues(field.value_data.field_elements, id_document.page_range.first_page_number)
+                self.assertFieldElementsHasValues(
+                    field.value_data.field_elements, id_document.page_range.first_page_number
+                )
 
     @pytest.mark.live_test_only
     @skip_flaky_test
@@ -111,7 +113,10 @@ class TestIdDocumentsFromUrl(FormRecognizerTest):
         client = get_fr_client(api_version=FormRecognizerApiVersion.V2_0)
         with pytest.raises(ValueError) as e:
             client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg)
-        assert "Method 'begin_recognize_identity_documents_from_url' is only available for API version V2_1 and up" in str(e.value)
+        assert (
+            "Method 'begin_recognize_identity_documents_from_url' is only available for API version V2_1 and up"
+            in str(e.value)
+        )
 
     @skip_flaky_test
     @FormRecognizerPreparer()
@@ -119,6 +124,6 @@ class TestIdDocumentsFromUrl(FormRecognizerTest):
     def test_pages_kwarg_specified(self):
         client = get_fr_client()
         poller = client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg, pages=["1"])
-        assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
+        assert "1" == poller._polling_method._initial_response.http_response.request.query["pages"]
         result = poller.result()
         assert result

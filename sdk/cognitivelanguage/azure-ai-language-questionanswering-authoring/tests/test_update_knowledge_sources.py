@@ -31,7 +31,7 @@ class TestSourcesQnasSynonyms(QuestionAnsweringAuthoringTestCase):
                 }
             )
         ]
-        poller = client.begin_update_sources( # pylint: disable=no-value-for-parameter
+        poller = client.begin_update_sources(  # pylint: disable=no-value-for-parameter
             project_name=project_name,
             sources=cast(list[_models.UpdateSourceRecord], update_source_ops),
             content_type="application/json",
@@ -60,7 +60,7 @@ class TestSourcesQnasSynonyms(QuestionAnsweringAuthoringTestCase):
                 }
             )
         ]
-        poller = client.begin_update_qnas( # pylint: disable=no-value-for-parameter
+        poller = client.begin_update_qnas(  # pylint: disable=no-value-for-parameter
             project_name=project_name,
             qnas=cast(list[_models.UpdateQnaRecord], update_qna_ops),
             content_type="application/json",
@@ -83,7 +83,7 @@ class TestSourcesQnasSynonyms(QuestionAnsweringAuthoringTestCase):
                 _models.WordAlterations(alterations=["qnamaker", "qna maker"]),
             ]
         )
-        client.update_synonyms( # pylint: disable=no-value-for-parameter
+        client.update_synonyms(  # pylint: disable=no-value-for-parameter
             project_name=project_name,
             synonyms=synonyms_model,
             content_type="application/json",

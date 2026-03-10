@@ -17,7 +17,6 @@ from preparers import FormRecognizerPreparer, get_async_client
 from asynctestcase import AsyncFormRecognizerTest
 from conftest import skip_flaky_test
 
-
 get_ft_client = functools.partial(get_async_client, FormTrainingClient)
 
 
@@ -118,7 +117,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )  
+        )
         transport = AioHttpTransport()
         ftc = get_ft_client(transport=transport, api_version="2.1")
 

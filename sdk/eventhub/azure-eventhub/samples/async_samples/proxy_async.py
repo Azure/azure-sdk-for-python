@@ -8,6 +8,7 @@
 """
 An example to show async sending and receiving events behind a proxy.
 """
+
 from typing import Union, Dict
 import os
 import asyncio

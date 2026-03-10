@@ -17,10 +17,8 @@ module_logger = logging.getLogger(__name__)
 
 class BatchEndpointsDefaultsSchema(metaclass=PatchedSchemaMeta):
     deployment_name = fields.Str(
-        metadata={
-            "description": """Name of the deployment that will be default for the endpoint.
-             This deployment will end up getting 100% traffic when the endpoint scoring URL is invoked."""
-        }
+        metadata={"description": """Name of the deployment that will be default for the endpoint.
+             This deployment will end up getting 100% traffic when the endpoint scoring URL is invoked."""}
     )
 
     @post_load

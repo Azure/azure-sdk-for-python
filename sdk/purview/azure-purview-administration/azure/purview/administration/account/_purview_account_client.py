@@ -22,6 +22,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.rest import HttpRequest, HttpResponse
 
+
 class PurviewAccountClient(object):
     """Creates a Microsoft.Purview data plane account client.
 
@@ -46,7 +47,7 @@ class PurviewAccountClient(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        _endpoint = '{endpoint}'
+        _endpoint = "{endpoint}"
         self._config = PurviewAccountClientConfiguration(endpoint, credential, **kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
@@ -55,8 +56,9 @@ class PurviewAccountClient(object):
         self._serialize.client_side_validation = False
         self.accounts = AccountsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.collections = CollectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.resource_set_rules = ResourceSetRulesOperations(self._client, self._config, self._serialize, self._deserialize)
-
+        self.resource_set_rules = ResourceSetRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def send_request(
         self,
@@ -83,7 +85,7 @@ class PurviewAccountClient(object):
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

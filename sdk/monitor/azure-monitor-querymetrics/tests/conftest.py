@@ -7,7 +7,6 @@ import pytest
 
 from devtools_testutils.sanitizers import add_header_regex_sanitizer
 
-
 # Environment variable keys
 ENV_METRICS_RESOURCE_ID = "METRICS_RESOURCE_ID"
 ENV_SUBSCRIPTION_ID = "MONITOR_SUBSCRIPTION_ID"

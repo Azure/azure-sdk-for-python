@@ -63,7 +63,6 @@ from ._utils import (
     _filter_sensitive_headers,
 )
 
-
 HttpRequestType = Union[LegacyHttpRequest, HttpRequest]
 HttpResponseType = Union[LegacyHttpResponse, HttpResponse]  # Sync only
 AllHttpResponseType = Union[

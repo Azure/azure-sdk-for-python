@@ -27,15 +27,14 @@ class TestResourceConnectorMgmtAppliancesOperationsAsync(AzureMgmtRecordedTestCa
         )
         result = [r async for r in response]
         assert result == []
-        
+
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_appliances_list_by_subscription(self, resource_group):
         response = self.client.appliances.list_by_subscription()
         result = [r async for r in response]
         assert response
-        
- 
+
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_appliances_list_operations(self, resource_group):

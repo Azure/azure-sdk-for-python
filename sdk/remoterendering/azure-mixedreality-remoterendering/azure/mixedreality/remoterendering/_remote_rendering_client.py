@@ -18,20 +18,24 @@ from azure.core.credentials import TokenCredential
 from ._api_version import validate_api_version, DEFAULT_VERSION
 from ._generated import RemoteRenderingRestClient
 
-from ._generated.models import (AssetConversion, AssetConversionInputSettings,
-                                AssetConversionOutputSettings,
-                                AssetConversionSettings,
-                                CreateAssetConversionSettings,
-                                CreateRenderingSessionSettings,
-                                RenderingSession, RenderingSessionSize,
-                                UpdateSessionSettings)
+from ._generated.models import (
+    AssetConversion,
+    AssetConversionInputSettings,
+    AssetConversionOutputSettings,
+    AssetConversionSettings,
+    CreateAssetConversionSettings,
+    CreateRenderingSessionSettings,
+    RenderingSession,
+    RenderingSessionSize,
+    UpdateSessionSettings,
+)
 from ._polling import ConversionPolling, SessionPolling
 from ._shared.authentication_endpoint import construct_endpoint_url
 from ._shared.mixed_reality_token_credential import get_mixedreality_credential
-from ._shared.mixedreality_account_key_credential import \
-    MixedRealityAccountKeyCredential
+from ._shared.mixedreality_account_key_credential import MixedRealityAccountKeyCredential
 from ._shared.static_access_token_credential import StaticAccessTokenCredential
 from ._version import SDK_MONIKER
+
 
 class RemoteRenderingClient:
     """A client for the Azure Remote Rendering Service.
@@ -63,16 +67,16 @@ class RemoteRenderingClient:
     :type authentication_endpoint_url: str
     """
 
-    def __init__(self,
-                 endpoint: str,
-                 account_id: str,
-                 account_domain: str,
-                 credential: Union[AzureKeyCredential, 'TokenCredential', AccessToken],
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        endpoint: str,
+        account_id: str,
+        account_domain: str,
+        credential: Union[AzureKeyCredential, "TokenCredential", AccessToken],
+        **kwargs
+    ) -> None:
 
-        self._api_version = kwargs.pop(
-            "api_version", DEFAULT_VERSION
-        )
+        self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         validate_api_version(self._api_version)
 
         if not endpoint:
@@ -88,7 +92,7 @@ class RemoteRenderingClient:
             raise ValueError("credential cannot be None")
 
         self.polling_interval = kwargs.pop("polling_interval", 5)
-        endpoint_url = kwargs.pop('authentication_endpoint_url', construct_endpoint_url(account_domain))
+        endpoint_url = kwargs.pop("authentication_endpoint_url", construct_endpoint_url(account_domain))
 
         cred: Any
 
@@ -100,16 +104,13 @@ class RemoteRenderingClient:
             cred = credential
 
         pipeline_credential = get_mixedreality_credential(
-                                account_id=account_id,
-                                account_domain=account_domain,
-                                credential=cred,
-                                endpoint_url=endpoint_url)
+            account_id=account_id, account_domain=account_domain, credential=cred, endpoint_url=endpoint_url
+        )
 
         if pipeline_credential is None:
             raise ValueError("credential is not of type TokenCredential, AzureKeyCredential or AccessToken")
 
-        authentication_policy = BearerTokenCredentialPolicy(
-            pipeline_credential, endpoint_url + '/.default')
+        authentication_policy = BearerTokenCredentialPolicy(pipeline_credential, endpoint_url + "/.default")
 
         self._account_id = account_id
 
@@ -118,14 +119,17 @@ class RemoteRenderingClient:
             authentication_policy=authentication_policy,
             sdk_moniker=SDK_MONIKER,
             api_version=self._api_version,
-            **kwargs)
+            **kwargs
+        )
 
     @distributed_trace
-    def begin_asset_conversion(self,
-                               conversion_id: str,
-                               input_settings: AssetConversionInputSettings,
-                               output_settings: AssetConversionOutputSettings,
-                               **kwargs) -> LROPoller[AssetConversion]:
+    def begin_asset_conversion(
+        self,
+        conversion_id: str,
+        input_settings: AssetConversionInputSettings,
+        output_settings: AssetConversionOutputSettings,
+        **kwargs
+    ) -> LROPoller[AssetConversion]:
         """Start a new asset conversion with the given options.
 
         :param str conversion_id:
@@ -146,17 +150,21 @@ class RemoteRenderingClient:
         initial_state = self._client.remote_rendering.create_conversion(
             account_id=self._account_id,
             conversion_id=conversion_id,
-            body=CreateAssetConversionSettings(settings=AssetConversionSettings(
-                input_settings=input_settings, output_settings=output_settings)),
-            **kwargs)
+            body=CreateAssetConversionSettings(
+                settings=AssetConversionSettings(input_settings=input_settings, output_settings=output_settings)
+            ),
+            **kwargs
+        )
 
         polling_method = ConversionPolling(account_id=self._account_id, polling_interval=polling_interval)
         deserialization_method: Callable[[Any], Any] = lambda _: None
 
-        return LROPoller(client=self._client,
-                         initial_response=initial_state,
-                         deserialization_callback=deserialization_method,
-                         polling_method=polling_method)
+        return LROPoller(
+            client=self._client,
+            initial_response=initial_state,
+            deserialization_callback=deserialization_method,
+            polling_method=polling_method,
+        )
 
     @distributed_trace
     def get_asset_conversion(self, conversion_id: str, **kwargs) -> AssetConversion:
@@ -169,11 +177,14 @@ class RemoteRenderingClient:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return self._client.remote_rendering.get_conversion(
-            account_id=self._account_id, conversion_id=conversion_id, **kwargs)
+            account_id=self._account_id, conversion_id=conversion_id, **kwargs
+        )
 
     @distributed_trace
-    def get_asset_conversion_poller(self, **kwargs) -> LROPoller[AssetConversion]: # pylint:disable=docstring-keyword-should-match-keyword-only
-        """Returns a poller for an existing conversion by conversion id or a continuation 
+    def get_asset_conversion_poller(
+        self, **kwargs
+    ) -> LROPoller[AssetConversion]:  # pylint:disable=docstring-keyword-should-match-keyword-only
+        """Returns a poller for an existing conversion by conversion id or a continuation
         token retrieved from a previous poller.
 
         :keyword str conversion_id: The conversion_id of a previously created conversion.
@@ -183,36 +194,37 @@ class RemoteRenderingClient:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        conversion_id: Union[str,None] = kwargs.pop("conversion_id", None)
-        continuation_token: Union[str,None] = kwargs.pop("continuation_token", None)
+        conversion_id: Union[str, None] = kwargs.pop("conversion_id", None)
+        continuation_token: Union[str, None] = kwargs.pop("continuation_token", None)
 
         if conversion_id is None and continuation_token is None:
-            raise ValueError(
-                "Either conversion_id or continuation_token needs to be supplied.")
+            raise ValueError("Either conversion_id or continuation_token needs to be supplied.")
 
         if conversion_id is not None and continuation_token is not None:
             raise ValueError(
-                "Parameters conversion_id and continuation_token are mutual exclusive. Supply only one of the two.")
+                "Parameters conversion_id and continuation_token are mutual exclusive. Supply only one of the two."
+            )
 
         polling_interval = kwargs.pop("polling_interval", self.polling_interval)
         polling_method = ConversionPolling(account_id=self._account_id, polling_interval=polling_interval)
         if continuation_token is not None:
-            return LROPoller.from_continuation_token(continuation_token=continuation_token,
-                                                     polling_method=polling_method,
-                                                     client=self._client)
+            return LROPoller.from_continuation_token(
+                continuation_token=continuation_token, polling_method=polling_method, client=self._client
+            )
 
         if conversion_id is not None:
             initial_state = self._client.remote_rendering.get_conversion(
-                account_id=self._account_id,
-                conversion_id=conversion_id,
-                **kwargs)
+                account_id=self._account_id, conversion_id=conversion_id, **kwargs
+            )
 
         deserialization_method: Callable[[Any], Any] = lambda _: None
 
-        return LROPoller(client=self._client,
-                         initial_response=initial_state,
-                         deserialization_callback=deserialization_method,
-                         polling_method=polling_method)
+        return LROPoller(
+            client=self._client,
+            initial_response=initial_state,
+            deserialization_callback=deserialization_method,
+            polling_method=polling_method,
+        )
 
     @distributed_trace
     def list_asset_conversions(self, **kwargs) -> ItemPaged[AssetConversion]:
@@ -222,14 +234,12 @@ class RemoteRenderingClient:
         :raises ~azure.core.exceptions.HttpResponseError:
         :return: List of conversion for the remote rendering account.
         """
-        return self._client.remote_rendering.list_conversions(account_id=self._account_id, **kwargs) # type: ignore
+        return self._client.remote_rendering.list_conversions(account_id=self._account_id, **kwargs)  # type: ignore
 
     @distributed_trace
-    def begin_rendering_session(self,
-                                session_id: str,
-                                size: Union[str, RenderingSessionSize],
-                                lease_time_minutes: int,
-                                **kwargs) -> LROPoller[RenderingSession]:
+    def begin_rendering_session(
+        self, session_id: str, size: Union[str, RenderingSessionSize], lease_time_minutes: int, **kwargs
+    ) -> LROPoller[RenderingSession]:
         """
 
         :param str session_id: An ID uniquely identifying the rendering session for the given account. The ID is case
@@ -244,37 +254,35 @@ class RemoteRenderingClient:
         :rtype: LROPoller[RenderingSession]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        settings = CreateRenderingSessionSettings(
-            size=size, lease_time_minutes=lease_time_minutes)
+        settings = CreateRenderingSessionSettings(size=size, lease_time_minutes=lease_time_minutes)
         initial_state = self._client.remote_rendering.create_session(
-            account_id=self._account_id,
-            session_id=session_id,
-            body=settings,
-            **kwargs)
+            account_id=self._account_id, session_id=session_id, body=settings, **kwargs
+        )
         polling_interval = kwargs.pop("polling_interval", self.polling_interval)
         polling_method = SessionPolling(account_id=self._account_id, polling_interval=polling_interval)
         deserialization_method: Callable[[Any], Any] = lambda _: None
-        return LROPoller(client=self._client,
-                         initial_response=initial_state,
-                         deserialization_callback=deserialization_method,
-                         polling_method=polling_method)
+        return LROPoller(
+            client=self._client,
+            initial_response=initial_state,
+            deserialization_callback=deserialization_method,
+            polling_method=polling_method,
+        )
 
     @distributed_trace
     def get_rendering_session(self, session_id: str, **kwargs) -> RenderingSession:
-        '''Returns the properties of a previously generated rendering session.
+        """Returns the properties of a previously generated rendering session.
 
         :param str session_id: The identifier of the rendering session.
         :return: Properties of the rendering session
         :rtype:  ~azure.mixedreality.remoterendering.models.RenderingSession
         :raises ~azure.core.exceptions.HttpResponseError:
-        '''
-        return self._client.remote_rendering.get_session(
-            account_id=self._account_id,
-            session_id=session_id,
-            **kwargs)
+        """
+        return self._client.remote_rendering.get_session(account_id=self._account_id, session_id=session_id, **kwargs)
 
     @distributed_trace
-    def get_rendering_session_poller(self, **kwargs) -> LROPoller[RenderingSession]: # pylint:disable=docstring-keyword-should-match-keyword-only
+    def get_rendering_session_poller(
+        self, **kwargs
+    ) -> LROPoller[RenderingSession]:  # pylint:disable=docstring-keyword-should-match-keyword-only
         """Returns a poller for an existing rendering session by session id or a continuation token retrieved from a
         previous poller.
 
@@ -285,36 +293,37 @@ class RemoteRenderingClient:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        session_id: Union[str,None] = kwargs.pop("session_id", None)
-        continuation_token: Union[str,None] = kwargs.pop("continuation_token", None)
+        session_id: Union[str, None] = kwargs.pop("session_id", None)
+        continuation_token: Union[str, None] = kwargs.pop("continuation_token", None)
 
         if session_id is None and continuation_token is None:
-            raise ValueError(
-                "Either session_id or continuation_token needs to be supplied.")
+            raise ValueError("Either session_id or continuation_token needs to be supplied.")
 
         if session_id is not None and continuation_token is not None:
             raise ValueError(
-                "Parameters session_id and continuation_token are mutual exclusive. Supply only one of the two.")
+                "Parameters session_id and continuation_token are mutual exclusive. Supply only one of the two."
+            )
 
         polling_interval = kwargs.pop("polling_interval", self.polling_interval)
         if continuation_token is not None:
             polling_method = SessionPolling(account_id=self._account_id, polling_interval=polling_interval)
-            return LROPoller.from_continuation_token(continuation_token=continuation_token,
-                                                     polling_method=polling_method,
-                                                     client=self._client)
+            return LROPoller.from_continuation_token(
+                continuation_token=continuation_token, polling_method=polling_method, client=self._client
+            )
 
         if session_id is not None:
             initial_state = self._client.remote_rendering.get_session(
-                account_id=self._account_id,
-                session_id=session_id,
-                **kwargs)
+                account_id=self._account_id, session_id=session_id, **kwargs
+            )
 
         polling_method = SessionPolling(account_id=self._account_id, polling_interval=polling_interval)
         deserialization_method: Callable[[Any], Any] = lambda _: None
-        return LROPoller(client=self._client,
-                         initial_response=initial_state,
-                         deserialization_callback=deserialization_method,
-                         polling_method=polling_method)
+        return LROPoller(
+            client=self._client,
+            initial_response=initial_state,
+            deserialization_callback=deserialization_method,
+            polling_method=polling_method,
+        )
 
     @distributed_trace
     def stop_rendering_session(self, session_id: str, **kwargs) -> None:
@@ -325,11 +334,12 @@ class RemoteRenderingClient:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        self._client.remote_rendering.stop_session(
-            account_id=self._account_id, session_id=session_id, **kwargs)
+        self._client.remote_rendering.stop_session(account_id=self._account_id, session_id=session_id, **kwargs)
 
     @distributed_trace
-    def update_rendering_session(self, session_id: str, **kwargs) -> RenderingSession: # pylint:disable=docstring-keyword-should-match-keyword-only
+    def update_rendering_session(
+        self, session_id: str, **kwargs
+    ) -> RenderingSession:  # pylint:disable=docstring-keyword-should-match-keyword-only
         """Updates an already existing rendering session.
 
         :param str session_id: The identifier of the session to be updated.
@@ -340,18 +350,17 @@ class RemoteRenderingClient:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        lease_time_minutes: Union[int,None] = kwargs.pop("lease_time_minutes", None)
+        lease_time_minutes: Union[int, None] = kwargs.pop("lease_time_minutes", None)
         if lease_time_minutes is not None:
-            return self._client.remote_rendering.update_session(account_id=self._account_id,
-                                                                session_id=session_id,
-                                                                body=UpdateSessionSettings(
-                                                                    lease_time_minutes=lease_time_minutes),
-                                                                **kwargs)
+            return self._client.remote_rendering.update_session(
+                account_id=self._account_id,
+                session_id=session_id,
+                body=UpdateSessionSettings(lease_time_minutes=lease_time_minutes),
+                **kwargs
+            )
 
         # if no param to update has been provided the unchanged session is returned
-        return self._client.remote_rendering.get_session(account_id=self._account_id,
-                                                         session_id=session_id,
-                                                         **kwargs)
+        return self._client.remote_rendering.get_session(account_id=self._account_id, session_id=session_id, **kwargs)
 
     @distributed_trace
     def list_rendering_sessions(self, **kwargs) -> ItemPaged[RenderingSession]:

@@ -4,6 +4,7 @@
 """Internal class for connection reset retry policy implementation in the Azure
 Cosmos database service.
 """
+
 from . import http_constants
 from .documents import _OperationType
 

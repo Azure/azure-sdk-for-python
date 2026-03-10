@@ -28,13 +28,16 @@ async def sample_get_detailed_diagnostics_information_async() -> None:
     import json
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics.aio import TextAnalyticsClient
+
     _LOGGER = logging.getLogger(__name__)
 
     endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
     key = os.environ["AZURE_LANGUAGE_KEY"]
 
     # This client will log detailed information about its HTTP sessions, at DEBUG level
-    text_analytics_client = TextAnalyticsClient(endpoint=endpoint, credential=AzureKeyCredential(key), logging_enable=True)
+    text_analytics_client = TextAnalyticsClient(
+        endpoint=endpoint, credential=AzureKeyCredential(key), logging_enable=True
+    )
 
     documents = [
         """I had the best day of my life. I decided to go sky-diving and it made me appreciate my whole life so much more.
@@ -42,7 +45,7 @@ async def sample_get_detailed_diagnostics_information_async() -> None:
         """,
         "This was a waste of my time. The speaker put me to sleep.",
         "No tengo dinero ni nada que dar...",
-        "L'hôtel n'était pas très confortable. L'éclairage était trop sombre."
+        "L'hôtel n'était pas très confortable. L'éclairage était trop sombre.",
     ]
 
     json_responses = []
@@ -58,10 +61,7 @@ async def sample_get_detailed_diagnostics_information_async() -> None:
 
     async with text_analytics_client:
         result = await text_analytics_client.extract_key_phrases(
-            documents,
-            show_stats=True,
-            model_version="latest",
-            raw_response_hook=callback
+            documents, show_stats=True, model_version="latest", raw_response_hook=callback
         )
         for doc in result:
             _LOGGER.warning(f"Doc with id {doc.id} has these warnings: {doc.warnings}")
@@ -73,5 +73,5 @@ async def main():
     await sample_get_detailed_diagnostics_information_async()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

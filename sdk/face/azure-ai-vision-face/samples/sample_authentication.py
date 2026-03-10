@@ -26,6 +26,7 @@ USAGE:
     4) AZURE_CLIENT_ID - the application (client) ID registered in the AAD tenant
     5) AZURE_CLIENT_SECRET - the client secret for the registered application
 """
+
 import os
 
 from dotenv import find_dotenv, load_dotenv

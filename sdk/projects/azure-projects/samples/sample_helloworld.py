@@ -27,6 +27,7 @@ USAGE:
     Running the samples requires that Azure Developer CLI be installed and authenticated:
     For more information: https://learn.microsoft.com/azure/developer/azure-developer-cli/
 """
+
 import asyncio
 import time
 

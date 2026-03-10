@@ -20,15 +20,12 @@ def get_mixedreality_credential(account_id, account_domain, endpoint_url, creden
         return credential
 
     return MixedRealityTokenCredential(
-        account_id=account_id,
-        account_domain=account_domain,
-        endpoint_url=endpoint_url,
-        credential=credential,
-        **kwargs)
+        account_id=account_id, account_domain=account_domain, endpoint_url=endpoint_url, credential=credential, **kwargs
+    )
 
 
 class MixedRealityTokenCredential(object):
-    """ Represents a token credential that can be used to access a Mixed Reality service.
+    """Represents a token credential that can be used to access a Mixed Reality service.
     This implements the TokenCredential protocol.
 
     :param str account_id: The Mixed Reality service account identifier.
@@ -43,8 +40,9 @@ class MixedRealityTokenCredential(object):
             account_domain=account_domain,
             endpoint_url=endpoint_url,
             credential=credential,
-            **kwargs)
+            **kwargs
+        )
 
-    def get_token(self, *scopes, **kwargs): #pylint: disable=unused-argument
+    def get_token(self, *scopes, **kwargs):  # pylint: disable=unused-argument
         # type: (*str, **Any) -> AccessToken
         return self.stsClient.get_token(**kwargs)

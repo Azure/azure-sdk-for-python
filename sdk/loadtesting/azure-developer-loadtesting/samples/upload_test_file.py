@@ -21,6 +21,7 @@ USAGE:
 
     Please ensure that correct file and path is used
 """
+
 from azure.developer.loadtesting import LoadTestAdministrationClient
 
 # for details refer: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/loadtesting/azure-developer-loadtesting/README.md

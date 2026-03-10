@@ -267,7 +267,7 @@ def _get_param_with_standard_annotation(
         """
 
         def _split(
-            _fields: Dict[str, Union[Annotation, Input, Output]]
+            _fields: Dict[str, Union[Annotation, Input, Output]],
         ) -> Tuple[Dict[str, Union[Annotation, Input, Output]], Dict[str, Union[Annotation, Input, Output]]]:
             """Split fields to two parts from the first default field.
 

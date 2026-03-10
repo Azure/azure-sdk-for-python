@@ -49,15 +49,12 @@ def add_sanitizers(test_proxy, environment_variables):
         ENV_ARR_STORAGE_ACCOUNT_NAME: TEST_ARR_STORAGE_ACCOUNT_NAME,
         ENV_ARR_SAS_TOKEN: TEST_ARR_SAS_TOKEN,
         ENV_ARR_BLOB_CONTAINER_NAME: TEST_ARR_BLOB_CONTAINER_NAME,
-        ENV_STORAGE_ENDPOINT_SUFFIX: TEST_STORAGE_ENDPOINT_SUFFIX
+        ENV_STORAGE_ENDPOINT_SUFFIX: TEST_STORAGE_ENDPOINT_SUFFIX,
     }
     environment_variables.sanitize_batch(sanitization_mapping)
     add_remove_header_sanitizer(headers="X-MRC-CV")
     add_body_key_sanitizer(json_path="AccessToken", value="fake.eyJleHAiOjIxNDc0ODM2NDd9.fake")
-    add_general_regex_sanitizer(
-        regex=f"{TEST_ID_PLACEHOLDER}[a-z0-9-]+",
-        value=TEST_ID_PLACEHOLDER
-    )
+    add_general_regex_sanitizer(regex=f"{TEST_ID_PLACEHOLDER}[a-z0-9-]+", value=TEST_ID_PLACEHOLDER)
 
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3430: $..id
@@ -76,7 +73,7 @@ def account_info(environment_variables):
         "blob_container_name": environment_variables.get(ENV_ARR_BLOB_CONTAINER_NAME),
         "storage_endpoint_suffix": environment_variables.get(ENV_STORAGE_ENDPOINT_SUFFIX),
         "key_credential": AzureKeyCredential(environment_variables.get(ENV_ARR_ACCOUNT_KEY)),
-        "id_placeholder": TEST_ID_PLACEHOLDER
+        "id_placeholder": TEST_ID_PLACEHOLDER,
     }
 
 
@@ -91,7 +88,7 @@ def arr_client(account_info):
         account_id=account_info["account_id"],
         account_domain=account_info["account_domain"],
         credential=account_info["key_credential"],
-        polling_interval=polling_interval
+        polling_interval=polling_interval,
     )
     yield client
     client.close()
@@ -105,7 +102,7 @@ async def async_arr_client(account_info):
         account_id=account_info["account_id"],
         account_domain=account_info["account_domain"],
         credential=account_info["key_credential"],
-        polling_interval=polling_interval
+        polling_interval=polling_interval,
     )
     yield client
     await client.close()

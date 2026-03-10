@@ -41,10 +41,12 @@ async def main():
     service_client = WebPubSubServiceClient.from_connection_string(  # type: ignore
         connection_string=os.getenv("WEBPUBSUB_CONNECTION_STRING", ""), hub="hub"
     )
+
     async def client_access_url_provider():
-        return (await service_client.get_client_access_token(
-            roles=["webpubsub.joinLeaveGroup", "webpubsub.sendToGroup"]
-        ))["url"]
+        return (
+            await service_client.get_client_access_token(roles=["webpubsub.joinLeaveGroup", "webpubsub.sendToGroup"])
+        )["url"]
+
     client = WebPubSubClient(
         credential=WebPubSubClientCredential(client_access_url_provider=client_access_url_provider),
     )
@@ -55,9 +57,7 @@ async def main():
         await client.subscribe(CallbackType.GROUP_MESSAGE, on_group_message)
         group_name = "hello_world_async"
         await client.join_group(group_name)
-        await client.send_to_group(
-            group_name, "hello text", WebPubSubDataType.TEXT, no_echo=False, ack=False
-        )
+        await client.send_to_group(group_name, "hello text", WebPubSubDataType.TEXT, no_echo=False, ack=False)
         await client.send_to_group(group_name, {"hello": "json"}, WebPubSubDataType.JSON)
         await client.send_to_group(group_name, "hello text", WebPubSubDataType.TEXT)
         content = memoryview("hello binary".encode())

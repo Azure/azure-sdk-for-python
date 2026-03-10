@@ -39,10 +39,10 @@ def rotate_left_64(val: int, shift: int) -> int:
 
 def mix(value: _UInt64) -> _UInt64:
     value ^= value >> 33
-    value *= 0xff51afd7ed558ccd
+    value *= 0xFF51AFD7ED558CCD
     value = value & 0xFFFFFFFFFFFFFFFF
     value ^= value >> 33
-    value *= 0xc4ceb9fe1a85ec53
+    value *= 0xC4CEB9FE1A85EC53
     value = value & 0xFFFFFFFFFFFFFFFF
     value ^= value >> 33
     return value
@@ -63,15 +63,15 @@ def murmurhash3_128(span: bytearray, seed: _UInt128) -> _UInt128:  # pylint: dis
     :rtype:
         UInt128
     """
-    c1 = _UInt64(0x87c37b91114253d5)
-    c2 = _UInt64(0x4cf5ad432745937f)
+    c1 = _UInt64(0x87C37B91114253D5)
+    c2 = _UInt64(0x4CF5AD432745937F)
     h1 = seed.get_low()
     h2 = seed.get_high()
 
     position = 0
     while position < len(span) - 15:
-        k1 = _UInt64(int.from_bytes(span[position: position + 8], 'little'))
-        k2 = _UInt64(int.from_bytes(span[position + 8: position + 16], 'little'))
+        k1 = _UInt64(int.from_bytes(span[position : position + 8], "little"))
+        k2 = _UInt64(int.from_bytes(span[position + 8 : position + 16], "little"))
 
         k1 *= c1
         k1.value = rotate_left_64(k1.value, 31)
@@ -79,7 +79,7 @@ def murmurhash3_128(span: bytearray, seed: _UInt128) -> _UInt128:  # pylint: dis
         h1 ^= k1
         h1.value = rotate_left_64(h1.value, 27)
         h1 += h2
-        h1 = h1 * 5 + _UInt64(0x52dce729)
+        h1 = h1 * 5 + _UInt64(0x52DCE729)
 
         k2 *= c2
         k2.value = rotate_left_64(k2.value, 33)
@@ -87,7 +87,7 @@ def murmurhash3_128(span: bytearray, seed: _UInt128) -> _UInt128:  # pylint: dis
         h2 ^= k2
         h2.value = rotate_left_64(h2.value, 31)
         h2 += h1
-        h2 = h2 * 5 + _UInt64(0x38495ab5)
+        h2 = h2 * 5 + _UInt64(0x38495AB5)
 
         position += 16
 
@@ -150,16 +150,16 @@ def murmurhash3_128(span: bytearray, seed: _UInt128) -> _UInt128:  # pylint: dis
 
 
 def murmurhash3_32(data: bytearray, seed: int) -> _UInt32:
-    c1: _UInt32 = _UInt32(0xcc9e2d51)
-    c2: _UInt32 = _UInt32(0x1b873593)
+    c1: _UInt32 = _UInt32(0xCC9E2D51)
+    c2: _UInt32 = _UInt32(0x1B873593)
     length: _UInt32 = _UInt32(len(data))
     h1: _UInt32 = _UInt32(seed)
-    rounded_end: _UInt32 = _UInt32(length.value & 0xfffffffc)  # round down to 4 byte block
+    rounded_end: _UInt32 = _UInt32(length.value & 0xFFFFFFFC)  # round down to 4 byte block
 
     for i in range(0, rounded_end.value, 4):
         # little endian load order
         k1: _UInt32 = _UInt32(
-            (data[i] & 0xff) | ((data[i + 1] & 0xff) << 8) | ((data[i + 2] & 0xff) << 16) | (data[i + 3] << 24)
+            (data[i] & 0xFF) | ((data[i + 1] & 0xFF) << 8) | ((data[i + 2] & 0xFF) << 16) | (data[i + 3] << 24)
         )
         k1 *= c1
         k1.value = (k1.value << 15) | (k1.value >> 17)  # ROTL32(k1,15)
@@ -167,16 +167,16 @@ def murmurhash3_32(data: bytearray, seed: int) -> _UInt32:
 
         h1 ^= k1
         h1.value = (h1.value << 13) | (h1.value >> 19)  # ROTL32(h1,13)
-        h1 = h1 * _UInt32(5) + _UInt32(0xe6546b64)
+        h1 = h1 * _UInt32(5) + _UInt32(0xE6546B64)
 
     # tail
     k1 = _UInt32(0)
     if length.value & 0x03 == 3:
-        k1 ^= _UInt32((data[rounded_end.value + 2] & 0xff) << 16)
+        k1 ^= _UInt32((data[rounded_end.value + 2] & 0xFF) << 16)
     if length.value & 0x03 >= 2:
-        k1 ^= _UInt32((data[rounded_end.value + 1] & 0xff) << 8)
+        k1 ^= _UInt32((data[rounded_end.value + 1] & 0xFF) << 8)
     if length.value & 0x03 >= 1:
-        k1 ^= _UInt32(data[rounded_end.value] & 0xff)
+        k1 ^= _UInt32(data[rounded_end.value] & 0xFF)
         k1 *= c1
         k1.value = (k1.value << 15) | (k1.value >> 17)
         k1 *= c2
@@ -185,9 +185,9 @@ def murmurhash3_32(data: bytearray, seed: int) -> _UInt32:
     # finalization
     h1 ^= length
     h1.value ^= h1.value >> 16
-    h1 *= _UInt32(0x85ebca6b)
+    h1 *= _UInt32(0x85EBCA6B)
     h1.value ^= h1.value >> 13
-    h1 *= _UInt32(0xc2b2ae35)
+    h1 *= _UInt32(0xC2B2AE35)
     h1.value ^= h1.value >> 16
 
     return h1

@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for the retry policy."""
+
 from io import BytesIO
 import pytest
 from itertools import product

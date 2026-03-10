@@ -52,16 +52,12 @@ async def analyze_custom_documents_async(custom_model_id):
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
     model_id = os.getenv("CUSTOM_BUILT_MODEL_ID", custom_model_id)
 
-    document_analysis_client = DocumentAnalysisClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
+    document_analysis_client = DocumentAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     async with document_analysis_client:
         # Make sure your document's type is included in the list of document types the custom model can analyze
         with open(path_to_sample_documents, "rb") as f:
-            poller = await document_analysis_client.begin_analyze_document(
-                model_id=model_id, document=f
-            )
+            poller = await document_analysis_client.begin_analyze_document(model_id=model_id, document=f)
         result = await poller.result()
 
     for idx, document in enumerate(result.documents):
@@ -94,9 +90,7 @@ async def analyze_custom_documents_async(custom_model_id):
         for region in table.bounding_regions:
             print(f"...{region.page_number}")
         for cell in table.cells:
-            print(
-                f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'"
-            )
+            print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
     print("-----------------------------------")
     # [END analyze_custom_documents_async]
 

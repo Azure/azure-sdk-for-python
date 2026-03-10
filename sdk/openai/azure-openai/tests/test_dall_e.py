@@ -13,10 +13,7 @@ from conftest import configure, DALLE_AZURE, OPENAI, PREVIEW, GA
 class TestDallE(AzureRecordedTestCase):
 
     @configure
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(DALLE_AZURE, GA), (DALLE_AZURE, PREVIEW), (OPENAI, "v1")]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(DALLE_AZURE, GA), (DALLE_AZURE, PREVIEW), (OPENAI, "v1")])
     def test_image_create(self, client, api_type, api_version, **kwargs):
         image = client.images.generate(
             prompt="a cute baby seal",

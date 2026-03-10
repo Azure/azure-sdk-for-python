@@ -7,7 +7,7 @@ import os
 import uuid
 from azure.identity import DefaultAzureCredential
 from azure.appconfiguration.provider import load, SettingSelector
-from azure.appconfiguration import (  # type:ignore
+from azure.appconfiguration import (  # type: ignore
     AzureAppConfigurationClient,
     ConfigurationSettingsFilter,
     ConfigurationSetting,

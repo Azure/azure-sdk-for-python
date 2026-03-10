@@ -13,7 +13,6 @@ from azure.core.rest import AsyncHttpResponse, HttpResponse, HttpRequest
 from ..models import SecurityDomain, SecurityDomainOperationStatus
 from .._utils.model_base import _deserialize
 
-
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
 # Correct success response should be "Succeeded", but this has already shipped. Still, handle "Succeeded" just in case.

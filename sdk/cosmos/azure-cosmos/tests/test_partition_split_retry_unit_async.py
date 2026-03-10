@@ -20,6 +20,7 @@ from azure.cosmos._execution_context.aio.base_execution_context import _DefaultQ
 # tracemalloc is not available in PyPy, so we import conditionally
 try:
     import tracemalloc
+
     HAS_TRACEMALLOC = True
 except ImportError:
     HAS_TRACEMALLOC = False
@@ -29,14 +30,17 @@ except ImportError:
 # Shared Test Helpers
 # ====================================
 
+
 class MockGlobalEndpointManager:
     """Mock global endpoint manager for testing."""
+
     def is_circuit_breaker_applicable(self, request):
         return False
 
 
 class MockClient:
     """Mock Cosmos client for testing partition split retry logic."""
+
     def __init__(self):
         self._global_endpoint_manager = MockGlobalEndpointManager()
         self.refresh_routing_map_provider_call_count = 0
@@ -51,10 +55,7 @@ class MockClient:
 
 def create_410_partition_split_error():
     """Create a 410 partition split error for testing."""
-    error = exceptions.CosmosHttpResponseError(
-        status_code=StatusCodes.GONE,
-        message="Partition key range is gone"
-    )
+    error = exceptions.CosmosHttpResponseError(status_code=StatusCodes.GONE, message="Partition key range is gone")
     error.sub_status = SubStatusCodes.PARTITION_KEY_RANGE_GONE
     return error
 
@@ -67,7 +68,6 @@ def raise_410_partition_split_error(*args, **kwargs):
 # ===============================
 # Test Class
 # ===============================
-
 
 
 @pytest.mark.cosmosEmulator
@@ -96,8 +96,7 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
 
         # Verify the loop condition WITHOUT state reset - this is FALSE
         loop_condition_without_reset = context._continuation or not context._has_started
-        assert not loop_condition_without_reset, \
-            "Without state reset, loop condition should be False"
+        assert not loop_condition_without_reset, "Without state reset, loop condition should be False"
 
         # Verify _fetch_items_helper_no_retries returns empty when state is not reset
         fetch_was_called = [False]
@@ -107,10 +106,8 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
             return ([{"id": "1"}], {})
 
         result = await context._fetch_items_helper_no_retries(tracking_fetch)
-        assert not fetch_was_called[0], \
-            "Fetch should NOT be called when _has_started=True and _continuation=None"
-        assert result == [], \
-            "Should return empty list when while loop doesn't execute"
+        assert not fetch_was_called[0], "Fetch should NOT be called when _has_started=True and _continuation=None"
+        assert result == [], "Should return empty list when while loop doesn't execute"
 
         # reset state
         context._has_started = False
@@ -118,12 +115,10 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
 
         # Verify _fetch_items_helper_no_retries works after state reset
         result = await context._fetch_items_helper_no_retries(tracking_fetch)
-        assert fetch_was_called[0], \
-            "Fetch SHOULD be called after state reset"
-        assert result == [{"id": "1"}], \
-            "Should return documents after state reset"
+        assert fetch_was_called[0], "Fetch SHOULD be called after state reset"
+        assert result == [{"id": "1"}], "Should return documents after state reset"
 
-    @patch('azure.cosmos.aio._retry_utility_async.ExecuteAsync')
+    @patch("azure.cosmos.aio._retry_utility_async.ExecuteAsync")
     async def test_retry_with_410_resets_state_and_succeeds_async(self, mock_execute):
         """
         Test the full retry flow: 410 partition split error triggers state reset and retry succeeds (async).
@@ -147,11 +142,12 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
         result = await context._fetch_items_helper_with_retries(mock_fetch_function)
 
         assert call_count[0] == 2, "Should have retried once after 410"
-        assert mock_client.refresh_routing_map_provider_call_count == 1, \
-            "refresh_routing_map_provider should be called once on 410"
+        assert (
+            mock_client.refresh_routing_map_provider_call_count == 1
+        ), "refresh_routing_map_provider should be called once on 410"
         assert result == expected_docs, "Should return expected documents after retry"
 
-    @patch('azure.cosmos.aio._retry_utility_async.ExecuteAsync')
+    @patch("azure.cosmos.aio._retry_utility_async.ExecuteAsync")
     async def test_pk_range_query_skips_410_retry_to_prevent_recursion_async(self, mock_execute):
         """
         Test that partition key range queries skip 410 retry to prevent recursion (async).
@@ -170,12 +166,12 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
             await context._fetch_items_helper_with_retries(mock_fetch_function)
 
         assert exc_info.value.status_code == StatusCodes.GONE
-        assert mock_client.refresh_routing_map_provider_call_count == 0, \
-            "refresh_routing_map_provider should NOT be called for PK range queries"
-        assert mock_execute.call_count == 1, \
-            "ExecuteAsync should only be called once - no retry for PK range queries"
+        assert (
+            mock_client.refresh_routing_map_provider_call_count == 0
+        ), "refresh_routing_map_provider should NOT be called for PK range queries"
+        assert mock_execute.call_count == 1, "ExecuteAsync should only be called once - no retry for PK range queries"
 
-    @patch('azure.cosmos.aio._retry_utility_async.ExecuteAsync')
+    @patch("azure.cosmos.aio._retry_utility_async.ExecuteAsync")
     async def test_410_retry_behavior_with_and_without_pk_range_flag_async(self, mock_execute):
         """
         Test that verifies the fix for the partition split recursion problem (async).
@@ -199,10 +195,10 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
         with pytest.raises(exceptions.CosmosHttpResponseError):
             await context._fetch_items_helper_with_retries(mock_fetch_function)
 
-        assert mock_client.refresh_routing_map_provider_call_count == 3, \
-            f"Expected 3 refresh calls, got {mock_client.refresh_routing_map_provider_call_count}"
-        assert mock_execute.call_count == 4, \
-            f"Expected 4 ExecuteAsync calls, got {mock_execute.call_count}"
+        assert (
+            mock_client.refresh_routing_map_provider_call_count == 3
+        ), f"Expected 3 refresh calls, got {mock_client.refresh_routing_map_provider_call_count}"
+        assert mock_execute.call_count == 4, f"Expected 4 ExecuteAsync calls, got {mock_execute.call_count}"
 
         # Test 2: PK range query (with flag) - should NOT retry
         mock_client.reset_counts()
@@ -215,13 +211,13 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
         with pytest.raises(exceptions.CosmosHttpResponseError):
             await context_pk_range._fetch_items_helper_with_retries(mock_fetch_function)
 
-        assert mock_client.refresh_routing_map_provider_call_count == 0, \
-            f"With flag, expected 0 refresh calls, got {mock_client.refresh_routing_map_provider_call_count}"
-        assert mock_execute.call_count == 1, \
-            f"With flag, expected 1 ExecuteAsync call, got {mock_execute.call_count}"
+        assert (
+            mock_client.refresh_routing_map_provider_call_count == 0
+        ), f"With flag, expected 0 refresh calls, got {mock_client.refresh_routing_map_provider_call_count}"
+        assert mock_execute.call_count == 1, f"With flag, expected 1 ExecuteAsync call, got {mock_execute.call_count}"
 
     @pytest.mark.skipif(not HAS_TRACEMALLOC, reason="tracemalloc not available in PyPy")
-    @patch('azure.cosmos.aio._retry_utility_async.ExecuteAsync')
+    @patch("azure.cosmos.aio._retry_utility_async.ExecuteAsync")
     async def test_memory_bounded_no_leak_on_410_retries_async(self, mock_execute):
         """
         Test that memory usage is bounded during 410 partition split retries.
@@ -256,7 +252,7 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
         gc.collect()
         snapshot_after = tracemalloc.take_snapshot()
         # compare_to() shows memory difference between snapshots to identify growth
-        top_stats = snapshot_after.compare_to(snapshot_before, 'lineno')
+        top_stats = snapshot_after.compare_to(snapshot_before, "lineno")
         memory_growth = sum(stat.size_diff for stat in top_stats if stat.size_diff > 0)
         peak_memory = tracemalloc.get_traced_memory()[1]
         # tracemalloc.stop() ends memory tracing and frees tracing overhead
@@ -278,14 +274,14 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
         print(f"  - Peak memory:     {peak_memory / 1024:.2f} KB")
         print(f"{'=' * 60}")
 
-        assert execute_calls == 4, \
-            f"Execute calls should be bounded to 4, got {execute_calls}"
-        assert refresh_calls == 3, \
-            f"Refresh calls should be bounded to 3, got {refresh_calls}"
-        assert elapsed_time < 1.0, \
-            f"Should complete quickly (< 1s), took {elapsed_time:.2f}s - indicates no infinite loop"
-        assert memory_growth < 500 * 1024, \
-            f"Memory growth should be < 500KB, got {memory_growth / 1024:.2f} KB - indicates no memory leak"
+        assert execute_calls == 4, f"Execute calls should be bounded to 4, got {execute_calls}"
+        assert refresh_calls == 3, f"Refresh calls should be bounded to 3, got {refresh_calls}"
+        assert (
+            elapsed_time < 1.0
+        ), f"Should complete quickly (< 1s), took {elapsed_time:.2f}s - indicates no infinite loop"
+        assert (
+            memory_growth < 500 * 1024
+        ), f"Memory growth should be < 500KB, got {memory_growth / 1024:.2f} KB - indicates no memory leak"
 
         # Test PK range query - should have NO retries (prevents recursion)
         mock_client.reset_counts()
@@ -306,12 +302,9 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
         print(f"  - Refresh calls:   {pk_refresh_calls} (no recursion)")
         print(f"{'=' * 60}\n")
 
-        assert pk_execute_calls == 1, \
-            f"PK range query should have 1 execute call, got {pk_execute_calls}"
-        assert pk_refresh_calls == 0, \
-            f"PK range query should have 0 refresh calls, got {pk_refresh_calls}"
+        assert pk_execute_calls == 1, f"PK range query should have 1 execute call, got {pk_execute_calls}"
+        assert pk_refresh_calls == 0, f"PK range query should have 0 refresh calls, got {pk_refresh_calls}"
 
 
 if __name__ == "__main__":
     unittest.main()
-

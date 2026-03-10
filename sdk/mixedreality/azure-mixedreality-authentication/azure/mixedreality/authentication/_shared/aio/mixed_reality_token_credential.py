@@ -13,25 +13,20 @@ if TYPE_CHECKING:
     from azure.core.credentials import AccessToken
     from azure.core.credentials_async import AsyncTokenCredential
 
+
 def get_mixedreality_credential(
-    account_id: str,
-    account_domain: str,
-    endpoint_url: str,
-    credential: "AsyncTokenCredential",
-    **kwargs):
+    account_id: str, account_domain: str, endpoint_url: str, credential: "AsyncTokenCredential", **kwargs
+):
     if isinstance(credential, StaticAccessTokenCredential):
         return credential
 
     return MixedRealityTokenCredential(
-        account_id=account_id,
-        account_domain=account_domain,
-        endpoint_url=endpoint_url,
-        credential=credential,
-        **kwargs)
+        account_id=account_id, account_domain=account_domain, endpoint_url=endpoint_url, credential=credential, **kwargs
+    )
 
 
 class MixedRealityTokenCredential(object):
-    """ Represents a token credential that can be used to access a Mixed Reality service.
+    """Represents a token credential that can be used to access a Mixed Reality service.
     This implements the TokenCredential protocol.
 
     :param str account_id: The Mixed Reality service account identifier.
@@ -40,20 +35,17 @@ class MixedRealityTokenCredential(object):
     """
 
     def __init__(
-        self,
-        account_id: str,
-        account_domain: str,
-        endpoint_url: str,
-        credential: "AsyncTokenCredential",
-        **kwargs):
+        self, account_id: str, account_domain: str, endpoint_url: str, credential: "AsyncTokenCredential", **kwargs
+    ):
         self.stsClient = MixedRealityStsClient(
             account_id=account_id,
             account_domain=account_domain,
             endpoint_url=endpoint_url,
             credential=credential,
-            **kwargs)
+            **kwargs
+        )
 
-    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken": #pylint: disable=unused-argument
+    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint: disable=unused-argument
         return await self.stsClient.get_token(**kwargs)
 
     async def close(self) -> None:

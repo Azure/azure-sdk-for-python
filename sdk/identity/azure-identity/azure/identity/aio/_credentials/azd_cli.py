@@ -28,7 +28,6 @@ from ..._credentials.azd_cli import (
 )
 from ..._internal import encode_base64, resolve_tenant, within_dac, validate_tenant_id, validate_scope
 
-
 _LOGGER = logging.getLogger(__name__)
 
 

@@ -17,7 +17,6 @@ from dataclasses import dataclass
 from io import StringIO, TextIOBase
 from typing import Any, Dict, Final, Mapping, Optional, Set, TextIO, Tuple, Union
 
-
 valid_logging_level: Final[Set[str]] = {"CRITICAL", "FATAL", "ERROR", "WARN", "WARNING", "INFO", "DEBUG", "NOTSET"}
 
 

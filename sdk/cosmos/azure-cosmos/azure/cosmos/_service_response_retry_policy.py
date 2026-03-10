@@ -6,9 +6,11 @@ Cosmos database service. Exceptions caught in this policy have had some issue re
 from the service, and as such we do not know what the output of the operation was. As such, we
 only do cross regional retries for read operations.
 """
-#cspell:ignore PPAF, ppaf
+
+# cspell:ignore PPAF, ppaf
 
 from azure.cosmos.documents import _OperationType
+
 
 class ServiceResponseRetryPolicy(object):
 
@@ -25,8 +27,9 @@ class ServiceResponseRetryPolicy(object):
                 # If the request is a write operation, we set the maximum retry count to be the number of
                 # write retries provided by the customer.
                 self.max_write_retry_count = self.request.retry_write
-            self.location_endpoint = (self.global_endpoint_manager
-                                      .resolve_service_endpoint_for_partition(self.request, pk_range_wrapper))
+            self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint_for_partition(
+                self.request, pk_range_wrapper
+            )
 
     def ShouldRetry(self):
         """Returns true if the request should retry based on preferred regions and retries already done.
@@ -38,8 +41,9 @@ class ServiceResponseRetryPolicy(object):
             return False
 
         # Check if the next retry about to be done is safe
-        if ((self.failover_retry_count + 1) >= self.total_retries and
-                _OperationType.IsReadOnlyOperation(self.request.operation_type)):
+        if (self.failover_retry_count + 1) >= self.total_retries and _OperationType.IsReadOnlyOperation(
+            self.request.operation_type
+        ):
             return False
 
         if self.request:

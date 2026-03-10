@@ -28,7 +28,6 @@ from azure.confidentialledger.certificate import (
 )
 from azure.identity import DefaultAzureCredential
 
-
 logging.basicConfig(level=logging.ERROR)
 LOG = logging.getLogger()
 

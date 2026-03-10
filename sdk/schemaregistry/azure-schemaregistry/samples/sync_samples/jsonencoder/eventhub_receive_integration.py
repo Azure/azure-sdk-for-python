@@ -28,6 +28,7 @@ This example uses DefaultAzureCredential, which requests a token from Azure Acti
 For more information on DefaultAzureCredential, see
     https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential?view=azure-python
 """
+
 import os
 from azure.eventhub import EventHubConsumerClient
 from azure.identity import DefaultAzureCredential

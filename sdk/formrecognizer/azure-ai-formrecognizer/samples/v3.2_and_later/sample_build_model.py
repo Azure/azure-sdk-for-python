@@ -40,9 +40,7 @@ def sample_build_model():
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
     container_sas_url = os.environ["CONTAINER_SAS_URL"]
 
-    document_model_admin_client = DocumentModelAdministrationClient(
-        endpoint, AzureKeyCredential(key)
-    )
+    document_model_admin_client = DocumentModelAdministrationClient(endpoint, AzureKeyCredential(key))
     poller = document_model_admin_client.begin_build_document_model(
         ModelBuildMode.TEMPLATE,
         blob_container_url=container_sas_url,
@@ -56,9 +54,7 @@ def sample_build_model():
     print(f"Model expires on: {model.expires_on}")
     print("Doc types the model can recognize:")
     for name, doc_type in model.doc_types.items():
-        print(
-            f"Doc Type: '{name}' built with '{doc_type.build_mode}' mode which has the following fields:"
-        )
+        print(f"Doc Type: '{name}' built with '{doc_type.build_mode}' mode which has the following fields:")
         for field_name, field in doc_type.field_schema.items():
             print(
                 f"Field: '{field_name}' has type '{field['type']}' and confidence score "

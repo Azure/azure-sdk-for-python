@@ -8,7 +8,7 @@
 FILE: deidentify_documents_async.py
 
 DESCRIPTION:
-    This sample demonstrates a basic scenario of de-identifying documents in Azure Storage. 
+    This sample demonstrates a basic scenario of de-identifying documents in Azure Storage.
     Taking a container URI and an input prefix, the sample will create a job and wait for the job to complete.
 
 USAGE:
@@ -20,7 +20,6 @@ USAGE:
     3) INPUT_PREFIX - the prefix of the input document name(s) in the container.
         For example, providing "folder1" would create a job that would process documents like "https://<storageaccount>.blob.core.windows.net/<container>/folder1/document1.txt".
 """
-
 
 import asyncio
 from azure.core.polling import AsyncLROPoller

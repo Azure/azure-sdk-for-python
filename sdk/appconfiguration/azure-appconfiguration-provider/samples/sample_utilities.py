@@ -13,6 +13,7 @@ DESCRIPTION:
     - get_credential(): get credential of the ConfigurationClient
     It is not a file expected to run independently.
 """
+
 from azure.identity import AzureAuthorityHosts, DefaultAzureCredential
 from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
 

@@ -15,10 +15,7 @@ class TestCompletions(AzureRecordedTestCase):
     """Missing tests for keyword argument `suffix`"""
 
     @configure
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")])
     def test_completion(self, client, api_type, api_version, **kwargs):
 
         completion = client.completions.create(prompt="hello world", **kwargs)
@@ -35,10 +32,7 @@ class TestCompletions(AzureRecordedTestCase):
         assert completion.choices[0].text is not None
 
     @configure
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")])
     def test_batched_completions(self, client, api_type, api_version, **kwargs):
 
         completion = client.completions.create(prompt=["hello world", "how are you today?"], **kwargs)
@@ -55,12 +49,11 @@ class TestCompletions(AzureRecordedTestCase):
             assert c.index is not None
             assert c.text
 
-    @pytest.mark.skip("openai.error.APIError: Invalid response object from API: 'Unsupported data type\n' (HTTP response code was 400)")
-    @configure
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
+    @pytest.mark.skip(
+        "openai.error.APIError: Invalid response object from API: 'Unsupported data type\n' (HTTP response code was 400)"
     )
+    @configure
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")])
     def test_completion_token_input(self, client, api_type, api_version, **kwargs):
 
         completion = client.completions.create(prompt=[10919, 3124, 318, 281, 17180, 30], **kwargs)
@@ -78,13 +71,12 @@ class TestCompletions(AzureRecordedTestCase):
             assert c.text
 
     @configure
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")])
     def test_streamed_completions(self, client, api_type, api_version, **kwargs):
 
-        response = client.completions.create(prompt="how do I bake a chocolate cake?", max_tokens=500, stream=True, **kwargs)
+        response = client.completions.create(
+            prompt="how do I bake a chocolate cake?", max_tokens=500, stream=True, **kwargs
+        )
         for completion in response:
             # API versions after 2023-05-15 send an empty first completion with RAI
             if len(completion.choices) > 0:
@@ -97,17 +89,10 @@ class TestCompletions(AzureRecordedTestCase):
                     assert c.text is not None
 
     @configure
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")])
     def test_completion_max_tokens(self, client, api_type, api_version, **kwargs):
 
-        completion = client.completions.create(
-            prompt="How do I bake a chocolate cake?",
-            max_tokens=50,
-            **kwargs
-        )
+        completion = client.completions.create(prompt="How do I bake a chocolate cake?", max_tokens=50, **kwargs)
 
         assert completion.id
         assert completion.object == "text_completion"
@@ -122,10 +107,7 @@ class TestCompletions(AzureRecordedTestCase):
         assert completion.choices[0].text is not None
 
     @configure
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(AZURE, PREVIEW), (AZURE, GA)]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, PREVIEW), (AZURE, GA)])
     def test_completion_content_filter_prompt(self, client, api_type, api_version, **kwargs):
 
         with pytest.raises(openai.BadRequestError) as e:
@@ -136,20 +118,16 @@ class TestCompletions(AzureRecordedTestCase):
         err = e.value
         assert err.status_code == 400
         assert err.body["code"] == "content_filter"
-        assert "The response was filtered due to the prompt triggering Azure OpenAI's content management policy" in err.body["message"]
+        assert (
+            "The response was filtered due to the prompt triggering Azure OpenAI's content management policy"
+            in err.body["message"]
+        )
 
     @configure
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")])
     def test_completion_temperature(self, client, api_type, api_version, **kwargs):
 
-        completion = client.completions.create(
-            prompt="How do I bake a chocolate cake?",
-            temperature=0.8,
-            **kwargs
-        )
+        completion = client.completions.create(prompt="How do I bake a chocolate cake?", temperature=0.8, **kwargs)
 
         assert completion.id
         assert completion.object == "text_completion"
@@ -164,17 +142,10 @@ class TestCompletions(AzureRecordedTestCase):
         assert completion.choices[0].text is not None
 
     @configure
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")])
     def test_completion_top_p(self, client, api_type, api_version, **kwargs):
 
-        completion = client.completions.create(
-            prompt="How do I bake a chocolate cake?",
-            top_p=0.1,
-            **kwargs
-        )
+        completion = client.completions.create(prompt="How do I bake a chocolate cake?", top_p=0.1, **kwargs)
 
         assert completion.id
         assert completion.object == "text_completion"
@@ -189,17 +160,10 @@ class TestCompletions(AzureRecordedTestCase):
         assert completion.choices[0].text is not None
 
     @configure
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")])
     def test_completion_n(self, client, api_type, api_version, **kwargs):
 
-        completion = client.completions.create(
-            prompt="hello world",
-            n=3,
-            **kwargs
-        )
+        completion = client.completions.create(prompt="hello world", n=3, **kwargs)
 
         assert completion.id
         assert completion.object == "text_completion"
@@ -214,17 +178,10 @@ class TestCompletions(AzureRecordedTestCase):
             assert c.text is not None
 
     @configure
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")])
     def test_completion_logprobs(self, client, api_type, api_version, **kwargs):
 
-        completion = client.completions.create(
-            prompt="How do I bake a chocolate cake?",
-            logprobs=2,
-            **kwargs
-        )
+        completion = client.completions.create(prompt="How do I bake a chocolate cake?", logprobs=2, **kwargs)
 
         assert completion.id
         assert completion.object == "text_completion"
@@ -243,18 +200,11 @@ class TestCompletions(AzureRecordedTestCase):
         assert completion.choices[0].logprobs.text_offset
 
     @configure
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(AZURE, PREVIEW), (AZURE, GA)]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, PREVIEW), (AZURE, GA)])
     def test_completion_echo(self, client, api_type, api_version, **kwargs):
 
         prompt = "How do I bake a chocolate cake?"
-        completion = client.completions.create(
-            prompt=prompt,
-            echo=True,
-            **kwargs
-        )
+        completion = client.completions.create(prompt=prompt, echo=True, **kwargs)
 
         assert completion.id
         assert completion.object == "text_completion"
@@ -269,17 +219,10 @@ class TestCompletions(AzureRecordedTestCase):
         assert prompt in completion.choices[0].text
 
     @configure
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")])
     def test_completion_stop(self, client, api_type, api_version, **kwargs):
 
-        completion = client.completions.create(
-            prompt="How do I bake a chocolate cake?",
-            stop=" ",
-            **kwargs
-        )
+        completion = client.completions.create(prompt="How do I bake a chocolate cake?", stop=" ", **kwargs)
 
         assert completion.id
         assert completion.object == "text_completion"
@@ -293,17 +236,11 @@ class TestCompletions(AzureRecordedTestCase):
         assert completion.choices[0].text is not None
 
     @configure
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")])
     def test_completion_token_penalty(self, client, api_type, api_version, **kwargs):
 
         completion = client.completions.create(
-            prompt="How do I bake a chocolate cake?",
-            presence_penalty=2,
-            frequency_penalty=2,
-            **kwargs
+            prompt="How do I bake a chocolate cake?", presence_penalty=2, frequency_penalty=2, **kwargs
         )
 
         assert completion.id
@@ -319,17 +256,11 @@ class TestCompletions(AzureRecordedTestCase):
         assert completion.choices[0].text is not None
 
     @configure
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")])
     def test_completion_best_of(self, client, api_type, api_version, **kwargs):
 
         completion = client.completions.create(
-            prompt="How do I bake a chocolate cake?",
-            best_of=2,
-            max_tokens=50,
-            **kwargs
+            prompt="How do I bake a chocolate cake?", best_of=2, max_tokens=50, **kwargs
         )
 
         assert completion.id
@@ -345,17 +276,10 @@ class TestCompletions(AzureRecordedTestCase):
         assert completion.choices[0].text is not None
 
     @configure
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")])
     def test_completion_user(self, client, api_type, api_version, **kwargs):
 
-        completion = client.completions.create(
-            prompt="How do I bake a chocolate cake?",
-            user="krista",
-            **kwargs
-        )
+        completion = client.completions.create(prompt="How do I bake a chocolate cake?", user="krista", **kwargs)
 
         assert completion.id
         assert completion.object == "text_completion"
@@ -370,16 +294,11 @@ class TestCompletions(AzureRecordedTestCase):
         assert completion.choices[0].text is not None
 
     @configure
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")])
     def test_completion_logit_bias(self, client, api_type, api_version, **kwargs):
 
         completion = client.completions.create(
-            prompt="What color is the ocean?",
-            logit_bias={17585: -100, 14573: -100},
-            **kwargs
+            prompt="What color is the ocean?", logit_bias={17585: -100, 14573: -100}, **kwargs
         )
 
         assert completion.id
@@ -400,10 +319,7 @@ class TestCompletions(AzureRecordedTestCase):
 
         # prompt filtered
         with pytest.raises(openai.BadRequestError) as e:
-            completion = client.completions.create(
-                prompt="how do I rob a bank with violence?",
-                **kwargs
-            )
+            completion = client.completions.create(prompt="how do I rob a bank with violence?", **kwargs)
         e = e.value
         assert e.code == "content_filter"
         assert e.message is not None
@@ -423,10 +339,7 @@ class TestCompletions(AzureRecordedTestCase):
         assert content_filter_result["violence"]["severity"] is not None
 
         # not filtered
-        completion = client.completions.create(
-            prompt="What color is the ocean?",
-            **kwargs
-        )
+        completion = client.completions.create(prompt="What color is the ocean?", **kwargs)
         prompt_filter_result = completion.prompt_filter_results[0]["content_filter_results"]
         assert prompt_filter_result["hate"]["filtered"] is False
         assert prompt_filter_result["hate"]["severity"] == "safe"

@@ -9,7 +9,7 @@
 """
 FILE: send_email_to_multiple_recipient_sample.py
 DESCRIPTION:
-    This sample demonstrates sending an email to multiple recipients. The Email client is 
+    This sample demonstrates sending an email to multiple recipients. The Email client is
     authenticated using a connection string.
 USAGE:
     python send_email_to_single_recipient_sample.py

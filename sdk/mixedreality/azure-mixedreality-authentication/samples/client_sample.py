@@ -1,4 +1,3 @@
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -17,7 +16,6 @@ USAGE:
     2) MIXEDREALITY_ACCOUNT_ID - the Mixed Reality account identifier.
     3) MIXEDREALITY_ACCOUNT_KEY - the Mixed Reality account primary or secondary key.
 """
-
 
 import os
 
@@ -42,6 +40,7 @@ class ClientSamples(object):
     def create_client(self):
         # [START create_client]
         from azure.mixedreality.authentication import MixedRealityStsClient
+
         client = MixedRealityStsClient(self.account_id, self.account_domain, self.key_credential)
         # [END create_client]
 
@@ -50,6 +49,7 @@ class ClientSamples(object):
     def get_token(self):
         # [START get_token]
         from azure.mixedreality.authentication import MixedRealityStsClient
+
         client = MixedRealityStsClient(self.account_id, self.account_domain, self.key_credential)
         access_token = client.get_token()
         # [END get_token]
@@ -57,7 +57,7 @@ class ClientSamples(object):
         print("token retrieved: " + access_token.token)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample = ClientSamples()
     sample.create_client()
     sample.get_token()

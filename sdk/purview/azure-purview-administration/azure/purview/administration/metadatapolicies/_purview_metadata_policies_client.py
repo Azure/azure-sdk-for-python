@@ -22,6 +22,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.rest import HttpRequest, HttpResponse
 
+
 class PurviewMetadataPoliciesClient(object):
     """PurviewMetadataPoliciesClient.
 
@@ -45,7 +46,7 @@ class PurviewMetadataPoliciesClient(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        _endpoint = '{Endpoint}/policyStore'
+        _endpoint = "{Endpoint}/policyStore"
         self._config = PurviewMetadataPoliciesClientConfiguration(endpoint, credential, **kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
@@ -54,7 +55,6 @@ class PurviewMetadataPoliciesClient(object):
         self._serialize.client_side_validation = False
         self.metadata_roles = MetadataRolesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.metadata_policy = MetadataPolicyOperations(self._client, self._config, self._serialize, self._deserialize)
-
 
     def send_request(
         self,
@@ -81,7 +81,7 @@ class PurviewMetadataPoliciesClient(object):
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

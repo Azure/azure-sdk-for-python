@@ -23,7 +23,6 @@
 Cosmos database service.
 """
 
-
 # pylint: disable=protected-access
 
 

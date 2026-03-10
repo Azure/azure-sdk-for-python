@@ -57,7 +57,6 @@ from .constants import (
 )
 from .error import AuthenticationException, ErrorCondition
 
-
 try:
     import fcntl
 except ImportError:  # pragma: no cover
@@ -260,7 +259,6 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         finally:
             if non_bocking_timeout != prev:
                 sock.settimeout(prev)
-
 
     def _init_socket(self, socket_settings, socket_timeout):
         self.sock.settimeout(None)  # set socket back to blocking mode

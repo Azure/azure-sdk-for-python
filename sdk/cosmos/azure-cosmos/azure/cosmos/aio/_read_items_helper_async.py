@@ -20,7 +20,7 @@
 # SOFTWARE.
 
 import logging
-import asyncio # pylint: disable=C4763  # Used for Semaphore and gather, not for sleep
+import asyncio  # pylint: disable=C4763  # Used for Semaphore and gather, not for sleep
 from typing import Tuple, Any, Sequence, Optional, TYPE_CHECKING, Mapping
 
 from azure.cosmos import _base, exceptions
@@ -32,6 +32,7 @@ from azure.cosmos import CosmosList
 if TYPE_CHECKING:
     from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnection
 
+
 class ReadItemsHelperAsync:
     """Helper class for handling read many items operations.
 
@@ -39,17 +40,18 @@ class ReadItemsHelperAsync:
     when returning results, regardless of how items are distributed across partitions
     or processed in chunks.
     """
+
     logger = logging.getLogger("azure.cosmos.ReadManyItemsHelper")
 
     def __init__(
-            self,
-            client: 'CosmosClientConnection',
-            collection_link: str,
-            items: Sequence[Tuple[str, PartitionKeyType]],
-            options: Optional[Mapping[str, Any]],
-            partition_key_definition: dict[str, Any],
-            max_concurrency: int = 5,
-            **kwargs: Any
+        self,
+        client: "CosmosClientConnection",
+        collection_link: str,
+        items: Sequence[Tuple[str, PartitionKeyType]],
+        options: Optional[Mapping[str, Any]],
+        partition_key_definition: dict[str, Any],
+        max_concurrency: int = 5,
+        **kwargs: Any,
     ):
         self.client = client
         self.collection_link = collection_link
@@ -60,7 +62,7 @@ class ReadItemsHelperAsync:
         self.max_concurrency = max_concurrency if max_concurrency and max_concurrency > 0 else 5
         self.max_items_per_query = 1000
 
-    async def read_items(self) -> 'CosmosList':
+    async def read_items(self) -> "CosmosList":
         """Executes the read-many operation.
 
         :return: A list of the retrieved items in the same order as the input.
@@ -81,8 +83,8 @@ class ReadItemsHelperAsync:
         all_results = [item[1] for item in indexed_results]
         cosmos_list = CosmosList(all_results, response_headers=combined_headers)
 
-        if 'response_hook' in self.kwargs:
-            self.kwargs['response_hook'](combined_headers, cosmos_list)
+        if "response_hook" in self.kwargs:
+            self.kwargs["response_hook"](combined_headers, cosmos_list)
 
         return cosmos_list
 
@@ -121,10 +123,8 @@ class ReadItemsHelperAsync:
         return items_by_partition
 
     def _create_query_chunks(
-            self,
-            items_by_partition: dict[str, list[Tuple[int, str, "PartitionKeyType"]]]
+        self, items_by_partition: dict[str, list[Tuple[int, str, "PartitionKeyType"]]]
     ) -> list[dict[str, list[Tuple[int, str, "PartitionKeyType"]]]]:
-
         """
         Create query chunks for concurrency control while preserving original indices.
 
@@ -137,13 +137,13 @@ class ReadItemsHelperAsync:
         query_chunks = []
         for partition_id, partition_items in items_by_partition.items():
             for i in range(0, len(partition_items), self.max_items_per_query):
-                chunk = partition_items[i:i + self.max_items_per_query]
+                chunk = partition_items[i : i + self.max_items_per_query]
                 query_chunks.append({partition_id: chunk})
         return query_chunks
 
     async def _execute_queries_concurrently(
-            self,
-            query_chunks: list[dict[str, list[Tuple[int, str, "PartitionKeyType"]]]],
+        self,
+        query_chunks: list[dict[str, list[Tuple[int, str, "PartitionKeyType"]]]],
     ) -> Tuple[list[Tuple[int, Any]], CaseInsensitiveDict]:
         """
         Execute query chunks concurrently and return aggregated results with original indices.
@@ -172,7 +172,8 @@ class ReadItemsHelperAsync:
                     chunk_results = [(id_to_idx[item_id], result)] if result else []
                 else:
                     chunk_results, headers = await self._execute_query(
-                        partition_id, items_for_query, id_to_idx, request_kwargs)
+                        partition_id, items_for_query, id_to_idx, request_kwargs
+                    )
 
                 request_charge = self._extract_request_charge(headers)
                 return chunk_results, request_charge
@@ -196,7 +197,7 @@ class ReadItemsHelperAsync:
             indexed_results.extend(chunk_result)
             total_request_charge += ru_charge
 
-        final_headers = CaseInsensitiveDict({'x-ms-request-charge': str(total_request_charge)})
+        final_headers = CaseInsensitiveDict({"x-ms-request-charge": str(total_request_charge)})
         return indexed_results, final_headers
 
     def _extract_request_charge(self, headers: CaseInsensitiveDict) -> float:
@@ -207,7 +208,7 @@ class ReadItemsHelperAsync:
         :return: The request charge.
         :rtype: float
         """
-        charge = headers.get('x-ms-request-charge')
+        charge = headers.get("x-ms-request-charge")
         request_charge = 0.0  # Renamed from ru_charge to avoid shadowing
         if charge:
             try:
@@ -217,10 +218,7 @@ class ReadItemsHelperAsync:
         return request_charge
 
     async def _execute_point_read(
-            self,
-            item_id: str,
-            pk_value: "PartitionKeyType",
-            request_kwargs: dict[str, Any]
+        self, item_id: str, pk_value: "PartitionKeyType", request_kwargs: dict[str, Any]
     ) -> Tuple[Optional[Any], CaseInsensitiveDict]:
         """
         Executes a point read for a single item.
@@ -242,7 +240,7 @@ class ReadItemsHelperAsync:
         def local_response_hook(hook_headers, _):
             captured_headers.update(hook_headers)
 
-        request_kwargs['response_hook'] = local_response_hook
+        request_kwargs["response_hook"] = local_response_hook
         request_kwargs.pop("containerProperties", None)
 
         try:
@@ -253,11 +251,11 @@ class ReadItemsHelperAsync:
             return None, CaseInsensitiveDict(captured_headers)
 
     async def _execute_query(
-            self,
-            partition_id: str,
-            items_for_query: Sequence[Tuple[str, "PartitionKeyType"]],
-            id_to_idx: dict[str, int],
-            request_kwargs: dict[str, Any]
+        self,
+        partition_id: str,
+        items_for_query: Sequence[Tuple[str, "PartitionKeyType"]],
+        id_to_idx: dict[str, int],
+        request_kwargs: dict[str, Any],
     ) -> Tuple[list[Tuple[int, Any]], CaseInsensitiveDict]:
         """
         Builds and executes a query for a chunk of items.
@@ -278,7 +276,7 @@ class ReadItemsHelperAsync:
         def local_response_hook(hook_headers, _):
             captured_headers.update(hook_headers)
 
-        request_kwargs['response_hook'] = local_response_hook
+        request_kwargs["response_hook"] = local_response_hook
 
         if _QueryBuilder.is_id_partition_key_query(items_for_query, self.partition_key_definition):
             query_obj = _QueryBuilder.build_id_in_query(items_for_query)
@@ -287,15 +285,17 @@ class ReadItemsHelperAsync:
         else:
             partition_items_dict = {partition_id: items_for_query}
             query_obj = _QueryBuilder.build_parameterized_query_for_items(
-                partition_items_dict, self.partition_key_definition)
+                partition_items_dict, self.partition_key_definition
+            )
 
         page_iterator = self.client.QueryItems(
-            self.collection_link, query_obj, self.options, **request_kwargs).by_page()
+            self.collection_link, query_obj, self.options, **request_kwargs
+        ).by_page()
 
         chunk_indexed_results = []
         async for page in page_iterator:
             async for item in page:
-                doc_id = item.get('id')
+                doc_id = item.get("id")
                 if doc_id in id_to_idx:
                     chunk_indexed_results.append((id_to_idx[doc_id], item))
                 else:

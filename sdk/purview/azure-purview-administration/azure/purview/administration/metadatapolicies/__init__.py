@@ -10,10 +10,11 @@ from ._purview_metadata_policies_client import PurviewMetadataPoliciesClient
 from ._version import VERSION
 
 __version__ = VERSION
-__all__ = ['PurviewMetadataPoliciesClient']
+__all__ = ["PurviewMetadataPoliciesClient"]
 
 try:
     from ._patch import patch_sdk  # type: ignore
+
     patch_sdk()
 except ImportError:
     pass

@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 
 from __future__ import annotations
-import asyncio # pylint:disable=do-not-import-asyncio
+import asyncio  # pylint:disable=do-not-import-asyncio
 import logging
 import datetime
 import warnings
@@ -26,7 +26,6 @@ from ._consumer_async import EventHubConsumer
 from ._client_base_async import ClientBaseAsync
 from .._constants import ALL_PARTITIONS, TransportType
 from .._eventprocessor.common import LoadBalancingStrategy
-
 
 if TYPE_CHECKING:
     from ssl import SSLContext
@@ -175,7 +174,8 @@ class EventHubConsumerClient(ClientBaseAsync):  # pylint: disable=client-accepts
                 "to use the pure Python AMQP transport. "
                 "If you rely on this, please comment on [this issue]"
                 "(https://github.com/Azure/azure-sdk-for-python/issues/40347) ",
-                DeprecationWarning, stacklevel=2
+                DeprecationWarning,
+                stacklevel=2,
             )
 
         self._checkpoint_store = kwargs.pop("checkpoint_store", None)

@@ -1,10 +1,10 @@
 # coding: utf-8
 
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 
 # TEST SCENARIO COVERAGE
@@ -19,6 +19,7 @@
 import unittest
 
 import azure.mgmt.kubernetesconfiguration
+
 # from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 # AZURE_LOCATION = 'eastus'
@@ -96,6 +97,6 @@ import azure.mgmt.kubernetesconfiguration
 #         result = result.result()
 
 
-#------------------------------------------------------------------------------
-if __name__ == '__main__':
+# ------------------------------------------------------------------------------
+if __name__ == "__main__":
     unittest.main()

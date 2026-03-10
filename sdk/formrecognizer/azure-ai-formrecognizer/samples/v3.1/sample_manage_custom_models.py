@@ -40,9 +40,11 @@ class ManageCustomModelsSample(object):
         form_training_client = FormTrainingClient(endpoint=endpoint, credential=AzureKeyCredential(key))
         # First, we see how many custom models we have, and what our limit is
         account_properties = form_training_client.get_account_properties()
-        print("Our account has {} custom models, and we can have at most {} custom models\n".format(
-            account_properties.custom_model_count, account_properties.custom_model_limit
-        ))
+        print(
+            "Our account has {} custom models, and we can have at most {} custom models\n".format(
+                account_properties.custom_model_count, account_properties.custom_model_limit
+            )
+        )
         # [END get_account_properties]
 
         # Next, we get a paged list of all of our custom models
@@ -80,6 +82,6 @@ class ManageCustomModelsSample(object):
         # [END delete_model]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample = ManageCustomModelsSample()
     sample.manage_custom_models()

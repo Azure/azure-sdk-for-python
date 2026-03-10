@@ -9,7 +9,13 @@ import datetime
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
@@ -21,8 +27,9 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
 
-    T = TypeVar('T')
+    T = TypeVar("T")
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+
 
 class ResourceChangesOperations(object):
     """ResourceChangesOperations operations.
@@ -76,33 +83,31 @@ class ResourceChangesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~Microsoft.ChangeAnalysis.models.ChangeList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ChangeList"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ChangeList"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
         api_version = "2021-04-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+            header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']  # type: ignore
+                url = self.list.metadata["url"]  # type: ignore
                 path_format_arguments = {
-                    'resourceId': self._serialize.url("resource_id", resource_id, 'str'),
+                    "resourceId": self._serialize.url("resource_id", resource_id, "str"),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-                query_parameters['$startTime'] = self._serialize.query("start_time", start_time, 'iso-8601')
-                query_parameters['$endTime'] = self._serialize.query("end_time", end_time, 'iso-8601')
+                query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+                query_parameters["$startTime"] = self._serialize.query("start_time", start_time, "iso-8601")
+                query_parameters["$endTime"] = self._serialize.query("end_time", end_time, "iso-8601")
                 if skip_token is not None:
-                    query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
+                    query_parameters["$skipToken"] = self._serialize.query("skip_token", skip_token, "str")
 
                 request = self._client.post(url, query_parameters, header_parameters)
             else:
@@ -112,7 +117,7 @@ class ResourceChangesOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('ChangeList', pipeline_response)
+            deserialized = self._deserialize("ChangeList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -131,7 +136,6 @@ class ResourceChangesOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list.metadata = {'url': '/{resourceId}/providers/Microsoft.ChangeAnalysis/resourceChanges'}  # type: ignore
+        return ItemPaged(get_next, extract_data)
+
+    list.metadata = {"url": "/{resourceId}/providers/Microsoft.ChangeAnalysis/resourceChanges"}  # type: ignore

@@ -22,6 +22,7 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
+
 class FormRecognizerClient(FormRecognizerClientOperationsMixin):
     """Extracts information from forms and images into structured data.
 
@@ -34,13 +35,8 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin):
      Retry-After header is present.
     """
 
-    def __init__(
-        self,
-        credential: "AsyncTokenCredential",
-        endpoint: str,
-        **kwargs: Any
-    ) -> None:
-        _base_url = '{endpoint}/formrecognizer/v2.1'
+    def __init__(self, credential: "AsyncTokenCredential", endpoint: str, **kwargs: Any) -> None:
+        _base_url = "{endpoint}/formrecognizer/v2.1"
         self._config = FormRecognizerClientConfiguration(credential=credential, endpoint=endpoint, **kwargs)
         self._client = AsyncPipelineClient(base_url=_base_url, config=self._config, **kwargs)
 
@@ -49,12 +45,7 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin):
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -74,7 +65,7 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin):
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

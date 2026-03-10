@@ -26,6 +26,7 @@
 """
 This module is the requests implementation of Pipeline ABC
 """
+
 import json
 import inspect
 import logging

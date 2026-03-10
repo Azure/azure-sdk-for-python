@@ -37,7 +37,6 @@ from azure.core.pipeline.transport import (
 )
 from azure.core.rest import HttpRequest, HttpResponse
 
-
 HTTPRequestType = Union[LegacyHttpRequest, HttpRequest]
 HTTPResponseType = Union[LegacyHttpResponse, HttpResponse]
 TokenCredentialType = TypeVar("TokenCredentialType", bound=Union[TokenCredential, AsyncTokenCredential])

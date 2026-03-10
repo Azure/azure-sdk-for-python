@@ -31,15 +31,25 @@ class AadMetadata(Model):
     """
 
     _attribute_map = {
-        'authority': {'key': 'authority', 'type': 'str'},
-        'client': {'key': 'client', 'type': 'str'},
-        'cluster': {'key': 'cluster', 'type': 'str'},
-        'login': {'key': 'login', 'type': 'str'},
-        'redirect': {'key': 'redirect', 'type': 'str'},
-        'tenant': {'key': 'tenant', 'type': 'str'},
+        "authority": {"key": "authority", "type": "str"},
+        "client": {"key": "client", "type": "str"},
+        "cluster": {"key": "cluster", "type": "str"},
+        "login": {"key": "login", "type": "str"},
+        "redirect": {"key": "redirect", "type": "str"},
+        "tenant": {"key": "tenant", "type": "str"},
     }
 
-    def __init__(self, *, authority: str=None, client: str=None, cluster: str=None, login: str=None, redirect: str=None, tenant: str=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        authority: str = None,
+        client: str = None,
+        cluster: str = None,
+        login: str = None,
+        redirect: str = None,
+        tenant: str = None,
+        **kwargs
+    ) -> None:
         super(AadMetadata, self).__init__(**kwargs)
         self.authority = authority
         self.client = client
@@ -61,11 +71,11 @@ class AadMetadataObject(Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'metadata': {'key': 'metadata', 'type': 'AadMetadata'},
+        "type": {"key": "type", "type": "str"},
+        "metadata": {"key": "metadata", "type": "AadMetadata"},
     }
 
-    def __init__(self, *, type: str=None, metadata=None, **kwargs) -> None:
+    def __init__(self, *, type: str = None, metadata=None, **kwargs) -> None:
         super(AadMetadataObject, self).__init__(**kwargs)
         self.type = type
         self.metadata = metadata
@@ -85,15 +95,18 @@ class ScalingMechanismDescription(Model):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
+        "kind": {"key": "Kind", "type": "str"},
     }
 
     _subtype_map = {
-        'kind': {'PartitionInstanceCount': 'PartitionInstanceCountScaleMechanism', 'AddRemoveIncrementalNamedPartition': 'AddRemoveIncrementalNamedPartitionScalingMechanism'}
+        "kind": {
+            "PartitionInstanceCount": "PartitionInstanceCountScaleMechanism",
+            "AddRemoveIncrementalNamedPartition": "AddRemoveIncrementalNamedPartitionScalingMechanism",
+        }
     }
 
     def __init__(self, **kwargs) -> None:
@@ -121,17 +134,17 @@ class AddRemoveIncrementalNamedPartitionScalingMechanism(ScalingMechanismDescrip
     """
 
     _validation = {
-        'kind': {'required': True},
-        'min_partition_count': {'required': True},
-        'max_partition_count': {'required': True},
-        'scale_increment': {'required': True},
+        "kind": {"required": True},
+        "min_partition_count": {"required": True},
+        "max_partition_count": {"required": True},
+        "scale_increment": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'min_partition_count': {'key': 'MinPartitionCount', 'type': 'int'},
-        'max_partition_count': {'key': 'MaxPartitionCount', 'type': 'int'},
-        'scale_increment': {'key': 'ScaleIncrement', 'type': 'int'},
+        "kind": {"key": "Kind", "type": "str"},
+        "min_partition_count": {"key": "MinPartitionCount", "type": "int"},
+        "max_partition_count": {"key": "MaxPartitionCount", "type": "int"},
+        "scale_increment": {"key": "ScaleIncrement", "type": "int"},
     }
 
     def __init__(self, *, min_partition_count: int, max_partition_count: int, scale_increment: int, **kwargs) -> None:
@@ -139,7 +152,7 @@ class AddRemoveIncrementalNamedPartitionScalingMechanism(ScalingMechanismDescrip
         self.min_partition_count = min_partition_count
         self.max_partition_count = max_partition_count
         self.scale_increment = scale_increment
-        self.kind = 'AddRemoveIncrementalNamedPartition'
+        self.kind = "AddRemoveIncrementalNamedPartition"
 
 
 class AutoScalingMechanism(Model):
@@ -156,16 +169,14 @@ class AutoScalingMechanism(Model):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
+        "kind": {"key": "kind", "type": "str"},
     }
 
-    _subtype_map = {
-        'kind': {'AddRemoveReplica': 'AddRemoveReplicaScalingMechanism'}
-    }
+    _subtype_map = {"kind": {"AddRemoveReplica": "AddRemoveReplicaScalingMechanism"}}
 
     def __init__(self, **kwargs) -> None:
         super(AutoScalingMechanism, self).__init__(**kwargs)
@@ -192,17 +203,17 @@ class AddRemoveReplicaScalingMechanism(AutoScalingMechanism):
     """
 
     _validation = {
-        'kind': {'required': True},
-        'min_count': {'required': True},
-        'max_count': {'required': True},
-        'scale_increment': {'required': True},
+        "kind": {"required": True},
+        "min_count": {"required": True},
+        "max_count": {"required": True},
+        "scale_increment": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'min_count': {'key': 'minCount', 'type': 'int'},
-        'max_count': {'key': 'maxCount', 'type': 'int'},
-        'scale_increment': {'key': 'scaleIncrement', 'type': 'int'},
+        "kind": {"key": "kind", "type": "str"},
+        "min_count": {"key": "minCount", "type": "int"},
+        "max_count": {"key": "maxCount", "type": "int"},
+        "scale_increment": {"key": "scaleIncrement", "type": "int"},
     }
 
     def __init__(self, *, min_count: int, max_count: int, scale_increment: int, **kwargs) -> None:
@@ -210,7 +221,7 @@ class AddRemoveReplicaScalingMechanism(AutoScalingMechanism):
         self.min_count = min_count
         self.max_count = max_count
         self.scale_increment = scale_increment
-        self.kind = 'AddRemoveReplica'
+        self.kind = "AddRemoveReplica"
 
 
 class AnalysisEventMetadata(Model):
@@ -223,8 +234,8 @@ class AnalysisEventMetadata(Model):
     """
 
     _attribute_map = {
-        'delay': {'key': 'Delay', 'type': 'duration'},
-        'duration': {'key': 'Duration', 'type': 'duration'},
+        "delay": {"key": "Delay", "type": "duration"},
+        "duration": {"key": "Duration", "type": "duration"},
     }
 
     def __init__(self, *, delay=None, duration=None, **kwargs) -> None:
@@ -257,21 +268,25 @@ class BackupConfigurationInfo(Model):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'policy_name': {'key': 'PolicyName', 'type': 'str'},
-        'policy_inherited_from': {'key': 'PolicyInheritedFrom', 'type': 'str'},
-        'suspension_info': {'key': 'SuspensionInfo', 'type': 'BackupSuspensionInfo'},
-        'kind': {'key': 'Kind', 'type': 'str'},
+        "policy_name": {"key": "PolicyName", "type": "str"},
+        "policy_inherited_from": {"key": "PolicyInheritedFrom", "type": "str"},
+        "suspension_info": {"key": "SuspensionInfo", "type": "BackupSuspensionInfo"},
+        "kind": {"key": "Kind", "type": "str"},
     }
 
     _subtype_map = {
-        'kind': {'Application': 'ApplicationBackupConfigurationInfo', 'Service': 'ServiceBackupConfigurationInfo', 'Partition': 'PartitionBackupConfigurationInfo'}
+        "kind": {
+            "Application": "ApplicationBackupConfigurationInfo",
+            "Service": "ServiceBackupConfigurationInfo",
+            "Partition": "PartitionBackupConfigurationInfo",
+        }
     }
 
-    def __init__(self, *, policy_name: str=None, policy_inherited_from=None, suspension_info=None, **kwargs) -> None:
+    def __init__(self, *, policy_name: str = None, policy_inherited_from=None, suspension_info=None, **kwargs) -> None:
         super(BackupConfigurationInfo, self).__init__(**kwargs)
         self.policy_name = policy_name
         self.policy_inherited_from = policy_inherited_from
@@ -304,21 +319,34 @@ class ApplicationBackupConfigurationInfo(BackupConfigurationInfo):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'policy_name': {'key': 'PolicyName', 'type': 'str'},
-        'policy_inherited_from': {'key': 'PolicyInheritedFrom', 'type': 'str'},
-        'suspension_info': {'key': 'SuspensionInfo', 'type': 'BackupSuspensionInfo'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'application_name': {'key': 'ApplicationName', 'type': 'str'},
+        "policy_name": {"key": "PolicyName", "type": "str"},
+        "policy_inherited_from": {"key": "PolicyInheritedFrom", "type": "str"},
+        "suspension_info": {"key": "SuspensionInfo", "type": "BackupSuspensionInfo"},
+        "kind": {"key": "Kind", "type": "str"},
+        "application_name": {"key": "ApplicationName", "type": "str"},
     }
 
-    def __init__(self, *, policy_name: str=None, policy_inherited_from=None, suspension_info=None, application_name: str=None, **kwargs) -> None:
-        super(ApplicationBackupConfigurationInfo, self).__init__(policy_name=policy_name, policy_inherited_from=policy_inherited_from, suspension_info=suspension_info, **kwargs)
+    def __init__(
+        self,
+        *,
+        policy_name: str = None,
+        policy_inherited_from=None,
+        suspension_info=None,
+        application_name: str = None,
+        **kwargs
+    ) -> None:
+        super(ApplicationBackupConfigurationInfo, self).__init__(
+            policy_name=policy_name,
+            policy_inherited_from=policy_inherited_from,
+            suspension_info=suspension_info,
+            **kwargs
+        )
         self.application_name = application_name
-        self.kind = 'Application'
+        self.kind = "Application"
 
 
 class BackupEntity(Model):
@@ -335,15 +363,19 @@ class BackupEntity(Model):
     """
 
     _validation = {
-        'entity_kind': {'required': True},
+        "entity_kind": {"required": True},
     }
 
     _attribute_map = {
-        'entity_kind': {'key': 'EntityKind', 'type': 'str'},
+        "entity_kind": {"key": "EntityKind", "type": "str"},
     }
 
     _subtype_map = {
-        'entity_kind': {'Application': 'ApplicationBackupEntity', 'Service': 'ServiceBackupEntity', 'Partition': 'PartitionBackupEntity'}
+        "entity_kind": {
+            "Application": "ApplicationBackupEntity",
+            "Service": "ServiceBackupEntity",
+            "Partition": "PartitionBackupEntity",
+        }
     }
 
     def __init__(self, **kwargs) -> None:
@@ -364,18 +396,18 @@ class ApplicationBackupEntity(BackupEntity):
     """
 
     _validation = {
-        'entity_kind': {'required': True},
+        "entity_kind": {"required": True},
     }
 
     _attribute_map = {
-        'entity_kind': {'key': 'EntityKind', 'type': 'str'},
-        'application_name': {'key': 'ApplicationName', 'type': 'str'},
+        "entity_kind": {"key": "EntityKind", "type": "str"},
+        "application_name": {"key": "ApplicationName", "type": "str"},
     }
 
-    def __init__(self, *, application_name: str=None, **kwargs) -> None:
+    def __init__(self, *, application_name: str = None, **kwargs) -> None:
         super(ApplicationBackupEntity, self).__init__(**kwargs)
         self.application_name = application_name
-        self.entity_kind = 'Application'
+        self.entity_kind = "Application"
 
 
 class ApplicationCapacityDescription(Model):
@@ -407,17 +439,19 @@ class ApplicationCapacityDescription(Model):
     """
 
     _validation = {
-        'minimum_nodes': {'minimum': 0},
-        'maximum_nodes': {'minimum': 0},
+        "minimum_nodes": {"minimum": 0},
+        "maximum_nodes": {"minimum": 0},
     }
 
     _attribute_map = {
-        'minimum_nodes': {'key': 'MinimumNodes', 'type': 'long'},
-        'maximum_nodes': {'key': 'MaximumNodes', 'type': 'long'},
-        'application_metrics': {'key': 'ApplicationMetrics', 'type': '[ApplicationMetricDescription]'},
+        "minimum_nodes": {"key": "MinimumNodes", "type": "long"},
+        "maximum_nodes": {"key": "MaximumNodes", "type": "long"},
+        "application_metrics": {"key": "ApplicationMetrics", "type": "[ApplicationMetricDescription]"},
     }
 
-    def __init__(self, *, minimum_nodes: int=None, maximum_nodes: int=0, application_metrics=None, **kwargs) -> None:
+    def __init__(
+        self, *, minimum_nodes: int = None, maximum_nodes: int = 0, application_metrics=None, **kwargs
+    ) -> None:
         super(ApplicationCapacityDescription, self).__init__(**kwargs)
         self.minimum_nodes = minimum_nodes
         self.maximum_nodes = maximum_nodes
@@ -448,24 +482,34 @@ class FabricEvent(Model):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
     }
 
     _subtype_map = {
-        'kind': {'ApplicationEvent': 'ApplicationEvent', 'ClusterEvent': 'ClusterEvent', 'ContainerInstanceEvent': 'ContainerInstanceEvent', 'NodeEvent': 'NodeEvent', 'PartitionEvent': 'PartitionEvent', 'ReplicaEvent': 'ReplicaEvent', 'ServiceEvent': 'ServiceEvent'}
+        "kind": {
+            "ApplicationEvent": "ApplicationEvent",
+            "ClusterEvent": "ClusterEvent",
+            "ContainerInstanceEvent": "ContainerInstanceEvent",
+            "NodeEvent": "NodeEvent",
+            "PartitionEvent": "PartitionEvent",
+            "ReplicaEvent": "ReplicaEvent",
+            "ServiceEvent": "ServiceEvent",
+        }
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
+    def __init__(
+        self, *, event_instance_id: str, time_stamp, category: str = None, has_correlated_events: bool = None, **kwargs
+    ) -> None:
         super(FabricEvent, self).__init__(**kwargs)
         self.event_instance_id = event_instance_id
         self.category = category
@@ -515,29 +559,61 @@ class ApplicationEvent(FabricEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'application_id': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "application_id": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'application_id': {'key': 'ApplicationId', 'type': 'str'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "application_id": {"key": "ApplicationId", "type": "str"},
     }
 
     _subtype_map = {
-        'kind': {'ApplicationCreated': 'ApplicationCreatedEvent', 'ApplicationDeleted': 'ApplicationDeletedEvent', 'ApplicationNewHealthReport': 'ApplicationNewHealthReportEvent', 'ApplicationHealthReportExpired': 'ApplicationHealthReportExpiredEvent', 'ApplicationUpgradeCompleted': 'ApplicationUpgradeCompletedEvent', 'ApplicationUpgradeDomainCompleted': 'ApplicationUpgradeDomainCompletedEvent', 'ApplicationUpgradeRollbackCompleted': 'ApplicationUpgradeRollbackCompletedEvent', 'ApplicationUpgradeRollbackStarted': 'ApplicationUpgradeRollbackStartedEvent', 'ApplicationUpgradeStarted': 'ApplicationUpgradeStartedEvent', 'DeployedApplicationNewHealthReport': 'DeployedApplicationNewHealthReportEvent', 'DeployedApplicationHealthReportExpired': 'DeployedApplicationHealthReportExpiredEvent', 'ApplicationProcessExited': 'ApplicationProcessExitedEvent', 'ApplicationContainerInstanceExited': 'ApplicationContainerInstanceExitedEvent', 'DeployedServicePackageNewHealthReport': 'DeployedServicePackageNewHealthReportEvent', 'DeployedServicePackageHealthReportExpired': 'DeployedServicePackageHealthReportExpiredEvent', 'ChaosCodePackageRestartScheduled': 'ChaosCodePackageRestartScheduledEvent'}
+        "kind": {
+            "ApplicationCreated": "ApplicationCreatedEvent",
+            "ApplicationDeleted": "ApplicationDeletedEvent",
+            "ApplicationNewHealthReport": "ApplicationNewHealthReportEvent",
+            "ApplicationHealthReportExpired": "ApplicationHealthReportExpiredEvent",
+            "ApplicationUpgradeCompleted": "ApplicationUpgradeCompletedEvent",
+            "ApplicationUpgradeDomainCompleted": "ApplicationUpgradeDomainCompletedEvent",
+            "ApplicationUpgradeRollbackCompleted": "ApplicationUpgradeRollbackCompletedEvent",
+            "ApplicationUpgradeRollbackStarted": "ApplicationUpgradeRollbackStartedEvent",
+            "ApplicationUpgradeStarted": "ApplicationUpgradeStartedEvent",
+            "DeployedApplicationNewHealthReport": "DeployedApplicationNewHealthReportEvent",
+            "DeployedApplicationHealthReportExpired": "DeployedApplicationHealthReportExpiredEvent",
+            "ApplicationProcessExited": "ApplicationProcessExitedEvent",
+            "ApplicationContainerInstanceExited": "ApplicationContainerInstanceExitedEvent",
+            "DeployedServicePackageNewHealthReport": "DeployedServicePackageNewHealthReportEvent",
+            "DeployedServicePackageHealthReportExpired": "DeployedServicePackageHealthReportExpiredEvent",
+            "ChaosCodePackageRestartScheduled": "ChaosCodePackageRestartScheduledEvent",
+        }
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, application_id: str, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ApplicationEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        application_id: str,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(ApplicationEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            **kwargs
+        )
         self.application_id = application_id
-        self.kind = 'ApplicationEvent'
+        self.kind = "ApplicationEvent"
 
 
 class ApplicationContainerInstanceExitedEvent(ApplicationEvent):
@@ -594,47 +670,75 @@ class ApplicationContainerInstanceExitedEvent(ApplicationEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'application_id': {'required': True},
-        'service_name': {'required': True},
-        'service_package_name': {'required': True},
-        'service_package_activation_id': {'required': True},
-        'is_exclusive': {'required': True},
-        'code_package_name': {'required': True},
-        'entry_point_type': {'required': True},
-        'image_name': {'required': True},
-        'container_name': {'required': True},
-        'host_id': {'required': True},
-        'exit_code': {'required': True},
-        'unexpected_termination': {'required': True},
-        'start_time': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "application_id": {"required": True},
+        "service_name": {"required": True},
+        "service_package_name": {"required": True},
+        "service_package_activation_id": {"required": True},
+        "is_exclusive": {"required": True},
+        "code_package_name": {"required": True},
+        "entry_point_type": {"required": True},
+        "image_name": {"required": True},
+        "container_name": {"required": True},
+        "host_id": {"required": True},
+        "exit_code": {"required": True},
+        "unexpected_termination": {"required": True},
+        "start_time": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'application_id': {'key': 'ApplicationId', 'type': 'str'},
-        'service_name': {'key': 'ServiceName', 'type': 'str'},
-        'service_package_name': {'key': 'ServicePackageName', 'type': 'str'},
-        'service_package_activation_id': {'key': 'ServicePackageActivationId', 'type': 'str'},
-        'is_exclusive': {'key': 'IsExclusive', 'type': 'bool'},
-        'code_package_name': {'key': 'CodePackageName', 'type': 'str'},
-        'entry_point_type': {'key': 'EntryPointType', 'type': 'str'},
-        'image_name': {'key': 'ImageName', 'type': 'str'},
-        'container_name': {'key': 'ContainerName', 'type': 'str'},
-        'host_id': {'key': 'HostId', 'type': 'str'},
-        'exit_code': {'key': 'ExitCode', 'type': 'long'},
-        'unexpected_termination': {'key': 'UnexpectedTermination', 'type': 'bool'},
-        'start_time': {'key': 'StartTime', 'type': 'iso-8601'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "application_id": {"key": "ApplicationId", "type": "str"},
+        "service_name": {"key": "ServiceName", "type": "str"},
+        "service_package_name": {"key": "ServicePackageName", "type": "str"},
+        "service_package_activation_id": {"key": "ServicePackageActivationId", "type": "str"},
+        "is_exclusive": {"key": "IsExclusive", "type": "bool"},
+        "code_package_name": {"key": "CodePackageName", "type": "str"},
+        "entry_point_type": {"key": "EntryPointType", "type": "str"},
+        "image_name": {"key": "ImageName", "type": "str"},
+        "container_name": {"key": "ContainerName", "type": "str"},
+        "host_id": {"key": "HostId", "type": "str"},
+        "exit_code": {"key": "ExitCode", "type": "long"},
+        "unexpected_termination": {"key": "UnexpectedTermination", "type": "bool"},
+        "start_time": {"key": "StartTime", "type": "iso-8601"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, application_id: str, service_name: str, service_package_name: str, service_package_activation_id: str, is_exclusive: bool, code_package_name: str, entry_point_type: str, image_name: str, container_name: str, host_id: str, exit_code: int, unexpected_termination: bool, start_time, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ApplicationContainerInstanceExitedEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, application_id=application_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        application_id: str,
+        service_name: str,
+        service_package_name: str,
+        service_package_activation_id: str,
+        is_exclusive: bool,
+        code_package_name: str,
+        entry_point_type: str,
+        image_name: str,
+        container_name: str,
+        host_id: str,
+        exit_code: int,
+        unexpected_termination: bool,
+        start_time,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(ApplicationContainerInstanceExitedEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            application_id=application_id,
+            **kwargs
+        )
         self.service_name = service_name
         self.service_package_name = service_package_name
         self.service_package_activation_id = service_package_activation_id
@@ -647,7 +751,7 @@ class ApplicationContainerInstanceExitedEvent(ApplicationEvent):
         self.exit_code = exit_code
         self.unexpected_termination = unexpected_termination
         self.start_time = start_time
-        self.kind = 'ApplicationContainerInstanceExited'
+        self.kind = "ApplicationContainerInstanceExited"
 
 
 class ApplicationCreatedEvent(ApplicationEvent):
@@ -684,33 +788,52 @@ class ApplicationCreatedEvent(ApplicationEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'application_id': {'required': True},
-        'application_type_name': {'required': True},
-        'application_type_version': {'required': True},
-        'application_definition_kind': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "application_id": {"required": True},
+        "application_type_name": {"required": True},
+        "application_type_version": {"required": True},
+        "application_definition_kind": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'application_id': {'key': 'ApplicationId', 'type': 'str'},
-        'application_type_name': {'key': 'ApplicationTypeName', 'type': 'str'},
-        'application_type_version': {'key': 'ApplicationTypeVersion', 'type': 'str'},
-        'application_definition_kind': {'key': 'ApplicationDefinitionKind', 'type': 'str'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "application_id": {"key": "ApplicationId", "type": "str"},
+        "application_type_name": {"key": "ApplicationTypeName", "type": "str"},
+        "application_type_version": {"key": "ApplicationTypeVersion", "type": "str"},
+        "application_definition_kind": {"key": "ApplicationDefinitionKind", "type": "str"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, application_id: str, application_type_name: str, application_type_version: str, application_definition_kind: str, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ApplicationCreatedEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, application_id=application_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        application_id: str,
+        application_type_name: str,
+        application_type_version: str,
+        application_definition_kind: str,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(ApplicationCreatedEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            application_id=application_id,
+            **kwargs
+        )
         self.application_type_name = application_type_name
         self.application_type_version = application_type_version
         self.application_definition_kind = application_definition_kind
-        self.kind = 'ApplicationCreated'
+        self.kind = "ApplicationCreated"
 
 
 class ApplicationDeletedEvent(ApplicationEvent):
@@ -745,30 +868,48 @@ class ApplicationDeletedEvent(ApplicationEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'application_id': {'required': True},
-        'application_type_name': {'required': True},
-        'application_type_version': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "application_id": {"required": True},
+        "application_type_name": {"required": True},
+        "application_type_version": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'application_id': {'key': 'ApplicationId', 'type': 'str'},
-        'application_type_name': {'key': 'ApplicationTypeName', 'type': 'str'},
-        'application_type_version': {'key': 'ApplicationTypeVersion', 'type': 'str'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "application_id": {"key": "ApplicationId", "type": "str"},
+        "application_type_name": {"key": "ApplicationTypeName", "type": "str"},
+        "application_type_version": {"key": "ApplicationTypeVersion", "type": "str"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, application_id: str, application_type_name: str, application_type_version: str, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ApplicationDeletedEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, application_id=application_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        application_id: str,
+        application_type_name: str,
+        application_type_version: str,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(ApplicationDeletedEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            application_id=application_id,
+            **kwargs
+        )
         self.application_type_name = application_type_name
         self.application_type_version = application_type_version
-        self.kind = 'ApplicationDeleted'
+        self.kind = "ApplicationDeleted"
 
 
 class ApplicationDescription(Model):
@@ -806,21 +947,34 @@ class ApplicationDescription(Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'type_name': {'required': True},
-        'type_version': {'required': True},
+        "name": {"required": True},
+        "type_name": {"required": True},
+        "type_version": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'type_name': {'key': 'TypeName', 'type': 'str'},
-        'type_version': {'key': 'TypeVersion', 'type': 'str'},
-        'parameter_list': {'key': 'ParameterList', 'type': '[ApplicationParameter]'},
-        'application_capacity': {'key': 'ApplicationCapacity', 'type': 'ApplicationCapacityDescription'},
-        'managed_application_identity': {'key': 'ManagedApplicationIdentity', 'type': 'ManagedApplicationIdentityDescription'},
+        "name": {"key": "Name", "type": "str"},
+        "type_name": {"key": "TypeName", "type": "str"},
+        "type_version": {"key": "TypeVersion", "type": "str"},
+        "parameter_list": {"key": "ParameterList", "type": "[ApplicationParameter]"},
+        "application_capacity": {"key": "ApplicationCapacity", "type": "ApplicationCapacityDescription"},
+        "managed_application_identity": {
+            "key": "ManagedApplicationIdentity",
+            "type": "ManagedApplicationIdentityDescription",
+        },
     }
 
-    def __init__(self, *, name: str, type_name: str, type_version: str, parameter_list=None, application_capacity=None, managed_application_identity=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str,
+        type_name: str,
+        type_version: str,
+        parameter_list=None,
+        application_capacity=None,
+        managed_application_identity=None,
+        **kwargs
+    ) -> None:
         super(ApplicationDescription, self).__init__(**kwargs)
         self.name = name
         self.type_name = type_name
@@ -854,13 +1008,21 @@ class EntityHealth(Model):
     """
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'health_events': {'key': 'HealthEvents', 'type': '[HealthEvent]'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
-        'health_statistics': {'key': 'HealthStatistics', 'type': 'HealthStatistics'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "health_events": {"key": "HealthEvents", "type": "[HealthEvent]"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
+        "health_statistics": {"key": "HealthStatistics", "type": "HealthStatistics"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, health_events=None, unhealthy_evaluations=None, health_statistics=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        aggregated_health_state=None,
+        health_events=None,
+        unhealthy_evaluations=None,
+        health_statistics=None,
+        **kwargs
+    ) -> None:
         super(EntityHealth, self).__init__(**kwargs)
         self.aggregated_health_state = aggregated_health_state
         self.health_events = health_events
@@ -904,17 +1066,37 @@ class ApplicationHealth(EntityHealth):
     """
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'health_events': {'key': 'HealthEvents', 'type': '[HealthEvent]'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
-        'health_statistics': {'key': 'HealthStatistics', 'type': 'HealthStatistics'},
-        'name': {'key': 'Name', 'type': 'str'},
-        'service_health_states': {'key': 'ServiceHealthStates', 'type': '[ServiceHealthState]'},
-        'deployed_application_health_states': {'key': 'DeployedApplicationHealthStates', 'type': '[DeployedApplicationHealthState]'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "health_events": {"key": "HealthEvents", "type": "[HealthEvent]"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
+        "health_statistics": {"key": "HealthStatistics", "type": "HealthStatistics"},
+        "name": {"key": "Name", "type": "str"},
+        "service_health_states": {"key": "ServiceHealthStates", "type": "[ServiceHealthState]"},
+        "deployed_application_health_states": {
+            "key": "DeployedApplicationHealthStates",
+            "type": "[DeployedApplicationHealthState]",
+        },
     }
 
-    def __init__(self, *, aggregated_health_state=None, health_events=None, unhealthy_evaluations=None, health_statistics=None, name: str=None, service_health_states=None, deployed_application_health_states=None, **kwargs) -> None:
-        super(ApplicationHealth, self).__init__(aggregated_health_state=aggregated_health_state, health_events=health_events, unhealthy_evaluations=unhealthy_evaluations, health_statistics=health_statistics, **kwargs)
+    def __init__(
+        self,
+        *,
+        aggregated_health_state=None,
+        health_events=None,
+        unhealthy_evaluations=None,
+        health_statistics=None,
+        name: str = None,
+        service_health_states=None,
+        deployed_application_health_states=None,
+        **kwargs
+    ) -> None:
+        super(ApplicationHealth, self).__init__(
+            aggregated_health_state=aggregated_health_state,
+            health_events=health_events,
+            unhealthy_evaluations=unhealthy_evaluations,
+            health_statistics=health_statistics,
+            **kwargs
+        )
         self.name = name
         self.service_health_states = service_health_states
         self.deployed_application_health_states = deployed_application_health_states
@@ -955,20 +1137,43 @@ class HealthEvaluation(Model):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'kind': {'key': 'Kind', 'type': 'str'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "description": {"key": "Description", "type": "str"},
+        "kind": {"key": "Kind", "type": "str"},
     }
 
     _subtype_map = {
-        'kind': {'Application': 'ApplicationHealthEvaluation', 'Applications': 'ApplicationsHealthEvaluation', 'ApplicationTypeApplications': 'ApplicationTypeApplicationsHealthEvaluation', 'DeltaNodesCheck': 'DeltaNodesCheckHealthEvaluation', 'DeployedApplication': 'DeployedApplicationHealthEvaluation', 'DeployedApplications': 'DeployedApplicationsHealthEvaluation', 'DeployedServicePackage': 'DeployedServicePackageHealthEvaluation', 'DeployedServicePackages': 'DeployedServicePackagesHealthEvaluation', 'Event': 'EventHealthEvaluation', 'Node': 'NodeHealthEvaluation', 'Nodes': 'NodesHealthEvaluation', 'Partition': 'PartitionHealthEvaluation', 'Partitions': 'PartitionsHealthEvaluation', 'Replica': 'ReplicaHealthEvaluation', 'Replicas': 'ReplicasHealthEvaluation', 'Service': 'ServiceHealthEvaluation', 'Services': 'ServicesHealthEvaluation', 'SystemApplication': 'SystemApplicationHealthEvaluation', 'UpgradeDomainDeltaNodesCheck': 'UpgradeDomainDeltaNodesCheckHealthEvaluation', 'UpgradeDomainDeployedApplications': 'UpgradeDomainDeployedApplicationsHealthEvaluation', 'UpgradeDomainNodes': 'UpgradeDomainNodesHealthEvaluation', 'NodeTypeNodes': 'NodeTypeNodesHealthEvaluation'}
+        "kind": {
+            "Application": "ApplicationHealthEvaluation",
+            "Applications": "ApplicationsHealthEvaluation",
+            "ApplicationTypeApplications": "ApplicationTypeApplicationsHealthEvaluation",
+            "DeltaNodesCheck": "DeltaNodesCheckHealthEvaluation",
+            "DeployedApplication": "DeployedApplicationHealthEvaluation",
+            "DeployedApplications": "DeployedApplicationsHealthEvaluation",
+            "DeployedServicePackage": "DeployedServicePackageHealthEvaluation",
+            "DeployedServicePackages": "DeployedServicePackagesHealthEvaluation",
+            "Event": "EventHealthEvaluation",
+            "Node": "NodeHealthEvaluation",
+            "Nodes": "NodesHealthEvaluation",
+            "Partition": "PartitionHealthEvaluation",
+            "Partitions": "PartitionsHealthEvaluation",
+            "Replica": "ReplicaHealthEvaluation",
+            "Replicas": "ReplicasHealthEvaluation",
+            "Service": "ServiceHealthEvaluation",
+            "Services": "ServicesHealthEvaluation",
+            "SystemApplication": "SystemApplicationHealthEvaluation",
+            "UpgradeDomainDeltaNodesCheck": "UpgradeDomainDeltaNodesCheckHealthEvaluation",
+            "UpgradeDomainDeployedApplications": "UpgradeDomainDeployedApplicationsHealthEvaluation",
+            "UpgradeDomainNodes": "UpgradeDomainNodesHealthEvaluation",
+            "NodeTypeNodes": "NodeTypeNodesHealthEvaluation",
+        }
     }
 
-    def __init__(self, *, aggregated_health_state=None, description: str=None, **kwargs) -> None:
+    def __init__(self, *, aggregated_health_state=None, description: str = None, **kwargs) -> None:
         super(HealthEvaluation, self).__init__(**kwargs)
         self.aggregated_health_state = aggregated_health_state
         self.description = description
@@ -1005,22 +1210,32 @@ class ApplicationHealthEvaluation(HealthEvaluation):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'application_name': {'key': 'ApplicationName', 'type': 'str'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "description": {"key": "Description", "type": "str"},
+        "kind": {"key": "Kind", "type": "str"},
+        "application_name": {"key": "ApplicationName", "type": "str"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, description: str=None, application_name: str=None, unhealthy_evaluations=None, **kwargs) -> None:
-        super(ApplicationHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description, **kwargs)
+    def __init__(
+        self,
+        *,
+        aggregated_health_state=None,
+        description: str = None,
+        application_name: str = None,
+        unhealthy_evaluations=None,
+        **kwargs
+    ) -> None:
+        super(ApplicationHealthEvaluation, self).__init__(
+            aggregated_health_state=aggregated_health_state, description=description, **kwargs
+        )
         self.application_name = application_name
         self.unhealthy_evaluations = unhealthy_evaluations
-        self.kind = 'Application'
+        self.kind = "Application"
 
 
 class ApplicationHealthPolicies(Model):
@@ -1035,7 +1250,10 @@ class ApplicationHealthPolicies(Model):
     """
 
     _attribute_map = {
-        'application_health_policy_map': {'key': 'ApplicationHealthPolicyMap', 'type': '[ApplicationHealthPolicyMapItem]'},
+        "application_health_policy_map": {
+            "key": "ApplicationHealthPolicyMap",
+            "type": "[ApplicationHealthPolicyMapItem]",
+        },
     }
 
     def __init__(self, *, application_health_policy_map=None, **kwargs) -> None:
@@ -1073,13 +1291,30 @@ class ApplicationHealthPolicy(Model):
     """
 
     _attribute_map = {
-        'consider_warning_as_error': {'key': 'ConsiderWarningAsError', 'type': 'bool'},
-        'max_percent_unhealthy_deployed_applications': {'key': 'MaxPercentUnhealthyDeployedApplications', 'type': 'int'},
-        'default_service_type_health_policy': {'key': 'DefaultServiceTypeHealthPolicy', 'type': 'ServiceTypeHealthPolicy'},
-        'service_type_health_policy_map': {'key': 'ServiceTypeHealthPolicyMap', 'type': '[ServiceTypeHealthPolicyMapItem]'},
+        "consider_warning_as_error": {"key": "ConsiderWarningAsError", "type": "bool"},
+        "max_percent_unhealthy_deployed_applications": {
+            "key": "MaxPercentUnhealthyDeployedApplications",
+            "type": "int",
+        },
+        "default_service_type_health_policy": {
+            "key": "DefaultServiceTypeHealthPolicy",
+            "type": "ServiceTypeHealthPolicy",
+        },
+        "service_type_health_policy_map": {
+            "key": "ServiceTypeHealthPolicyMap",
+            "type": "[ServiceTypeHealthPolicyMapItem]",
+        },
     }
 
-    def __init__(self, *, consider_warning_as_error: bool=False, max_percent_unhealthy_deployed_applications: int=0, default_service_type_health_policy=None, service_type_health_policy_map=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        consider_warning_as_error: bool = False,
+        max_percent_unhealthy_deployed_applications: int = 0,
+        default_service_type_health_policy=None,
+        service_type_health_policy_map=None,
+        **kwargs
+    ) -> None:
         super(ApplicationHealthPolicy, self).__init__(**kwargs)
         self.consider_warning_as_error = consider_warning_as_error
         self.max_percent_unhealthy_deployed_applications = max_percent_unhealthy_deployed_applications
@@ -1101,13 +1336,13 @@ class ApplicationHealthPolicyMapItem(Model):
     """
 
     _validation = {
-        'key': {'required': True},
-        'value': {'required': True},
+        "key": {"required": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'key': {'key': 'Key', 'type': 'str'},
-        'value': {'key': 'Value', 'type': 'ApplicationHealthPolicy'},
+        "key": {"key": "Key", "type": "str"},
+        "value": {"key": "Value", "type": "ApplicationHealthPolicy"},
     }
 
     def __init__(self, *, key: str, value, **kwargs) -> None:
@@ -1134,7 +1369,10 @@ class ApplicationHealthPolicyMapObject(Model):
     """
 
     _attribute_map = {
-        'application_health_policy_map': {'key': 'ApplicationHealthPolicyMap', 'type': '[ApplicationHealthPolicyMapItem]'},
+        "application_health_policy_map": {
+            "key": "ApplicationHealthPolicyMap",
+            "type": "[ApplicationHealthPolicyMapItem]",
+        },
     }
 
     def __init__(self, *, application_health_policy_map=None, **kwargs) -> None:
@@ -1189,41 +1427,66 @@ class ApplicationHealthReportExpiredEvent(ApplicationEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'application_id': {'required': True},
-        'application_instance_id': {'required': True},
-        'source_id': {'required': True},
-        'property': {'required': True},
-        'health_state': {'required': True},
-        'time_to_live_ms': {'required': True},
-        'sequence_number': {'required': True},
-        'description': {'required': True},
-        'remove_when_expired': {'required': True},
-        'source_utc_timestamp': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "application_id": {"required": True},
+        "application_instance_id": {"required": True},
+        "source_id": {"required": True},
+        "property": {"required": True},
+        "health_state": {"required": True},
+        "time_to_live_ms": {"required": True},
+        "sequence_number": {"required": True},
+        "description": {"required": True},
+        "remove_when_expired": {"required": True},
+        "source_utc_timestamp": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'application_id': {'key': 'ApplicationId', 'type': 'str'},
-        'application_instance_id': {'key': 'ApplicationInstanceId', 'type': 'long'},
-        'source_id': {'key': 'SourceId', 'type': 'str'},
-        'property': {'key': 'Property', 'type': 'str'},
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'time_to_live_ms': {'key': 'TimeToLiveMs', 'type': 'long'},
-        'sequence_number': {'key': 'SequenceNumber', 'type': 'long'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'remove_when_expired': {'key': 'RemoveWhenExpired', 'type': 'bool'},
-        'source_utc_timestamp': {'key': 'SourceUtcTimestamp', 'type': 'iso-8601'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "application_id": {"key": "ApplicationId", "type": "str"},
+        "application_instance_id": {"key": "ApplicationInstanceId", "type": "long"},
+        "source_id": {"key": "SourceId", "type": "str"},
+        "property": {"key": "Property", "type": "str"},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "time_to_live_ms": {"key": "TimeToLiveMs", "type": "long"},
+        "sequence_number": {"key": "SequenceNumber", "type": "long"},
+        "description": {"key": "Description", "type": "str"},
+        "remove_when_expired": {"key": "RemoveWhenExpired", "type": "bool"},
+        "source_utc_timestamp": {"key": "SourceUtcTimestamp", "type": "iso-8601"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, application_id: str, application_instance_id: int, source_id: str, property: str, health_state: str, time_to_live_ms: int, sequence_number: int, description: str, remove_when_expired: bool, source_utc_timestamp, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ApplicationHealthReportExpiredEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, application_id=application_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        application_id: str,
+        application_instance_id: int,
+        source_id: str,
+        property: str,
+        health_state: str,
+        time_to_live_ms: int,
+        sequence_number: int,
+        description: str,
+        remove_when_expired: bool,
+        source_utc_timestamp,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(ApplicationHealthReportExpiredEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            application_id=application_id,
+            **kwargs
+        )
         self.application_instance_id = application_instance_id
         self.source_id = source_id
         self.property = property
@@ -1233,7 +1496,7 @@ class ApplicationHealthReportExpiredEvent(ApplicationEvent):
         self.description = description
         self.remove_when_expired = remove_when_expired
         self.source_utc_timestamp = source_utc_timestamp
-        self.kind = 'ApplicationHealthReportExpired'
+        self.kind = "ApplicationHealthReportExpired"
 
 
 class EntityHealthState(Model):
@@ -1249,7 +1512,7 @@ class EntityHealthState(Model):
     """
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
     }
 
     def __init__(self, *, aggregated_health_state=None, **kwargs) -> None:
@@ -1273,11 +1536,11 @@ class ApplicationHealthState(EntityHealthState):
     """
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'name': {'key': 'Name', 'type': 'str'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "name": {"key": "Name", "type": "str"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, name: str=None, **kwargs) -> None:
+    def __init__(self, *, aggregated_health_state=None, name: str = None, **kwargs) -> None:
         super(ApplicationHealthState, self).__init__(aggregated_health_state=aggregated_health_state, **kwargs)
         self.name = name
 
@@ -1293,7 +1556,7 @@ class EntityHealthStateChunk(Model):
     """
 
     _attribute_map = {
-        'health_state': {'key': 'HealthState', 'type': 'str'},
+        "health_state": {"key": "HealthState", "type": "str"},
     }
 
     def __init__(self, *, health_state=None, **kwargs) -> None:
@@ -1330,14 +1593,26 @@ class ApplicationHealthStateChunk(EntityHealthStateChunk):
     """
 
     _attribute_map = {
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'application_name': {'key': 'ApplicationName', 'type': 'str'},
-        'application_type_name': {'key': 'ApplicationTypeName', 'type': 'str'},
-        'service_health_state_chunks': {'key': 'ServiceHealthStateChunks', 'type': 'ServiceHealthStateChunkList'},
-        'deployed_application_health_state_chunks': {'key': 'DeployedApplicationHealthStateChunks', 'type': 'DeployedApplicationHealthStateChunkList'},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "application_name": {"key": "ApplicationName", "type": "str"},
+        "application_type_name": {"key": "ApplicationTypeName", "type": "str"},
+        "service_health_state_chunks": {"key": "ServiceHealthStateChunks", "type": "ServiceHealthStateChunkList"},
+        "deployed_application_health_state_chunks": {
+            "key": "DeployedApplicationHealthStateChunks",
+            "type": "DeployedApplicationHealthStateChunkList",
+        },
     }
 
-    def __init__(self, *, health_state=None, application_name: str=None, application_type_name: str=None, service_health_state_chunks=None, deployed_application_health_state_chunks=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        health_state=None,
+        application_name: str = None,
+        application_type_name: str = None,
+        service_health_state_chunks=None,
+        deployed_application_health_state_chunks=None,
+        **kwargs
+    ) -> None:
         super(ApplicationHealthStateChunk, self).__init__(health_state=health_state, **kwargs)
         self.application_name = application_name
         self.application_type_name = application_type_name
@@ -1355,10 +1630,10 @@ class EntityHealthStateChunkList(Model):
     """
 
     _attribute_map = {
-        'total_count': {'key': 'TotalCount', 'type': 'long'},
+        "total_count": {"key": "TotalCount", "type": "long"},
     }
 
-    def __init__(self, *, total_count: int=None, **kwargs) -> None:
+    def __init__(self, *, total_count: int = None, **kwargs) -> None:
         super(EntityHealthStateChunkList, self).__init__(**kwargs)
         self.total_count = total_count
 
@@ -1377,11 +1652,11 @@ class ApplicationHealthStateChunkList(EntityHealthStateChunkList):
     """
 
     _attribute_map = {
-        'total_count': {'key': 'TotalCount', 'type': 'long'},
-        'items': {'key': 'Items', 'type': '[ApplicationHealthStateChunk]'},
+        "total_count": {"key": "TotalCount", "type": "long"},
+        "items": {"key": "Items", "type": "[ApplicationHealthStateChunk]"},
     }
 
-    def __init__(self, *, total_count: int=None, items=None, **kwargs) -> None:
+    def __init__(self, *, total_count: int = None, items=None, **kwargs) -> None:
         super(ApplicationHealthStateChunkList, self).__init__(total_count=total_count, **kwargs)
         self.items = items
 
@@ -1467,14 +1742,26 @@ class ApplicationHealthStateFilter(Model):
     """
 
     _attribute_map = {
-        'application_name_filter': {'key': 'ApplicationNameFilter', 'type': 'str'},
-        'application_type_name_filter': {'key': 'ApplicationTypeNameFilter', 'type': 'str'},
-        'health_state_filter': {'key': 'HealthStateFilter', 'type': 'int'},
-        'service_filters': {'key': 'ServiceFilters', 'type': '[ServiceHealthStateFilter]'},
-        'deployed_application_filters': {'key': 'DeployedApplicationFilters', 'type': '[DeployedApplicationHealthStateFilter]'},
+        "application_name_filter": {"key": "ApplicationNameFilter", "type": "str"},
+        "application_type_name_filter": {"key": "ApplicationTypeNameFilter", "type": "str"},
+        "health_state_filter": {"key": "HealthStateFilter", "type": "int"},
+        "service_filters": {"key": "ServiceFilters", "type": "[ServiceHealthStateFilter]"},
+        "deployed_application_filters": {
+            "key": "DeployedApplicationFilters",
+            "type": "[DeployedApplicationHealthStateFilter]",
+        },
     }
 
-    def __init__(self, *, application_name_filter: str=None, application_type_name_filter: str=None, health_state_filter: int=0, service_filters=None, deployed_application_filters=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        application_name_filter: str = None,
+        application_type_name_filter: str = None,
+        health_state_filter: int = 0,
+        service_filters=None,
+        deployed_application_filters=None,
+        **kwargs
+    ) -> None:
         super(ApplicationHealthStateFilter, self).__init__(**kwargs)
         self.application_name_filter = application_name_filter
         self.application_type_name_filter = application_type_name_filter
@@ -1525,18 +1812,34 @@ class ApplicationInfo(Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str'},
-        'name': {'key': 'Name', 'type': 'str'},
-        'type_name': {'key': 'TypeName', 'type': 'str'},
-        'type_version': {'key': 'TypeVersion', 'type': 'str'},
-        'status': {'key': 'Status', 'type': 'str'},
-        'parameters': {'key': 'Parameters', 'type': '[ApplicationParameter]'},
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'application_definition_kind': {'key': 'ApplicationDefinitionKind', 'type': 'str'},
-        'managed_application_identity': {'key': 'ManagedApplicationIdentity', 'type': 'ManagedApplicationIdentityDescription'},
+        "id": {"key": "Id", "type": "str"},
+        "name": {"key": "Name", "type": "str"},
+        "type_name": {"key": "TypeName", "type": "str"},
+        "type_version": {"key": "TypeVersion", "type": "str"},
+        "status": {"key": "Status", "type": "str"},
+        "parameters": {"key": "Parameters", "type": "[ApplicationParameter]"},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "application_definition_kind": {"key": "ApplicationDefinitionKind", "type": "str"},
+        "managed_application_identity": {
+            "key": "ManagedApplicationIdentity",
+            "type": "ManagedApplicationIdentityDescription",
+        },
     }
 
-    def __init__(self, *, id: str=None, name: str=None, type_name: str=None, type_version: str=None, status=None, parameters=None, health_state=None, application_definition_kind=None, managed_application_identity=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        id: str = None,
+        name: str = None,
+        type_name: str = None,
+        type_version: str = None,
+        status=None,
+        parameters=None,
+        health_state=None,
+        application_definition_kind=None,
+        managed_application_identity=None,
+        **kwargs
+    ) -> None:
         super(ApplicationInfo, self).__init__(**kwargs)
         self.id = id
         self.name = name
@@ -1585,14 +1888,26 @@ class ApplicationLoadInfo(Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str'},
-        'minimum_nodes': {'key': 'MinimumNodes', 'type': 'long'},
-        'maximum_nodes': {'key': 'MaximumNodes', 'type': 'long'},
-        'node_count': {'key': 'NodeCount', 'type': 'long'},
-        'application_load_metric_information': {'key': 'ApplicationLoadMetricInformation', 'type': '[ApplicationLoadMetricInformation]'},
+        "id": {"key": "Id", "type": "str"},
+        "minimum_nodes": {"key": "MinimumNodes", "type": "long"},
+        "maximum_nodes": {"key": "MaximumNodes", "type": "long"},
+        "node_count": {"key": "NodeCount", "type": "long"},
+        "application_load_metric_information": {
+            "key": "ApplicationLoadMetricInformation",
+            "type": "[ApplicationLoadMetricInformation]",
+        },
     }
 
-    def __init__(self, *, id: str=None, minimum_nodes: int=None, maximum_nodes: int=None, node_count: int=None, application_load_metric_information=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        id: str = None,
+        minimum_nodes: int = None,
+        maximum_nodes: int = None,
+        node_count: int = None,
+        application_load_metric_information=None,
+        **kwargs
+    ) -> None:
         super(ApplicationLoadInfo, self).__init__(**kwargs)
         self.id = id
         self.minimum_nodes = minimum_nodes
@@ -1625,13 +1940,21 @@ class ApplicationLoadMetricInformation(Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'reservation_capacity': {'key': 'ReservationCapacity', 'type': 'long'},
-        'application_capacity': {'key': 'ApplicationCapacity', 'type': 'long'},
-        'application_load': {'key': 'ApplicationLoad', 'type': 'long'},
+        "name": {"key": "Name", "type": "str"},
+        "reservation_capacity": {"key": "ReservationCapacity", "type": "long"},
+        "application_capacity": {"key": "ApplicationCapacity", "type": "long"},
+        "application_load": {"key": "ApplicationLoad", "type": "long"},
     }
 
-    def __init__(self, *, name: str=None, reservation_capacity: int=None, application_capacity: int=None, application_load: int=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        reservation_capacity: int = None,
+        application_capacity: int = None,
+        application_load: int = None,
+        **kwargs
+    ) -> None:
         super(ApplicationLoadMetricInformation, self).__init__(**kwargs)
         self.name = name
         self.reservation_capacity = reservation_capacity
@@ -1683,13 +2006,21 @@ class ApplicationMetricDescription(Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'maximum_capacity': {'key': 'MaximumCapacity', 'type': 'long'},
-        'reservation_capacity': {'key': 'ReservationCapacity', 'type': 'long'},
-        'total_application_capacity': {'key': 'TotalApplicationCapacity', 'type': 'long'},
+        "name": {"key": "Name", "type": "str"},
+        "maximum_capacity": {"key": "MaximumCapacity", "type": "long"},
+        "reservation_capacity": {"key": "ReservationCapacity", "type": "long"},
+        "total_application_capacity": {"key": "TotalApplicationCapacity", "type": "long"},
     }
 
-    def __init__(self, *, name: str=None, maximum_capacity: int=None, reservation_capacity: int=None, total_application_capacity: int=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        maximum_capacity: int = None,
+        reservation_capacity: int = None,
+        total_application_capacity: int = None,
+        **kwargs
+    ) -> None:
         super(ApplicationMetricDescription, self).__init__(**kwargs)
         self.name = name
         self.maximum_capacity = maximum_capacity
@@ -1714,11 +2045,11 @@ class ApplicationNameInfo(Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str'},
-        'name': {'key': 'Name', 'type': 'str'},
+        "id": {"key": "Id", "type": "str"},
+        "name": {"key": "Name", "type": "str"},
     }
 
-    def __init__(self, *, id: str=None, name: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str = None, name: str = None, **kwargs) -> None:
         super(ApplicationNameInfo, self).__init__(**kwargs)
         self.id = id
         self.name = name
@@ -1771,41 +2102,66 @@ class ApplicationNewHealthReportEvent(ApplicationEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'application_id': {'required': True},
-        'application_instance_id': {'required': True},
-        'source_id': {'required': True},
-        'property': {'required': True},
-        'health_state': {'required': True},
-        'time_to_live_ms': {'required': True},
-        'sequence_number': {'required': True},
-        'description': {'required': True},
-        'remove_when_expired': {'required': True},
-        'source_utc_timestamp': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "application_id": {"required": True},
+        "application_instance_id": {"required": True},
+        "source_id": {"required": True},
+        "property": {"required": True},
+        "health_state": {"required": True},
+        "time_to_live_ms": {"required": True},
+        "sequence_number": {"required": True},
+        "description": {"required": True},
+        "remove_when_expired": {"required": True},
+        "source_utc_timestamp": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'application_id': {'key': 'ApplicationId', 'type': 'str'},
-        'application_instance_id': {'key': 'ApplicationInstanceId', 'type': 'long'},
-        'source_id': {'key': 'SourceId', 'type': 'str'},
-        'property': {'key': 'Property', 'type': 'str'},
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'time_to_live_ms': {'key': 'TimeToLiveMs', 'type': 'long'},
-        'sequence_number': {'key': 'SequenceNumber', 'type': 'long'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'remove_when_expired': {'key': 'RemoveWhenExpired', 'type': 'bool'},
-        'source_utc_timestamp': {'key': 'SourceUtcTimestamp', 'type': 'iso-8601'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "application_id": {"key": "ApplicationId", "type": "str"},
+        "application_instance_id": {"key": "ApplicationInstanceId", "type": "long"},
+        "source_id": {"key": "SourceId", "type": "str"},
+        "property": {"key": "Property", "type": "str"},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "time_to_live_ms": {"key": "TimeToLiveMs", "type": "long"},
+        "sequence_number": {"key": "SequenceNumber", "type": "long"},
+        "description": {"key": "Description", "type": "str"},
+        "remove_when_expired": {"key": "RemoveWhenExpired", "type": "bool"},
+        "source_utc_timestamp": {"key": "SourceUtcTimestamp", "type": "iso-8601"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, application_id: str, application_instance_id: int, source_id: str, property: str, health_state: str, time_to_live_ms: int, sequence_number: int, description: str, remove_when_expired: bool, source_utc_timestamp, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ApplicationNewHealthReportEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, application_id=application_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        application_id: str,
+        application_instance_id: int,
+        source_id: str,
+        property: str,
+        health_state: str,
+        time_to_live_ms: int,
+        sequence_number: int,
+        description: str,
+        remove_when_expired: bool,
+        source_utc_timestamp,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(ApplicationNewHealthReportEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            application_id=application_id,
+            **kwargs
+        )
         self.application_instance_id = application_instance_id
         self.source_id = source_id
         self.property = property
@@ -1815,7 +2171,7 @@ class ApplicationNewHealthReportEvent(ApplicationEvent):
         self.description = description
         self.remove_when_expired = remove_when_expired
         self.source_utc_timestamp = source_utc_timestamp
-        self.kind = 'ApplicationNewHealthReport'
+        self.kind = "ApplicationNewHealthReport"
 
 
 class ApplicationParameter(Model):
@@ -1831,13 +2187,13 @@ class ApplicationParameter(Model):
     """
 
     _validation = {
-        'key': {'required': True},
-        'value': {'required': True},
+        "key": {"required": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'key': {'key': 'Key', 'type': 'str'},
-        'value': {'key': 'Value', 'type': 'str'},
+        "key": {"key": "Key", "type": "str"},
+        "value": {"key": "Value", "type": "str"},
     }
 
     def __init__(self, *, key: str, value: str, **kwargs) -> None:
@@ -1900,47 +2256,75 @@ class ApplicationProcessExitedEvent(ApplicationEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'application_id': {'required': True},
-        'service_name': {'required': True},
-        'service_package_name': {'required': True},
-        'service_package_activation_id': {'required': True},
-        'is_exclusive': {'required': True},
-        'code_package_name': {'required': True},
-        'entry_point_type': {'required': True},
-        'exe_name': {'required': True},
-        'process_id': {'required': True},
-        'host_id': {'required': True},
-        'exit_code': {'required': True},
-        'unexpected_termination': {'required': True},
-        'start_time': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "application_id": {"required": True},
+        "service_name": {"required": True},
+        "service_package_name": {"required": True},
+        "service_package_activation_id": {"required": True},
+        "is_exclusive": {"required": True},
+        "code_package_name": {"required": True},
+        "entry_point_type": {"required": True},
+        "exe_name": {"required": True},
+        "process_id": {"required": True},
+        "host_id": {"required": True},
+        "exit_code": {"required": True},
+        "unexpected_termination": {"required": True},
+        "start_time": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'application_id': {'key': 'ApplicationId', 'type': 'str'},
-        'service_name': {'key': 'ServiceName', 'type': 'str'},
-        'service_package_name': {'key': 'ServicePackageName', 'type': 'str'},
-        'service_package_activation_id': {'key': 'ServicePackageActivationId', 'type': 'str'},
-        'is_exclusive': {'key': 'IsExclusive', 'type': 'bool'},
-        'code_package_name': {'key': 'CodePackageName', 'type': 'str'},
-        'entry_point_type': {'key': 'EntryPointType', 'type': 'str'},
-        'exe_name': {'key': 'ExeName', 'type': 'str'},
-        'process_id': {'key': 'ProcessId', 'type': 'long'},
-        'host_id': {'key': 'HostId', 'type': 'str'},
-        'exit_code': {'key': 'ExitCode', 'type': 'long'},
-        'unexpected_termination': {'key': 'UnexpectedTermination', 'type': 'bool'},
-        'start_time': {'key': 'StartTime', 'type': 'iso-8601'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "application_id": {"key": "ApplicationId", "type": "str"},
+        "service_name": {"key": "ServiceName", "type": "str"},
+        "service_package_name": {"key": "ServicePackageName", "type": "str"},
+        "service_package_activation_id": {"key": "ServicePackageActivationId", "type": "str"},
+        "is_exclusive": {"key": "IsExclusive", "type": "bool"},
+        "code_package_name": {"key": "CodePackageName", "type": "str"},
+        "entry_point_type": {"key": "EntryPointType", "type": "str"},
+        "exe_name": {"key": "ExeName", "type": "str"},
+        "process_id": {"key": "ProcessId", "type": "long"},
+        "host_id": {"key": "HostId", "type": "str"},
+        "exit_code": {"key": "ExitCode", "type": "long"},
+        "unexpected_termination": {"key": "UnexpectedTermination", "type": "bool"},
+        "start_time": {"key": "StartTime", "type": "iso-8601"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, application_id: str, service_name: str, service_package_name: str, service_package_activation_id: str, is_exclusive: bool, code_package_name: str, entry_point_type: str, exe_name: str, process_id: int, host_id: str, exit_code: int, unexpected_termination: bool, start_time, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ApplicationProcessExitedEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, application_id=application_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        application_id: str,
+        service_name: str,
+        service_package_name: str,
+        service_package_activation_id: str,
+        is_exclusive: bool,
+        code_package_name: str,
+        entry_point_type: str,
+        exe_name: str,
+        process_id: int,
+        host_id: str,
+        exit_code: int,
+        unexpected_termination: bool,
+        start_time,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(ApplicationProcessExitedEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            application_id=application_id,
+            **kwargs
+        )
         self.service_name = service_name
         self.service_package_name = service_package_name
         self.service_package_activation_id = service_package_activation_id
@@ -1953,7 +2337,7 @@ class ApplicationProcessExitedEvent(ApplicationEvent):
         self.exit_code = exit_code
         self.unexpected_termination = unexpected_termination
         self.start_time = start_time
-        self.kind = 'ApplicationProcessExited'
+        self.kind = "ApplicationProcessExited"
 
 
 class ApplicationResourceDescription(Model):
@@ -2000,29 +2384,39 @@ class ApplicationResourceDescription(Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'service_names': {'readonly': True},
-        'status': {'readonly': True},
-        'status_details': {'readonly': True},
-        'health_state': {'readonly': True},
-        'unhealthy_evaluation': {'readonly': True},
+        "name": {"required": True},
+        "service_names": {"readonly": True},
+        "status": {"readonly": True},
+        "status_details": {"readonly": True},
+        "health_state": {"readonly": True},
+        "unhealthy_evaluation": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'services': {'key': 'properties.services', 'type': '[ServiceResourceDescription]'},
-        'diagnostics': {'key': 'properties.diagnostics', 'type': 'DiagnosticsDescription'},
-        'debug_params': {'key': 'properties.debugParams', 'type': 'str'},
-        'service_names': {'key': 'properties.serviceNames', 'type': '[str]'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'status_details': {'key': 'properties.statusDetails', 'type': 'str'},
-        'health_state': {'key': 'properties.healthState', 'type': 'str'},
-        'unhealthy_evaluation': {'key': 'properties.unhealthyEvaluation', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'IdentityDescription'},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "services": {"key": "properties.services", "type": "[ServiceResourceDescription]"},
+        "diagnostics": {"key": "properties.diagnostics", "type": "DiagnosticsDescription"},
+        "debug_params": {"key": "properties.debugParams", "type": "str"},
+        "service_names": {"key": "properties.serviceNames", "type": "[str]"},
+        "status": {"key": "properties.status", "type": "str"},
+        "status_details": {"key": "properties.statusDetails", "type": "str"},
+        "health_state": {"key": "properties.healthState", "type": "str"},
+        "unhealthy_evaluation": {"key": "properties.unhealthyEvaluation", "type": "str"},
+        "identity": {"key": "identity", "type": "IdentityDescription"},
     }
 
-    def __init__(self, *, name: str, description: str=None, services=None, diagnostics=None, debug_params: str=None, identity=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str,
+        description: str = None,
+        services=None,
+        diagnostics=None,
+        debug_params: str = None,
+        identity=None,
+        **kwargs
+    ) -> None:
         super(ApplicationResourceDescription, self).__init__(**kwargs)
         self.name = name
         self.description = description
@@ -2088,20 +2482,38 @@ class ApplicationResourceUpgradeProgressInfo(Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'target_application_type_version': {'key': 'TargetApplicationTypeVersion', 'type': 'str'},
-        'start_timestamp_utc': {'key': 'StartTimestampUtc', 'type': 'str'},
-        'upgrade_state': {'key': 'UpgradeState', 'type': 'str'},
-        'percent_completed': {'key': 'PercentCompleted', 'type': 'str'},
-        'service_upgrade_progress': {'key': 'ServiceUpgradeProgress', 'type': '[ServiceUpgradeProgress]'},
-        'rolling_upgrade_mode': {'key': 'RollingUpgradeMode', 'type': 'str'},
-        'upgrade_duration': {'key': 'UpgradeDuration', 'type': 'str'},
-        'application_upgrade_status_details': {'key': 'ApplicationUpgradeStatusDetails', 'type': 'str'},
-        'upgrade_replica_set_check_timeout_in_seconds': {'key': 'UpgradeReplicaSetCheckTimeoutInSeconds', 'type': 'long'},
-        'failure_timestamp_utc': {'key': 'FailureTimestampUtc', 'type': 'str'},
+        "name": {"key": "Name", "type": "str"},
+        "target_application_type_version": {"key": "TargetApplicationTypeVersion", "type": "str"},
+        "start_timestamp_utc": {"key": "StartTimestampUtc", "type": "str"},
+        "upgrade_state": {"key": "UpgradeState", "type": "str"},
+        "percent_completed": {"key": "PercentCompleted", "type": "str"},
+        "service_upgrade_progress": {"key": "ServiceUpgradeProgress", "type": "[ServiceUpgradeProgress]"},
+        "rolling_upgrade_mode": {"key": "RollingUpgradeMode", "type": "str"},
+        "upgrade_duration": {"key": "UpgradeDuration", "type": "str"},
+        "application_upgrade_status_details": {"key": "ApplicationUpgradeStatusDetails", "type": "str"},
+        "upgrade_replica_set_check_timeout_in_seconds": {
+            "key": "UpgradeReplicaSetCheckTimeoutInSeconds",
+            "type": "long",
+        },
+        "failure_timestamp_utc": {"key": "FailureTimestampUtc", "type": "str"},
     }
 
-    def __init__(self, *, name: str=None, target_application_type_version: str=None, start_timestamp_utc: str=None, upgrade_state=None, percent_completed: str=None, service_upgrade_progress=None, rolling_upgrade_mode="Monitored", upgrade_duration: str="PT0H2M0S", application_upgrade_status_details: str=None, upgrade_replica_set_check_timeout_in_seconds: int=42949672925, failure_timestamp_utc: str=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        target_application_type_version: str = None,
+        start_timestamp_utc: str = None,
+        upgrade_state=None,
+        percent_completed: str = None,
+        service_upgrade_progress=None,
+        rolling_upgrade_mode="Monitored",
+        upgrade_duration: str = "PT0H2M0S",
+        application_upgrade_status_details: str = None,
+        upgrade_replica_set_check_timeout_in_seconds: int = 42949672925,
+        failure_timestamp_utc: str = None,
+        **kwargs
+    ) -> None:
         super(ApplicationResourceUpgradeProgressInfo, self).__init__(**kwargs)
         self.name = name
         self.target_application_type_version = target_application_type_version
@@ -2132,17 +2544,17 @@ class VolumeReference(Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'destination_path': {'required': True},
+        "name": {"required": True},
+        "destination_path": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'read_only': {'key': 'readOnly', 'type': 'bool'},
-        'destination_path': {'key': 'destinationPath', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "read_only": {"key": "readOnly", "type": "bool"},
+        "destination_path": {"key": "destinationPath", "type": "str"},
     }
 
-    def __init__(self, *, name: str, destination_path: str, read_only: bool=None, **kwargs) -> None:
+    def __init__(self, *, name: str, destination_path: str, read_only: bool = None, **kwargs) -> None:
         super(VolumeReference, self).__init__(**kwargs)
         self.name = name
         self.read_only = read_only
@@ -2169,20 +2581,24 @@ class ApplicationScopedVolume(VolumeReference):
     """
 
     _validation = {
-        'name': {'required': True},
-        'destination_path': {'required': True},
-        'creation_parameters': {'required': True},
+        "name": {"required": True},
+        "destination_path": {"required": True},
+        "creation_parameters": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'read_only': {'key': 'readOnly', 'type': 'bool'},
-        'destination_path': {'key': 'destinationPath', 'type': 'str'},
-        'creation_parameters': {'key': 'creationParameters', 'type': 'ApplicationScopedVolumeCreationParameters'},
+        "name": {"key": "name", "type": "str"},
+        "read_only": {"key": "readOnly", "type": "bool"},
+        "destination_path": {"key": "destinationPath", "type": "str"},
+        "creation_parameters": {"key": "creationParameters", "type": "ApplicationScopedVolumeCreationParameters"},
     }
 
-    def __init__(self, *, name: str, destination_path: str, creation_parameters, read_only: bool=None, **kwargs) -> None:
-        super(ApplicationScopedVolume, self).__init__(name=name, read_only=read_only, destination_path=destination_path, **kwargs)
+    def __init__(
+        self, *, name: str, destination_path: str, creation_parameters, read_only: bool = None, **kwargs
+    ) -> None:
+        super(ApplicationScopedVolume, self).__init__(
+            name=name, read_only=read_only, destination_path=destination_path, **kwargs
+        )
         self.creation_parameters = creation_parameters
 
 
@@ -2202,19 +2618,19 @@ class ApplicationScopedVolumeCreationParameters(Model):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
     }
 
     _subtype_map = {
-        'kind': {'ServiceFabricVolumeDisk': 'ApplicationScopedVolumeCreationParametersServiceFabricVolumeDisk'}
+        "kind": {"ServiceFabricVolumeDisk": "ApplicationScopedVolumeCreationParametersServiceFabricVolumeDisk"}
     }
 
-    def __init__(self, *, description: str=None, **kwargs) -> None:
+    def __init__(self, *, description: str = None, **kwargs) -> None:
         super(ApplicationScopedVolumeCreationParameters, self).__init__(**kwargs)
         self.description = description
         self.kind = None
@@ -2236,20 +2652,22 @@ class ApplicationScopedVolumeCreationParametersServiceFabricVolumeDisk(Applicati
     """
 
     _validation = {
-        'kind': {'required': True},
-        'size_disk': {'required': True},
+        "kind": {"required": True},
+        "size_disk": {"required": True},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'size_disk': {'key': 'sizeDisk', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "size_disk": {"key": "sizeDisk", "type": "str"},
     }
 
-    def __init__(self, *, size_disk, description: str=None, **kwargs) -> None:
-        super(ApplicationScopedVolumeCreationParametersServiceFabricVolumeDisk, self).__init__(description=description, **kwargs)
+    def __init__(self, *, size_disk, description: str = None, **kwargs) -> None:
+        super(ApplicationScopedVolumeCreationParametersServiceFabricVolumeDisk, self).__init__(
+            description=description, **kwargs
+        )
         self.size_disk = size_disk
-        self.kind = 'ServiceFabricVolumeDisk'
+        self.kind = "ServiceFabricVolumeDisk"
 
 
 class ApplicationsHealthEvaluation(HealthEvaluation):
@@ -2283,24 +2701,35 @@ class ApplicationsHealthEvaluation(HealthEvaluation):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'max_percent_unhealthy_applications': {'key': 'MaxPercentUnhealthyApplications', 'type': 'int'},
-        'total_count': {'key': 'TotalCount', 'type': 'long'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "description": {"key": "Description", "type": "str"},
+        "kind": {"key": "Kind", "type": "str"},
+        "max_percent_unhealthy_applications": {"key": "MaxPercentUnhealthyApplications", "type": "int"},
+        "total_count": {"key": "TotalCount", "type": "long"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, description: str=None, max_percent_unhealthy_applications: int=None, total_count: int=None, unhealthy_evaluations=None, **kwargs) -> None:
-        super(ApplicationsHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description, **kwargs)
+    def __init__(
+        self,
+        *,
+        aggregated_health_state=None,
+        description: str = None,
+        max_percent_unhealthy_applications: int = None,
+        total_count: int = None,
+        unhealthy_evaluations=None,
+        **kwargs
+    ) -> None:
+        super(ApplicationsHealthEvaluation, self).__init__(
+            aggregated_health_state=aggregated_health_state, description=description, **kwargs
+        )
         self.max_percent_unhealthy_applications = max_percent_unhealthy_applications
         self.total_count = total_count
         self.unhealthy_evaluations = unhealthy_evaluations
-        self.kind = 'Applications'
+        self.kind = "Applications"
 
 
 class ApplicationTypeApplicationsHealthEvaluation(HealthEvaluation):
@@ -2343,26 +2772,38 @@ class ApplicationTypeApplicationsHealthEvaluation(HealthEvaluation):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'application_type_name': {'key': 'ApplicationTypeName', 'type': 'str'},
-        'max_percent_unhealthy_applications': {'key': 'MaxPercentUnhealthyApplications', 'type': 'int'},
-        'total_count': {'key': 'TotalCount', 'type': 'long'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "description": {"key": "Description", "type": "str"},
+        "kind": {"key": "Kind", "type": "str"},
+        "application_type_name": {"key": "ApplicationTypeName", "type": "str"},
+        "max_percent_unhealthy_applications": {"key": "MaxPercentUnhealthyApplications", "type": "int"},
+        "total_count": {"key": "TotalCount", "type": "long"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, description: str=None, application_type_name: str=None, max_percent_unhealthy_applications: int=None, total_count: int=None, unhealthy_evaluations=None, **kwargs) -> None:
-        super(ApplicationTypeApplicationsHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description, **kwargs)
+    def __init__(
+        self,
+        *,
+        aggregated_health_state=None,
+        description: str = None,
+        application_type_name: str = None,
+        max_percent_unhealthy_applications: int = None,
+        total_count: int = None,
+        unhealthy_evaluations=None,
+        **kwargs
+    ) -> None:
+        super(ApplicationTypeApplicationsHealthEvaluation, self).__init__(
+            aggregated_health_state=aggregated_health_state, description=description, **kwargs
+        )
         self.application_type_name = application_type_name
         self.max_percent_unhealthy_applications = max_percent_unhealthy_applications
         self.total_count = total_count
         self.unhealthy_evaluations = unhealthy_evaluations
-        self.kind = 'ApplicationTypeApplications'
+        self.kind = "ApplicationTypeApplications"
 
 
 class ApplicationTypeHealthPolicyMapItem(Model):
@@ -2381,13 +2822,13 @@ class ApplicationTypeHealthPolicyMapItem(Model):
     """
 
     _validation = {
-        'key': {'required': True},
-        'value': {'required': True},
+        "key": {"required": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'key': {'key': 'Key', 'type': 'str'},
-        'value': {'key': 'Value', 'type': 'int'},
+        "key": {"key": "Key", "type": "str"},
+        "value": {"key": "Value", "type": "int"},
     }
 
     def __init__(self, *, key: str, value: int, **kwargs) -> None:
@@ -2408,11 +2849,11 @@ class ApplicationTypeImageStorePath(Model):
     """
 
     _validation = {
-        'application_type_build_path': {'required': True},
+        "application_type_build_path": {"required": True},
     }
 
     _attribute_map = {
-        'application_type_build_path': {'key': 'ApplicationTypeBuildPath', 'type': 'str'},
+        "application_type_build_path": {"key": "ApplicationTypeBuildPath", "type": "str"},
     }
 
     def __init__(self, *, application_type_build_path: str, **kwargs) -> None:
@@ -2448,15 +2889,25 @@ class ApplicationTypeInfo(Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'version': {'key': 'Version', 'type': 'str'},
-        'default_parameter_list': {'key': 'DefaultParameterList', 'type': '[ApplicationParameter]'},
-        'status': {'key': 'Status', 'type': 'str'},
-        'status_details': {'key': 'StatusDetails', 'type': 'str'},
-        'application_type_definition_kind': {'key': 'ApplicationTypeDefinitionKind', 'type': 'str'},
+        "name": {"key": "Name", "type": "str"},
+        "version": {"key": "Version", "type": "str"},
+        "default_parameter_list": {"key": "DefaultParameterList", "type": "[ApplicationParameter]"},
+        "status": {"key": "Status", "type": "str"},
+        "status_details": {"key": "StatusDetails", "type": "str"},
+        "application_type_definition_kind": {"key": "ApplicationTypeDefinitionKind", "type": "str"},
     }
 
-    def __init__(self, *, name: str=None, version: str=None, default_parameter_list=None, status=None, status_details: str=None, application_type_definition_kind=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        version: str = None,
+        default_parameter_list=None,
+        status=None,
+        status_details: str = None,
+        application_type_definition_kind=None,
+        **kwargs
+    ) -> None:
         super(ApplicationTypeInfo, self).__init__(**kwargs)
         self.name = name
         self.version = version
@@ -2475,10 +2926,10 @@ class ApplicationTypeManifest(Model):
     """
 
     _attribute_map = {
-        'manifest': {'key': 'Manifest', 'type': 'str'},
+        "manifest": {"key": "Manifest", "type": "str"},
     }
 
-    def __init__(self, *, manifest: str=None, **kwargs) -> None:
+    def __init__(self, *, manifest: str = None, **kwargs) -> None:
         super(ApplicationTypeManifest, self).__init__(**kwargs)
         self.manifest = manifest
 
@@ -2529,19 +2980,28 @@ class ApplicationUpdateDescription(Model):
     """
 
     _validation = {
-        'minimum_nodes': {'minimum': 0},
-        'maximum_nodes': {'minimum': 0},
+        "minimum_nodes": {"minimum": 0},
+        "maximum_nodes": {"minimum": 0},
     }
 
     _attribute_map = {
-        'flags': {'key': 'Flags', 'type': 'str'},
-        'remove_application_capacity': {'key': 'RemoveApplicationCapacity', 'type': 'bool'},
-        'minimum_nodes': {'key': 'MinimumNodes', 'type': 'long'},
-        'maximum_nodes': {'key': 'MaximumNodes', 'type': 'long'},
-        'application_metrics': {'key': 'ApplicationMetrics', 'type': '[ApplicationMetricDescription]'},
+        "flags": {"key": "Flags", "type": "str"},
+        "remove_application_capacity": {"key": "RemoveApplicationCapacity", "type": "bool"},
+        "minimum_nodes": {"key": "MinimumNodes", "type": "long"},
+        "maximum_nodes": {"key": "MaximumNodes", "type": "long"},
+        "application_metrics": {"key": "ApplicationMetrics", "type": "[ApplicationMetricDescription]"},
     }
 
-    def __init__(self, *, flags: str=None, remove_application_capacity: bool=False, minimum_nodes: int=None, maximum_nodes: int=0, application_metrics=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        flags: str = None,
+        remove_application_capacity: bool = False,
+        minimum_nodes: int = None,
+        maximum_nodes: int = 0,
+        application_metrics=None,
+        **kwargs
+    ) -> None:
         super(ApplicationUpdateDescription, self).__init__(**kwargs)
         self.flags = flags
         self.remove_application_capacity = remove_application_capacity
@@ -2585,33 +3045,52 @@ class ApplicationUpgradeCompletedEvent(ApplicationEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'application_id': {'required': True},
-        'application_type_name': {'required': True},
-        'application_type_version': {'required': True},
-        'overall_upgrade_elapsed_time_in_ms': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "application_id": {"required": True},
+        "application_type_name": {"required": True},
+        "application_type_version": {"required": True},
+        "overall_upgrade_elapsed_time_in_ms": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'application_id': {'key': 'ApplicationId', 'type': 'str'},
-        'application_type_name': {'key': 'ApplicationTypeName', 'type': 'str'},
-        'application_type_version': {'key': 'ApplicationTypeVersion', 'type': 'str'},
-        'overall_upgrade_elapsed_time_in_ms': {'key': 'OverallUpgradeElapsedTimeInMs', 'type': 'float'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "application_id": {"key": "ApplicationId", "type": "str"},
+        "application_type_name": {"key": "ApplicationTypeName", "type": "str"},
+        "application_type_version": {"key": "ApplicationTypeVersion", "type": "str"},
+        "overall_upgrade_elapsed_time_in_ms": {"key": "OverallUpgradeElapsedTimeInMs", "type": "float"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, application_id: str, application_type_name: str, application_type_version: str, overall_upgrade_elapsed_time_in_ms: float, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ApplicationUpgradeCompletedEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, application_id=application_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        application_id: str,
+        application_type_name: str,
+        application_type_version: str,
+        overall_upgrade_elapsed_time_in_ms: float,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(ApplicationUpgradeCompletedEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            application_id=application_id,
+            **kwargs
+        )
         self.application_type_name = application_type_name
         self.application_type_version = application_type_version
         self.overall_upgrade_elapsed_time_in_ms = overall_upgrade_elapsed_time_in_ms
-        self.kind = 'ApplicationUpgradeCompleted'
+        self.kind = "ApplicationUpgradeCompleted"
 
 
 class ApplicationUpgradeDescription(Model):
@@ -2691,27 +3170,49 @@ class ApplicationUpgradeDescription(Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'target_application_type_version': {'required': True},
-        'upgrade_kind': {'required': True},
+        "name": {"required": True},
+        "target_application_type_version": {"required": True},
+        "upgrade_kind": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'target_application_type_version': {'key': 'TargetApplicationTypeVersion', 'type': 'str'},
-        'parameters': {'key': 'Parameters', 'type': '[ApplicationParameter]'},
-        'upgrade_kind': {'key': 'UpgradeKind', 'type': 'str'},
-        'rolling_upgrade_mode': {'key': 'RollingUpgradeMode', 'type': 'str'},
-        'upgrade_replica_set_check_timeout_in_seconds': {'key': 'UpgradeReplicaSetCheckTimeoutInSeconds', 'type': 'long'},
-        'force_restart': {'key': 'ForceRestart', 'type': 'bool'},
-        'sort_order': {'key': 'SortOrder', 'type': 'str'},
-        'monitoring_policy': {'key': 'MonitoringPolicy', 'type': 'MonitoringPolicyDescription'},
-        'application_health_policy': {'key': 'ApplicationHealthPolicy', 'type': 'ApplicationHealthPolicy'},
-        'instance_close_delay_duration_in_seconds': {'key': 'InstanceCloseDelayDurationInSeconds', 'type': 'long'},
-        'managed_application_identity': {'key': 'ManagedApplicationIdentity', 'type': 'ManagedApplicationIdentityDescription'},
+        "name": {"key": "Name", "type": "str"},
+        "target_application_type_version": {"key": "TargetApplicationTypeVersion", "type": "str"},
+        "parameters": {"key": "Parameters", "type": "[ApplicationParameter]"},
+        "upgrade_kind": {"key": "UpgradeKind", "type": "str"},
+        "rolling_upgrade_mode": {"key": "RollingUpgradeMode", "type": "str"},
+        "upgrade_replica_set_check_timeout_in_seconds": {
+            "key": "UpgradeReplicaSetCheckTimeoutInSeconds",
+            "type": "long",
+        },
+        "force_restart": {"key": "ForceRestart", "type": "bool"},
+        "sort_order": {"key": "SortOrder", "type": "str"},
+        "monitoring_policy": {"key": "MonitoringPolicy", "type": "MonitoringPolicyDescription"},
+        "application_health_policy": {"key": "ApplicationHealthPolicy", "type": "ApplicationHealthPolicy"},
+        "instance_close_delay_duration_in_seconds": {"key": "InstanceCloseDelayDurationInSeconds", "type": "long"},
+        "managed_application_identity": {
+            "key": "ManagedApplicationIdentity",
+            "type": "ManagedApplicationIdentityDescription",
+        },
     }
 
-    def __init__(self, *, name: str, target_application_type_version: str, parameters=None, upgrade_kind="Rolling", rolling_upgrade_mode="UnmonitoredAuto", upgrade_replica_set_check_timeout_in_seconds: int=None, force_restart: bool=None, sort_order="Default", monitoring_policy=None, application_health_policy=None, instance_close_delay_duration_in_seconds: int=None, managed_application_identity=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str,
+        target_application_type_version: str,
+        parameters=None,
+        upgrade_kind="Rolling",
+        rolling_upgrade_mode="UnmonitoredAuto",
+        upgrade_replica_set_check_timeout_in_seconds: int = None,
+        force_restart: bool = None,
+        sort_order="Default",
+        monitoring_policy=None,
+        application_health_policy=None,
+        instance_close_delay_duration_in_seconds: int = None,
+        managed_application_identity=None,
+        **kwargs
+    ) -> None:
         super(ApplicationUpgradeDescription, self).__init__(**kwargs)
         self.name = name
         self.target_application_type_version = target_application_type_version
@@ -2770,42 +3271,64 @@ class ApplicationUpgradeDomainCompletedEvent(ApplicationEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'application_id': {'required': True},
-        'application_type_name': {'required': True},
-        'current_application_type_version': {'required': True},
-        'application_type_version': {'required': True},
-        'upgrade_state': {'required': True},
-        'upgrade_domains': {'required': True},
-        'upgrade_domain_elapsed_time_in_ms': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "application_id": {"required": True},
+        "application_type_name": {"required": True},
+        "current_application_type_version": {"required": True},
+        "application_type_version": {"required": True},
+        "upgrade_state": {"required": True},
+        "upgrade_domains": {"required": True},
+        "upgrade_domain_elapsed_time_in_ms": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'application_id': {'key': 'ApplicationId', 'type': 'str'},
-        'application_type_name': {'key': 'ApplicationTypeName', 'type': 'str'},
-        'current_application_type_version': {'key': 'CurrentApplicationTypeVersion', 'type': 'str'},
-        'application_type_version': {'key': 'ApplicationTypeVersion', 'type': 'str'},
-        'upgrade_state': {'key': 'UpgradeState', 'type': 'str'},
-        'upgrade_domains': {'key': 'UpgradeDomains', 'type': 'str'},
-        'upgrade_domain_elapsed_time_in_ms': {'key': 'UpgradeDomainElapsedTimeInMs', 'type': 'float'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "application_id": {"key": "ApplicationId", "type": "str"},
+        "application_type_name": {"key": "ApplicationTypeName", "type": "str"},
+        "current_application_type_version": {"key": "CurrentApplicationTypeVersion", "type": "str"},
+        "application_type_version": {"key": "ApplicationTypeVersion", "type": "str"},
+        "upgrade_state": {"key": "UpgradeState", "type": "str"},
+        "upgrade_domains": {"key": "UpgradeDomains", "type": "str"},
+        "upgrade_domain_elapsed_time_in_ms": {"key": "UpgradeDomainElapsedTimeInMs", "type": "float"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, application_id: str, application_type_name: str, current_application_type_version: str, application_type_version: str, upgrade_state: str, upgrade_domains: str, upgrade_domain_elapsed_time_in_ms: float, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ApplicationUpgradeDomainCompletedEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, application_id=application_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        application_id: str,
+        application_type_name: str,
+        current_application_type_version: str,
+        application_type_version: str,
+        upgrade_state: str,
+        upgrade_domains: str,
+        upgrade_domain_elapsed_time_in_ms: float,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(ApplicationUpgradeDomainCompletedEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            application_id=application_id,
+            **kwargs
+        )
         self.application_type_name = application_type_name
         self.current_application_type_version = current_application_type_version
         self.application_type_version = application_type_version
         self.upgrade_state = upgrade_state
         self.upgrade_domains = upgrade_domains
         self.upgrade_domain_elapsed_time_in_ms = upgrade_domain_elapsed_time_in_ms
-        self.kind = 'ApplicationUpgradeDomainCompleted'
+        self.kind = "ApplicationUpgradeDomainCompleted"
 
 
 class ApplicationUpgradeProgressInfo(Model):
@@ -2892,29 +3415,62 @@ class ApplicationUpgradeProgressInfo(Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'type_name': {'key': 'TypeName', 'type': 'str'},
-        'target_application_type_version': {'key': 'TargetApplicationTypeVersion', 'type': 'str'},
-        'upgrade_domains': {'key': 'UpgradeDomains', 'type': '[UpgradeDomainInfo]'},
-        'upgrade_units': {'key': 'UpgradeUnits', 'type': '[UpgradeUnitInfo]'},
-        'upgrade_state': {'key': 'UpgradeState', 'type': 'str'},
-        'next_upgrade_domain': {'key': 'NextUpgradeDomain', 'type': 'str'},
-        'rolling_upgrade_mode': {'key': 'RollingUpgradeMode', 'type': 'str'},
-        'upgrade_description': {'key': 'UpgradeDescription', 'type': 'ApplicationUpgradeDescription'},
-        'upgrade_duration_in_milliseconds': {'key': 'UpgradeDurationInMilliseconds', 'type': 'str'},
-        'upgrade_domain_duration_in_milliseconds': {'key': 'UpgradeDomainDurationInMilliseconds', 'type': 'str'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
-        'current_upgrade_domain_progress': {'key': 'CurrentUpgradeDomainProgress', 'type': 'CurrentUpgradeDomainProgressInfo'},
-        'current_upgrade_units_progress': {'key': 'CurrentUpgradeUnitsProgress', 'type': 'CurrentUpgradeUnitsProgressInfo'},
-        'start_timestamp_utc': {'key': 'StartTimestampUtc', 'type': 'str'},
-        'failure_timestamp_utc': {'key': 'FailureTimestampUtc', 'type': 'str'},
-        'failure_reason': {'key': 'FailureReason', 'type': 'str'},
-        'upgrade_domain_progress_at_failure': {'key': 'UpgradeDomainProgressAtFailure', 'type': 'FailureUpgradeDomainProgressInfo'},
-        'upgrade_status_details': {'key': 'UpgradeStatusDetails', 'type': 'str'},
-        'is_node_by_node': {'key': 'IsNodeByNode', 'type': 'bool'},
+        "name": {"key": "Name", "type": "str"},
+        "type_name": {"key": "TypeName", "type": "str"},
+        "target_application_type_version": {"key": "TargetApplicationTypeVersion", "type": "str"},
+        "upgrade_domains": {"key": "UpgradeDomains", "type": "[UpgradeDomainInfo]"},
+        "upgrade_units": {"key": "UpgradeUnits", "type": "[UpgradeUnitInfo]"},
+        "upgrade_state": {"key": "UpgradeState", "type": "str"},
+        "next_upgrade_domain": {"key": "NextUpgradeDomain", "type": "str"},
+        "rolling_upgrade_mode": {"key": "RollingUpgradeMode", "type": "str"},
+        "upgrade_description": {"key": "UpgradeDescription", "type": "ApplicationUpgradeDescription"},
+        "upgrade_duration_in_milliseconds": {"key": "UpgradeDurationInMilliseconds", "type": "str"},
+        "upgrade_domain_duration_in_milliseconds": {"key": "UpgradeDomainDurationInMilliseconds", "type": "str"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
+        "current_upgrade_domain_progress": {
+            "key": "CurrentUpgradeDomainProgress",
+            "type": "CurrentUpgradeDomainProgressInfo",
+        },
+        "current_upgrade_units_progress": {
+            "key": "CurrentUpgradeUnitsProgress",
+            "type": "CurrentUpgradeUnitsProgressInfo",
+        },
+        "start_timestamp_utc": {"key": "StartTimestampUtc", "type": "str"},
+        "failure_timestamp_utc": {"key": "FailureTimestampUtc", "type": "str"},
+        "failure_reason": {"key": "FailureReason", "type": "str"},
+        "upgrade_domain_progress_at_failure": {
+            "key": "UpgradeDomainProgressAtFailure",
+            "type": "FailureUpgradeDomainProgressInfo",
+        },
+        "upgrade_status_details": {"key": "UpgradeStatusDetails", "type": "str"},
+        "is_node_by_node": {"key": "IsNodeByNode", "type": "bool"},
     }
 
-    def __init__(self, *, name: str=None, type_name: str=None, target_application_type_version: str=None, upgrade_domains=None, upgrade_units=None, upgrade_state=None, next_upgrade_domain: str=None, rolling_upgrade_mode="UnmonitoredAuto", upgrade_description=None, upgrade_duration_in_milliseconds: str=None, upgrade_domain_duration_in_milliseconds: str=None, unhealthy_evaluations=None, current_upgrade_domain_progress=None, current_upgrade_units_progress=None, start_timestamp_utc: str=None, failure_timestamp_utc: str=None, failure_reason=None, upgrade_domain_progress_at_failure=None, upgrade_status_details: str=None, is_node_by_node: bool=False, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        type_name: str = None,
+        target_application_type_version: str = None,
+        upgrade_domains=None,
+        upgrade_units=None,
+        upgrade_state=None,
+        next_upgrade_domain: str = None,
+        rolling_upgrade_mode="UnmonitoredAuto",
+        upgrade_description=None,
+        upgrade_duration_in_milliseconds: str = None,
+        upgrade_domain_duration_in_milliseconds: str = None,
+        unhealthy_evaluations=None,
+        current_upgrade_domain_progress=None,
+        current_upgrade_units_progress=None,
+        start_timestamp_utc: str = None,
+        failure_timestamp_utc: str = None,
+        failure_reason=None,
+        upgrade_domain_progress_at_failure=None,
+        upgrade_status_details: str = None,
+        is_node_by_node: bool = False,
+        **kwargs
+    ) -> None:
         super(ApplicationUpgradeProgressInfo, self).__init__(**kwargs)
         self.name = name
         self.type_name = type_name
@@ -2975,36 +3531,56 @@ class ApplicationUpgradeRollbackCompletedEvent(ApplicationEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'application_id': {'required': True},
-        'application_type_name': {'required': True},
-        'application_type_version': {'required': True},
-        'failure_reason': {'required': True},
-        'overall_upgrade_elapsed_time_in_ms': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "application_id": {"required": True},
+        "application_type_name": {"required": True},
+        "application_type_version": {"required": True},
+        "failure_reason": {"required": True},
+        "overall_upgrade_elapsed_time_in_ms": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'application_id': {'key': 'ApplicationId', 'type': 'str'},
-        'application_type_name': {'key': 'ApplicationTypeName', 'type': 'str'},
-        'application_type_version': {'key': 'ApplicationTypeVersion', 'type': 'str'},
-        'failure_reason': {'key': 'FailureReason', 'type': 'str'},
-        'overall_upgrade_elapsed_time_in_ms': {'key': 'OverallUpgradeElapsedTimeInMs', 'type': 'float'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "application_id": {"key": "ApplicationId", "type": "str"},
+        "application_type_name": {"key": "ApplicationTypeName", "type": "str"},
+        "application_type_version": {"key": "ApplicationTypeVersion", "type": "str"},
+        "failure_reason": {"key": "FailureReason", "type": "str"},
+        "overall_upgrade_elapsed_time_in_ms": {"key": "OverallUpgradeElapsedTimeInMs", "type": "float"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, application_id: str, application_type_name: str, application_type_version: str, failure_reason: str, overall_upgrade_elapsed_time_in_ms: float, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ApplicationUpgradeRollbackCompletedEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, application_id=application_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        application_id: str,
+        application_type_name: str,
+        application_type_version: str,
+        failure_reason: str,
+        overall_upgrade_elapsed_time_in_ms: float,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(ApplicationUpgradeRollbackCompletedEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            application_id=application_id,
+            **kwargs
+        )
         self.application_type_name = application_type_name
         self.application_type_version = application_type_version
         self.failure_reason = failure_reason
         self.overall_upgrade_elapsed_time_in_ms = overall_upgrade_elapsed_time_in_ms
-        self.kind = 'ApplicationUpgradeRollbackCompleted'
+        self.kind = "ApplicationUpgradeRollbackCompleted"
 
 
 class ApplicationUpgradeRollbackStartedEvent(ApplicationEvent):
@@ -3048,39 +3624,60 @@ class ApplicationUpgradeRollbackStartedEvent(ApplicationEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'application_id': {'required': True},
-        'application_type_name': {'required': True},
-        'current_application_type_version': {'required': True},
-        'application_type_version': {'required': True},
-        'failure_reason': {'required': True},
-        'overall_upgrade_elapsed_time_in_ms': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "application_id": {"required": True},
+        "application_type_name": {"required": True},
+        "current_application_type_version": {"required": True},
+        "application_type_version": {"required": True},
+        "failure_reason": {"required": True},
+        "overall_upgrade_elapsed_time_in_ms": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'application_id': {'key': 'ApplicationId', 'type': 'str'},
-        'application_type_name': {'key': 'ApplicationTypeName', 'type': 'str'},
-        'current_application_type_version': {'key': 'CurrentApplicationTypeVersion', 'type': 'str'},
-        'application_type_version': {'key': 'ApplicationTypeVersion', 'type': 'str'},
-        'failure_reason': {'key': 'FailureReason', 'type': 'str'},
-        'overall_upgrade_elapsed_time_in_ms': {'key': 'OverallUpgradeElapsedTimeInMs', 'type': 'float'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "application_id": {"key": "ApplicationId", "type": "str"},
+        "application_type_name": {"key": "ApplicationTypeName", "type": "str"},
+        "current_application_type_version": {"key": "CurrentApplicationTypeVersion", "type": "str"},
+        "application_type_version": {"key": "ApplicationTypeVersion", "type": "str"},
+        "failure_reason": {"key": "FailureReason", "type": "str"},
+        "overall_upgrade_elapsed_time_in_ms": {"key": "OverallUpgradeElapsedTimeInMs", "type": "float"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, application_id: str, application_type_name: str, current_application_type_version: str, application_type_version: str, failure_reason: str, overall_upgrade_elapsed_time_in_ms: float, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ApplicationUpgradeRollbackStartedEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, application_id=application_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        application_id: str,
+        application_type_name: str,
+        current_application_type_version: str,
+        application_type_version: str,
+        failure_reason: str,
+        overall_upgrade_elapsed_time_in_ms: float,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(ApplicationUpgradeRollbackStartedEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            application_id=application_id,
+            **kwargs
+        )
         self.application_type_name = application_type_name
         self.current_application_type_version = current_application_type_version
         self.application_type_version = application_type_version
         self.failure_reason = failure_reason
         self.overall_upgrade_elapsed_time_in_ms = overall_upgrade_elapsed_time_in_ms
-        self.kind = 'ApplicationUpgradeRollbackStarted'
+        self.kind = "ApplicationUpgradeRollbackStarted"
 
 
 class ApplicationUpgradeStartedEvent(ApplicationEvent):
@@ -3125,42 +3722,64 @@ class ApplicationUpgradeStartedEvent(ApplicationEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'application_id': {'required': True},
-        'application_type_name': {'required': True},
-        'current_application_type_version': {'required': True},
-        'application_type_version': {'required': True},
-        'upgrade_type': {'required': True},
-        'rolling_upgrade_mode': {'required': True},
-        'failure_action': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "application_id": {"required": True},
+        "application_type_name": {"required": True},
+        "current_application_type_version": {"required": True},
+        "application_type_version": {"required": True},
+        "upgrade_type": {"required": True},
+        "rolling_upgrade_mode": {"required": True},
+        "failure_action": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'application_id': {'key': 'ApplicationId', 'type': 'str'},
-        'application_type_name': {'key': 'ApplicationTypeName', 'type': 'str'},
-        'current_application_type_version': {'key': 'CurrentApplicationTypeVersion', 'type': 'str'},
-        'application_type_version': {'key': 'ApplicationTypeVersion', 'type': 'str'},
-        'upgrade_type': {'key': 'UpgradeType', 'type': 'str'},
-        'rolling_upgrade_mode': {'key': 'RollingUpgradeMode', 'type': 'str'},
-        'failure_action': {'key': 'FailureAction', 'type': 'str'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "application_id": {"key": "ApplicationId", "type": "str"},
+        "application_type_name": {"key": "ApplicationTypeName", "type": "str"},
+        "current_application_type_version": {"key": "CurrentApplicationTypeVersion", "type": "str"},
+        "application_type_version": {"key": "ApplicationTypeVersion", "type": "str"},
+        "upgrade_type": {"key": "UpgradeType", "type": "str"},
+        "rolling_upgrade_mode": {"key": "RollingUpgradeMode", "type": "str"},
+        "failure_action": {"key": "FailureAction", "type": "str"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, application_id: str, application_type_name: str, current_application_type_version: str, application_type_version: str, upgrade_type: str, rolling_upgrade_mode: str, failure_action: str, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ApplicationUpgradeStartedEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, application_id=application_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        application_id: str,
+        application_type_name: str,
+        current_application_type_version: str,
+        application_type_version: str,
+        upgrade_type: str,
+        rolling_upgrade_mode: str,
+        failure_action: str,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(ApplicationUpgradeStartedEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            application_id=application_id,
+            **kwargs
+        )
         self.application_type_name = application_type_name
         self.current_application_type_version = current_application_type_version
         self.application_type_version = application_type_version
         self.upgrade_type = upgrade_type
         self.rolling_upgrade_mode = rolling_upgrade_mode
         self.failure_action = failure_action
-        self.kind = 'ApplicationUpgradeStarted'
+        self.kind = "ApplicationUpgradeStarted"
 
 
 class ApplicationUpgradeUpdateDescription(Model):
@@ -3186,18 +3805,20 @@ class ApplicationUpgradeUpdateDescription(Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'upgrade_kind': {'required': True},
+        "name": {"required": True},
+        "upgrade_kind": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'upgrade_kind': {'key': 'UpgradeKind', 'type': 'str'},
-        'application_health_policy': {'key': 'ApplicationHealthPolicy', 'type': 'ApplicationHealthPolicy'},
-        'update_description': {'key': 'UpdateDescription', 'type': 'RollingUpgradeUpdateDescription'},
+        "name": {"key": "Name", "type": "str"},
+        "upgrade_kind": {"key": "UpgradeKind", "type": "str"},
+        "application_health_policy": {"key": "ApplicationHealthPolicy", "type": "ApplicationHealthPolicy"},
+        "update_description": {"key": "UpdateDescription", "type": "RollingUpgradeUpdateDescription"},
     }
 
-    def __init__(self, *, name: str, upgrade_kind="Rolling", application_health_policy=None, update_description=None, **kwargs) -> None:
+    def __init__(
+        self, *, name: str, upgrade_kind="Rolling", application_health_policy=None, update_description=None, **kwargs
+    ) -> None:
         super(ApplicationUpgradeUpdateDescription, self).__init__(**kwargs)
         self.name = name
         self.upgrade_kind = upgrade_kind
@@ -3219,16 +3840,14 @@ class AutoScalingMetric(Model):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
+        "kind": {"key": "kind", "type": "str"},
     }
 
-    _subtype_map = {
-        'kind': {'Resource': 'AutoScalingResourceMetric'}
-    }
+    _subtype_map = {"kind": {"Resource": "AutoScalingResourceMetric"}}
 
     def __init__(self, **kwargs) -> None:
         super(AutoScalingMetric, self).__init__(**kwargs)
@@ -3251,15 +3870,15 @@ class AutoScalingPolicy(Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'trigger': {'required': True},
-        'mechanism': {'required': True},
+        "name": {"required": True},
+        "trigger": {"required": True},
+        "mechanism": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'trigger': {'key': 'trigger', 'type': 'AutoScalingTrigger'},
-        'mechanism': {'key': 'mechanism', 'type': 'AutoScalingMechanism'},
+        "name": {"key": "name", "type": "str"},
+        "trigger": {"key": "trigger", "type": "AutoScalingTrigger"},
+        "mechanism": {"key": "mechanism", "type": "AutoScalingMechanism"},
     }
 
     def __init__(self, *, name: str, trigger, mechanism, **kwargs) -> None:
@@ -3283,19 +3902,19 @@ class AutoScalingResourceMetric(AutoScalingMetric):
     """
 
     _validation = {
-        'kind': {'required': True},
-        'name': {'required': True},
+        "kind": {"required": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "kind": {"key": "kind", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
     def __init__(self, *, name, **kwargs) -> None:
         super(AutoScalingResourceMetric, self).__init__(**kwargs)
         self.name = name
-        self.kind = 'Resource'
+        self.kind = "Resource"
 
 
 class AutoScalingTrigger(Model):
@@ -3311,16 +3930,14 @@ class AutoScalingTrigger(Model):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
+        "kind": {"key": "kind", "type": "str"},
     }
 
-    _subtype_map = {
-        'kind': {'AverageLoad': 'AverageLoadScalingTrigger'}
-    }
+    _subtype_map = {"kind": {"AverageLoad": "AverageLoadScalingTrigger"}}
 
     def __init__(self, **kwargs) -> None:
         super(AutoScalingTrigger, self).__init__(**kwargs)
@@ -3349,28 +3966,36 @@ class AverageLoadScalingTrigger(AutoScalingTrigger):
     """
 
     _validation = {
-        'kind': {'required': True},
-        'metric': {'required': True},
-        'lower_load_threshold': {'required': True},
-        'upper_load_threshold': {'required': True},
-        'scale_interval_in_seconds': {'required': True, 'minimum': 60},
+        "kind": {"required": True},
+        "metric": {"required": True},
+        "lower_load_threshold": {"required": True},
+        "upper_load_threshold": {"required": True},
+        "scale_interval_in_seconds": {"required": True, "minimum": 60},
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'metric': {'key': 'metric', 'type': 'AutoScalingMetric'},
-        'lower_load_threshold': {'key': 'lowerLoadThreshold', 'type': 'float'},
-        'upper_load_threshold': {'key': 'upperLoadThreshold', 'type': 'float'},
-        'scale_interval_in_seconds': {'key': 'scaleIntervalInSeconds', 'type': 'int'},
+        "kind": {"key": "kind", "type": "str"},
+        "metric": {"key": "metric", "type": "AutoScalingMetric"},
+        "lower_load_threshold": {"key": "lowerLoadThreshold", "type": "float"},
+        "upper_load_threshold": {"key": "upperLoadThreshold", "type": "float"},
+        "scale_interval_in_seconds": {"key": "scaleIntervalInSeconds", "type": "int"},
     }
 
-    def __init__(self, *, metric, lower_load_threshold: float, upper_load_threshold: float, scale_interval_in_seconds: int, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        metric,
+        lower_load_threshold: float,
+        upper_load_threshold: float,
+        scale_interval_in_seconds: int,
+        **kwargs
+    ) -> None:
         super(AverageLoadScalingTrigger, self).__init__(**kwargs)
         self.metric = metric
         self.lower_load_threshold = lower_load_threshold
         self.upper_load_threshold = upper_load_threshold
         self.scale_interval_in_seconds = scale_interval_in_seconds
-        self.kind = 'AverageLoad'
+        self.kind = "AverageLoad"
 
 
 class ScalingTriggerDescription(Model):
@@ -3387,15 +4012,18 @@ class ScalingTriggerDescription(Model):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
+        "kind": {"key": "Kind", "type": "str"},
     }
 
     _subtype_map = {
-        'kind': {'AveragePartitionLoad': 'AveragePartitionLoadScalingTrigger', 'AverageServiceLoad': 'AverageServiceLoadScalingTrigger'}
+        "kind": {
+            "AveragePartitionLoad": "AveragePartitionLoadScalingTrigger",
+            "AverageServiceLoad": "AverageServiceLoadScalingTrigger",
+        }
     }
 
     def __init__(self, **kwargs) -> None:
@@ -3426,28 +4054,36 @@ class AveragePartitionLoadScalingTrigger(ScalingTriggerDescription):
     """
 
     _validation = {
-        'kind': {'required': True},
-        'metric_name': {'required': True},
-        'lower_load_threshold': {'required': True},
-        'upper_load_threshold': {'required': True},
-        'scale_interval_in_seconds': {'required': True, 'maximum': 4294967295, 'minimum': 0},
+        "kind": {"required": True},
+        "metric_name": {"required": True},
+        "lower_load_threshold": {"required": True},
+        "upper_load_threshold": {"required": True},
+        "scale_interval_in_seconds": {"required": True, "maximum": 4294967295, "minimum": 0},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'metric_name': {'key': 'MetricName', 'type': 'str'},
-        'lower_load_threshold': {'key': 'LowerLoadThreshold', 'type': 'str'},
-        'upper_load_threshold': {'key': 'UpperLoadThreshold', 'type': 'str'},
-        'scale_interval_in_seconds': {'key': 'ScaleIntervalInSeconds', 'type': 'long'},
+        "kind": {"key": "Kind", "type": "str"},
+        "metric_name": {"key": "MetricName", "type": "str"},
+        "lower_load_threshold": {"key": "LowerLoadThreshold", "type": "str"},
+        "upper_load_threshold": {"key": "UpperLoadThreshold", "type": "str"},
+        "scale_interval_in_seconds": {"key": "ScaleIntervalInSeconds", "type": "long"},
     }
 
-    def __init__(self, *, metric_name: str, lower_load_threshold: str, upper_load_threshold: str, scale_interval_in_seconds: int, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        metric_name: str,
+        lower_load_threshold: str,
+        upper_load_threshold: str,
+        scale_interval_in_seconds: int,
+        **kwargs
+    ) -> None:
         super(AveragePartitionLoadScalingTrigger, self).__init__(**kwargs)
         self.metric_name = metric_name
         self.lower_load_threshold = lower_load_threshold
         self.upper_load_threshold = upper_load_threshold
         self.scale_interval_in_seconds = scale_interval_in_seconds
-        self.kind = 'AveragePartitionLoad'
+        self.kind = "AveragePartitionLoad"
 
 
 class AverageServiceLoadScalingTrigger(ScalingTriggerDescription):
@@ -3480,31 +4116,40 @@ class AverageServiceLoadScalingTrigger(ScalingTriggerDescription):
     """
 
     _validation = {
-        'kind': {'required': True},
-        'metric_name': {'required': True},
-        'lower_load_threshold': {'required': True},
-        'upper_load_threshold': {'required': True},
-        'scale_interval_in_seconds': {'required': True, 'maximum': 4294967295, 'minimum': 0},
-        'use_only_primary_load': {'required': True},
+        "kind": {"required": True},
+        "metric_name": {"required": True},
+        "lower_load_threshold": {"required": True},
+        "upper_load_threshold": {"required": True},
+        "scale_interval_in_seconds": {"required": True, "maximum": 4294967295, "minimum": 0},
+        "use_only_primary_load": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'metric_name': {'key': 'MetricName', 'type': 'str'},
-        'lower_load_threshold': {'key': 'LowerLoadThreshold', 'type': 'str'},
-        'upper_load_threshold': {'key': 'UpperLoadThreshold', 'type': 'str'},
-        'scale_interval_in_seconds': {'key': 'ScaleIntervalInSeconds', 'type': 'long'},
-        'use_only_primary_load': {'key': 'UseOnlyPrimaryLoad', 'type': 'bool'},
+        "kind": {"key": "Kind", "type": "str"},
+        "metric_name": {"key": "MetricName", "type": "str"},
+        "lower_load_threshold": {"key": "LowerLoadThreshold", "type": "str"},
+        "upper_load_threshold": {"key": "UpperLoadThreshold", "type": "str"},
+        "scale_interval_in_seconds": {"key": "ScaleIntervalInSeconds", "type": "long"},
+        "use_only_primary_load": {"key": "UseOnlyPrimaryLoad", "type": "bool"},
     }
 
-    def __init__(self, *, metric_name: str, lower_load_threshold: str, upper_load_threshold: str, scale_interval_in_seconds: int, use_only_primary_load: bool, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        metric_name: str,
+        lower_load_threshold: str,
+        upper_load_threshold: str,
+        scale_interval_in_seconds: int,
+        use_only_primary_load: bool,
+        **kwargs
+    ) -> None:
         super(AverageServiceLoadScalingTrigger, self).__init__(**kwargs)
         self.metric_name = metric_name
         self.lower_load_threshold = lower_load_threshold
         self.upper_load_threshold = upper_load_threshold
         self.scale_interval_in_seconds = scale_interval_in_seconds
         self.use_only_primary_load = use_only_primary_load
-        self.kind = 'AverageServiceLoad'
+        self.kind = "AverageServiceLoad"
 
 
 class BackupStorageDescription(Model):
@@ -3524,19 +4169,24 @@ class BackupStorageDescription(Model):
     """
 
     _validation = {
-        'storage_kind': {'required': True},
+        "storage_kind": {"required": True},
     }
 
     _attribute_map = {
-        'friendly_name': {'key': 'FriendlyName', 'type': 'str'},
-        'storage_kind': {'key': 'StorageKind', 'type': 'str'},
+        "friendly_name": {"key": "FriendlyName", "type": "str"},
+        "storage_kind": {"key": "StorageKind", "type": "str"},
     }
 
     _subtype_map = {
-        'storage_kind': {'AzureBlobStore': 'AzureBlobBackupStorageDescription', 'FileShare': 'FileShareBackupStorageDescription', 'DsmsAzureBlobStore': 'DsmsAzureBlobBackupStorageDescription', 'ManagedIdentityAzureBlobStore': 'ManagedIdentityAzureBlobBackupStorageDescription'}
+        "storage_kind": {
+            "AzureBlobStore": "AzureBlobBackupStorageDescription",
+            "FileShare": "FileShareBackupStorageDescription",
+            "DsmsAzureBlobStore": "DsmsAzureBlobBackupStorageDescription",
+            "ManagedIdentityAzureBlobStore": "ManagedIdentityAzureBlobBackupStorageDescription",
+        }
     }
 
-    def __init__(self, *, friendly_name: str=None, **kwargs) -> None:
+    def __init__(self, *, friendly_name: str = None, **kwargs) -> None:
         super(BackupStorageDescription, self).__init__(**kwargs)
         self.friendly_name = friendly_name
         self.storage_kind = None
@@ -3561,23 +4211,23 @@ class AzureBlobBackupStorageDescription(BackupStorageDescription):
     """
 
     _validation = {
-        'storage_kind': {'required': True},
-        'connection_string': {'required': True},
-        'container_name': {'required': True},
+        "storage_kind": {"required": True},
+        "connection_string": {"required": True},
+        "container_name": {"required": True},
     }
 
     _attribute_map = {
-        'friendly_name': {'key': 'FriendlyName', 'type': 'str'},
-        'storage_kind': {'key': 'StorageKind', 'type': 'str'},
-        'connection_string': {'key': 'ConnectionString', 'type': 'str'},
-        'container_name': {'key': 'ContainerName', 'type': 'str'},
+        "friendly_name": {"key": "FriendlyName", "type": "str"},
+        "storage_kind": {"key": "StorageKind", "type": "str"},
+        "connection_string": {"key": "ConnectionString", "type": "str"},
+        "container_name": {"key": "ContainerName", "type": "str"},
     }
 
-    def __init__(self, *, connection_string: str, container_name: str, friendly_name: str=None, **kwargs) -> None:
+    def __init__(self, *, connection_string: str, container_name: str, friendly_name: str = None, **kwargs) -> None:
         super(AzureBlobBackupStorageDescription, self).__init__(friendly_name=friendly_name, **kwargs)
         self.connection_string = connection_string
         self.container_name = container_name
-        self.storage_kind = 'AzureBlobStore'
+        self.storage_kind = "AzureBlobStore"
 
 
 class DiagnosticsSinkProperties(Model):
@@ -3598,20 +4248,18 @@ class DiagnosticsSinkProperties(Model):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
     }
 
-    _subtype_map = {
-        'kind': {'AzureInternalMonitoringPipeline': 'AzureInternalMonitoringPipelineSinkDescription'}
-    }
+    _subtype_map = {"kind": {"AzureInternalMonitoringPipeline": "AzureInternalMonitoringPipelineSinkDescription"}}
 
-    def __init__(self, *, name: str=None, description: str=None, **kwargs) -> None:
+    def __init__(self, *, name: str = None, description: str = None, **kwargs) -> None:
         super(DiagnosticsSinkProperties, self).__init__(**kwargs)
         self.name = name
         self.description = description
@@ -3645,28 +4293,41 @@ class AzureInternalMonitoringPipelineSinkDescription(DiagnosticsSinkProperties):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'account_name': {'key': 'accountName', 'type': 'str'},
-        'namespace': {'key': 'namespace', 'type': 'str'},
-        'ma_config_url': {'key': 'maConfigUrl', 'type': 'str'},
-        'fluentd_config_url': {'key': 'fluentdConfigUrl', 'type': 'str'},
-        'auto_key_config_url': {'key': 'autoKeyConfigUrl', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "account_name": {"key": "accountName", "type": "str"},
+        "namespace": {"key": "namespace", "type": "str"},
+        "ma_config_url": {"key": "maConfigUrl", "type": "str"},
+        "fluentd_config_url": {"key": "fluentdConfigUrl", "type": "str"},
+        "auto_key_config_url": {"key": "autoKeyConfigUrl", "type": "str"},
     }
 
-    def __init__(self, *, name: str=None, description: str=None, account_name: str=None, namespace: str=None, ma_config_url: str=None, fluentd_config_url: str=None, auto_key_config_url: str=None, **kwargs) -> None:
-        super(AzureInternalMonitoringPipelineSinkDescription, self).__init__(name=name, description=description, **kwargs)
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        description: str = None,
+        account_name: str = None,
+        namespace: str = None,
+        ma_config_url: str = None,
+        fluentd_config_url: str = None,
+        auto_key_config_url: str = None,
+        **kwargs
+    ) -> None:
+        super(AzureInternalMonitoringPipelineSinkDescription, self).__init__(
+            name=name, description=description, **kwargs
+        )
         self.account_name = account_name
         self.namespace = namespace
         self.ma_config_url = ma_config_url
         self.fluentd_config_url = fluentd_config_url
         self.auto_key_config_url = auto_key_config_url
-        self.kind = 'AzureInternalMonitoringPipeline'
+        self.kind = "AzureInternalMonitoringPipeline"
 
 
 class BackupInfo(Model):
@@ -3710,21 +4371,37 @@ class BackupInfo(Model):
     """
 
     _attribute_map = {
-        'backup_id': {'key': 'BackupId', 'type': 'str'},
-        'backup_chain_id': {'key': 'BackupChainId', 'type': 'str'},
-        'application_name': {'key': 'ApplicationName', 'type': 'str'},
-        'service_name': {'key': 'ServiceName', 'type': 'str'},
-        'partition_information': {'key': 'PartitionInformation', 'type': 'PartitionInformation'},
-        'backup_location': {'key': 'BackupLocation', 'type': 'str'},
-        'backup_type': {'key': 'BackupType', 'type': 'str'},
-        'epoch_of_last_backup_record': {'key': 'EpochOfLastBackupRecord', 'type': 'Epoch'},
-        'lsn_of_last_backup_record': {'key': 'LsnOfLastBackupRecord', 'type': 'str'},
-        'creation_time_utc': {'key': 'CreationTimeUtc', 'type': 'iso-8601'},
-        'service_manifest_version': {'key': 'ServiceManifestVersion', 'type': 'str'},
-        'failure_error': {'key': 'FailureError', 'type': 'FabricErrorError'},
+        "backup_id": {"key": "BackupId", "type": "str"},
+        "backup_chain_id": {"key": "BackupChainId", "type": "str"},
+        "application_name": {"key": "ApplicationName", "type": "str"},
+        "service_name": {"key": "ServiceName", "type": "str"},
+        "partition_information": {"key": "PartitionInformation", "type": "PartitionInformation"},
+        "backup_location": {"key": "BackupLocation", "type": "str"},
+        "backup_type": {"key": "BackupType", "type": "str"},
+        "epoch_of_last_backup_record": {"key": "EpochOfLastBackupRecord", "type": "Epoch"},
+        "lsn_of_last_backup_record": {"key": "LsnOfLastBackupRecord", "type": "str"},
+        "creation_time_utc": {"key": "CreationTimeUtc", "type": "iso-8601"},
+        "service_manifest_version": {"key": "ServiceManifestVersion", "type": "str"},
+        "failure_error": {"key": "FailureError", "type": "FabricErrorError"},
     }
 
-    def __init__(self, *, backup_id: str=None, backup_chain_id: str=None, application_name: str=None, service_name: str=None, partition_information=None, backup_location: str=None, backup_type=None, epoch_of_last_backup_record=None, lsn_of_last_backup_record: str=None, creation_time_utc=None, service_manifest_version: str=None, failure_error=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        backup_id: str = None,
+        backup_chain_id: str = None,
+        application_name: str = None,
+        service_name: str = None,
+        partition_information=None,
+        backup_location: str = None,
+        backup_type=None,
+        epoch_of_last_backup_record=None,
+        lsn_of_last_backup_record: str = None,
+        creation_time_utc=None,
+        service_manifest_version: str = None,
+        failure_error=None,
+        **kwargs
+    ) -> None:
         super(BackupInfo, self).__init__(**kwargs)
         self.backup_id = backup_id
         self.backup_chain_id = backup_chain_id
@@ -3749,7 +4426,7 @@ class BackupPartitionDescription(Model):
     """
 
     _attribute_map = {
-        'backup_storage': {'key': 'BackupStorage', 'type': 'BackupStorageDescription'},
+        "backup_storage": {"key": "BackupStorage", "type": "BackupStorageDescription"},
     }
 
     def __init__(self, *, backup_storage=None, **kwargs) -> None:
@@ -3788,23 +4465,33 @@ class BackupPolicyDescription(Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'auto_restore_on_data_loss': {'required': True},
-        'max_incremental_backups': {'required': True, 'maximum': 255, 'minimum': 0},
-        'schedule': {'required': True},
-        'storage': {'required': True},
+        "name": {"required": True},
+        "auto_restore_on_data_loss": {"required": True},
+        "max_incremental_backups": {"required": True, "maximum": 255, "minimum": 0},
+        "schedule": {"required": True},
+        "storage": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'auto_restore_on_data_loss': {'key': 'AutoRestoreOnDataLoss', 'type': 'bool'},
-        'max_incremental_backups': {'key': 'MaxIncrementalBackups', 'type': 'int'},
-        'schedule': {'key': 'Schedule', 'type': 'BackupScheduleDescription'},
-        'storage': {'key': 'Storage', 'type': 'BackupStorageDescription'},
-        'retention_policy': {'key': 'RetentionPolicy', 'type': 'RetentionPolicyDescription'},
+        "name": {"key": "Name", "type": "str"},
+        "auto_restore_on_data_loss": {"key": "AutoRestoreOnDataLoss", "type": "bool"},
+        "max_incremental_backups": {"key": "MaxIncrementalBackups", "type": "int"},
+        "schedule": {"key": "Schedule", "type": "BackupScheduleDescription"},
+        "storage": {"key": "Storage", "type": "BackupStorageDescription"},
+        "retention_policy": {"key": "RetentionPolicy", "type": "RetentionPolicyDescription"},
     }
 
-    def __init__(self, *, name: str, auto_restore_on_data_loss: bool, max_incremental_backups: int, schedule, storage, retention_policy=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str,
+        auto_restore_on_data_loss: bool,
+        max_incremental_backups: int,
+        schedule,
+        storage,
+        retention_policy=None,
+        **kwargs
+    ) -> None:
         super(BackupPolicyDescription, self).__init__(**kwargs)
         self.name = name
         self.auto_restore_on_data_loss = auto_restore_on_data_loss
@@ -3841,16 +4528,27 @@ class BackupProgressInfo(Model):
     """
 
     _attribute_map = {
-        'backup_state': {'key': 'BackupState', 'type': 'str'},
-        'time_stamp_utc': {'key': 'TimeStampUtc', 'type': 'iso-8601'},
-        'backup_id': {'key': 'BackupId', 'type': 'str'},
-        'backup_location': {'key': 'BackupLocation', 'type': 'str'},
-        'epoch_of_last_backup_record': {'key': 'EpochOfLastBackupRecord', 'type': 'Epoch'},
-        'lsn_of_last_backup_record': {'key': 'LsnOfLastBackupRecord', 'type': 'str'},
-        'failure_error': {'key': 'FailureError', 'type': 'FabricErrorError'},
+        "backup_state": {"key": "BackupState", "type": "str"},
+        "time_stamp_utc": {"key": "TimeStampUtc", "type": "iso-8601"},
+        "backup_id": {"key": "BackupId", "type": "str"},
+        "backup_location": {"key": "BackupLocation", "type": "str"},
+        "epoch_of_last_backup_record": {"key": "EpochOfLastBackupRecord", "type": "Epoch"},
+        "lsn_of_last_backup_record": {"key": "LsnOfLastBackupRecord", "type": "str"},
+        "failure_error": {"key": "FailureError", "type": "FabricErrorError"},
     }
 
-    def __init__(self, *, backup_state=None, time_stamp_utc=None, backup_id: str=None, backup_location: str=None, epoch_of_last_backup_record=None, lsn_of_last_backup_record: str=None, failure_error=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        backup_state=None,
+        time_stamp_utc=None,
+        backup_id: str = None,
+        backup_location: str = None,
+        epoch_of_last_backup_record=None,
+        lsn_of_last_backup_record: str = None,
+        failure_error=None,
+        **kwargs
+    ) -> None:
         super(BackupProgressInfo, self).__init__(**kwargs)
         self.backup_state = backup_state
         self.time_stamp_utc = time_stamp_utc
@@ -3875,15 +4573,18 @@ class BackupScheduleDescription(Model):
     """
 
     _validation = {
-        'schedule_kind': {'required': True},
+        "schedule_kind": {"required": True},
     }
 
     _attribute_map = {
-        'schedule_kind': {'key': 'ScheduleKind', 'type': 'str'},
+        "schedule_kind": {"key": "ScheduleKind", "type": "str"},
     }
 
     _subtype_map = {
-        'schedule_kind': {'FrequencyBased': 'FrequencyBasedBackupScheduleDescription', 'TimeBased': 'TimeBasedBackupScheduleDescription'}
+        "schedule_kind": {
+            "FrequencyBased": "FrequencyBasedBackupScheduleDescription",
+            "TimeBased": "TimeBasedBackupScheduleDescription",
+        }
     }
 
     def __init__(self, **kwargs) -> None:
@@ -3905,11 +4606,11 @@ class BackupSuspensionInfo(Model):
     """
 
     _attribute_map = {
-        'is_suspended': {'key': 'IsSuspended', 'type': 'bool'},
-        'suspension_inherited_from': {'key': 'SuspensionInheritedFrom', 'type': 'str'},
+        "is_suspended": {"key": "IsSuspended", "type": "bool"},
+        "suspension_inherited_from": {"key": "SuspensionInheritedFrom", "type": "str"},
     }
 
-    def __init__(self, *, is_suspended: bool=None, suspension_inherited_from=None, **kwargs) -> None:
+    def __init__(self, *, is_suspended: bool = None, suspension_inherited_from=None, **kwargs) -> None:
         super(BackupSuspensionInfo, self).__init__(**kwargs)
         self.is_suspended = is_suspended
         self.suspension_inherited_from = suspension_inherited_from
@@ -3928,16 +4629,14 @@ class RetentionPolicyDescription(Model):
     """
 
     _validation = {
-        'retention_policy_type': {'required': True},
+        "retention_policy_type": {"required": True},
     }
 
     _attribute_map = {
-        'retention_policy_type': {'key': 'RetentionPolicyType', 'type': 'str'},
+        "retention_policy_type": {"key": "RetentionPolicyType", "type": "str"},
     }
 
-    _subtype_map = {
-        'retention_policy_type': {'Basic': 'BasicRetentionPolicyDescription'}
-    }
+    _subtype_map = {"retention_policy_type": {"Basic": "BasicRetentionPolicyDescription"}}
 
     def __init__(self, **kwargs) -> None:
         super(RetentionPolicyDescription, self).__init__(**kwargs)
@@ -3963,22 +4662,22 @@ class BasicRetentionPolicyDescription(RetentionPolicyDescription):
     """
 
     _validation = {
-        'retention_policy_type': {'required': True},
-        'retention_duration': {'required': True},
-        'minimum_number_of_backups': {'minimum': 0},
+        "retention_policy_type": {"required": True},
+        "retention_duration": {"required": True},
+        "minimum_number_of_backups": {"minimum": 0},
     }
 
     _attribute_map = {
-        'retention_policy_type': {'key': 'RetentionPolicyType', 'type': 'str'},
-        'retention_duration': {'key': 'RetentionDuration', 'type': 'duration'},
-        'minimum_number_of_backups': {'key': 'MinimumNumberOfBackups', 'type': 'int'},
+        "retention_policy_type": {"key": "RetentionPolicyType", "type": "str"},
+        "retention_duration": {"key": "RetentionDuration", "type": "duration"},
+        "minimum_number_of_backups": {"key": "MinimumNumberOfBackups", "type": "int"},
     }
 
-    def __init__(self, *, retention_duration, minimum_number_of_backups: int=None, **kwargs) -> None:
+    def __init__(self, *, retention_duration, minimum_number_of_backups: int = None, **kwargs) -> None:
         super(BasicRetentionPolicyDescription, self).__init__(**kwargs)
         self.retention_duration = retention_duration
         self.minimum_number_of_backups = minimum_number_of_backups
-        self.retention_policy_type = 'Basic'
+        self.retention_policy_type = "Basic"
 
 
 class PropertyValue(Model):
@@ -3995,15 +4694,21 @@ class PropertyValue(Model):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
+        "kind": {"key": "Kind", "type": "str"},
     }
 
     _subtype_map = {
-        'kind': {'Binary': 'BinaryPropertyValue', 'Int64': 'Int64PropertyValue', 'Double': 'DoublePropertyValue', 'String': 'StringPropertyValue', 'Guid': 'GuidPropertyValue'}
+        "kind": {
+            "Binary": "BinaryPropertyValue",
+            "Int64": "Int64PropertyValue",
+            "Double": "DoublePropertyValue",
+            "String": "StringPropertyValue",
+            "Guid": "GuidPropertyValue",
+        }
     }
 
     def __init__(self, **kwargs) -> None:
@@ -4024,19 +4729,19 @@ class BinaryPropertyValue(PropertyValue):
     """
 
     _validation = {
-        'kind': {'required': True},
-        'data': {'required': True},
+        "kind": {"required": True},
+        "data": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'data': {'key': 'Data', 'type': '[int]'},
+        "kind": {"key": "Kind", "type": "str"},
+        "data": {"key": "Data", "type": "[int]"},
     }
 
     def __init__(self, *, data, **kwargs) -> None:
         super(BinaryPropertyValue, self).__init__(**kwargs)
         self.data = data
-        self.kind = 'Binary'
+        self.kind = "Binary"
 
 
 class Chaos(Model):
@@ -4055,9 +4760,9 @@ class Chaos(Model):
     """
 
     _attribute_map = {
-        'chaos_parameters': {'key': 'ChaosParameters', 'type': 'ChaosParameters'},
-        'status': {'key': 'Status', 'type': 'str'},
-        'schedule_status': {'key': 'ScheduleStatus', 'type': 'str'},
+        "chaos_parameters": {"key": "ChaosParameters", "type": "ChaosParameters"},
+        "status": {"key": "Status", "type": "str"},
+        "schedule_status": {"key": "ScheduleStatus", "type": "str"},
     }
 
     def __init__(self, *, chaos_parameters=None, status=None, schedule_status=None, **kwargs) -> None:
@@ -4108,42 +4813,64 @@ class ChaosCodePackageRestartScheduledEvent(ApplicationEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'application_id': {'required': True},
-        'fault_group_id': {'required': True},
-        'fault_id': {'required': True},
-        'node_name': {'required': True},
-        'service_manifest_name': {'required': True},
-        'code_package_name': {'required': True},
-        'service_package_activation_id': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "application_id": {"required": True},
+        "fault_group_id": {"required": True},
+        "fault_id": {"required": True},
+        "node_name": {"required": True},
+        "service_manifest_name": {"required": True},
+        "code_package_name": {"required": True},
+        "service_package_activation_id": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'application_id': {'key': 'ApplicationId', 'type': 'str'},
-        'fault_group_id': {'key': 'FaultGroupId', 'type': 'str'},
-        'fault_id': {'key': 'FaultId', 'type': 'str'},
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'service_manifest_name': {'key': 'ServiceManifestName', 'type': 'str'},
-        'code_package_name': {'key': 'CodePackageName', 'type': 'str'},
-        'service_package_activation_id': {'key': 'ServicePackageActivationId', 'type': 'str'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "application_id": {"key": "ApplicationId", "type": "str"},
+        "fault_group_id": {"key": "FaultGroupId", "type": "str"},
+        "fault_id": {"key": "FaultId", "type": "str"},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "service_manifest_name": {"key": "ServiceManifestName", "type": "str"},
+        "code_package_name": {"key": "CodePackageName", "type": "str"},
+        "service_package_activation_id": {"key": "ServicePackageActivationId", "type": "str"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, application_id: str, fault_group_id: str, fault_id: str, node_name: str, service_manifest_name: str, code_package_name: str, service_package_activation_id: str, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ChaosCodePackageRestartScheduledEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, application_id=application_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        application_id: str,
+        fault_group_id: str,
+        fault_id: str,
+        node_name: str,
+        service_manifest_name: str,
+        code_package_name: str,
+        service_package_activation_id: str,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(ChaosCodePackageRestartScheduledEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            application_id=application_id,
+            **kwargs
+        )
         self.fault_group_id = fault_group_id
         self.fault_id = fault_id
         self.node_name = node_name
         self.service_manifest_name = service_manifest_name
         self.code_package_name = code_package_name
         self.service_package_activation_id = service_package_activation_id
-        self.kind = 'ChaosCodePackageRestartScheduled'
+        self.kind = "ChaosCodePackageRestartScheduled"
 
 
 class ChaosContext(Model):
@@ -4160,7 +4887,7 @@ class ChaosContext(Model):
     """
 
     _attribute_map = {
-        'map': {'key': 'Map', 'type': '{str}'},
+        "map": {"key": "Map", "type": "{str}"},
     }
 
     def __init__(self, *, map=None, **kwargs) -> None:
@@ -4186,17 +4913,24 @@ class ChaosEvent(Model):
     """
 
     _validation = {
-        'time_stamp_utc': {'required': True},
-        'kind': {'required': True},
+        "time_stamp_utc": {"required": True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'time_stamp_utc': {'key': 'TimeStampUtc', 'type': 'iso-8601'},
-        'kind': {'key': 'Kind', 'type': 'str'},
+        "time_stamp_utc": {"key": "TimeStampUtc", "type": "iso-8601"},
+        "kind": {"key": "Kind", "type": "str"},
     }
 
     _subtype_map = {
-        'kind': {'ExecutingFaults': 'ExecutingFaultsChaosEvent', 'Started': 'StartedChaosEvent', 'Stopped': 'StoppedChaosEvent', 'TestError': 'TestErrorChaosEvent', 'ValidationFailed': 'ValidationFailedChaosEvent', 'Waiting': 'WaitingChaosEvent'}
+        "kind": {
+            "ExecutingFaults": "ExecutingFaultsChaosEvent",
+            "Started": "StartedChaosEvent",
+            "Stopped": "StoppedChaosEvent",
+            "TestError": "TestErrorChaosEvent",
+            "ValidationFailed": "ValidationFailedChaosEvent",
+            "Waiting": "WaitingChaosEvent",
+        }
     }
 
     def __init__(self, *, time_stamp_utc, **kwargs) -> None:
@@ -4221,11 +4955,11 @@ class ChaosEventsSegment(Model):
     """
 
     _attribute_map = {
-        'continuation_token': {'key': 'ContinuationToken', 'type': 'str'},
-        'history': {'key': 'History', 'type': '[ChaosEventWrapper]'},
+        "continuation_token": {"key": "ContinuationToken", "type": "str"},
+        "history": {"key": "History", "type": "[ChaosEventWrapper]"},
     }
 
-    def __init__(self, *, continuation_token: str=None, history=None, **kwargs) -> None:
+    def __init__(self, *, continuation_token: str = None, history=None, **kwargs) -> None:
         super(ChaosEventsSegment, self).__init__(**kwargs)
         self.continuation_token = continuation_token
         self.history = history
@@ -4239,7 +4973,7 @@ class ChaosEventWrapper(Model):
     """
 
     _attribute_map = {
-        'chaos_event': {'key': 'ChaosEvent', 'type': 'ChaosEvent'},
+        "chaos_event": {"key": "ChaosEvent", "type": "ChaosEvent"},
     }
 
     def __init__(self, *, chaos_event=None, **kwargs) -> None:
@@ -4276,29 +5010,58 @@ class NodeEvent(FabricEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'node_name': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "node_name": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'node_name': {'key': 'NodeName', 'type': 'str'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "node_name": {"key": "NodeName", "type": "str"},
     }
 
     _subtype_map = {
-        'kind': {'NodeAborted': 'NodeAbortedEvent', 'NodeAddedToCluster': 'NodeAddedToClusterEvent', 'NodeClosed': 'NodeClosedEvent', 'NodeDeactivateCompleted': 'NodeDeactivateCompletedEvent', 'NodeDeactivateStarted': 'NodeDeactivateStartedEvent', 'NodeDown': 'NodeDownEvent', 'NodeNewHealthReport': 'NodeNewHealthReportEvent', 'NodeHealthReportExpired': 'NodeHealthReportExpiredEvent', 'NodeOpenSucceeded': 'NodeOpenSucceededEvent', 'NodeOpenFailed': 'NodeOpenFailedEvent', 'NodeRemovedFromCluster': 'NodeRemovedFromClusterEvent', 'NodeUp': 'NodeUpEvent', 'ChaosNodeRestartScheduled': 'ChaosNodeRestartScheduledEvent'}
+        "kind": {
+            "NodeAborted": "NodeAbortedEvent",
+            "NodeAddedToCluster": "NodeAddedToClusterEvent",
+            "NodeClosed": "NodeClosedEvent",
+            "NodeDeactivateCompleted": "NodeDeactivateCompletedEvent",
+            "NodeDeactivateStarted": "NodeDeactivateStartedEvent",
+            "NodeDown": "NodeDownEvent",
+            "NodeNewHealthReport": "NodeNewHealthReportEvent",
+            "NodeHealthReportExpired": "NodeHealthReportExpiredEvent",
+            "NodeOpenSucceeded": "NodeOpenSucceededEvent",
+            "NodeOpenFailed": "NodeOpenFailedEvent",
+            "NodeRemovedFromCluster": "NodeRemovedFromClusterEvent",
+            "NodeUp": "NodeUpEvent",
+            "ChaosNodeRestartScheduled": "ChaosNodeRestartScheduledEvent",
+        }
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, node_name: str, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(NodeEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        node_name: str,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(NodeEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            **kwargs
+        )
         self.node_name = node_name
-        self.kind = 'NodeEvent'
+        self.kind = "NodeEvent"
 
 
 class ChaosNodeRestartScheduledEvent(NodeEvent):
@@ -4329,33 +5092,52 @@ class ChaosNodeRestartScheduledEvent(NodeEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'node_name': {'required': True},
-        'node_instance_id': {'required': True},
-        'fault_group_id': {'required': True},
-        'fault_id': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "node_name": {"required": True},
+        "node_instance_id": {"required": True},
+        "fault_group_id": {"required": True},
+        "fault_id": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'node_instance_id': {'key': 'NodeInstanceId', 'type': 'long'},
-        'fault_group_id': {'key': 'FaultGroupId', 'type': 'str'},
-        'fault_id': {'key': 'FaultId', 'type': 'str'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "node_instance_id": {"key": "NodeInstanceId", "type": "long"},
+        "fault_group_id": {"key": "FaultGroupId", "type": "str"},
+        "fault_id": {"key": "FaultId", "type": "str"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, node_name: str, node_instance_id: int, fault_group_id: str, fault_id: str, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ChaosNodeRestartScheduledEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, node_name=node_name, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        node_name: str,
+        node_instance_id: int,
+        fault_group_id: str,
+        fault_id: str,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(ChaosNodeRestartScheduledEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            node_name=node_name,
+            **kwargs
+        )
         self.node_instance_id = node_instance_id
         self.fault_group_id = fault_group_id
         self.fault_id = fault_id
-        self.kind = 'ChaosNodeRestartScheduled'
+        self.kind = "ChaosNodeRestartScheduled"
 
 
 class ChaosParameters(Model):
@@ -4422,25 +5204,41 @@ class ChaosParameters(Model):
     """
 
     _validation = {
-        'max_cluster_stabilization_timeout_in_seconds': {'maximum': 4294967295, 'minimum': 0},
-        'max_concurrent_faults': {'maximum': 4294967295, 'minimum': 0},
-        'wait_time_between_faults_in_seconds': {'maximum': 4294967295, 'minimum': 0},
-        'wait_time_between_iterations_in_seconds': {'maximum': 4294967295, 'minimum': 0},
+        "max_cluster_stabilization_timeout_in_seconds": {"maximum": 4294967295, "minimum": 0},
+        "max_concurrent_faults": {"maximum": 4294967295, "minimum": 0},
+        "wait_time_between_faults_in_seconds": {"maximum": 4294967295, "minimum": 0},
+        "wait_time_between_iterations_in_seconds": {"maximum": 4294967295, "minimum": 0},
     }
 
     _attribute_map = {
-        'time_to_run_in_seconds': {'key': 'TimeToRunInSeconds', 'type': 'str'},
-        'max_cluster_stabilization_timeout_in_seconds': {'key': 'MaxClusterStabilizationTimeoutInSeconds', 'type': 'long'},
-        'max_concurrent_faults': {'key': 'MaxConcurrentFaults', 'type': 'long'},
-        'enable_move_replica_faults': {'key': 'EnableMoveReplicaFaults', 'type': 'bool'},
-        'wait_time_between_faults_in_seconds': {'key': 'WaitTimeBetweenFaultsInSeconds', 'type': 'long'},
-        'wait_time_between_iterations_in_seconds': {'key': 'WaitTimeBetweenIterationsInSeconds', 'type': 'long'},
-        'cluster_health_policy': {'key': 'ClusterHealthPolicy', 'type': 'ClusterHealthPolicy'},
-        'context': {'key': 'Context', 'type': 'ChaosContext'},
-        'chaos_target_filter': {'key': 'ChaosTargetFilter', 'type': 'ChaosTargetFilter'},
+        "time_to_run_in_seconds": {"key": "TimeToRunInSeconds", "type": "str"},
+        "max_cluster_stabilization_timeout_in_seconds": {
+            "key": "MaxClusterStabilizationTimeoutInSeconds",
+            "type": "long",
+        },
+        "max_concurrent_faults": {"key": "MaxConcurrentFaults", "type": "long"},
+        "enable_move_replica_faults": {"key": "EnableMoveReplicaFaults", "type": "bool"},
+        "wait_time_between_faults_in_seconds": {"key": "WaitTimeBetweenFaultsInSeconds", "type": "long"},
+        "wait_time_between_iterations_in_seconds": {"key": "WaitTimeBetweenIterationsInSeconds", "type": "long"},
+        "cluster_health_policy": {"key": "ClusterHealthPolicy", "type": "ClusterHealthPolicy"},
+        "context": {"key": "Context", "type": "ChaosContext"},
+        "chaos_target_filter": {"key": "ChaosTargetFilter", "type": "ChaosTargetFilter"},
     }
 
-    def __init__(self, *, time_to_run_in_seconds: str="4294967295", max_cluster_stabilization_timeout_in_seconds: int=60, max_concurrent_faults: int=1, enable_move_replica_faults: bool=True, wait_time_between_faults_in_seconds: int=20, wait_time_between_iterations_in_seconds: int=30, cluster_health_policy=None, context=None, chaos_target_filter=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        time_to_run_in_seconds: str = "4294967295",
+        max_cluster_stabilization_timeout_in_seconds: int = 60,
+        max_concurrent_faults: int = 1,
+        enable_move_replica_faults: bool = True,
+        wait_time_between_faults_in_seconds: int = 20,
+        wait_time_between_iterations_in_seconds: int = 30,
+        cluster_health_policy=None,
+        context=None,
+        chaos_target_filter=None,
+        **kwargs
+    ) -> None:
         super(ChaosParameters, self).__init__(**kwargs)
         self.time_to_run_in_seconds = time_to_run_in_seconds
         self.max_cluster_stabilization_timeout_in_seconds = max_cluster_stabilization_timeout_in_seconds
@@ -4467,13 +5265,13 @@ class ChaosParametersDictionaryItem(Model):
     """
 
     _validation = {
-        'key': {'required': True},
-        'value': {'required': True},
+        "key": {"required": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'key': {'key': 'Key', 'type': 'str'},
-        'value': {'key': 'Value', 'type': 'ChaosParameters'},
+        "key": {"key": "Key", "type": "str"},
+        "value": {"key": "Value", "type": "ChaosParameters"},
     }
 
     def __init__(self, *, key: str, value, **kwargs) -> None:
@@ -4514,29 +5312,51 @@ class PartitionEvent(FabricEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'partition_id': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "partition_id": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
     }
 
     _subtype_map = {
-        'kind': {'PartitionAnalysisEvent': 'PartitionAnalysisEvent', 'PartitionNewHealthReport': 'PartitionNewHealthReportEvent', 'PartitionHealthReportExpired': 'PartitionHealthReportExpiredEvent', 'PartitionReconfigured': 'PartitionReconfiguredEvent', 'ChaosPartitionSecondaryMoveScheduled': 'ChaosPartitionSecondaryMoveScheduledEvent', 'ChaosPartitionPrimaryMoveScheduled': 'ChaosPartitionPrimaryMoveScheduledEvent'}
+        "kind": {
+            "PartitionAnalysisEvent": "PartitionAnalysisEvent",
+            "PartitionNewHealthReport": "PartitionNewHealthReportEvent",
+            "PartitionHealthReportExpired": "PartitionHealthReportExpiredEvent",
+            "PartitionReconfigured": "PartitionReconfiguredEvent",
+            "ChaosPartitionSecondaryMoveScheduled": "ChaosPartitionSecondaryMoveScheduledEvent",
+            "ChaosPartitionPrimaryMoveScheduled": "ChaosPartitionPrimaryMoveScheduledEvent",
+        }
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, partition_id: str, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(PartitionEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        partition_id: str,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(PartitionEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            **kwargs
+        )
         self.partition_id = partition_id
-        self.kind = 'PartitionEvent'
+        self.kind = "PartitionEvent"
 
 
 class ChaosPartitionPrimaryMoveScheduledEvent(PartitionEvent):
@@ -4575,39 +5395,60 @@ class ChaosPartitionPrimaryMoveScheduledEvent(PartitionEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'partition_id': {'required': True},
-        'fault_group_id': {'required': True},
-        'fault_id': {'required': True},
-        'service_name': {'required': True},
-        'node_to': {'required': True},
-        'forced_move': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "partition_id": {"required": True},
+        "fault_group_id": {"required": True},
+        "fault_id": {"required": True},
+        "service_name": {"required": True},
+        "node_to": {"required": True},
+        "forced_move": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'fault_group_id': {'key': 'FaultGroupId', 'type': 'str'},
-        'fault_id': {'key': 'FaultId', 'type': 'str'},
-        'service_name': {'key': 'ServiceName', 'type': 'str'},
-        'node_to': {'key': 'NodeTo', 'type': 'str'},
-        'forced_move': {'key': 'ForcedMove', 'type': 'bool'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "fault_group_id": {"key": "FaultGroupId", "type": "str"},
+        "fault_id": {"key": "FaultId", "type": "str"},
+        "service_name": {"key": "ServiceName", "type": "str"},
+        "node_to": {"key": "NodeTo", "type": "str"},
+        "forced_move": {"key": "ForcedMove", "type": "bool"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, partition_id: str, fault_group_id: str, fault_id: str, service_name: str, node_to: str, forced_move: bool, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ChaosPartitionPrimaryMoveScheduledEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, partition_id=partition_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        partition_id: str,
+        fault_group_id: str,
+        fault_id: str,
+        service_name: str,
+        node_to: str,
+        forced_move: bool,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(ChaosPartitionPrimaryMoveScheduledEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            partition_id=partition_id,
+            **kwargs
+        )
         self.fault_group_id = fault_group_id
         self.fault_id = fault_id
         self.service_name = service_name
         self.node_to = node_to
         self.forced_move = forced_move
-        self.kind = 'ChaosPartitionPrimaryMoveScheduled'
+        self.kind = "ChaosPartitionPrimaryMoveScheduled"
 
 
 class ChaosPartitionSecondaryMoveScheduledEvent(PartitionEvent):
@@ -4648,42 +5489,64 @@ class ChaosPartitionSecondaryMoveScheduledEvent(PartitionEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'partition_id': {'required': True},
-        'fault_group_id': {'required': True},
-        'fault_id': {'required': True},
-        'service_name': {'required': True},
-        'source_node': {'required': True},
-        'destination_node': {'required': True},
-        'forced_move': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "partition_id": {"required": True},
+        "fault_group_id": {"required": True},
+        "fault_id": {"required": True},
+        "service_name": {"required": True},
+        "source_node": {"required": True},
+        "destination_node": {"required": True},
+        "forced_move": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'fault_group_id': {'key': 'FaultGroupId', 'type': 'str'},
-        'fault_id': {'key': 'FaultId', 'type': 'str'},
-        'service_name': {'key': 'ServiceName', 'type': 'str'},
-        'source_node': {'key': 'SourceNode', 'type': 'str'},
-        'destination_node': {'key': 'DestinationNode', 'type': 'str'},
-        'forced_move': {'key': 'ForcedMove', 'type': 'bool'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "fault_group_id": {"key": "FaultGroupId", "type": "str"},
+        "fault_id": {"key": "FaultId", "type": "str"},
+        "service_name": {"key": "ServiceName", "type": "str"},
+        "source_node": {"key": "SourceNode", "type": "str"},
+        "destination_node": {"key": "DestinationNode", "type": "str"},
+        "forced_move": {"key": "ForcedMove", "type": "bool"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, partition_id: str, fault_group_id: str, fault_id: str, service_name: str, source_node: str, destination_node: str, forced_move: bool, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ChaosPartitionSecondaryMoveScheduledEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, partition_id=partition_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        partition_id: str,
+        fault_group_id: str,
+        fault_id: str,
+        service_name: str,
+        source_node: str,
+        destination_node: str,
+        forced_move: bool,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(ChaosPartitionSecondaryMoveScheduledEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            partition_id=partition_id,
+            **kwargs
+        )
         self.fault_group_id = fault_group_id
         self.fault_id = fault_id
         self.service_name = service_name
         self.source_node = source_node
         self.destination_node = destination_node
         self.forced_move = forced_move
-        self.kind = 'ChaosPartitionSecondaryMoveScheduled'
+        self.kind = "ChaosPartitionSecondaryMoveScheduled"
 
 
 class ReplicaEvent(FabricEvent):
@@ -4727,32 +5590,55 @@ class ReplicaEvent(FabricEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'partition_id': {'required': True},
-        'replica_id': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "partition_id": {"required": True},
+        "replica_id": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'replica_id': {'key': 'ReplicaId', 'type': 'long'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "replica_id": {"key": "ReplicaId", "type": "long"},
     }
 
     _subtype_map = {
-        'kind': {'StatefulReplicaNewHealthReport': 'StatefulReplicaNewHealthReportEvent', 'StatefulReplicaHealthReportExpired': 'StatefulReplicaHealthReportExpiredEvent', 'StatelessReplicaNewHealthReport': 'StatelessReplicaNewHealthReportEvent', 'StatelessReplicaHealthReportExpired': 'StatelessReplicaHealthReportExpiredEvent', 'ChaosReplicaRemovalScheduled': 'ChaosReplicaRemovalScheduledEvent', 'ChaosReplicaRestartScheduled': 'ChaosReplicaRestartScheduledEvent'}
+        "kind": {
+            "StatefulReplicaNewHealthReport": "StatefulReplicaNewHealthReportEvent",
+            "StatefulReplicaHealthReportExpired": "StatefulReplicaHealthReportExpiredEvent",
+            "StatelessReplicaNewHealthReport": "StatelessReplicaNewHealthReportEvent",
+            "StatelessReplicaHealthReportExpired": "StatelessReplicaHealthReportExpiredEvent",
+            "ChaosReplicaRemovalScheduled": "ChaosReplicaRemovalScheduledEvent",
+            "ChaosReplicaRestartScheduled": "ChaosReplicaRestartScheduledEvent",
+        }
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, partition_id: str, replica_id: int, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ReplicaEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        partition_id: str,
+        replica_id: int,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(ReplicaEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            **kwargs
+        )
         self.partition_id = partition_id
         self.replica_id = replica_id
-        self.kind = 'ReplicaEvent'
+        self.kind = "ReplicaEvent"
 
 
 class ChaosReplicaRemovalScheduledEvent(ReplicaEvent):
@@ -4795,35 +5681,56 @@ class ChaosReplicaRemovalScheduledEvent(ReplicaEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'partition_id': {'required': True},
-        'replica_id': {'required': True},
-        'fault_group_id': {'required': True},
-        'fault_id': {'required': True},
-        'service_uri': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "partition_id": {"required": True},
+        "replica_id": {"required": True},
+        "fault_group_id": {"required": True},
+        "fault_id": {"required": True},
+        "service_uri": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'replica_id': {'key': 'ReplicaId', 'type': 'long'},
-        'fault_group_id': {'key': 'FaultGroupId', 'type': 'str'},
-        'fault_id': {'key': 'FaultId', 'type': 'str'},
-        'service_uri': {'key': 'ServiceUri', 'type': 'str'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "replica_id": {"key": "ReplicaId", "type": "long"},
+        "fault_group_id": {"key": "FaultGroupId", "type": "str"},
+        "fault_id": {"key": "FaultId", "type": "str"},
+        "service_uri": {"key": "ServiceUri", "type": "str"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, partition_id: str, replica_id: int, fault_group_id: str, fault_id: str, service_uri: str, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ChaosReplicaRemovalScheduledEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, partition_id=partition_id, replica_id=replica_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        partition_id: str,
+        replica_id: int,
+        fault_group_id: str,
+        fault_id: str,
+        service_uri: str,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(ChaosReplicaRemovalScheduledEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            partition_id=partition_id,
+            replica_id=replica_id,
+            **kwargs
+        )
         self.fault_group_id = fault_group_id
         self.fault_id = fault_id
         self.service_uri = service_uri
-        self.kind = 'ChaosReplicaRemovalScheduled'
+        self.kind = "ChaosReplicaRemovalScheduled"
 
 
 class ChaosReplicaRestartScheduledEvent(ReplicaEvent):
@@ -4866,35 +5773,56 @@ class ChaosReplicaRestartScheduledEvent(ReplicaEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'partition_id': {'required': True},
-        'replica_id': {'required': True},
-        'fault_group_id': {'required': True},
-        'fault_id': {'required': True},
-        'service_uri': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "partition_id": {"required": True},
+        "replica_id": {"required": True},
+        "fault_group_id": {"required": True},
+        "fault_id": {"required": True},
+        "service_uri": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'replica_id': {'key': 'ReplicaId', 'type': 'long'},
-        'fault_group_id': {'key': 'FaultGroupId', 'type': 'str'},
-        'fault_id': {'key': 'FaultId', 'type': 'str'},
-        'service_uri': {'key': 'ServiceUri', 'type': 'str'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "replica_id": {"key": "ReplicaId", "type": "long"},
+        "fault_group_id": {"key": "FaultGroupId", "type": "str"},
+        "fault_id": {"key": "FaultId", "type": "str"},
+        "service_uri": {"key": "ServiceUri", "type": "str"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, partition_id: str, replica_id: int, fault_group_id: str, fault_id: str, service_uri: str, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ChaosReplicaRestartScheduledEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, partition_id=partition_id, replica_id=replica_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        partition_id: str,
+        replica_id: int,
+        fault_group_id: str,
+        fault_id: str,
+        service_uri: str,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(ChaosReplicaRestartScheduledEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            partition_id=partition_id,
+            replica_id=replica_id,
+            **kwargs
+        )
         self.fault_group_id = fault_group_id
         self.fault_id = fault_id
         self.service_uri = service_uri
-        self.kind = 'ChaosReplicaRestartScheduled'
+        self.kind = "ChaosReplicaRestartScheduled"
 
 
 class ChaosSchedule(Model):
@@ -4916,13 +5844,21 @@ class ChaosSchedule(Model):
     """
 
     _attribute_map = {
-        'start_date': {'key': 'StartDate', 'type': 'iso-8601'},
-        'expiry_date': {'key': 'ExpiryDate', 'type': 'iso-8601'},
-        'chaos_parameters_dictionary': {'key': 'ChaosParametersDictionary', 'type': '[ChaosParametersDictionaryItem]'},
-        'jobs': {'key': 'Jobs', 'type': '[ChaosScheduleJob]'},
+        "start_date": {"key": "StartDate", "type": "iso-8601"},
+        "expiry_date": {"key": "ExpiryDate", "type": "iso-8601"},
+        "chaos_parameters_dictionary": {"key": "ChaosParametersDictionary", "type": "[ChaosParametersDictionaryItem]"},
+        "jobs": {"key": "Jobs", "type": "[ChaosScheduleJob]"},
     }
 
-    def __init__(self, *, start_date="1601-01-01T00:00:00Z", expiry_date="9999-12-31T23:59:59.999Z", chaos_parameters_dictionary=None, jobs=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        start_date="1601-01-01T00:00:00Z",
+        expiry_date="9999-12-31T23:59:59.999Z",
+        chaos_parameters_dictionary=None,
+        jobs=None,
+        **kwargs
+    ) -> None:
         super(ChaosSchedule, self).__init__(**kwargs)
         self.start_date = start_date
         self.expiry_date = expiry_date
@@ -4941,15 +5877,15 @@ class ChaosScheduleDescription(Model):
     """
 
     _validation = {
-        'version': {'minimum': 0},
+        "version": {"minimum": 0},
     }
 
     _attribute_map = {
-        'version': {'key': 'Version', 'type': 'int'},
-        'schedule': {'key': 'Schedule', 'type': 'ChaosSchedule'},
+        "version": {"key": "Version", "type": "int"},
+        "schedule": {"key": "Schedule", "type": "ChaosSchedule"},
     }
 
-    def __init__(self, *, version: int=None, schedule=None, **kwargs) -> None:
+    def __init__(self, *, version: int = None, schedule=None, **kwargs) -> None:
         super(ChaosScheduleDescription, self).__init__(**kwargs)
         self.version = version
         self.schedule = schedule
@@ -4971,12 +5907,12 @@ class ChaosScheduleJob(Model):
     """
 
     _attribute_map = {
-        'chaos_parameters': {'key': 'ChaosParameters', 'type': 'str'},
-        'days': {'key': 'Days', 'type': 'ChaosScheduleJobActiveDaysOfWeek'},
-        'times': {'key': 'Times', 'type': '[TimeRange]'},
+        "chaos_parameters": {"key": "ChaosParameters", "type": "str"},
+        "days": {"key": "Days", "type": "ChaosScheduleJobActiveDaysOfWeek"},
+        "times": {"key": "Times", "type": "[TimeRange]"},
     }
 
-    def __init__(self, *, chaos_parameters: str=None, days=None, times=None, **kwargs) -> None:
+    def __init__(self, *, chaos_parameters: str = None, days=None, times=None, **kwargs) -> None:
         super(ChaosScheduleJob, self).__init__(**kwargs)
         self.chaos_parameters = chaos_parameters
         self.days = days
@@ -5010,16 +5946,27 @@ class ChaosScheduleJobActiveDaysOfWeek(Model):
     """
 
     _attribute_map = {
-        'sunday': {'key': 'Sunday', 'type': 'bool'},
-        'monday': {'key': 'Monday', 'type': 'bool'},
-        'tuesday': {'key': 'Tuesday', 'type': 'bool'},
-        'wednesday': {'key': 'Wednesday', 'type': 'bool'},
-        'thursday': {'key': 'Thursday', 'type': 'bool'},
-        'friday': {'key': 'Friday', 'type': 'bool'},
-        'saturday': {'key': 'Saturday', 'type': 'bool'},
+        "sunday": {"key": "Sunday", "type": "bool"},
+        "monday": {"key": "Monday", "type": "bool"},
+        "tuesday": {"key": "Tuesday", "type": "bool"},
+        "wednesday": {"key": "Wednesday", "type": "bool"},
+        "thursday": {"key": "Thursday", "type": "bool"},
+        "friday": {"key": "Friday", "type": "bool"},
+        "saturday": {"key": "Saturday", "type": "bool"},
     }
 
-    def __init__(self, *, sunday: bool=False, monday: bool=False, tuesday: bool=False, wednesday: bool=False, thursday: bool=False, friday: bool=False, saturday: bool=False, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        sunday: bool = False,
+        monday: bool = False,
+        tuesday: bool = False,
+        wednesday: bool = False,
+        thursday: bool = False,
+        friday: bool = False,
+        saturday: bool = False,
+        **kwargs
+    ) -> None:
         super(ChaosScheduleJobActiveDaysOfWeek, self).__init__(**kwargs)
         self.sunday = sunday
         self.monday = monday
@@ -5057,26 +6004,44 @@ class ClusterEvent(FabricEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
     }
 
     _subtype_map = {
-        'kind': {'ClusterNewHealthReport': 'ClusterNewHealthReportEvent', 'ClusterHealthReportExpired': 'ClusterHealthReportExpiredEvent', 'ClusterUpgradeCompleted': 'ClusterUpgradeCompletedEvent', 'ClusterUpgradeDomainCompleted': 'ClusterUpgradeDomainCompletedEvent', 'ClusterUpgradeRollbackCompleted': 'ClusterUpgradeRollbackCompletedEvent', 'ClusterUpgradeRollbackStarted': 'ClusterUpgradeRollbackStartedEvent', 'ClusterUpgradeStarted': 'ClusterUpgradeStartedEvent', 'ChaosStopped': 'ChaosStoppedEvent', 'ChaosStarted': 'ChaosStartedEvent'}
+        "kind": {
+            "ClusterNewHealthReport": "ClusterNewHealthReportEvent",
+            "ClusterHealthReportExpired": "ClusterHealthReportExpiredEvent",
+            "ClusterUpgradeCompleted": "ClusterUpgradeCompletedEvent",
+            "ClusterUpgradeDomainCompleted": "ClusterUpgradeDomainCompletedEvent",
+            "ClusterUpgradeRollbackCompleted": "ClusterUpgradeRollbackCompletedEvent",
+            "ClusterUpgradeRollbackStarted": "ClusterUpgradeRollbackStartedEvent",
+            "ClusterUpgradeStarted": "ClusterUpgradeStartedEvent",
+            "ChaosStopped": "ChaosStoppedEvent",
+            "ChaosStarted": "ChaosStartedEvent",
+        }
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ClusterEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, **kwargs)
-        self.kind = 'ClusterEvent'
+    def __init__(
+        self, *, event_instance_id: str, time_stamp, category: str = None, has_correlated_events: bool = None, **kwargs
+    ) -> None:
+        super(ClusterEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            **kwargs
+        )
+        self.kind = "ClusterEvent"
 
 
 class ChaosStartedEvent(ClusterEvent):
@@ -5124,41 +6089,68 @@ class ChaosStartedEvent(ClusterEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'max_concurrent_faults': {'required': True},
-        'time_to_run_in_seconds': {'required': True},
-        'max_cluster_stabilization_timeout_in_seconds': {'required': True},
-        'wait_time_between_iterations_in_seconds': {'required': True},
-        'wait_time_between_faults_in_seconds': {'required': True},
-        'move_replica_fault_enabled': {'required': True},
-        'included_node_type_list': {'required': True},
-        'included_application_list': {'required': True},
-        'cluster_health_policy': {'required': True},
-        'chaos_context': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "max_concurrent_faults": {"required": True},
+        "time_to_run_in_seconds": {"required": True},
+        "max_cluster_stabilization_timeout_in_seconds": {"required": True},
+        "wait_time_between_iterations_in_seconds": {"required": True},
+        "wait_time_between_faults_in_seconds": {"required": True},
+        "move_replica_fault_enabled": {"required": True},
+        "included_node_type_list": {"required": True},
+        "included_application_list": {"required": True},
+        "cluster_health_policy": {"required": True},
+        "chaos_context": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'max_concurrent_faults': {'key': 'MaxConcurrentFaults', 'type': 'long'},
-        'time_to_run_in_seconds': {'key': 'TimeToRunInSeconds', 'type': 'float'},
-        'max_cluster_stabilization_timeout_in_seconds': {'key': 'MaxClusterStabilizationTimeoutInSeconds', 'type': 'float'},
-        'wait_time_between_iterations_in_seconds': {'key': 'WaitTimeBetweenIterationsInSeconds', 'type': 'float'},
-        'wait_time_between_faults_in_seconds': {'key': 'WaitTimeBetweenFaultsInSeconds', 'type': 'float'},
-        'move_replica_fault_enabled': {'key': 'MoveReplicaFaultEnabled', 'type': 'bool'},
-        'included_node_type_list': {'key': 'IncludedNodeTypeList', 'type': 'str'},
-        'included_application_list': {'key': 'IncludedApplicationList', 'type': 'str'},
-        'cluster_health_policy': {'key': 'ClusterHealthPolicy', 'type': 'str'},
-        'chaos_context': {'key': 'ChaosContext', 'type': 'str'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "max_concurrent_faults": {"key": "MaxConcurrentFaults", "type": "long"},
+        "time_to_run_in_seconds": {"key": "TimeToRunInSeconds", "type": "float"},
+        "max_cluster_stabilization_timeout_in_seconds": {
+            "key": "MaxClusterStabilizationTimeoutInSeconds",
+            "type": "float",
+        },
+        "wait_time_between_iterations_in_seconds": {"key": "WaitTimeBetweenIterationsInSeconds", "type": "float"},
+        "wait_time_between_faults_in_seconds": {"key": "WaitTimeBetweenFaultsInSeconds", "type": "float"},
+        "move_replica_fault_enabled": {"key": "MoveReplicaFaultEnabled", "type": "bool"},
+        "included_node_type_list": {"key": "IncludedNodeTypeList", "type": "str"},
+        "included_application_list": {"key": "IncludedApplicationList", "type": "str"},
+        "cluster_health_policy": {"key": "ClusterHealthPolicy", "type": "str"},
+        "chaos_context": {"key": "ChaosContext", "type": "str"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, max_concurrent_faults: int, time_to_run_in_seconds: float, max_cluster_stabilization_timeout_in_seconds: float, wait_time_between_iterations_in_seconds: float, wait_time_between_faults_in_seconds: float, move_replica_fault_enabled: bool, included_node_type_list: str, included_application_list: str, cluster_health_policy: str, chaos_context: str, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ChaosStartedEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        max_concurrent_faults: int,
+        time_to_run_in_seconds: float,
+        max_cluster_stabilization_timeout_in_seconds: float,
+        wait_time_between_iterations_in_seconds: float,
+        wait_time_between_faults_in_seconds: float,
+        move_replica_fault_enabled: bool,
+        included_node_type_list: str,
+        included_application_list: str,
+        cluster_health_policy: str,
+        chaos_context: str,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(ChaosStartedEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            **kwargs
+        )
         self.max_concurrent_faults = max_concurrent_faults
         self.time_to_run_in_seconds = time_to_run_in_seconds
         self.max_cluster_stabilization_timeout_in_seconds = max_cluster_stabilization_timeout_in_seconds
@@ -5169,7 +6161,7 @@ class ChaosStartedEvent(ClusterEvent):
         self.included_application_list = included_application_list
         self.cluster_health_policy = cluster_health_policy
         self.chaos_context = chaos_context
-        self.kind = 'ChaosStarted'
+        self.kind = "ChaosStarted"
 
 
 class ChaosStoppedEvent(ClusterEvent):
@@ -5194,25 +6186,40 @@ class ChaosStoppedEvent(ClusterEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'reason': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "reason": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'reason': {'key': 'Reason', 'type': 'str'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "reason": {"key": "Reason", "type": "str"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, reason: str, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ChaosStoppedEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        reason: str,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(ChaosStoppedEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            **kwargs
+        )
         self.reason = reason
-        self.kind = 'ChaosStopped'
+        self.kind = "ChaosStopped"
 
 
 class ChaosTargetFilter(Model):
@@ -5271,8 +6278,8 @@ class ChaosTargetFilter(Model):
     """
 
     _attribute_map = {
-        'node_type_inclusion_list': {'key': 'NodeTypeInclusionList', 'type': '[str]'},
-        'application_inclusion_list': {'key': 'ApplicationInclusionList', 'type': '[str]'},
+        "node_type_inclusion_list": {"key": "NodeTypeInclusionList", "type": "[str]"},
+        "application_inclusion_list": {"key": "ApplicationInclusionList", "type": "[str]"},
     }
 
     def __init__(self, *, node_type_inclusion_list=None, application_inclusion_list=None, **kwargs) -> None:
@@ -5300,17 +6307,24 @@ class PropertyBatchOperation(Model):
     """
 
     _validation = {
-        'property_name': {'required': True},
-        'kind': {'required': True},
+        "property_name": {"required": True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'property_name': {'key': 'PropertyName', 'type': 'str'},
-        'kind': {'key': 'Kind', 'type': 'str'},
+        "property_name": {"key": "PropertyName", "type": "str"},
+        "kind": {"key": "Kind", "type": "str"},
     }
 
     _subtype_map = {
-        'kind': {'CheckExists': 'CheckExistsPropertyBatchOperation', 'CheckSequence': 'CheckSequencePropertyBatchOperation', 'CheckValue': 'CheckValuePropertyBatchOperation', 'Delete': 'DeletePropertyBatchOperation', 'Get': 'GetPropertyBatchOperation', 'Put': 'PutPropertyBatchOperation'}
+        "kind": {
+            "CheckExists": "CheckExistsPropertyBatchOperation",
+            "CheckSequence": "CheckSequencePropertyBatchOperation",
+            "CheckValue": "CheckValuePropertyBatchOperation",
+            "Delete": "DeletePropertyBatchOperation",
+            "Get": "GetPropertyBatchOperation",
+            "Put": "PutPropertyBatchOperation",
+        }
     }
 
     def __init__(self, *, property_name: str, **kwargs) -> None:
@@ -5341,21 +6355,21 @@ class CheckExistsPropertyBatchOperation(PropertyBatchOperation):
     """
 
     _validation = {
-        'property_name': {'required': True},
-        'kind': {'required': True},
-        'exists': {'required': True},
+        "property_name": {"required": True},
+        "kind": {"required": True},
+        "exists": {"required": True},
     }
 
     _attribute_map = {
-        'property_name': {'key': 'PropertyName', 'type': 'str'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'exists': {'key': 'Exists', 'type': 'bool'},
+        "property_name": {"key": "PropertyName", "type": "str"},
+        "kind": {"key": "Kind", "type": "str"},
+        "exists": {"key": "Exists", "type": "bool"},
     }
 
     def __init__(self, *, property_name: str, exists: bool, **kwargs) -> None:
         super(CheckExistsPropertyBatchOperation, self).__init__(property_name=property_name, **kwargs)
         self.exists = exists
-        self.kind = 'CheckExists'
+        self.kind = "CheckExists"
 
 
 class CheckSequencePropertyBatchOperation(PropertyBatchOperation):
@@ -5381,21 +6395,21 @@ class CheckSequencePropertyBatchOperation(PropertyBatchOperation):
     """
 
     _validation = {
-        'property_name': {'required': True},
-        'kind': {'required': True},
-        'sequence_number': {'required': True},
+        "property_name": {"required": True},
+        "kind": {"required": True},
+        "sequence_number": {"required": True},
     }
 
     _attribute_map = {
-        'property_name': {'key': 'PropertyName', 'type': 'str'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'sequence_number': {'key': 'SequenceNumber', 'type': 'str'},
+        "property_name": {"key": "PropertyName", "type": "str"},
+        "kind": {"key": "Kind", "type": "str"},
+        "sequence_number": {"key": "SequenceNumber", "type": "str"},
     }
 
     def __init__(self, *, property_name: str, sequence_number: str, **kwargs) -> None:
         super(CheckSequencePropertyBatchOperation, self).__init__(property_name=property_name, **kwargs)
         self.sequence_number = sequence_number
-        self.kind = 'CheckSequence'
+        self.kind = "CheckSequence"
 
 
 class CheckValuePropertyBatchOperation(PropertyBatchOperation):
@@ -5417,21 +6431,21 @@ class CheckValuePropertyBatchOperation(PropertyBatchOperation):
     """
 
     _validation = {
-        'property_name': {'required': True},
-        'kind': {'required': True},
-        'value': {'required': True},
+        "property_name": {"required": True},
+        "kind": {"required": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'property_name': {'key': 'PropertyName', 'type': 'str'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'value': {'key': 'Value', 'type': 'PropertyValue'},
+        "property_name": {"key": "PropertyName", "type": "str"},
+        "kind": {"key": "Kind", "type": "str"},
+        "value": {"key": "Value", "type": "PropertyValue"},
     }
 
     def __init__(self, *, property_name: str, value, **kwargs) -> None:
         super(CheckValuePropertyBatchOperation, self).__init__(property_name=property_name, **kwargs)
         self.value = value
-        self.kind = 'CheckValue'
+        self.kind = "CheckValue"
 
 
 class ClusterConfiguration(Model):
@@ -5443,10 +6457,10 @@ class ClusterConfiguration(Model):
     """
 
     _attribute_map = {
-        'cluster_configuration': {'key': 'ClusterConfiguration', 'type': 'str'},
+        "cluster_configuration": {"key": "ClusterConfiguration", "type": "str"},
     }
 
-    def __init__(self, *, cluster_configuration: str=None, **kwargs) -> None:
+    def __init__(self, *, cluster_configuration: str = None, **kwargs) -> None:
         super(ClusterConfiguration, self).__init__(**kwargs)
         self.cluster_configuration = cluster_configuration
 
@@ -5505,24 +6519,42 @@ class ClusterConfigurationUpgradeDescription(Model):
     """
 
     _validation = {
-        'cluster_config': {'required': True},
+        "cluster_config": {"required": True},
     }
 
     _attribute_map = {
-        'cluster_config': {'key': 'ClusterConfig', 'type': 'str'},
-        'health_check_retry_timeout': {'key': 'HealthCheckRetryTimeout', 'type': 'duration'},
-        'health_check_wait_duration_in_seconds': {'key': 'HealthCheckWaitDurationInSeconds', 'type': 'duration'},
-        'health_check_stable_duration_in_seconds': {'key': 'HealthCheckStableDurationInSeconds', 'type': 'duration'},
-        'upgrade_domain_timeout_in_seconds': {'key': 'UpgradeDomainTimeoutInSeconds', 'type': 'duration'},
-        'upgrade_timeout_in_seconds': {'key': 'UpgradeTimeoutInSeconds', 'type': 'duration'},
-        'max_percent_unhealthy_applications': {'key': 'MaxPercentUnhealthyApplications', 'type': 'int'},
-        'max_percent_unhealthy_nodes': {'key': 'MaxPercentUnhealthyNodes', 'type': 'int'},
-        'max_percent_delta_unhealthy_nodes': {'key': 'MaxPercentDeltaUnhealthyNodes', 'type': 'int'},
-        'max_percent_upgrade_domain_delta_unhealthy_nodes': {'key': 'MaxPercentUpgradeDomainDeltaUnhealthyNodes', 'type': 'int'},
-        'application_health_policies': {'key': 'ApplicationHealthPolicies', 'type': 'ApplicationHealthPolicies'},
+        "cluster_config": {"key": "ClusterConfig", "type": "str"},
+        "health_check_retry_timeout": {"key": "HealthCheckRetryTimeout", "type": "duration"},
+        "health_check_wait_duration_in_seconds": {"key": "HealthCheckWaitDurationInSeconds", "type": "duration"},
+        "health_check_stable_duration_in_seconds": {"key": "HealthCheckStableDurationInSeconds", "type": "duration"},
+        "upgrade_domain_timeout_in_seconds": {"key": "UpgradeDomainTimeoutInSeconds", "type": "duration"},
+        "upgrade_timeout_in_seconds": {"key": "UpgradeTimeoutInSeconds", "type": "duration"},
+        "max_percent_unhealthy_applications": {"key": "MaxPercentUnhealthyApplications", "type": "int"},
+        "max_percent_unhealthy_nodes": {"key": "MaxPercentUnhealthyNodes", "type": "int"},
+        "max_percent_delta_unhealthy_nodes": {"key": "MaxPercentDeltaUnhealthyNodes", "type": "int"},
+        "max_percent_upgrade_domain_delta_unhealthy_nodes": {
+            "key": "MaxPercentUpgradeDomainDeltaUnhealthyNodes",
+            "type": "int",
+        },
+        "application_health_policies": {"key": "ApplicationHealthPolicies", "type": "ApplicationHealthPolicies"},
     }
 
-    def __init__(self, *, cluster_config: str, health_check_retry_timeout="PT0H0M0S", health_check_wait_duration_in_seconds="PT0H0M0S", health_check_stable_duration_in_seconds="PT0H0M0S", upgrade_domain_timeout_in_seconds="PT0H0M0S", upgrade_timeout_in_seconds="PT0H0M0S", max_percent_unhealthy_applications: int=0, max_percent_unhealthy_nodes: int=0, max_percent_delta_unhealthy_nodes: int=0, max_percent_upgrade_domain_delta_unhealthy_nodes: int=0, application_health_policies=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        cluster_config: str,
+        health_check_retry_timeout="PT0H0M0S",
+        health_check_wait_duration_in_seconds="PT0H0M0S",
+        health_check_stable_duration_in_seconds="PT0H0M0S",
+        upgrade_domain_timeout_in_seconds="PT0H0M0S",
+        upgrade_timeout_in_seconds="PT0H0M0S",
+        max_percent_unhealthy_applications: int = 0,
+        max_percent_unhealthy_nodes: int = 0,
+        max_percent_delta_unhealthy_nodes: int = 0,
+        max_percent_upgrade_domain_delta_unhealthy_nodes: int = 0,
+        application_health_policies=None,
+        **kwargs
+    ) -> None:
         super(ClusterConfigurationUpgradeDescription, self).__init__(**kwargs)
         self.cluster_config = cluster_config
         self.health_check_retry_timeout = health_check_retry_timeout
@@ -5554,13 +6586,21 @@ class ClusterConfigurationUpgradeStatusInfo(Model):
     """
 
     _attribute_map = {
-        'upgrade_state': {'key': 'UpgradeState', 'type': 'str'},
-        'progress_status': {'key': 'ProgressStatus', 'type': 'int'},
-        'config_version': {'key': 'ConfigVersion', 'type': 'str'},
-        'details': {'key': 'Details', 'type': 'str'},
+        "upgrade_state": {"key": "UpgradeState", "type": "str"},
+        "progress_status": {"key": "ProgressStatus", "type": "int"},
+        "config_version": {"key": "ConfigVersion", "type": "str"},
+        "details": {"key": "Details", "type": "str"},
     }
 
-    def __init__(self, *, upgrade_state=None, progress_status: int=None, config_version: str=None, details: str=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        upgrade_state=None,
+        progress_status: int = None,
+        config_version: str = None,
+        details: str = None,
+        **kwargs
+    ) -> None:
         super(ClusterConfigurationUpgradeStatusInfo, self).__init__(**kwargs)
         self.upgrade_state = upgrade_state
         self.progress_status = progress_status
@@ -5602,16 +6642,32 @@ class ClusterHealth(EntityHealth):
     """
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'health_events': {'key': 'HealthEvents', 'type': '[HealthEvent]'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
-        'health_statistics': {'key': 'HealthStatistics', 'type': 'HealthStatistics'},
-        'node_health_states': {'key': 'NodeHealthStates', 'type': '[NodeHealthState]'},
-        'application_health_states': {'key': 'ApplicationHealthStates', 'type': '[ApplicationHealthState]'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "health_events": {"key": "HealthEvents", "type": "[HealthEvent]"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
+        "health_statistics": {"key": "HealthStatistics", "type": "HealthStatistics"},
+        "node_health_states": {"key": "NodeHealthStates", "type": "[NodeHealthState]"},
+        "application_health_states": {"key": "ApplicationHealthStates", "type": "[ApplicationHealthState]"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, health_events=None, unhealthy_evaluations=None, health_statistics=None, node_health_states=None, application_health_states=None, **kwargs) -> None:
-        super(ClusterHealth, self).__init__(aggregated_health_state=aggregated_health_state, health_events=health_events, unhealthy_evaluations=unhealthy_evaluations, health_statistics=health_statistics, **kwargs)
+    def __init__(
+        self,
+        *,
+        aggregated_health_state=None,
+        health_events=None,
+        unhealthy_evaluations=None,
+        health_statistics=None,
+        node_health_states=None,
+        application_health_states=None,
+        **kwargs
+    ) -> None:
+        super(ClusterHealth, self).__init__(
+            aggregated_health_state=aggregated_health_state,
+            health_events=health_events,
+            unhealthy_evaluations=unhealthy_evaluations,
+            health_statistics=health_statistics,
+            **kwargs
+        )
         self.node_health_states = node_health_states
         self.application_health_states = application_health_states
 
@@ -5642,12 +6698,17 @@ class ClusterHealthChunk(Model):
     """
 
     _attribute_map = {
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'node_health_state_chunks': {'key': 'NodeHealthStateChunks', 'type': 'NodeHealthStateChunkList'},
-        'application_health_state_chunks': {'key': 'ApplicationHealthStateChunks', 'type': 'ApplicationHealthStateChunkList'},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "node_health_state_chunks": {"key": "NodeHealthStateChunks", "type": "NodeHealthStateChunkList"},
+        "application_health_state_chunks": {
+            "key": "ApplicationHealthStateChunks",
+            "type": "ApplicationHealthStateChunkList",
+        },
     }
 
-    def __init__(self, *, health_state=None, node_health_state_chunks=None, application_health_state_chunks=None, **kwargs) -> None:
+    def __init__(
+        self, *, health_state=None, node_health_state_chunks=None, application_health_state_chunks=None, **kwargs
+    ) -> None:
         super(ClusterHealthChunk, self).__init__(**kwargs)
         self.health_state = health_state
         self.node_health_state_chunks = node_health_state_chunks
@@ -5693,13 +6754,21 @@ class ClusterHealthChunkQueryDescription(Model):
     """
 
     _attribute_map = {
-        'node_filters': {'key': 'NodeFilters', 'type': '[NodeHealthStateFilter]'},
-        'application_filters': {'key': 'ApplicationFilters', 'type': '[ApplicationHealthStateFilter]'},
-        'cluster_health_policy': {'key': 'ClusterHealthPolicy', 'type': 'ClusterHealthPolicy'},
-        'application_health_policies': {'key': 'ApplicationHealthPolicies', 'type': 'ApplicationHealthPolicies'},
+        "node_filters": {"key": "NodeFilters", "type": "[NodeHealthStateFilter]"},
+        "application_filters": {"key": "ApplicationFilters", "type": "[ApplicationHealthStateFilter]"},
+        "cluster_health_policy": {"key": "ClusterHealthPolicy", "type": "ClusterHealthPolicy"},
+        "application_health_policies": {"key": "ApplicationHealthPolicies", "type": "ApplicationHealthPolicies"},
     }
 
-    def __init__(self, *, node_filters=None, application_filters=None, cluster_health_policy=None, application_health_policies=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        node_filters=None,
+        application_filters=None,
+        cluster_health_policy=None,
+        application_health_policies=None,
+        **kwargs
+    ) -> None:
         super(ClusterHealthChunkQueryDescription, self).__init__(**kwargs)
         self.node_filters = node_filters
         self.application_filters = application_filters
@@ -5728,8 +6797,11 @@ class ClusterHealthPolicies(Model):
     """
 
     _attribute_map = {
-        'application_health_policy_map': {'key': 'ApplicationHealthPolicyMap', 'type': '[ApplicationHealthPolicyMapItem]'},
-        'cluster_health_policy': {'key': 'ClusterHealthPolicy', 'type': 'ClusterHealthPolicy'},
+        "application_health_policy_map": {
+            "key": "ApplicationHealthPolicyMap",
+            "type": "[ApplicationHealthPolicyMapItem]",
+        },
+        "cluster_health_policy": {"key": "ClusterHealthPolicy", "type": "ClusterHealthPolicy"},
     }
 
     def __init__(self, *, application_health_policy_map=None, cluster_health_policy=None, **kwargs) -> None:
@@ -5839,14 +6911,26 @@ class ClusterHealthPolicy(Model):
     """
 
     _attribute_map = {
-        'consider_warning_as_error': {'key': 'ConsiderWarningAsError', 'type': 'bool'},
-        'max_percent_unhealthy_nodes': {'key': 'MaxPercentUnhealthyNodes', 'type': 'int'},
-        'max_percent_unhealthy_applications': {'key': 'MaxPercentUnhealthyApplications', 'type': 'int'},
-        'application_type_health_policy_map': {'key': 'ApplicationTypeHealthPolicyMap', 'type': '[ApplicationTypeHealthPolicyMapItem]'},
-        'node_type_health_policy_map': {'key': 'NodeTypeHealthPolicyMap', 'type': '[NodeTypeHealthPolicyMapItem]'},
+        "consider_warning_as_error": {"key": "ConsiderWarningAsError", "type": "bool"},
+        "max_percent_unhealthy_nodes": {"key": "MaxPercentUnhealthyNodes", "type": "int"},
+        "max_percent_unhealthy_applications": {"key": "MaxPercentUnhealthyApplications", "type": "int"},
+        "application_type_health_policy_map": {
+            "key": "ApplicationTypeHealthPolicyMap",
+            "type": "[ApplicationTypeHealthPolicyMapItem]",
+        },
+        "node_type_health_policy_map": {"key": "NodeTypeHealthPolicyMap", "type": "[NodeTypeHealthPolicyMapItem]"},
     }
 
-    def __init__(self, *, consider_warning_as_error: bool=False, max_percent_unhealthy_nodes: int=0, max_percent_unhealthy_applications: int=0, application_type_health_policy_map=None, node_type_health_policy_map=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        consider_warning_as_error: bool = False,
+        max_percent_unhealthy_nodes: int = 0,
+        max_percent_unhealthy_applications: int = 0,
+        application_type_health_policy_map=None,
+        node_type_health_policy_map=None,
+        **kwargs
+    ) -> None:
         super(ClusterHealthPolicy, self).__init__(**kwargs)
         self.consider_warning_as_error = consider_warning_as_error
         self.max_percent_unhealthy_nodes = max_percent_unhealthy_nodes
@@ -5892,37 +6976,59 @@ class ClusterHealthReportExpiredEvent(ClusterEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'source_id': {'required': True},
-        'property': {'required': True},
-        'health_state': {'required': True},
-        'time_to_live_ms': {'required': True},
-        'sequence_number': {'required': True},
-        'description': {'required': True},
-        'remove_when_expired': {'required': True},
-        'source_utc_timestamp': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "source_id": {"required": True},
+        "property": {"required": True},
+        "health_state": {"required": True},
+        "time_to_live_ms": {"required": True},
+        "sequence_number": {"required": True},
+        "description": {"required": True},
+        "remove_when_expired": {"required": True},
+        "source_utc_timestamp": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'source_id': {'key': 'SourceId', 'type': 'str'},
-        'property': {'key': 'Property', 'type': 'str'},
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'time_to_live_ms': {'key': 'TimeToLiveMs', 'type': 'long'},
-        'sequence_number': {'key': 'SequenceNumber', 'type': 'long'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'remove_when_expired': {'key': 'RemoveWhenExpired', 'type': 'bool'},
-        'source_utc_timestamp': {'key': 'SourceUtcTimestamp', 'type': 'iso-8601'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "source_id": {"key": "SourceId", "type": "str"},
+        "property": {"key": "Property", "type": "str"},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "time_to_live_ms": {"key": "TimeToLiveMs", "type": "long"},
+        "sequence_number": {"key": "SequenceNumber", "type": "long"},
+        "description": {"key": "Description", "type": "str"},
+        "remove_when_expired": {"key": "RemoveWhenExpired", "type": "bool"},
+        "source_utc_timestamp": {"key": "SourceUtcTimestamp", "type": "iso-8601"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, source_id: str, property: str, health_state: str, time_to_live_ms: int, sequence_number: int, description: str, remove_when_expired: bool, source_utc_timestamp, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ClusterHealthReportExpiredEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        source_id: str,
+        property: str,
+        health_state: str,
+        time_to_live_ms: int,
+        sequence_number: int,
+        description: str,
+        remove_when_expired: bool,
+        source_utc_timestamp,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(ClusterHealthReportExpiredEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            **kwargs
+        )
         self.source_id = source_id
         self.property = property
         self.health_state = health_state
@@ -5931,7 +7037,7 @@ class ClusterHealthReportExpiredEvent(ClusterEvent):
         self.description = description
         self.remove_when_expired = remove_when_expired
         self.source_utc_timestamp = source_utc_timestamp
-        self.kind = 'ClusterHealthReportExpired'
+        self.kind = "ClusterHealthReportExpired"
 
 
 class ClusterLoadInfo(Model):
@@ -5951,12 +7057,19 @@ class ClusterLoadInfo(Model):
     """
 
     _attribute_map = {
-        'last_balancing_start_time_utc': {'key': 'LastBalancingStartTimeUtc', 'type': 'iso-8601'},
-        'last_balancing_end_time_utc': {'key': 'LastBalancingEndTimeUtc', 'type': 'iso-8601'},
-        'load_metric_information': {'key': 'LoadMetricInformation', 'type': '[LoadMetricInformation]'},
+        "last_balancing_start_time_utc": {"key": "LastBalancingStartTimeUtc", "type": "iso-8601"},
+        "last_balancing_end_time_utc": {"key": "LastBalancingEndTimeUtc", "type": "iso-8601"},
+        "load_metric_information": {"key": "LoadMetricInformation", "type": "[LoadMetricInformation]"},
     }
 
-    def __init__(self, *, last_balancing_start_time_utc=None, last_balancing_end_time_utc=None, load_metric_information=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        last_balancing_start_time_utc=None,
+        last_balancing_end_time_utc=None,
+        load_metric_information=None,
+        **kwargs
+    ) -> None:
         super(ClusterLoadInfo, self).__init__(**kwargs)
         self.last_balancing_start_time_utc = last_balancing_start_time_utc
         self.last_balancing_end_time_utc = last_balancing_end_time_utc
@@ -5971,10 +7084,10 @@ class ClusterManifest(Model):
     """
 
     _attribute_map = {
-        'manifest': {'key': 'Manifest', 'type': 'str'},
+        "manifest": {"key": "Manifest", "type": "str"},
     }
 
-    def __init__(self, *, manifest: str=None, **kwargs) -> None:
+    def __init__(self, *, manifest: str = None, **kwargs) -> None:
         super(ClusterManifest, self).__init__(**kwargs)
         self.manifest = manifest
 
@@ -6016,37 +7129,59 @@ class ClusterNewHealthReportEvent(ClusterEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'source_id': {'required': True},
-        'property': {'required': True},
-        'health_state': {'required': True},
-        'time_to_live_ms': {'required': True},
-        'sequence_number': {'required': True},
-        'description': {'required': True},
-        'remove_when_expired': {'required': True},
-        'source_utc_timestamp': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "source_id": {"required": True},
+        "property": {"required": True},
+        "health_state": {"required": True},
+        "time_to_live_ms": {"required": True},
+        "sequence_number": {"required": True},
+        "description": {"required": True},
+        "remove_when_expired": {"required": True},
+        "source_utc_timestamp": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'source_id': {'key': 'SourceId', 'type': 'str'},
-        'property': {'key': 'Property', 'type': 'str'},
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'time_to_live_ms': {'key': 'TimeToLiveMs', 'type': 'long'},
-        'sequence_number': {'key': 'SequenceNumber', 'type': 'long'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'remove_when_expired': {'key': 'RemoveWhenExpired', 'type': 'bool'},
-        'source_utc_timestamp': {'key': 'SourceUtcTimestamp', 'type': 'iso-8601'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "source_id": {"key": "SourceId", "type": "str"},
+        "property": {"key": "Property", "type": "str"},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "time_to_live_ms": {"key": "TimeToLiveMs", "type": "long"},
+        "sequence_number": {"key": "SequenceNumber", "type": "long"},
+        "description": {"key": "Description", "type": "str"},
+        "remove_when_expired": {"key": "RemoveWhenExpired", "type": "bool"},
+        "source_utc_timestamp": {"key": "SourceUtcTimestamp", "type": "iso-8601"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, source_id: str, property: str, health_state: str, time_to_live_ms: int, sequence_number: int, description: str, remove_when_expired: bool, source_utc_timestamp, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ClusterNewHealthReportEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        source_id: str,
+        property: str,
+        health_state: str,
+        time_to_live_ms: int,
+        sequence_number: int,
+        description: str,
+        remove_when_expired: bool,
+        source_utc_timestamp,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(ClusterNewHealthReportEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            **kwargs
+        )
         self.source_id = source_id
         self.property = property
         self.health_state = health_state
@@ -6055,7 +7190,7 @@ class ClusterNewHealthReportEvent(ClusterEvent):
         self.description = description
         self.remove_when_expired = remove_when_expired
         self.source_utc_timestamp = source_utc_timestamp
-        self.kind = 'ClusterNewHealthReport'
+        self.kind = "ClusterNewHealthReport"
 
 
 class ClusterUpgradeCompletedEvent(ClusterEvent):
@@ -6083,28 +7218,44 @@ class ClusterUpgradeCompletedEvent(ClusterEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'target_cluster_version': {'required': True},
-        'overall_upgrade_elapsed_time_in_ms': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "target_cluster_version": {"required": True},
+        "overall_upgrade_elapsed_time_in_ms": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'target_cluster_version': {'key': 'TargetClusterVersion', 'type': 'str'},
-        'overall_upgrade_elapsed_time_in_ms': {'key': 'OverallUpgradeElapsedTimeInMs', 'type': 'float'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "target_cluster_version": {"key": "TargetClusterVersion", "type": "str"},
+        "overall_upgrade_elapsed_time_in_ms": {"key": "OverallUpgradeElapsedTimeInMs", "type": "float"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, target_cluster_version: str, overall_upgrade_elapsed_time_in_ms: float, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ClusterUpgradeCompletedEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        target_cluster_version: str,
+        overall_upgrade_elapsed_time_in_ms: float,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(ClusterUpgradeCompletedEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            **kwargs
+        )
         self.target_cluster_version = target_cluster_version
         self.overall_upgrade_elapsed_time_in_ms = overall_upgrade_elapsed_time_in_ms
-        self.kind = 'ClusterUpgradeCompleted'
+        self.kind = "ClusterUpgradeCompleted"
 
 
 class ClusterUpgradeDescriptionObject(Model):
@@ -6165,21 +7316,46 @@ class ClusterUpgradeDescriptionObject(Model):
     """
 
     _attribute_map = {
-        'config_version': {'key': 'ConfigVersion', 'type': 'str'},
-        'code_version': {'key': 'CodeVersion', 'type': 'str'},
-        'upgrade_kind': {'key': 'UpgradeKind', 'type': 'str'},
-        'rolling_upgrade_mode': {'key': 'RollingUpgradeMode', 'type': 'str'},
-        'upgrade_replica_set_check_timeout_in_seconds': {'key': 'UpgradeReplicaSetCheckTimeoutInSeconds', 'type': 'long'},
-        'force_restart': {'key': 'ForceRestart', 'type': 'bool'},
-        'sort_order': {'key': 'SortOrder', 'type': 'str'},
-        'enable_delta_health_evaluation': {'key': 'EnableDeltaHealthEvaluation', 'type': 'bool'},
-        'monitoring_policy': {'key': 'MonitoringPolicy', 'type': 'MonitoringPolicyDescription'},
-        'cluster_health_policy': {'key': 'ClusterHealthPolicy', 'type': 'ClusterHealthPolicy'},
-        'cluster_upgrade_health_policy': {'key': 'ClusterUpgradeHealthPolicy', 'type': 'ClusterUpgradeHealthPolicyObject'},
-        'application_health_policy_map': {'key': 'ApplicationHealthPolicyMap', 'type': 'ApplicationHealthPolicyMapObject'},
+        "config_version": {"key": "ConfigVersion", "type": "str"},
+        "code_version": {"key": "CodeVersion", "type": "str"},
+        "upgrade_kind": {"key": "UpgradeKind", "type": "str"},
+        "rolling_upgrade_mode": {"key": "RollingUpgradeMode", "type": "str"},
+        "upgrade_replica_set_check_timeout_in_seconds": {
+            "key": "UpgradeReplicaSetCheckTimeoutInSeconds",
+            "type": "long",
+        },
+        "force_restart": {"key": "ForceRestart", "type": "bool"},
+        "sort_order": {"key": "SortOrder", "type": "str"},
+        "enable_delta_health_evaluation": {"key": "EnableDeltaHealthEvaluation", "type": "bool"},
+        "monitoring_policy": {"key": "MonitoringPolicy", "type": "MonitoringPolicyDescription"},
+        "cluster_health_policy": {"key": "ClusterHealthPolicy", "type": "ClusterHealthPolicy"},
+        "cluster_upgrade_health_policy": {
+            "key": "ClusterUpgradeHealthPolicy",
+            "type": "ClusterUpgradeHealthPolicyObject",
+        },
+        "application_health_policy_map": {
+            "key": "ApplicationHealthPolicyMap",
+            "type": "ApplicationHealthPolicyMapObject",
+        },
     }
 
-    def __init__(self, *, config_version: str=None, code_version: str=None, upgrade_kind="Rolling", rolling_upgrade_mode="UnmonitoredAuto", upgrade_replica_set_check_timeout_in_seconds: int=None, force_restart: bool=None, sort_order="Default", enable_delta_health_evaluation: bool=None, monitoring_policy=None, cluster_health_policy=None, cluster_upgrade_health_policy=None, application_health_policy_map=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        config_version: str = None,
+        code_version: str = None,
+        upgrade_kind="Rolling",
+        rolling_upgrade_mode="UnmonitoredAuto",
+        upgrade_replica_set_check_timeout_in_seconds: int = None,
+        force_restart: bool = None,
+        sort_order="Default",
+        enable_delta_health_evaluation: bool = None,
+        monitoring_policy=None,
+        cluster_health_policy=None,
+        cluster_upgrade_health_policy=None,
+        application_health_policy_map=None,
+        **kwargs
+    ) -> None:
         super(ClusterUpgradeDescriptionObject, self).__init__(**kwargs)
         self.config_version = config_version
         self.code_version = code_version
@@ -6224,34 +7400,52 @@ class ClusterUpgradeDomainCompletedEvent(ClusterEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'target_cluster_version': {'required': True},
-        'upgrade_state': {'required': True},
-        'upgrade_domains': {'required': True},
-        'upgrade_domain_elapsed_time_in_ms': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "target_cluster_version": {"required": True},
+        "upgrade_state": {"required": True},
+        "upgrade_domains": {"required": True},
+        "upgrade_domain_elapsed_time_in_ms": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'target_cluster_version': {'key': 'TargetClusterVersion', 'type': 'str'},
-        'upgrade_state': {'key': 'UpgradeState', 'type': 'str'},
-        'upgrade_domains': {'key': 'UpgradeDomains', 'type': 'str'},
-        'upgrade_domain_elapsed_time_in_ms': {'key': 'UpgradeDomainElapsedTimeInMs', 'type': 'float'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "target_cluster_version": {"key": "TargetClusterVersion", "type": "str"},
+        "upgrade_state": {"key": "UpgradeState", "type": "str"},
+        "upgrade_domains": {"key": "UpgradeDomains", "type": "str"},
+        "upgrade_domain_elapsed_time_in_ms": {"key": "UpgradeDomainElapsedTimeInMs", "type": "float"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, target_cluster_version: str, upgrade_state: str, upgrade_domains: str, upgrade_domain_elapsed_time_in_ms: float, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ClusterUpgradeDomainCompletedEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        target_cluster_version: str,
+        upgrade_state: str,
+        upgrade_domains: str,
+        upgrade_domain_elapsed_time_in_ms: float,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(ClusterUpgradeDomainCompletedEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            **kwargs
+        )
         self.target_cluster_version = target_cluster_version
         self.upgrade_state = upgrade_state
         self.upgrade_domains = upgrade_domains
         self.upgrade_domain_elapsed_time_in_ms = upgrade_domain_elapsed_time_in_ms
-        self.kind = 'ClusterUpgradeDomainCompleted'
+        self.kind = "ClusterUpgradeDomainCompleted"
 
 
 class ClusterUpgradeHealthPolicyObject(Model):
@@ -6278,16 +7472,25 @@ class ClusterUpgradeHealthPolicyObject(Model):
     """
 
     _validation = {
-        'max_percent_delta_unhealthy_nodes': {'maximum': 100, 'minimum': 0},
-        'max_percent_upgrade_domain_delta_unhealthy_nodes': {'maximum': 100, 'minimum': 0},
+        "max_percent_delta_unhealthy_nodes": {"maximum": 100, "minimum": 0},
+        "max_percent_upgrade_domain_delta_unhealthy_nodes": {"maximum": 100, "minimum": 0},
     }
 
     _attribute_map = {
-        'max_percent_delta_unhealthy_nodes': {'key': 'MaxPercentDeltaUnhealthyNodes', 'type': 'int'},
-        'max_percent_upgrade_domain_delta_unhealthy_nodes': {'key': 'MaxPercentUpgradeDomainDeltaUnhealthyNodes', 'type': 'int'},
+        "max_percent_delta_unhealthy_nodes": {"key": "MaxPercentDeltaUnhealthyNodes", "type": "int"},
+        "max_percent_upgrade_domain_delta_unhealthy_nodes": {
+            "key": "MaxPercentUpgradeDomainDeltaUnhealthyNodes",
+            "type": "int",
+        },
     }
 
-    def __init__(self, *, max_percent_delta_unhealthy_nodes: int=None, max_percent_upgrade_domain_delta_unhealthy_nodes: int=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        max_percent_delta_unhealthy_nodes: int = None,
+        max_percent_upgrade_domain_delta_unhealthy_nodes: int = None,
+        **kwargs
+    ) -> None:
         super(ClusterUpgradeHealthPolicyObject, self).__init__(**kwargs)
         self.max_percent_delta_unhealthy_nodes = max_percent_delta_unhealthy_nodes
         self.max_percent_upgrade_domain_delta_unhealthy_nodes = max_percent_upgrade_domain_delta_unhealthy_nodes
@@ -6362,27 +7565,58 @@ class ClusterUpgradeProgressObject(Model):
     """
 
     _attribute_map = {
-        'code_version': {'key': 'CodeVersion', 'type': 'str'},
-        'config_version': {'key': 'ConfigVersion', 'type': 'str'},
-        'upgrade_domains': {'key': 'UpgradeDomains', 'type': '[UpgradeDomainInfo]'},
-        'upgrade_units': {'key': 'UpgradeUnits', 'type': '[UpgradeUnitInfo]'},
-        'upgrade_state': {'key': 'UpgradeState', 'type': 'str'},
-        'next_upgrade_domain': {'key': 'NextUpgradeDomain', 'type': 'str'},
-        'rolling_upgrade_mode': {'key': 'RollingUpgradeMode', 'type': 'str'},
-        'upgrade_description': {'key': 'UpgradeDescription', 'type': 'ClusterUpgradeDescriptionObject'},
-        'upgrade_duration_in_milliseconds': {'key': 'UpgradeDurationInMilliseconds', 'type': 'str'},
-        'upgrade_domain_duration_in_milliseconds': {'key': 'UpgradeDomainDurationInMilliseconds', 'type': 'str'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
-        'current_upgrade_domain_progress': {'key': 'CurrentUpgradeDomainProgress', 'type': 'CurrentUpgradeDomainProgressInfo'},
-        'current_upgrade_units_progress': {'key': 'CurrentUpgradeUnitsProgress', 'type': 'CurrentUpgradeUnitsProgressInfo'},
-        'start_timestamp_utc': {'key': 'StartTimestampUtc', 'type': 'str'},
-        'failure_timestamp_utc': {'key': 'FailureTimestampUtc', 'type': 'str'},
-        'failure_reason': {'key': 'FailureReason', 'type': 'str'},
-        'upgrade_domain_progress_at_failure': {'key': 'UpgradeDomainProgressAtFailure', 'type': 'FailedUpgradeDomainProgressObject'},
-        'is_node_by_node': {'key': 'IsNodeByNode', 'type': 'bool'},
+        "code_version": {"key": "CodeVersion", "type": "str"},
+        "config_version": {"key": "ConfigVersion", "type": "str"},
+        "upgrade_domains": {"key": "UpgradeDomains", "type": "[UpgradeDomainInfo]"},
+        "upgrade_units": {"key": "UpgradeUnits", "type": "[UpgradeUnitInfo]"},
+        "upgrade_state": {"key": "UpgradeState", "type": "str"},
+        "next_upgrade_domain": {"key": "NextUpgradeDomain", "type": "str"},
+        "rolling_upgrade_mode": {"key": "RollingUpgradeMode", "type": "str"},
+        "upgrade_description": {"key": "UpgradeDescription", "type": "ClusterUpgradeDescriptionObject"},
+        "upgrade_duration_in_milliseconds": {"key": "UpgradeDurationInMilliseconds", "type": "str"},
+        "upgrade_domain_duration_in_milliseconds": {"key": "UpgradeDomainDurationInMilliseconds", "type": "str"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
+        "current_upgrade_domain_progress": {
+            "key": "CurrentUpgradeDomainProgress",
+            "type": "CurrentUpgradeDomainProgressInfo",
+        },
+        "current_upgrade_units_progress": {
+            "key": "CurrentUpgradeUnitsProgress",
+            "type": "CurrentUpgradeUnitsProgressInfo",
+        },
+        "start_timestamp_utc": {"key": "StartTimestampUtc", "type": "str"},
+        "failure_timestamp_utc": {"key": "FailureTimestampUtc", "type": "str"},
+        "failure_reason": {"key": "FailureReason", "type": "str"},
+        "upgrade_domain_progress_at_failure": {
+            "key": "UpgradeDomainProgressAtFailure",
+            "type": "FailedUpgradeDomainProgressObject",
+        },
+        "is_node_by_node": {"key": "IsNodeByNode", "type": "bool"},
     }
 
-    def __init__(self, *, code_version: str=None, config_version: str=None, upgrade_domains=None, upgrade_units=None, upgrade_state=None, next_upgrade_domain: str=None, rolling_upgrade_mode="UnmonitoredAuto", upgrade_description=None, upgrade_duration_in_milliseconds: str=None, upgrade_domain_duration_in_milliseconds: str=None, unhealthy_evaluations=None, current_upgrade_domain_progress=None, current_upgrade_units_progress=None, start_timestamp_utc: str=None, failure_timestamp_utc: str=None, failure_reason=None, upgrade_domain_progress_at_failure=None, is_node_by_node: bool=False, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        code_version: str = None,
+        config_version: str = None,
+        upgrade_domains=None,
+        upgrade_units=None,
+        upgrade_state=None,
+        next_upgrade_domain: str = None,
+        rolling_upgrade_mode="UnmonitoredAuto",
+        upgrade_description=None,
+        upgrade_duration_in_milliseconds: str = None,
+        upgrade_domain_duration_in_milliseconds: str = None,
+        unhealthy_evaluations=None,
+        current_upgrade_domain_progress=None,
+        current_upgrade_units_progress=None,
+        start_timestamp_utc: str = None,
+        failure_timestamp_utc: str = None,
+        failure_reason=None,
+        upgrade_domain_progress_at_failure=None,
+        is_node_by_node: bool = False,
+        **kwargs
+    ) -> None:
         super(ClusterUpgradeProgressObject, self).__init__(**kwargs)
         self.code_version = code_version
         self.config_version = config_version
@@ -6431,31 +7665,48 @@ class ClusterUpgradeRollbackCompletedEvent(ClusterEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'target_cluster_version': {'required': True},
-        'failure_reason': {'required': True},
-        'overall_upgrade_elapsed_time_in_ms': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "target_cluster_version": {"required": True},
+        "failure_reason": {"required": True},
+        "overall_upgrade_elapsed_time_in_ms": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'target_cluster_version': {'key': 'TargetClusterVersion', 'type': 'str'},
-        'failure_reason': {'key': 'FailureReason', 'type': 'str'},
-        'overall_upgrade_elapsed_time_in_ms': {'key': 'OverallUpgradeElapsedTimeInMs', 'type': 'float'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "target_cluster_version": {"key": "TargetClusterVersion", "type": "str"},
+        "failure_reason": {"key": "FailureReason", "type": "str"},
+        "overall_upgrade_elapsed_time_in_ms": {"key": "OverallUpgradeElapsedTimeInMs", "type": "float"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, target_cluster_version: str, failure_reason: str, overall_upgrade_elapsed_time_in_ms: float, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ClusterUpgradeRollbackCompletedEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        target_cluster_version: str,
+        failure_reason: str,
+        overall_upgrade_elapsed_time_in_ms: float,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(ClusterUpgradeRollbackCompletedEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            **kwargs
+        )
         self.target_cluster_version = target_cluster_version
         self.failure_reason = failure_reason
         self.overall_upgrade_elapsed_time_in_ms = overall_upgrade_elapsed_time_in_ms
-        self.kind = 'ClusterUpgradeRollbackCompleted'
+        self.kind = "ClusterUpgradeRollbackCompleted"
 
 
 class ClusterUpgradeRollbackStartedEvent(ClusterEvent):
@@ -6485,31 +7736,48 @@ class ClusterUpgradeRollbackStartedEvent(ClusterEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'target_cluster_version': {'required': True},
-        'failure_reason': {'required': True},
-        'overall_upgrade_elapsed_time_in_ms': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "target_cluster_version": {"required": True},
+        "failure_reason": {"required": True},
+        "overall_upgrade_elapsed_time_in_ms": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'target_cluster_version': {'key': 'TargetClusterVersion', 'type': 'str'},
-        'failure_reason': {'key': 'FailureReason', 'type': 'str'},
-        'overall_upgrade_elapsed_time_in_ms': {'key': 'OverallUpgradeElapsedTimeInMs', 'type': 'float'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "target_cluster_version": {"key": "TargetClusterVersion", "type": "str"},
+        "failure_reason": {"key": "FailureReason", "type": "str"},
+        "overall_upgrade_elapsed_time_in_ms": {"key": "OverallUpgradeElapsedTimeInMs", "type": "float"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, target_cluster_version: str, failure_reason: str, overall_upgrade_elapsed_time_in_ms: float, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ClusterUpgradeRollbackStartedEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        target_cluster_version: str,
+        failure_reason: str,
+        overall_upgrade_elapsed_time_in_ms: float,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(ClusterUpgradeRollbackStartedEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            **kwargs
+        )
         self.target_cluster_version = target_cluster_version
         self.failure_reason = failure_reason
         self.overall_upgrade_elapsed_time_in_ms = overall_upgrade_elapsed_time_in_ms
-        self.kind = 'ClusterUpgradeRollbackStarted'
+        self.kind = "ClusterUpgradeRollbackStarted"
 
 
 class ClusterUpgradeStartedEvent(ClusterEvent):
@@ -6542,37 +7810,56 @@ class ClusterUpgradeStartedEvent(ClusterEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'current_cluster_version': {'required': True},
-        'target_cluster_version': {'required': True},
-        'upgrade_type': {'required': True},
-        'rolling_upgrade_mode': {'required': True},
-        'failure_action': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "current_cluster_version": {"required": True},
+        "target_cluster_version": {"required": True},
+        "upgrade_type": {"required": True},
+        "rolling_upgrade_mode": {"required": True},
+        "failure_action": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'current_cluster_version': {'key': 'CurrentClusterVersion', 'type': 'str'},
-        'target_cluster_version': {'key': 'TargetClusterVersion', 'type': 'str'},
-        'upgrade_type': {'key': 'UpgradeType', 'type': 'str'},
-        'rolling_upgrade_mode': {'key': 'RollingUpgradeMode', 'type': 'str'},
-        'failure_action': {'key': 'FailureAction', 'type': 'str'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "current_cluster_version": {"key": "CurrentClusterVersion", "type": "str"},
+        "target_cluster_version": {"key": "TargetClusterVersion", "type": "str"},
+        "upgrade_type": {"key": "UpgradeType", "type": "str"},
+        "rolling_upgrade_mode": {"key": "RollingUpgradeMode", "type": "str"},
+        "failure_action": {"key": "FailureAction", "type": "str"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, current_cluster_version: str, target_cluster_version: str, upgrade_type: str, rolling_upgrade_mode: str, failure_action: str, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ClusterUpgradeStartedEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        current_cluster_version: str,
+        target_cluster_version: str,
+        upgrade_type: str,
+        rolling_upgrade_mode: str,
+        failure_action: str,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(ClusterUpgradeStartedEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            **kwargs
+        )
         self.current_cluster_version = current_cluster_version
         self.target_cluster_version = target_cluster_version
         self.upgrade_type = upgrade_type
         self.rolling_upgrade_mode = rolling_upgrade_mode
         self.failure_action = failure_action
-        self.kind = 'ClusterUpgradeStarted'
+        self.kind = "ClusterUpgradeStarted"
 
 
 class ClusterVersion(Model):
@@ -6583,10 +7870,10 @@ class ClusterVersion(Model):
     """
 
     _attribute_map = {
-        'version': {'key': 'Version', 'type': 'str'},
+        "version": {"key": "Version", "type": "str"},
     }
 
-    def __init__(self, *, version: str=None, **kwargs) -> None:
+    def __init__(self, *, version: str = None, **kwargs) -> None:
         super(ClusterVersion, self).__init__(**kwargs)
         self.version = version
 
@@ -6622,16 +7909,30 @@ class CodePackageEntryPoint(Model):
     """
 
     _attribute_map = {
-        'entry_point_location': {'key': 'EntryPointLocation', 'type': 'str'},
-        'process_id': {'key': 'ProcessId', 'type': 'str'},
-        'run_as_user_name': {'key': 'RunAsUserName', 'type': 'str'},
-        'code_package_entry_point_statistics': {'key': 'CodePackageEntryPointStatistics', 'type': 'CodePackageEntryPointStatistics'},
-        'status': {'key': 'Status', 'type': 'str'},
-        'next_activation_time': {'key': 'NextActivationTime', 'type': 'iso-8601'},
-        'instance_id': {'key': 'InstanceId', 'type': 'str'},
+        "entry_point_location": {"key": "EntryPointLocation", "type": "str"},
+        "process_id": {"key": "ProcessId", "type": "str"},
+        "run_as_user_name": {"key": "RunAsUserName", "type": "str"},
+        "code_package_entry_point_statistics": {
+            "key": "CodePackageEntryPointStatistics",
+            "type": "CodePackageEntryPointStatistics",
+        },
+        "status": {"key": "Status", "type": "str"},
+        "next_activation_time": {"key": "NextActivationTime", "type": "iso-8601"},
+        "instance_id": {"key": "InstanceId", "type": "str"},
     }
 
-    def __init__(self, *, entry_point_location: str=None, process_id: str=None, run_as_user_name: str=None, code_package_entry_point_statistics=None, status=None, next_activation_time=None, instance_id: str=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        entry_point_location: str = None,
+        process_id: str = None,
+        run_as_user_name: str = None,
+        code_package_entry_point_statistics=None,
+        status=None,
+        next_activation_time=None,
+        instance_id: str = None,
+        **kwargs
+    ) -> None:
         super(CodePackageEntryPoint, self).__init__(**kwargs)
         self.entry_point_location = entry_point_location
         self.process_id = process_id
@@ -6679,20 +7980,35 @@ class CodePackageEntryPointStatistics(Model):
     """
 
     _attribute_map = {
-        'last_exit_code': {'key': 'LastExitCode', 'type': 'str'},
-        'last_activation_time': {'key': 'LastActivationTime', 'type': 'iso-8601'},
-        'last_exit_time': {'key': 'LastExitTime', 'type': 'iso-8601'},
-        'last_successful_activation_time': {'key': 'LastSuccessfulActivationTime', 'type': 'iso-8601'},
-        'last_successful_exit_time': {'key': 'LastSuccessfulExitTime', 'type': 'iso-8601'},
-        'activation_count': {'key': 'ActivationCount', 'type': 'str'},
-        'activation_failure_count': {'key': 'ActivationFailureCount', 'type': 'str'},
-        'continuous_activation_failure_count': {'key': 'ContinuousActivationFailureCount', 'type': 'str'},
-        'exit_count': {'key': 'ExitCount', 'type': 'str'},
-        'exit_failure_count': {'key': 'ExitFailureCount', 'type': 'str'},
-        'continuous_exit_failure_count': {'key': 'ContinuousExitFailureCount', 'type': 'str'},
+        "last_exit_code": {"key": "LastExitCode", "type": "str"},
+        "last_activation_time": {"key": "LastActivationTime", "type": "iso-8601"},
+        "last_exit_time": {"key": "LastExitTime", "type": "iso-8601"},
+        "last_successful_activation_time": {"key": "LastSuccessfulActivationTime", "type": "iso-8601"},
+        "last_successful_exit_time": {"key": "LastSuccessfulExitTime", "type": "iso-8601"},
+        "activation_count": {"key": "ActivationCount", "type": "str"},
+        "activation_failure_count": {"key": "ActivationFailureCount", "type": "str"},
+        "continuous_activation_failure_count": {"key": "ContinuousActivationFailureCount", "type": "str"},
+        "exit_count": {"key": "ExitCount", "type": "str"},
+        "exit_failure_count": {"key": "ExitFailureCount", "type": "str"},
+        "continuous_exit_failure_count": {"key": "ContinuousExitFailureCount", "type": "str"},
     }
 
-    def __init__(self, *, last_exit_code: str=None, last_activation_time=None, last_exit_time=None, last_successful_activation_time=None, last_successful_exit_time=None, activation_count: str=None, activation_failure_count: str=None, continuous_activation_failure_count: str=None, exit_count: str=None, exit_failure_count: str=None, continuous_exit_failure_count: str=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        last_exit_code: str = None,
+        last_activation_time=None,
+        last_exit_time=None,
+        last_successful_activation_time=None,
+        last_successful_exit_time=None,
+        activation_count: str = None,
+        activation_failure_count: str = None,
+        continuous_activation_failure_count: str = None,
+        exit_count: str = None,
+        exit_failure_count: str = None,
+        continuous_exit_failure_count: str = None,
+        **kwargs
+    ) -> None:
         super(CodePackageEntryPointStatistics, self).__init__(**kwargs)
         self.last_exit_code = last_exit_code
         self.last_activation_time = last_activation_time
@@ -6725,13 +8041,15 @@ class ComposeDeploymentStatusInfo(Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'application_name': {'key': 'ApplicationName', 'type': 'str'},
-        'status': {'key': 'Status', 'type': 'str'},
-        'status_details': {'key': 'StatusDetails', 'type': 'str'},
+        "name": {"key": "Name", "type": "str"},
+        "application_name": {"key": "ApplicationName", "type": "str"},
+        "status": {"key": "Status", "type": "str"},
+        "status_details": {"key": "StatusDetails", "type": "str"},
     }
 
-    def __init__(self, *, name: str=None, application_name: str=None, status=None, status_details: str=None, **kwargs) -> None:
+    def __init__(
+        self, *, name: str = None, application_name: str = None, status=None, status_details: str = None, **kwargs
+    ) -> None:
         super(ComposeDeploymentStatusInfo, self).__init__(**kwargs)
         self.name = name
         self.application_name = application_name
@@ -6785,24 +8103,40 @@ class ComposeDeploymentUpgradeDescription(Model):
     """
 
     _validation = {
-        'deployment_name': {'required': True},
-        'compose_file_content': {'required': True},
-        'upgrade_kind': {'required': True},
+        "deployment_name": {"required": True},
+        "compose_file_content": {"required": True},
+        "upgrade_kind": {"required": True},
     }
 
     _attribute_map = {
-        'deployment_name': {'key': 'DeploymentName', 'type': 'str'},
-        'compose_file_content': {'key': 'ComposeFileContent', 'type': 'str'},
-        'registry_credential': {'key': 'RegistryCredential', 'type': 'RegistryCredential'},
-        'upgrade_kind': {'key': 'UpgradeKind', 'type': 'str'},
-        'rolling_upgrade_mode': {'key': 'RollingUpgradeMode', 'type': 'str'},
-        'upgrade_replica_set_check_timeout_in_seconds': {'key': 'UpgradeReplicaSetCheckTimeoutInSeconds', 'type': 'long'},
-        'force_restart': {'key': 'ForceRestart', 'type': 'bool'},
-        'monitoring_policy': {'key': 'MonitoringPolicy', 'type': 'MonitoringPolicyDescription'},
-        'application_health_policy': {'key': 'ApplicationHealthPolicy', 'type': 'ApplicationHealthPolicy'},
+        "deployment_name": {"key": "DeploymentName", "type": "str"},
+        "compose_file_content": {"key": "ComposeFileContent", "type": "str"},
+        "registry_credential": {"key": "RegistryCredential", "type": "RegistryCredential"},
+        "upgrade_kind": {"key": "UpgradeKind", "type": "str"},
+        "rolling_upgrade_mode": {"key": "RollingUpgradeMode", "type": "str"},
+        "upgrade_replica_set_check_timeout_in_seconds": {
+            "key": "UpgradeReplicaSetCheckTimeoutInSeconds",
+            "type": "long",
+        },
+        "force_restart": {"key": "ForceRestart", "type": "bool"},
+        "monitoring_policy": {"key": "MonitoringPolicy", "type": "MonitoringPolicyDescription"},
+        "application_health_policy": {"key": "ApplicationHealthPolicy", "type": "ApplicationHealthPolicy"},
     }
 
-    def __init__(self, *, deployment_name: str, compose_file_content: str, registry_credential=None, upgrade_kind="Rolling", rolling_upgrade_mode="UnmonitoredAuto", upgrade_replica_set_check_timeout_in_seconds: int=None, force_restart: bool=None, monitoring_policy=None, application_health_policy=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        deployment_name: str,
+        compose_file_content: str,
+        registry_credential=None,
+        upgrade_kind="Rolling",
+        rolling_upgrade_mode="UnmonitoredAuto",
+        upgrade_replica_set_check_timeout_in_seconds: int = None,
+        force_restart: bool = None,
+        monitoring_policy=None,
+        application_health_policy=None,
+        **kwargs
+    ) -> None:
         super(ComposeDeploymentUpgradeDescription, self).__init__(**kwargs)
         self.deployment_name = deployment_name
         self.compose_file_content = compose_file_content
@@ -6906,29 +8240,65 @@ class ComposeDeploymentUpgradeProgressInfo(Model):
     """
 
     _attribute_map = {
-        'deployment_name': {'key': 'DeploymentName', 'type': 'str'},
-        'application_name': {'key': 'ApplicationName', 'type': 'str'},
-        'upgrade_state': {'key': 'UpgradeState', 'type': 'str'},
-        'upgrade_status_details': {'key': 'UpgradeStatusDetails', 'type': 'str'},
-        'upgrade_kind': {'key': 'UpgradeKind', 'type': 'str'},
-        'rolling_upgrade_mode': {'key': 'RollingUpgradeMode', 'type': 'str'},
-        'force_restart': {'key': 'ForceRestart', 'type': 'bool'},
-        'upgrade_replica_set_check_timeout_in_seconds': {'key': 'UpgradeReplicaSetCheckTimeoutInSeconds', 'type': 'long'},
-        'monitoring_policy': {'key': 'MonitoringPolicy', 'type': 'MonitoringPolicyDescription'},
-        'application_health_policy': {'key': 'ApplicationHealthPolicy', 'type': 'ApplicationHealthPolicy'},
-        'target_application_type_version': {'key': 'TargetApplicationTypeVersion', 'type': 'str'},
-        'upgrade_duration': {'key': 'UpgradeDuration', 'type': 'str'},
-        'current_upgrade_domain_duration': {'key': 'CurrentUpgradeDomainDuration', 'type': 'str'},
-        'application_unhealthy_evaluations': {'key': 'ApplicationUnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
-        'current_upgrade_domain_progress': {'key': 'CurrentUpgradeDomainProgress', 'type': 'CurrentUpgradeDomainProgressInfo'},
-        'start_timestamp_utc': {'key': 'StartTimestampUtc', 'type': 'str'},
-        'failure_timestamp_utc': {'key': 'FailureTimestampUtc', 'type': 'str'},
-        'failure_reason': {'key': 'FailureReason', 'type': 'str'},
-        'upgrade_domain_progress_at_failure': {'key': 'UpgradeDomainProgressAtFailure', 'type': 'FailureUpgradeDomainProgressInfo'},
-        'application_upgrade_status_details': {'key': 'ApplicationUpgradeStatusDetails', 'type': 'str'},
+        "deployment_name": {"key": "DeploymentName", "type": "str"},
+        "application_name": {"key": "ApplicationName", "type": "str"},
+        "upgrade_state": {"key": "UpgradeState", "type": "str"},
+        "upgrade_status_details": {"key": "UpgradeStatusDetails", "type": "str"},
+        "upgrade_kind": {"key": "UpgradeKind", "type": "str"},
+        "rolling_upgrade_mode": {"key": "RollingUpgradeMode", "type": "str"},
+        "force_restart": {"key": "ForceRestart", "type": "bool"},
+        "upgrade_replica_set_check_timeout_in_seconds": {
+            "key": "UpgradeReplicaSetCheckTimeoutInSeconds",
+            "type": "long",
+        },
+        "monitoring_policy": {"key": "MonitoringPolicy", "type": "MonitoringPolicyDescription"},
+        "application_health_policy": {"key": "ApplicationHealthPolicy", "type": "ApplicationHealthPolicy"},
+        "target_application_type_version": {"key": "TargetApplicationTypeVersion", "type": "str"},
+        "upgrade_duration": {"key": "UpgradeDuration", "type": "str"},
+        "current_upgrade_domain_duration": {"key": "CurrentUpgradeDomainDuration", "type": "str"},
+        "application_unhealthy_evaluations": {
+            "key": "ApplicationUnhealthyEvaluations",
+            "type": "[HealthEvaluationWrapper]",
+        },
+        "current_upgrade_domain_progress": {
+            "key": "CurrentUpgradeDomainProgress",
+            "type": "CurrentUpgradeDomainProgressInfo",
+        },
+        "start_timestamp_utc": {"key": "StartTimestampUtc", "type": "str"},
+        "failure_timestamp_utc": {"key": "FailureTimestampUtc", "type": "str"},
+        "failure_reason": {"key": "FailureReason", "type": "str"},
+        "upgrade_domain_progress_at_failure": {
+            "key": "UpgradeDomainProgressAtFailure",
+            "type": "FailureUpgradeDomainProgressInfo",
+        },
+        "application_upgrade_status_details": {"key": "ApplicationUpgradeStatusDetails", "type": "str"},
     }
 
-    def __init__(self, *, deployment_name: str=None, application_name: str=None, upgrade_state=None, upgrade_status_details: str=None, upgrade_kind="Rolling", rolling_upgrade_mode="UnmonitoredAuto", force_restart: bool=None, upgrade_replica_set_check_timeout_in_seconds: int=None, monitoring_policy=None, application_health_policy=None, target_application_type_version: str=None, upgrade_duration: str=None, current_upgrade_domain_duration: str=None, application_unhealthy_evaluations=None, current_upgrade_domain_progress=None, start_timestamp_utc: str=None, failure_timestamp_utc: str=None, failure_reason=None, upgrade_domain_progress_at_failure=None, application_upgrade_status_details: str=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        deployment_name: str = None,
+        application_name: str = None,
+        upgrade_state=None,
+        upgrade_status_details: str = None,
+        upgrade_kind="Rolling",
+        rolling_upgrade_mode="UnmonitoredAuto",
+        force_restart: bool = None,
+        upgrade_replica_set_check_timeout_in_seconds: int = None,
+        monitoring_policy=None,
+        application_health_policy=None,
+        target_application_type_version: str = None,
+        upgrade_duration: str = None,
+        current_upgrade_domain_duration: str = None,
+        application_unhealthy_evaluations=None,
+        current_upgrade_domain_progress=None,
+        start_timestamp_utc: str = None,
+        failure_timestamp_utc: str = None,
+        failure_reason=None,
+        upgrade_domain_progress_at_failure=None,
+        application_upgrade_status_details: str = None,
+        **kwargs
+    ) -> None:
         super(ComposeDeploymentUpgradeProgressInfo, self).__init__(**kwargs)
         self.deployment_name = deployment_name
         self.application_name = application_name
@@ -6973,20 +8343,29 @@ class ConfigParameterOverride(Model):
     """
 
     _validation = {
-        'section_name': {'required': True},
-        'parameter_name': {'required': True},
-        'parameter_value': {'required': True},
+        "section_name": {"required": True},
+        "parameter_name": {"required": True},
+        "parameter_value": {"required": True},
     }
 
     _attribute_map = {
-        'section_name': {'key': 'SectionName', 'type': 'str'},
-        'parameter_name': {'key': 'ParameterName', 'type': 'str'},
-        'parameter_value': {'key': 'ParameterValue', 'type': 'str'},
-        'timeout': {'key': 'Timeout', 'type': 'duration'},
-        'persist_across_upgrade': {'key': 'PersistAcrossUpgrade', 'type': 'bool'},
+        "section_name": {"key": "SectionName", "type": "str"},
+        "parameter_name": {"key": "ParameterName", "type": "str"},
+        "parameter_value": {"key": "ParameterValue", "type": "str"},
+        "timeout": {"key": "Timeout", "type": "duration"},
+        "persist_across_upgrade": {"key": "PersistAcrossUpgrade", "type": "bool"},
     }
 
-    def __init__(self, *, section_name: str, parameter_name: str, parameter_value: str, timeout=None, persist_across_upgrade: bool=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        section_name: str,
+        parameter_name: str,
+        parameter_value: str,
+        timeout=None,
+        persist_across_upgrade: bool = None,
+        **kwargs
+    ) -> None:
         super(ConfigParameterOverride, self).__init__(**kwargs)
         self.section_name = section_name
         self.parameter_name = parameter_name
@@ -7012,17 +8391,19 @@ class ContainerApiRequestBody(Model):
     """
 
     _validation = {
-        'uri_path': {'required': True},
+        "uri_path": {"required": True},
     }
 
     _attribute_map = {
-        'http_verb': {'key': 'HttpVerb', 'type': 'str'},
-        'uri_path': {'key': 'UriPath', 'type': 'str'},
-        'content_type': {'key': 'Content-Type', 'type': 'str'},
-        'body': {'key': 'Body', 'type': 'str'},
+        "http_verb": {"key": "HttpVerb", "type": "str"},
+        "uri_path": {"key": "UriPath", "type": "str"},
+        "content_type": {"key": "Content-Type", "type": "str"},
+        "body": {"key": "Body", "type": "str"},
     }
 
-    def __init__(self, *, uri_path: str, http_verb: str=None, content_type: str=None, body: str=None, **kwargs) -> None:
+    def __init__(
+        self, *, uri_path: str, http_verb: str = None, content_type: str = None, body: str = None, **kwargs
+    ) -> None:
         super(ContainerApiRequestBody, self).__init__(**kwargs)
         self.http_verb = http_verb
         self.uri_path = uri_path
@@ -7040,11 +8421,11 @@ class ContainerApiResponse(Model):
     """
 
     _validation = {
-        'container_api_result': {'required': True},
+        "container_api_result": {"required": True},
     }
 
     _attribute_map = {
-        'container_api_result': {'key': 'ContainerApiResult', 'type': 'ContainerApiResult'},
+        "container_api_result": {"key": "ContainerApiResult", "type": "ContainerApiResult"},
     }
 
     def __init__(self, *, container_api_result, **kwargs) -> None:
@@ -7069,17 +8450,19 @@ class ContainerApiResult(Model):
     """
 
     _validation = {
-        'status': {'required': True},
+        "status": {"required": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'Status', 'type': 'int'},
-        'content_type': {'key': 'Content-Type', 'type': 'str'},
-        'content_encoding': {'key': 'Content-Encoding', 'type': 'str'},
-        'body': {'key': 'Body', 'type': 'str'},
+        "status": {"key": "Status", "type": "int"},
+        "content_type": {"key": "Content-Type", "type": "str"},
+        "content_encoding": {"key": "Content-Encoding", "type": "str"},
+        "body": {"key": "Body", "type": "str"},
     }
 
-    def __init__(self, *, status: int, content_type: str=None, content_encoding: str=None, body: str=None, **kwargs) -> None:
+    def __init__(
+        self, *, status: int, content_type: str = None, content_encoding: str = None, body: str = None, **kwargs
+    ) -> None:
         super(ContainerApiResult, self).__init__(**kwargs)
         self.status = status
         self.content_type = content_type
@@ -7146,33 +8529,53 @@ class ContainerCodePackageProperties(Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'image': {'required': True},
-        'resources': {'required': True},
-        'instance_view': {'readonly': True},
+        "name": {"required": True},
+        "image": {"required": True},
+        "resources": {"required": True},
+        "instance_view": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'image': {'key': 'image', 'type': 'str'},
-        'image_registry_credential': {'key': 'imageRegistryCredential', 'type': 'ImageRegistryCredential'},
-        'entry_point': {'key': 'entryPoint', 'type': 'str'},
-        'commands': {'key': 'commands', 'type': '[str]'},
-        'environment_variables': {'key': 'environmentVariables', 'type': '[EnvironmentVariable]'},
-        'settings': {'key': 'settings', 'type': '[Setting]'},
-        'labels': {'key': 'labels', 'type': '[ContainerLabel]'},
-        'endpoints': {'key': 'endpoints', 'type': '[EndpointProperties]'},
-        'resources': {'key': 'resources', 'type': 'ResourceRequirements'},
-        'volume_refs': {'key': 'volumeRefs', 'type': '[VolumeReference]'},
-        'volumes': {'key': 'volumes', 'type': '[ApplicationScopedVolume]'},
-        'diagnostics': {'key': 'diagnostics', 'type': 'DiagnosticsRef'},
-        'reliable_collections_refs': {'key': 'reliableCollectionsRefs', 'type': '[ReliableCollectionsRef]'},
-        'instance_view': {'key': 'instanceView', 'type': 'ContainerInstanceView'},
-        'liveness_probe': {'key': 'livenessProbe', 'type': '[Probe]'},
-        'readiness_probe': {'key': 'readinessProbe', 'type': '[Probe]'},
+        "name": {"key": "name", "type": "str"},
+        "image": {"key": "image", "type": "str"},
+        "image_registry_credential": {"key": "imageRegistryCredential", "type": "ImageRegistryCredential"},
+        "entry_point": {"key": "entryPoint", "type": "str"},
+        "commands": {"key": "commands", "type": "[str]"},
+        "environment_variables": {"key": "environmentVariables", "type": "[EnvironmentVariable]"},
+        "settings": {"key": "settings", "type": "[Setting]"},
+        "labels": {"key": "labels", "type": "[ContainerLabel]"},
+        "endpoints": {"key": "endpoints", "type": "[EndpointProperties]"},
+        "resources": {"key": "resources", "type": "ResourceRequirements"},
+        "volume_refs": {"key": "volumeRefs", "type": "[VolumeReference]"},
+        "volumes": {"key": "volumes", "type": "[ApplicationScopedVolume]"},
+        "diagnostics": {"key": "diagnostics", "type": "DiagnosticsRef"},
+        "reliable_collections_refs": {"key": "reliableCollectionsRefs", "type": "[ReliableCollectionsRef]"},
+        "instance_view": {"key": "instanceView", "type": "ContainerInstanceView"},
+        "liveness_probe": {"key": "livenessProbe", "type": "[Probe]"},
+        "readiness_probe": {"key": "readinessProbe", "type": "[Probe]"},
     }
 
-    def __init__(self, *, name: str, image: str, resources, image_registry_credential=None, entry_point: str=None, commands=None, environment_variables=None, settings=None, labels=None, endpoints=None, volume_refs=None, volumes=None, diagnostics=None, reliable_collections_refs=None, liveness_probe=None, readiness_probe=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str,
+        image: str,
+        resources,
+        image_registry_credential=None,
+        entry_point: str = None,
+        commands=None,
+        environment_variables=None,
+        settings=None,
+        labels=None,
+        endpoints=None,
+        volume_refs=None,
+        volumes=None,
+        diagnostics=None,
+        reliable_collections_refs=None,
+        liveness_probe=None,
+        readiness_probe=None,
+        **kwargs
+    ) -> None:
         super(ContainerCodePackageProperties, self).__init__(**kwargs)
         self.name = name
         self.image = image
@@ -7211,15 +8614,25 @@ class ContainerEvent(Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'count': {'key': 'count', 'type': 'int'},
-        'first_timestamp': {'key': 'firstTimestamp', 'type': 'str'},
-        'last_timestamp': {'key': 'lastTimestamp', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "count": {"key": "count", "type": "int"},
+        "first_timestamp": {"key": "firstTimestamp", "type": "str"},
+        "last_timestamp": {"key": "lastTimestamp", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, name: str=None, count: int=None, first_timestamp: str=None, last_timestamp: str=None, message: str=None, type: str=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        count: int = None,
+        first_timestamp: str = None,
+        last_timestamp: str = None,
+        message: str = None,
+        type: str = None,
+        **kwargs
+    ) -> None:
         super(ContainerEvent, self).__init__(**kwargs)
         self.name = name
         self.count = count
@@ -7249,22 +8662,30 @@ class ContainerInstanceEvent(FabricEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ContainerInstanceEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, **kwargs)
-        self.kind = 'ContainerInstanceEvent'
+    def __init__(
+        self, *, event_instance_id: str, time_stamp, category: str = None, has_correlated_events: bool = None, **kwargs
+    ) -> None:
+        super(ContainerInstanceEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            **kwargs
+        )
+        self.kind = "ContainerInstanceEvent"
 
 
 class ContainerInstanceView(Model):
@@ -7282,13 +8703,15 @@ class ContainerInstanceView(Model):
     """
 
     _attribute_map = {
-        'restart_count': {'key': 'restartCount', 'type': 'int'},
-        'current_state': {'key': 'currentState', 'type': 'ContainerState'},
-        'previous_state': {'key': 'previousState', 'type': 'ContainerState'},
-        'events': {'key': 'events', 'type': '[ContainerEvent]'},
+        "restart_count": {"key": "restartCount", "type": "int"},
+        "current_state": {"key": "currentState", "type": "ContainerState"},
+        "previous_state": {"key": "previousState", "type": "ContainerState"},
+        "events": {"key": "events", "type": "[ContainerEvent]"},
     }
 
-    def __init__(self, *, restart_count: int=None, current_state=None, previous_state=None, events=None, **kwargs) -> None:
+    def __init__(
+        self, *, restart_count: int = None, current_state=None, previous_state=None, events=None, **kwargs
+    ) -> None:
         super(ContainerInstanceView, self).__init__(**kwargs)
         self.restart_count = restart_count
         self.current_state = current_state
@@ -7308,13 +8731,13 @@ class ContainerLabel(Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'value': {'required': True},
+        "name": {"required": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
     def __init__(self, *, name: str, value: str, **kwargs) -> None:
@@ -7331,10 +8754,10 @@ class ContainerLogs(Model):
     """
 
     _attribute_map = {
-        'content': {'key': 'Content', 'type': 'str'},
+        "content": {"key": "Content", "type": "str"},
     }
 
-    def __init__(self, *, content: str=None, **kwargs) -> None:
+    def __init__(self, *, content: str = None, **kwargs) -> None:
         super(ContainerLogs, self).__init__(**kwargs)
         self.content = content
 
@@ -7355,14 +8778,23 @@ class ContainerState(Model):
     """
 
     _attribute_map = {
-        'state': {'key': 'state', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'exit_code': {'key': 'exitCode', 'type': 'str'},
-        'finish_time': {'key': 'finishTime', 'type': 'iso-8601'},
-        'detail_status': {'key': 'detailStatus', 'type': 'str'},
+        "state": {"key": "state", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "exit_code": {"key": "exitCode", "type": "str"},
+        "finish_time": {"key": "finishTime", "type": "iso-8601"},
+        "detail_status": {"key": "detailStatus", "type": "str"},
     }
 
-    def __init__(self, *, state: str=None, start_time=None, exit_code: str=None, finish_time=None, detail_status: str=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        state: str = None,
+        start_time=None,
+        exit_code: str = None,
+        finish_time=None,
+        detail_status: str = None,
+        **kwargs
+    ) -> None:
         super(ContainerState, self).__init__(**kwargs)
         self.state = state
         self.start_time = start_time
@@ -7387,14 +8819,14 @@ class CreateComposeDeploymentDescription(Model):
     """
 
     _validation = {
-        'deployment_name': {'required': True},
-        'compose_file_content': {'required': True},
+        "deployment_name": {"required": True},
+        "compose_file_content": {"required": True},
     }
 
     _attribute_map = {
-        'deployment_name': {'key': 'DeploymentName', 'type': 'str'},
-        'compose_file_content': {'key': 'ComposeFileContent', 'type': 'str'},
-        'registry_credential': {'key': 'RegistryCredential', 'type': 'RegistryCredential'},
+        "deployment_name": {"key": "DeploymentName", "type": "str"},
+        "compose_file_content": {"key": "ComposeFileContent", "type": "str"},
+        "registry_credential": {"key": "RegistryCredential", "type": "RegistryCredential"},
     }
 
     def __init__(self, *, deployment_name: str, compose_file_content: str, registry_credential=None, **kwargs) -> None:
@@ -7417,11 +8849,11 @@ class CurrentUpgradeDomainProgressInfo(Model):
     """
 
     _attribute_map = {
-        'domain_name': {'key': 'DomainName', 'type': 'str'},
-        'node_upgrade_progress_list': {'key': 'NodeUpgradeProgressList', 'type': '[NodeUpgradeProgressInfo]'},
+        "domain_name": {"key": "DomainName", "type": "str"},
+        "node_upgrade_progress_list": {"key": "NodeUpgradeProgressList", "type": "[NodeUpgradeProgressInfo]"},
     }
 
-    def __init__(self, *, domain_name: str=None, node_upgrade_progress_list=None, **kwargs) -> None:
+    def __init__(self, *, domain_name: str = None, node_upgrade_progress_list=None, **kwargs) -> None:
         super(CurrentUpgradeDomainProgressInfo, self).__init__(**kwargs)
         self.domain_name = domain_name
         self.node_upgrade_progress_list = node_upgrade_progress_list
@@ -7440,11 +8872,11 @@ class CurrentUpgradeUnitsProgressInfo(Model):
     """
 
     _attribute_map = {
-        'domain_name': {'key': 'DomainName', 'type': 'str'},
-        'node_upgrade_progress_list': {'key': 'NodeUpgradeProgressList', 'type': '[NodeUpgradeProgressInfo]'},
+        "domain_name": {"key": "DomainName", "type": "str"},
+        "node_upgrade_progress_list": {"key": "NodeUpgradeProgressList", "type": "[NodeUpgradeProgressInfo]"},
     }
 
-    def __init__(self, *, domain_name: str=None, node_upgrade_progress_list=None, **kwargs) -> None:
+    def __init__(self, *, domain_name: str = None, node_upgrade_progress_list=None, **kwargs) -> None:
         super(CurrentUpgradeUnitsProgressInfo, self).__init__(**kwargs)
         self.domain_name = domain_name
         self.node_upgrade_progress_list = node_upgrade_progress_list
@@ -7461,7 +8893,7 @@ class DeactivationIntentDescription(Model):
     """
 
     _attribute_map = {
-        'deactivation_intent': {'key': 'DeactivationIntent', 'type': 'str'},
+        "deactivation_intent": {"key": "DeactivationIntent", "type": "str"},
     }
 
     def __init__(self, *, deactivation_intent=None, **kwargs) -> None:
@@ -7482,16 +8914,14 @@ class ExecutionPolicy(Model):
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
     }
 
-    _subtype_map = {
-        'type': {'Default': 'DefaultExecutionPolicy', 'RunToCompletion': 'RunToCompletionExecutionPolicy'}
-    }
+    _subtype_map = {"type": {"Default": "DefaultExecutionPolicy", "RunToCompletion": "RunToCompletionExecutionPolicy"}}
 
     def __init__(self, **kwargs) -> None:
         super(ExecutionPolicy, self).__init__(**kwargs)
@@ -7508,16 +8938,16 @@ class DefaultExecutionPolicy(ExecutionPolicy):
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
     }
 
     def __init__(self, **kwargs) -> None:
         super(DefaultExecutionPolicy, self).__init__(**kwargs)
-        self.type = 'Default'
+        self.type = "Default"
 
 
 class DeletePropertyBatchOperation(PropertyBatchOperation):
@@ -7535,18 +8965,18 @@ class DeletePropertyBatchOperation(PropertyBatchOperation):
     """
 
     _validation = {
-        'property_name': {'required': True},
-        'kind': {'required': True},
+        "property_name": {"required": True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'property_name': {'key': 'PropertyName', 'type': 'str'},
-        'kind': {'key': 'Kind', 'type': 'str'},
+        "property_name": {"key": "PropertyName", "type": "str"},
+        "kind": {"key": "Kind", "type": "str"},
     }
 
     def __init__(self, *, property_name: str, **kwargs) -> None:
         super(DeletePropertyBatchOperation, self).__init__(property_name=property_name, **kwargs)
-        self.kind = 'Delete'
+        self.kind = "Delete"
 
 
 class DeltaNodesCheckHealthEvaluation(HealthEvaluation):
@@ -7588,28 +9018,41 @@ class DeltaNodesCheckHealthEvaluation(HealthEvaluation):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'baseline_error_count': {'key': 'BaselineErrorCount', 'type': 'long'},
-        'baseline_total_count': {'key': 'BaselineTotalCount', 'type': 'long'},
-        'max_percent_delta_unhealthy_nodes': {'key': 'MaxPercentDeltaUnhealthyNodes', 'type': 'int'},
-        'total_count': {'key': 'TotalCount', 'type': 'long'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "description": {"key": "Description", "type": "str"},
+        "kind": {"key": "Kind", "type": "str"},
+        "baseline_error_count": {"key": "BaselineErrorCount", "type": "long"},
+        "baseline_total_count": {"key": "BaselineTotalCount", "type": "long"},
+        "max_percent_delta_unhealthy_nodes": {"key": "MaxPercentDeltaUnhealthyNodes", "type": "int"},
+        "total_count": {"key": "TotalCount", "type": "long"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, description: str=None, baseline_error_count: int=None, baseline_total_count: int=None, max_percent_delta_unhealthy_nodes: int=None, total_count: int=None, unhealthy_evaluations=None, **kwargs) -> None:
-        super(DeltaNodesCheckHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description, **kwargs)
+    def __init__(
+        self,
+        *,
+        aggregated_health_state=None,
+        description: str = None,
+        baseline_error_count: int = None,
+        baseline_total_count: int = None,
+        max_percent_delta_unhealthy_nodes: int = None,
+        total_count: int = None,
+        unhealthy_evaluations=None,
+        **kwargs
+    ) -> None:
+        super(DeltaNodesCheckHealthEvaluation, self).__init__(
+            aggregated_health_state=aggregated_health_state, description=description, **kwargs
+        )
         self.baseline_error_count = baseline_error_count
         self.baseline_total_count = baseline_total_count
         self.max_percent_delta_unhealthy_nodes = max_percent_delta_unhealthy_nodes
         self.total_count = total_count
         self.unhealthy_evaluations = unhealthy_evaluations
-        self.kind = 'DeltaNodesCheck'
+        self.kind = "DeltaNodesCheck"
 
 
 class DeployedApplicationHealth(EntityHealth):
@@ -7646,17 +9089,37 @@ class DeployedApplicationHealth(EntityHealth):
     """
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'health_events': {'key': 'HealthEvents', 'type': '[HealthEvent]'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
-        'health_statistics': {'key': 'HealthStatistics', 'type': 'HealthStatistics'},
-        'name': {'key': 'Name', 'type': 'str'},
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'deployed_service_package_health_states': {'key': 'DeployedServicePackageHealthStates', 'type': '[DeployedServicePackageHealthState]'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "health_events": {"key": "HealthEvents", "type": "[HealthEvent]"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
+        "health_statistics": {"key": "HealthStatistics", "type": "HealthStatistics"},
+        "name": {"key": "Name", "type": "str"},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "deployed_service_package_health_states": {
+            "key": "DeployedServicePackageHealthStates",
+            "type": "[DeployedServicePackageHealthState]",
+        },
     }
 
-    def __init__(self, *, aggregated_health_state=None, health_events=None, unhealthy_evaluations=None, health_statistics=None, name: str=None, node_name: str=None, deployed_service_package_health_states=None, **kwargs) -> None:
-        super(DeployedApplicationHealth, self).__init__(aggregated_health_state=aggregated_health_state, health_events=health_events, unhealthy_evaluations=unhealthy_evaluations, health_statistics=health_statistics, **kwargs)
+    def __init__(
+        self,
+        *,
+        aggregated_health_state=None,
+        health_events=None,
+        unhealthy_evaluations=None,
+        health_statistics=None,
+        name: str = None,
+        node_name: str = None,
+        deployed_service_package_health_states=None,
+        **kwargs
+    ) -> None:
+        super(DeployedApplicationHealth, self).__init__(
+            aggregated_health_state=aggregated_health_state,
+            health_events=health_events,
+            unhealthy_evaluations=unhealthy_evaluations,
+            health_statistics=health_statistics,
+            **kwargs
+        )
         self.name = name
         self.node_name = node_name
         self.deployed_service_package_health_states = deployed_service_package_health_states
@@ -7694,24 +9157,35 @@ class DeployedApplicationHealthEvaluation(HealthEvaluation):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'application_name': {'key': 'ApplicationName', 'type': 'str'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "description": {"key": "Description", "type": "str"},
+        "kind": {"key": "Kind", "type": "str"},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "application_name": {"key": "ApplicationName", "type": "str"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, description: str=None, node_name: str=None, application_name: str=None, unhealthy_evaluations=None, **kwargs) -> None:
-        super(DeployedApplicationHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description, **kwargs)
+    def __init__(
+        self,
+        *,
+        aggregated_health_state=None,
+        description: str = None,
+        node_name: str = None,
+        application_name: str = None,
+        unhealthy_evaluations=None,
+        **kwargs
+    ) -> None:
+        super(DeployedApplicationHealthEvaluation, self).__init__(
+            aggregated_health_state=aggregated_health_state, description=description, **kwargs
+        )
         self.node_name = node_name
         self.application_name = application_name
         self.unhealthy_evaluations = unhealthy_evaluations
-        self.kind = 'DeployedApplication'
+        self.kind = "DeployedApplication"
 
 
 class DeployedApplicationHealthReportExpiredEvent(ApplicationEvent):
@@ -7763,43 +9237,69 @@ class DeployedApplicationHealthReportExpiredEvent(ApplicationEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'application_id': {'required': True},
-        'application_instance_id': {'required': True},
-        'node_name': {'required': True},
-        'source_id': {'required': True},
-        'property': {'required': True},
-        'health_state': {'required': True},
-        'time_to_live_ms': {'required': True},
-        'sequence_number': {'required': True},
-        'description': {'required': True},
-        'remove_when_expired': {'required': True},
-        'source_utc_timestamp': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "application_id": {"required": True},
+        "application_instance_id": {"required": True},
+        "node_name": {"required": True},
+        "source_id": {"required": True},
+        "property": {"required": True},
+        "health_state": {"required": True},
+        "time_to_live_ms": {"required": True},
+        "sequence_number": {"required": True},
+        "description": {"required": True},
+        "remove_when_expired": {"required": True},
+        "source_utc_timestamp": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'application_id': {'key': 'ApplicationId', 'type': 'str'},
-        'application_instance_id': {'key': 'ApplicationInstanceId', 'type': 'long'},
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'source_id': {'key': 'SourceId', 'type': 'str'},
-        'property': {'key': 'Property', 'type': 'str'},
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'time_to_live_ms': {'key': 'TimeToLiveMs', 'type': 'long'},
-        'sequence_number': {'key': 'SequenceNumber', 'type': 'long'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'remove_when_expired': {'key': 'RemoveWhenExpired', 'type': 'bool'},
-        'source_utc_timestamp': {'key': 'SourceUtcTimestamp', 'type': 'iso-8601'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "application_id": {"key": "ApplicationId", "type": "str"},
+        "application_instance_id": {"key": "ApplicationInstanceId", "type": "long"},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "source_id": {"key": "SourceId", "type": "str"},
+        "property": {"key": "Property", "type": "str"},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "time_to_live_ms": {"key": "TimeToLiveMs", "type": "long"},
+        "sequence_number": {"key": "SequenceNumber", "type": "long"},
+        "description": {"key": "Description", "type": "str"},
+        "remove_when_expired": {"key": "RemoveWhenExpired", "type": "bool"},
+        "source_utc_timestamp": {"key": "SourceUtcTimestamp", "type": "iso-8601"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, application_id: str, application_instance_id: int, node_name: str, source_id: str, property: str, health_state: str, time_to_live_ms: int, sequence_number: int, description: str, remove_when_expired: bool, source_utc_timestamp, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(DeployedApplicationHealthReportExpiredEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, application_id=application_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        application_id: str,
+        application_instance_id: int,
+        node_name: str,
+        source_id: str,
+        property: str,
+        health_state: str,
+        time_to_live_ms: int,
+        sequence_number: int,
+        description: str,
+        remove_when_expired: bool,
+        source_utc_timestamp,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(DeployedApplicationHealthReportExpiredEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            application_id=application_id,
+            **kwargs
+        )
         self.application_instance_id = application_instance_id
         self.node_name = node_name
         self.source_id = source_id
@@ -7810,7 +9310,7 @@ class DeployedApplicationHealthReportExpiredEvent(ApplicationEvent):
         self.description = description
         self.remove_when_expired = remove_when_expired
         self.source_utc_timestamp = source_utc_timestamp
-        self.kind = 'DeployedApplicationHealthReportExpired'
+        self.kind = "DeployedApplicationHealthReportExpired"
 
 
 class DeployedApplicationHealthState(EntityHealthState):
@@ -7832,12 +9332,14 @@ class DeployedApplicationHealthState(EntityHealthState):
     """
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'application_name': {'key': 'ApplicationName', 'type': 'str'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "application_name": {"key": "ApplicationName", "type": "str"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, node_name: str=None, application_name: str=None, **kwargs) -> None:
+    def __init__(
+        self, *, aggregated_health_state=None, node_name: str = None, application_name: str = None, **kwargs
+    ) -> None:
         super(DeployedApplicationHealthState, self).__init__(aggregated_health_state=aggregated_health_state, **kwargs)
         self.node_name = node_name
         self.application_name = application_name
@@ -7863,12 +9365,17 @@ class DeployedApplicationHealthStateChunk(EntityHealthStateChunk):
     """
 
     _attribute_map = {
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'deployed_service_package_health_state_chunks': {'key': 'DeployedServicePackageHealthStateChunks', 'type': 'DeployedServicePackageHealthStateChunkList'},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "deployed_service_package_health_state_chunks": {
+            "key": "DeployedServicePackageHealthStateChunks",
+            "type": "DeployedServicePackageHealthStateChunkList",
+        },
     }
 
-    def __init__(self, *, health_state=None, node_name: str=None, deployed_service_package_health_state_chunks=None, **kwargs) -> None:
+    def __init__(
+        self, *, health_state=None, node_name: str = None, deployed_service_package_health_state_chunks=None, **kwargs
+    ) -> None:
         super(DeployedApplicationHealthStateChunk, self).__init__(health_state=health_state, **kwargs)
         self.node_name = node_name
         self.deployed_service_package_health_state_chunks = deployed_service_package_health_state_chunks
@@ -7886,7 +9393,7 @@ class DeployedApplicationHealthStateChunkList(Model):
     """
 
     _attribute_map = {
-        'items': {'key': 'Items', 'type': '[DeployedApplicationHealthStateChunk]'},
+        "items": {"key": "Items", "type": "[DeployedApplicationHealthStateChunk]"},
     }
 
     def __init__(self, *, items=None, **kwargs) -> None:
@@ -7960,12 +9467,22 @@ class DeployedApplicationHealthStateFilter(Model):
     """
 
     _attribute_map = {
-        'node_name_filter': {'key': 'NodeNameFilter', 'type': 'str'},
-        'health_state_filter': {'key': 'HealthStateFilter', 'type': 'int'},
-        'deployed_service_package_filters': {'key': 'DeployedServicePackageFilters', 'type': '[DeployedServicePackageHealthStateFilter]'},
+        "node_name_filter": {"key": "NodeNameFilter", "type": "str"},
+        "health_state_filter": {"key": "HealthStateFilter", "type": "int"},
+        "deployed_service_package_filters": {
+            "key": "DeployedServicePackageFilters",
+            "type": "[DeployedServicePackageHealthStateFilter]",
+        },
     }
 
-    def __init__(self, *, node_name_filter: str=None, health_state_filter: int=0, deployed_service_package_filters=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        node_name_filter: str = None,
+        health_state_filter: int = 0,
+        deployed_service_package_filters=None,
+        **kwargs
+    ) -> None:
         super(DeployedApplicationHealthStateFilter, self).__init__(**kwargs)
         self.node_name_filter = node_name_filter
         self.health_state_filter = health_state_filter
@@ -8013,18 +9530,31 @@ class DeployedApplicationInfo(Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str'},
-        'name': {'key': 'Name', 'type': 'str'},
-        'type_name': {'key': 'TypeName', 'type': 'str'},
-        'type_version': {'key': 'TypeVersion', 'type': 'str'},
-        'status': {'key': 'Status', 'type': 'str'},
-        'work_directory': {'key': 'WorkDirectory', 'type': 'str'},
-        'log_directory': {'key': 'LogDirectory', 'type': 'str'},
-        'temp_directory': {'key': 'TempDirectory', 'type': 'str'},
-        'health_state': {'key': 'HealthState', 'type': 'str'},
+        "id": {"key": "Id", "type": "str"},
+        "name": {"key": "Name", "type": "str"},
+        "type_name": {"key": "TypeName", "type": "str"},
+        "type_version": {"key": "TypeVersion", "type": "str"},
+        "status": {"key": "Status", "type": "str"},
+        "work_directory": {"key": "WorkDirectory", "type": "str"},
+        "log_directory": {"key": "LogDirectory", "type": "str"},
+        "temp_directory": {"key": "TempDirectory", "type": "str"},
+        "health_state": {"key": "HealthState", "type": "str"},
     }
 
-    def __init__(self, *, id: str=None, name: str=None, type_name: str=None, type_version: str=None, status=None, work_directory: str=None, log_directory: str=None, temp_directory: str=None, health_state=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        id: str = None,
+        name: str = None,
+        type_name: str = None,
+        type_version: str = None,
+        status=None,
+        work_directory: str = None,
+        log_directory: str = None,
+        temp_directory: str = None,
+        health_state=None,
+        **kwargs
+    ) -> None:
         super(DeployedApplicationInfo, self).__init__(**kwargs)
         self.id = id
         self.name = name
@@ -8086,43 +9616,69 @@ class DeployedApplicationNewHealthReportEvent(ApplicationEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'application_id': {'required': True},
-        'application_instance_id': {'required': True},
-        'node_name': {'required': True},
-        'source_id': {'required': True},
-        'property': {'required': True},
-        'health_state': {'required': True},
-        'time_to_live_ms': {'required': True},
-        'sequence_number': {'required': True},
-        'description': {'required': True},
-        'remove_when_expired': {'required': True},
-        'source_utc_timestamp': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "application_id": {"required": True},
+        "application_instance_id": {"required": True},
+        "node_name": {"required": True},
+        "source_id": {"required": True},
+        "property": {"required": True},
+        "health_state": {"required": True},
+        "time_to_live_ms": {"required": True},
+        "sequence_number": {"required": True},
+        "description": {"required": True},
+        "remove_when_expired": {"required": True},
+        "source_utc_timestamp": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'application_id': {'key': 'ApplicationId', 'type': 'str'},
-        'application_instance_id': {'key': 'ApplicationInstanceId', 'type': 'long'},
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'source_id': {'key': 'SourceId', 'type': 'str'},
-        'property': {'key': 'Property', 'type': 'str'},
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'time_to_live_ms': {'key': 'TimeToLiveMs', 'type': 'long'},
-        'sequence_number': {'key': 'SequenceNumber', 'type': 'long'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'remove_when_expired': {'key': 'RemoveWhenExpired', 'type': 'bool'},
-        'source_utc_timestamp': {'key': 'SourceUtcTimestamp', 'type': 'iso-8601'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "application_id": {"key": "ApplicationId", "type": "str"},
+        "application_instance_id": {"key": "ApplicationInstanceId", "type": "long"},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "source_id": {"key": "SourceId", "type": "str"},
+        "property": {"key": "Property", "type": "str"},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "time_to_live_ms": {"key": "TimeToLiveMs", "type": "long"},
+        "sequence_number": {"key": "SequenceNumber", "type": "long"},
+        "description": {"key": "Description", "type": "str"},
+        "remove_when_expired": {"key": "RemoveWhenExpired", "type": "bool"},
+        "source_utc_timestamp": {"key": "SourceUtcTimestamp", "type": "iso-8601"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, application_id: str, application_instance_id: int, node_name: str, source_id: str, property: str, health_state: str, time_to_live_ms: int, sequence_number: int, description: str, remove_when_expired: bool, source_utc_timestamp, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(DeployedApplicationNewHealthReportEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, application_id=application_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        application_id: str,
+        application_instance_id: int,
+        node_name: str,
+        source_id: str,
+        property: str,
+        health_state: str,
+        time_to_live_ms: int,
+        sequence_number: int,
+        description: str,
+        remove_when_expired: bool,
+        source_utc_timestamp,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(DeployedApplicationNewHealthReportEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            application_id=application_id,
+            **kwargs
+        )
         self.application_instance_id = application_instance_id
         self.node_name = node_name
         self.source_id = source_id
@@ -8133,7 +9689,7 @@ class DeployedApplicationNewHealthReportEvent(ApplicationEvent):
         self.description = description
         self.remove_when_expired = remove_when_expired
         self.source_utc_timestamp = source_utc_timestamp
-        self.kind = 'DeployedApplicationNewHealthReport'
+        self.kind = "DeployedApplicationNewHealthReport"
 
 
 class DeployedApplicationsHealthEvaluation(HealthEvaluation):
@@ -8171,24 +9727,38 @@ class DeployedApplicationsHealthEvaluation(HealthEvaluation):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'max_percent_unhealthy_deployed_applications': {'key': 'MaxPercentUnhealthyDeployedApplications', 'type': 'int'},
-        'total_count': {'key': 'TotalCount', 'type': 'long'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "description": {"key": "Description", "type": "str"},
+        "kind": {"key": "Kind", "type": "str"},
+        "max_percent_unhealthy_deployed_applications": {
+            "key": "MaxPercentUnhealthyDeployedApplications",
+            "type": "int",
+        },
+        "total_count": {"key": "TotalCount", "type": "long"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, description: str=None, max_percent_unhealthy_deployed_applications: int=None, total_count: int=None, unhealthy_evaluations=None, **kwargs) -> None:
-        super(DeployedApplicationsHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description, **kwargs)
+    def __init__(
+        self,
+        *,
+        aggregated_health_state=None,
+        description: str = None,
+        max_percent_unhealthy_deployed_applications: int = None,
+        total_count: int = None,
+        unhealthy_evaluations=None,
+        **kwargs
+    ) -> None:
+        super(DeployedApplicationsHealthEvaluation, self).__init__(
+            aggregated_health_state=aggregated_health_state, description=description, **kwargs
+        )
         self.max_percent_unhealthy_deployed_applications = max_percent_unhealthy_deployed_applications
         self.total_count = total_count
         self.unhealthy_evaluations = unhealthy_evaluations
-        self.kind = 'DeployedApplications'
+        self.kind = "DeployedApplications"
 
 
 class DeployedCodePackageInfo(Model):
@@ -8237,19 +9807,33 @@ class DeployedCodePackageInfo(Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'version': {'key': 'Version', 'type': 'str'},
-        'service_manifest_name': {'key': 'ServiceManifestName', 'type': 'str'},
-        'service_package_activation_id': {'key': 'ServicePackageActivationId', 'type': 'str'},
-        'host_type': {'key': 'HostType', 'type': 'str'},
-        'host_isolation_mode': {'key': 'HostIsolationMode', 'type': 'str'},
-        'status': {'key': 'Status', 'type': 'str'},
-        'run_frequency_interval': {'key': 'RunFrequencyInterval', 'type': 'str'},
-        'setup_entry_point': {'key': 'SetupEntryPoint', 'type': 'CodePackageEntryPoint'},
-        'main_entry_point': {'key': 'MainEntryPoint', 'type': 'CodePackageEntryPoint'},
+        "name": {"key": "Name", "type": "str"},
+        "version": {"key": "Version", "type": "str"},
+        "service_manifest_name": {"key": "ServiceManifestName", "type": "str"},
+        "service_package_activation_id": {"key": "ServicePackageActivationId", "type": "str"},
+        "host_type": {"key": "HostType", "type": "str"},
+        "host_isolation_mode": {"key": "HostIsolationMode", "type": "str"},
+        "status": {"key": "Status", "type": "str"},
+        "run_frequency_interval": {"key": "RunFrequencyInterval", "type": "str"},
+        "setup_entry_point": {"key": "SetupEntryPoint", "type": "CodePackageEntryPoint"},
+        "main_entry_point": {"key": "MainEntryPoint", "type": "CodePackageEntryPoint"},
     }
 
-    def __init__(self, *, name: str=None, version: str=None, service_manifest_name: str=None, service_package_activation_id: str=None, host_type=None, host_isolation_mode=None, status=None, run_frequency_interval: str=None, setup_entry_point=None, main_entry_point=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        version: str = None,
+        service_manifest_name: str = None,
+        service_package_activation_id: str = None,
+        host_type=None,
+        host_isolation_mode=None,
+        status=None,
+        run_frequency_interval: str = None,
+        setup_entry_point=None,
+        main_entry_point=None,
+        **kwargs
+    ) -> None:
         super(DeployedCodePackageInfo, self).__init__(**kwargs)
         self.name = name
         self.version = version
@@ -8294,17 +9878,34 @@ class DeployedServicePackageHealth(EntityHealth):
     """
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'health_events': {'key': 'HealthEvents', 'type': '[HealthEvent]'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
-        'health_statistics': {'key': 'HealthStatistics', 'type': 'HealthStatistics'},
-        'application_name': {'key': 'ApplicationName', 'type': 'str'},
-        'service_manifest_name': {'key': 'ServiceManifestName', 'type': 'str'},
-        'node_name': {'key': 'NodeName', 'type': 'str'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "health_events": {"key": "HealthEvents", "type": "[HealthEvent]"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
+        "health_statistics": {"key": "HealthStatistics", "type": "HealthStatistics"},
+        "application_name": {"key": "ApplicationName", "type": "str"},
+        "service_manifest_name": {"key": "ServiceManifestName", "type": "str"},
+        "node_name": {"key": "NodeName", "type": "str"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, health_events=None, unhealthy_evaluations=None, health_statistics=None, application_name: str=None, service_manifest_name: str=None, node_name: str=None, **kwargs) -> None:
-        super(DeployedServicePackageHealth, self).__init__(aggregated_health_state=aggregated_health_state, health_events=health_events, unhealthy_evaluations=unhealthy_evaluations, health_statistics=health_statistics, **kwargs)
+    def __init__(
+        self,
+        *,
+        aggregated_health_state=None,
+        health_events=None,
+        unhealthy_evaluations=None,
+        health_statistics=None,
+        application_name: str = None,
+        service_manifest_name: str = None,
+        node_name: str = None,
+        **kwargs
+    ) -> None:
+        super(DeployedServicePackageHealth, self).__init__(
+            aggregated_health_state=aggregated_health_state,
+            health_events=health_events,
+            unhealthy_evaluations=unhealthy_evaluations,
+            health_statistics=health_statistics,
+            **kwargs
+        )
         self.application_name = application_name
         self.service_manifest_name = service_manifest_name
         self.node_name = node_name
@@ -8344,26 +9945,38 @@ class DeployedServicePackageHealthEvaluation(HealthEvaluation):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'application_name': {'key': 'ApplicationName', 'type': 'str'},
-        'service_manifest_name': {'key': 'ServiceManifestName', 'type': 'str'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "description": {"key": "Description", "type": "str"},
+        "kind": {"key": "Kind", "type": "str"},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "application_name": {"key": "ApplicationName", "type": "str"},
+        "service_manifest_name": {"key": "ServiceManifestName", "type": "str"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, description: str=None, node_name: str=None, application_name: str=None, service_manifest_name: str=None, unhealthy_evaluations=None, **kwargs) -> None:
-        super(DeployedServicePackageHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description, **kwargs)
+    def __init__(
+        self,
+        *,
+        aggregated_health_state=None,
+        description: str = None,
+        node_name: str = None,
+        application_name: str = None,
+        service_manifest_name: str = None,
+        unhealthy_evaluations=None,
+        **kwargs
+    ) -> None:
+        super(DeployedServicePackageHealthEvaluation, self).__init__(
+            aggregated_health_state=aggregated_health_state, description=description, **kwargs
+        )
         self.node_name = node_name
         self.application_name = application_name
         self.service_manifest_name = service_manifest_name
         self.unhealthy_evaluations = unhealthy_evaluations
-        self.kind = 'DeployedServicePackage'
+        self.kind = "DeployedServicePackage"
 
 
 class DeployedServicePackageHealthReportExpiredEvent(ApplicationEvent):
@@ -8421,47 +10034,75 @@ class DeployedServicePackageHealthReportExpiredEvent(ApplicationEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'application_id': {'required': True},
-        'service_manifest': {'required': True},
-        'service_package_instance_id': {'required': True},
-        'service_package_activation_id': {'required': True},
-        'node_name': {'required': True},
-        'source_id': {'required': True},
-        'property': {'required': True},
-        'health_state': {'required': True},
-        'time_to_live_ms': {'required': True},
-        'sequence_number': {'required': True},
-        'description': {'required': True},
-        'remove_when_expired': {'required': True},
-        'source_utc_timestamp': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "application_id": {"required": True},
+        "service_manifest": {"required": True},
+        "service_package_instance_id": {"required": True},
+        "service_package_activation_id": {"required": True},
+        "node_name": {"required": True},
+        "source_id": {"required": True},
+        "property": {"required": True},
+        "health_state": {"required": True},
+        "time_to_live_ms": {"required": True},
+        "sequence_number": {"required": True},
+        "description": {"required": True},
+        "remove_when_expired": {"required": True},
+        "source_utc_timestamp": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'application_id': {'key': 'ApplicationId', 'type': 'str'},
-        'service_manifest': {'key': 'ServiceManifest', 'type': 'str'},
-        'service_package_instance_id': {'key': 'ServicePackageInstanceId', 'type': 'long'},
-        'service_package_activation_id': {'key': 'ServicePackageActivationId', 'type': 'str'},
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'source_id': {'key': 'SourceId', 'type': 'str'},
-        'property': {'key': 'Property', 'type': 'str'},
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'time_to_live_ms': {'key': 'TimeToLiveMs', 'type': 'long'},
-        'sequence_number': {'key': 'SequenceNumber', 'type': 'long'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'remove_when_expired': {'key': 'RemoveWhenExpired', 'type': 'bool'},
-        'source_utc_timestamp': {'key': 'SourceUtcTimestamp', 'type': 'iso-8601'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "application_id": {"key": "ApplicationId", "type": "str"},
+        "service_manifest": {"key": "ServiceManifest", "type": "str"},
+        "service_package_instance_id": {"key": "ServicePackageInstanceId", "type": "long"},
+        "service_package_activation_id": {"key": "ServicePackageActivationId", "type": "str"},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "source_id": {"key": "SourceId", "type": "str"},
+        "property": {"key": "Property", "type": "str"},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "time_to_live_ms": {"key": "TimeToLiveMs", "type": "long"},
+        "sequence_number": {"key": "SequenceNumber", "type": "long"},
+        "description": {"key": "Description", "type": "str"},
+        "remove_when_expired": {"key": "RemoveWhenExpired", "type": "bool"},
+        "source_utc_timestamp": {"key": "SourceUtcTimestamp", "type": "iso-8601"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, application_id: str, service_manifest: str, service_package_instance_id: int, service_package_activation_id: str, node_name: str, source_id: str, property: str, health_state: str, time_to_live_ms: int, sequence_number: int, description: str, remove_when_expired: bool, source_utc_timestamp, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(DeployedServicePackageHealthReportExpiredEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, application_id=application_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        application_id: str,
+        service_manifest: str,
+        service_package_instance_id: int,
+        service_package_activation_id: str,
+        node_name: str,
+        source_id: str,
+        property: str,
+        health_state: str,
+        time_to_live_ms: int,
+        sequence_number: int,
+        description: str,
+        remove_when_expired: bool,
+        source_utc_timestamp,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(DeployedServicePackageHealthReportExpiredEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            application_id=application_id,
+            **kwargs
+        )
         self.service_manifest = service_manifest
         self.service_package_instance_id = service_package_instance_id
         self.service_package_activation_id = service_package_activation_id
@@ -8474,7 +10115,7 @@ class DeployedServicePackageHealthReportExpiredEvent(ApplicationEvent):
         self.description = description
         self.remove_when_expired = remove_when_expired
         self.source_utc_timestamp = source_utc_timestamp
-        self.kind = 'DeployedServicePackageHealthReportExpired'
+        self.kind = "DeployedServicePackageHealthReportExpired"
 
 
 class DeployedServicePackageHealthState(EntityHealthState):
@@ -8506,15 +10147,26 @@ class DeployedServicePackageHealthState(EntityHealthState):
     """
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'application_name': {'key': 'ApplicationName', 'type': 'str'},
-        'service_manifest_name': {'key': 'ServiceManifestName', 'type': 'str'},
-        'service_package_activation_id': {'key': 'ServicePackageActivationId', 'type': 'str'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "application_name": {"key": "ApplicationName", "type": "str"},
+        "service_manifest_name": {"key": "ServiceManifestName", "type": "str"},
+        "service_package_activation_id": {"key": "ServicePackageActivationId", "type": "str"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, node_name: str=None, application_name: str=None, service_manifest_name: str=None, service_package_activation_id: str=None, **kwargs) -> None:
-        super(DeployedServicePackageHealthState, self).__init__(aggregated_health_state=aggregated_health_state, **kwargs)
+    def __init__(
+        self,
+        *,
+        aggregated_health_state=None,
+        node_name: str = None,
+        application_name: str = None,
+        service_manifest_name: str = None,
+        service_package_activation_id: str = None,
+        **kwargs
+    ) -> None:
+        super(DeployedServicePackageHealthState, self).__init__(
+            aggregated_health_state=aggregated_health_state, **kwargs
+        )
         self.node_name = node_name
         self.application_name = application_name
         self.service_manifest_name = service_manifest_name
@@ -8542,12 +10194,19 @@ class DeployedServicePackageHealthStateChunk(EntityHealthStateChunk):
     """
 
     _attribute_map = {
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'service_manifest_name': {'key': 'ServiceManifestName', 'type': 'str'},
-        'service_package_activation_id': {'key': 'ServicePackageActivationId', 'type': 'str'},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "service_manifest_name": {"key": "ServiceManifestName", "type": "str"},
+        "service_package_activation_id": {"key": "ServicePackageActivationId", "type": "str"},
     }
 
-    def __init__(self, *, health_state=None, service_manifest_name: str=None, service_package_activation_id: str=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        health_state=None,
+        service_manifest_name: str = None,
+        service_package_activation_id: str = None,
+        **kwargs
+    ) -> None:
         super(DeployedServicePackageHealthStateChunk, self).__init__(health_state=health_state, **kwargs)
         self.service_manifest_name = service_manifest_name
         self.service_package_activation_id = service_package_activation_id
@@ -8565,7 +10224,7 @@ class DeployedServicePackageHealthStateChunkList(Model):
     """
 
     _attribute_map = {
-        'items': {'key': 'Items', 'type': '[DeployedServicePackageHealthStateChunk]'},
+        "items": {"key": "Items", "type": "[DeployedServicePackageHealthStateChunk]"},
     }
 
     def __init__(self, *, items=None, **kwargs) -> None:
@@ -8633,12 +10292,19 @@ class DeployedServicePackageHealthStateFilter(Model):
     """
 
     _attribute_map = {
-        'service_manifest_name_filter': {'key': 'ServiceManifestNameFilter', 'type': 'str'},
-        'service_package_activation_id_filter': {'key': 'ServicePackageActivationIdFilter', 'type': 'str'},
-        'health_state_filter': {'key': 'HealthStateFilter', 'type': 'int'},
+        "service_manifest_name_filter": {"key": "ServiceManifestNameFilter", "type": "str"},
+        "service_package_activation_id_filter": {"key": "ServicePackageActivationIdFilter", "type": "str"},
+        "health_state_filter": {"key": "HealthStateFilter", "type": "int"},
     }
 
-    def __init__(self, *, service_manifest_name_filter: str=None, service_package_activation_id_filter: str=None, health_state_filter: int=0, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        service_manifest_name_filter: str = None,
+        service_package_activation_id_filter: str = None,
+        health_state_filter: int = 0,
+        **kwargs
+    ) -> None:
         super(DeployedServicePackageHealthStateFilter, self).__init__(**kwargs)
         self.service_manifest_name_filter = service_manifest_name_filter
         self.service_package_activation_id_filter = service_package_activation_id_filter
@@ -8669,13 +10335,15 @@ class DeployedServicePackageInfo(Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'version': {'key': 'Version', 'type': 'str'},
-        'status': {'key': 'Status', 'type': 'str'},
-        'service_package_activation_id': {'key': 'ServicePackageActivationId', 'type': 'str'},
+        "name": {"key": "Name", "type": "str"},
+        "version": {"key": "Version", "type": "str"},
+        "status": {"key": "Status", "type": "str"},
+        "service_package_activation_id": {"key": "ServicePackageActivationId", "type": "str"},
     }
 
-    def __init__(self, *, name: str=None, version: str=None, status=None, service_package_activation_id: str=None, **kwargs) -> None:
+    def __init__(
+        self, *, name: str = None, version: str = None, status=None, service_package_activation_id: str = None, **kwargs
+    ) -> None:
         super(DeployedServicePackageInfo, self).__init__(**kwargs)
         self.name = name
         self.version = version
@@ -8738,47 +10406,75 @@ class DeployedServicePackageNewHealthReportEvent(ApplicationEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'application_id': {'required': True},
-        'service_manifest_name': {'required': True},
-        'service_package_instance_id': {'required': True},
-        'service_package_activation_id': {'required': True},
-        'node_name': {'required': True},
-        'source_id': {'required': True},
-        'property': {'required': True},
-        'health_state': {'required': True},
-        'time_to_live_ms': {'required': True},
-        'sequence_number': {'required': True},
-        'description': {'required': True},
-        'remove_when_expired': {'required': True},
-        'source_utc_timestamp': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "application_id": {"required": True},
+        "service_manifest_name": {"required": True},
+        "service_package_instance_id": {"required": True},
+        "service_package_activation_id": {"required": True},
+        "node_name": {"required": True},
+        "source_id": {"required": True},
+        "property": {"required": True},
+        "health_state": {"required": True},
+        "time_to_live_ms": {"required": True},
+        "sequence_number": {"required": True},
+        "description": {"required": True},
+        "remove_when_expired": {"required": True},
+        "source_utc_timestamp": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'application_id': {'key': 'ApplicationId', 'type': 'str'},
-        'service_manifest_name': {'key': 'ServiceManifestName', 'type': 'str'},
-        'service_package_instance_id': {'key': 'ServicePackageInstanceId', 'type': 'long'},
-        'service_package_activation_id': {'key': 'ServicePackageActivationId', 'type': 'str'},
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'source_id': {'key': 'SourceId', 'type': 'str'},
-        'property': {'key': 'Property', 'type': 'str'},
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'time_to_live_ms': {'key': 'TimeToLiveMs', 'type': 'long'},
-        'sequence_number': {'key': 'SequenceNumber', 'type': 'long'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'remove_when_expired': {'key': 'RemoveWhenExpired', 'type': 'bool'},
-        'source_utc_timestamp': {'key': 'SourceUtcTimestamp', 'type': 'iso-8601'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "application_id": {"key": "ApplicationId", "type": "str"},
+        "service_manifest_name": {"key": "ServiceManifestName", "type": "str"},
+        "service_package_instance_id": {"key": "ServicePackageInstanceId", "type": "long"},
+        "service_package_activation_id": {"key": "ServicePackageActivationId", "type": "str"},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "source_id": {"key": "SourceId", "type": "str"},
+        "property": {"key": "Property", "type": "str"},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "time_to_live_ms": {"key": "TimeToLiveMs", "type": "long"},
+        "sequence_number": {"key": "SequenceNumber", "type": "long"},
+        "description": {"key": "Description", "type": "str"},
+        "remove_when_expired": {"key": "RemoveWhenExpired", "type": "bool"},
+        "source_utc_timestamp": {"key": "SourceUtcTimestamp", "type": "iso-8601"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, application_id: str, service_manifest_name: str, service_package_instance_id: int, service_package_activation_id: str, node_name: str, source_id: str, property: str, health_state: str, time_to_live_ms: int, sequence_number: int, description: str, remove_when_expired: bool, source_utc_timestamp, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(DeployedServicePackageNewHealthReportEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, application_id=application_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        application_id: str,
+        service_manifest_name: str,
+        service_package_instance_id: int,
+        service_package_activation_id: str,
+        node_name: str,
+        source_id: str,
+        property: str,
+        health_state: str,
+        time_to_live_ms: int,
+        sequence_number: int,
+        description: str,
+        remove_when_expired: bool,
+        source_utc_timestamp,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(DeployedServicePackageNewHealthReportEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            application_id=application_id,
+            **kwargs
+        )
         self.service_manifest_name = service_manifest_name
         self.service_package_instance_id = service_package_instance_id
         self.service_package_activation_id = service_package_activation_id
@@ -8791,7 +10487,7 @@ class DeployedServicePackageNewHealthReportEvent(ApplicationEvent):
         self.description = description
         self.remove_when_expired = remove_when_expired
         self.source_utc_timestamp = source_utc_timestamp
-        self.kind = 'DeployedServicePackageNewHealthReport'
+        self.kind = "DeployedServicePackageNewHealthReport"
 
 
 class DeployedServicePackagesHealthEvaluation(HealthEvaluation):
@@ -8826,22 +10522,32 @@ class DeployedServicePackagesHealthEvaluation(HealthEvaluation):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'total_count': {'key': 'TotalCount', 'type': 'long'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "description": {"key": "Description", "type": "str"},
+        "kind": {"key": "Kind", "type": "str"},
+        "total_count": {"key": "TotalCount", "type": "long"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, description: str=None, total_count: int=None, unhealthy_evaluations=None, **kwargs) -> None:
-        super(DeployedServicePackagesHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description, **kwargs)
+    def __init__(
+        self,
+        *,
+        aggregated_health_state=None,
+        description: str = None,
+        total_count: int = None,
+        unhealthy_evaluations=None,
+        **kwargs
+    ) -> None:
+        super(DeployedServicePackagesHealthEvaluation, self).__init__(
+            aggregated_health_state=aggregated_health_state, description=description, **kwargs
+        )
         self.total_count = total_count
         self.unhealthy_evaluations = unhealthy_evaluations
-        self.kind = 'DeployedServicePackages'
+        self.kind = "DeployedServicePackages"
 
 
 class DeployedServiceReplicaDetailInfo(Model):
@@ -8879,23 +10585,35 @@ class DeployedServiceReplicaDetailInfo(Model):
     """
 
     _validation = {
-        'service_kind': {'required': True},
+        "service_kind": {"required": True},
     }
 
     _attribute_map = {
-        'service_name': {'key': 'ServiceName', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'current_service_operation': {'key': 'CurrentServiceOperation', 'type': 'str'},
-        'current_service_operation_start_time_utc': {'key': 'CurrentServiceOperationStartTimeUtc', 'type': 'iso-8601'},
-        'reported_load': {'key': 'ReportedLoad', 'type': '[LoadMetricReportInfo]'},
-        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
+        "service_name": {"key": "ServiceName", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "current_service_operation": {"key": "CurrentServiceOperation", "type": "str"},
+        "current_service_operation_start_time_utc": {"key": "CurrentServiceOperationStartTimeUtc", "type": "iso-8601"},
+        "reported_load": {"key": "ReportedLoad", "type": "[LoadMetricReportInfo]"},
+        "service_kind": {"key": "ServiceKind", "type": "str"},
     }
 
     _subtype_map = {
-        'service_kind': {'Stateful': 'DeployedStatefulServiceReplicaDetailInfo', 'Stateless': 'DeployedStatelessServiceInstanceDetailInfo'}
+        "service_kind": {
+            "Stateful": "DeployedStatefulServiceReplicaDetailInfo",
+            "Stateless": "DeployedStatelessServiceInstanceDetailInfo",
+        }
     }
 
-    def __init__(self, *, service_name: str=None, partition_id: str=None, current_service_operation=None, current_service_operation_start_time_utc=None, reported_load=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        service_name: str = None,
+        partition_id: str = None,
+        current_service_operation=None,
+        current_service_operation_start_time_utc=None,
+        reported_load=None,
+        **kwargs
+    ) -> None:
         super(DeployedServiceReplicaDetailInfo, self).__init__(**kwargs)
         self.service_name = service_name
         self.partition_id = partition_id
@@ -8955,27 +10673,43 @@ class DeployedServiceReplicaInfo(Model):
     """
 
     _validation = {
-        'service_kind': {'required': True},
+        "service_kind": {"required": True},
     }
 
     _attribute_map = {
-        'service_name': {'key': 'ServiceName', 'type': 'str'},
-        'service_type_name': {'key': 'ServiceTypeName', 'type': 'str'},
-        'service_manifest_name': {'key': 'ServiceManifestName', 'type': 'str'},
-        'code_package_name': {'key': 'CodePackageName', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'replica_status': {'key': 'ReplicaStatus', 'type': 'str'},
-        'address': {'key': 'Address', 'type': 'str'},
-        'service_package_activation_id': {'key': 'ServicePackageActivationId', 'type': 'str'},
-        'host_process_id': {'key': 'HostProcessId', 'type': 'str'},
-        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
+        "service_name": {"key": "ServiceName", "type": "str"},
+        "service_type_name": {"key": "ServiceTypeName", "type": "str"},
+        "service_manifest_name": {"key": "ServiceManifestName", "type": "str"},
+        "code_package_name": {"key": "CodePackageName", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "replica_status": {"key": "ReplicaStatus", "type": "str"},
+        "address": {"key": "Address", "type": "str"},
+        "service_package_activation_id": {"key": "ServicePackageActivationId", "type": "str"},
+        "host_process_id": {"key": "HostProcessId", "type": "str"},
+        "service_kind": {"key": "ServiceKind", "type": "str"},
     }
 
     _subtype_map = {
-        'service_kind': {'Stateful': 'DeployedStatefulServiceReplicaInfo', 'Stateless': 'DeployedStatelessServiceInstanceInfo'}
+        "service_kind": {
+            "Stateful": "DeployedStatefulServiceReplicaInfo",
+            "Stateless": "DeployedStatelessServiceInstanceInfo",
+        }
     }
 
-    def __init__(self, *, service_name: str=None, service_type_name: str=None, service_manifest_name: str=None, code_package_name: str=None, partition_id: str=None, replica_status=None, address: str=None, service_package_activation_id: str=None, host_process_id: str=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        service_name: str = None,
+        service_type_name: str = None,
+        service_manifest_name: str = None,
+        code_package_name: str = None,
+        partition_id: str = None,
+        replica_status=None,
+        address: str = None,
+        service_package_activation_id: str = None,
+        host_process_id: str = None,
+        **kwargs
+    ) -> None:
         super(DeployedServiceReplicaInfo, self).__init__(**kwargs)
         self.service_name = service_name
         self.service_type_name = service_type_name
@@ -9016,14 +10750,23 @@ class DeployedServiceTypeInfo(Model):
     """
 
     _attribute_map = {
-        'service_type_name': {'key': 'ServiceTypeName', 'type': 'str'},
-        'service_manifest_name': {'key': 'ServiceManifestName', 'type': 'str'},
-        'code_package_name': {'key': 'CodePackageName', 'type': 'str'},
-        'status': {'key': 'Status', 'type': 'str'},
-        'service_package_activation_id': {'key': 'ServicePackageActivationId', 'type': 'str'},
+        "service_type_name": {"key": "ServiceTypeName", "type": "str"},
+        "service_manifest_name": {"key": "ServiceManifestName", "type": "str"},
+        "code_package_name": {"key": "CodePackageName", "type": "str"},
+        "status": {"key": "Status", "type": "str"},
+        "service_package_activation_id": {"key": "ServicePackageActivationId", "type": "str"},
     }
 
-    def __init__(self, *, service_type_name: str=None, service_manifest_name: str=None, code_package_name: str=None, status=None, service_package_activation_id: str=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        service_type_name: str = None,
+        service_manifest_name: str = None,
+        code_package_name: str = None,
+        status=None,
+        service_package_activation_id: str = None,
+        **kwargs
+    ) -> None:
         super(DeployedServiceTypeInfo, self).__init__(**kwargs)
         self.service_type_name = service_type_name
         self.service_manifest_name = service_manifest_name
@@ -9103,27 +10846,53 @@ class DeployedStatefulServiceReplicaDetailInfo(DeployedServiceReplicaDetailInfo)
     """
 
     _validation = {
-        'service_kind': {'required': True},
+        "service_kind": {"required": True},
     }
 
     _attribute_map = {
-        'service_name': {'key': 'ServiceName', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'current_service_operation': {'key': 'CurrentServiceOperation', 'type': 'str'},
-        'current_service_operation_start_time_utc': {'key': 'CurrentServiceOperationStartTimeUtc', 'type': 'iso-8601'},
-        'reported_load': {'key': 'ReportedLoad', 'type': '[LoadMetricReportInfo]'},
-        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
-        'replica_id': {'key': 'ReplicaId', 'type': 'str'},
-        'current_replicator_operation': {'key': 'CurrentReplicatorOperation', 'type': 'str'},
-        'read_status': {'key': 'ReadStatus', 'type': 'str'},
-        'write_status': {'key': 'WriteStatus', 'type': 'str'},
-        'replicator_status': {'key': 'ReplicatorStatus', 'type': 'ReplicatorStatus'},
-        'replica_status': {'key': 'ReplicaStatus', 'type': 'KeyValueStoreReplicaStatus'},
-        'deployed_service_replica_query_result': {'key': 'DeployedServiceReplicaQueryResult', 'type': 'DeployedStatefulServiceReplicaInfo'},
+        "service_name": {"key": "ServiceName", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "current_service_operation": {"key": "CurrentServiceOperation", "type": "str"},
+        "current_service_operation_start_time_utc": {"key": "CurrentServiceOperationStartTimeUtc", "type": "iso-8601"},
+        "reported_load": {"key": "ReportedLoad", "type": "[LoadMetricReportInfo]"},
+        "service_kind": {"key": "ServiceKind", "type": "str"},
+        "replica_id": {"key": "ReplicaId", "type": "str"},
+        "current_replicator_operation": {"key": "CurrentReplicatorOperation", "type": "str"},
+        "read_status": {"key": "ReadStatus", "type": "str"},
+        "write_status": {"key": "WriteStatus", "type": "str"},
+        "replicator_status": {"key": "ReplicatorStatus", "type": "ReplicatorStatus"},
+        "replica_status": {"key": "ReplicaStatus", "type": "KeyValueStoreReplicaStatus"},
+        "deployed_service_replica_query_result": {
+            "key": "DeployedServiceReplicaQueryResult",
+            "type": "DeployedStatefulServiceReplicaInfo",
+        },
     }
 
-    def __init__(self, *, service_name: str=None, partition_id: str=None, current_service_operation=None, current_service_operation_start_time_utc=None, reported_load=None, replica_id: str=None, current_replicator_operation=None, read_status=None, write_status=None, replicator_status=None, replica_status=None, deployed_service_replica_query_result=None, **kwargs) -> None:
-        super(DeployedStatefulServiceReplicaDetailInfo, self).__init__(service_name=service_name, partition_id=partition_id, current_service_operation=current_service_operation, current_service_operation_start_time_utc=current_service_operation_start_time_utc, reported_load=reported_load, **kwargs)
+    def __init__(
+        self,
+        *,
+        service_name: str = None,
+        partition_id: str = None,
+        current_service_operation=None,
+        current_service_operation_start_time_utc=None,
+        reported_load=None,
+        replica_id: str = None,
+        current_replicator_operation=None,
+        read_status=None,
+        write_status=None,
+        replicator_status=None,
+        replica_status=None,
+        deployed_service_replica_query_result=None,
+        **kwargs
+    ) -> None:
+        super(DeployedStatefulServiceReplicaDetailInfo, self).__init__(
+            service_name=service_name,
+            partition_id=partition_id,
+            current_service_operation=current_service_operation,
+            current_service_operation_start_time_utc=current_service_operation_start_time_utc,
+            reported_load=reported_load,
+            **kwargs
+        )
         self.replica_id = replica_id
         self.current_replicator_operation = current_replicator_operation
         self.read_status = read_status
@@ -9131,7 +10900,7 @@ class DeployedStatefulServiceReplicaDetailInfo(DeployedServiceReplicaDetailInfo)
         self.replicator_status = replicator_status
         self.replica_status = replica_status
         self.deployed_service_replica_query_result = deployed_service_replica_query_result
-        self.service_kind = 'Stateful'
+        self.service_kind = "Stateful"
 
 
 class DeployedStatefulServiceReplicaInfo(DeployedServiceReplicaInfo):
@@ -9197,31 +10966,58 @@ class DeployedStatefulServiceReplicaInfo(DeployedServiceReplicaInfo):
     """
 
     _validation = {
-        'service_kind': {'required': True},
+        "service_kind": {"required": True},
     }
 
     _attribute_map = {
-        'service_name': {'key': 'ServiceName', 'type': 'str'},
-        'service_type_name': {'key': 'ServiceTypeName', 'type': 'str'},
-        'service_manifest_name': {'key': 'ServiceManifestName', 'type': 'str'},
-        'code_package_name': {'key': 'CodePackageName', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'replica_status': {'key': 'ReplicaStatus', 'type': 'str'},
-        'address': {'key': 'Address', 'type': 'str'},
-        'service_package_activation_id': {'key': 'ServicePackageActivationId', 'type': 'str'},
-        'host_process_id': {'key': 'HostProcessId', 'type': 'str'},
-        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
-        'replica_id': {'key': 'ReplicaId', 'type': 'str'},
-        'replica_role': {'key': 'ReplicaRole', 'type': 'str'},
-        'reconfiguration_information': {'key': 'ReconfigurationInformation', 'type': 'ReconfigurationInformation'},
+        "service_name": {"key": "ServiceName", "type": "str"},
+        "service_type_name": {"key": "ServiceTypeName", "type": "str"},
+        "service_manifest_name": {"key": "ServiceManifestName", "type": "str"},
+        "code_package_name": {"key": "CodePackageName", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "replica_status": {"key": "ReplicaStatus", "type": "str"},
+        "address": {"key": "Address", "type": "str"},
+        "service_package_activation_id": {"key": "ServicePackageActivationId", "type": "str"},
+        "host_process_id": {"key": "HostProcessId", "type": "str"},
+        "service_kind": {"key": "ServiceKind", "type": "str"},
+        "replica_id": {"key": "ReplicaId", "type": "str"},
+        "replica_role": {"key": "ReplicaRole", "type": "str"},
+        "reconfiguration_information": {"key": "ReconfigurationInformation", "type": "ReconfigurationInformation"},
     }
 
-    def __init__(self, *, service_name: str=None, service_type_name: str=None, service_manifest_name: str=None, code_package_name: str=None, partition_id: str=None, replica_status=None, address: str=None, service_package_activation_id: str=None, host_process_id: str=None, replica_id: str=None, replica_role=None, reconfiguration_information=None, **kwargs) -> None:
-        super(DeployedStatefulServiceReplicaInfo, self).__init__(service_name=service_name, service_type_name=service_type_name, service_manifest_name=service_manifest_name, code_package_name=code_package_name, partition_id=partition_id, replica_status=replica_status, address=address, service_package_activation_id=service_package_activation_id, host_process_id=host_process_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        service_name: str = None,
+        service_type_name: str = None,
+        service_manifest_name: str = None,
+        code_package_name: str = None,
+        partition_id: str = None,
+        replica_status=None,
+        address: str = None,
+        service_package_activation_id: str = None,
+        host_process_id: str = None,
+        replica_id: str = None,
+        replica_role=None,
+        reconfiguration_information=None,
+        **kwargs
+    ) -> None:
+        super(DeployedStatefulServiceReplicaInfo, self).__init__(
+            service_name=service_name,
+            service_type_name=service_type_name,
+            service_manifest_name=service_manifest_name,
+            code_package_name=code_package_name,
+            partition_id=partition_id,
+            replica_status=replica_status,
+            address=address,
+            service_package_activation_id=service_package_activation_id,
+            host_process_id=host_process_id,
+            **kwargs
+        )
         self.replica_id = replica_id
         self.replica_role = replica_role
         self.reconfiguration_information = reconfiguration_information
-        self.service_kind = 'Stateful'
+        self.service_kind = "Stateful"
 
 
 class DeployedStatelessServiceInstanceDetailInfo(DeployedServiceReplicaDetailInfo):
@@ -9267,25 +11063,46 @@ class DeployedStatelessServiceInstanceDetailInfo(DeployedServiceReplicaDetailInf
     """
 
     _validation = {
-        'service_kind': {'required': True},
+        "service_kind": {"required": True},
     }
 
     _attribute_map = {
-        'service_name': {'key': 'ServiceName', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'current_service_operation': {'key': 'CurrentServiceOperation', 'type': 'str'},
-        'current_service_operation_start_time_utc': {'key': 'CurrentServiceOperationStartTimeUtc', 'type': 'iso-8601'},
-        'reported_load': {'key': 'ReportedLoad', 'type': '[LoadMetricReportInfo]'},
-        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
-        'instance_id': {'key': 'InstanceId', 'type': 'str'},
-        'deployed_service_replica_query_result': {'key': 'DeployedServiceReplicaQueryResult', 'type': 'DeployedStatelessServiceInstanceInfo'},
+        "service_name": {"key": "ServiceName", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "current_service_operation": {"key": "CurrentServiceOperation", "type": "str"},
+        "current_service_operation_start_time_utc": {"key": "CurrentServiceOperationStartTimeUtc", "type": "iso-8601"},
+        "reported_load": {"key": "ReportedLoad", "type": "[LoadMetricReportInfo]"},
+        "service_kind": {"key": "ServiceKind", "type": "str"},
+        "instance_id": {"key": "InstanceId", "type": "str"},
+        "deployed_service_replica_query_result": {
+            "key": "DeployedServiceReplicaQueryResult",
+            "type": "DeployedStatelessServiceInstanceInfo",
+        },
     }
 
-    def __init__(self, *, service_name: str=None, partition_id: str=None, current_service_operation=None, current_service_operation_start_time_utc=None, reported_load=None, instance_id: str=None, deployed_service_replica_query_result=None, **kwargs) -> None:
-        super(DeployedStatelessServiceInstanceDetailInfo, self).__init__(service_name=service_name, partition_id=partition_id, current_service_operation=current_service_operation, current_service_operation_start_time_utc=current_service_operation_start_time_utc, reported_load=reported_load, **kwargs)
+    def __init__(
+        self,
+        *,
+        service_name: str = None,
+        partition_id: str = None,
+        current_service_operation=None,
+        current_service_operation_start_time_utc=None,
+        reported_load=None,
+        instance_id: str = None,
+        deployed_service_replica_query_result=None,
+        **kwargs
+    ) -> None:
+        super(DeployedStatelessServiceInstanceDetailInfo, self).__init__(
+            service_name=service_name,
+            partition_id=partition_id,
+            current_service_operation=current_service_operation,
+            current_service_operation_start_time_utc=current_service_operation_start_time_utc,
+            reported_load=reported_load,
+            **kwargs
+        )
         self.instance_id = instance_id
         self.deployed_service_replica_query_result = deployed_service_replica_query_result
-        self.service_kind = 'Stateless'
+        self.service_kind = "Stateless"
 
 
 class DeployedStatelessServiceInstanceInfo(DeployedServiceReplicaInfo):
@@ -9340,27 +11157,52 @@ class DeployedStatelessServiceInstanceInfo(DeployedServiceReplicaInfo):
     """
 
     _validation = {
-        'service_kind': {'required': True},
+        "service_kind": {"required": True},
     }
 
     _attribute_map = {
-        'service_name': {'key': 'ServiceName', 'type': 'str'},
-        'service_type_name': {'key': 'ServiceTypeName', 'type': 'str'},
-        'service_manifest_name': {'key': 'ServiceManifestName', 'type': 'str'},
-        'code_package_name': {'key': 'CodePackageName', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'replica_status': {'key': 'ReplicaStatus', 'type': 'str'},
-        'address': {'key': 'Address', 'type': 'str'},
-        'service_package_activation_id': {'key': 'ServicePackageActivationId', 'type': 'str'},
-        'host_process_id': {'key': 'HostProcessId', 'type': 'str'},
-        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
-        'instance_id': {'key': 'InstanceId', 'type': 'str'},
+        "service_name": {"key": "ServiceName", "type": "str"},
+        "service_type_name": {"key": "ServiceTypeName", "type": "str"},
+        "service_manifest_name": {"key": "ServiceManifestName", "type": "str"},
+        "code_package_name": {"key": "CodePackageName", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "replica_status": {"key": "ReplicaStatus", "type": "str"},
+        "address": {"key": "Address", "type": "str"},
+        "service_package_activation_id": {"key": "ServicePackageActivationId", "type": "str"},
+        "host_process_id": {"key": "HostProcessId", "type": "str"},
+        "service_kind": {"key": "ServiceKind", "type": "str"},
+        "instance_id": {"key": "InstanceId", "type": "str"},
     }
 
-    def __init__(self, *, service_name: str=None, service_type_name: str=None, service_manifest_name: str=None, code_package_name: str=None, partition_id: str=None, replica_status=None, address: str=None, service_package_activation_id: str=None, host_process_id: str=None, instance_id: str=None, **kwargs) -> None:
-        super(DeployedStatelessServiceInstanceInfo, self).__init__(service_name=service_name, service_type_name=service_type_name, service_manifest_name=service_manifest_name, code_package_name=code_package_name, partition_id=partition_id, replica_status=replica_status, address=address, service_package_activation_id=service_package_activation_id, host_process_id=host_process_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        service_name: str = None,
+        service_type_name: str = None,
+        service_manifest_name: str = None,
+        code_package_name: str = None,
+        partition_id: str = None,
+        replica_status=None,
+        address: str = None,
+        service_package_activation_id: str = None,
+        host_process_id: str = None,
+        instance_id: str = None,
+        **kwargs
+    ) -> None:
+        super(DeployedStatelessServiceInstanceInfo, self).__init__(
+            service_name=service_name,
+            service_type_name=service_type_name,
+            service_manifest_name=service_manifest_name,
+            code_package_name=code_package_name,
+            partition_id=partition_id,
+            replica_status=replica_status,
+            address=address,
+            service_package_activation_id=service_package_activation_id,
+            host_process_id=host_process_id,
+            **kwargs
+        )
         self.instance_id = instance_id
-        self.service_kind = 'Stateless'
+        self.service_kind = "Stateless"
 
 
 class DeployServicePackageToNodeDescription(Model):
@@ -9386,21 +11228,30 @@ class DeployServicePackageToNodeDescription(Model):
     """
 
     _validation = {
-        'service_manifest_name': {'required': True},
-        'application_type_name': {'required': True},
-        'application_type_version': {'required': True},
-        'node_name': {'required': True},
+        "service_manifest_name": {"required": True},
+        "application_type_name": {"required": True},
+        "application_type_version": {"required": True},
+        "node_name": {"required": True},
     }
 
     _attribute_map = {
-        'service_manifest_name': {'key': 'ServiceManifestName', 'type': 'str'},
-        'application_type_name': {'key': 'ApplicationTypeName', 'type': 'str'},
-        'application_type_version': {'key': 'ApplicationTypeVersion', 'type': 'str'},
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'package_sharing_policy': {'key': 'PackageSharingPolicy', 'type': '[PackageSharingPolicyInfo]'},
+        "service_manifest_name": {"key": "ServiceManifestName", "type": "str"},
+        "application_type_name": {"key": "ApplicationTypeName", "type": "str"},
+        "application_type_version": {"key": "ApplicationTypeVersion", "type": "str"},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "package_sharing_policy": {"key": "PackageSharingPolicy", "type": "[PackageSharingPolicyInfo]"},
     }
 
-    def __init__(self, *, service_manifest_name: str, application_type_name: str, application_type_version: str, node_name: str, package_sharing_policy=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        service_manifest_name: str,
+        application_type_name: str,
+        application_type_version: str,
+        node_name: str,
+        package_sharing_policy=None,
+        **kwargs
+    ) -> None:
         super(DeployServicePackageToNodeDescription, self).__init__(**kwargs)
         self.service_manifest_name = service_manifest_name
         self.application_type_name = application_type_name
@@ -9422,12 +11273,12 @@ class DiagnosticsDescription(Model):
     """
 
     _attribute_map = {
-        'sinks': {'key': 'sinks', 'type': '[DiagnosticsSinkProperties]'},
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'default_sink_refs': {'key': 'defaultSinkRefs', 'type': '[str]'},
+        "sinks": {"key": "sinks", "type": "[DiagnosticsSinkProperties]"},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "default_sink_refs": {"key": "defaultSinkRefs", "type": "[str]"},
     }
 
-    def __init__(self, *, sinks=None, enabled: bool=None, default_sink_refs=None, **kwargs) -> None:
+    def __init__(self, *, sinks=None, enabled: bool = None, default_sink_refs=None, **kwargs) -> None:
         super(DiagnosticsDescription, self).__init__(**kwargs)
         self.sinks = sinks
         self.enabled = enabled
@@ -9445,11 +11296,11 @@ class DiagnosticsRef(Model):
     """
 
     _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'sink_refs': {'key': 'sinkRefs', 'type': '[str]'},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "sink_refs": {"key": "sinkRefs", "type": "[str]"},
     }
 
-    def __init__(self, *, enabled: bool=None, sink_refs=None, **kwargs) -> None:
+    def __init__(self, *, enabled: bool = None, sink_refs=None, **kwargs) -> None:
         super(DiagnosticsRef, self).__init__(**kwargs)
         self.enabled = enabled
         self.sink_refs = sink_refs
@@ -9468,11 +11319,11 @@ class DisableBackupDescription(Model):
     """
 
     _validation = {
-        'clean_backup': {'required': True},
+        "clean_backup": {"required": True},
     }
 
     _attribute_map = {
-        'clean_backup': {'key': 'CleanBackup', 'type': 'bool'},
+        "clean_backup": {"key": "CleanBackup", "type": "bool"},
     }
 
     def __init__(self, *, clean_backup: bool, **kwargs) -> None:
@@ -9490,11 +11341,11 @@ class DiskInfo(Model):
     """
 
     _attribute_map = {
-        'capacity': {'key': 'Capacity', 'type': 'str'},
-        'available_space': {'key': 'AvailableSpace', 'type': 'str'},
+        "capacity": {"key": "Capacity", "type": "str"},
+        "available_space": {"key": "AvailableSpace", "type": "str"},
     }
 
-    def __init__(self, *, capacity: str=None, available_space: str=None, **kwargs) -> None:
+    def __init__(self, *, capacity: str = None, available_space: str = None, **kwargs) -> None:
         super(DiskInfo, self).__init__(**kwargs)
         self.capacity = capacity
         self.available_space = available_space
@@ -9512,19 +11363,19 @@ class DoublePropertyValue(PropertyValue):
     """
 
     _validation = {
-        'kind': {'required': True},
-        'data': {'required': True},
+        "kind": {"required": True},
+        "data": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'data': {'key': 'Data', 'type': 'float'},
+        "kind": {"key": "Kind", "type": "str"},
+        "data": {"key": "Data", "type": "float"},
     }
 
     def __init__(self, *, data: float, **kwargs) -> None:
         super(DoublePropertyValue, self).__init__(**kwargs)
         self.data = data
-        self.kind = 'Double'
+        self.kind = "Double"
 
 
 class DsmsAzureBlobBackupStorageDescription(BackupStorageDescription):
@@ -9546,23 +11397,25 @@ class DsmsAzureBlobBackupStorageDescription(BackupStorageDescription):
     """
 
     _validation = {
-        'storage_kind': {'required': True},
-        'storage_credentials_source_location': {'required': True},
-        'container_name': {'required': True},
+        "storage_kind": {"required": True},
+        "storage_credentials_source_location": {"required": True},
+        "container_name": {"required": True},
     }
 
     _attribute_map = {
-        'friendly_name': {'key': 'FriendlyName', 'type': 'str'},
-        'storage_kind': {'key': 'StorageKind', 'type': 'str'},
-        'storage_credentials_source_location': {'key': 'StorageCredentialsSourceLocation', 'type': 'str'},
-        'container_name': {'key': 'ContainerName', 'type': 'str'},
+        "friendly_name": {"key": "FriendlyName", "type": "str"},
+        "storage_kind": {"key": "StorageKind", "type": "str"},
+        "storage_credentials_source_location": {"key": "StorageCredentialsSourceLocation", "type": "str"},
+        "container_name": {"key": "ContainerName", "type": "str"},
     }
 
-    def __init__(self, *, storage_credentials_source_location: str, container_name: str, friendly_name: str=None, **kwargs) -> None:
+    def __init__(
+        self, *, storage_credentials_source_location: str, container_name: str, friendly_name: str = None, **kwargs
+    ) -> None:
         super(DsmsAzureBlobBackupStorageDescription, self).__init__(friendly_name=friendly_name, **kwargs)
         self.storage_credentials_source_location = storage_credentials_source_location
         self.container_name = container_name
-        self.storage_kind = 'DsmsAzureBlobStore'
+        self.storage_kind = "DsmsAzureBlobStore"
 
 
 class EnableBackupDescription(Model):
@@ -9576,11 +11429,11 @@ class EnableBackupDescription(Model):
     """
 
     _validation = {
-        'backup_policy_name': {'required': True},
+        "backup_policy_name": {"required": True},
     }
 
     _attribute_map = {
-        'backup_policy_name': {'key': 'BackupPolicyName', 'type': 'str'},
+        "backup_policy_name": {"key": "BackupPolicyName", "type": "str"},
     }
 
     def __init__(self, *, backup_policy_name: str, **kwargs) -> None:
@@ -9600,15 +11453,15 @@ class EndpointProperties(Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'port': {'key': 'port', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "port": {"key": "port", "type": "int"},
     }
 
-    def __init__(self, *, name: str, port: int=None, **kwargs) -> None:
+    def __init__(self, *, name: str, port: int = None, **kwargs) -> None:
         super(EndpointProperties, self).__init__(**kwargs)
         self.name = name
         self.port = port
@@ -9622,10 +11475,10 @@ class EndpointRef(Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, name: str=None, **kwargs) -> None:
+    def __init__(self, *, name: str = None, **kwargs) -> None:
         super(EndpointRef, self).__init__(**kwargs)
         self.name = name
 
@@ -9645,15 +11498,15 @@ class SafetyCheck(Model):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
+        "kind": {"key": "Kind", "type": "str"},
     }
 
     _subtype_map = {
-        'kind': {'PartitionSafetyCheck': 'PartitionSafetyCheck', 'EnsureSeedNodeQuorum': 'SeedNodeSafetyCheck'}
+        "kind": {"PartitionSafetyCheck": "PartitionSafetyCheck", "EnsureSeedNodeQuorum": "SeedNodeSafetyCheck"}
     }
 
     def __init__(self, **kwargs) -> None:
@@ -9681,22 +11534,29 @@ class PartitionSafetyCheck(SafetyCheck):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
+        "kind": {"key": "Kind", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
     }
 
     _subtype_map = {
-        'kind': {'EnsureAvailability': 'EnsureAvailabilitySafetyCheck', 'EnsurePartitionQuorum': 'EnsurePartitionQuorumSafetyCheck', 'WaitForInbuildReplica': 'WaitForInbuildReplicaSafetyCheck', 'WaitForPrimaryPlacement': 'WaitForPrimaryPlacementSafetyCheck', 'WaitForPrimarySwap': 'WaitForPrimarySwapSafetyCheck', 'WaitForReconfiguration': 'WaitForReconfigurationSafetyCheck'}
+        "kind": {
+            "EnsureAvailability": "EnsureAvailabilitySafetyCheck",
+            "EnsurePartitionQuorum": "EnsurePartitionQuorumSafetyCheck",
+            "WaitForInbuildReplica": "WaitForInbuildReplicaSafetyCheck",
+            "WaitForPrimaryPlacement": "WaitForPrimaryPlacementSafetyCheck",
+            "WaitForPrimarySwap": "WaitForPrimarySwapSafetyCheck",
+            "WaitForReconfiguration": "WaitForReconfigurationSafetyCheck",
+        }
     }
 
-    def __init__(self, *, partition_id: str=None, **kwargs) -> None:
+    def __init__(self, *, partition_id: str = None, **kwargs) -> None:
         super(PartitionSafetyCheck, self).__init__(**kwargs)
         self.partition_id = partition_id
-        self.kind = 'PartitionSafetyCheck'
+        self.kind = "PartitionSafetyCheck"
 
 
 class EnsureAvailabilitySafetyCheck(PartitionSafetyCheck):
@@ -9714,17 +11574,17 @@ class EnsureAvailabilitySafetyCheck(PartitionSafetyCheck):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
+        "kind": {"key": "Kind", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
     }
 
-    def __init__(self, *, partition_id: str=None, **kwargs) -> None:
+    def __init__(self, *, partition_id: str = None, **kwargs) -> None:
         super(EnsureAvailabilitySafetyCheck, self).__init__(partition_id=partition_id, **kwargs)
-        self.kind = 'EnsureAvailability'
+        self.kind = "EnsureAvailability"
 
 
 class EnsurePartitionQuorumSafetyCheck(PartitionSafetyCheck):
@@ -9741,17 +11601,17 @@ class EnsurePartitionQuorumSafetyCheck(PartitionSafetyCheck):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
+        "kind": {"key": "Kind", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
     }
 
-    def __init__(self, *, partition_id: str=None, **kwargs) -> None:
+    def __init__(self, *, partition_id: str = None, **kwargs) -> None:
         super(EnsurePartitionQuorumSafetyCheck, self).__init__(partition_id=partition_id, **kwargs)
-        self.kind = 'EnsurePartitionQuorum'
+        self.kind = "EnsurePartitionQuorum"
 
 
 class EntityKindHealthStateCount(Model):
@@ -9768,8 +11628,8 @@ class EntityKindHealthStateCount(Model):
     """
 
     _attribute_map = {
-        'entity_kind': {'key': 'EntityKind', 'type': 'str'},
-        'health_state_count': {'key': 'HealthStateCount', 'type': 'HealthStateCount'},
+        "entity_kind": {"key": "EntityKind", "type": "str"},
+        "health_state_count": {"key": "HealthStateCount", "type": "HealthStateCount"},
     }
 
     def __init__(self, *, entity_kind=None, health_state_count=None, **kwargs) -> None:
@@ -9793,12 +11653,12 @@ class EnvironmentVariable(Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, type="ClearText", name: str=None, value: str=None, **kwargs) -> None:
+    def __init__(self, *, type="ClearText", name: str = None, value: str = None, **kwargs) -> None:
         super(EnvironmentVariable, self).__init__(**kwargs)
         self.type = type
         self.name = name
@@ -9824,11 +11684,11 @@ class Epoch(Model):
     """
 
     _attribute_map = {
-        'configuration_version': {'key': 'ConfigurationVersion', 'type': 'str'},
-        'data_loss_version': {'key': 'DataLossVersion', 'type': 'str'},
+        "configuration_version": {"key": "ConfigurationVersion", "type": "str"},
+        "data_loss_version": {"key": "DataLossVersion", "type": "str"},
     }
 
-    def __init__(self, *, configuration_version: str=None, data_loss_version: str=None, **kwargs) -> None:
+    def __init__(self, *, configuration_version: str = None, data_loss_version: str = None, **kwargs) -> None:
         super(Epoch, self).__init__(**kwargs)
         self.configuration_version = configuration_version
         self.data_loss_version = data_loss_version
@@ -9864,22 +11724,32 @@ class EventHealthEvaluation(HealthEvaluation):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'consider_warning_as_error': {'key': 'ConsiderWarningAsError', 'type': 'bool'},
-        'unhealthy_event': {'key': 'UnhealthyEvent', 'type': 'HealthEvent'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "description": {"key": "Description", "type": "str"},
+        "kind": {"key": "Kind", "type": "str"},
+        "consider_warning_as_error": {"key": "ConsiderWarningAsError", "type": "bool"},
+        "unhealthy_event": {"key": "UnhealthyEvent", "type": "HealthEvent"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, description: str=None, consider_warning_as_error: bool=None, unhealthy_event=None, **kwargs) -> None:
-        super(EventHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description, **kwargs)
+    def __init__(
+        self,
+        *,
+        aggregated_health_state=None,
+        description: str = None,
+        consider_warning_as_error: bool = None,
+        unhealthy_event=None,
+        **kwargs
+    ) -> None:
+        super(EventHealthEvaluation, self).__init__(
+            aggregated_health_state=aggregated_health_state, description=description, **kwargs
+        )
         self.consider_warning_as_error = consider_warning_as_error
         self.unhealthy_event = unhealthy_event
-        self.kind = 'Event'
+        self.kind = "Event"
 
 
 class ExecutingFaultsChaosEvent(ChaosEvent):
@@ -9900,20 +11770,20 @@ class ExecutingFaultsChaosEvent(ChaosEvent):
     """
 
     _validation = {
-        'time_stamp_utc': {'required': True},
-        'kind': {'required': True},
+        "time_stamp_utc": {"required": True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'time_stamp_utc': {'key': 'TimeStampUtc', 'type': 'iso-8601'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'faults': {'key': 'Faults', 'type': '[str]'},
+        "time_stamp_utc": {"key": "TimeStampUtc", "type": "iso-8601"},
+        "kind": {"key": "Kind", "type": "str"},
+        "faults": {"key": "Faults", "type": "[str]"},
     }
 
     def __init__(self, *, time_stamp_utc, faults=None, **kwargs) -> None:
         super(ExecutingFaultsChaosEvent, self).__init__(time_stamp_utc=time_stamp_utc, **kwargs)
         self.faults = faults
-        self.kind = 'ExecutingFaults'
+        self.kind = "ExecutingFaults"
 
 
 class ProvisionApplicationTypeDescriptionBase(Model):
@@ -9938,17 +11808,20 @@ class ProvisionApplicationTypeDescriptionBase(Model):
     """
 
     _validation = {
-        'async_property': {'required': True},
-        'kind': {'required': True},
+        "async_property": {"required": True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'async_property': {'key': 'Async', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
+        "async_property": {"key": "Async", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
     }
 
     _subtype_map = {
-        'kind': {'ImageStorePath': 'ProvisionApplicationTypeDescription', 'ExternalStore': 'ExternalStoreProvisionApplicationTypeDescription'}
+        "kind": {
+            "ImageStorePath": "ProvisionApplicationTypeDescription",
+            "ExternalStore": "ExternalStoreProvisionApplicationTypeDescription",
+        }
     }
 
     def __init__(self, *, async_property: bool, **kwargs) -> None:
@@ -9990,27 +11863,35 @@ class ExternalStoreProvisionApplicationTypeDescription(ProvisionApplicationTypeD
     """
 
     _validation = {
-        'async_property': {'required': True},
-        'kind': {'required': True},
-        'application_package_download_uri': {'required': True},
-        'application_type_name': {'required': True},
-        'application_type_version': {'required': True},
+        "async_property": {"required": True},
+        "kind": {"required": True},
+        "application_package_download_uri": {"required": True},
+        "application_type_name": {"required": True},
+        "application_type_version": {"required": True},
     }
 
     _attribute_map = {
-        'async_property': {'key': 'Async', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'application_package_download_uri': {'key': 'ApplicationPackageDownloadUri', 'type': 'str'},
-        'application_type_name': {'key': 'ApplicationTypeName', 'type': 'str'},
-        'application_type_version': {'key': 'ApplicationTypeVersion', 'type': 'str'},
+        "async_property": {"key": "Async", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "application_package_download_uri": {"key": "ApplicationPackageDownloadUri", "type": "str"},
+        "application_type_name": {"key": "ApplicationTypeName", "type": "str"},
+        "application_type_version": {"key": "ApplicationTypeVersion", "type": "str"},
     }
 
-    def __init__(self, *, async_property: bool, application_package_download_uri: str, application_type_name: str, application_type_version: str, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        async_property: bool,
+        application_package_download_uri: str,
+        application_type_name: str,
+        application_type_version: str,
+        **kwargs
+    ) -> None:
         super(ExternalStoreProvisionApplicationTypeDescription, self).__init__(async_property=async_property, **kwargs)
         self.application_package_download_uri = application_package_download_uri
         self.application_type_name = application_type_name
         self.application_type_version = application_type_version
-        self.kind = 'ExternalStore'
+        self.kind = "ExternalStore"
 
 
 class FabricCodeVersionInfo(Model):
@@ -10021,10 +11902,10 @@ class FabricCodeVersionInfo(Model):
     """
 
     _attribute_map = {
-        'code_version': {'key': 'CodeVersion', 'type': 'str'},
+        "code_version": {"key": "CodeVersion", "type": "str"},
     }
 
-    def __init__(self, *, code_version: str=None, **kwargs) -> None:
+    def __init__(self, *, code_version: str = None, **kwargs) -> None:
         super(FabricCodeVersionInfo, self).__init__(**kwargs)
         self.code_version = code_version
 
@@ -10037,10 +11918,10 @@ class FabricConfigVersionInfo(Model):
     """
 
     _attribute_map = {
-        'config_version': {'key': 'ConfigVersion', 'type': 'str'},
+        "config_version": {"key": "ConfigVersion", "type": "str"},
     }
 
-    def __init__(self, *, config_version: str=None, **kwargs) -> None:
+    def __init__(self, *, config_version: str = None, **kwargs) -> None:
         super(FabricConfigVersionInfo, self).__init__(**kwargs)
         self.config_version = config_version
 
@@ -10058,11 +11939,11 @@ class FabricError(Model):
     """
 
     _validation = {
-        'error': {'required': True},
+        "error": {"required": True},
     }
 
     _attribute_map = {
-        'error': {'key': 'Error', 'type': 'FabricErrorError'},
+        "error": {"key": "Error", "type": "FabricErrorError"},
     }
 
     def __init__(self, *, error, **kwargs) -> None:
@@ -10079,7 +11960,7 @@ class FabricErrorException(HttpOperationError):
 
     def __init__(self, deserialize, response, *args):
 
-        super(FabricErrorException, self).__init__(deserialize, response, 'FabricError', *args)
+        super(FabricErrorException, self).__init__(deserialize, response, "FabricError", *args)
 
 
 class FabricErrorError(Model):
@@ -10249,15 +12130,15 @@ class FabricErrorError(Model):
     """
 
     _validation = {
-        'code': {'required': True},
+        "code": {"required": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'Code', 'type': 'str'},
-        'message': {'key': 'Message', 'type': 'str'},
+        "code": {"key": "Code", "type": "str"},
+        "message": {"key": "Message", "type": "str"},
     }
 
-    def __init__(self, *, code, message: str=None, **kwargs) -> None:
+    def __init__(self, *, code, message: str = None, **kwargs) -> None:
         super(FabricErrorError, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -10276,16 +12157,14 @@ class PropertyBatchInfo(Model):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
+        "kind": {"key": "Kind", "type": "str"},
     }
 
-    _subtype_map = {
-        'kind': {'Successful': 'SuccessfulPropertyBatchInfo', 'Failed': 'FailedPropertyBatchInfo'}
-    }
+    _subtype_map = {"kind": {"Successful": "SuccessfulPropertyBatchInfo", "Failed": "FailedPropertyBatchInfo"}}
 
     def __init__(self, **kwargs) -> None:
         super(PropertyBatchInfo, self).__init__(**kwargs)
@@ -10310,20 +12189,20 @@ class FailedPropertyBatchInfo(PropertyBatchInfo):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'error_message': {'key': 'ErrorMessage', 'type': 'str'},
-        'operation_index': {'key': 'OperationIndex', 'type': 'int'},
+        "kind": {"key": "Kind", "type": "str"},
+        "error_message": {"key": "ErrorMessage", "type": "str"},
+        "operation_index": {"key": "OperationIndex", "type": "int"},
     }
 
-    def __init__(self, *, error_message: str=None, operation_index: int=None, **kwargs) -> None:
+    def __init__(self, *, error_message: str = None, operation_index: int = None, **kwargs) -> None:
         super(FailedPropertyBatchInfo, self).__init__(**kwargs)
         self.error_message = error_message
         self.operation_index = operation_index
-        self.kind = 'Failed'
+        self.kind = "Failed"
 
 
 class FailedUpgradeDomainProgressObject(Model):
@@ -10339,11 +12218,11 @@ class FailedUpgradeDomainProgressObject(Model):
     """
 
     _attribute_map = {
-        'domain_name': {'key': 'DomainName', 'type': 'str'},
-        'node_upgrade_progress_list': {'key': 'NodeUpgradeProgressList', 'type': '[NodeUpgradeProgressInfo]'},
+        "domain_name": {"key": "DomainName", "type": "str"},
+        "node_upgrade_progress_list": {"key": "NodeUpgradeProgressList", "type": "[NodeUpgradeProgressInfo]"},
     }
 
-    def __init__(self, *, domain_name: str=None, node_upgrade_progress_list=None, **kwargs) -> None:
+    def __init__(self, *, domain_name: str = None, node_upgrade_progress_list=None, **kwargs) -> None:
         super(FailedUpgradeDomainProgressObject, self).__init__(**kwargs)
         self.domain_name = domain_name
         self.node_upgrade_progress_list = node_upgrade_progress_list
@@ -10362,11 +12241,11 @@ class FailureUpgradeDomainProgressInfo(Model):
     """
 
     _attribute_map = {
-        'domain_name': {'key': 'DomainName', 'type': 'str'},
-        'node_upgrade_progress_list': {'key': 'NodeUpgradeProgressList', 'type': '[NodeUpgradeProgressInfo]'},
+        "domain_name": {"key": "DomainName", "type": "str"},
+        "node_upgrade_progress_list": {"key": "NodeUpgradeProgressList", "type": "[NodeUpgradeProgressInfo]"},
     }
 
-    def __init__(self, *, domain_name: str=None, node_upgrade_progress_list=None, **kwargs) -> None:
+    def __init__(self, *, domain_name: str = None, node_upgrade_progress_list=None, **kwargs) -> None:
         super(FailureUpgradeDomainProgressInfo, self).__init__(**kwargs)
         self.domain_name = domain_name
         self.node_upgrade_progress_list = node_upgrade_progress_list
@@ -10388,13 +12267,15 @@ class FileInfo(Model):
     """
 
     _attribute_map = {
-        'file_size': {'key': 'FileSize', 'type': 'str'},
-        'file_version': {'key': 'FileVersion', 'type': 'FileVersion'},
-        'modified_date': {'key': 'ModifiedDate', 'type': 'iso-8601'},
-        'store_relative_path': {'key': 'StoreRelativePath', 'type': 'str'},
+        "file_size": {"key": "FileSize", "type": "str"},
+        "file_version": {"key": "FileVersion", "type": "FileVersion"},
+        "modified_date": {"key": "ModifiedDate", "type": "iso-8601"},
+        "store_relative_path": {"key": "StoreRelativePath", "type": "str"},
     }
 
-    def __init__(self, *, file_size: str=None, file_version=None, modified_date=None, store_relative_path: str=None, **kwargs) -> None:
+    def __init__(
+        self, *, file_size: str = None, file_version=None, modified_date=None, store_relative_path: str = None, **kwargs
+    ) -> None:
         super(FileInfo, self).__init__(**kwargs)
         self.file_size = file_size
         self.file_version = file_version
@@ -10426,28 +12307,38 @@ class FileShareBackupStorageDescription(BackupStorageDescription):
     """
 
     _validation = {
-        'storage_kind': {'required': True},
-        'path': {'required': True},
+        "storage_kind": {"required": True},
+        "path": {"required": True},
     }
 
     _attribute_map = {
-        'friendly_name': {'key': 'FriendlyName', 'type': 'str'},
-        'storage_kind': {'key': 'StorageKind', 'type': 'str'},
-        'path': {'key': 'Path', 'type': 'str'},
-        'primary_user_name': {'key': 'PrimaryUserName', 'type': 'str'},
-        'primary_password': {'key': 'PrimaryPassword', 'type': 'str'},
-        'secondary_user_name': {'key': 'SecondaryUserName', 'type': 'str'},
-        'secondary_password': {'key': 'SecondaryPassword', 'type': 'str'},
+        "friendly_name": {"key": "FriendlyName", "type": "str"},
+        "storage_kind": {"key": "StorageKind", "type": "str"},
+        "path": {"key": "Path", "type": "str"},
+        "primary_user_name": {"key": "PrimaryUserName", "type": "str"},
+        "primary_password": {"key": "PrimaryPassword", "type": "str"},
+        "secondary_user_name": {"key": "SecondaryUserName", "type": "str"},
+        "secondary_password": {"key": "SecondaryPassword", "type": "str"},
     }
 
-    def __init__(self, *, path: str, friendly_name: str=None, primary_user_name: str=None, primary_password: str=None, secondary_user_name: str=None, secondary_password: str=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        path: str,
+        friendly_name: str = None,
+        primary_user_name: str = None,
+        primary_password: str = None,
+        secondary_user_name: str = None,
+        secondary_password: str = None,
+        **kwargs
+    ) -> None:
         super(FileShareBackupStorageDescription, self).__init__(friendly_name=friendly_name, **kwargs)
         self.path = path
         self.primary_user_name = primary_user_name
         self.primary_password = primary_password
         self.secondary_user_name = secondary_user_name
         self.secondary_password = secondary_password
-        self.storage_kind = 'FileShare'
+        self.storage_kind = "FileShare"
 
 
 class FileVersion(Model):
@@ -10465,12 +12356,19 @@ class FileVersion(Model):
     """
 
     _attribute_map = {
-        'version_number': {'key': 'VersionNumber', 'type': 'str'},
-        'epoch_data_loss_number': {'key': 'EpochDataLossNumber', 'type': 'str'},
-        'epoch_configuration_number': {'key': 'EpochConfigurationNumber', 'type': 'str'},
+        "version_number": {"key": "VersionNumber", "type": "str"},
+        "epoch_data_loss_number": {"key": "EpochDataLossNumber", "type": "str"},
+        "epoch_configuration_number": {"key": "EpochConfigurationNumber", "type": "str"},
     }
 
-    def __init__(self, *, version_number: str=None, epoch_data_loss_number: str=None, epoch_configuration_number: str=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        version_number: str = None,
+        epoch_data_loss_number: str = None,
+        epoch_configuration_number: str = None,
+        **kwargs
+    ) -> None:
         super(FileVersion, self).__init__(**kwargs)
         self.version_number = version_number
         self.epoch_data_loss_number = epoch_data_loss_number
@@ -10489,11 +12387,11 @@ class FolderInfo(Model):
     """
 
     _attribute_map = {
-        'store_relative_path': {'key': 'StoreRelativePath', 'type': 'str'},
-        'file_count': {'key': 'FileCount', 'type': 'str'},
+        "store_relative_path": {"key": "StoreRelativePath", "type": "str"},
+        "file_count": {"key": "FileCount", "type": "str"},
     }
 
-    def __init__(self, *, store_relative_path: str=None, file_count: str=None, **kwargs) -> None:
+    def __init__(self, *, store_relative_path: str = None, file_count: str = None, **kwargs) -> None:
         super(FolderInfo, self).__init__(**kwargs)
         self.store_relative_path = store_relative_path
         self.file_count = file_count
@@ -10510,11 +12408,11 @@ class FolderSizeInfo(Model):
     """
 
     _attribute_map = {
-        'store_relative_path': {'key': 'StoreRelativePath', 'type': 'str'},
-        'folder_size': {'key': 'FolderSize', 'type': 'str'},
+        "store_relative_path": {"key": "StoreRelativePath", "type": "str"},
+        "folder_size": {"key": "FolderSize", "type": "str"},
     }
 
-    def __init__(self, *, store_relative_path: str=None, folder_size: str=None, **kwargs) -> None:
+    def __init__(self, *, store_relative_path: str = None, folder_size: str = None, **kwargs) -> None:
         super(FolderSizeInfo, self).__init__(**kwargs)
         self.store_relative_path = store_relative_path
         self.folder_size = folder_size
@@ -10534,19 +12432,19 @@ class FrequencyBasedBackupScheduleDescription(BackupScheduleDescription):
     """
 
     _validation = {
-        'schedule_kind': {'required': True},
-        'interval': {'required': True},
+        "schedule_kind": {"required": True},
+        "interval": {"required": True},
     }
 
     _attribute_map = {
-        'schedule_kind': {'key': 'ScheduleKind', 'type': 'str'},
-        'interval': {'key': 'Interval', 'type': 'duration'},
+        "schedule_kind": {"key": "ScheduleKind", "type": "str"},
+        "interval": {"key": "Interval", "type": "duration"},
     }
 
     def __init__(self, *, interval, **kwargs) -> None:
         super(FrequencyBasedBackupScheduleDescription, self).__init__(**kwargs)
         self.interval = interval
-        self.schedule_kind = 'FrequencyBased'
+        self.schedule_kind = "FrequencyBased"
 
 
 class GatewayDestination(Model):
@@ -10564,15 +12462,15 @@ class GatewayDestination(Model):
     """
 
     _validation = {
-        'application_name': {'required': True},
-        'service_name': {'required': True},
-        'endpoint_name': {'required': True},
+        "application_name": {"required": True},
+        "service_name": {"required": True},
+        "endpoint_name": {"required": True},
     }
 
     _attribute_map = {
-        'application_name': {'key': 'applicationName', 'type': 'str'},
-        'service_name': {'key': 'serviceName', 'type': 'str'},
-        'endpoint_name': {'key': 'endpointName', 'type': 'str'},
+        "application_name": {"key": "applicationName", "type": "str"},
+        "service_name": {"key": "serviceName", "type": "str"},
+        "endpoint_name": {"key": "endpointName", "type": "str"},
     }
 
     def __init__(self, *, application_name: str, service_name: str, endpoint_name: str, **kwargs) -> None:
@@ -10616,27 +12514,29 @@ class GatewayResourceDescription(Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'source_network': {'required': True},
-        'destination_network': {'required': True},
-        'status': {'readonly': True},
-        'status_details': {'readonly': True},
-        'ip_address': {'readonly': True},
+        "name": {"required": True},
+        "source_network": {"required": True},
+        "destination_network": {"required": True},
+        "status": {"readonly": True},
+        "status_details": {"readonly": True},
+        "ip_address": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'source_network': {'key': 'properties.sourceNetwork', 'type': 'NetworkRef'},
-        'destination_network': {'key': 'properties.destinationNetwork', 'type': 'NetworkRef'},
-        'tcp': {'key': 'properties.tcp', 'type': '[TcpConfig]'},
-        'http': {'key': 'properties.http', 'type': '[HttpConfig]'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'status_details': {'key': 'properties.statusDetails', 'type': 'str'},
-        'ip_address': {'key': 'properties.ipAddress', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "source_network": {"key": "properties.sourceNetwork", "type": "NetworkRef"},
+        "destination_network": {"key": "properties.destinationNetwork", "type": "NetworkRef"},
+        "tcp": {"key": "properties.tcp", "type": "[TcpConfig]"},
+        "http": {"key": "properties.http", "type": "[HttpConfig]"},
+        "status": {"key": "properties.status", "type": "str"},
+        "status_details": {"key": "properties.statusDetails", "type": "str"},
+        "ip_address": {"key": "properties.ipAddress", "type": "str"},
     }
 
-    def __init__(self, *, name: str, source_network, destination_network, description: str=None, tcp=None, http=None, **kwargs) -> None:
+    def __init__(
+        self, *, name: str, source_network, destination_network, description: str = None, tcp=None, http=None, **kwargs
+    ) -> None:
         super(GatewayResourceDescription, self).__init__(**kwargs)
         self.name = name
         self.description = description
@@ -10680,19 +12580,28 @@ class GetBackupByStorageQueryDescription(Model):
     """
 
     _validation = {
-        'storage': {'required': True},
-        'backup_entity': {'required': True},
+        "storage": {"required": True},
+        "backup_entity": {"required": True},
     }
 
     _attribute_map = {
-        'start_date_time_filter': {'key': 'StartDateTimeFilter', 'type': 'iso-8601'},
-        'end_date_time_filter': {'key': 'EndDateTimeFilter', 'type': 'iso-8601'},
-        'latest': {'key': 'Latest', 'type': 'bool'},
-        'storage': {'key': 'Storage', 'type': 'BackupStorageDescription'},
-        'backup_entity': {'key': 'BackupEntity', 'type': 'BackupEntity'},
+        "start_date_time_filter": {"key": "StartDateTimeFilter", "type": "iso-8601"},
+        "end_date_time_filter": {"key": "EndDateTimeFilter", "type": "iso-8601"},
+        "latest": {"key": "Latest", "type": "bool"},
+        "storage": {"key": "Storage", "type": "BackupStorageDescription"},
+        "backup_entity": {"key": "BackupEntity", "type": "BackupEntity"},
     }
 
-    def __init__(self, *, storage, backup_entity, start_date_time_filter=None, end_date_time_filter=None, latest: bool=False, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        storage,
+        backup_entity,
+        start_date_time_filter=None,
+        end_date_time_filter=None,
+        latest: bool = False,
+        **kwargs
+    ) -> None:
         super(GetBackupByStorageQueryDescription, self).__init__(**kwargs)
         self.start_date_time_filter = start_date_time_filter
         self.end_date_time_filter = end_date_time_filter
@@ -10721,20 +12630,20 @@ class GetPropertyBatchOperation(PropertyBatchOperation):
     """
 
     _validation = {
-        'property_name': {'required': True},
-        'kind': {'required': True},
+        "property_name": {"required": True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'property_name': {'key': 'PropertyName', 'type': 'str'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'include_value': {'key': 'IncludeValue', 'type': 'bool'},
+        "property_name": {"key": "PropertyName", "type": "str"},
+        "kind": {"key": "Kind", "type": "str"},
+        "include_value": {"key": "IncludeValue", "type": "bool"},
     }
 
-    def __init__(self, *, property_name: str, include_value: bool=False, **kwargs) -> None:
+    def __init__(self, *, property_name: str, include_value: bool = False, **kwargs) -> None:
         super(GetPropertyBatchOperation, self).__init__(property_name=property_name, **kwargs)
         self.include_value = include_value
-        self.kind = 'Get'
+        self.kind = "Get"
 
 
 class GuidPropertyValue(PropertyValue):
@@ -10749,19 +12658,19 @@ class GuidPropertyValue(PropertyValue):
     """
 
     _validation = {
-        'kind': {'required': True},
-        'data': {'required': True},
+        "kind": {"required": True},
+        "data": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'data': {'key': 'Data', 'type': 'str'},
+        "kind": {"key": "Kind", "type": "str"},
+        "data": {"key": "Data", "type": "str"},
     }
 
     def __init__(self, *, data: str, **kwargs) -> None:
         super(GuidPropertyValue, self).__init__(**kwargs)
         self.data = data
-        self.kind = 'Guid'
+        self.kind = "Guid"
 
 
 class HealthEvaluationWrapper(Model):
@@ -10774,7 +12683,7 @@ class HealthEvaluationWrapper(Model):
     """
 
     _attribute_map = {
-        'health_evaluation': {'key': 'HealthEvaluation', 'type': 'HealthEvaluation'},
+        "health_evaluation": {"key": "HealthEvaluation", "type": "HealthEvaluation"},
     }
 
     def __init__(self, *, health_evaluation=None, **kwargs) -> None:
@@ -10861,23 +12770,35 @@ class HealthInformation(Model):
     """
 
     _validation = {
-        'source_id': {'required': True},
-        'property': {'required': True},
-        'health_state': {'required': True},
+        "source_id": {"required": True},
+        "property": {"required": True},
+        "health_state": {"required": True},
     }
 
     _attribute_map = {
-        'source_id': {'key': 'SourceId', 'type': 'str'},
-        'property': {'key': 'Property', 'type': 'str'},
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'time_to_live_in_milli_seconds': {'key': 'TimeToLiveInMilliSeconds', 'type': 'duration'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'sequence_number': {'key': 'SequenceNumber', 'type': 'str'},
-        'remove_when_expired': {'key': 'RemoveWhenExpired', 'type': 'bool'},
-        'health_report_id': {'key': 'HealthReportId', 'type': 'str'},
+        "source_id": {"key": "SourceId", "type": "str"},
+        "property": {"key": "Property", "type": "str"},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "time_to_live_in_milli_seconds": {"key": "TimeToLiveInMilliSeconds", "type": "duration"},
+        "description": {"key": "Description", "type": "str"},
+        "sequence_number": {"key": "SequenceNumber", "type": "str"},
+        "remove_when_expired": {"key": "RemoveWhenExpired", "type": "bool"},
+        "health_report_id": {"key": "HealthReportId", "type": "str"},
     }
 
-    def __init__(self, *, source_id: str, property: str, health_state, time_to_live_in_milli_seconds=None, description: str=None, sequence_number: str=None, remove_when_expired: bool=None, health_report_id: str=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        source_id: str,
+        property: str,
+        health_state,
+        time_to_live_in_milli_seconds=None,
+        description: str = None,
+        sequence_number: str = None,
+        remove_when_expired: bool = None,
+        health_report_id: str = None,
+        **kwargs
+    ) -> None:
         super(HealthInformation, self).__init__(**kwargs)
         self.source_id = source_id
         self.property = property
@@ -11008,30 +12929,58 @@ class HealthEvent(HealthInformation):
     """
 
     _validation = {
-        'source_id': {'required': True},
-        'property': {'required': True},
-        'health_state': {'required': True},
+        "source_id": {"required": True},
+        "property": {"required": True},
+        "health_state": {"required": True},
     }
 
     _attribute_map = {
-        'source_id': {'key': 'SourceId', 'type': 'str'},
-        'property': {'key': 'Property', 'type': 'str'},
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'time_to_live_in_milli_seconds': {'key': 'TimeToLiveInMilliSeconds', 'type': 'duration'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'sequence_number': {'key': 'SequenceNumber', 'type': 'str'},
-        'remove_when_expired': {'key': 'RemoveWhenExpired', 'type': 'bool'},
-        'health_report_id': {'key': 'HealthReportId', 'type': 'str'},
-        'is_expired': {'key': 'IsExpired', 'type': 'bool'},
-        'source_utc_timestamp': {'key': 'SourceUtcTimestamp', 'type': 'iso-8601'},
-        'last_modified_utc_timestamp': {'key': 'LastModifiedUtcTimestamp', 'type': 'iso-8601'},
-        'last_ok_transition_at': {'key': 'LastOkTransitionAt', 'type': 'iso-8601'},
-        'last_warning_transition_at': {'key': 'LastWarningTransitionAt', 'type': 'iso-8601'},
-        'last_error_transition_at': {'key': 'LastErrorTransitionAt', 'type': 'iso-8601'},
+        "source_id": {"key": "SourceId", "type": "str"},
+        "property": {"key": "Property", "type": "str"},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "time_to_live_in_milli_seconds": {"key": "TimeToLiveInMilliSeconds", "type": "duration"},
+        "description": {"key": "Description", "type": "str"},
+        "sequence_number": {"key": "SequenceNumber", "type": "str"},
+        "remove_when_expired": {"key": "RemoveWhenExpired", "type": "bool"},
+        "health_report_id": {"key": "HealthReportId", "type": "str"},
+        "is_expired": {"key": "IsExpired", "type": "bool"},
+        "source_utc_timestamp": {"key": "SourceUtcTimestamp", "type": "iso-8601"},
+        "last_modified_utc_timestamp": {"key": "LastModifiedUtcTimestamp", "type": "iso-8601"},
+        "last_ok_transition_at": {"key": "LastOkTransitionAt", "type": "iso-8601"},
+        "last_warning_transition_at": {"key": "LastWarningTransitionAt", "type": "iso-8601"},
+        "last_error_transition_at": {"key": "LastErrorTransitionAt", "type": "iso-8601"},
     }
 
-    def __init__(self, *, source_id: str, property: str, health_state, time_to_live_in_milli_seconds=None, description: str=None, sequence_number: str=None, remove_when_expired: bool=None, health_report_id: str=None, is_expired: bool=None, source_utc_timestamp=None, last_modified_utc_timestamp=None, last_ok_transition_at=None, last_warning_transition_at=None, last_error_transition_at=None, **kwargs) -> None:
-        super(HealthEvent, self).__init__(source_id=source_id, property=property, health_state=health_state, time_to_live_in_milli_seconds=time_to_live_in_milli_seconds, description=description, sequence_number=sequence_number, remove_when_expired=remove_when_expired, health_report_id=health_report_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        source_id: str,
+        property: str,
+        health_state,
+        time_to_live_in_milli_seconds=None,
+        description: str = None,
+        sequence_number: str = None,
+        remove_when_expired: bool = None,
+        health_report_id: str = None,
+        is_expired: bool = None,
+        source_utc_timestamp=None,
+        last_modified_utc_timestamp=None,
+        last_ok_transition_at=None,
+        last_warning_transition_at=None,
+        last_error_transition_at=None,
+        **kwargs
+    ) -> None:
+        super(HealthEvent, self).__init__(
+            source_id=source_id,
+            property=property,
+            health_state=health_state,
+            time_to_live_in_milli_seconds=time_to_live_in_milli_seconds,
+            description=description,
+            sequence_number=sequence_number,
+            remove_when_expired=remove_when_expired,
+            health_report_id=health_report_id,
+            **kwargs
+        )
         self.is_expired = is_expired
         self.source_utc_timestamp = source_utc_timestamp
         self.last_modified_utc_timestamp = last_modified_utc_timestamp
@@ -11056,18 +13005,18 @@ class HealthStateCount(Model):
     """
 
     _validation = {
-        'ok_count': {'minimum': 0},
-        'warning_count': {'minimum': 0},
-        'error_count': {'minimum': 0},
+        "ok_count": {"minimum": 0},
+        "warning_count": {"minimum": 0},
+        "error_count": {"minimum": 0},
     }
 
     _attribute_map = {
-        'ok_count': {'key': 'OkCount', 'type': 'long'},
-        'warning_count': {'key': 'WarningCount', 'type': 'long'},
-        'error_count': {'key': 'ErrorCount', 'type': 'long'},
+        "ok_count": {"key": "OkCount", "type": "long"},
+        "warning_count": {"key": "WarningCount", "type": "long"},
+        "error_count": {"key": "ErrorCount", "type": "long"},
     }
 
-    def __init__(self, *, ok_count: int=None, warning_count: int=None, error_count: int=None, **kwargs) -> None:
+    def __init__(self, *, ok_count: int = None, warning_count: int = None, error_count: int = None, **kwargs) -> None:
         super(HealthStateCount, self).__init__(**kwargs)
         self.ok_count = ok_count
         self.warning_count = warning_count
@@ -11092,7 +13041,7 @@ class HealthStatistics(Model):
     """
 
     _attribute_map = {
-        'health_state_count_list': {'key': 'HealthStateCountList', 'type': '[EntityKindHealthStateCount]'},
+        "health_state_count_list": {"key": "HealthStateCountList", "type": "[EntityKindHealthStateCount]"},
     }
 
     def __init__(self, *, health_state_count_list=None, **kwargs) -> None:
@@ -11116,15 +13065,15 @@ class HttpConfig(Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'port': {'required': True},
-        'hosts': {'required': True},
+        "name": {"required": True},
+        "port": {"required": True},
+        "hosts": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'port': {'key': 'port', 'type': 'int'},
-        'hosts': {'key': 'hosts', 'type': '[HttpHostConfig]'},
+        "name": {"key": "name", "type": "str"},
+        "port": {"key": "port", "type": "int"},
+        "hosts": {"key": "hosts", "type": "[HttpHostConfig]"},
     }
 
     def __init__(self, *, name: str, port: int, hosts, **kwargs) -> None:
@@ -11148,13 +13097,13 @@ class HttpHostConfig(Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'routes': {'required': True},
+        "name": {"required": True},
+        "routes": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'routes': {'key': 'routes', 'type': '[HttpRouteConfig]'},
+        "name": {"key": "name", "type": "str"},
+        "routes": {"key": "routes", "type": "[HttpRouteConfig]"},
     }
 
     def __init__(self, *, name: str, routes, **kwargs) -> None:
@@ -11178,15 +13127,15 @@ class HttpRouteConfig(Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'match': {'required': True},
-        'destination': {'required': True},
+        "name": {"required": True},
+        "match": {"required": True},
+        "destination": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'match': {'key': 'match', 'type': 'HttpRouteMatchRule'},
-        'destination': {'key': 'destination', 'type': 'GatewayDestination'},
+        "name": {"key": "name", "type": "str"},
+        "match": {"key": "match", "type": "HttpRouteMatchRule"},
+        "destination": {"key": "destination", "type": "GatewayDestination"},
     }
 
     def __init__(self, *, name: str, match, destination, **kwargs) -> None:
@@ -11210,16 +13159,16 @@ class HttpRouteMatchHeader(Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, name: str, value: str=None, type=None, **kwargs) -> None:
+    def __init__(self, *, name: str, value: str = None, type=None, **kwargs) -> None:
         super(HttpRouteMatchHeader, self).__init__(**kwargs)
         self.name = name
         self.value = value
@@ -11244,19 +13193,19 @@ class HttpRouteMatchPath(Model):
     """
 
     _validation = {
-        'value': {'required': True},
-        'type': {'required': True, 'constant': True},
+        "value": {"required": True},
+        "type": {"required": True, "constant": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'rewrite': {'key': 'rewrite', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "value": {"key": "value", "type": "str"},
+        "rewrite": {"key": "rewrite", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
     type = "prefix"
 
-    def __init__(self, *, value: str, rewrite: str=None, **kwargs) -> None:
+    def __init__(self, *, value: str, rewrite: str = None, **kwargs) -> None:
         super(HttpRouteMatchPath, self).__init__(**kwargs)
         self.value = value
         self.rewrite = rewrite
@@ -11274,12 +13223,12 @@ class HttpRouteMatchRule(Model):
     """
 
     _validation = {
-        'path': {'required': True},
+        "path": {"required": True},
     }
 
     _attribute_map = {
-        'path': {'key': 'path', 'type': 'HttpRouteMatchPath'},
-        'headers': {'key': 'headers', 'type': '[HttpRouteMatchHeader]'},
+        "path": {"key": "path", "type": "HttpRouteMatchPath"},
+        "headers": {"key": "headers", "type": "[HttpRouteMatchHeader]"},
     }
 
     def __init__(self, *, path, headers=None, **kwargs) -> None:
@@ -11311,18 +13260,27 @@ class IdentityDescription(Model):
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'token_service_endpoint': {'key': 'tokenServiceEndpoint', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{IdentityItemDescription}'},
+        "token_service_endpoint": {"key": "tokenServiceEndpoint", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{IdentityItemDescription}"},
     }
 
-    def __init__(self, *, type: str, token_service_endpoint: str=None, tenant_id: str=None, principal_id: str=None, user_assigned_identities=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        type: str,
+        token_service_endpoint: str = None,
+        tenant_id: str = None,
+        principal_id: str = None,
+        user_assigned_identities=None,
+        **kwargs
+    ) -> None:
         super(IdentityDescription, self).__init__(**kwargs)
         self.token_service_endpoint = token_service_endpoint
         self.type = type
@@ -11343,11 +13301,11 @@ class IdentityItemDescription(Model):
     """
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(self, *, principal_id: str=None, client_id: str=None, **kwargs) -> None:
+    def __init__(self, *, principal_id: str = None, client_id: str = None, **kwargs) -> None:
         super(IdentityItemDescription, self).__init__(**kwargs)
         self.principal_id = principal_id
         self.client_id = client_id
@@ -11375,18 +13333,20 @@ class ImageRegistryCredential(Model):
     """
 
     _validation = {
-        'server': {'required': True},
-        'username': {'required': True},
+        "server": {"required": True},
+        "username": {"required": True},
     }
 
     _attribute_map = {
-        'server': {'key': 'server', 'type': 'str'},
-        'username': {'key': 'username', 'type': 'str'},
-        'password_type': {'key': 'passwordType', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
+        "server": {"key": "server", "type": "str"},
+        "username": {"key": "username", "type": "str"},
+        "password_type": {"key": "passwordType", "type": "str"},
+        "password": {"key": "password", "type": "str"},
     }
 
-    def __init__(self, *, server: str, username: str, password_type="ClearText", password: str=None, **kwargs) -> None:
+    def __init__(
+        self, *, server: str, username: str, password_type="ClearText", password: str = None, **kwargs
+    ) -> None:
         super(ImageRegistryCredential, self).__init__(**kwargs)
         self.server = server
         self.username = username
@@ -11406,8 +13366,8 @@ class ImageStoreContent(Model):
     """
 
     _attribute_map = {
-        'store_files': {'key': 'StoreFiles', 'type': '[FileInfo]'},
-        'store_folders': {'key': 'StoreFolders', 'type': '[FolderInfo]'},
+        "store_files": {"key": "StoreFiles", "type": "[FileInfo]"},
+        "store_folders": {"key": "StoreFolders", "type": "[FolderInfo]"},
     }
 
     def __init__(self, *, store_files=None, store_folders=None, **kwargs) -> None:
@@ -11439,18 +13399,20 @@ class ImageStoreCopyDescription(Model):
     """
 
     _validation = {
-        'remote_source': {'required': True},
-        'remote_destination': {'required': True},
+        "remote_source": {"required": True},
+        "remote_destination": {"required": True},
     }
 
     _attribute_map = {
-        'remote_source': {'key': 'RemoteSource', 'type': 'str'},
-        'remote_destination': {'key': 'RemoteDestination', 'type': 'str'},
-        'skip_files': {'key': 'SkipFiles', 'type': '[str]'},
-        'check_mark_file': {'key': 'CheckMarkFile', 'type': 'bool'},
+        "remote_source": {"key": "RemoteSource", "type": "str"},
+        "remote_destination": {"key": "RemoteDestination", "type": "str"},
+        "skip_files": {"key": "SkipFiles", "type": "[str]"},
+        "check_mark_file": {"key": "CheckMarkFile", "type": "bool"},
     }
 
-    def __init__(self, *, remote_source: str, remote_destination: str, skip_files=None, check_mark_file: bool=None, **kwargs) -> None:
+    def __init__(
+        self, *, remote_source: str, remote_destination: str, skip_files=None, check_mark_file: bool = None, **kwargs
+    ) -> None:
         super(ImageStoreCopyDescription, self).__init__(**kwargs)
         self.remote_source = remote_source
         self.remote_destination = remote_destination
@@ -11484,14 +13446,23 @@ class ImageStoreInfo(Model):
     """
 
     _attribute_map = {
-        'disk_info': {'key': 'DiskInfo', 'type': 'DiskInfo'},
-        'used_by_metadata': {'key': 'UsedByMetadata', 'type': 'UsageInfo'},
-        'used_by_staging': {'key': 'UsedByStaging', 'type': 'UsageInfo'},
-        'used_by_copy': {'key': 'UsedByCopy', 'type': 'UsageInfo'},
-        'used_by_register': {'key': 'UsedByRegister', 'type': 'UsageInfo'},
+        "disk_info": {"key": "DiskInfo", "type": "DiskInfo"},
+        "used_by_metadata": {"key": "UsedByMetadata", "type": "UsageInfo"},
+        "used_by_staging": {"key": "UsedByStaging", "type": "UsageInfo"},
+        "used_by_copy": {"key": "UsedByCopy", "type": "UsageInfo"},
+        "used_by_register": {"key": "UsedByRegister", "type": "UsageInfo"},
     }
 
-    def __init__(self, *, disk_info=None, used_by_metadata=None, used_by_staging=None, used_by_copy=None, used_by_register=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        disk_info=None,
+        used_by_metadata=None,
+        used_by_staging=None,
+        used_by_copy=None,
+        used_by_register=None,
+        **kwargs
+    ) -> None:
         super(ImageStoreInfo, self).__init__(**kwargs)
         self.disk_info = disk_info
         self.used_by_metadata = used_by_metadata
@@ -11514,16 +13485,14 @@ class SecretResourcePropertiesBase(Model):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
+        "kind": {"key": "kind", "type": "str"},
     }
 
-    _subtype_map = {
-        'kind': {'SecretResourceProperties': 'SecretResourceProperties'}
-    }
+    _subtype_map = {"kind": {"SecretResourceProperties": "SecretResourceProperties"}}
 
     def __init__(self, **kwargs) -> None:
         super(SecretResourcePropertiesBase, self).__init__(**kwargs)
@@ -11558,30 +13527,28 @@ class SecretResourceProperties(SecretResourcePropertiesBase):
     """
 
     _validation = {
-        'kind': {'required': True},
-        'status': {'readonly': True},
-        'status_details': {'readonly': True},
+        "kind": {"required": True},
+        "status": {"readonly": True},
+        "status_details": {"readonly": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'status_details': {'key': 'statusDetails', 'type': 'str'},
-        'content_type': {'key': 'contentType', 'type': 'str'},
+        "kind": {"key": "kind", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "status_details": {"key": "statusDetails", "type": "str"},
+        "content_type": {"key": "contentType", "type": "str"},
     }
 
-    _subtype_map = {
-        'kind': {'inlinedValue': 'InlinedValueSecretResourceProperties'}
-    }
+    _subtype_map = {"kind": {"inlinedValue": "InlinedValueSecretResourceProperties"}}
 
-    def __init__(self, *, description: str=None, content_type: str=None, **kwargs) -> None:
+    def __init__(self, *, description: str = None, content_type: str = None, **kwargs) -> None:
         super(SecretResourceProperties, self).__init__(**kwargs)
         self.description = description
         self.status = None
         self.status_details = None
         self.content_type = content_type
-        self.kind = 'SecretResourceProperties'
+        self.kind = "SecretResourceProperties"
 
 
 class InlinedValueSecretResourceProperties(SecretResourceProperties):
@@ -11613,22 +13580,24 @@ class InlinedValueSecretResourceProperties(SecretResourceProperties):
     """
 
     _validation = {
-        'kind': {'required': True},
-        'status': {'readonly': True},
-        'status_details': {'readonly': True},
+        "kind": {"required": True},
+        "status": {"readonly": True},
+        "status_details": {"readonly": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'status_details': {'key': 'statusDetails', 'type': 'str'},
-        'content_type': {'key': 'contentType', 'type': 'str'},
+        "kind": {"key": "kind", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "status_details": {"key": "statusDetails", "type": "str"},
+        "content_type": {"key": "contentType", "type": "str"},
     }
 
-    def __init__(self, *, description: str=None, content_type: str=None, **kwargs) -> None:
-        super(InlinedValueSecretResourceProperties, self).__init__(description=description, content_type=content_type, **kwargs)
-        self.kind = 'inlinedValue'
+    def __init__(self, *, description: str = None, content_type: str = None, **kwargs) -> None:
+        super(InlinedValueSecretResourceProperties, self).__init__(
+            description=description, content_type=content_type, **kwargs
+        )
+        self.kind = "inlinedValue"
 
 
 class InstanceLifecycleDescription(Model):
@@ -11640,10 +13609,10 @@ class InstanceLifecycleDescription(Model):
     """
 
     _attribute_map = {
-        'restore_replica_location_after_upgrade': {'key': 'RestoreReplicaLocationAfterUpgrade', 'type': 'bool'},
+        "restore_replica_location_after_upgrade": {"key": "RestoreReplicaLocationAfterUpgrade", "type": "bool"},
     }
 
-    def __init__(self, *, restore_replica_location_after_upgrade: bool=None, **kwargs) -> None:
+    def __init__(self, *, restore_replica_location_after_upgrade: bool = None, **kwargs) -> None:
         super(InstanceLifecycleDescription, self).__init__(**kwargs)
         self.restore_replica_location_after_upgrade = restore_replica_location_after_upgrade
 
@@ -11660,19 +13629,19 @@ class Int64PropertyValue(PropertyValue):
     """
 
     _validation = {
-        'kind': {'required': True},
-        'data': {'required': True},
+        "kind": {"required": True},
+        "data": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'data': {'key': 'Data', 'type': 'str'},
+        "kind": {"key": "Kind", "type": "str"},
+        "data": {"key": "Data", "type": "str"},
     }
 
     def __init__(self, *, data: str, **kwargs) -> None:
         super(Int64PropertyValue, self).__init__(**kwargs)
         self.data = data
-        self.kind = 'Int64'
+        self.kind = "Int64"
 
 
 class PartitionInformation(Model):
@@ -11696,19 +13665,23 @@ class PartitionInformation(Model):
     """
 
     _validation = {
-        'service_partition_kind': {'required': True},
+        "service_partition_kind": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str'},
-        'service_partition_kind': {'key': 'ServicePartitionKind', 'type': 'str'},
+        "id": {"key": "Id", "type": "str"},
+        "service_partition_kind": {"key": "ServicePartitionKind", "type": "str"},
     }
 
     _subtype_map = {
-        'service_partition_kind': {'Int64Range': 'Int64RangePartitionInformation', 'Named': 'NamedPartitionInformation', 'Singleton': 'SingletonPartitionInformation'}
+        "service_partition_kind": {
+            "Int64Range": "Int64RangePartitionInformation",
+            "Named": "NamedPartitionInformation",
+            "Singleton": "SingletonPartitionInformation",
+        }
     }
 
-    def __init__(self, *, id: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str = None, **kwargs) -> None:
         super(PartitionInformation, self).__init__(**kwargs)
         self.id = id
         self.service_partition_kind = None
@@ -11736,21 +13709,21 @@ class Int64RangePartitionInformation(PartitionInformation):
     """
 
     _validation = {
-        'service_partition_kind': {'required': True},
+        "service_partition_kind": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str'},
-        'service_partition_kind': {'key': 'ServicePartitionKind', 'type': 'str'},
-        'low_key': {'key': 'LowKey', 'type': 'str'},
-        'high_key': {'key': 'HighKey', 'type': 'str'},
+        "id": {"key": "Id", "type": "str"},
+        "service_partition_kind": {"key": "ServicePartitionKind", "type": "str"},
+        "low_key": {"key": "LowKey", "type": "str"},
+        "high_key": {"key": "HighKey", "type": "str"},
     }
 
-    def __init__(self, *, id: str=None, low_key: str=None, high_key: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str = None, low_key: str = None, high_key: str = None, **kwargs) -> None:
         super(Int64RangePartitionInformation, self).__init__(id=id, **kwargs)
         self.low_key = low_key
         self.high_key = high_key
-        self.service_partition_kind = 'Int64Range'
+        self.service_partition_kind = "Int64Range"
 
 
 class InvokeDataLossResult(Model):
@@ -11766,11 +13739,11 @@ class InvokeDataLossResult(Model):
     """
 
     _attribute_map = {
-        'error_code': {'key': 'ErrorCode', 'type': 'int'},
-        'selected_partition': {'key': 'SelectedPartition', 'type': 'SelectedPartition'},
+        "error_code": {"key": "ErrorCode", "type": "int"},
+        "selected_partition": {"key": "SelectedPartition", "type": "SelectedPartition"},
     }
 
-    def __init__(self, *, error_code: int=None, selected_partition=None, **kwargs) -> None:
+    def __init__(self, *, error_code: int = None, selected_partition=None, **kwargs) -> None:
         super(InvokeDataLossResult, self).__init__(**kwargs)
         self.error_code = error_code
         self.selected_partition = selected_partition
@@ -11789,11 +13762,11 @@ class InvokeQuorumLossResult(Model):
     """
 
     _attribute_map = {
-        'error_code': {'key': 'ErrorCode', 'type': 'int'},
-        'selected_partition': {'key': 'SelectedPartition', 'type': 'SelectedPartition'},
+        "error_code": {"key": "ErrorCode", "type": "int"},
+        "selected_partition": {"key": "SelectedPartition", "type": "SelectedPartition"},
     }
 
-    def __init__(self, *, error_code: int=None, selected_partition=None, **kwargs) -> None:
+    def __init__(self, *, error_code: int = None, selected_partition=None, **kwargs) -> None:
         super(InvokeQuorumLossResult, self).__init__(**kwargs)
         self.error_code = error_code
         self.selected_partition = selected_partition
@@ -11812,16 +13785,14 @@ class ReplicaStatusBase(Model):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
+        "kind": {"key": "Kind", "type": "str"},
     }
 
-    _subtype_map = {
-        'kind': {'KeyValueStore': 'KeyValueStoreReplicaStatus'}
-    }
+    _subtype_map = {"kind": {"KeyValueStore": "KeyValueStoreReplicaStatus"}}
 
     def __init__(self, **kwargs) -> None:
         super(ReplicaStatusBase, self).__init__(**kwargs)
@@ -11855,26 +13826,35 @@ class KeyValueStoreReplicaStatus(ReplicaStatusBase):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'database_row_count_estimate': {'key': 'DatabaseRowCountEstimate', 'type': 'str'},
-        'database_logical_size_estimate': {'key': 'DatabaseLogicalSizeEstimate', 'type': 'str'},
-        'copy_notification_current_key_filter': {'key': 'CopyNotificationCurrentKeyFilter', 'type': 'str'},
-        'copy_notification_current_progress': {'key': 'CopyNotificationCurrentProgress', 'type': 'str'},
-        'status_details': {'key': 'StatusDetails', 'type': 'str'},
+        "kind": {"key": "Kind", "type": "str"},
+        "database_row_count_estimate": {"key": "DatabaseRowCountEstimate", "type": "str"},
+        "database_logical_size_estimate": {"key": "DatabaseLogicalSizeEstimate", "type": "str"},
+        "copy_notification_current_key_filter": {"key": "CopyNotificationCurrentKeyFilter", "type": "str"},
+        "copy_notification_current_progress": {"key": "CopyNotificationCurrentProgress", "type": "str"},
+        "status_details": {"key": "StatusDetails", "type": "str"},
     }
 
-    def __init__(self, *, database_row_count_estimate: str=None, database_logical_size_estimate: str=None, copy_notification_current_key_filter: str=None, copy_notification_current_progress: str=None, status_details: str=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        database_row_count_estimate: str = None,
+        database_logical_size_estimate: str = None,
+        copy_notification_current_key_filter: str = None,
+        copy_notification_current_progress: str = None,
+        status_details: str = None,
+        **kwargs
+    ) -> None:
         super(KeyValueStoreReplicaStatus, self).__init__(**kwargs)
         self.database_row_count_estimate = database_row_count_estimate
         self.database_logical_size_estimate = database_logical_size_estimate
         self.copy_notification_current_key_filter = copy_notification_current_key_filter
         self.copy_notification_current_progress = copy_notification_current_progress
         self.status_details = status_details
-        self.kind = 'KeyValueStore'
+        self.kind = "KeyValueStore"
 
 
 class LoadedPartitionInformationQueryDescription(Model):
@@ -11906,14 +13886,23 @@ class LoadedPartitionInformationQueryDescription(Model):
     """
 
     _attribute_map = {
-        'metric_name': {'key': 'MetricName', 'type': 'str'},
-        'service_name': {'key': 'ServiceName', 'type': 'str'},
-        'ordering': {'key': 'Ordering', 'type': 'str'},
-        'max_results': {'key': 'MaxResults', 'type': 'long'},
-        'continuation_token': {'key': 'ContinuationToken', 'type': 'str'},
+        "metric_name": {"key": "MetricName", "type": "str"},
+        "service_name": {"key": "ServiceName", "type": "str"},
+        "ordering": {"key": "Ordering", "type": "str"},
+        "max_results": {"key": "MaxResults", "type": "long"},
+        "continuation_token": {"key": "ContinuationToken", "type": "str"},
     }
 
-    def __init__(self, *, metric_name: str=None, service_name: str=None, ordering="Desc", max_results: int=None, continuation_token: str=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        metric_name: str = None,
+        service_name: str = None,
+        ordering="Desc",
+        max_results: int = None,
+        continuation_token: str = None,
+        **kwargs
+    ) -> None:
         super(LoadedPartitionInformationQueryDescription, self).__init__(**kwargs)
         self.metric_name = metric_name
         self.service_name = service_name
@@ -11940,17 +13929,17 @@ class LoadedPartitionInformationResult(Model):
     """
 
     _validation = {
-        'service_name': {'required': True},
-        'partition_id': {'required': True},
-        'metric_name': {'required': True},
-        'load': {'required': True},
+        "service_name": {"required": True},
+        "partition_id": {"required": True},
+        "metric_name": {"required": True},
+        "load": {"required": True},
     }
 
     _attribute_map = {
-        'service_name': {'key': 'ServiceName', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'metric_name': {'key': 'MetricName', 'type': 'str'},
-        'load': {'key': 'Load', 'type': 'long'},
+        "service_name": {"key": "ServiceName", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "metric_name": {"key": "MetricName", "type": "str"},
+        "load": {"key": "Load", "type": "long"},
     }
 
     def __init__(self, *, service_name: str, partition_id: str, metric_name: str, load: int, **kwargs) -> None:
@@ -11978,11 +13967,11 @@ class LoadedPartitionInformationResultList(Model):
     """
 
     _attribute_map = {
-        'continuation_token': {'key': 'ContinuationToken', 'type': 'str'},
-        'items': {'key': 'Items', 'type': '[LoadedPartitionInformationResult]'},
+        "continuation_token": {"key": "ContinuationToken", "type": "str"},
+        "items": {"key": "Items", "type": "[LoadedPartitionInformationResult]"},
     }
 
-    def __init__(self, *, continuation_token: str=None, items=None, **kwargs) -> None:
+    def __init__(self, *, continuation_token: str = None, items=None, **kwargs) -> None:
         super(LoadedPartitionInformationResultList, self).__init__(**kwargs)
         self.continuation_token = continuation_token
         self.items = items
@@ -12071,34 +14060,63 @@ class LoadMetricInformation(Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'is_balanced_before': {'key': 'IsBalancedBefore', 'type': 'bool'},
-        'is_balanced_after': {'key': 'IsBalancedAfter', 'type': 'bool'},
-        'deviation_before': {'key': 'DeviationBefore', 'type': 'str'},
-        'deviation_after': {'key': 'DeviationAfter', 'type': 'str'},
-        'balancing_threshold': {'key': 'BalancingThreshold', 'type': 'str'},
-        'action': {'key': 'Action', 'type': 'str'},
-        'activity_threshold': {'key': 'ActivityThreshold', 'type': 'str'},
-        'cluster_capacity': {'key': 'ClusterCapacity', 'type': 'str'},
-        'cluster_load': {'key': 'ClusterLoad', 'type': 'str'},
-        'current_cluster_load': {'key': 'CurrentClusterLoad', 'type': 'str'},
-        'cluster_remaining_capacity': {'key': 'ClusterRemainingCapacity', 'type': 'str'},
-        'cluster_capacity_remaining': {'key': 'ClusterCapacityRemaining', 'type': 'str'},
-        'is_cluster_capacity_violation': {'key': 'IsClusterCapacityViolation', 'type': 'bool'},
-        'node_buffer_percentage': {'key': 'NodeBufferPercentage', 'type': 'str'},
-        'cluster_buffered_capacity': {'key': 'ClusterBufferedCapacity', 'type': 'str'},
-        'buffered_cluster_capacity_remaining': {'key': 'BufferedClusterCapacityRemaining', 'type': 'str'},
-        'cluster_remaining_buffered_capacity': {'key': 'ClusterRemainingBufferedCapacity', 'type': 'str'},
-        'min_node_load_value': {'key': 'MinNodeLoadValue', 'type': 'str'},
-        'minimum_node_load': {'key': 'MinimumNodeLoad', 'type': 'str'},
-        'min_node_load_node_id': {'key': 'MinNodeLoadNodeId', 'type': 'NodeId'},
-        'max_node_load_value': {'key': 'MaxNodeLoadValue', 'type': 'str'},
-        'maximum_node_load': {'key': 'MaximumNodeLoad', 'type': 'str'},
-        'max_node_load_node_id': {'key': 'MaxNodeLoadNodeId', 'type': 'NodeId'},
-        'planned_load_removal': {'key': 'PlannedLoadRemoval', 'type': 'str'},
+        "name": {"key": "Name", "type": "str"},
+        "is_balanced_before": {"key": "IsBalancedBefore", "type": "bool"},
+        "is_balanced_after": {"key": "IsBalancedAfter", "type": "bool"},
+        "deviation_before": {"key": "DeviationBefore", "type": "str"},
+        "deviation_after": {"key": "DeviationAfter", "type": "str"},
+        "balancing_threshold": {"key": "BalancingThreshold", "type": "str"},
+        "action": {"key": "Action", "type": "str"},
+        "activity_threshold": {"key": "ActivityThreshold", "type": "str"},
+        "cluster_capacity": {"key": "ClusterCapacity", "type": "str"},
+        "cluster_load": {"key": "ClusterLoad", "type": "str"},
+        "current_cluster_load": {"key": "CurrentClusterLoad", "type": "str"},
+        "cluster_remaining_capacity": {"key": "ClusterRemainingCapacity", "type": "str"},
+        "cluster_capacity_remaining": {"key": "ClusterCapacityRemaining", "type": "str"},
+        "is_cluster_capacity_violation": {"key": "IsClusterCapacityViolation", "type": "bool"},
+        "node_buffer_percentage": {"key": "NodeBufferPercentage", "type": "str"},
+        "cluster_buffered_capacity": {"key": "ClusterBufferedCapacity", "type": "str"},
+        "buffered_cluster_capacity_remaining": {"key": "BufferedClusterCapacityRemaining", "type": "str"},
+        "cluster_remaining_buffered_capacity": {"key": "ClusterRemainingBufferedCapacity", "type": "str"},
+        "min_node_load_value": {"key": "MinNodeLoadValue", "type": "str"},
+        "minimum_node_load": {"key": "MinimumNodeLoad", "type": "str"},
+        "min_node_load_node_id": {"key": "MinNodeLoadNodeId", "type": "NodeId"},
+        "max_node_load_value": {"key": "MaxNodeLoadValue", "type": "str"},
+        "maximum_node_load": {"key": "MaximumNodeLoad", "type": "str"},
+        "max_node_load_node_id": {"key": "MaxNodeLoadNodeId", "type": "NodeId"},
+        "planned_load_removal": {"key": "PlannedLoadRemoval", "type": "str"},
     }
 
-    def __init__(self, *, name: str=None, is_balanced_before: bool=None, is_balanced_after: bool=None, deviation_before: str=None, deviation_after: str=None, balancing_threshold: str=None, action: str=None, activity_threshold: str=None, cluster_capacity: str=None, cluster_load: str=None, current_cluster_load: str=None, cluster_remaining_capacity: str=None, cluster_capacity_remaining: str=None, is_cluster_capacity_violation: bool=None, node_buffer_percentage: str=None, cluster_buffered_capacity: str=None, buffered_cluster_capacity_remaining: str=None, cluster_remaining_buffered_capacity: str=None, min_node_load_value: str=None, minimum_node_load: str=None, min_node_load_node_id=None, max_node_load_value: str=None, maximum_node_load: str=None, max_node_load_node_id=None, planned_load_removal: str=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        is_balanced_before: bool = None,
+        is_balanced_after: bool = None,
+        deviation_before: str = None,
+        deviation_after: str = None,
+        balancing_threshold: str = None,
+        action: str = None,
+        activity_threshold: str = None,
+        cluster_capacity: str = None,
+        cluster_load: str = None,
+        current_cluster_load: str = None,
+        cluster_remaining_capacity: str = None,
+        cluster_capacity_remaining: str = None,
+        is_cluster_capacity_violation: bool = None,
+        node_buffer_percentage: str = None,
+        cluster_buffered_capacity: str = None,
+        buffered_cluster_capacity_remaining: str = None,
+        cluster_remaining_buffered_capacity: str = None,
+        min_node_load_value: str = None,
+        minimum_node_load: str = None,
+        min_node_load_node_id=None,
+        max_node_load_value: str = None,
+        maximum_node_load: str = None,
+        max_node_load_node_id=None,
+        planned_load_removal: str = None,
+        **kwargs
+    ) -> None:
         super(LoadMetricInformation, self).__init__(**kwargs)
         self.name = name
         self.is_balanced_before = is_balanced_before
@@ -12143,13 +14161,15 @@ class LoadMetricReport(Model):
     """
 
     _attribute_map = {
-        'last_reported_utc': {'key': 'LastReportedUtc', 'type': 'iso-8601'},
-        'name': {'key': 'Name', 'type': 'str'},
-        'value': {'key': 'Value', 'type': 'str'},
-        'current_value': {'key': 'CurrentValue', 'type': 'str'},
+        "last_reported_utc": {"key": "LastReportedUtc", "type": "iso-8601"},
+        "name": {"key": "Name", "type": "str"},
+        "value": {"key": "Value", "type": "str"},
+        "current_value": {"key": "CurrentValue", "type": "str"},
     }
 
-    def __init__(self, *, last_reported_utc=None, name: str=None, value: str=None, current_value: str=None, **kwargs) -> None:
+    def __init__(
+        self, *, last_reported_utc=None, name: str = None, value: str = None, current_value: str = None, **kwargs
+    ) -> None:
         super(LoadMetricReport, self).__init__(**kwargs)
         self.last_reported_utc = last_reported_utc
         self.name = name
@@ -12172,13 +14192,15 @@ class LoadMetricReportInfo(Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'value': {'key': 'Value', 'type': 'int'},
-        'current_value': {'key': 'CurrentValue', 'type': 'str'},
-        'last_reported_utc': {'key': 'LastReportedUtc', 'type': 'iso-8601'},
+        "name": {"key": "Name", "type": "str"},
+        "value": {"key": "Value", "type": "int"},
+        "current_value": {"key": "CurrentValue", "type": "str"},
+        "last_reported_utc": {"key": "LastReportedUtc", "type": "iso-8601"},
     }
 
-    def __init__(self, *, name: str=None, value: int=None, current_value: str=None, last_reported_utc=None, **kwargs) -> None:
+    def __init__(
+        self, *, name: str = None, value: int = None, current_value: str = None, last_reported_utc=None, **kwargs
+    ) -> None:
         super(LoadMetricReportInfo, self).__init__(**kwargs)
         self.name = name
         self.value = value
@@ -12200,16 +14222,14 @@ class NetworkResourcePropertiesBase(Model):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
+        "kind": {"key": "kind", "type": "str"},
     }
 
-    _subtype_map = {
-        'kind': {'NetworkResourceProperties': 'NetworkResourceProperties'}
-    }
+    _subtype_map = {"kind": {"NetworkResourceProperties": "NetworkResourceProperties"}}
 
     def __init__(self, **kwargs) -> None:
         super(NetworkResourcePropertiesBase, self).__init__(**kwargs)
@@ -12240,28 +14260,26 @@ class NetworkResourceProperties(NetworkResourcePropertiesBase):
     """
 
     _validation = {
-        'kind': {'required': True},
-        'status': {'readonly': True},
-        'status_details': {'readonly': True},
+        "kind": {"required": True},
+        "status": {"readonly": True},
+        "status_details": {"readonly": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'status_details': {'key': 'statusDetails', 'type': 'str'},
+        "kind": {"key": "kind", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "status_details": {"key": "statusDetails", "type": "str"},
     }
 
-    _subtype_map = {
-        'kind': {'Local': 'LocalNetworkResourceProperties'}
-    }
+    _subtype_map = {"kind": {"Local": "LocalNetworkResourceProperties"}}
 
-    def __init__(self, *, description: str=None, **kwargs) -> None:
+    def __init__(self, *, description: str = None, **kwargs) -> None:
         super(NetworkResourceProperties, self).__init__(**kwargs)
         self.description = description
         self.status = None
         self.status_details = None
-        self.kind = 'NetworkResourceProperties'
+        self.kind = "NetworkResourceProperties"
 
 
 class LocalNetworkResourceProperties(NetworkResourceProperties):
@@ -12289,23 +14307,23 @@ class LocalNetworkResourceProperties(NetworkResourceProperties):
     """
 
     _validation = {
-        'kind': {'required': True},
-        'status': {'readonly': True},
-        'status_details': {'readonly': True},
+        "kind": {"required": True},
+        "status": {"readonly": True},
+        "status_details": {"readonly": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'status_details': {'key': 'statusDetails', 'type': 'str'},
-        'network_address_prefix': {'key': 'networkAddressPrefix', 'type': 'str'},
+        "kind": {"key": "kind", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "status_details": {"key": "statusDetails", "type": "str"},
+        "network_address_prefix": {"key": "networkAddressPrefix", "type": "str"},
     }
 
-    def __init__(self, *, description: str=None, network_address_prefix: str=None, **kwargs) -> None:
+    def __init__(self, *, description: str = None, network_address_prefix: str = None, **kwargs) -> None:
         super(LocalNetworkResourceProperties, self).__init__(description=description, **kwargs)
         self.network_address_prefix = network_address_prefix
-        self.kind = 'Local'
+        self.kind = "Local"
 
 
 class ManagedApplicationIdentity(Model):
@@ -12320,15 +14338,15 @@ class ManagedApplicationIdentity(Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'principal_id': {'key': 'PrincipalId', 'type': 'str'},
+        "name": {"key": "Name", "type": "str"},
+        "principal_id": {"key": "PrincipalId", "type": "str"},
     }
 
-    def __init__(self, *, name: str, principal_id: str=None, **kwargs) -> None:
+    def __init__(self, *, name: str, principal_id: str = None, **kwargs) -> None:
         super(ManagedApplicationIdentity, self).__init__(**kwargs)
         self.name = name
         self.principal_id = principal_id
@@ -12345,11 +14363,11 @@ class ManagedApplicationIdentityDescription(Model):
     """
 
     _attribute_map = {
-        'token_service_endpoint': {'key': 'TokenServiceEndpoint', 'type': 'str'},
-        'managed_identities': {'key': 'ManagedIdentities', 'type': '[ManagedApplicationIdentity]'},
+        "token_service_endpoint": {"key": "TokenServiceEndpoint", "type": "str"},
+        "managed_identities": {"key": "ManagedIdentities", "type": "[ManagedApplicationIdentity]"},
     }
 
-    def __init__(self, *, token_service_endpoint: str=None, managed_identities=None, **kwargs) -> None:
+    def __init__(self, *, token_service_endpoint: str = None, managed_identities=None, **kwargs) -> None:
         super(ManagedApplicationIdentityDescription, self).__init__(**kwargs)
         self.token_service_endpoint = token_service_endpoint
         self.managed_identities = managed_identities
@@ -12379,26 +14397,28 @@ class ManagedIdentityAzureBlobBackupStorageDescription(BackupStorageDescription)
     """
 
     _validation = {
-        'storage_kind': {'required': True},
-        'managed_identity_type': {'required': True},
-        'blob_service_uri': {'required': True},
-        'container_name': {'required': True},
+        "storage_kind": {"required": True},
+        "managed_identity_type": {"required": True},
+        "blob_service_uri": {"required": True},
+        "container_name": {"required": True},
     }
 
     _attribute_map = {
-        'friendly_name': {'key': 'FriendlyName', 'type': 'str'},
-        'storage_kind': {'key': 'StorageKind', 'type': 'str'},
-        'managed_identity_type': {'key': 'ManagedIdentityType', 'type': 'str'},
-        'blob_service_uri': {'key': 'BlobServiceUri', 'type': 'str'},
-        'container_name': {'key': 'ContainerName', 'type': 'str'},
+        "friendly_name": {"key": "FriendlyName", "type": "str"},
+        "storage_kind": {"key": "StorageKind", "type": "str"},
+        "managed_identity_type": {"key": "ManagedIdentityType", "type": "str"},
+        "blob_service_uri": {"key": "BlobServiceUri", "type": "str"},
+        "container_name": {"key": "ContainerName", "type": "str"},
     }
 
-    def __init__(self, *, managed_identity_type, blob_service_uri: str, container_name: str, friendly_name: str=None, **kwargs) -> None:
+    def __init__(
+        self, *, managed_identity_type, blob_service_uri: str, container_name: str, friendly_name: str = None, **kwargs
+    ) -> None:
         super(ManagedIdentityAzureBlobBackupStorageDescription, self).__init__(friendly_name=friendly_name, **kwargs)
         self.managed_identity_type = managed_identity_type
         self.blob_service_uri = blob_service_uri
         self.container_name = container_name
-        self.storage_kind = 'ManagedIdentityAzureBlobStore'
+        self.storage_kind = "ManagedIdentityAzureBlobStore"
 
 
 class MetricLoadDescription(Model):
@@ -12416,12 +14436,14 @@ class MetricLoadDescription(Model):
     """
 
     _attribute_map = {
-        'metric_name': {'key': 'MetricName', 'type': 'str'},
-        'current_load': {'key': 'CurrentLoad', 'type': 'long'},
-        'predicted_load': {'key': 'PredictedLoad', 'type': 'long'},
+        "metric_name": {"key": "MetricName", "type": "str"},
+        "current_load": {"key": "CurrentLoad", "type": "long"},
+        "predicted_load": {"key": "PredictedLoad", "type": "long"},
     }
 
-    def __init__(self, *, metric_name: str=None, current_load: int=None, predicted_load: int=None, **kwargs) -> None:
+    def __init__(
+        self, *, metric_name: str = None, current_load: int = None, predicted_load: int = None, **kwargs
+    ) -> None:
         super(MetricLoadDescription, self).__init__(**kwargs)
         self.metric_name = metric_name
         self.current_load = current_load
@@ -12471,15 +14493,28 @@ class MonitoringPolicyDescription(Model):
     """
 
     _attribute_map = {
-        'failure_action': {'key': 'FailureAction', 'type': 'str'},
-        'health_check_wait_duration_in_milliseconds': {'key': 'HealthCheckWaitDurationInMilliseconds', 'type': 'str'},
-        'health_check_stable_duration_in_milliseconds': {'key': 'HealthCheckStableDurationInMilliseconds', 'type': 'str'},
-        'health_check_retry_timeout_in_milliseconds': {'key': 'HealthCheckRetryTimeoutInMilliseconds', 'type': 'str'},
-        'upgrade_timeout_in_milliseconds': {'key': 'UpgradeTimeoutInMilliseconds', 'type': 'str'},
-        'upgrade_domain_timeout_in_milliseconds': {'key': 'UpgradeDomainTimeoutInMilliseconds', 'type': 'str'},
+        "failure_action": {"key": "FailureAction", "type": "str"},
+        "health_check_wait_duration_in_milliseconds": {"key": "HealthCheckWaitDurationInMilliseconds", "type": "str"},
+        "health_check_stable_duration_in_milliseconds": {
+            "key": "HealthCheckStableDurationInMilliseconds",
+            "type": "str",
+        },
+        "health_check_retry_timeout_in_milliseconds": {"key": "HealthCheckRetryTimeoutInMilliseconds", "type": "str"},
+        "upgrade_timeout_in_milliseconds": {"key": "UpgradeTimeoutInMilliseconds", "type": "str"},
+        "upgrade_domain_timeout_in_milliseconds": {"key": "UpgradeDomainTimeoutInMilliseconds", "type": "str"},
     }
 
-    def __init__(self, *, failure_action=None, health_check_wait_duration_in_milliseconds: str=None, health_check_stable_duration_in_milliseconds: str=None, health_check_retry_timeout_in_milliseconds: str=None, upgrade_timeout_in_milliseconds: str=None, upgrade_domain_timeout_in_milliseconds: str=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        failure_action=None,
+        health_check_wait_duration_in_milliseconds: str = None,
+        health_check_stable_duration_in_milliseconds: str = None,
+        health_check_retry_timeout_in_milliseconds: str = None,
+        upgrade_timeout_in_milliseconds: str = None,
+        upgrade_domain_timeout_in_milliseconds: str = None,
+        **kwargs
+    ) -> None:
         super(MonitoringPolicyDescription, self).__init__(**kwargs)
         self.failure_action = failure_action
         self.health_check_wait_duration_in_milliseconds = health_check_wait_duration_in_milliseconds
@@ -12500,11 +14535,11 @@ class NameDescription(Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
+        "name": {"key": "Name", "type": "str"},
     }
 
     def __init__(self, *, name: str, **kwargs) -> None:
@@ -12531,19 +14566,19 @@ class NamedPartitionInformation(PartitionInformation):
     """
 
     _validation = {
-        'service_partition_kind': {'required': True},
+        "service_partition_kind": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str'},
-        'service_partition_kind': {'key': 'ServicePartitionKind', 'type': 'str'},
-        'name': {'key': 'Name', 'type': 'str'},
+        "id": {"key": "Id", "type": "str"},
+        "service_partition_kind": {"key": "ServicePartitionKind", "type": "str"},
+        "name": {"key": "Name", "type": "str"},
     }
 
-    def __init__(self, *, id: str=None, name: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str = None, name: str = None, **kwargs) -> None:
         super(NamedPartitionInformation, self).__init__(id=id, **kwargs)
         self.name = name
-        self.service_partition_kind = 'Named'
+        self.service_partition_kind = "Named"
 
 
 class PartitionSchemeDescription(Model):
@@ -12561,15 +14596,19 @@ class PartitionSchemeDescription(Model):
     """
 
     _validation = {
-        'partition_scheme': {'required': True},
+        "partition_scheme": {"required": True},
     }
 
     _attribute_map = {
-        'partition_scheme': {'key': 'PartitionScheme', 'type': 'str'},
+        "partition_scheme": {"key": "PartitionScheme", "type": "str"},
     }
 
     _subtype_map = {
-        'partition_scheme': {'Named': 'NamedPartitionSchemeDescription', 'Singleton': 'SingletonPartitionSchemeDescription', 'UniformInt64Range': 'UniformInt64RangePartitionSchemeDescription'}
+        "partition_scheme": {
+            "Named": "NamedPartitionSchemeDescription",
+            "Singleton": "SingletonPartitionSchemeDescription",
+            "UniformInt64Range": "UniformInt64RangePartitionSchemeDescription",
+        }
     }
 
     def __init__(self, **kwargs) -> None:
@@ -12592,22 +14631,22 @@ class NamedPartitionSchemeDescription(PartitionSchemeDescription):
     """
 
     _validation = {
-        'partition_scheme': {'required': True},
-        'count': {'required': True},
-        'names': {'required': True},
+        "partition_scheme": {"required": True},
+        "count": {"required": True},
+        "names": {"required": True},
     }
 
     _attribute_map = {
-        'partition_scheme': {'key': 'PartitionScheme', 'type': 'str'},
-        'count': {'key': 'Count', 'type': 'int'},
-        'names': {'key': 'Names', 'type': '[str]'},
+        "partition_scheme": {"key": "PartitionScheme", "type": "str"},
+        "count": {"key": "Count", "type": "int"},
+        "names": {"key": "Names", "type": "[str]"},
     }
 
     def __init__(self, *, count: int, names, **kwargs) -> None:
         super(NamedPartitionSchemeDescription, self).__init__(**kwargs)
         self.count = count
         self.names = names
-        self.partition_scheme = 'Named'
+        self.partition_scheme = "Named"
 
 
 class NetworkRef(Model):
@@ -12621,11 +14660,11 @@ class NetworkRef(Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'endpoint_refs': {'key': 'endpointRefs', 'type': '[EndpointRef]'},
+        "name": {"key": "name", "type": "str"},
+        "endpoint_refs": {"key": "endpointRefs", "type": "[EndpointRef]"},
     }
 
-    def __init__(self, *, name: str=None, endpoint_refs=None, **kwargs) -> None:
+    def __init__(self, *, name: str = None, endpoint_refs=None, **kwargs) -> None:
         super(NetworkRef, self).__init__(**kwargs)
         self.name = name
         self.endpoint_refs = endpoint_refs
@@ -12643,13 +14682,13 @@ class NetworkResourceDescription(Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'properties': {'required': True},
+        "name": {"required": True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'NetworkResourceProperties'},
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "NetworkResourceProperties"},
     }
 
     def __init__(self, *, name: str, properties, **kwargs) -> None:
@@ -12696,39 +14735,63 @@ class NodeAbortedEvent(NodeEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'node_name': {'required': True},
-        'node_instance': {'required': True},
-        'node_id': {'required': True},
-        'upgrade_domain': {'required': True},
-        'fault_domain': {'required': True},
-        'ip_address_or_fqdn': {'required': True},
-        'hostname': {'required': True},
-        'is_seed_node': {'required': True},
-        'node_version': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "node_name": {"required": True},
+        "node_instance": {"required": True},
+        "node_id": {"required": True},
+        "upgrade_domain": {"required": True},
+        "fault_domain": {"required": True},
+        "ip_address_or_fqdn": {"required": True},
+        "hostname": {"required": True},
+        "is_seed_node": {"required": True},
+        "node_version": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'node_instance': {'key': 'NodeInstance', 'type': 'long'},
-        'node_id': {'key': 'NodeId', 'type': 'str'},
-        'upgrade_domain': {'key': 'UpgradeDomain', 'type': 'str'},
-        'fault_domain': {'key': 'FaultDomain', 'type': 'str'},
-        'ip_address_or_fqdn': {'key': 'IpAddressOrFQDN', 'type': 'str'},
-        'hostname': {'key': 'Hostname', 'type': 'str'},
-        'is_seed_node': {'key': 'IsSeedNode', 'type': 'bool'},
-        'node_version': {'key': 'NodeVersion', 'type': 'str'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "node_instance": {"key": "NodeInstance", "type": "long"},
+        "node_id": {"key": "NodeId", "type": "str"},
+        "upgrade_domain": {"key": "UpgradeDomain", "type": "str"},
+        "fault_domain": {"key": "FaultDomain", "type": "str"},
+        "ip_address_or_fqdn": {"key": "IpAddressOrFQDN", "type": "str"},
+        "hostname": {"key": "Hostname", "type": "str"},
+        "is_seed_node": {"key": "IsSeedNode", "type": "bool"},
+        "node_version": {"key": "NodeVersion", "type": "str"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, node_name: str, node_instance: int, node_id: str, upgrade_domain: str, fault_domain: str, ip_address_or_fqdn: str, hostname: str, is_seed_node: bool, node_version: str, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(NodeAbortedEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, node_name=node_name, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        node_name: str,
+        node_instance: int,
+        node_id: str,
+        upgrade_domain: str,
+        fault_domain: str,
+        ip_address_or_fqdn: str,
+        hostname: str,
+        is_seed_node: bool,
+        node_version: str,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(NodeAbortedEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            node_name=node_name,
+            **kwargs
+        )
         self.node_instance = node_instance
         self.node_id = node_id
         self.upgrade_domain = upgrade_domain
@@ -12737,7 +14800,7 @@ class NodeAbortedEvent(NodeEvent):
         self.hostname = hostname
         self.is_seed_node = is_seed_node
         self.node_version = node_version
-        self.kind = 'NodeAborted'
+        self.kind = "NodeAborted"
 
 
 class NodeAddedToClusterEvent(NodeEvent):
@@ -12774,42 +14837,64 @@ class NodeAddedToClusterEvent(NodeEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'node_name': {'required': True},
-        'node_id': {'required': True},
-        'node_instance': {'required': True},
-        'node_type': {'required': True},
-        'fabric_version': {'required': True},
-        'ip_address_or_fqdn': {'required': True},
-        'node_capacities': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "node_name": {"required": True},
+        "node_id": {"required": True},
+        "node_instance": {"required": True},
+        "node_type": {"required": True},
+        "fabric_version": {"required": True},
+        "ip_address_or_fqdn": {"required": True},
+        "node_capacities": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'node_id': {'key': 'NodeId', 'type': 'str'},
-        'node_instance': {'key': 'NodeInstance', 'type': 'long'},
-        'node_type': {'key': 'NodeType', 'type': 'str'},
-        'fabric_version': {'key': 'FabricVersion', 'type': 'str'},
-        'ip_address_or_fqdn': {'key': 'IpAddressOrFQDN', 'type': 'str'},
-        'node_capacities': {'key': 'NodeCapacities', 'type': 'str'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "node_id": {"key": "NodeId", "type": "str"},
+        "node_instance": {"key": "NodeInstance", "type": "long"},
+        "node_type": {"key": "NodeType", "type": "str"},
+        "fabric_version": {"key": "FabricVersion", "type": "str"},
+        "ip_address_or_fqdn": {"key": "IpAddressOrFQDN", "type": "str"},
+        "node_capacities": {"key": "NodeCapacities", "type": "str"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, node_name: str, node_id: str, node_instance: int, node_type: str, fabric_version: str, ip_address_or_fqdn: str, node_capacities: str, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(NodeAddedToClusterEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, node_name=node_name, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        node_name: str,
+        node_id: str,
+        node_instance: int,
+        node_type: str,
+        fabric_version: str,
+        ip_address_or_fqdn: str,
+        node_capacities: str,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(NodeAddedToClusterEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            node_name=node_name,
+            **kwargs
+        )
         self.node_id = node_id
         self.node_instance = node_instance
         self.node_type = node_type
         self.fabric_version = fabric_version
         self.ip_address_or_fqdn = ip_address_or_fqdn
         self.node_capacities = node_capacities
-        self.kind = 'NodeAddedToCluster'
+        self.kind = "NodeAddedToCluster"
 
 
 class NodeClosedEvent(NodeEvent):
@@ -12840,33 +14925,52 @@ class NodeClosedEvent(NodeEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'node_name': {'required': True},
-        'node_id': {'required': True},
-        'node_instance': {'required': True},
-        'error': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "node_name": {"required": True},
+        "node_id": {"required": True},
+        "node_instance": {"required": True},
+        "error": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'node_id': {'key': 'NodeId', 'type': 'str'},
-        'node_instance': {'key': 'NodeInstance', 'type': 'long'},
-        'error': {'key': 'Error', 'type': 'str'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "node_id": {"key": "NodeId", "type": "str"},
+        "node_instance": {"key": "NodeInstance", "type": "long"},
+        "error": {"key": "Error", "type": "str"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, node_name: str, node_id: str, node_instance: int, error: str, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(NodeClosedEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, node_name=node_name, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        node_name: str,
+        node_id: str,
+        node_instance: int,
+        error: str,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(NodeClosedEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            node_name=node_name,
+            **kwargs
+        )
         self.node_id = node_id
         self.node_instance = node_instance
         self.error = error
-        self.kind = 'NodeClosed'
+        self.kind = "NodeClosed"
 
 
 class NodeDeactivateCompletedEvent(NodeEvent):
@@ -12899,36 +15003,56 @@ class NodeDeactivateCompletedEvent(NodeEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'node_name': {'required': True},
-        'node_instance': {'required': True},
-        'effective_deactivate_intent': {'required': True},
-        'batch_ids_with_deactivate_intent': {'required': True},
-        'start_time': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "node_name": {"required": True},
+        "node_instance": {"required": True},
+        "effective_deactivate_intent": {"required": True},
+        "batch_ids_with_deactivate_intent": {"required": True},
+        "start_time": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'node_instance': {'key': 'NodeInstance', 'type': 'long'},
-        'effective_deactivate_intent': {'key': 'EffectiveDeactivateIntent', 'type': 'str'},
-        'batch_ids_with_deactivate_intent': {'key': 'BatchIdsWithDeactivateIntent', 'type': 'str'},
-        'start_time': {'key': 'StartTime', 'type': 'iso-8601'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "node_instance": {"key": "NodeInstance", "type": "long"},
+        "effective_deactivate_intent": {"key": "EffectiveDeactivateIntent", "type": "str"},
+        "batch_ids_with_deactivate_intent": {"key": "BatchIdsWithDeactivateIntent", "type": "str"},
+        "start_time": {"key": "StartTime", "type": "iso-8601"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, node_name: str, node_instance: int, effective_deactivate_intent: str, batch_ids_with_deactivate_intent: str, start_time, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(NodeDeactivateCompletedEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, node_name=node_name, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        node_name: str,
+        node_instance: int,
+        effective_deactivate_intent: str,
+        batch_ids_with_deactivate_intent: str,
+        start_time,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(NodeDeactivateCompletedEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            node_name=node_name,
+            **kwargs
+        )
         self.node_instance = node_instance
         self.effective_deactivate_intent = effective_deactivate_intent
         self.batch_ids_with_deactivate_intent = batch_ids_with_deactivate_intent
         self.start_time = start_time
-        self.kind = 'NodeDeactivateCompleted'
+        self.kind = "NodeDeactivateCompleted"
 
 
 class NodeDeactivateStartedEvent(NodeEvent):
@@ -12959,33 +15083,52 @@ class NodeDeactivateStartedEvent(NodeEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'node_name': {'required': True},
-        'node_instance': {'required': True},
-        'batch_id': {'required': True},
-        'deactivate_intent': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "node_name": {"required": True},
+        "node_instance": {"required": True},
+        "batch_id": {"required": True},
+        "deactivate_intent": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'node_instance': {'key': 'NodeInstance', 'type': 'long'},
-        'batch_id': {'key': 'BatchId', 'type': 'str'},
-        'deactivate_intent': {'key': 'DeactivateIntent', 'type': 'str'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "node_instance": {"key": "NodeInstance", "type": "long"},
+        "batch_id": {"key": "BatchId", "type": "str"},
+        "deactivate_intent": {"key": "DeactivateIntent", "type": "str"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, node_name: str, node_instance: int, batch_id: str, deactivate_intent: str, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(NodeDeactivateStartedEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, node_name=node_name, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        node_name: str,
+        node_instance: int,
+        batch_id: str,
+        deactivate_intent: str,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(NodeDeactivateStartedEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            node_name=node_name,
+            **kwargs
+        )
         self.node_instance = node_instance
         self.batch_id = batch_id
         self.deactivate_intent = deactivate_intent
-        self.kind = 'NodeDeactivateStarted'
+        self.kind = "NodeDeactivateStarted"
 
 
 class NodeDeactivationInfo(Model):
@@ -13012,13 +15155,21 @@ class NodeDeactivationInfo(Model):
     """
 
     _attribute_map = {
-        'node_deactivation_intent': {'key': 'NodeDeactivationIntent', 'type': 'str'},
-        'node_deactivation_status': {'key': 'NodeDeactivationStatus', 'type': 'str'},
-        'node_deactivation_task': {'key': 'NodeDeactivationTask', 'type': '[NodeDeactivationTask]'},
-        'pending_safety_checks': {'key': 'PendingSafetyChecks', 'type': '[SafetyCheckWrapper]'},
+        "node_deactivation_intent": {"key": "NodeDeactivationIntent", "type": "str"},
+        "node_deactivation_status": {"key": "NodeDeactivationStatus", "type": "str"},
+        "node_deactivation_task": {"key": "NodeDeactivationTask", "type": "[NodeDeactivationTask]"},
+        "pending_safety_checks": {"key": "PendingSafetyChecks", "type": "[SafetyCheckWrapper]"},
     }
 
-    def __init__(self, *, node_deactivation_intent=None, node_deactivation_status=None, node_deactivation_task=None, pending_safety_checks=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        node_deactivation_intent=None,
+        node_deactivation_status=None,
+        node_deactivation_task=None,
+        pending_safety_checks=None,
+        **kwargs
+    ) -> None:
         super(NodeDeactivationInfo, self).__init__(**kwargs)
         self.node_deactivation_intent = node_deactivation_intent
         self.node_deactivation_status = node_deactivation_status
@@ -13041,8 +15192,8 @@ class NodeDeactivationTask(Model):
     """
 
     _attribute_map = {
-        'node_deactivation_task_id': {'key': 'NodeDeactivationTaskId', 'type': 'NodeDeactivationTaskId'},
-        'node_deactivation_intent': {'key': 'NodeDeactivationIntent', 'type': 'str'},
+        "node_deactivation_task_id": {"key": "NodeDeactivationTaskId", "type": "NodeDeactivationTaskId"},
+        "node_deactivation_intent": {"key": "NodeDeactivationIntent", "type": "str"},
     }
 
     def __init__(self, *, node_deactivation_task_id=None, node_deactivation_intent=None, **kwargs) -> None:
@@ -13064,11 +15215,11 @@ class NodeDeactivationTaskId(Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str'},
-        'node_deactivation_task_type': {'key': 'NodeDeactivationTaskType', 'type': 'str'},
+        "id": {"key": "Id", "type": "str"},
+        "node_deactivation_task_type": {"key": "NodeDeactivationTaskType", "type": "str"},
     }
 
-    def __init__(self, *, id: str=None, node_deactivation_task_type=None, **kwargs) -> None:
+    def __init__(self, *, id: str = None, node_deactivation_task_type=None, **kwargs) -> None:
         super(NodeDeactivationTaskId, self).__init__(**kwargs)
         self.id = id
         self.node_deactivation_task_type = node_deactivation_task_type
@@ -13100,30 +15251,48 @@ class NodeDownEvent(NodeEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'node_name': {'required': True},
-        'node_instance': {'required': True},
-        'last_node_up_at': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "node_name": {"required": True},
+        "node_instance": {"required": True},
+        "last_node_up_at": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'node_instance': {'key': 'NodeInstance', 'type': 'long'},
-        'last_node_up_at': {'key': 'LastNodeUpAt', 'type': 'iso-8601'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "node_instance": {"key": "NodeInstance", "type": "long"},
+        "last_node_up_at": {"key": "LastNodeUpAt", "type": "iso-8601"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, node_name: str, node_instance: int, last_node_up_at, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(NodeDownEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, node_name=node_name, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        node_name: str,
+        node_instance: int,
+        last_node_up_at,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(NodeDownEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            node_name=node_name,
+            **kwargs
+        )
         self.node_instance = node_instance
         self.last_node_up_at = last_node_up_at
-        self.kind = 'NodeDown'
+        self.kind = "NodeDown"
 
 
 class NodeHealth(EntityHealth):
@@ -13152,15 +15321,30 @@ class NodeHealth(EntityHealth):
     """
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'health_events': {'key': 'HealthEvents', 'type': '[HealthEvent]'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
-        'health_statistics': {'key': 'HealthStatistics', 'type': 'HealthStatistics'},
-        'name': {'key': 'Name', 'type': 'str'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "health_events": {"key": "HealthEvents", "type": "[HealthEvent]"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
+        "health_statistics": {"key": "HealthStatistics", "type": "HealthStatistics"},
+        "name": {"key": "Name", "type": "str"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, health_events=None, unhealthy_evaluations=None, health_statistics=None, name: str=None, **kwargs) -> None:
-        super(NodeHealth, self).__init__(aggregated_health_state=aggregated_health_state, health_events=health_events, unhealthy_evaluations=unhealthy_evaluations, health_statistics=health_statistics, **kwargs)
+    def __init__(
+        self,
+        *,
+        aggregated_health_state=None,
+        health_events=None,
+        unhealthy_evaluations=None,
+        health_statistics=None,
+        name: str = None,
+        **kwargs
+    ) -> None:
+        super(NodeHealth, self).__init__(
+            aggregated_health_state=aggregated_health_state,
+            health_events=health_events,
+            unhealthy_evaluations=unhealthy_evaluations,
+            health_statistics=health_statistics,
+            **kwargs
+        )
         self.name = name
 
 
@@ -13193,22 +15377,32 @@ class NodeHealthEvaluation(HealthEvaluation):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "description": {"key": "Description", "type": "str"},
+        "kind": {"key": "Kind", "type": "str"},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, description: str=None, node_name: str=None, unhealthy_evaluations=None, **kwargs) -> None:
-        super(NodeHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description, **kwargs)
+    def __init__(
+        self,
+        *,
+        aggregated_health_state=None,
+        description: str = None,
+        node_name: str = None,
+        unhealthy_evaluations=None,
+        **kwargs
+    ) -> None:
+        super(NodeHealthEvaluation, self).__init__(
+            aggregated_health_state=aggregated_health_state, description=description, **kwargs
+        )
         self.node_name = node_name
         self.unhealthy_evaluations = unhealthy_evaluations
-        self.kind = 'Node'
+        self.kind = "Node"
 
 
 class NodeHealthReportExpiredEvent(NodeEvent):
@@ -13252,41 +15446,66 @@ class NodeHealthReportExpiredEvent(NodeEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'node_name': {'required': True},
-        'node_instance_id': {'required': True},
-        'source_id': {'required': True},
-        'property': {'required': True},
-        'health_state': {'required': True},
-        'time_to_live_ms': {'required': True},
-        'sequence_number': {'required': True},
-        'description': {'required': True},
-        'remove_when_expired': {'required': True},
-        'source_utc_timestamp': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "node_name": {"required": True},
+        "node_instance_id": {"required": True},
+        "source_id": {"required": True},
+        "property": {"required": True},
+        "health_state": {"required": True},
+        "time_to_live_ms": {"required": True},
+        "sequence_number": {"required": True},
+        "description": {"required": True},
+        "remove_when_expired": {"required": True},
+        "source_utc_timestamp": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'node_instance_id': {'key': 'NodeInstanceId', 'type': 'long'},
-        'source_id': {'key': 'SourceId', 'type': 'str'},
-        'property': {'key': 'Property', 'type': 'str'},
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'time_to_live_ms': {'key': 'TimeToLiveMs', 'type': 'long'},
-        'sequence_number': {'key': 'SequenceNumber', 'type': 'long'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'remove_when_expired': {'key': 'RemoveWhenExpired', 'type': 'bool'},
-        'source_utc_timestamp': {'key': 'SourceUtcTimestamp', 'type': 'iso-8601'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "node_instance_id": {"key": "NodeInstanceId", "type": "long"},
+        "source_id": {"key": "SourceId", "type": "str"},
+        "property": {"key": "Property", "type": "str"},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "time_to_live_ms": {"key": "TimeToLiveMs", "type": "long"},
+        "sequence_number": {"key": "SequenceNumber", "type": "long"},
+        "description": {"key": "Description", "type": "str"},
+        "remove_when_expired": {"key": "RemoveWhenExpired", "type": "bool"},
+        "source_utc_timestamp": {"key": "SourceUtcTimestamp", "type": "iso-8601"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, node_name: str, node_instance_id: int, source_id: str, property: str, health_state: str, time_to_live_ms: int, sequence_number: int, description: str, remove_when_expired: bool, source_utc_timestamp, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(NodeHealthReportExpiredEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, node_name=node_name, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        node_name: str,
+        node_instance_id: int,
+        source_id: str,
+        property: str,
+        health_state: str,
+        time_to_live_ms: int,
+        sequence_number: int,
+        description: str,
+        remove_when_expired: bool,
+        source_utc_timestamp,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(NodeHealthReportExpiredEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            node_name=node_name,
+            **kwargs
+        )
         self.node_instance_id = node_instance_id
         self.source_id = source_id
         self.property = property
@@ -13296,7 +15515,7 @@ class NodeHealthReportExpiredEvent(NodeEvent):
         self.description = description
         self.remove_when_expired = remove_when_expired
         self.source_utc_timestamp = source_utc_timestamp
-        self.kind = 'NodeHealthReportExpired'
+        self.kind = "NodeHealthReportExpired"
 
 
 class NodeHealthState(EntityHealthState):
@@ -13317,12 +15536,12 @@ class NodeHealthState(EntityHealthState):
     """
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'name': {'key': 'Name', 'type': 'str'},
-        'id': {'key': 'Id', 'type': 'NodeId'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "name": {"key": "Name", "type": "str"},
+        "id": {"key": "Id", "type": "NodeId"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, name: str=None, id=None, **kwargs) -> None:
+    def __init__(self, *, aggregated_health_state=None, name: str = None, id=None, **kwargs) -> None:
         super(NodeHealthState, self).__init__(aggregated_health_state=aggregated_health_state, **kwargs)
         self.name = name
         self.id = id
@@ -13341,11 +15560,11 @@ class NodeHealthStateChunk(EntityHealthStateChunk):
     """
 
     _attribute_map = {
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'node_name': {'key': 'NodeName', 'type': 'str'},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "node_name": {"key": "NodeName", "type": "str"},
     }
 
-    def __init__(self, *, health_state=None, node_name: str=None, **kwargs) -> None:
+    def __init__(self, *, health_state=None, node_name: str = None, **kwargs) -> None:
         super(NodeHealthStateChunk, self).__init__(health_state=health_state, **kwargs)
         self.node_name = node_name
 
@@ -13364,11 +15583,11 @@ class NodeHealthStateChunkList(EntityHealthStateChunkList):
     """
 
     _attribute_map = {
-        'total_count': {'key': 'TotalCount', 'type': 'long'},
-        'items': {'key': 'Items', 'type': '[NodeHealthStateChunk]'},
+        "total_count": {"key": "TotalCount", "type": "long"},
+        "items": {"key": "Items", "type": "[NodeHealthStateChunk]"},
     }
 
-    def __init__(self, *, total_count: int=None, items=None, **kwargs) -> None:
+    def __init__(self, *, total_count: int = None, items=None, **kwargs) -> None:
         super(NodeHealthStateChunkList, self).__init__(total_count=total_count, **kwargs)
         self.items = items
 
@@ -13417,11 +15636,11 @@ class NodeHealthStateFilter(Model):
     """
 
     _attribute_map = {
-        'node_name_filter': {'key': 'NodeNameFilter', 'type': 'str'},
-        'health_state_filter': {'key': 'HealthStateFilter', 'type': 'int'},
+        "node_name_filter": {"key": "NodeNameFilter", "type": "str"},
+        "health_state_filter": {"key": "HealthStateFilter", "type": "int"},
     }
 
-    def __init__(self, *, node_name_filter: str=None, health_state_filter: int=0, **kwargs) -> None:
+    def __init__(self, *, node_name_filter: str = None, health_state_filter: int = 0, **kwargs) -> None:
         super(NodeHealthStateFilter, self).__init__(**kwargs)
         self.node_name_filter = node_name_filter
         self.health_state_filter = health_state_filter
@@ -13436,10 +15655,10 @@ class NodeId(Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str'},
+        "id": {"key": "Id", "type": "str"},
     }
 
-    def __init__(self, *, id: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str = None, **kwargs) -> None:
         super(NodeId, self).__init__(**kwargs)
         self.id = id
 
@@ -13459,12 +15678,12 @@ class NodeImpact(Model):
     """
 
     _validation = {
-        'node_name': {'required': True},
+        "node_name": {"required": True},
     }
 
     _attribute_map = {
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'impact_level': {'key': 'ImpactLevel', 'type': 'str'},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "impact_level": {"key": "ImpactLevel", "type": "str"},
     }
 
     def __init__(self, *, node_name: str, impact_level=None, **kwargs) -> None:
@@ -13544,30 +15763,55 @@ class NodeInfo(Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'ip_address_or_fqdn': {'key': 'IpAddressOrFQDN', 'type': 'str'},
-        'type': {'key': 'Type', 'type': 'str'},
-        'code_version': {'key': 'CodeVersion', 'type': 'str'},
-        'config_version': {'key': 'ConfigVersion', 'type': 'str'},
-        'node_status': {'key': 'NodeStatus', 'type': 'str'},
-        'node_up_time_in_seconds': {'key': 'NodeUpTimeInSeconds', 'type': 'str'},
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'is_seed_node': {'key': 'IsSeedNode', 'type': 'bool'},
-        'upgrade_domain': {'key': 'UpgradeDomain', 'type': 'str'},
-        'fault_domain': {'key': 'FaultDomain', 'type': 'str'},
-        'id': {'key': 'Id', 'type': 'NodeId'},
-        'instance_id': {'key': 'InstanceId', 'type': 'str'},
-        'node_deactivation_info': {'key': 'NodeDeactivationInfo', 'type': 'NodeDeactivationInfo'},
-        'is_stopped': {'key': 'IsStopped', 'type': 'bool'},
-        'node_down_time_in_seconds': {'key': 'NodeDownTimeInSeconds', 'type': 'str'},
-        'node_up_at': {'key': 'NodeUpAt', 'type': 'iso-8601'},
-        'node_down_at': {'key': 'NodeDownAt', 'type': 'iso-8601'},
-        'node_tags': {'key': 'NodeTags', 'type': '[str]'},
-        'is_node_by_node_upgrade_in_progress': {'key': 'IsNodeByNodeUpgradeInProgress', 'type': 'bool'},
-        'infrastructure_placement_id': {'key': 'InfrastructurePlacementID', 'type': 'str'},
+        "name": {"key": "Name", "type": "str"},
+        "ip_address_or_fqdn": {"key": "IpAddressOrFQDN", "type": "str"},
+        "type": {"key": "Type", "type": "str"},
+        "code_version": {"key": "CodeVersion", "type": "str"},
+        "config_version": {"key": "ConfigVersion", "type": "str"},
+        "node_status": {"key": "NodeStatus", "type": "str"},
+        "node_up_time_in_seconds": {"key": "NodeUpTimeInSeconds", "type": "str"},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "is_seed_node": {"key": "IsSeedNode", "type": "bool"},
+        "upgrade_domain": {"key": "UpgradeDomain", "type": "str"},
+        "fault_domain": {"key": "FaultDomain", "type": "str"},
+        "id": {"key": "Id", "type": "NodeId"},
+        "instance_id": {"key": "InstanceId", "type": "str"},
+        "node_deactivation_info": {"key": "NodeDeactivationInfo", "type": "NodeDeactivationInfo"},
+        "is_stopped": {"key": "IsStopped", "type": "bool"},
+        "node_down_time_in_seconds": {"key": "NodeDownTimeInSeconds", "type": "str"},
+        "node_up_at": {"key": "NodeUpAt", "type": "iso-8601"},
+        "node_down_at": {"key": "NodeDownAt", "type": "iso-8601"},
+        "node_tags": {"key": "NodeTags", "type": "[str]"},
+        "is_node_by_node_upgrade_in_progress": {"key": "IsNodeByNodeUpgradeInProgress", "type": "bool"},
+        "infrastructure_placement_id": {"key": "InfrastructurePlacementID", "type": "str"},
     }
 
-    def __init__(self, *, name: str=None, ip_address_or_fqdn: str=None, type: str=None, code_version: str=None, config_version: str=None, node_status=None, node_up_time_in_seconds: str=None, health_state=None, is_seed_node: bool=None, upgrade_domain: str=None, fault_domain: str=None, id=None, instance_id: str=None, node_deactivation_info=None, is_stopped: bool=None, node_down_time_in_seconds: str=None, node_up_at=None, node_down_at=None, node_tags=None, is_node_by_node_upgrade_in_progress: bool=None, infrastructure_placement_id: str=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        ip_address_or_fqdn: str = None,
+        type: str = None,
+        code_version: str = None,
+        config_version: str = None,
+        node_status=None,
+        node_up_time_in_seconds: str = None,
+        health_state=None,
+        is_seed_node: bool = None,
+        upgrade_domain: str = None,
+        fault_domain: str = None,
+        id=None,
+        instance_id: str = None,
+        node_deactivation_info=None,
+        is_stopped: bool = None,
+        node_down_time_in_seconds: str = None,
+        node_up_at=None,
+        node_down_at=None,
+        node_tags=None,
+        is_node_by_node_upgrade_in_progress: bool = None,
+        infrastructure_placement_id: str = None,
+        **kwargs
+    ) -> None:
         super(NodeInfo, self).__init__(**kwargs)
         self.name = name
         self.ip_address_or_fqdn = ip_address_or_fqdn
@@ -13606,11 +15850,11 @@ class NodeLoadInfo(Model):
     """
 
     _attribute_map = {
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'node_load_metric_information': {'key': 'NodeLoadMetricInformation', 'type': '[NodeLoadMetricInformation]'},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "node_load_metric_information": {"key": "NodeLoadMetricInformation", "type": "[NodeLoadMetricInformation]"},
     }
 
-    def __init__(self, *, node_name: str=None, node_load_metric_information=None, **kwargs) -> None:
+    def __init__(self, *, node_name: str = None, node_load_metric_information=None, **kwargs) -> None:
         super(NodeLoadInfo, self).__init__(**kwargs)
         self.node_name = node_name
         self.node_load_metric_information = node_load_metric_information
@@ -13660,20 +15904,35 @@ class NodeLoadMetricInformation(Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'node_capacity': {'key': 'NodeCapacity', 'type': 'str'},
-        'node_load': {'key': 'NodeLoad', 'type': 'str'},
-        'node_remaining_capacity': {'key': 'NodeRemainingCapacity', 'type': 'str'},
-        'is_capacity_violation': {'key': 'IsCapacityViolation', 'type': 'bool'},
-        'node_buffered_capacity': {'key': 'NodeBufferedCapacity', 'type': 'str'},
-        'node_remaining_buffered_capacity': {'key': 'NodeRemainingBufferedCapacity', 'type': 'str'},
-        'current_node_load': {'key': 'CurrentNodeLoad', 'type': 'str'},
-        'node_capacity_remaining': {'key': 'NodeCapacityRemaining', 'type': 'str'},
-        'buffered_node_capacity_remaining': {'key': 'BufferedNodeCapacityRemaining', 'type': 'str'},
-        'planned_node_load_removal': {'key': 'PlannedNodeLoadRemoval', 'type': 'str'},
+        "name": {"key": "Name", "type": "str"},
+        "node_capacity": {"key": "NodeCapacity", "type": "str"},
+        "node_load": {"key": "NodeLoad", "type": "str"},
+        "node_remaining_capacity": {"key": "NodeRemainingCapacity", "type": "str"},
+        "is_capacity_violation": {"key": "IsCapacityViolation", "type": "bool"},
+        "node_buffered_capacity": {"key": "NodeBufferedCapacity", "type": "str"},
+        "node_remaining_buffered_capacity": {"key": "NodeRemainingBufferedCapacity", "type": "str"},
+        "current_node_load": {"key": "CurrentNodeLoad", "type": "str"},
+        "node_capacity_remaining": {"key": "NodeCapacityRemaining", "type": "str"},
+        "buffered_node_capacity_remaining": {"key": "BufferedNodeCapacityRemaining", "type": "str"},
+        "planned_node_load_removal": {"key": "PlannedNodeLoadRemoval", "type": "str"},
     }
 
-    def __init__(self, *, name: str=None, node_capacity: str=None, node_load: str=None, node_remaining_capacity: str=None, is_capacity_violation: bool=None, node_buffered_capacity: str=None, node_remaining_buffered_capacity: str=None, current_node_load: str=None, node_capacity_remaining: str=None, buffered_node_capacity_remaining: str=None, planned_node_load_removal: str=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        node_capacity: str = None,
+        node_load: str = None,
+        node_remaining_capacity: str = None,
+        is_capacity_violation: bool = None,
+        node_buffered_capacity: str = None,
+        node_remaining_buffered_capacity: str = None,
+        current_node_load: str = None,
+        node_capacity_remaining: str = None,
+        buffered_node_capacity_remaining: str = None,
+        planned_node_load_removal: str = None,
+        **kwargs
+    ) -> None:
         super(NodeLoadMetricInformation, self).__init__(**kwargs)
         self.name = name
         self.node_capacity = node_capacity
@@ -13729,41 +15988,66 @@ class NodeNewHealthReportEvent(NodeEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'node_name': {'required': True},
-        'node_instance_id': {'required': True},
-        'source_id': {'required': True},
-        'property': {'required': True},
-        'health_state': {'required': True},
-        'time_to_live_ms': {'required': True},
-        'sequence_number': {'required': True},
-        'description': {'required': True},
-        'remove_when_expired': {'required': True},
-        'source_utc_timestamp': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "node_name": {"required": True},
+        "node_instance_id": {"required": True},
+        "source_id": {"required": True},
+        "property": {"required": True},
+        "health_state": {"required": True},
+        "time_to_live_ms": {"required": True},
+        "sequence_number": {"required": True},
+        "description": {"required": True},
+        "remove_when_expired": {"required": True},
+        "source_utc_timestamp": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'node_instance_id': {'key': 'NodeInstanceId', 'type': 'long'},
-        'source_id': {'key': 'SourceId', 'type': 'str'},
-        'property': {'key': 'Property', 'type': 'str'},
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'time_to_live_ms': {'key': 'TimeToLiveMs', 'type': 'long'},
-        'sequence_number': {'key': 'SequenceNumber', 'type': 'long'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'remove_when_expired': {'key': 'RemoveWhenExpired', 'type': 'bool'},
-        'source_utc_timestamp': {'key': 'SourceUtcTimestamp', 'type': 'iso-8601'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "node_instance_id": {"key": "NodeInstanceId", "type": "long"},
+        "source_id": {"key": "SourceId", "type": "str"},
+        "property": {"key": "Property", "type": "str"},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "time_to_live_ms": {"key": "TimeToLiveMs", "type": "long"},
+        "sequence_number": {"key": "SequenceNumber", "type": "long"},
+        "description": {"key": "Description", "type": "str"},
+        "remove_when_expired": {"key": "RemoveWhenExpired", "type": "bool"},
+        "source_utc_timestamp": {"key": "SourceUtcTimestamp", "type": "iso-8601"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, node_name: str, node_instance_id: int, source_id: str, property: str, health_state: str, time_to_live_ms: int, sequence_number: int, description: str, remove_when_expired: bool, source_utc_timestamp, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(NodeNewHealthReportEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, node_name=node_name, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        node_name: str,
+        node_instance_id: int,
+        source_id: str,
+        property: str,
+        health_state: str,
+        time_to_live_ms: int,
+        sequence_number: int,
+        description: str,
+        remove_when_expired: bool,
+        source_utc_timestamp,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(NodeNewHealthReportEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            node_name=node_name,
+            **kwargs
+        )
         self.node_instance_id = node_instance_id
         self.source_id = source_id
         self.property = property
@@ -13773,7 +16057,7 @@ class NodeNewHealthReportEvent(NodeEvent):
         self.description = description
         self.remove_when_expired = remove_when_expired
         self.source_utc_timestamp = source_utc_timestamp
-        self.kind = 'NodeNewHealthReport'
+        self.kind = "NodeNewHealthReport"
 
 
 class NodeOpenFailedEvent(NodeEvent):
@@ -13816,41 +16100,66 @@ class NodeOpenFailedEvent(NodeEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'node_name': {'required': True},
-        'node_instance': {'required': True},
-        'node_id': {'required': True},
-        'upgrade_domain': {'required': True},
-        'fault_domain': {'required': True},
-        'ip_address_or_fqdn': {'required': True},
-        'hostname': {'required': True},
-        'is_seed_node': {'required': True},
-        'node_version': {'required': True},
-        'error': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "node_name": {"required": True},
+        "node_instance": {"required": True},
+        "node_id": {"required": True},
+        "upgrade_domain": {"required": True},
+        "fault_domain": {"required": True},
+        "ip_address_or_fqdn": {"required": True},
+        "hostname": {"required": True},
+        "is_seed_node": {"required": True},
+        "node_version": {"required": True},
+        "error": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'node_instance': {'key': 'NodeInstance', 'type': 'long'},
-        'node_id': {'key': 'NodeId', 'type': 'str'},
-        'upgrade_domain': {'key': 'UpgradeDomain', 'type': 'str'},
-        'fault_domain': {'key': 'FaultDomain', 'type': 'str'},
-        'ip_address_or_fqdn': {'key': 'IpAddressOrFQDN', 'type': 'str'},
-        'hostname': {'key': 'Hostname', 'type': 'str'},
-        'is_seed_node': {'key': 'IsSeedNode', 'type': 'bool'},
-        'node_version': {'key': 'NodeVersion', 'type': 'str'},
-        'error': {'key': 'Error', 'type': 'str'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "node_instance": {"key": "NodeInstance", "type": "long"},
+        "node_id": {"key": "NodeId", "type": "str"},
+        "upgrade_domain": {"key": "UpgradeDomain", "type": "str"},
+        "fault_domain": {"key": "FaultDomain", "type": "str"},
+        "ip_address_or_fqdn": {"key": "IpAddressOrFQDN", "type": "str"},
+        "hostname": {"key": "Hostname", "type": "str"},
+        "is_seed_node": {"key": "IsSeedNode", "type": "bool"},
+        "node_version": {"key": "NodeVersion", "type": "str"},
+        "error": {"key": "Error", "type": "str"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, node_name: str, node_instance: int, node_id: str, upgrade_domain: str, fault_domain: str, ip_address_or_fqdn: str, hostname: str, is_seed_node: bool, node_version: str, error: str, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(NodeOpenFailedEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, node_name=node_name, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        node_name: str,
+        node_instance: int,
+        node_id: str,
+        upgrade_domain: str,
+        fault_domain: str,
+        ip_address_or_fqdn: str,
+        hostname: str,
+        is_seed_node: bool,
+        node_version: str,
+        error: str,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(NodeOpenFailedEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            node_name=node_name,
+            **kwargs
+        )
         self.node_instance = node_instance
         self.node_id = node_id
         self.upgrade_domain = upgrade_domain
@@ -13860,7 +16169,7 @@ class NodeOpenFailedEvent(NodeEvent):
         self.is_seed_node = is_seed_node
         self.node_version = node_version
         self.error = error
-        self.kind = 'NodeOpenFailed'
+        self.kind = "NodeOpenFailed"
 
 
 class NodeOpenSucceededEvent(NodeEvent):
@@ -13901,39 +16210,63 @@ class NodeOpenSucceededEvent(NodeEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'node_name': {'required': True},
-        'node_instance': {'required': True},
-        'node_id': {'required': True},
-        'upgrade_domain': {'required': True},
-        'fault_domain': {'required': True},
-        'ip_address_or_fqdn': {'required': True},
-        'hostname': {'required': True},
-        'is_seed_node': {'required': True},
-        'node_version': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "node_name": {"required": True},
+        "node_instance": {"required": True},
+        "node_id": {"required": True},
+        "upgrade_domain": {"required": True},
+        "fault_domain": {"required": True},
+        "ip_address_or_fqdn": {"required": True},
+        "hostname": {"required": True},
+        "is_seed_node": {"required": True},
+        "node_version": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'node_instance': {'key': 'NodeInstance', 'type': 'long'},
-        'node_id': {'key': 'NodeId', 'type': 'str'},
-        'upgrade_domain': {'key': 'UpgradeDomain', 'type': 'str'},
-        'fault_domain': {'key': 'FaultDomain', 'type': 'str'},
-        'ip_address_or_fqdn': {'key': 'IpAddressOrFQDN', 'type': 'str'},
-        'hostname': {'key': 'Hostname', 'type': 'str'},
-        'is_seed_node': {'key': 'IsSeedNode', 'type': 'bool'},
-        'node_version': {'key': 'NodeVersion', 'type': 'str'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "node_instance": {"key": "NodeInstance", "type": "long"},
+        "node_id": {"key": "NodeId", "type": "str"},
+        "upgrade_domain": {"key": "UpgradeDomain", "type": "str"},
+        "fault_domain": {"key": "FaultDomain", "type": "str"},
+        "ip_address_or_fqdn": {"key": "IpAddressOrFQDN", "type": "str"},
+        "hostname": {"key": "Hostname", "type": "str"},
+        "is_seed_node": {"key": "IsSeedNode", "type": "bool"},
+        "node_version": {"key": "NodeVersion", "type": "str"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, node_name: str, node_instance: int, node_id: str, upgrade_domain: str, fault_domain: str, ip_address_or_fqdn: str, hostname: str, is_seed_node: bool, node_version: str, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(NodeOpenSucceededEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, node_name=node_name, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        node_name: str,
+        node_instance: int,
+        node_id: str,
+        upgrade_domain: str,
+        fault_domain: str,
+        ip_address_or_fqdn: str,
+        hostname: str,
+        is_seed_node: bool,
+        node_version: str,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(NodeOpenSucceededEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            node_name=node_name,
+            **kwargs
+        )
         self.node_instance = node_instance
         self.node_id = node_id
         self.upgrade_domain = upgrade_domain
@@ -13942,7 +16275,7 @@ class NodeOpenSucceededEvent(NodeEvent):
         self.hostname = hostname
         self.is_seed_node = is_seed_node
         self.node_version = node_version
-        self.kind = 'NodeOpenSucceeded'
+        self.kind = "NodeOpenSucceeded"
 
 
 class NodeRemovedFromClusterEvent(NodeEvent):
@@ -13979,42 +16312,64 @@ class NodeRemovedFromClusterEvent(NodeEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'node_name': {'required': True},
-        'node_id': {'required': True},
-        'node_instance': {'required': True},
-        'node_type': {'required': True},
-        'fabric_version': {'required': True},
-        'ip_address_or_fqdn': {'required': True},
-        'node_capacities': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "node_name": {"required": True},
+        "node_id": {"required": True},
+        "node_instance": {"required": True},
+        "node_type": {"required": True},
+        "fabric_version": {"required": True},
+        "ip_address_or_fqdn": {"required": True},
+        "node_capacities": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'node_id': {'key': 'NodeId', 'type': 'str'},
-        'node_instance': {'key': 'NodeInstance', 'type': 'long'},
-        'node_type': {'key': 'NodeType', 'type': 'str'},
-        'fabric_version': {'key': 'FabricVersion', 'type': 'str'},
-        'ip_address_or_fqdn': {'key': 'IpAddressOrFQDN', 'type': 'str'},
-        'node_capacities': {'key': 'NodeCapacities', 'type': 'str'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "node_id": {"key": "NodeId", "type": "str"},
+        "node_instance": {"key": "NodeInstance", "type": "long"},
+        "node_type": {"key": "NodeType", "type": "str"},
+        "fabric_version": {"key": "FabricVersion", "type": "str"},
+        "ip_address_or_fqdn": {"key": "IpAddressOrFQDN", "type": "str"},
+        "node_capacities": {"key": "NodeCapacities", "type": "str"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, node_name: str, node_id: str, node_instance: int, node_type: str, fabric_version: str, ip_address_or_fqdn: str, node_capacities: str, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(NodeRemovedFromClusterEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, node_name=node_name, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        node_name: str,
+        node_id: str,
+        node_instance: int,
+        node_type: str,
+        fabric_version: str,
+        ip_address_or_fqdn: str,
+        node_capacities: str,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(NodeRemovedFromClusterEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            node_name=node_name,
+            **kwargs
+        )
         self.node_id = node_id
         self.node_instance = node_instance
         self.node_type = node_type
         self.fabric_version = fabric_version
         self.ip_address_or_fqdn = ip_address_or_fqdn
         self.node_capacities = node_capacities
-        self.kind = 'NodeRemovedFromCluster'
+        self.kind = "NodeRemovedFromCluster"
 
 
 class RepairImpactDescriptionBase(Model):
@@ -14032,16 +16387,14 @@ class RepairImpactDescriptionBase(Model):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
+        "kind": {"key": "Kind", "type": "str"},
     }
 
-    _subtype_map = {
-        'kind': {'Node': 'NodeRepairImpactDescription'}
-    }
+    _subtype_map = {"kind": {"Node": "NodeRepairImpactDescription"}}
 
     def __init__(self, **kwargs) -> None:
         super(RepairImpactDescriptionBase, self).__init__(**kwargs)
@@ -14063,18 +16416,18 @@ class NodeRepairImpactDescription(RepairImpactDescriptionBase):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'node_impact_list': {'key': 'NodeImpactList', 'type': '[NodeImpact]'},
+        "kind": {"key": "Kind", "type": "str"},
+        "node_impact_list": {"key": "NodeImpactList", "type": "[NodeImpact]"},
     }
 
     def __init__(self, *, node_impact_list=None, **kwargs) -> None:
         super(NodeRepairImpactDescription, self).__init__(**kwargs)
         self.node_impact_list = node_impact_list
-        self.kind = 'Node'
+        self.kind = "Node"
 
 
 class RepairTargetDescriptionBase(Model):
@@ -14092,16 +16445,14 @@ class RepairTargetDescriptionBase(Model):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
+        "kind": {"key": "Kind", "type": "str"},
     }
 
-    _subtype_map = {
-        'kind': {'Node': 'NodeRepairTargetDescription'}
-    }
+    _subtype_map = {"kind": {"Node": "NodeRepairTargetDescription"}}
 
     def __init__(self, **kwargs) -> None:
         super(RepairTargetDescriptionBase, self).__init__(**kwargs)
@@ -14122,18 +16473,18 @@ class NodeRepairTargetDescription(RepairTargetDescriptionBase):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'node_names': {'key': 'NodeNames', 'type': '[str]'},
+        "kind": {"key": "Kind", "type": "str"},
+        "node_names": {"key": "NodeNames", "type": "[str]"},
     }
 
     def __init__(self, *, node_names=None, **kwargs) -> None:
         super(NodeRepairTargetDescription, self).__init__(**kwargs)
         self.node_names = node_names
-        self.kind = 'Node'
+        self.kind = "Node"
 
 
 class NodeResult(Model):
@@ -14147,11 +16498,11 @@ class NodeResult(Model):
     """
 
     _attribute_map = {
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'node_instance_id': {'key': 'NodeInstanceId', 'type': 'str'},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "node_instance_id": {"key": "NodeInstanceId", "type": "str"},
     }
 
-    def __init__(self, *, node_name: str=None, node_instance_id: str=None, **kwargs) -> None:
+    def __init__(self, *, node_name: str = None, node_instance_id: str = None, **kwargs) -> None:
         super(NodeResult, self).__init__(**kwargs)
         self.node_name = node_name
         self.node_instance_id = node_instance_id
@@ -14189,24 +16540,35 @@ class NodesHealthEvaluation(HealthEvaluation):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'max_percent_unhealthy_nodes': {'key': 'MaxPercentUnhealthyNodes', 'type': 'int'},
-        'total_count': {'key': 'TotalCount', 'type': 'long'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "description": {"key": "Description", "type": "str"},
+        "kind": {"key": "Kind", "type": "str"},
+        "max_percent_unhealthy_nodes": {"key": "MaxPercentUnhealthyNodes", "type": "int"},
+        "total_count": {"key": "TotalCount", "type": "long"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, description: str=None, max_percent_unhealthy_nodes: int=None, total_count: int=None, unhealthy_evaluations=None, **kwargs) -> None:
-        super(NodesHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description, **kwargs)
+    def __init__(
+        self,
+        *,
+        aggregated_health_state=None,
+        description: str = None,
+        max_percent_unhealthy_nodes: int = None,
+        total_count: int = None,
+        unhealthy_evaluations=None,
+        **kwargs
+    ) -> None:
+        super(NodesHealthEvaluation, self).__init__(
+            aggregated_health_state=aggregated_health_state, description=description, **kwargs
+        )
         self.max_percent_unhealthy_nodes = max_percent_unhealthy_nodes
         self.total_count = total_count
         self.unhealthy_evaluations = unhealthy_evaluations
-        self.kind = 'Nodes'
+        self.kind = "Nodes"
 
 
 class NodeTagsDescription(Model):
@@ -14222,13 +16584,13 @@ class NodeTagsDescription(Model):
     """
 
     _validation = {
-        'count': {'required': True},
-        'tags': {'required': True},
+        "count": {"required": True},
+        "tags": {"required": True},
     }
 
     _attribute_map = {
-        'count': {'key': 'Count', 'type': 'int'},
-        'tags': {'key': 'Tags', 'type': '[str]'},
+        "count": {"key": "Count", "type": "int"},
+        "tags": {"key": "Tags", "type": "[str]"},
     }
 
     def __init__(self, *, count: int, tags, **kwargs) -> None:
@@ -14254,8 +16616,8 @@ class NodeTransitionProgress(Model):
     """
 
     _attribute_map = {
-        'state': {'key': 'State', 'type': 'str'},
-        'node_transition_result': {'key': 'NodeTransitionResult', 'type': 'NodeTransitionResult'},
+        "state": {"key": "State", "type": "str"},
+        "node_transition_result": {"key": "NodeTransitionResult", "type": "NodeTransitionResult"},
     }
 
     def __init__(self, *, state=None, node_transition_result=None, **kwargs) -> None:
@@ -14277,11 +16639,11 @@ class NodeTransitionResult(Model):
     """
 
     _attribute_map = {
-        'error_code': {'key': 'ErrorCode', 'type': 'int'},
-        'node_result': {'key': 'NodeResult', 'type': 'NodeResult'},
+        "error_code": {"key": "ErrorCode", "type": "int"},
+        "node_result": {"key": "NodeResult", "type": "NodeResult"},
     }
 
-    def __init__(self, *, error_code: int=None, node_result=None, **kwargs) -> None:
+    def __init__(self, *, error_code: int = None, node_result=None, **kwargs) -> None:
         super(NodeTransitionResult, self).__init__(**kwargs)
         self.error_code = error_code
         self.node_result = node_result
@@ -14308,13 +16670,13 @@ class NodeTypeHealthPolicyMapItem(Model):
     """
 
     _validation = {
-        'key': {'required': True},
-        'value': {'required': True},
+        "key": {"required": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'key': {'key': 'Key', 'type': 'str'},
-        'value': {'key': 'Value', 'type': 'int'},
+        "key": {"key": "Key", "type": "str"},
+        "value": {"key": "Value", "type": "int"},
     }
 
     def __init__(self, *, key: str, value: int, **kwargs) -> None:
@@ -14362,26 +16724,38 @@ class NodeTypeNodesHealthEvaluation(HealthEvaluation):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'node_type_name': {'key': 'NodeTypeName', 'type': 'str'},
-        'max_percent_unhealthy_nodes': {'key': 'MaxPercentUnhealthyNodes', 'type': 'int'},
-        'total_count': {'key': 'TotalCount', 'type': 'long'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "description": {"key": "Description", "type": "str"},
+        "kind": {"key": "Kind", "type": "str"},
+        "node_type_name": {"key": "NodeTypeName", "type": "str"},
+        "max_percent_unhealthy_nodes": {"key": "MaxPercentUnhealthyNodes", "type": "int"},
+        "total_count": {"key": "TotalCount", "type": "long"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, description: str=None, node_type_name: str=None, max_percent_unhealthy_nodes: int=None, total_count: int=None, unhealthy_evaluations=None, **kwargs) -> None:
-        super(NodeTypeNodesHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description, **kwargs)
+    def __init__(
+        self,
+        *,
+        aggregated_health_state=None,
+        description: str = None,
+        node_type_name: str = None,
+        max_percent_unhealthy_nodes: int = None,
+        total_count: int = None,
+        unhealthy_evaluations=None,
+        **kwargs
+    ) -> None:
+        super(NodeTypeNodesHealthEvaluation, self).__init__(
+            aggregated_health_state=aggregated_health_state, description=description, **kwargs
+        )
         self.node_type_name = node_type_name
         self.max_percent_unhealthy_nodes = max_percent_unhealthy_nodes
         self.total_count = total_count
         self.unhealthy_evaluations = unhealthy_evaluations
-        self.kind = 'NodeTypeNodes'
+        self.kind = "NodeTypeNodes"
 
 
 class NodeUpEvent(NodeEvent):
@@ -14410,30 +16784,48 @@ class NodeUpEvent(NodeEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'node_name': {'required': True},
-        'node_instance': {'required': True},
-        'last_node_down_at': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "node_name": {"required": True},
+        "node_instance": {"required": True},
+        "last_node_down_at": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'node_instance': {'key': 'NodeInstance', 'type': 'long'},
-        'last_node_down_at': {'key': 'LastNodeDownAt', 'type': 'iso-8601'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "node_instance": {"key": "NodeInstance", "type": "long"},
+        "last_node_down_at": {"key": "LastNodeDownAt", "type": "iso-8601"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, node_name: str, node_instance: int, last_node_down_at, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(NodeUpEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, node_name=node_name, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        node_name: str,
+        node_instance: int,
+        last_node_down_at,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(NodeUpEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            node_name=node_name,
+            **kwargs
+        )
         self.node_instance = node_instance
         self.last_node_down_at = last_node_down_at
-        self.kind = 'NodeUp'
+        self.kind = "NodeUp"
 
 
 class NodeUpgradeProgressInfo(Model):
@@ -14454,13 +16846,21 @@ class NodeUpgradeProgressInfo(Model):
     """
 
     _attribute_map = {
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'upgrade_phase': {'key': 'UpgradePhase', 'type': 'str'},
-        'pending_safety_checks': {'key': 'PendingSafetyChecks', 'type': '[SafetyCheckWrapper]'},
-        'upgrade_duration': {'key': 'UpgradeDuration', 'type': 'str'},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "upgrade_phase": {"key": "UpgradePhase", "type": "str"},
+        "pending_safety_checks": {"key": "PendingSafetyChecks", "type": "[SafetyCheckWrapper]"},
+        "upgrade_duration": {"key": "UpgradeDuration", "type": "str"},
     }
 
-    def __init__(self, *, node_name: str=None, upgrade_phase=None, pending_safety_checks=None, upgrade_duration: str=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        node_name: str = None,
+        upgrade_phase=None,
+        pending_safety_checks=None,
+        upgrade_duration: str = None,
+        **kwargs
+    ) -> None:
         super(NodeUpgradeProgressInfo, self).__init__(**kwargs)
         self.node_name = node_name
         self.upgrade_phase = upgrade_phase
@@ -14486,12 +16886,12 @@ class OperationStatus(Model):
     """
 
     _attribute_map = {
-        'operation_id': {'key': 'OperationId', 'type': 'str'},
-        'state': {'key': 'State', 'type': 'str'},
-        'type': {'key': 'Type', 'type': 'str'},
+        "operation_id": {"key": "OperationId", "type": "str"},
+        "state": {"key": "State", "type": "str"},
+        "type": {"key": "Type", "type": "str"},
     }
 
-    def __init__(self, *, operation_id: str=None, state=None, type=None, **kwargs) -> None:
+    def __init__(self, *, operation_id: str = None, state=None, type=None, **kwargs) -> None:
         super(OperationStatus, self).__init__(**kwargs)
         self.operation_id = operation_id
         self.state = state
@@ -14513,11 +16913,11 @@ class PackageSharingPolicyInfo(Model):
     """
 
     _attribute_map = {
-        'shared_package_name': {'key': 'SharedPackageName', 'type': 'str'},
-        'package_sharing_scope': {'key': 'PackageSharingScope', 'type': 'str'},
+        "shared_package_name": {"key": "SharedPackageName", "type": "str"},
+        "package_sharing_scope": {"key": "PackageSharingScope", "type": "str"},
     }
 
-    def __init__(self, *, shared_package_name: str=None, package_sharing_scope=None, **kwargs) -> None:
+    def __init__(self, *, shared_package_name: str = None, package_sharing_scope=None, **kwargs) -> None:
         super(PackageSharingPolicyInfo, self).__init__(**kwargs)
         self.shared_package_name = shared_package_name
         self.package_sharing_scope = package_sharing_scope
@@ -14541,11 +16941,11 @@ class PagedApplicationInfoList(Model):
     """
 
     _attribute_map = {
-        'continuation_token': {'key': 'ContinuationToken', 'type': 'str'},
-        'items': {'key': 'Items', 'type': '[ApplicationInfo]'},
+        "continuation_token": {"key": "ContinuationToken", "type": "str"},
+        "items": {"key": "Items", "type": "[ApplicationInfo]"},
     }
 
-    def __init__(self, *, continuation_token: str=None, items=None, **kwargs) -> None:
+    def __init__(self, *, continuation_token: str = None, items=None, **kwargs) -> None:
         super(PagedApplicationInfoList, self).__init__(**kwargs)
         self.continuation_token = continuation_token
         self.items = items
@@ -14570,11 +16970,11 @@ class PagedApplicationResourceDescriptionList(Model):
     """
 
     _attribute_map = {
-        'continuation_token': {'key': 'ContinuationToken', 'type': 'str'},
-        'items': {'key': 'Items', 'type': '[ApplicationResourceDescription]'},
+        "continuation_token": {"key": "ContinuationToken", "type": "str"},
+        "items": {"key": "Items", "type": "[ApplicationResourceDescription]"},
     }
 
-    def __init__(self, *, continuation_token: str=None, items=None, **kwargs) -> None:
+    def __init__(self, *, continuation_token: str = None, items=None, **kwargs) -> None:
         super(PagedApplicationResourceDescriptionList, self).__init__(**kwargs)
         self.continuation_token = continuation_token
         self.items = items
@@ -14598,11 +16998,11 @@ class PagedApplicationTypeInfoList(Model):
     """
 
     _attribute_map = {
-        'continuation_token': {'key': 'ContinuationToken', 'type': 'str'},
-        'items': {'key': 'Items', 'type': '[ApplicationTypeInfo]'},
+        "continuation_token": {"key": "ContinuationToken", "type": "str"},
+        "items": {"key": "Items", "type": "[ApplicationTypeInfo]"},
     }
 
-    def __init__(self, *, continuation_token: str=None, items=None, **kwargs) -> None:
+    def __init__(self, *, continuation_token: str = None, items=None, **kwargs) -> None:
         super(PagedApplicationTypeInfoList, self).__init__(**kwargs)
         self.continuation_token = continuation_token
         self.items = items
@@ -14626,11 +17026,11 @@ class PagedBackupConfigurationInfoList(Model):
     """
 
     _attribute_map = {
-        'continuation_token': {'key': 'ContinuationToken', 'type': 'str'},
-        'items': {'key': 'Items', 'type': '[BackupConfigurationInfo]'},
+        "continuation_token": {"key": "ContinuationToken", "type": "str"},
+        "items": {"key": "Items", "type": "[BackupConfigurationInfo]"},
     }
 
-    def __init__(self, *, continuation_token: str=None, items=None, **kwargs) -> None:
+    def __init__(self, *, continuation_token: str = None, items=None, **kwargs) -> None:
         super(PagedBackupConfigurationInfoList, self).__init__(**kwargs)
         self.continuation_token = continuation_token
         self.items = items
@@ -14654,11 +17054,11 @@ class PagedBackupEntityList(Model):
     """
 
     _attribute_map = {
-        'continuation_token': {'key': 'ContinuationToken', 'type': 'str'},
-        'items': {'key': 'Items', 'type': '[BackupEntity]'},
+        "continuation_token": {"key": "ContinuationToken", "type": "str"},
+        "items": {"key": "Items", "type": "[BackupEntity]"},
     }
 
-    def __init__(self, *, continuation_token: str=None, items=None, **kwargs) -> None:
+    def __init__(self, *, continuation_token: str = None, items=None, **kwargs) -> None:
         super(PagedBackupEntityList, self).__init__(**kwargs)
         self.continuation_token = continuation_token
         self.items = items
@@ -14681,11 +17081,11 @@ class PagedBackupInfoList(Model):
     """
 
     _attribute_map = {
-        'continuation_token': {'key': 'ContinuationToken', 'type': 'str'},
-        'items': {'key': 'Items', 'type': '[BackupInfo]'},
+        "continuation_token": {"key": "ContinuationToken", "type": "str"},
+        "items": {"key": "Items", "type": "[BackupInfo]"},
     }
 
-    def __init__(self, *, continuation_token: str=None, items=None, **kwargs) -> None:
+    def __init__(self, *, continuation_token: str = None, items=None, **kwargs) -> None:
         super(PagedBackupInfoList, self).__init__(**kwargs)
         self.continuation_token = continuation_token
         self.items = items
@@ -14709,11 +17109,11 @@ class PagedBackupPolicyDescriptionList(Model):
     """
 
     _attribute_map = {
-        'continuation_token': {'key': 'ContinuationToken', 'type': 'str'},
-        'items': {'key': 'Items', 'type': '[BackupPolicyDescription]'},
+        "continuation_token": {"key": "ContinuationToken", "type": "str"},
+        "items": {"key": "Items", "type": "[BackupPolicyDescription]"},
     }
 
-    def __init__(self, *, continuation_token: str=None, items=None, **kwargs) -> None:
+    def __init__(self, *, continuation_token: str = None, items=None, **kwargs) -> None:
         super(PagedBackupPolicyDescriptionList, self).__init__(**kwargs)
         self.continuation_token = continuation_token
         self.items = items
@@ -14737,11 +17137,11 @@ class PagedComposeDeploymentStatusInfoList(Model):
     """
 
     _attribute_map = {
-        'continuation_token': {'key': 'ContinuationToken', 'type': 'str'},
-        'items': {'key': 'Items', 'type': '[ComposeDeploymentStatusInfo]'},
+        "continuation_token": {"key": "ContinuationToken", "type": "str"},
+        "items": {"key": "Items", "type": "[ComposeDeploymentStatusInfo]"},
     }
 
-    def __init__(self, *, continuation_token: str=None, items=None, **kwargs) -> None:
+    def __init__(self, *, continuation_token: str = None, items=None, **kwargs) -> None:
         super(PagedComposeDeploymentStatusInfoList, self).__init__(**kwargs)
         self.continuation_token = continuation_token
         self.items = items
@@ -14766,11 +17166,11 @@ class PagedDeployedApplicationInfoList(Model):
     """
 
     _attribute_map = {
-        'continuation_token': {'key': 'ContinuationToken', 'type': 'str'},
-        'items': {'key': 'Items', 'type': '[DeployedApplicationInfo]'},
+        "continuation_token": {"key": "ContinuationToken", "type": "str"},
+        "items": {"key": "Items", "type": "[DeployedApplicationInfo]"},
     }
 
-    def __init__(self, *, continuation_token: str=None, items=None, **kwargs) -> None:
+    def __init__(self, *, continuation_token: str = None, items=None, **kwargs) -> None:
         super(PagedDeployedApplicationInfoList, self).__init__(**kwargs)
         self.continuation_token = continuation_token
         self.items = items
@@ -14793,11 +17193,11 @@ class PagedGatewayResourceDescriptionList(Model):
     """
 
     _attribute_map = {
-        'continuation_token': {'key': 'ContinuationToken', 'type': 'str'},
-        'items': {'key': 'Items', 'type': '[GatewayResourceDescription]'},
+        "continuation_token": {"key": "ContinuationToken", "type": "str"},
+        "items": {"key": "Items", "type": "[GatewayResourceDescription]"},
     }
 
-    def __init__(self, *, continuation_token: str=None, items=None, **kwargs) -> None:
+    def __init__(self, *, continuation_token: str = None, items=None, **kwargs) -> None:
         super(PagedGatewayResourceDescriptionList, self).__init__(**kwargs)
         self.continuation_token = continuation_token
         self.items = items
@@ -14820,11 +17220,11 @@ class PagedNetworkResourceDescriptionList(Model):
     """
 
     _attribute_map = {
-        'continuation_token': {'key': 'ContinuationToken', 'type': 'str'},
-        'items': {'key': 'Items', 'type': '[NetworkResourceDescription]'},
+        "continuation_token": {"key": "ContinuationToken", "type": "str"},
+        "items": {"key": "Items", "type": "[NetworkResourceDescription]"},
     }
 
-    def __init__(self, *, continuation_token: str=None, items=None, **kwargs) -> None:
+    def __init__(self, *, continuation_token: str = None, items=None, **kwargs) -> None:
         super(PagedNetworkResourceDescriptionList, self).__init__(**kwargs)
         self.continuation_token = continuation_token
         self.items = items
@@ -14847,11 +17247,11 @@ class PagedNodeInfoList(Model):
     """
 
     _attribute_map = {
-        'continuation_token': {'key': 'ContinuationToken', 'type': 'str'},
-        'items': {'key': 'Items', 'type': '[NodeInfo]'},
+        "continuation_token": {"key": "ContinuationToken", "type": "str"},
+        "items": {"key": "Items", "type": "[NodeInfo]"},
     }
 
-    def __init__(self, *, continuation_token: str=None, items=None, **kwargs) -> None:
+    def __init__(self, *, continuation_token: str = None, items=None, **kwargs) -> None:
         super(PagedNodeInfoList, self).__init__(**kwargs)
         self.continuation_token = continuation_token
         self.items = items
@@ -14879,12 +17279,14 @@ class PagedPropertyInfoList(Model):
     """
 
     _attribute_map = {
-        'continuation_token': {'key': 'ContinuationToken', 'type': 'str'},
-        'is_consistent': {'key': 'IsConsistent', 'type': 'bool'},
-        'properties': {'key': 'Properties', 'type': '[PropertyInfo]'},
+        "continuation_token": {"key": "ContinuationToken", "type": "str"},
+        "is_consistent": {"key": "IsConsistent", "type": "bool"},
+        "properties": {"key": "Properties", "type": "[PropertyInfo]"},
     }
 
-    def __init__(self, *, continuation_token: str=None, is_consistent: bool=None, properties=None, **kwargs) -> None:
+    def __init__(
+        self, *, continuation_token: str = None, is_consistent: bool = None, properties=None, **kwargs
+    ) -> None:
         super(PagedPropertyInfoList, self).__init__(**kwargs)
         self.continuation_token = continuation_token
         self.is_consistent = is_consistent
@@ -14909,11 +17311,11 @@ class PagedReplicaInfoList(Model):
     """
 
     _attribute_map = {
-        'continuation_token': {'key': 'ContinuationToken', 'type': 'str'},
-        'items': {'key': 'Items', 'type': '[ReplicaInfo]'},
+        "continuation_token": {"key": "ContinuationToken", "type": "str"},
+        "items": {"key": "Items", "type": "[ReplicaInfo]"},
     }
 
-    def __init__(self, *, continuation_token: str=None, items=None, **kwargs) -> None:
+    def __init__(self, *, continuation_token: str = None, items=None, **kwargs) -> None:
         super(PagedReplicaInfoList, self).__init__(**kwargs)
         self.continuation_token = continuation_token
         self.items = items
@@ -14936,11 +17338,11 @@ class PagedSecretResourceDescriptionList(Model):
     """
 
     _attribute_map = {
-        'continuation_token': {'key': 'ContinuationToken', 'type': 'str'},
-        'items': {'key': 'Items', 'type': '[SecretResourceDescription]'},
+        "continuation_token": {"key": "ContinuationToken", "type": "str"},
+        "items": {"key": "Items", "type": "[SecretResourceDescription]"},
     }
 
-    def __init__(self, *, continuation_token: str=None, items=None, **kwargs) -> None:
+    def __init__(self, *, continuation_token: str = None, items=None, **kwargs) -> None:
         super(PagedSecretResourceDescriptionList, self).__init__(**kwargs)
         self.continuation_token = continuation_token
         self.items = items
@@ -14965,11 +17367,11 @@ class PagedSecretValueResourceDescriptionList(Model):
     """
 
     _attribute_map = {
-        'continuation_token': {'key': 'ContinuationToken', 'type': 'str'},
-        'items': {'key': 'Items', 'type': '[SecretValueResourceDescription]'},
+        "continuation_token": {"key": "ContinuationToken", "type": "str"},
+        "items": {"key": "Items", "type": "[SecretValueResourceDescription]"},
     }
 
-    def __init__(self, *, continuation_token: str=None, items=None, **kwargs) -> None:
+    def __init__(self, *, continuation_token: str = None, items=None, **kwargs) -> None:
         super(PagedSecretValueResourceDescriptionList, self).__init__(**kwargs)
         self.continuation_token = continuation_token
         self.items = items
@@ -14993,11 +17395,11 @@ class PagedServiceInfoList(Model):
     """
 
     _attribute_map = {
-        'continuation_token': {'key': 'ContinuationToken', 'type': 'str'},
-        'items': {'key': 'Items', 'type': '[ServiceInfo]'},
+        "continuation_token": {"key": "ContinuationToken", "type": "str"},
+        "items": {"key": "Items", "type": "[ServiceInfo]"},
     }
 
-    def __init__(self, *, continuation_token: str=None, items=None, **kwargs) -> None:
+    def __init__(self, *, continuation_token: str = None, items=None, **kwargs) -> None:
         super(PagedServiceInfoList, self).__init__(**kwargs)
         self.continuation_token = continuation_token
         self.items = items
@@ -15021,11 +17423,11 @@ class PagedServicePartitionInfoList(Model):
     """
 
     _attribute_map = {
-        'continuation_token': {'key': 'ContinuationToken', 'type': 'str'},
-        'items': {'key': 'Items', 'type': '[ServicePartitionInfo]'},
+        "continuation_token": {"key": "ContinuationToken", "type": "str"},
+        "items": {"key": "Items", "type": "[ServicePartitionInfo]"},
     }
 
-    def __init__(self, *, continuation_token: str=None, items=None, **kwargs) -> None:
+    def __init__(self, *, continuation_token: str = None, items=None, **kwargs) -> None:
         super(PagedServicePartitionInfoList, self).__init__(**kwargs)
         self.continuation_token = continuation_token
         self.items = items
@@ -15049,11 +17451,11 @@ class PagedServiceReplicaDescriptionList(Model):
     """
 
     _attribute_map = {
-        'continuation_token': {'key': 'ContinuationToken', 'type': 'str'},
-        'items': {'key': 'Items', 'type': '[ServiceReplicaDescription]'},
+        "continuation_token": {"key": "ContinuationToken", "type": "str"},
+        "items": {"key": "Items", "type": "[ServiceReplicaDescription]"},
     }
 
-    def __init__(self, *, continuation_token: str=None, items=None, **kwargs) -> None:
+    def __init__(self, *, continuation_token: str = None, items=None, **kwargs) -> None:
         super(PagedServiceReplicaDescriptionList, self).__init__(**kwargs)
         self.continuation_token = continuation_token
         self.items = items
@@ -15076,11 +17478,11 @@ class PagedServiceResourceDescriptionList(Model):
     """
 
     _attribute_map = {
-        'continuation_token': {'key': 'ContinuationToken', 'type': 'str'},
-        'items': {'key': 'Items', 'type': '[ServiceResourceDescription]'},
+        "continuation_token": {"key": "ContinuationToken", "type": "str"},
+        "items": {"key": "Items", "type": "[ServiceResourceDescription]"},
     }
 
-    def __init__(self, *, continuation_token: str=None, items=None, **kwargs) -> None:
+    def __init__(self, *, continuation_token: str = None, items=None, **kwargs) -> None:
         super(PagedServiceResourceDescriptionList, self).__init__(**kwargs)
         self.continuation_token = continuation_token
         self.items = items
@@ -15108,12 +17510,12 @@ class PagedSubNameInfoList(Model):
     """
 
     _attribute_map = {
-        'continuation_token': {'key': 'ContinuationToken', 'type': 'str'},
-        'is_consistent': {'key': 'IsConsistent', 'type': 'bool'},
-        'sub_names': {'key': 'SubNames', 'type': '[str]'},
+        "continuation_token": {"key": "ContinuationToken", "type": "str"},
+        "is_consistent": {"key": "IsConsistent", "type": "bool"},
+        "sub_names": {"key": "SubNames", "type": "[str]"},
     }
 
-    def __init__(self, *, continuation_token: str=None, is_consistent: bool=None, sub_names=None, **kwargs) -> None:
+    def __init__(self, *, continuation_token: str = None, is_consistent: bool = None, sub_names=None, **kwargs) -> None:
         super(PagedSubNameInfoList, self).__init__(**kwargs)
         self.continuation_token = continuation_token
         self.is_consistent = is_consistent
@@ -15138,11 +17540,11 @@ class PagedUpdatePartitionLoadResultList(Model):
     """
 
     _attribute_map = {
-        'continuation_token': {'key': 'ContinuationToken', 'type': 'str'},
-        'items': {'key': 'Items', 'type': '[UpdatePartitionLoadResult]'},
+        "continuation_token": {"key": "ContinuationToken", "type": "str"},
+        "items": {"key": "Items", "type": "[UpdatePartitionLoadResult]"},
     }
 
-    def __init__(self, *, continuation_token: str=None, items=None, **kwargs) -> None:
+    def __init__(self, *, continuation_token: str = None, items=None, **kwargs) -> None:
         super(PagedUpdatePartitionLoadResultList, self).__init__(**kwargs)
         self.continuation_token = continuation_token
         self.items = items
@@ -15165,11 +17567,11 @@ class PagedVolumeResourceDescriptionList(Model):
     """
 
     _attribute_map = {
-        'continuation_token': {'key': 'ContinuationToken', 'type': 'str'},
-        'items': {'key': 'Items', 'type': '[VolumeResourceDescription]'},
+        "continuation_token": {"key": "ContinuationToken", "type": "str"},
+        "items": {"key": "Items", "type": "[VolumeResourceDescription]"},
     }
 
-    def __init__(self, *, continuation_token: str=None, items=None, **kwargs) -> None:
+    def __init__(self, *, continuation_token: str = None, items=None, **kwargs) -> None:
         super(PagedVolumeResourceDescriptionList, self).__init__(**kwargs)
         self.continuation_token = continuation_token
         self.items = items
@@ -15206,31 +17608,46 @@ class PartitionAnalysisEvent(PartitionEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'partition_id': {'required': True},
-        'metadata': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "partition_id": {"required": True},
+        "metadata": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'metadata': {'key': 'Metadata', 'type': 'AnalysisEventMetadata'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "metadata": {"key": "Metadata", "type": "AnalysisEventMetadata"},
     }
 
-    _subtype_map = {
-        'kind': {'PartitionPrimaryMoveAnalysis': 'PartitionPrimaryMoveAnalysisEvent'}
-    }
+    _subtype_map = {"kind": {"PartitionPrimaryMoveAnalysis": "PartitionPrimaryMoveAnalysisEvent"}}
 
-    def __init__(self, *, event_instance_id: str, time_stamp, partition_id: str, metadata, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(PartitionAnalysisEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, partition_id=partition_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        partition_id: str,
+        metadata,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(PartitionAnalysisEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            partition_id=partition_id,
+            **kwargs
+        )
         self.metadata = metadata
-        self.kind = 'PartitionAnalysisEvent'
+        self.kind = "PartitionAnalysisEvent"
 
 
 class PartitionBackupConfigurationInfo(BackupConfigurationInfo):
@@ -15259,23 +17676,37 @@ class PartitionBackupConfigurationInfo(BackupConfigurationInfo):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'policy_name': {'key': 'PolicyName', 'type': 'str'},
-        'policy_inherited_from': {'key': 'PolicyInheritedFrom', 'type': 'str'},
-        'suspension_info': {'key': 'SuspensionInfo', 'type': 'BackupSuspensionInfo'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'service_name': {'key': 'ServiceName', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
+        "policy_name": {"key": "PolicyName", "type": "str"},
+        "policy_inherited_from": {"key": "PolicyInheritedFrom", "type": "str"},
+        "suspension_info": {"key": "SuspensionInfo", "type": "BackupSuspensionInfo"},
+        "kind": {"key": "Kind", "type": "str"},
+        "service_name": {"key": "ServiceName", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
     }
 
-    def __init__(self, *, policy_name: str=None, policy_inherited_from=None, suspension_info=None, service_name: str=None, partition_id: str=None, **kwargs) -> None:
-        super(PartitionBackupConfigurationInfo, self).__init__(policy_name=policy_name, policy_inherited_from=policy_inherited_from, suspension_info=suspension_info, **kwargs)
+    def __init__(
+        self,
+        *,
+        policy_name: str = None,
+        policy_inherited_from=None,
+        suspension_info=None,
+        service_name: str = None,
+        partition_id: str = None,
+        **kwargs
+    ) -> None:
+        super(PartitionBackupConfigurationInfo, self).__init__(
+            policy_name=policy_name,
+            policy_inherited_from=policy_inherited_from,
+            suspension_info=suspension_info,
+            **kwargs
+        )
         self.service_name = service_name
         self.partition_id = partition_id
-        self.kind = 'Partition'
+        self.kind = "Partition"
 
 
 class PartitionBackupEntity(BackupEntity):
@@ -15293,20 +17724,20 @@ class PartitionBackupEntity(BackupEntity):
     """
 
     _validation = {
-        'entity_kind': {'required': True},
+        "entity_kind": {"required": True},
     }
 
     _attribute_map = {
-        'entity_kind': {'key': 'EntityKind', 'type': 'str'},
-        'service_name': {'key': 'ServiceName', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
+        "entity_kind": {"key": "EntityKind", "type": "str"},
+        "service_name": {"key": "ServiceName", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
     }
 
-    def __init__(self, *, service_name: str=None, partition_id: str=None, **kwargs) -> None:
+    def __init__(self, *, service_name: str = None, partition_id: str = None, **kwargs) -> None:
         super(PartitionBackupEntity, self).__init__(**kwargs)
         self.service_name = service_name
         self.partition_id = partition_id
-        self.entity_kind = 'Partition'
+        self.entity_kind = "Partition"
 
 
 class PartitionDataLossProgress(Model):
@@ -15323,8 +17754,8 @@ class PartitionDataLossProgress(Model):
     """
 
     _attribute_map = {
-        'state': {'key': 'State', 'type': 'str'},
-        'invoke_data_loss_result': {'key': 'InvokeDataLossResult', 'type': 'InvokeDataLossResult'},
+        "state": {"key": "State", "type": "str"},
+        "invoke_data_loss_result": {"key": "InvokeDataLossResult", "type": "InvokeDataLossResult"},
     }
 
     def __init__(self, *, state=None, invoke_data_loss_result=None, **kwargs) -> None:
@@ -15363,16 +17794,32 @@ class PartitionHealth(EntityHealth):
     """
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'health_events': {'key': 'HealthEvents', 'type': '[HealthEvent]'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
-        'health_statistics': {'key': 'HealthStatistics', 'type': 'HealthStatistics'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'replica_health_states': {'key': 'ReplicaHealthStates', 'type': '[ReplicaHealthState]'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "health_events": {"key": "HealthEvents", "type": "[HealthEvent]"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
+        "health_statistics": {"key": "HealthStatistics", "type": "HealthStatistics"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "replica_health_states": {"key": "ReplicaHealthStates", "type": "[ReplicaHealthState]"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, health_events=None, unhealthy_evaluations=None, health_statistics=None, partition_id: str=None, replica_health_states=None, **kwargs) -> None:
-        super(PartitionHealth, self).__init__(aggregated_health_state=aggregated_health_state, health_events=health_events, unhealthy_evaluations=unhealthy_evaluations, health_statistics=health_statistics, **kwargs)
+    def __init__(
+        self,
+        *,
+        aggregated_health_state=None,
+        health_events=None,
+        unhealthy_evaluations=None,
+        health_statistics=None,
+        partition_id: str = None,
+        replica_health_states=None,
+        **kwargs
+    ) -> None:
+        super(PartitionHealth, self).__init__(
+            aggregated_health_state=aggregated_health_state,
+            health_events=health_events,
+            unhealthy_evaluations=unhealthy_evaluations,
+            health_statistics=health_statistics,
+            **kwargs
+        )
         self.partition_id = partition_id
         self.replica_health_states = replica_health_states
 
@@ -15408,22 +17855,32 @@ class PartitionHealthEvaluation(HealthEvaluation):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "description": {"key": "Description", "type": "str"},
+        "kind": {"key": "Kind", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, description: str=None, partition_id: str=None, unhealthy_evaluations=None, **kwargs) -> None:
-        super(PartitionHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description, **kwargs)
+    def __init__(
+        self,
+        *,
+        aggregated_health_state=None,
+        description: str = None,
+        partition_id: str = None,
+        unhealthy_evaluations=None,
+        **kwargs
+    ) -> None:
+        super(PartitionHealthEvaluation, self).__init__(
+            aggregated_health_state=aggregated_health_state, description=description, **kwargs
+        )
         self.partition_id = partition_id
         self.unhealthy_evaluations = unhealthy_evaluations
-        self.kind = 'Partition'
+        self.kind = "Partition"
 
 
 class PartitionHealthReportExpiredEvent(PartitionEvent):
@@ -15469,39 +17926,63 @@ class PartitionHealthReportExpiredEvent(PartitionEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'partition_id': {'required': True},
-        'source_id': {'required': True},
-        'property': {'required': True},
-        'health_state': {'required': True},
-        'time_to_live_ms': {'required': True},
-        'sequence_number': {'required': True},
-        'description': {'required': True},
-        'remove_when_expired': {'required': True},
-        'source_utc_timestamp': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "partition_id": {"required": True},
+        "source_id": {"required": True},
+        "property": {"required": True},
+        "health_state": {"required": True},
+        "time_to_live_ms": {"required": True},
+        "sequence_number": {"required": True},
+        "description": {"required": True},
+        "remove_when_expired": {"required": True},
+        "source_utc_timestamp": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'source_id': {'key': 'SourceId', 'type': 'str'},
-        'property': {'key': 'Property', 'type': 'str'},
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'time_to_live_ms': {'key': 'TimeToLiveMs', 'type': 'long'},
-        'sequence_number': {'key': 'SequenceNumber', 'type': 'long'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'remove_when_expired': {'key': 'RemoveWhenExpired', 'type': 'bool'},
-        'source_utc_timestamp': {'key': 'SourceUtcTimestamp', 'type': 'iso-8601'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "source_id": {"key": "SourceId", "type": "str"},
+        "property": {"key": "Property", "type": "str"},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "time_to_live_ms": {"key": "TimeToLiveMs", "type": "long"},
+        "sequence_number": {"key": "SequenceNumber", "type": "long"},
+        "description": {"key": "Description", "type": "str"},
+        "remove_when_expired": {"key": "RemoveWhenExpired", "type": "bool"},
+        "source_utc_timestamp": {"key": "SourceUtcTimestamp", "type": "iso-8601"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, partition_id: str, source_id: str, property: str, health_state: str, time_to_live_ms: int, sequence_number: int, description: str, remove_when_expired: bool, source_utc_timestamp, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(PartitionHealthReportExpiredEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, partition_id=partition_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        partition_id: str,
+        source_id: str,
+        property: str,
+        health_state: str,
+        time_to_live_ms: int,
+        sequence_number: int,
+        description: str,
+        remove_when_expired: bool,
+        source_utc_timestamp,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(PartitionHealthReportExpiredEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            partition_id=partition_id,
+            **kwargs
+        )
         self.source_id = source_id
         self.property = property
         self.health_state = health_state
@@ -15510,7 +17991,7 @@ class PartitionHealthReportExpiredEvent(PartitionEvent):
         self.description = description
         self.remove_when_expired = remove_when_expired
         self.source_utc_timestamp = source_utc_timestamp
-        self.kind = 'PartitionHealthReportExpired'
+        self.kind = "PartitionHealthReportExpired"
 
 
 class PartitionHealthState(EntityHealthState):
@@ -15529,11 +18010,11 @@ class PartitionHealthState(EntityHealthState):
     """
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, partition_id: str=None, **kwargs) -> None:
+    def __init__(self, *, aggregated_health_state=None, partition_id: str = None, **kwargs) -> None:
         super(PartitionHealthState, self).__init__(aggregated_health_state=aggregated_health_state, **kwargs)
         self.partition_id = partition_id
 
@@ -15557,12 +18038,14 @@ class PartitionHealthStateChunk(EntityHealthStateChunk):
     """
 
     _attribute_map = {
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'replica_health_state_chunks': {'key': 'ReplicaHealthStateChunks', 'type': 'ReplicaHealthStateChunkList'},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "replica_health_state_chunks": {"key": "ReplicaHealthStateChunks", "type": "ReplicaHealthStateChunkList"},
     }
 
-    def __init__(self, *, health_state=None, partition_id: str=None, replica_health_state_chunks=None, **kwargs) -> None:
+    def __init__(
+        self, *, health_state=None, partition_id: str = None, replica_health_state_chunks=None, **kwargs
+    ) -> None:
         super(PartitionHealthStateChunk, self).__init__(health_state=health_state, **kwargs)
         self.partition_id = partition_id
         self.replica_health_state_chunks = replica_health_state_chunks
@@ -15580,7 +18063,7 @@ class PartitionHealthStateChunkList(Model):
     """
 
     _attribute_map = {
-        'items': {'key': 'Items', 'type': '[PartitionHealthStateChunk]'},
+        "items": {"key": "Items", "type": "[PartitionHealthStateChunk]"},
     }
 
     def __init__(self, *, items=None, **kwargs) -> None:
@@ -15648,12 +18131,14 @@ class PartitionHealthStateFilter(Model):
     """
 
     _attribute_map = {
-        'partition_id_filter': {'key': 'PartitionIdFilter', 'type': 'str'},
-        'health_state_filter': {'key': 'HealthStateFilter', 'type': 'int'},
-        'replica_filters': {'key': 'ReplicaFilters', 'type': '[ReplicaHealthStateFilter]'},
+        "partition_id_filter": {"key": "PartitionIdFilter", "type": "str"},
+        "health_state_filter": {"key": "HealthStateFilter", "type": "int"},
+        "replica_filters": {"key": "ReplicaFilters", "type": "[ReplicaHealthStateFilter]"},
     }
 
-    def __init__(self, *, partition_id_filter: str=None, health_state_filter: int=0, replica_filters=None, **kwargs) -> None:
+    def __init__(
+        self, *, partition_id_filter: str = None, health_state_filter: int = 0, replica_filters=None, **kwargs
+    ) -> None:
         super(PartitionHealthStateFilter, self).__init__(**kwargs)
         self.partition_id_filter = partition_id_filter
         self.health_state_filter = health_state_filter
@@ -15680,17 +18165,17 @@ class PartitionInstanceCountScaleMechanism(ScalingMechanismDescription):
     """
 
     _validation = {
-        'kind': {'required': True},
-        'min_instance_count': {'required': True},
-        'max_instance_count': {'required': True},
-        'scale_increment': {'required': True},
+        "kind": {"required": True},
+        "min_instance_count": {"required": True},
+        "max_instance_count": {"required": True},
+        "scale_increment": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'min_instance_count': {'key': 'MinInstanceCount', 'type': 'int'},
-        'max_instance_count': {'key': 'MaxInstanceCount', 'type': 'int'},
-        'scale_increment': {'key': 'ScaleIncrement', 'type': 'int'},
+        "kind": {"key": "Kind", "type": "str"},
+        "min_instance_count": {"key": "MinInstanceCount", "type": "int"},
+        "max_instance_count": {"key": "MaxInstanceCount", "type": "int"},
+        "scale_increment": {"key": "ScaleIncrement", "type": "int"},
     }
 
     def __init__(self, *, min_instance_count: int, max_instance_count: int, scale_increment: int, **kwargs) -> None:
@@ -15698,7 +18183,7 @@ class PartitionInstanceCountScaleMechanism(ScalingMechanismDescription):
         self.min_instance_count = min_instance_count
         self.max_instance_count = max_instance_count
         self.scale_increment = scale_increment
-        self.kind = 'PartitionInstanceCount'
+        self.kind = "PartitionInstanceCount"
 
 
 class PartitionLoadInformation(Model):
@@ -15727,13 +18212,21 @@ class PartitionLoadInformation(Model):
     """
 
     _attribute_map = {
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'primary_load_metric_reports': {'key': 'PrimaryLoadMetricReports', 'type': '[LoadMetricReport]'},
-        'secondary_load_metric_reports': {'key': 'SecondaryLoadMetricReports', 'type': '[LoadMetricReport]'},
-        'auxiliary_load_metric_reports': {'key': 'AuxiliaryLoadMetricReports', 'type': '[LoadMetricReport]'},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "primary_load_metric_reports": {"key": "PrimaryLoadMetricReports", "type": "[LoadMetricReport]"},
+        "secondary_load_metric_reports": {"key": "SecondaryLoadMetricReports", "type": "[LoadMetricReport]"},
+        "auxiliary_load_metric_reports": {"key": "AuxiliaryLoadMetricReports", "type": "[LoadMetricReport]"},
     }
 
-    def __init__(self, *, partition_id: str=None, primary_load_metric_reports=None, secondary_load_metric_reports=None, auxiliary_load_metric_reports=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        partition_id: str = None,
+        primary_load_metric_reports=None,
+        secondary_load_metric_reports=None,
+        auxiliary_load_metric_reports=None,
+        **kwargs
+    ) -> None:
         super(PartitionLoadInformation, self).__init__(**kwargs)
         self.partition_id = partition_id
         self.primary_load_metric_reports = primary_load_metric_reports
@@ -15773,15 +18266,34 @@ class PartitionMetricLoadDescription(Model):
     """
 
     _attribute_map = {
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'primary_replica_load_entries': {'key': 'PrimaryReplicaLoadEntries', 'type': '[MetricLoadDescription]'},
-        'secondary_replicas_or_instances_load_entries': {'key': 'SecondaryReplicasOrInstancesLoadEntries', 'type': '[MetricLoadDescription]'},
-        'secondary_replica_or_instance_load_entries_per_node': {'key': 'SecondaryReplicaOrInstanceLoadEntriesPerNode', 'type': '[ReplicaMetricLoadDescription]'},
-        'auxiliary_replicas_load_entries': {'key': 'AuxiliaryReplicasLoadEntries', 'type': '[MetricLoadDescription]'},
-        'auxiliary_replica_load_entries_per_node': {'key': 'AuxiliaryReplicaLoadEntriesPerNode', 'type': '[ReplicaMetricLoadDescription]'},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "primary_replica_load_entries": {"key": "PrimaryReplicaLoadEntries", "type": "[MetricLoadDescription]"},
+        "secondary_replicas_or_instances_load_entries": {
+            "key": "SecondaryReplicasOrInstancesLoadEntries",
+            "type": "[MetricLoadDescription]",
+        },
+        "secondary_replica_or_instance_load_entries_per_node": {
+            "key": "SecondaryReplicaOrInstanceLoadEntriesPerNode",
+            "type": "[ReplicaMetricLoadDescription]",
+        },
+        "auxiliary_replicas_load_entries": {"key": "AuxiliaryReplicasLoadEntries", "type": "[MetricLoadDescription]"},
+        "auxiliary_replica_load_entries_per_node": {
+            "key": "AuxiliaryReplicaLoadEntriesPerNode",
+            "type": "[ReplicaMetricLoadDescription]",
+        },
     }
 
-    def __init__(self, *, partition_id: str=None, primary_replica_load_entries=None, secondary_replicas_or_instances_load_entries=None, secondary_replica_or_instance_load_entries_per_node=None, auxiliary_replicas_load_entries=None, auxiliary_replica_load_entries_per_node=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        partition_id: str = None,
+        primary_replica_load_entries=None,
+        secondary_replicas_or_instances_load_entries=None,
+        secondary_replica_or_instance_load_entries_per_node=None,
+        auxiliary_replicas_load_entries=None,
+        auxiliary_replica_load_entries_per_node=None,
+        **kwargs
+    ) -> None:
         super(PartitionMetricLoadDescription, self).__init__(**kwargs)
         self.partition_id = partition_id
         self.primary_replica_load_entries = primary_replica_load_entries
@@ -15834,39 +18346,63 @@ class PartitionNewHealthReportEvent(PartitionEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'partition_id': {'required': True},
-        'source_id': {'required': True},
-        'property': {'required': True},
-        'health_state': {'required': True},
-        'time_to_live_ms': {'required': True},
-        'sequence_number': {'required': True},
-        'description': {'required': True},
-        'remove_when_expired': {'required': True},
-        'source_utc_timestamp': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "partition_id": {"required": True},
+        "source_id": {"required": True},
+        "property": {"required": True},
+        "health_state": {"required": True},
+        "time_to_live_ms": {"required": True},
+        "sequence_number": {"required": True},
+        "description": {"required": True},
+        "remove_when_expired": {"required": True},
+        "source_utc_timestamp": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'source_id': {'key': 'SourceId', 'type': 'str'},
-        'property': {'key': 'Property', 'type': 'str'},
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'time_to_live_ms': {'key': 'TimeToLiveMs', 'type': 'long'},
-        'sequence_number': {'key': 'SequenceNumber', 'type': 'long'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'remove_when_expired': {'key': 'RemoveWhenExpired', 'type': 'bool'},
-        'source_utc_timestamp': {'key': 'SourceUtcTimestamp', 'type': 'iso-8601'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "source_id": {"key": "SourceId", "type": "str"},
+        "property": {"key": "Property", "type": "str"},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "time_to_live_ms": {"key": "TimeToLiveMs", "type": "long"},
+        "sequence_number": {"key": "SequenceNumber", "type": "long"},
+        "description": {"key": "Description", "type": "str"},
+        "remove_when_expired": {"key": "RemoveWhenExpired", "type": "bool"},
+        "source_utc_timestamp": {"key": "SourceUtcTimestamp", "type": "iso-8601"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, partition_id: str, source_id: str, property: str, health_state: str, time_to_live_ms: int, sequence_number: int, description: str, remove_when_expired: bool, source_utc_timestamp, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(PartitionNewHealthReportEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, partition_id=partition_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        partition_id: str,
+        source_id: str,
+        property: str,
+        health_state: str,
+        time_to_live_ms: int,
+        sequence_number: int,
+        description: str,
+        remove_when_expired: bool,
+        source_utc_timestamp,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(PartitionNewHealthReportEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            partition_id=partition_id,
+            **kwargs
+        )
         self.source_id = source_id
         self.property = property
         self.health_state = health_state
@@ -15875,7 +18411,7 @@ class PartitionNewHealthReportEvent(PartitionEvent):
         self.description = description
         self.remove_when_expired = remove_when_expired
         self.source_utc_timestamp = source_utc_timestamp
-        self.kind = 'PartitionNewHealthReport'
+        self.kind = "PartitionNewHealthReport"
 
 
 class PartitionPrimaryMoveAnalysisEvent(PartitionAnalysisEvent):
@@ -15916,41 +18452,64 @@ class PartitionPrimaryMoveAnalysisEvent(PartitionAnalysisEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'partition_id': {'required': True},
-        'metadata': {'required': True},
-        'when_move_completed': {'required': True},
-        'previous_node': {'required': True},
-        'current_node': {'required': True},
-        'move_reason': {'required': True},
-        'relevant_traces': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "partition_id": {"required": True},
+        "metadata": {"required": True},
+        "when_move_completed": {"required": True},
+        "previous_node": {"required": True},
+        "current_node": {"required": True},
+        "move_reason": {"required": True},
+        "relevant_traces": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'metadata': {'key': 'Metadata', 'type': 'AnalysisEventMetadata'},
-        'when_move_completed': {'key': 'WhenMoveCompleted', 'type': 'iso-8601'},
-        'previous_node': {'key': 'PreviousNode', 'type': 'str'},
-        'current_node': {'key': 'CurrentNode', 'type': 'str'},
-        'move_reason': {'key': 'MoveReason', 'type': 'str'},
-        'relevant_traces': {'key': 'RelevantTraces', 'type': 'str'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "metadata": {"key": "Metadata", "type": "AnalysisEventMetadata"},
+        "when_move_completed": {"key": "WhenMoveCompleted", "type": "iso-8601"},
+        "previous_node": {"key": "PreviousNode", "type": "str"},
+        "current_node": {"key": "CurrentNode", "type": "str"},
+        "move_reason": {"key": "MoveReason", "type": "str"},
+        "relevant_traces": {"key": "RelevantTraces", "type": "str"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, partition_id: str, metadata, when_move_completed, previous_node: str, current_node: str, move_reason: str, relevant_traces: str, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(PartitionPrimaryMoveAnalysisEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, partition_id=partition_id, metadata=metadata, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        partition_id: str,
+        metadata,
+        when_move_completed,
+        previous_node: str,
+        current_node: str,
+        move_reason: str,
+        relevant_traces: str,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(PartitionPrimaryMoveAnalysisEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            partition_id=partition_id,
+            metadata=metadata,
+            **kwargs
+        )
         self.when_move_completed = when_move_completed
         self.previous_node = previous_node
         self.current_node = current_node
         self.move_reason = move_reason
         self.relevant_traces = relevant_traces
-        self.kind = 'PartitionPrimaryMoveAnalysis'
+        self.kind = "PartitionPrimaryMoveAnalysis"
 
 
 class PartitionQuorumLossProgress(Model):
@@ -15967,8 +18526,8 @@ class PartitionQuorumLossProgress(Model):
     """
 
     _attribute_map = {
-        'state': {'key': 'State', 'type': 'str'},
-        'invoke_quorum_loss_result': {'key': 'InvokeQuorumLossResult', 'type': 'InvokeQuorumLossResult'},
+        "state": {"key": "State", "type": "str"},
+        "invoke_quorum_loss_result": {"key": "InvokeQuorumLossResult", "type": "InvokeQuorumLossResult"},
     }
 
     def __init__(self, *, state=None, invoke_quorum_loss_result=None, **kwargs) -> None:
@@ -16029,49 +18588,78 @@ class PartitionReconfiguredEvent(PartitionEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'partition_id': {'required': True},
-        'node_name': {'required': True},
-        'node_instance_id': {'required': True},
-        'service_type': {'required': True},
-        'cc_epoch_data_loss_version': {'required': True},
-        'cc_epoch_config_version': {'required': True},
-        'reconfig_type': {'required': True},
-        'result': {'required': True},
-        'phase0_duration_ms': {'required': True},
-        'phase1_duration_ms': {'required': True},
-        'phase2_duration_ms': {'required': True},
-        'phase3_duration_ms': {'required': True},
-        'phase4_duration_ms': {'required': True},
-        'total_duration_ms': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "partition_id": {"required": True},
+        "node_name": {"required": True},
+        "node_instance_id": {"required": True},
+        "service_type": {"required": True},
+        "cc_epoch_data_loss_version": {"required": True},
+        "cc_epoch_config_version": {"required": True},
+        "reconfig_type": {"required": True},
+        "result": {"required": True},
+        "phase0_duration_ms": {"required": True},
+        "phase1_duration_ms": {"required": True},
+        "phase2_duration_ms": {"required": True},
+        "phase3_duration_ms": {"required": True},
+        "phase4_duration_ms": {"required": True},
+        "total_duration_ms": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'node_instance_id': {'key': 'NodeInstanceId', 'type': 'str'},
-        'service_type': {'key': 'ServiceType', 'type': 'str'},
-        'cc_epoch_data_loss_version': {'key': 'CcEpochDataLossVersion', 'type': 'long'},
-        'cc_epoch_config_version': {'key': 'CcEpochConfigVersion', 'type': 'long'},
-        'reconfig_type': {'key': 'ReconfigType', 'type': 'str'},
-        'result': {'key': 'Result', 'type': 'str'},
-        'phase0_duration_ms': {'key': 'Phase0DurationMs', 'type': 'float'},
-        'phase1_duration_ms': {'key': 'Phase1DurationMs', 'type': 'float'},
-        'phase2_duration_ms': {'key': 'Phase2DurationMs', 'type': 'float'},
-        'phase3_duration_ms': {'key': 'Phase3DurationMs', 'type': 'float'},
-        'phase4_duration_ms': {'key': 'Phase4DurationMs', 'type': 'float'},
-        'total_duration_ms': {'key': 'TotalDurationMs', 'type': 'float'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "node_instance_id": {"key": "NodeInstanceId", "type": "str"},
+        "service_type": {"key": "ServiceType", "type": "str"},
+        "cc_epoch_data_loss_version": {"key": "CcEpochDataLossVersion", "type": "long"},
+        "cc_epoch_config_version": {"key": "CcEpochConfigVersion", "type": "long"},
+        "reconfig_type": {"key": "ReconfigType", "type": "str"},
+        "result": {"key": "Result", "type": "str"},
+        "phase0_duration_ms": {"key": "Phase0DurationMs", "type": "float"},
+        "phase1_duration_ms": {"key": "Phase1DurationMs", "type": "float"},
+        "phase2_duration_ms": {"key": "Phase2DurationMs", "type": "float"},
+        "phase3_duration_ms": {"key": "Phase3DurationMs", "type": "float"},
+        "phase4_duration_ms": {"key": "Phase4DurationMs", "type": "float"},
+        "total_duration_ms": {"key": "TotalDurationMs", "type": "float"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, partition_id: str, node_name: str, node_instance_id: str, service_type: str, cc_epoch_data_loss_version: int, cc_epoch_config_version: int, reconfig_type: str, result: str, phase0_duration_ms: float, phase1_duration_ms: float, phase2_duration_ms: float, phase3_duration_ms: float, phase4_duration_ms: float, total_duration_ms: float, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(PartitionReconfiguredEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, partition_id=partition_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        partition_id: str,
+        node_name: str,
+        node_instance_id: str,
+        service_type: str,
+        cc_epoch_data_loss_version: int,
+        cc_epoch_config_version: int,
+        reconfig_type: str,
+        result: str,
+        phase0_duration_ms: float,
+        phase1_duration_ms: float,
+        phase2_duration_ms: float,
+        phase3_duration_ms: float,
+        phase4_duration_ms: float,
+        total_duration_ms: float,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(PartitionReconfiguredEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            partition_id=partition_id,
+            **kwargs
+        )
         self.node_name = node_name
         self.node_instance_id = node_instance_id
         self.service_type = service_type
@@ -16085,7 +18673,7 @@ class PartitionReconfiguredEvent(PartitionEvent):
         self.phase3_duration_ms = phase3_duration_ms
         self.phase4_duration_ms = phase4_duration_ms
         self.total_duration_ms = total_duration_ms
-        self.kind = 'PartitionReconfigured'
+        self.kind = "PartitionReconfigured"
 
 
 class PartitionRestartProgress(Model):
@@ -16102,8 +18690,8 @@ class PartitionRestartProgress(Model):
     """
 
     _attribute_map = {
-        'state': {'key': 'State', 'type': 'str'},
-        'restart_partition_result': {'key': 'RestartPartitionResult', 'type': 'RestartPartitionResult'},
+        "state": {"key": "State", "type": "str"},
+        "restart_partition_result": {"key": "RestartPartitionResult", "type": "RestartPartitionResult"},
     }
 
     def __init__(self, *, state=None, restart_partition_result=None, **kwargs) -> None:
@@ -16146,24 +18734,38 @@ class PartitionsHealthEvaluation(HealthEvaluation):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'max_percent_unhealthy_partitions_per_service': {'key': 'MaxPercentUnhealthyPartitionsPerService', 'type': 'int'},
-        'total_count': {'key': 'TotalCount', 'type': 'long'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "description": {"key": "Description", "type": "str"},
+        "kind": {"key": "Kind", "type": "str"},
+        "max_percent_unhealthy_partitions_per_service": {
+            "key": "MaxPercentUnhealthyPartitionsPerService",
+            "type": "int",
+        },
+        "total_count": {"key": "TotalCount", "type": "long"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, description: str=None, max_percent_unhealthy_partitions_per_service: int=None, total_count: int=None, unhealthy_evaluations=None, **kwargs) -> None:
-        super(PartitionsHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description, **kwargs)
+    def __init__(
+        self,
+        *,
+        aggregated_health_state=None,
+        description: str = None,
+        max_percent_unhealthy_partitions_per_service: int = None,
+        total_count: int = None,
+        unhealthy_evaluations=None,
+        **kwargs
+    ) -> None:
+        super(PartitionsHealthEvaluation, self).__init__(
+            aggregated_health_state=aggregated_health_state, description=description, **kwargs
+        )
         self.max_percent_unhealthy_partitions_per_service = max_percent_unhealthy_partitions_per_service
         self.total_count = total_count
         self.unhealthy_evaluations = unhealthy_evaluations
-        self.kind = 'Partitions'
+        self.kind = "Partitions"
 
 
 class ReplicatorStatus(Model):
@@ -16182,15 +18784,15 @@ class ReplicatorStatus(Model):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
+        "kind": {"key": "Kind", "type": "str"},
     }
 
     _subtype_map = {
-        'kind': {'Primary': 'PrimaryReplicatorStatus', 'SecondaryReplicatorStatus': 'SecondaryReplicatorStatus'}
+        "kind": {"Primary": "PrimaryReplicatorStatus", "SecondaryReplicatorStatus": "SecondaryReplicatorStatus"}
     }
 
     def __init__(self, **kwargs) -> None:
@@ -16217,20 +18819,20 @@ class PrimaryReplicatorStatus(ReplicatorStatus):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'replication_queue_status': {'key': 'ReplicationQueueStatus', 'type': 'ReplicatorQueueStatus'},
-        'remote_replicators': {'key': 'RemoteReplicators', 'type': '[RemoteReplicatorStatus]'},
+        "kind": {"key": "Kind", "type": "str"},
+        "replication_queue_status": {"key": "ReplicationQueueStatus", "type": "ReplicatorQueueStatus"},
+        "remote_replicators": {"key": "RemoteReplicators", "type": "[RemoteReplicatorStatus]"},
     }
 
     def __init__(self, *, replication_queue_status=None, remote_replicators=None, **kwargs) -> None:
         super(PrimaryReplicatorStatus, self).__init__(**kwargs)
         self.replication_queue_status = replication_queue_status
         self.remote_replicators = remote_replicators
-        self.kind = 'Primary'
+        self.kind = "Primary"
 
 
 class Probe(Model):
@@ -16260,17 +18862,29 @@ class Probe(Model):
     """
 
     _attribute_map = {
-        'initial_delay_seconds': {'key': 'initialDelaySeconds', 'type': 'int'},
-        'period_seconds': {'key': 'periodSeconds', 'type': 'int'},
-        'timeout_seconds': {'key': 'timeoutSeconds', 'type': 'int'},
-        'success_threshold': {'key': 'successThreshold', 'type': 'int'},
-        'failure_threshold': {'key': 'failureThreshold', 'type': 'int'},
-        'exec_property': {'key': 'exec', 'type': 'ProbeExec'},
-        'http_get': {'key': 'httpGet', 'type': 'ProbeHttpGet'},
-        'tcp_socket': {'key': 'tcpSocket', 'type': 'ProbeTcpSocket'},
+        "initial_delay_seconds": {"key": "initialDelaySeconds", "type": "int"},
+        "period_seconds": {"key": "periodSeconds", "type": "int"},
+        "timeout_seconds": {"key": "timeoutSeconds", "type": "int"},
+        "success_threshold": {"key": "successThreshold", "type": "int"},
+        "failure_threshold": {"key": "failureThreshold", "type": "int"},
+        "exec_property": {"key": "exec", "type": "ProbeExec"},
+        "http_get": {"key": "httpGet", "type": "ProbeHttpGet"},
+        "tcp_socket": {"key": "tcpSocket", "type": "ProbeTcpSocket"},
     }
 
-    def __init__(self, *, initial_delay_seconds: int=0, period_seconds: int=10, timeout_seconds: int=1, success_threshold: int=1, failure_threshold: int=3, exec_property=None, http_get=None, tcp_socket=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        initial_delay_seconds: int = 0,
+        period_seconds: int = 10,
+        timeout_seconds: int = 1,
+        success_threshold: int = 1,
+        failure_threshold: int = 3,
+        exec_property=None,
+        http_get=None,
+        tcp_socket=None,
+        **kwargs
+    ) -> None:
         super(Probe, self).__init__(**kwargs)
         self.initial_delay_seconds = initial_delay_seconds
         self.period_seconds = period_seconds
@@ -16293,11 +18907,11 @@ class ProbeExec(Model):
     """
 
     _validation = {
-        'command': {'required': True},
+        "command": {"required": True},
     }
 
     _attribute_map = {
-        'command': {'key': 'command', 'type': 'str'},
+        "command": {"key": "command", "type": "str"},
     }
 
     def __init__(self, *, command: str, **kwargs) -> None:
@@ -16324,18 +18938,20 @@ class ProbeHttpGet(Model):
     """
 
     _validation = {
-        'port': {'required': True},
+        "port": {"required": True},
     }
 
     _attribute_map = {
-        'port': {'key': 'port', 'type': 'int'},
-        'path': {'key': 'path', 'type': 'str'},
-        'host': {'key': 'host', 'type': 'str'},
-        'http_headers': {'key': 'httpHeaders', 'type': '[ProbeHttpGetHeaders]'},
-        'scheme': {'key': 'scheme', 'type': 'str'},
+        "port": {"key": "port", "type": "int"},
+        "path": {"key": "path", "type": "str"},
+        "host": {"key": "host", "type": "str"},
+        "http_headers": {"key": "httpHeaders", "type": "[ProbeHttpGetHeaders]"},
+        "scheme": {"key": "scheme", "type": "str"},
     }
 
-    def __init__(self, *, port: int, path: str=None, host: str=None, http_headers=None, scheme=None, **kwargs) -> None:
+    def __init__(
+        self, *, port: int, path: str = None, host: str = None, http_headers=None, scheme=None, **kwargs
+    ) -> None:
         super(ProbeHttpGet, self).__init__(**kwargs)
         self.port = port
         self.path = path
@@ -16356,13 +18972,13 @@ class ProbeHttpGetHeaders(Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'value': {'required': True},
+        "name": {"required": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
     def __init__(self, *, name: str, value: str, **kwargs) -> None:
@@ -16381,11 +18997,11 @@ class ProbeTcpSocket(Model):
     """
 
     _validation = {
-        'port': {'required': True},
+        "port": {"required": True},
     }
 
     _attribute_map = {
-        'port': {'key': 'port', 'type': 'int'},
+        "port": {"key": "port", "type": "int"},
     }
 
     def __init__(self, *, port: int, **kwargs) -> None:
@@ -16402,7 +19018,7 @@ class PropertyBatchDescriptionList(Model):
     """
 
     _attribute_map = {
-        'operations': {'key': 'Operations', 'type': '[PropertyBatchOperation]'},
+        "operations": {"key": "Operations", "type": "[PropertyBatchOperation]"},
     }
 
     def __init__(self, *, operations=None, **kwargs) -> None:
@@ -16425,17 +19041,17 @@ class PropertyDescription(Model):
     """
 
     _validation = {
-        'property_name': {'required': True},
-        'value': {'required': True},
+        "property_name": {"required": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'property_name': {'key': 'PropertyName', 'type': 'str'},
-        'custom_type_id': {'key': 'CustomTypeId', 'type': 'str'},
-        'value': {'key': 'Value', 'type': 'PropertyValue'},
+        "property_name": {"key": "PropertyName", "type": "str"},
+        "custom_type_id": {"key": "CustomTypeId", "type": "str"},
+        "value": {"key": "Value", "type": "PropertyValue"},
     }
 
-    def __init__(self, *, property_name: str, value, custom_type_id: str=None, **kwargs) -> None:
+    def __init__(self, *, property_name: str, value, custom_type_id: str = None, **kwargs) -> None:
         super(PropertyDescription, self).__init__(**kwargs)
         self.property_name = property_name
         self.custom_type_id = custom_type_id
@@ -16457,14 +19073,14 @@ class PropertyInfo(Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'metadata': {'required': True},
+        "name": {"required": True},
+        "metadata": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'value': {'key': 'Value', 'type': 'PropertyValue'},
-        'metadata': {'key': 'Metadata', 'type': 'PropertyMetadata'},
+        "name": {"key": "Name", "type": "str"},
+        "value": {"key": "Value", "type": "PropertyValue"},
+        "metadata": {"key": "Metadata", "type": "PropertyMetadata"},
     }
 
     def __init__(self, *, name: str, metadata, value=None, **kwargs) -> None:
@@ -16498,15 +19114,25 @@ class PropertyMetadata(Model):
     """
 
     _attribute_map = {
-        'type_id': {'key': 'TypeId', 'type': 'str'},
-        'custom_type_id': {'key': 'CustomTypeId', 'type': 'str'},
-        'parent': {'key': 'Parent', 'type': 'str'},
-        'size_in_bytes': {'key': 'SizeInBytes', 'type': 'int'},
-        'last_modified_utc_timestamp': {'key': 'LastModifiedUtcTimestamp', 'type': 'iso-8601'},
-        'sequence_number': {'key': 'SequenceNumber', 'type': 'str'},
+        "type_id": {"key": "TypeId", "type": "str"},
+        "custom_type_id": {"key": "CustomTypeId", "type": "str"},
+        "parent": {"key": "Parent", "type": "str"},
+        "size_in_bytes": {"key": "SizeInBytes", "type": "int"},
+        "last_modified_utc_timestamp": {"key": "LastModifiedUtcTimestamp", "type": "iso-8601"},
+        "sequence_number": {"key": "SequenceNumber", "type": "str"},
     }
 
-    def __init__(self, *, type_id=None, custom_type_id: str=None, parent: str=None, size_in_bytes: int=None, last_modified_utc_timestamp=None, sequence_number: str=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        type_id=None,
+        custom_type_id: str = None,
+        parent: str = None,
+        size_in_bytes: int = None,
+        last_modified_utc_timestamp=None,
+        sequence_number: str = None,
+        **kwargs
+    ) -> None:
         super(PropertyMetadata, self).__init__(**kwargs)
         self.type_id = type_id
         self.custom_type_id = custom_type_id
@@ -16543,23 +19169,30 @@ class ProvisionApplicationTypeDescription(ProvisionApplicationTypeDescriptionBas
     """
 
     _validation = {
-        'async_property': {'required': True},
-        'kind': {'required': True},
-        'application_type_build_path': {'required': True},
+        "async_property": {"required": True},
+        "kind": {"required": True},
+        "application_type_build_path": {"required": True},
     }
 
     _attribute_map = {
-        'async_property': {'key': 'Async', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'application_type_build_path': {'key': 'ApplicationTypeBuildPath', 'type': 'str'},
-        'application_package_cleanup_policy': {'key': 'ApplicationPackageCleanupPolicy', 'type': 'str'},
+        "async_property": {"key": "Async", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "application_type_build_path": {"key": "ApplicationTypeBuildPath", "type": "str"},
+        "application_package_cleanup_policy": {"key": "ApplicationPackageCleanupPolicy", "type": "str"},
     }
 
-    def __init__(self, *, async_property: bool, application_type_build_path: str, application_package_cleanup_policy=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        async_property: bool,
+        application_type_build_path: str,
+        application_package_cleanup_policy=None,
+        **kwargs
+    ) -> None:
         super(ProvisionApplicationTypeDescription, self).__init__(async_property=async_property, **kwargs)
         self.application_type_build_path = application_type_build_path
         self.application_package_cleanup_policy = application_package_cleanup_policy
-        self.kind = 'ImageStorePath'
+        self.kind = "ImageStorePath"
 
 
 class ProvisionFabricDescription(Model):
@@ -16572,11 +19205,11 @@ class ProvisionFabricDescription(Model):
     """
 
     _attribute_map = {
-        'code_file_path': {'key': 'CodeFilePath', 'type': 'str'},
-        'cluster_manifest_file_path': {'key': 'ClusterManifestFilePath', 'type': 'str'},
+        "code_file_path": {"key": "CodeFilePath", "type": "str"},
+        "cluster_manifest_file_path": {"key": "ClusterManifestFilePath", "type": "str"},
     }
 
-    def __init__(self, *, code_file_path: str=None, cluster_manifest_file_path: str=None, **kwargs) -> None:
+    def __init__(self, *, code_file_path: str = None, cluster_manifest_file_path: str = None, **kwargs) -> None:
         super(ProvisionFabricDescription, self).__init__(**kwargs)
         self.code_file_path = code_file_path
         self.cluster_manifest_file_path = cluster_manifest_file_path
@@ -16601,23 +19234,23 @@ class PutPropertyBatchOperation(PropertyBatchOperation):
     """
 
     _validation = {
-        'property_name': {'required': True},
-        'kind': {'required': True},
-        'value': {'required': True},
+        "property_name": {"required": True},
+        "kind": {"required": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'property_name': {'key': 'PropertyName', 'type': 'str'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'value': {'key': 'Value', 'type': 'PropertyValue'},
-        'custom_type_id': {'key': 'CustomTypeId', 'type': 'str'},
+        "property_name": {"key": "PropertyName", "type": "str"},
+        "kind": {"key": "Kind", "type": "str"},
+        "value": {"key": "Value", "type": "PropertyValue"},
+        "custom_type_id": {"key": "CustomTypeId", "type": "str"},
     }
 
-    def __init__(self, *, property_name: str, value, custom_type_id: str=None, **kwargs) -> None:
+    def __init__(self, *, property_name: str, value, custom_type_id: str = None, **kwargs) -> None:
         super(PutPropertyBatchOperation, self).__init__(property_name=property_name, **kwargs)
         self.value = value
         self.custom_type_id = custom_type_id
-        self.kind = 'Put'
+        self.kind = "Put"
 
 
 class ReconfigurationInformation(Model):
@@ -16648,13 +19281,21 @@ class ReconfigurationInformation(Model):
     """
 
     _attribute_map = {
-        'previous_configuration_role': {'key': 'PreviousConfigurationRole', 'type': 'str'},
-        'reconfiguration_phase': {'key': 'ReconfigurationPhase', 'type': 'str'},
-        'reconfiguration_type': {'key': 'ReconfigurationType', 'type': 'str'},
-        'reconfiguration_start_time_utc': {'key': 'ReconfigurationStartTimeUtc', 'type': 'iso-8601'},
+        "previous_configuration_role": {"key": "PreviousConfigurationRole", "type": "str"},
+        "reconfiguration_phase": {"key": "ReconfigurationPhase", "type": "str"},
+        "reconfiguration_type": {"key": "ReconfigurationType", "type": "str"},
+        "reconfiguration_start_time_utc": {"key": "ReconfigurationStartTimeUtc", "type": "iso-8601"},
     }
 
-    def __init__(self, *, previous_configuration_role=None, reconfiguration_phase=None, reconfiguration_type=None, reconfiguration_start_time_utc=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        previous_configuration_role=None,
+        reconfiguration_phase=None,
+        reconfiguration_type=None,
+        reconfiguration_start_time_utc=None,
+        **kwargs
+    ) -> None:
         super(ReconfigurationInformation, self).__init__(**kwargs)
         self.previous_configuration_role = previous_configuration_role
         self.reconfiguration_phase = reconfiguration_phase
@@ -16676,12 +19317,19 @@ class RegistryCredential(Model):
     """
 
     _attribute_map = {
-        'registry_user_name': {'key': 'RegistryUserName', 'type': 'str'},
-        'registry_password': {'key': 'RegistryPassword', 'type': 'str'},
-        'password_encrypted': {'key': 'PasswordEncrypted', 'type': 'bool'},
+        "registry_user_name": {"key": "RegistryUserName", "type": "str"},
+        "registry_password": {"key": "RegistryPassword", "type": "str"},
+        "password_encrypted": {"key": "PasswordEncrypted", "type": "bool"},
     }
 
-    def __init__(self, *, registry_user_name: str=None, registry_password: str=None, password_encrypted: bool=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        registry_user_name: str = None,
+        registry_password: str = None,
+        password_encrypted: bool = None,
+        **kwargs
+    ) -> None:
         super(RegistryCredential, self).__init__(**kwargs)
         self.registry_user_name = registry_user_name
         self.registry_password = registry_password
@@ -16704,15 +19352,15 @@ class ReliableCollectionsRef(Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'do_not_persist_state': {'key': 'doNotPersistState', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "do_not_persist_state": {"key": "doNotPersistState", "type": "bool"},
     }
 
-    def __init__(self, *, name: str, do_not_persist_state: bool=None, **kwargs) -> None:
+    def __init__(self, *, name: str, do_not_persist_state: bool = None, **kwargs) -> None:
         super(ReliableCollectionsRef, self).__init__(**kwargs)
         self.name = name
         self.do_not_persist_state = do_not_persist_state
@@ -16738,13 +19386,21 @@ class RemoteReplicatorAcknowledgementDetail(Model):
     """
 
     _attribute_map = {
-        'average_receive_duration': {'key': 'AverageReceiveDuration', 'type': 'str'},
-        'average_apply_duration': {'key': 'AverageApplyDuration', 'type': 'str'},
-        'not_received_count': {'key': 'NotReceivedCount', 'type': 'str'},
-        'received_and_not_applied_count': {'key': 'ReceivedAndNotAppliedCount', 'type': 'str'},
+        "average_receive_duration": {"key": "AverageReceiveDuration", "type": "str"},
+        "average_apply_duration": {"key": "AverageApplyDuration", "type": "str"},
+        "not_received_count": {"key": "NotReceivedCount", "type": "str"},
+        "received_and_not_applied_count": {"key": "ReceivedAndNotAppliedCount", "type": "str"},
     }
 
-    def __init__(self, *, average_receive_duration: str=None, average_apply_duration: str=None, not_received_count: str=None, received_and_not_applied_count: str=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        average_receive_duration: str = None,
+        average_apply_duration: str = None,
+        not_received_count: str = None,
+        received_and_not_applied_count: str = None,
+        **kwargs
+    ) -> None:
         super(RemoteReplicatorAcknowledgementDetail, self).__init__(**kwargs)
         self.average_receive_duration = average_receive_duration
         self.average_apply_duration = average_apply_duration
@@ -16768,11 +19424,19 @@ class RemoteReplicatorAcknowledgementStatus(Model):
     """
 
     _attribute_map = {
-        'replication_stream_acknowledgement_detail': {'key': 'ReplicationStreamAcknowledgementDetail', 'type': 'RemoteReplicatorAcknowledgementDetail'},
-        'copy_stream_acknowledgement_detail': {'key': 'CopyStreamAcknowledgementDetail', 'type': 'RemoteReplicatorAcknowledgementDetail'},
+        "replication_stream_acknowledgement_detail": {
+            "key": "ReplicationStreamAcknowledgementDetail",
+            "type": "RemoteReplicatorAcknowledgementDetail",
+        },
+        "copy_stream_acknowledgement_detail": {
+            "key": "CopyStreamAcknowledgementDetail",
+            "type": "RemoteReplicatorAcknowledgementDetail",
+        },
     }
 
-    def __init__(self, *, replication_stream_acknowledgement_detail=None, copy_stream_acknowledgement_detail=None, **kwargs) -> None:
+    def __init__(
+        self, *, replication_stream_acknowledgement_detail=None, copy_stream_acknowledgement_detail=None, **kwargs
+    ) -> None:
         super(RemoteReplicatorAcknowledgementStatus, self).__init__(**kwargs)
         self.replication_stream_acknowledgement_detail = replication_stream_acknowledgement_detail
         self.copy_stream_acknowledgement_detail = copy_stream_acknowledgement_detail
@@ -16817,17 +19481,32 @@ class RemoteReplicatorStatus(Model):
     """
 
     _attribute_map = {
-        'replica_id': {'key': 'ReplicaId', 'type': 'str'},
-        'last_acknowledgement_processed_time_utc': {'key': 'LastAcknowledgementProcessedTimeUtc', 'type': 'iso-8601'},
-        'last_received_replication_sequence_number': {'key': 'LastReceivedReplicationSequenceNumber', 'type': 'str'},
-        'last_applied_replication_sequence_number': {'key': 'LastAppliedReplicationSequenceNumber', 'type': 'str'},
-        'is_in_build': {'key': 'IsInBuild', 'type': 'bool'},
-        'last_received_copy_sequence_number': {'key': 'LastReceivedCopySequenceNumber', 'type': 'str'},
-        'last_applied_copy_sequence_number': {'key': 'LastAppliedCopySequenceNumber', 'type': 'str'},
-        'remote_replicator_acknowledgement_status': {'key': 'RemoteReplicatorAcknowledgementStatus', 'type': 'RemoteReplicatorAcknowledgementStatus'},
+        "replica_id": {"key": "ReplicaId", "type": "str"},
+        "last_acknowledgement_processed_time_utc": {"key": "LastAcknowledgementProcessedTimeUtc", "type": "iso-8601"},
+        "last_received_replication_sequence_number": {"key": "LastReceivedReplicationSequenceNumber", "type": "str"},
+        "last_applied_replication_sequence_number": {"key": "LastAppliedReplicationSequenceNumber", "type": "str"},
+        "is_in_build": {"key": "IsInBuild", "type": "bool"},
+        "last_received_copy_sequence_number": {"key": "LastReceivedCopySequenceNumber", "type": "str"},
+        "last_applied_copy_sequence_number": {"key": "LastAppliedCopySequenceNumber", "type": "str"},
+        "remote_replicator_acknowledgement_status": {
+            "key": "RemoteReplicatorAcknowledgementStatus",
+            "type": "RemoteReplicatorAcknowledgementStatus",
+        },
     }
 
-    def __init__(self, *, replica_id: str=None, last_acknowledgement_processed_time_utc=None, last_received_replication_sequence_number: str=None, last_applied_replication_sequence_number: str=None, is_in_build: bool=None, last_received_copy_sequence_number: str=None, last_applied_copy_sequence_number: str=None, remote_replicator_acknowledgement_status=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        replica_id: str = None,
+        last_acknowledgement_processed_time_utc=None,
+        last_received_replication_sequence_number: str = None,
+        last_applied_replication_sequence_number: str = None,
+        is_in_build: bool = None,
+        last_received_copy_sequence_number: str = None,
+        last_applied_copy_sequence_number: str = None,
+        remote_replicator_acknowledgement_status=None,
+        **kwargs
+    ) -> None:
         super(RemoteReplicatorStatus, self).__init__(**kwargs)
         self.replica_id = replica_id
         self.last_acknowledgement_processed_time_utc = last_acknowledgement_processed_time_utc
@@ -16932,33 +19611,55 @@ class RepairTask(Model):
     """
 
     _validation = {
-        'task_id': {'required': True},
-        'state': {'required': True},
-        'action': {'required': True},
+        "task_id": {"required": True},
+        "state": {"required": True},
+        "action": {"required": True},
     }
 
     _attribute_map = {
-        'task_id': {'key': 'TaskId', 'type': 'str'},
-        'version': {'key': 'Version', 'type': 'str'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'state': {'key': 'State', 'type': 'str'},
-        'flags': {'key': 'Flags', 'type': 'int'},
-        'action': {'key': 'Action', 'type': 'str'},
-        'target': {'key': 'Target', 'type': 'RepairTargetDescriptionBase'},
-        'executor': {'key': 'Executor', 'type': 'str'},
-        'executor_data': {'key': 'ExecutorData', 'type': 'str'},
-        'impact': {'key': 'Impact', 'type': 'RepairImpactDescriptionBase'},
-        'result_status': {'key': 'ResultStatus', 'type': 'str'},
-        'result_code': {'key': 'ResultCode', 'type': 'int'},
-        'result_details': {'key': 'ResultDetails', 'type': 'str'},
-        'history': {'key': 'History', 'type': 'RepairTaskHistory'},
-        'preparing_health_check_state': {'key': 'PreparingHealthCheckState', 'type': 'str'},
-        'restoring_health_check_state': {'key': 'RestoringHealthCheckState', 'type': 'str'},
-        'perform_preparing_health_check': {'key': 'PerformPreparingHealthCheck', 'type': 'bool'},
-        'perform_restoring_health_check': {'key': 'PerformRestoringHealthCheck', 'type': 'bool'},
+        "task_id": {"key": "TaskId", "type": "str"},
+        "version": {"key": "Version", "type": "str"},
+        "description": {"key": "Description", "type": "str"},
+        "state": {"key": "State", "type": "str"},
+        "flags": {"key": "Flags", "type": "int"},
+        "action": {"key": "Action", "type": "str"},
+        "target": {"key": "Target", "type": "RepairTargetDescriptionBase"},
+        "executor": {"key": "Executor", "type": "str"},
+        "executor_data": {"key": "ExecutorData", "type": "str"},
+        "impact": {"key": "Impact", "type": "RepairImpactDescriptionBase"},
+        "result_status": {"key": "ResultStatus", "type": "str"},
+        "result_code": {"key": "ResultCode", "type": "int"},
+        "result_details": {"key": "ResultDetails", "type": "str"},
+        "history": {"key": "History", "type": "RepairTaskHistory"},
+        "preparing_health_check_state": {"key": "PreparingHealthCheckState", "type": "str"},
+        "restoring_health_check_state": {"key": "RestoringHealthCheckState", "type": "str"},
+        "perform_preparing_health_check": {"key": "PerformPreparingHealthCheck", "type": "bool"},
+        "perform_restoring_health_check": {"key": "PerformRestoringHealthCheck", "type": "bool"},
     }
 
-    def __init__(self, *, task_id: str, state, action: str, version: str=None, description: str=None, flags: int=None, target=None, executor: str=None, executor_data: str=None, impact=None, result_status=None, result_code: int=None, result_details: str=None, history=None, preparing_health_check_state=None, restoring_health_check_state=None, perform_preparing_health_check: bool=None, perform_restoring_health_check: bool=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        task_id: str,
+        state,
+        action: str,
+        version: str = None,
+        description: str = None,
+        flags: int = None,
+        target=None,
+        executor: str = None,
+        executor_data: str = None,
+        impact=None,
+        result_status=None,
+        result_code: int = None,
+        result_details: str = None,
+        history=None,
+        preparing_health_check_state=None,
+        restoring_health_check_state=None,
+        perform_preparing_health_check: bool = None,
+        perform_restoring_health_check: bool = None,
+        **kwargs
+    ) -> None:
         super(RepairTask, self).__init__(**kwargs)
         self.task_id = task_id
         self.version = version
@@ -16997,15 +19698,15 @@ class RepairTaskApproveDescription(Model):
     """
 
     _validation = {
-        'task_id': {'required': True},
+        "task_id": {"required": True},
     }
 
     _attribute_map = {
-        'task_id': {'key': 'TaskId', 'type': 'str'},
-        'version': {'key': 'Version', 'type': 'str'},
+        "task_id": {"key": "TaskId", "type": "str"},
+        "version": {"key": "Version", "type": "str"},
     }
 
-    def __init__(self, *, task_id: str, version: str=None, **kwargs) -> None:
+    def __init__(self, *, task_id: str, version: str = None, **kwargs) -> None:
         super(RepairTaskApproveDescription, self).__init__(**kwargs)
         self.task_id = task_id
         self.version = version
@@ -17032,16 +19733,16 @@ class RepairTaskCancelDescription(Model):
     """
 
     _validation = {
-        'task_id': {'required': True},
+        "task_id": {"required": True},
     }
 
     _attribute_map = {
-        'task_id': {'key': 'TaskId', 'type': 'str'},
-        'version': {'key': 'Version', 'type': 'str'},
-        'request_abort': {'key': 'RequestAbort', 'type': 'bool'},
+        "task_id": {"key": "TaskId", "type": "str"},
+        "version": {"key": "Version", "type": "str"},
+        "request_abort": {"key": "RequestAbort", "type": "bool"},
     }
 
-    def __init__(self, *, task_id: str, version: str=None, request_abort: bool=None, **kwargs) -> None:
+    def __init__(self, *, task_id: str, version: str = None, request_abort: bool = None, **kwargs) -> None:
         super(RepairTaskCancelDescription, self).__init__(**kwargs)
         self.task_id = task_id
         self.version = version
@@ -17066,15 +19767,15 @@ class RepairTaskDeleteDescription(Model):
     """
 
     _validation = {
-        'task_id': {'required': True},
+        "task_id": {"required": True},
     }
 
     _attribute_map = {
-        'task_id': {'key': 'TaskId', 'type': 'str'},
-        'version': {'key': 'Version', 'type': 'str'},
+        "task_id": {"key": "TaskId", "type": "str"},
+        "version": {"key": "Version", "type": "str"},
     }
 
-    def __init__(self, *, task_id: str, version: str=None, **kwargs) -> None:
+    def __init__(self, *, task_id: str, version: str = None, **kwargs) -> None:
         super(RepairTaskDeleteDescription, self).__init__(**kwargs)
         self.task_id = task_id
         self.version = version
@@ -17121,20 +19822,41 @@ class RepairTaskHistory(Model):
     """
 
     _attribute_map = {
-        'created_utc_timestamp': {'key': 'CreatedUtcTimestamp', 'type': 'iso-8601'},
-        'claimed_utc_timestamp': {'key': 'ClaimedUtcTimestamp', 'type': 'iso-8601'},
-        'preparing_utc_timestamp': {'key': 'PreparingUtcTimestamp', 'type': 'iso-8601'},
-        'approved_utc_timestamp': {'key': 'ApprovedUtcTimestamp', 'type': 'iso-8601'},
-        'executing_utc_timestamp': {'key': 'ExecutingUtcTimestamp', 'type': 'iso-8601'},
-        'restoring_utc_timestamp': {'key': 'RestoringUtcTimestamp', 'type': 'iso-8601'},
-        'completed_utc_timestamp': {'key': 'CompletedUtcTimestamp', 'type': 'iso-8601'},
-        'preparing_health_check_start_utc_timestamp': {'key': 'PreparingHealthCheckStartUtcTimestamp', 'type': 'iso-8601'},
-        'preparing_health_check_end_utc_timestamp': {'key': 'PreparingHealthCheckEndUtcTimestamp', 'type': 'iso-8601'},
-        'restoring_health_check_start_utc_timestamp': {'key': 'RestoringHealthCheckStartUtcTimestamp', 'type': 'iso-8601'},
-        'restoring_health_check_end_utc_timestamp': {'key': 'RestoringHealthCheckEndUtcTimestamp', 'type': 'iso-8601'},
+        "created_utc_timestamp": {"key": "CreatedUtcTimestamp", "type": "iso-8601"},
+        "claimed_utc_timestamp": {"key": "ClaimedUtcTimestamp", "type": "iso-8601"},
+        "preparing_utc_timestamp": {"key": "PreparingUtcTimestamp", "type": "iso-8601"},
+        "approved_utc_timestamp": {"key": "ApprovedUtcTimestamp", "type": "iso-8601"},
+        "executing_utc_timestamp": {"key": "ExecutingUtcTimestamp", "type": "iso-8601"},
+        "restoring_utc_timestamp": {"key": "RestoringUtcTimestamp", "type": "iso-8601"},
+        "completed_utc_timestamp": {"key": "CompletedUtcTimestamp", "type": "iso-8601"},
+        "preparing_health_check_start_utc_timestamp": {
+            "key": "PreparingHealthCheckStartUtcTimestamp",
+            "type": "iso-8601",
+        },
+        "preparing_health_check_end_utc_timestamp": {"key": "PreparingHealthCheckEndUtcTimestamp", "type": "iso-8601"},
+        "restoring_health_check_start_utc_timestamp": {
+            "key": "RestoringHealthCheckStartUtcTimestamp",
+            "type": "iso-8601",
+        },
+        "restoring_health_check_end_utc_timestamp": {"key": "RestoringHealthCheckEndUtcTimestamp", "type": "iso-8601"},
     }
 
-    def __init__(self, *, created_utc_timestamp=None, claimed_utc_timestamp=None, preparing_utc_timestamp=None, approved_utc_timestamp=None, executing_utc_timestamp=None, restoring_utc_timestamp=None, completed_utc_timestamp=None, preparing_health_check_start_utc_timestamp=None, preparing_health_check_end_utc_timestamp=None, restoring_health_check_start_utc_timestamp=None, restoring_health_check_end_utc_timestamp=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        created_utc_timestamp=None,
+        claimed_utc_timestamp=None,
+        preparing_utc_timestamp=None,
+        approved_utc_timestamp=None,
+        executing_utc_timestamp=None,
+        restoring_utc_timestamp=None,
+        completed_utc_timestamp=None,
+        preparing_health_check_start_utc_timestamp=None,
+        preparing_health_check_end_utc_timestamp=None,
+        restoring_health_check_start_utc_timestamp=None,
+        restoring_health_check_end_utc_timestamp=None,
+        **kwargs
+    ) -> None:
         super(RepairTaskHistory, self).__init__(**kwargs)
         self.created_utc_timestamp = created_utc_timestamp
         self.claimed_utc_timestamp = claimed_utc_timestamp
@@ -17176,17 +19898,25 @@ class RepairTaskUpdateHealthPolicyDescription(Model):
     """
 
     _validation = {
-        'task_id': {'required': True},
+        "task_id": {"required": True},
     }
 
     _attribute_map = {
-        'task_id': {'key': 'TaskId', 'type': 'str'},
-        'version': {'key': 'Version', 'type': 'str'},
-        'perform_preparing_health_check': {'key': 'PerformPreparingHealthCheck', 'type': 'bool'},
-        'perform_restoring_health_check': {'key': 'PerformRestoringHealthCheck', 'type': 'bool'},
+        "task_id": {"key": "TaskId", "type": "str"},
+        "version": {"key": "Version", "type": "str"},
+        "perform_preparing_health_check": {"key": "PerformPreparingHealthCheck", "type": "bool"},
+        "perform_restoring_health_check": {"key": "PerformRestoringHealthCheck", "type": "bool"},
     }
 
-    def __init__(self, *, task_id: str, version: str=None, perform_preparing_health_check: bool=None, perform_restoring_health_check: bool=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        task_id: str,
+        version: str = None,
+        perform_preparing_health_check: bool = None,
+        perform_restoring_health_check: bool = None,
+        **kwargs
+    ) -> None:
         super(RepairTaskUpdateHealthPolicyDescription, self).__init__(**kwargs)
         self.task_id = task_id
         self.version = version
@@ -17206,11 +19936,11 @@ class RepairTaskUpdateInfo(Model):
     """
 
     _validation = {
-        'version': {'required': True},
+        "version": {"required": True},
     }
 
     _attribute_map = {
-        'version': {'key': 'Version', 'type': 'str'},
+        "version": {"key": "Version", "type": "str"},
     }
 
     def __init__(self, *, version: str, **kwargs) -> None:
@@ -17254,27 +19984,42 @@ class ReplicaHealth(EntityHealth):
     """
 
     _validation = {
-        'service_kind': {'required': True},
+        "service_kind": {"required": True},
     }
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'health_events': {'key': 'HealthEvents', 'type': '[HealthEvent]'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
-        'health_statistics': {'key': 'HealthStatistics', 'type': 'HealthStatistics'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "health_events": {"key": "HealthEvents", "type": "[HealthEvent]"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
+        "health_statistics": {"key": "HealthStatistics", "type": "HealthStatistics"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "service_kind": {"key": "ServiceKind", "type": "str"},
     }
 
     _subtype_map = {
-        'service_kind': {'Stateful': 'StatefulServiceReplicaHealth', 'Stateless': 'StatelessServiceInstanceHealth'}
+        "service_kind": {"Stateful": "StatefulServiceReplicaHealth", "Stateless": "StatelessServiceInstanceHealth"}
     }
 
-    def __init__(self, *, aggregated_health_state=None, health_events=None, unhealthy_evaluations=None, health_statistics=None, partition_id: str=None, **kwargs) -> None:
-        super(ReplicaHealth, self).__init__(aggregated_health_state=aggregated_health_state, health_events=health_events, unhealthy_evaluations=unhealthy_evaluations, health_statistics=health_statistics, **kwargs)
+    def __init__(
+        self,
+        *,
+        aggregated_health_state=None,
+        health_events=None,
+        unhealthy_evaluations=None,
+        health_statistics=None,
+        partition_id: str = None,
+        **kwargs
+    ) -> None:
+        super(ReplicaHealth, self).__init__(
+            aggregated_health_state=aggregated_health_state,
+            health_events=health_events,
+            unhealthy_evaluations=unhealthy_evaluations,
+            health_statistics=health_statistics,
+            **kwargs
+        )
         self.partition_id = partition_id
         self.service_kind = None
-        self.service_kind = 'ReplicaHealth'
+        self.service_kind = "ReplicaHealth"
 
 
 class ReplicaHealthEvaluation(HealthEvaluation):
@@ -17317,24 +20062,35 @@ class ReplicaHealthEvaluation(HealthEvaluation):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'replica_or_instance_id': {'key': 'ReplicaOrInstanceId', 'type': 'str'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "description": {"key": "Description", "type": "str"},
+        "kind": {"key": "Kind", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "replica_or_instance_id": {"key": "ReplicaOrInstanceId", "type": "str"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, description: str=None, partition_id: str=None, replica_or_instance_id: str=None, unhealthy_evaluations=None, **kwargs) -> None:
-        super(ReplicaHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description, **kwargs)
+    def __init__(
+        self,
+        *,
+        aggregated_health_state=None,
+        description: str = None,
+        partition_id: str = None,
+        replica_or_instance_id: str = None,
+        unhealthy_evaluations=None,
+        **kwargs
+    ) -> None:
+        super(ReplicaHealthEvaluation, self).__init__(
+            aggregated_health_state=aggregated_health_state, description=description, **kwargs
+        )
         self.partition_id = partition_id
         self.replica_or_instance_id = replica_or_instance_id
         self.unhealthy_evaluations = unhealthy_evaluations
-        self.kind = 'Replica'
+        self.kind = "Replica"
 
 
 class ReplicaHealthState(EntityHealthState):
@@ -17361,24 +20117,27 @@ class ReplicaHealthState(EntityHealthState):
     """
 
     _validation = {
-        'service_kind': {'required': True},
+        "service_kind": {"required": True},
     }
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "service_kind": {"key": "ServiceKind", "type": "str"},
     }
 
     _subtype_map = {
-        'service_kind': {'Stateful': 'StatefulServiceReplicaHealthState', 'Stateless': 'StatelessServiceInstanceHealthState'}
+        "service_kind": {
+            "Stateful": "StatefulServiceReplicaHealthState",
+            "Stateless": "StatelessServiceInstanceHealthState",
+        }
     }
 
-    def __init__(self, *, aggregated_health_state=None, partition_id: str=None, **kwargs) -> None:
+    def __init__(self, *, aggregated_health_state=None, partition_id: str = None, **kwargs) -> None:
         super(ReplicaHealthState, self).__init__(aggregated_health_state=aggregated_health_state, **kwargs)
         self.partition_id = partition_id
         self.service_kind = None
-        self.service_kind = 'ReplicaHealthState'
+        self.service_kind = "ReplicaHealthState"
 
 
 class ReplicaHealthStateChunk(EntityHealthStateChunk):
@@ -17405,11 +20164,11 @@ class ReplicaHealthStateChunk(EntityHealthStateChunk):
     """
 
     _attribute_map = {
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'replica_or_instance_id': {'key': 'ReplicaOrInstanceId', 'type': 'str'},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "replica_or_instance_id": {"key": "ReplicaOrInstanceId", "type": "str"},
     }
 
-    def __init__(self, *, health_state=None, replica_or_instance_id: str=None, **kwargs) -> None:
+    def __init__(self, *, health_state=None, replica_or_instance_id: str = None, **kwargs) -> None:
         super(ReplicaHealthStateChunk, self).__init__(health_state=health_state, **kwargs)
         self.replica_or_instance_id = replica_or_instance_id
 
@@ -17424,7 +20183,7 @@ class ReplicaHealthStateChunkList(Model):
     """
 
     _attribute_map = {
-        'items': {'key': 'Items', 'type': '[ReplicaHealthStateChunk]'},
+        "items": {"key": "Items", "type": "[ReplicaHealthStateChunk]"},
     }
 
     def __init__(self, *, items=None, **kwargs) -> None:
@@ -17481,11 +20240,11 @@ class ReplicaHealthStateFilter(Model):
     """
 
     _attribute_map = {
-        'replica_or_instance_id_filter': {'key': 'ReplicaOrInstanceIdFilter', 'type': 'str'},
-        'health_state_filter': {'key': 'HealthStateFilter', 'type': 'int'},
+        "replica_or_instance_id_filter": {"key": "ReplicaOrInstanceIdFilter", "type": "str"},
+        "health_state_filter": {"key": "HealthStateFilter", "type": "int"},
     }
 
-    def __init__(self, *, replica_or_instance_id_filter: str=None, health_state_filter: int=0, **kwargs) -> None:
+    def __init__(self, *, replica_or_instance_id_filter: str = None, health_state_filter: int = 0, **kwargs) -> None:
         super(ReplicaHealthStateFilter, self).__init__(**kwargs)
         self.replica_or_instance_id_filter = replica_or_instance_id_filter
         self.health_state_filter = health_state_filter
@@ -17520,23 +20279,32 @@ class ReplicaInfo(Model):
     """
 
     _validation = {
-        'service_kind': {'required': True},
+        "service_kind": {"required": True},
     }
 
     _attribute_map = {
-        'replica_status': {'key': 'ReplicaStatus', 'type': 'str'},
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'address': {'key': 'Address', 'type': 'str'},
-        'last_in_build_duration_in_seconds': {'key': 'LastInBuildDurationInSeconds', 'type': 'str'},
-        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
+        "replica_status": {"key": "ReplicaStatus", "type": "str"},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "address": {"key": "Address", "type": "str"},
+        "last_in_build_duration_in_seconds": {"key": "LastInBuildDurationInSeconds", "type": "str"},
+        "service_kind": {"key": "ServiceKind", "type": "str"},
     }
 
     _subtype_map = {
-        'service_kind': {'Stateful': 'StatefulServiceReplicaInfo', 'Stateless': 'StatelessServiceInstanceInfo'}
+        "service_kind": {"Stateful": "StatefulServiceReplicaInfo", "Stateless": "StatelessServiceInstanceInfo"}
     }
 
-    def __init__(self, *, replica_status=None, health_state=None, node_name: str=None, address: str=None, last_in_build_duration_in_seconds: str=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        replica_status=None,
+        health_state=None,
+        node_name: str = None,
+        address: str = None,
+        last_in_build_duration_in_seconds: str = None,
+        **kwargs
+    ) -> None:
         super(ReplicaInfo, self).__init__(**kwargs)
         self.replica_status = replica_status
         self.health_state = health_state
@@ -17559,11 +20327,20 @@ class ReplicaLifecycleDescription(Model):
     """
 
     _attribute_map = {
-        'is_singleton_replica_move_allowed_during_upgrade': {'key': 'IsSingletonReplicaMoveAllowedDuringUpgrade', 'type': 'bool'},
-        'restore_replica_location_after_upgrade': {'key': 'RestoreReplicaLocationAfterUpgrade', 'type': 'bool'},
+        "is_singleton_replica_move_allowed_during_upgrade": {
+            "key": "IsSingletonReplicaMoveAllowedDuringUpgrade",
+            "type": "bool",
+        },
+        "restore_replica_location_after_upgrade": {"key": "RestoreReplicaLocationAfterUpgrade", "type": "bool"},
     }
 
-    def __init__(self, *, is_singleton_replica_move_allowed_during_upgrade: bool=None, restore_replica_location_after_upgrade: bool=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        is_singleton_replica_move_allowed_during_upgrade: bool = None,
+        restore_replica_location_after_upgrade: bool = None,
+        **kwargs
+    ) -> None:
         super(ReplicaLifecycleDescription, self).__init__(**kwargs)
         self.is_singleton_replica_move_allowed_during_upgrade = is_singleton_replica_move_allowed_during_upgrade
         self.restore_replica_location_after_upgrade = restore_replica_location_after_upgrade
@@ -17582,11 +20359,11 @@ class ReplicaMetricLoadDescription(Model):
     """
 
     _attribute_map = {
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'replica_or_instance_load_entries': {'key': 'ReplicaOrInstanceLoadEntries', 'type': '[MetricLoadDescription]'},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "replica_or_instance_load_entries": {"key": "ReplicaOrInstanceLoadEntries", "type": "[MetricLoadDescription]"},
     }
 
-    def __init__(self, *, node_name: str=None, replica_or_instance_load_entries=None, **kwargs) -> None:
+    def __init__(self, *, node_name: str = None, replica_or_instance_load_entries=None, **kwargs) -> None:
         super(ReplicaMetricLoadDescription, self).__init__(**kwargs)
         self.node_name = node_name
         self.replica_or_instance_load_entries = replica_or_instance_load_entries
@@ -17626,24 +20403,38 @@ class ReplicasHealthEvaluation(HealthEvaluation):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'max_percent_unhealthy_replicas_per_partition': {'key': 'MaxPercentUnhealthyReplicasPerPartition', 'type': 'int'},
-        'total_count': {'key': 'TotalCount', 'type': 'long'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "description": {"key": "Description", "type": "str"},
+        "kind": {"key": "Kind", "type": "str"},
+        "max_percent_unhealthy_replicas_per_partition": {
+            "key": "MaxPercentUnhealthyReplicasPerPartition",
+            "type": "int",
+        },
+        "total_count": {"key": "TotalCount", "type": "long"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, description: str=None, max_percent_unhealthy_replicas_per_partition: int=None, total_count: int=None, unhealthy_evaluations=None, **kwargs) -> None:
-        super(ReplicasHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description, **kwargs)
+    def __init__(
+        self,
+        *,
+        aggregated_health_state=None,
+        description: str = None,
+        max_percent_unhealthy_replicas_per_partition: int = None,
+        total_count: int = None,
+        unhealthy_evaluations=None,
+        **kwargs
+    ) -> None:
+        super(ReplicasHealthEvaluation, self).__init__(
+            aggregated_health_state=aggregated_health_state, description=description, **kwargs
+        )
         self.max_percent_unhealthy_replicas_per_partition = max_percent_unhealthy_replicas_per_partition
         self.total_count = total_count
         self.unhealthy_evaluations = unhealthy_evaluations
-        self.kind = 'Replicas'
+        self.kind = "Replicas"
 
 
 class ReplicatorQueueStatus(Model):
@@ -17686,15 +20477,25 @@ class ReplicatorQueueStatus(Model):
     """
 
     _attribute_map = {
-        'queue_utilization_percentage': {'key': 'QueueUtilizationPercentage', 'type': 'int'},
-        'queue_memory_size': {'key': 'QueueMemorySize', 'type': 'str'},
-        'first_sequence_number': {'key': 'FirstSequenceNumber', 'type': 'str'},
-        'completed_sequence_number': {'key': 'CompletedSequenceNumber', 'type': 'str'},
-        'committed_sequence_number': {'key': 'CommittedSequenceNumber', 'type': 'str'},
-        'last_sequence_number': {'key': 'LastSequenceNumber', 'type': 'str'},
+        "queue_utilization_percentage": {"key": "QueueUtilizationPercentage", "type": "int"},
+        "queue_memory_size": {"key": "QueueMemorySize", "type": "str"},
+        "first_sequence_number": {"key": "FirstSequenceNumber", "type": "str"},
+        "completed_sequence_number": {"key": "CompletedSequenceNumber", "type": "str"},
+        "committed_sequence_number": {"key": "CommittedSequenceNumber", "type": "str"},
+        "last_sequence_number": {"key": "LastSequenceNumber", "type": "str"},
     }
 
-    def __init__(self, *, queue_utilization_percentage: int=None, queue_memory_size: str=None, first_sequence_number: str=None, completed_sequence_number: str=None, committed_sequence_number: str=None, last_sequence_number: str=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        queue_utilization_percentage: int = None,
+        queue_memory_size: str = None,
+        first_sequence_number: str = None,
+        completed_sequence_number: str = None,
+        committed_sequence_number: str = None,
+        last_sequence_number: str = None,
+        **kwargs
+    ) -> None:
         super(ReplicatorQueueStatus, self).__init__(**kwargs)
         self.queue_utilization_percentage = queue_utilization_percentage
         self.queue_memory_size = queue_memory_size
@@ -17718,11 +20519,11 @@ class ResolvedServiceEndpoint(Model):
     """
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'address': {'key': 'Address', 'type': 'str'},
+        "kind": {"key": "Kind", "type": "str"},
+        "address": {"key": "Address", "type": "str"},
     }
 
-    def __init__(self, *, kind=None, address: str=None, **kwargs) -> None:
+    def __init__(self, *, kind=None, address: str = None, **kwargs) -> None:
         super(ResolvedServiceEndpoint, self).__init__(**kwargs)
         self.kind = kind
         self.address = address
@@ -17750,17 +20551,17 @@ class ResolvedServicePartition(Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'partition_information': {'required': True},
-        'endpoints': {'required': True},
-        'version': {'required': True},
+        "name": {"required": True},
+        "partition_information": {"required": True},
+        "endpoints": {"required": True},
+        "version": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'partition_information': {'key': 'PartitionInformation', 'type': 'PartitionInformation'},
-        'endpoints': {'key': 'Endpoints', 'type': '[ResolvedServiceEndpoint]'},
-        'version': {'key': 'Version', 'type': 'str'},
+        "name": {"key": "Name", "type": "str"},
+        "partition_information": {"key": "PartitionInformation", "type": "PartitionInformation"},
+        "endpoints": {"key": "Endpoints", "type": "[ResolvedServiceEndpoint]"},
+        "version": {"key": "Version", "type": "str"},
     }
 
     def __init__(self, *, name: str, partition_information, endpoints, version: str, **kwargs) -> None:
@@ -17784,11 +20585,11 @@ class ResourceLimits(Model):
     """
 
     _attribute_map = {
-        'memory_in_gb': {'key': 'memoryInGB', 'type': 'float'},
-        'cpu': {'key': 'cpu', 'type': 'float'},
+        "memory_in_gb": {"key": "memoryInGB", "type": "float"},
+        "cpu": {"key": "cpu", "type": "float"},
     }
 
-    def __init__(self, *, memory_in_gb: float=None, cpu: float=None, **kwargs) -> None:
+    def __init__(self, *, memory_in_gb: float = None, cpu: float = None, **kwargs) -> None:
         super(ResourceLimits, self).__init__(**kwargs)
         self.memory_in_gb = memory_in_gb
         self.cpu = cpu
@@ -17812,13 +20613,13 @@ class ResourceRequests(Model):
     """
 
     _validation = {
-        'memory_in_gb': {'required': True},
-        'cpu': {'required': True},
+        "memory_in_gb": {"required": True},
+        "cpu": {"required": True},
     }
 
     _attribute_map = {
-        'memory_in_gb': {'key': 'memoryInGB', 'type': 'float'},
-        'cpu': {'key': 'cpu', 'type': 'float'},
+        "memory_in_gb": {"key": "memoryInGB", "type": "float"},
+        "cpu": {"key": "cpu", "type": "float"},
     }
 
     def __init__(self, *, memory_in_gb: float, cpu: float, **kwargs) -> None:
@@ -17841,12 +20642,12 @@ class ResourceRequirements(Model):
     """
 
     _validation = {
-        'requests': {'required': True},
+        "requests": {"required": True},
     }
 
     _attribute_map = {
-        'requests': {'key': 'requests', 'type': 'ResourceRequests'},
-        'limits': {'key': 'limits', 'type': 'ResourceLimits'},
+        "requests": {"key": "requests", "type": "ResourceRequests"},
+        "limits": {"key": "limits", "type": "ResourceLimits"},
     }
 
     def __init__(self, *, requests, limits=None, **kwargs) -> None:
@@ -17888,19 +20689,27 @@ class RestartDeployedCodePackageDescription(Model):
     """
 
     _validation = {
-        'service_manifest_name': {'required': True},
-        'code_package_name': {'required': True},
-        'code_package_instance_id': {'required': True},
+        "service_manifest_name": {"required": True},
+        "code_package_name": {"required": True},
+        "code_package_instance_id": {"required": True},
     }
 
     _attribute_map = {
-        'service_manifest_name': {'key': 'ServiceManifestName', 'type': 'str'},
-        'service_package_activation_id': {'key': 'ServicePackageActivationId', 'type': 'str'},
-        'code_package_name': {'key': 'CodePackageName', 'type': 'str'},
-        'code_package_instance_id': {'key': 'CodePackageInstanceId', 'type': 'str'},
+        "service_manifest_name": {"key": "ServiceManifestName", "type": "str"},
+        "service_package_activation_id": {"key": "ServicePackageActivationId", "type": "str"},
+        "code_package_name": {"key": "CodePackageName", "type": "str"},
+        "code_package_instance_id": {"key": "CodePackageInstanceId", "type": "str"},
     }
 
-    def __init__(self, *, service_manifest_name: str, code_package_name: str, code_package_instance_id: str, service_package_activation_id: str=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        service_manifest_name: str,
+        code_package_name: str,
+        code_package_instance_id: str,
+        service_package_activation_id: str = None,
+        **kwargs
+    ) -> None:
         super(RestartDeployedCodePackageDescription, self).__init__(**kwargs)
         self.service_manifest_name = service_manifest_name
         self.service_package_activation_id = service_package_activation_id
@@ -17927,15 +20736,15 @@ class RestartNodeDescription(Model):
     """
 
     _validation = {
-        'node_instance_id': {'required': True},
+        "node_instance_id": {"required": True},
     }
 
     _attribute_map = {
-        'node_instance_id': {'key': 'NodeInstanceId', 'type': 'str'},
-        'create_fabric_dump': {'key': 'CreateFabricDump', 'type': 'str'},
+        "node_instance_id": {"key": "NodeInstanceId", "type": "str"},
+        "create_fabric_dump": {"key": "CreateFabricDump", "type": "str"},
     }
 
-    def __init__(self, *, node_instance_id: str="0", create_fabric_dump="False", **kwargs) -> None:
+    def __init__(self, *, node_instance_id: str = "0", create_fabric_dump="False", **kwargs) -> None:
         super(RestartNodeDescription, self).__init__(**kwargs)
         self.node_instance_id = node_instance_id
         self.create_fabric_dump = create_fabric_dump
@@ -17954,11 +20763,11 @@ class RestartPartitionResult(Model):
     """
 
     _attribute_map = {
-        'error_code': {'key': 'ErrorCode', 'type': 'int'},
-        'selected_partition': {'key': 'SelectedPartition', 'type': 'SelectedPartition'},
+        "error_code": {"key": "ErrorCode", "type": "int"},
+        "selected_partition": {"key": "SelectedPartition", "type": "SelectedPartition"},
     }
 
-    def __init__(self, *, error_code: int=None, selected_partition=None, **kwargs) -> None:
+    def __init__(self, *, error_code: int = None, selected_partition=None, **kwargs) -> None:
         super(RestartPartitionResult, self).__init__(**kwargs)
         self.error_code = error_code
         self.selected_partition = selected_partition
@@ -17981,14 +20790,14 @@ class RestorePartitionDescription(Model):
     """
 
     _validation = {
-        'backup_id': {'required': True},
-        'backup_location': {'required': True},
+        "backup_id": {"required": True},
+        "backup_location": {"required": True},
     }
 
     _attribute_map = {
-        'backup_id': {'key': 'BackupId', 'type': 'str'},
-        'backup_location': {'key': 'BackupLocation', 'type': 'str'},
-        'backup_storage': {'key': 'BackupStorage', 'type': 'BackupStorageDescription'},
+        "backup_id": {"key": "BackupId", "type": "str"},
+        "backup_location": {"key": "BackupLocation", "type": "str"},
+        "backup_storage": {"key": "BackupStorage", "type": "BackupStorageDescription"},
     }
 
     def __init__(self, *, backup_id: str, backup_location: str, backup_storage=None, **kwargs) -> None:
@@ -18018,14 +20827,23 @@ class RestoreProgressInfo(Model):
     """
 
     _attribute_map = {
-        'restore_state': {'key': 'RestoreState', 'type': 'str'},
-        'time_stamp_utc': {'key': 'TimeStampUtc', 'type': 'iso-8601'},
-        'restored_epoch': {'key': 'RestoredEpoch', 'type': 'Epoch'},
-        'restored_lsn': {'key': 'RestoredLsn', 'type': 'str'},
-        'failure_error': {'key': 'FailureError', 'type': 'FabricErrorError'},
+        "restore_state": {"key": "RestoreState", "type": "str"},
+        "time_stamp_utc": {"key": "TimeStampUtc", "type": "iso-8601"},
+        "restored_epoch": {"key": "RestoredEpoch", "type": "Epoch"},
+        "restored_lsn": {"key": "RestoredLsn", "type": "str"},
+        "failure_error": {"key": "FailureError", "type": "FabricErrorError"},
     }
 
-    def __init__(self, *, restore_state=None, time_stamp_utc=None, restored_epoch=None, restored_lsn: str=None, failure_error=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        restore_state=None,
+        time_stamp_utc=None,
+        restored_epoch=None,
+        restored_lsn: str = None,
+        failure_error=None,
+        **kwargs
+    ) -> None:
         super(RestoreProgressInfo, self).__init__(**kwargs)
         self.restore_state = restore_state
         self.time_stamp_utc = time_stamp_utc
@@ -18046,11 +20864,11 @@ class ResumeApplicationUpgradeDescription(Model):
     """
 
     _validation = {
-        'upgrade_domain_name': {'required': True},
+        "upgrade_domain_name": {"required": True},
     }
 
     _attribute_map = {
-        'upgrade_domain_name': {'key': 'UpgradeDomainName', 'type': 'str'},
+        "upgrade_domain_name": {"key": "UpgradeDomainName", "type": "str"},
     }
 
     def __init__(self, *, upgrade_domain_name: str, **kwargs) -> None:
@@ -18069,11 +20887,11 @@ class ResumeClusterUpgradeDescription(Model):
     """
 
     _validation = {
-        'upgrade_domain': {'required': True},
+        "upgrade_domain": {"required": True},
     }
 
     _attribute_map = {
-        'upgrade_domain': {'key': 'UpgradeDomain', 'type': 'str'},
+        "upgrade_domain": {"key": "UpgradeDomain", "type": "str"},
     }
 
     def __init__(self, *, upgrade_domain: str, **kwargs) -> None:
@@ -18157,23 +20975,40 @@ class RollingUpgradeUpdateDescription(Model):
     """
 
     _validation = {
-        'rolling_upgrade_mode': {'required': True},
+        "rolling_upgrade_mode": {"required": True},
     }
 
     _attribute_map = {
-        'rolling_upgrade_mode': {'key': 'RollingUpgradeMode', 'type': 'str'},
-        'force_restart': {'key': 'ForceRestart', 'type': 'bool'},
-        'replica_set_check_timeout_in_milliseconds': {'key': 'ReplicaSetCheckTimeoutInMilliseconds', 'type': 'long'},
-        'failure_action': {'key': 'FailureAction', 'type': 'str'},
-        'health_check_wait_duration_in_milliseconds': {'key': 'HealthCheckWaitDurationInMilliseconds', 'type': 'str'},
-        'health_check_stable_duration_in_milliseconds': {'key': 'HealthCheckStableDurationInMilliseconds', 'type': 'str'},
-        'health_check_retry_timeout_in_milliseconds': {'key': 'HealthCheckRetryTimeoutInMilliseconds', 'type': 'str'},
-        'upgrade_timeout_in_milliseconds': {'key': 'UpgradeTimeoutInMilliseconds', 'type': 'str'},
-        'upgrade_domain_timeout_in_milliseconds': {'key': 'UpgradeDomainTimeoutInMilliseconds', 'type': 'str'},
-        'instance_close_delay_duration_in_seconds': {'key': 'InstanceCloseDelayDurationInSeconds', 'type': 'long'},
+        "rolling_upgrade_mode": {"key": "RollingUpgradeMode", "type": "str"},
+        "force_restart": {"key": "ForceRestart", "type": "bool"},
+        "replica_set_check_timeout_in_milliseconds": {"key": "ReplicaSetCheckTimeoutInMilliseconds", "type": "long"},
+        "failure_action": {"key": "FailureAction", "type": "str"},
+        "health_check_wait_duration_in_milliseconds": {"key": "HealthCheckWaitDurationInMilliseconds", "type": "str"},
+        "health_check_stable_duration_in_milliseconds": {
+            "key": "HealthCheckStableDurationInMilliseconds",
+            "type": "str",
+        },
+        "health_check_retry_timeout_in_milliseconds": {"key": "HealthCheckRetryTimeoutInMilliseconds", "type": "str"},
+        "upgrade_timeout_in_milliseconds": {"key": "UpgradeTimeoutInMilliseconds", "type": "str"},
+        "upgrade_domain_timeout_in_milliseconds": {"key": "UpgradeDomainTimeoutInMilliseconds", "type": "str"},
+        "instance_close_delay_duration_in_seconds": {"key": "InstanceCloseDelayDurationInSeconds", "type": "long"},
     }
 
-    def __init__(self, *, rolling_upgrade_mode="UnmonitoredAuto", force_restart: bool=None, replica_set_check_timeout_in_milliseconds: int=None, failure_action=None, health_check_wait_duration_in_milliseconds: str=None, health_check_stable_duration_in_milliseconds: str=None, health_check_retry_timeout_in_milliseconds: str=None, upgrade_timeout_in_milliseconds: str=None, upgrade_domain_timeout_in_milliseconds: str=None, instance_close_delay_duration_in_seconds: int=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        rolling_upgrade_mode="UnmonitoredAuto",
+        force_restart: bool = None,
+        replica_set_check_timeout_in_milliseconds: int = None,
+        failure_action=None,
+        health_check_wait_duration_in_milliseconds: str = None,
+        health_check_stable_duration_in_milliseconds: str = None,
+        health_check_retry_timeout_in_milliseconds: str = None,
+        upgrade_timeout_in_milliseconds: str = None,
+        upgrade_domain_timeout_in_milliseconds: str = None,
+        instance_close_delay_duration_in_seconds: int = None,
+        **kwargs
+    ) -> None:
         super(RollingUpgradeUpdateDescription, self).__init__(**kwargs)
         self.rolling_upgrade_mode = rolling_upgrade_mode
         self.force_restart = force_restart
@@ -18205,19 +21040,19 @@ class RunToCompletionExecutionPolicy(ExecutionPolicy):
     """
 
     _validation = {
-        'type': {'required': True},
-        'restart': {'required': True},
+        "type": {"required": True},
+        "restart": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'restart': {'key': 'restart', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "restart": {"key": "restart", "type": "str"},
     }
 
     def __init__(self, *, restart, **kwargs) -> None:
         super(RunToCompletionExecutionPolicy, self).__init__(**kwargs)
         self.restart = restart
-        self.type = 'RunToCompletion'
+        self.type = "RunToCompletion"
 
 
 class SafetyCheckWrapper(Model):
@@ -18232,7 +21067,7 @@ class SafetyCheckWrapper(Model):
     """
 
     _attribute_map = {
-        'safety_check': {'key': 'SafetyCheck', 'type': 'SafetyCheck'},
+        "safety_check": {"key": "SafetyCheck", "type": "SafetyCheck"},
     }
 
     def __init__(self, *, safety_check=None, **kwargs) -> None:
@@ -18256,13 +21091,13 @@ class ScalingPolicyDescription(Model):
     """
 
     _validation = {
-        'scaling_trigger': {'required': True},
-        'scaling_mechanism': {'required': True},
+        "scaling_trigger": {"required": True},
+        "scaling_mechanism": {"required": True},
     }
 
     _attribute_map = {
-        'scaling_trigger': {'key': 'ScalingTrigger', 'type': 'ScalingTriggerDescription'},
-        'scaling_mechanism': {'key': 'ScalingMechanism', 'type': 'ScalingMechanismDescription'},
+        "scaling_trigger": {"key": "ScalingTrigger", "type": "ScalingTriggerDescription"},
+        "scaling_mechanism": {"key": "ScalingMechanism", "type": "ScalingMechanismDescription"},
     }
 
     def __init__(self, *, scaling_trigger, scaling_mechanism, **kwargs) -> None:
@@ -18311,24 +21146,37 @@ class SecondaryReplicatorStatus(ReplicatorStatus):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'replication_queue_status': {'key': 'ReplicationQueueStatus', 'type': 'ReplicatorQueueStatus'},
-        'last_replication_operation_received_time_utc': {'key': 'LastReplicationOperationReceivedTimeUtc', 'type': 'iso-8601'},
-        'is_in_build': {'key': 'IsInBuild', 'type': 'bool'},
-        'copy_queue_status': {'key': 'CopyQueueStatus', 'type': 'ReplicatorQueueStatus'},
-        'last_copy_operation_received_time_utc': {'key': 'LastCopyOperationReceivedTimeUtc', 'type': 'iso-8601'},
-        'last_acknowledgement_sent_time_utc': {'key': 'LastAcknowledgementSentTimeUtc', 'type': 'iso-8601'},
+        "kind": {"key": "Kind", "type": "str"},
+        "replication_queue_status": {"key": "ReplicationQueueStatus", "type": "ReplicatorQueueStatus"},
+        "last_replication_operation_received_time_utc": {
+            "key": "LastReplicationOperationReceivedTimeUtc",
+            "type": "iso-8601",
+        },
+        "is_in_build": {"key": "IsInBuild", "type": "bool"},
+        "copy_queue_status": {"key": "CopyQueueStatus", "type": "ReplicatorQueueStatus"},
+        "last_copy_operation_received_time_utc": {"key": "LastCopyOperationReceivedTimeUtc", "type": "iso-8601"},
+        "last_acknowledgement_sent_time_utc": {"key": "LastAcknowledgementSentTimeUtc", "type": "iso-8601"},
     }
 
     _subtype_map = {
-        'kind': {'ActiveSecondary': 'SecondaryActiveReplicatorStatus', 'IdleSecondary': 'SecondaryIdleReplicatorStatus'}
+        "kind": {"ActiveSecondary": "SecondaryActiveReplicatorStatus", "IdleSecondary": "SecondaryIdleReplicatorStatus"}
     }
 
-    def __init__(self, *, replication_queue_status=None, last_replication_operation_received_time_utc=None, is_in_build: bool=None, copy_queue_status=None, last_copy_operation_received_time_utc=None, last_acknowledgement_sent_time_utc=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        replication_queue_status=None,
+        last_replication_operation_received_time_utc=None,
+        is_in_build: bool = None,
+        copy_queue_status=None,
+        last_copy_operation_received_time_utc=None,
+        last_acknowledgement_sent_time_utc=None,
+        **kwargs
+    ) -> None:
         super(SecondaryReplicatorStatus, self).__init__(**kwargs)
         self.replication_queue_status = replication_queue_status
         self.last_replication_operation_received_time_utc = last_replication_operation_received_time_utc
@@ -18336,7 +21184,7 @@ class SecondaryReplicatorStatus(ReplicatorStatus):
         self.copy_queue_status = copy_queue_status
         self.last_copy_operation_received_time_utc = last_copy_operation_received_time_utc
         self.last_acknowledgement_sent_time_utc = last_acknowledgement_sent_time_utc
-        self.kind = 'SecondaryReplicatorStatus'
+        self.kind = "SecondaryReplicatorStatus"
 
 
 class SecondaryActiveReplicatorStatus(SecondaryReplicatorStatus):
@@ -18375,22 +21223,43 @@ class SecondaryActiveReplicatorStatus(SecondaryReplicatorStatus):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'replication_queue_status': {'key': 'ReplicationQueueStatus', 'type': 'ReplicatorQueueStatus'},
-        'last_replication_operation_received_time_utc': {'key': 'LastReplicationOperationReceivedTimeUtc', 'type': 'iso-8601'},
-        'is_in_build': {'key': 'IsInBuild', 'type': 'bool'},
-        'copy_queue_status': {'key': 'CopyQueueStatus', 'type': 'ReplicatorQueueStatus'},
-        'last_copy_operation_received_time_utc': {'key': 'LastCopyOperationReceivedTimeUtc', 'type': 'iso-8601'},
-        'last_acknowledgement_sent_time_utc': {'key': 'LastAcknowledgementSentTimeUtc', 'type': 'iso-8601'},
+        "kind": {"key": "Kind", "type": "str"},
+        "replication_queue_status": {"key": "ReplicationQueueStatus", "type": "ReplicatorQueueStatus"},
+        "last_replication_operation_received_time_utc": {
+            "key": "LastReplicationOperationReceivedTimeUtc",
+            "type": "iso-8601",
+        },
+        "is_in_build": {"key": "IsInBuild", "type": "bool"},
+        "copy_queue_status": {"key": "CopyQueueStatus", "type": "ReplicatorQueueStatus"},
+        "last_copy_operation_received_time_utc": {"key": "LastCopyOperationReceivedTimeUtc", "type": "iso-8601"},
+        "last_acknowledgement_sent_time_utc": {"key": "LastAcknowledgementSentTimeUtc", "type": "iso-8601"},
     }
 
-    def __init__(self, *, replication_queue_status=None, last_replication_operation_received_time_utc=None, is_in_build: bool=None, copy_queue_status=None, last_copy_operation_received_time_utc=None, last_acknowledgement_sent_time_utc=None, **kwargs) -> None:
-        super(SecondaryActiveReplicatorStatus, self).__init__(replication_queue_status=replication_queue_status, last_replication_operation_received_time_utc=last_replication_operation_received_time_utc, is_in_build=is_in_build, copy_queue_status=copy_queue_status, last_copy_operation_received_time_utc=last_copy_operation_received_time_utc, last_acknowledgement_sent_time_utc=last_acknowledgement_sent_time_utc, **kwargs)
-        self.kind = 'ActiveSecondary'
+    def __init__(
+        self,
+        *,
+        replication_queue_status=None,
+        last_replication_operation_received_time_utc=None,
+        is_in_build: bool = None,
+        copy_queue_status=None,
+        last_copy_operation_received_time_utc=None,
+        last_acknowledgement_sent_time_utc=None,
+        **kwargs
+    ) -> None:
+        super(SecondaryActiveReplicatorStatus, self).__init__(
+            replication_queue_status=replication_queue_status,
+            last_replication_operation_received_time_utc=last_replication_operation_received_time_utc,
+            is_in_build=is_in_build,
+            copy_queue_status=copy_queue_status,
+            last_copy_operation_received_time_utc=last_copy_operation_received_time_utc,
+            last_acknowledgement_sent_time_utc=last_acknowledgement_sent_time_utc,
+            **kwargs
+        )
+        self.kind = "ActiveSecondary"
 
 
 class SecondaryIdleReplicatorStatus(SecondaryReplicatorStatus):
@@ -18429,22 +21298,43 @@ class SecondaryIdleReplicatorStatus(SecondaryReplicatorStatus):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'replication_queue_status': {'key': 'ReplicationQueueStatus', 'type': 'ReplicatorQueueStatus'},
-        'last_replication_operation_received_time_utc': {'key': 'LastReplicationOperationReceivedTimeUtc', 'type': 'iso-8601'},
-        'is_in_build': {'key': 'IsInBuild', 'type': 'bool'},
-        'copy_queue_status': {'key': 'CopyQueueStatus', 'type': 'ReplicatorQueueStatus'},
-        'last_copy_operation_received_time_utc': {'key': 'LastCopyOperationReceivedTimeUtc', 'type': 'iso-8601'},
-        'last_acknowledgement_sent_time_utc': {'key': 'LastAcknowledgementSentTimeUtc', 'type': 'iso-8601'},
+        "kind": {"key": "Kind", "type": "str"},
+        "replication_queue_status": {"key": "ReplicationQueueStatus", "type": "ReplicatorQueueStatus"},
+        "last_replication_operation_received_time_utc": {
+            "key": "LastReplicationOperationReceivedTimeUtc",
+            "type": "iso-8601",
+        },
+        "is_in_build": {"key": "IsInBuild", "type": "bool"},
+        "copy_queue_status": {"key": "CopyQueueStatus", "type": "ReplicatorQueueStatus"},
+        "last_copy_operation_received_time_utc": {"key": "LastCopyOperationReceivedTimeUtc", "type": "iso-8601"},
+        "last_acknowledgement_sent_time_utc": {"key": "LastAcknowledgementSentTimeUtc", "type": "iso-8601"},
     }
 
-    def __init__(self, *, replication_queue_status=None, last_replication_operation_received_time_utc=None, is_in_build: bool=None, copy_queue_status=None, last_copy_operation_received_time_utc=None, last_acknowledgement_sent_time_utc=None, **kwargs) -> None:
-        super(SecondaryIdleReplicatorStatus, self).__init__(replication_queue_status=replication_queue_status, last_replication_operation_received_time_utc=last_replication_operation_received_time_utc, is_in_build=is_in_build, copy_queue_status=copy_queue_status, last_copy_operation_received_time_utc=last_copy_operation_received_time_utc, last_acknowledgement_sent_time_utc=last_acknowledgement_sent_time_utc, **kwargs)
-        self.kind = 'IdleSecondary'
+    def __init__(
+        self,
+        *,
+        replication_queue_status=None,
+        last_replication_operation_received_time_utc=None,
+        is_in_build: bool = None,
+        copy_queue_status=None,
+        last_copy_operation_received_time_utc=None,
+        last_acknowledgement_sent_time_utc=None,
+        **kwargs
+    ) -> None:
+        super(SecondaryIdleReplicatorStatus, self).__init__(
+            replication_queue_status=replication_queue_status,
+            last_replication_operation_received_time_utc=last_replication_operation_received_time_utc,
+            is_in_build=is_in_build,
+            copy_queue_status=copy_queue_status,
+            last_copy_operation_received_time_utc=last_copy_operation_received_time_utc,
+            last_acknowledgement_sent_time_utc=last_acknowledgement_sent_time_utc,
+            **kwargs
+        )
+        self.kind = "IdleSecondary"
 
 
 class SecretResourceDescription(Model):
@@ -18460,13 +21350,13 @@ class SecretResourceDescription(Model):
     """
 
     _validation = {
-        'properties': {'required': True},
-        'name': {'required': True},
+        "properties": {"required": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'SecretResourceProperties'},
-        'name': {'key': 'name', 'type': 'str'},
+        "properties": {"key": "properties", "type": "SecretResourceProperties"},
+        "name": {"key": "name", "type": "str"},
     }
 
     def __init__(self, *, properties, name: str, **kwargs) -> None:
@@ -18483,10 +21373,10 @@ class SecretValue(Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, value: str=None, **kwargs) -> None:
+    def __init__(self, *, value: str = None, **kwargs) -> None:
         super(SecretValue, self).__init__(**kwargs)
         self.value = value
 
@@ -18499,10 +21389,10 @@ class SecretValueProperties(Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, value: str=None, **kwargs) -> None:
+    def __init__(self, *, value: str = None, **kwargs) -> None:
         super(SecretValueProperties, self).__init__(**kwargs)
         self.value = value
 
@@ -18520,15 +21410,15 @@ class SecretValueResourceDescription(Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'properties.value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "properties.value", "type": "str"},
     }
 
-    def __init__(self, *, name: str, value: str=None, **kwargs) -> None:
+    def __init__(self, *, name: str, value: str = None, **kwargs) -> None:
         super(SecretValueResourceDescription, self).__init__(**kwargs)
         self.name = name
         self.value = value
@@ -18545,16 +21435,16 @@ class SeedNodeSafetyCheck(SafetyCheck):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
+        "kind": {"key": "Kind", "type": "str"},
     }
 
     def __init__(self, **kwargs) -> None:
         super(SeedNodeSafetyCheck, self).__init__(**kwargs)
-        self.kind = 'EnsureSeedNodeQuorum'
+        self.kind = "EnsureSeedNodeQuorum"
 
 
 class SelectedPartition(Model):
@@ -18572,11 +21462,11 @@ class SelectedPartition(Model):
     """
 
     _attribute_map = {
-        'service_name': {'key': 'ServiceName', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
+        "service_name": {"key": "ServiceName", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
     }
 
-    def __init__(self, *, service_name: str=None, partition_id: str=None, **kwargs) -> None:
+    def __init__(self, *, service_name: str = None, partition_id: str = None, **kwargs) -> None:
         super(SelectedPartition, self).__init__(**kwargs)
         self.service_name = service_name
         self.partition_id = partition_id
@@ -18607,21 +21497,34 @@ class ServiceBackupConfigurationInfo(BackupConfigurationInfo):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'policy_name': {'key': 'PolicyName', 'type': 'str'},
-        'policy_inherited_from': {'key': 'PolicyInheritedFrom', 'type': 'str'},
-        'suspension_info': {'key': 'SuspensionInfo', 'type': 'BackupSuspensionInfo'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'service_name': {'key': 'ServiceName', 'type': 'str'},
+        "policy_name": {"key": "PolicyName", "type": "str"},
+        "policy_inherited_from": {"key": "PolicyInheritedFrom", "type": "str"},
+        "suspension_info": {"key": "SuspensionInfo", "type": "BackupSuspensionInfo"},
+        "kind": {"key": "Kind", "type": "str"},
+        "service_name": {"key": "ServiceName", "type": "str"},
     }
 
-    def __init__(self, *, policy_name: str=None, policy_inherited_from=None, suspension_info=None, service_name: str=None, **kwargs) -> None:
-        super(ServiceBackupConfigurationInfo, self).__init__(policy_name=policy_name, policy_inherited_from=policy_inherited_from, suspension_info=suspension_info, **kwargs)
+    def __init__(
+        self,
+        *,
+        policy_name: str = None,
+        policy_inherited_from=None,
+        suspension_info=None,
+        service_name: str = None,
+        **kwargs
+    ) -> None:
+        super(ServiceBackupConfigurationInfo, self).__init__(
+            policy_name=policy_name,
+            policy_inherited_from=policy_inherited_from,
+            suspension_info=suspension_info,
+            **kwargs
+        )
         self.service_name = service_name
-        self.kind = 'Service'
+        self.kind = "Service"
 
 
 class ServiceBackupEntity(BackupEntity):
@@ -18637,18 +21540,18 @@ class ServiceBackupEntity(BackupEntity):
     """
 
     _validation = {
-        'entity_kind': {'required': True},
+        "entity_kind": {"required": True},
     }
 
     _attribute_map = {
-        'entity_kind': {'key': 'EntityKind', 'type': 'str'},
-        'service_name': {'key': 'ServiceName', 'type': 'str'},
+        "entity_kind": {"key": "EntityKind", "type": "str"},
+        "service_name": {"key": "ServiceName", "type": "str"},
     }
 
-    def __init__(self, *, service_name: str=None, **kwargs) -> None:
+    def __init__(self, *, service_name: str = None, **kwargs) -> None:
         super(ServiceBackupEntity, self).__init__(**kwargs)
         self.service_name = service_name
-        self.entity_kind = 'Service'
+        self.entity_kind = "Service"
 
 
 class ServiceCorrelationDescription(Model):
@@ -18667,13 +21570,13 @@ class ServiceCorrelationDescription(Model):
     """
 
     _validation = {
-        'scheme': {'required': True},
-        'service_name': {'required': True},
+        "scheme": {"required": True},
+        "service_name": {"required": True},
     }
 
     _attribute_map = {
-        'scheme': {'key': 'Scheme', 'type': 'str'},
-        'service_name': {'key': 'ServiceName', 'type': 'str'},
+        "scheme": {"key": "Scheme", "type": "str"},
+        "service_name": {"key": "ServiceName", "type": "str"},
     }
 
     def __init__(self, *, scheme, service_name: str, **kwargs) -> None:
@@ -18714,29 +21617,49 @@ class ServiceEvent(FabricEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'service_id': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "service_id": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'service_id': {'key': 'ServiceId', 'type': 'str'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "service_id": {"key": "ServiceId", "type": "str"},
     }
 
     _subtype_map = {
-        'kind': {'ServiceCreated': 'ServiceCreatedEvent', 'ServiceDeleted': 'ServiceDeletedEvent', 'ServiceNewHealthReport': 'ServiceNewHealthReportEvent', 'ServiceHealthReportExpired': 'ServiceHealthReportExpiredEvent'}
+        "kind": {
+            "ServiceCreated": "ServiceCreatedEvent",
+            "ServiceDeleted": "ServiceDeletedEvent",
+            "ServiceNewHealthReport": "ServiceNewHealthReportEvent",
+            "ServiceHealthReportExpired": "ServiceHealthReportExpiredEvent",
+        }
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, service_id: str, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ServiceEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        service_id: str,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(ServiceEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            **kwargs
+        )
         self.service_id = service_id
-        self.kind = 'ServiceEvent'
+        self.kind = "ServiceEvent"
 
 
 class ServiceCreatedEvent(ServiceEvent):
@@ -18791,43 +21714,69 @@ class ServiceCreatedEvent(ServiceEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'service_id': {'required': True},
-        'service_type_name': {'required': True},
-        'application_name': {'required': True},
-        'application_type_name': {'required': True},
-        'service_instance': {'required': True},
-        'is_stateful': {'required': True},
-        'partition_count': {'required': True},
-        'target_replica_set_size': {'required': True},
-        'min_replica_set_size': {'required': True},
-        'service_package_version': {'required': True},
-        'partition_id': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "service_id": {"required": True},
+        "service_type_name": {"required": True},
+        "application_name": {"required": True},
+        "application_type_name": {"required": True},
+        "service_instance": {"required": True},
+        "is_stateful": {"required": True},
+        "partition_count": {"required": True},
+        "target_replica_set_size": {"required": True},
+        "min_replica_set_size": {"required": True},
+        "service_package_version": {"required": True},
+        "partition_id": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'service_id': {'key': 'ServiceId', 'type': 'str'},
-        'service_type_name': {'key': 'ServiceTypeName', 'type': 'str'},
-        'application_name': {'key': 'ApplicationName', 'type': 'str'},
-        'application_type_name': {'key': 'ApplicationTypeName', 'type': 'str'},
-        'service_instance': {'key': 'ServiceInstance', 'type': 'long'},
-        'is_stateful': {'key': 'IsStateful', 'type': 'bool'},
-        'partition_count': {'key': 'PartitionCount', 'type': 'int'},
-        'target_replica_set_size': {'key': 'TargetReplicaSetSize', 'type': 'int'},
-        'min_replica_set_size': {'key': 'MinReplicaSetSize', 'type': 'int'},
-        'service_package_version': {'key': 'ServicePackageVersion', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "service_id": {"key": "ServiceId", "type": "str"},
+        "service_type_name": {"key": "ServiceTypeName", "type": "str"},
+        "application_name": {"key": "ApplicationName", "type": "str"},
+        "application_type_name": {"key": "ApplicationTypeName", "type": "str"},
+        "service_instance": {"key": "ServiceInstance", "type": "long"},
+        "is_stateful": {"key": "IsStateful", "type": "bool"},
+        "partition_count": {"key": "PartitionCount", "type": "int"},
+        "target_replica_set_size": {"key": "TargetReplicaSetSize", "type": "int"},
+        "min_replica_set_size": {"key": "MinReplicaSetSize", "type": "int"},
+        "service_package_version": {"key": "ServicePackageVersion", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, service_id: str, service_type_name: str, application_name: str, application_type_name: str, service_instance: int, is_stateful: bool, partition_count: int, target_replica_set_size: int, min_replica_set_size: int, service_package_version: str, partition_id: str, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ServiceCreatedEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, service_id=service_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        service_id: str,
+        service_type_name: str,
+        application_name: str,
+        application_type_name: str,
+        service_instance: int,
+        is_stateful: bool,
+        partition_count: int,
+        target_replica_set_size: int,
+        min_replica_set_size: int,
+        service_package_version: str,
+        partition_id: str,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(ServiceCreatedEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            service_id=service_id,
+            **kwargs
+        )
         self.service_type_name = service_type_name
         self.application_name = application_name
         self.application_type_name = application_type_name
@@ -18838,7 +21787,7 @@ class ServiceCreatedEvent(ServiceEvent):
         self.min_replica_set_size = min_replica_set_size
         self.service_package_version = service_package_version
         self.partition_id = partition_id
-        self.kind = 'ServiceCreated'
+        self.kind = "ServiceCreated"
 
 
 class ServiceDeletedEvent(ServiceEvent):
@@ -18887,41 +21836,66 @@ class ServiceDeletedEvent(ServiceEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'service_id': {'required': True},
-        'service_type_name': {'required': True},
-        'application_name': {'required': True},
-        'application_type_name': {'required': True},
-        'service_instance': {'required': True},
-        'is_stateful': {'required': True},
-        'partition_count': {'required': True},
-        'target_replica_set_size': {'required': True},
-        'min_replica_set_size': {'required': True},
-        'service_package_version': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "service_id": {"required": True},
+        "service_type_name": {"required": True},
+        "application_name": {"required": True},
+        "application_type_name": {"required": True},
+        "service_instance": {"required": True},
+        "is_stateful": {"required": True},
+        "partition_count": {"required": True},
+        "target_replica_set_size": {"required": True},
+        "min_replica_set_size": {"required": True},
+        "service_package_version": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'service_id': {'key': 'ServiceId', 'type': 'str'},
-        'service_type_name': {'key': 'ServiceTypeName', 'type': 'str'},
-        'application_name': {'key': 'ApplicationName', 'type': 'str'},
-        'application_type_name': {'key': 'ApplicationTypeName', 'type': 'str'},
-        'service_instance': {'key': 'ServiceInstance', 'type': 'long'},
-        'is_stateful': {'key': 'IsStateful', 'type': 'bool'},
-        'partition_count': {'key': 'PartitionCount', 'type': 'int'},
-        'target_replica_set_size': {'key': 'TargetReplicaSetSize', 'type': 'int'},
-        'min_replica_set_size': {'key': 'MinReplicaSetSize', 'type': 'int'},
-        'service_package_version': {'key': 'ServicePackageVersion', 'type': 'str'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "service_id": {"key": "ServiceId", "type": "str"},
+        "service_type_name": {"key": "ServiceTypeName", "type": "str"},
+        "application_name": {"key": "ApplicationName", "type": "str"},
+        "application_type_name": {"key": "ApplicationTypeName", "type": "str"},
+        "service_instance": {"key": "ServiceInstance", "type": "long"},
+        "is_stateful": {"key": "IsStateful", "type": "bool"},
+        "partition_count": {"key": "PartitionCount", "type": "int"},
+        "target_replica_set_size": {"key": "TargetReplicaSetSize", "type": "int"},
+        "min_replica_set_size": {"key": "MinReplicaSetSize", "type": "int"},
+        "service_package_version": {"key": "ServicePackageVersion", "type": "str"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, service_id: str, service_type_name: str, application_name: str, application_type_name: str, service_instance: int, is_stateful: bool, partition_count: int, target_replica_set_size: int, min_replica_set_size: int, service_package_version: str, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ServiceDeletedEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, service_id=service_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        service_id: str,
+        service_type_name: str,
+        application_name: str,
+        application_type_name: str,
+        service_instance: int,
+        is_stateful: bool,
+        partition_count: int,
+        target_replica_set_size: int,
+        min_replica_set_size: int,
+        service_package_version: str,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(ServiceDeletedEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            service_id=service_id,
+            **kwargs
+        )
         self.service_type_name = service_type_name
         self.application_name = application_name
         self.application_type_name = application_type_name
@@ -18931,7 +21905,7 @@ class ServiceDeletedEvent(ServiceEvent):
         self.target_replica_set_size = target_replica_set_size
         self.min_replica_set_size = min_replica_set_size
         self.service_package_version = service_package_version
-        self.kind = 'ServiceDeleted'
+        self.kind = "ServiceDeleted"
 
 
 class ServiceDescription(Model):
@@ -19003,37 +21977,60 @@ class ServiceDescription(Model):
     """
 
     _validation = {
-        'service_name': {'required': True},
-        'service_type_name': {'required': True},
-        'partition_description': {'required': True},
-        'service_kind': {'required': True},
+        "service_name": {"required": True},
+        "service_type_name": {"required": True},
+        "partition_description": {"required": True},
+        "service_kind": {"required": True},
     }
 
     _attribute_map = {
-        'application_name': {'key': 'ApplicationName', 'type': 'str'},
-        'service_name': {'key': 'ServiceName', 'type': 'str'},
-        'service_type_name': {'key': 'ServiceTypeName', 'type': 'str'},
-        'initialization_data': {'key': 'InitializationData', 'type': '[int]'},
-        'partition_description': {'key': 'PartitionDescription', 'type': 'PartitionSchemeDescription'},
-        'placement_constraints': {'key': 'PlacementConstraints', 'type': 'str'},
-        'correlation_scheme': {'key': 'CorrelationScheme', 'type': '[ServiceCorrelationDescription]'},
-        'service_load_metrics': {'key': 'ServiceLoadMetrics', 'type': '[ServiceLoadMetricDescription]'},
-        'service_placement_policies': {'key': 'ServicePlacementPolicies', 'type': '[ServicePlacementPolicyDescription]'},
-        'default_move_cost': {'key': 'DefaultMoveCost', 'type': 'str'},
-        'is_default_move_cost_specified': {'key': 'IsDefaultMoveCostSpecified', 'type': 'bool'},
-        'service_package_activation_mode': {'key': 'ServicePackageActivationMode', 'type': 'str'},
-        'service_dns_name': {'key': 'ServiceDnsName', 'type': 'str'},
-        'scaling_policies': {'key': 'ScalingPolicies', 'type': '[ScalingPolicyDescription]'},
-        'tags_required_to_place': {'key': 'TagsRequiredToPlace', 'type': 'NodeTagsDescription'},
-        'tags_required_to_run': {'key': 'TagsRequiredToRun', 'type': 'NodeTagsDescription'},
-        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
+        "application_name": {"key": "ApplicationName", "type": "str"},
+        "service_name": {"key": "ServiceName", "type": "str"},
+        "service_type_name": {"key": "ServiceTypeName", "type": "str"},
+        "initialization_data": {"key": "InitializationData", "type": "[int]"},
+        "partition_description": {"key": "PartitionDescription", "type": "PartitionSchemeDescription"},
+        "placement_constraints": {"key": "PlacementConstraints", "type": "str"},
+        "correlation_scheme": {"key": "CorrelationScheme", "type": "[ServiceCorrelationDescription]"},
+        "service_load_metrics": {"key": "ServiceLoadMetrics", "type": "[ServiceLoadMetricDescription]"},
+        "service_placement_policies": {
+            "key": "ServicePlacementPolicies",
+            "type": "[ServicePlacementPolicyDescription]",
+        },
+        "default_move_cost": {"key": "DefaultMoveCost", "type": "str"},
+        "is_default_move_cost_specified": {"key": "IsDefaultMoveCostSpecified", "type": "bool"},
+        "service_package_activation_mode": {"key": "ServicePackageActivationMode", "type": "str"},
+        "service_dns_name": {"key": "ServiceDnsName", "type": "str"},
+        "scaling_policies": {"key": "ScalingPolicies", "type": "[ScalingPolicyDescription]"},
+        "tags_required_to_place": {"key": "TagsRequiredToPlace", "type": "NodeTagsDescription"},
+        "tags_required_to_run": {"key": "TagsRequiredToRun", "type": "NodeTagsDescription"},
+        "service_kind": {"key": "ServiceKind", "type": "str"},
     }
 
     _subtype_map = {
-        'service_kind': {'Stateful': 'StatefulServiceDescription', 'Stateless': 'StatelessServiceDescription'}
+        "service_kind": {"Stateful": "StatefulServiceDescription", "Stateless": "StatelessServiceDescription"}
     }
 
-    def __init__(self, *, service_name: str, service_type_name: str, partition_description, application_name: str=None, initialization_data=None, placement_constraints: str=None, correlation_scheme=None, service_load_metrics=None, service_placement_policies=None, default_move_cost=None, is_default_move_cost_specified: bool=None, service_package_activation_mode=None, service_dns_name: str=None, scaling_policies=None, tags_required_to_place=None, tags_required_to_run=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        service_name: str,
+        service_type_name: str,
+        partition_description,
+        application_name: str = None,
+        initialization_data=None,
+        placement_constraints: str = None,
+        correlation_scheme=None,
+        service_load_metrics=None,
+        service_placement_policies=None,
+        default_move_cost=None,
+        is_default_move_cost_specified: bool = None,
+        service_package_activation_mode=None,
+        service_dns_name: str = None,
+        scaling_policies=None,
+        tags_required_to_place=None,
+        tags_required_to_run=None,
+        **kwargs
+    ) -> None:
         super(ServiceDescription, self).__init__(**kwargs)
         self.application_name = application_name
         self.service_name = service_name
@@ -19083,21 +22080,31 @@ class ServiceFromTemplateDescription(Model):
     """
 
     _validation = {
-        'application_name': {'required': True},
-        'service_name': {'required': True},
-        'service_type_name': {'required': True},
+        "application_name": {"required": True},
+        "service_name": {"required": True},
+        "service_type_name": {"required": True},
     }
 
     _attribute_map = {
-        'application_name': {'key': 'ApplicationName', 'type': 'str'},
-        'service_name': {'key': 'ServiceName', 'type': 'str'},
-        'service_type_name': {'key': 'ServiceTypeName', 'type': 'str'},
-        'initialization_data': {'key': 'InitializationData', 'type': '[int]'},
-        'service_package_activation_mode': {'key': 'ServicePackageActivationMode', 'type': 'str'},
-        'service_dns_name': {'key': 'ServiceDnsName', 'type': 'str'},
+        "application_name": {"key": "ApplicationName", "type": "str"},
+        "service_name": {"key": "ServiceName", "type": "str"},
+        "service_type_name": {"key": "ServiceTypeName", "type": "str"},
+        "initialization_data": {"key": "InitializationData", "type": "[int]"},
+        "service_package_activation_mode": {"key": "ServicePackageActivationMode", "type": "str"},
+        "service_dns_name": {"key": "ServiceDnsName", "type": "str"},
     }
 
-    def __init__(self, *, application_name: str, service_name: str, service_type_name: str, initialization_data=None, service_package_activation_mode=None, service_dns_name: str=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        application_name: str,
+        service_name: str,
+        service_type_name: str,
+        initialization_data=None,
+        service_package_activation_mode=None,
+        service_dns_name: str = None,
+        **kwargs
+    ) -> None:
         super(ServiceFromTemplateDescription, self).__init__(**kwargs)
         self.application_name = application_name
         self.service_name = service_name
@@ -19137,16 +22144,32 @@ class ServiceHealth(EntityHealth):
     """
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'health_events': {'key': 'HealthEvents', 'type': '[HealthEvent]'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
-        'health_statistics': {'key': 'HealthStatistics', 'type': 'HealthStatistics'},
-        'name': {'key': 'Name', 'type': 'str'},
-        'partition_health_states': {'key': 'PartitionHealthStates', 'type': '[PartitionHealthState]'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "health_events": {"key": "HealthEvents", "type": "[HealthEvent]"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
+        "health_statistics": {"key": "HealthStatistics", "type": "HealthStatistics"},
+        "name": {"key": "Name", "type": "str"},
+        "partition_health_states": {"key": "PartitionHealthStates", "type": "[PartitionHealthState]"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, health_events=None, unhealthy_evaluations=None, health_statistics=None, name: str=None, partition_health_states=None, **kwargs) -> None:
-        super(ServiceHealth, self).__init__(aggregated_health_state=aggregated_health_state, health_events=health_events, unhealthy_evaluations=unhealthy_evaluations, health_statistics=health_statistics, **kwargs)
+    def __init__(
+        self,
+        *,
+        aggregated_health_state=None,
+        health_events=None,
+        unhealthy_evaluations=None,
+        health_statistics=None,
+        name: str = None,
+        partition_health_states=None,
+        **kwargs
+    ) -> None:
+        super(ServiceHealth, self).__init__(
+            aggregated_health_state=aggregated_health_state,
+            health_events=health_events,
+            unhealthy_evaluations=unhealthy_evaluations,
+            health_statistics=health_statistics,
+            **kwargs
+        )
         self.name = name
         self.partition_health_states = partition_health_states
 
@@ -19182,22 +22205,32 @@ class ServiceHealthEvaluation(HealthEvaluation):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'service_name': {'key': 'ServiceName', 'type': 'str'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "description": {"key": "Description", "type": "str"},
+        "kind": {"key": "Kind", "type": "str"},
+        "service_name": {"key": "ServiceName", "type": "str"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, description: str=None, service_name: str=None, unhealthy_evaluations=None, **kwargs) -> None:
-        super(ServiceHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description, **kwargs)
+    def __init__(
+        self,
+        *,
+        aggregated_health_state=None,
+        description: str = None,
+        service_name: str = None,
+        unhealthy_evaluations=None,
+        **kwargs
+    ) -> None:
+        super(ServiceHealthEvaluation, self).__init__(
+            aggregated_health_state=aggregated_health_state, description=description, **kwargs
+        )
         self.service_name = service_name
         self.unhealthy_evaluations = unhealthy_evaluations
-        self.kind = 'Service'
+        self.kind = "Service"
 
 
 class ServiceHealthReportExpiredEvent(ServiceEvent):
@@ -19247,41 +22280,66 @@ class ServiceHealthReportExpiredEvent(ServiceEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'service_id': {'required': True},
-        'instance_id': {'required': True},
-        'source_id': {'required': True},
-        'property': {'required': True},
-        'health_state': {'required': True},
-        'time_to_live_ms': {'required': True},
-        'sequence_number': {'required': True},
-        'description': {'required': True},
-        'remove_when_expired': {'required': True},
-        'source_utc_timestamp': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "service_id": {"required": True},
+        "instance_id": {"required": True},
+        "source_id": {"required": True},
+        "property": {"required": True},
+        "health_state": {"required": True},
+        "time_to_live_ms": {"required": True},
+        "sequence_number": {"required": True},
+        "description": {"required": True},
+        "remove_when_expired": {"required": True},
+        "source_utc_timestamp": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'service_id': {'key': 'ServiceId', 'type': 'str'},
-        'instance_id': {'key': 'InstanceId', 'type': 'long'},
-        'source_id': {'key': 'SourceId', 'type': 'str'},
-        'property': {'key': 'Property', 'type': 'str'},
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'time_to_live_ms': {'key': 'TimeToLiveMs', 'type': 'long'},
-        'sequence_number': {'key': 'SequenceNumber', 'type': 'long'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'remove_when_expired': {'key': 'RemoveWhenExpired', 'type': 'bool'},
-        'source_utc_timestamp': {'key': 'SourceUtcTimestamp', 'type': 'iso-8601'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "service_id": {"key": "ServiceId", "type": "str"},
+        "instance_id": {"key": "InstanceId", "type": "long"},
+        "source_id": {"key": "SourceId", "type": "str"},
+        "property": {"key": "Property", "type": "str"},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "time_to_live_ms": {"key": "TimeToLiveMs", "type": "long"},
+        "sequence_number": {"key": "SequenceNumber", "type": "long"},
+        "description": {"key": "Description", "type": "str"},
+        "remove_when_expired": {"key": "RemoveWhenExpired", "type": "bool"},
+        "source_utc_timestamp": {"key": "SourceUtcTimestamp", "type": "iso-8601"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, service_id: str, instance_id: int, source_id: str, property: str, health_state: str, time_to_live_ms: int, sequence_number: int, description: str, remove_when_expired: bool, source_utc_timestamp, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ServiceHealthReportExpiredEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, service_id=service_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        service_id: str,
+        instance_id: int,
+        source_id: str,
+        property: str,
+        health_state: str,
+        time_to_live_ms: int,
+        sequence_number: int,
+        description: str,
+        remove_when_expired: bool,
+        source_utc_timestamp,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(ServiceHealthReportExpiredEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            service_id=service_id,
+            **kwargs
+        )
         self.instance_id = instance_id
         self.source_id = source_id
         self.property = property
@@ -19291,7 +22349,7 @@ class ServiceHealthReportExpiredEvent(ServiceEvent):
         self.description = description
         self.remove_when_expired = remove_when_expired
         self.source_utc_timestamp = source_utc_timestamp
-        self.kind = 'ServiceHealthReportExpired'
+        self.kind = "ServiceHealthReportExpired"
 
 
 class ServiceHealthState(EntityHealthState):
@@ -19310,11 +22368,11 @@ class ServiceHealthState(EntityHealthState):
     """
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'service_name': {'key': 'ServiceName', 'type': 'str'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "service_name": {"key": "ServiceName", "type": "str"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, service_name: str=None, **kwargs) -> None:
+    def __init__(self, *, aggregated_health_state=None, service_name: str = None, **kwargs) -> None:
         super(ServiceHealthState, self).__init__(aggregated_health_state=aggregated_health_state, **kwargs)
         self.service_name = service_name
 
@@ -19339,12 +22397,14 @@ class ServiceHealthStateChunk(EntityHealthStateChunk):
     """
 
     _attribute_map = {
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'service_name': {'key': 'ServiceName', 'type': 'str'},
-        'partition_health_state_chunks': {'key': 'PartitionHealthStateChunks', 'type': 'PartitionHealthStateChunkList'},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "service_name": {"key": "ServiceName", "type": "str"},
+        "partition_health_state_chunks": {"key": "PartitionHealthStateChunks", "type": "PartitionHealthStateChunkList"},
     }
 
-    def __init__(self, *, health_state=None, service_name: str=None, partition_health_state_chunks=None, **kwargs) -> None:
+    def __init__(
+        self, *, health_state=None, service_name: str = None, partition_health_state_chunks=None, **kwargs
+    ) -> None:
         super(ServiceHealthStateChunk, self).__init__(health_state=health_state, **kwargs)
         self.service_name = service_name
         self.partition_health_state_chunks = partition_health_state_chunks
@@ -19360,7 +22420,7 @@ class ServiceHealthStateChunkList(Model):
     """
 
     _attribute_map = {
-        'items': {'key': 'Items', 'type': '[ServiceHealthStateChunk]'},
+        "items": {"key": "Items", "type": "[ServiceHealthStateChunk]"},
     }
 
     def __init__(self, *, items=None, **kwargs) -> None:
@@ -19427,12 +22487,14 @@ class ServiceHealthStateFilter(Model):
     """
 
     _attribute_map = {
-        'service_name_filter': {'key': 'ServiceNameFilter', 'type': 'str'},
-        'health_state_filter': {'key': 'HealthStateFilter', 'type': 'int'},
-        'partition_filters': {'key': 'PartitionFilters', 'type': '[PartitionHealthStateFilter]'},
+        "service_name_filter": {"key": "ServiceNameFilter", "type": "str"},
+        "health_state_filter": {"key": "HealthStateFilter", "type": "int"},
+        "partition_filters": {"key": "PartitionFilters", "type": "[PartitionHealthStateFilter]"},
     }
 
-    def __init__(self, *, service_name_filter: str=None, health_state_filter: int=0, partition_filters=None, **kwargs) -> None:
+    def __init__(
+        self, *, service_name_filter: str = None, health_state_filter: int = 0, partition_filters=None, **kwargs
+    ) -> None:
         super(ServiceHealthStateFilter, self).__init__(**kwargs)
         self.service_name_filter = service_name_filter
         self.health_state_filter = health_state_filter
@@ -19449,11 +22511,11 @@ class ServiceIdentity(Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'identity_ref': {'key': 'identityRef', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "identity_ref": {"key": "identityRef", "type": "str"},
     }
 
-    def __init__(self, *, name: str=None, identity_ref: str=None, **kwargs) -> None:
+    def __init__(self, *, name: str = None, identity_ref: str = None, **kwargs) -> None:
         super(ServiceIdentity, self).__init__(**kwargs)
         self.name = name
         self.identity_ref = identity_ref
@@ -19497,25 +22559,34 @@ class ServiceInfo(Model):
     """
 
     _validation = {
-        'service_kind': {'required': True},
+        "service_kind": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str'},
-        'name': {'key': 'Name', 'type': 'str'},
-        'type_name': {'key': 'TypeName', 'type': 'str'},
-        'manifest_version': {'key': 'ManifestVersion', 'type': 'str'},
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'service_status': {'key': 'ServiceStatus', 'type': 'str'},
-        'is_service_group': {'key': 'IsServiceGroup', 'type': 'bool'},
-        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
+        "id": {"key": "Id", "type": "str"},
+        "name": {"key": "Name", "type": "str"},
+        "type_name": {"key": "TypeName", "type": "str"},
+        "manifest_version": {"key": "ManifestVersion", "type": "str"},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "service_status": {"key": "ServiceStatus", "type": "str"},
+        "is_service_group": {"key": "IsServiceGroup", "type": "bool"},
+        "service_kind": {"key": "ServiceKind", "type": "str"},
     }
 
-    _subtype_map = {
-        'service_kind': {'Stateful': 'StatefulServiceInfo', 'Stateless': 'StatelessServiceInfo'}
-    }
+    _subtype_map = {"service_kind": {"Stateful": "StatefulServiceInfo", "Stateless": "StatelessServiceInfo"}}
 
-    def __init__(self, *, id: str=None, name: str=None, type_name: str=None, manifest_version: str=None, health_state=None, service_status=None, is_service_group: bool=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        id: str = None,
+        name: str = None,
+        type_name: str = None,
+        manifest_version: str = None,
+        health_state=None,
+        service_status=None,
+        is_service_group: bool = None,
+        **kwargs
+    ) -> None:
         super(ServiceInfo, self).__init__(**kwargs)
         self.id = id
         self.name = name
@@ -19559,19 +22630,29 @@ class ServiceLoadMetricDescription(Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'weight': {'key': 'Weight', 'type': 'str'},
-        'primary_default_load': {'key': 'PrimaryDefaultLoad', 'type': 'int'},
-        'secondary_default_load': {'key': 'SecondaryDefaultLoad', 'type': 'int'},
-        'auxiliary_default_load': {'key': 'AuxiliaryDefaultLoad', 'type': 'int'},
-        'default_load': {'key': 'DefaultLoad', 'type': 'int'},
+        "name": {"key": "Name", "type": "str"},
+        "weight": {"key": "Weight", "type": "str"},
+        "primary_default_load": {"key": "PrimaryDefaultLoad", "type": "int"},
+        "secondary_default_load": {"key": "SecondaryDefaultLoad", "type": "int"},
+        "auxiliary_default_load": {"key": "AuxiliaryDefaultLoad", "type": "int"},
+        "default_load": {"key": "DefaultLoad", "type": "int"},
     }
 
-    def __init__(self, *, name: str, weight=None, primary_default_load: int=None, secondary_default_load: int=None, auxiliary_default_load: int=None, default_load: int=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str,
+        weight=None,
+        primary_default_load: int = None,
+        secondary_default_load: int = None,
+        auxiliary_default_load: int = None,
+        default_load: int = None,
+        **kwargs
+    ) -> None:
         super(ServiceLoadMetricDescription, self).__init__(**kwargs)
         self.name = name
         self.weight = weight
@@ -19597,11 +22678,11 @@ class ServiceNameInfo(Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str'},
-        'name': {'key': 'Name', 'type': 'str'},
+        "id": {"key": "Id", "type": "str"},
+        "name": {"key": "Name", "type": "str"},
     }
 
-    def __init__(self, *, id: str=None, name: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str = None, name: str = None, **kwargs) -> None:
         super(ServiceNameInfo, self).__init__(**kwargs)
         self.id = id
         self.name = name
@@ -19654,41 +22735,66 @@ class ServiceNewHealthReportEvent(ServiceEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'service_id': {'required': True},
-        'instance_id': {'required': True},
-        'source_id': {'required': True},
-        'property': {'required': True},
-        'health_state': {'required': True},
-        'time_to_live_ms': {'required': True},
-        'sequence_number': {'required': True},
-        'description': {'required': True},
-        'remove_when_expired': {'required': True},
-        'source_utc_timestamp': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "service_id": {"required": True},
+        "instance_id": {"required": True},
+        "source_id": {"required": True},
+        "property": {"required": True},
+        "health_state": {"required": True},
+        "time_to_live_ms": {"required": True},
+        "sequence_number": {"required": True},
+        "description": {"required": True},
+        "remove_when_expired": {"required": True},
+        "source_utc_timestamp": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'service_id': {'key': 'ServiceId', 'type': 'str'},
-        'instance_id': {'key': 'InstanceId', 'type': 'long'},
-        'source_id': {'key': 'SourceId', 'type': 'str'},
-        'property': {'key': 'Property', 'type': 'str'},
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'time_to_live_ms': {'key': 'TimeToLiveMs', 'type': 'long'},
-        'sequence_number': {'key': 'SequenceNumber', 'type': 'long'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'remove_when_expired': {'key': 'RemoveWhenExpired', 'type': 'bool'},
-        'source_utc_timestamp': {'key': 'SourceUtcTimestamp', 'type': 'iso-8601'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "service_id": {"key": "ServiceId", "type": "str"},
+        "instance_id": {"key": "InstanceId", "type": "long"},
+        "source_id": {"key": "SourceId", "type": "str"},
+        "property": {"key": "Property", "type": "str"},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "time_to_live_ms": {"key": "TimeToLiveMs", "type": "long"},
+        "sequence_number": {"key": "SequenceNumber", "type": "long"},
+        "description": {"key": "Description", "type": "str"},
+        "remove_when_expired": {"key": "RemoveWhenExpired", "type": "bool"},
+        "source_utc_timestamp": {"key": "SourceUtcTimestamp", "type": "iso-8601"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, service_id: str, instance_id: int, source_id: str, property: str, health_state: str, time_to_live_ms: int, sequence_number: int, description: str, remove_when_expired: bool, source_utc_timestamp, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ServiceNewHealthReportEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, service_id=service_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        service_id: str,
+        instance_id: int,
+        source_id: str,
+        property: str,
+        health_state: str,
+        time_to_live_ms: int,
+        sequence_number: int,
+        description: str,
+        remove_when_expired: bool,
+        source_utc_timestamp,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(ServiceNewHealthReportEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            service_id=service_id,
+            **kwargs
+        )
         self.instance_id = instance_id
         self.source_id = source_id
         self.property = property
@@ -19698,7 +22804,7 @@ class ServiceNewHealthReportEvent(ServiceEvent):
         self.description = description
         self.remove_when_expired = remove_when_expired
         self.source_utc_timestamp = source_utc_timestamp
-        self.kind = 'ServiceNewHealthReport'
+        self.kind = "ServiceNewHealthReport"
 
 
 class ServicePartitionInfo(Model):
@@ -19728,18 +22834,18 @@ class ServicePartitionInfo(Model):
     """
 
     _validation = {
-        'service_kind': {'required': True},
+        "service_kind": {"required": True},
     }
 
     _attribute_map = {
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'partition_status': {'key': 'PartitionStatus', 'type': 'str'},
-        'partition_information': {'key': 'PartitionInformation', 'type': 'PartitionInformation'},
-        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "partition_status": {"key": "PartitionStatus", "type": "str"},
+        "partition_information": {"key": "PartitionInformation", "type": "PartitionInformation"},
+        "service_kind": {"key": "ServiceKind", "type": "str"},
     }
 
     _subtype_map = {
-        'service_kind': {'Stateful': 'StatefulServicePartitionInfo', 'Stateless': 'StatelessServicePartitionInfo'}
+        "service_kind": {"Stateful": "StatefulServicePartitionInfo", "Stateless": "StatelessServicePartitionInfo"}
     }
 
     def __init__(self, *, health_state=None, partition_status=None, partition_information=None, **kwargs) -> None:
@@ -19768,15 +22874,22 @@ class ServicePlacementPolicyDescription(Model):
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'Type', 'type': 'str'},
+        "type": {"key": "Type", "type": "str"},
     }
 
     _subtype_map = {
-        'type': {'InvalidDomain': 'ServicePlacementInvalidDomainPolicyDescription', 'NonPartiallyPlaceService': 'ServicePlacementNonPartiallyPlaceServicePolicyDescription', 'AllowMultipleStatelessInstancesOnNode': 'ServicePlacementAllowMultipleStatelessInstancesOnNodePolicyDescription', 'PreferPrimaryDomain': 'ServicePlacementPreferPrimaryDomainPolicyDescription', 'RequireDomain': 'ServicePlacementRequiredDomainPolicyDescription', 'RequireDomainDistribution': 'ServicePlacementRequireDomainDistributionPolicyDescription'}
+        "type": {
+            "InvalidDomain": "ServicePlacementInvalidDomainPolicyDescription",
+            "NonPartiallyPlaceService": "ServicePlacementNonPartiallyPlaceServicePolicyDescription",
+            "AllowMultipleStatelessInstancesOnNode": "ServicePlacementAllowMultipleStatelessInstancesOnNodePolicyDescription",
+            "PreferPrimaryDomain": "ServicePlacementPreferPrimaryDomainPolicyDescription",
+            "RequireDomain": "ServicePlacementRequiredDomainPolicyDescription",
+            "RequireDomainDistribution": "ServicePlacementRequireDomainDistributionPolicyDescription",
+        }
     }
 
     def __init__(self, **kwargs) -> None:
@@ -19800,18 +22913,18 @@ class ServicePlacementAllowMultipleStatelessInstancesOnNodePolicyDescription(Ser
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'Type', 'type': 'str'},
-        'domain_name': {'key': 'DomainName', 'type': 'str'},
+        "type": {"key": "Type", "type": "str"},
+        "domain_name": {"key": "DomainName", "type": "str"},
     }
 
-    def __init__(self, *, domain_name: str=None, **kwargs) -> None:
+    def __init__(self, *, domain_name: str = None, **kwargs) -> None:
         super(ServicePlacementAllowMultipleStatelessInstancesOnNodePolicyDescription, self).__init__(**kwargs)
         self.domain_name = domain_name
-        self.type = 'AllowMultipleStatelessInstancesOnNode'
+        self.type = "AllowMultipleStatelessInstancesOnNode"
 
 
 class ServicePlacementInvalidDomainPolicyDescription(ServicePlacementPolicyDescription):
@@ -19829,18 +22942,18 @@ class ServicePlacementInvalidDomainPolicyDescription(ServicePlacementPolicyDescr
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'Type', 'type': 'str'},
-        'domain_name': {'key': 'DomainName', 'type': 'str'},
+        "type": {"key": "Type", "type": "str"},
+        "domain_name": {"key": "DomainName", "type": "str"},
     }
 
-    def __init__(self, *, domain_name: str=None, **kwargs) -> None:
+    def __init__(self, *, domain_name: str = None, **kwargs) -> None:
         super(ServicePlacementInvalidDomainPolicyDescription, self).__init__(**kwargs)
         self.domain_name = domain_name
-        self.type = 'InvalidDomain'
+        self.type = "InvalidDomain"
 
 
 class ServicePlacementNonPartiallyPlaceServicePolicyDescription(ServicePlacementPolicyDescription):
@@ -19855,16 +22968,16 @@ class ServicePlacementNonPartiallyPlaceServicePolicyDescription(ServicePlacement
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'Type', 'type': 'str'},
+        "type": {"key": "Type", "type": "str"},
     }
 
     def __init__(self, **kwargs) -> None:
         super(ServicePlacementNonPartiallyPlaceServicePolicyDescription, self).__init__(**kwargs)
-        self.type = 'NonPartiallyPlaceService'
+        self.type = "NonPartiallyPlaceService"
 
 
 class ServicePlacementPreferPrimaryDomainPolicyDescription(ServicePlacementPolicyDescription):
@@ -19889,18 +23002,18 @@ class ServicePlacementPreferPrimaryDomainPolicyDescription(ServicePlacementPolic
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'Type', 'type': 'str'},
-        'domain_name': {'key': 'DomainName', 'type': 'str'},
+        "type": {"key": "Type", "type": "str"},
+        "domain_name": {"key": "DomainName", "type": "str"},
     }
 
-    def __init__(self, *, domain_name: str=None, **kwargs) -> None:
+    def __init__(self, *, domain_name: str = None, **kwargs) -> None:
         super(ServicePlacementPreferPrimaryDomainPolicyDescription, self).__init__(**kwargs)
         self.domain_name = domain_name
-        self.type = 'PreferPrimaryDomain'
+        self.type = "PreferPrimaryDomain"
 
 
 class ServicePlacementRequiredDomainPolicyDescription(ServicePlacementPolicyDescription):
@@ -19918,18 +23031,18 @@ class ServicePlacementRequiredDomainPolicyDescription(ServicePlacementPolicyDesc
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'Type', 'type': 'str'},
-        'domain_name': {'key': 'DomainName', 'type': 'str'},
+        "type": {"key": "Type", "type": "str"},
+        "domain_name": {"key": "DomainName", "type": "str"},
     }
 
-    def __init__(self, *, domain_name: str=None, **kwargs) -> None:
+    def __init__(self, *, domain_name: str = None, **kwargs) -> None:
         super(ServicePlacementRequiredDomainPolicyDescription, self).__init__(**kwargs)
         self.domain_name = domain_name
-        self.type = 'RequireDomain'
+        self.type = "RequireDomain"
 
 
 class ServicePlacementRequireDomainDistributionPolicyDescription(ServicePlacementPolicyDescription):
@@ -19955,18 +23068,18 @@ class ServicePlacementRequireDomainDistributionPolicyDescription(ServicePlacemen
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'Type', 'type': 'str'},
-        'domain_name': {'key': 'DomainName', 'type': 'str'},
+        "type": {"key": "Type", "type": "str"},
+        "domain_name": {"key": "DomainName", "type": "str"},
     }
 
-    def __init__(self, *, domain_name: str=None, **kwargs) -> None:
+    def __init__(self, *, domain_name: str = None, **kwargs) -> None:
         super(ServicePlacementRequireDomainDistributionPolicyDescription, self).__init__(**kwargs)
         self.domain_name = domain_name
-        self.type = 'RequireDomainDistribution'
+        self.type = "RequireDomainDistribution"
 
 
 class ServiceProperties(Model):
@@ -20005,26 +23118,36 @@ class ServiceProperties(Model):
     """
 
     _validation = {
-        'status': {'readonly': True},
-        'status_details': {'readonly': True},
-        'health_state': {'readonly': True},
-        'unhealthy_evaluation': {'readonly': True},
+        "status": {"readonly": True},
+        "status_details": {"readonly": True},
+        "health_state": {"readonly": True},
+        "unhealthy_evaluation": {"readonly": True},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'replica_count': {'key': 'replicaCount', 'type': 'int'},
-        'execution_policy': {'key': 'executionPolicy', 'type': 'ExecutionPolicy'},
-        'auto_scaling_policies': {'key': 'autoScalingPolicies', 'type': '[AutoScalingPolicy]'},
-        'status': {'key': 'status', 'type': 'str'},
-        'status_details': {'key': 'statusDetails', 'type': 'str'},
-        'health_state': {'key': 'healthState', 'type': 'str'},
-        'unhealthy_evaluation': {'key': 'unhealthyEvaluation', 'type': 'str'},
-        'identity_refs': {'key': 'identityRefs', 'type': '[ServiceIdentity]'},
-        'dns_name': {'key': 'dnsName', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "replica_count": {"key": "replicaCount", "type": "int"},
+        "execution_policy": {"key": "executionPolicy", "type": "ExecutionPolicy"},
+        "auto_scaling_policies": {"key": "autoScalingPolicies", "type": "[AutoScalingPolicy]"},
+        "status": {"key": "status", "type": "str"},
+        "status_details": {"key": "statusDetails", "type": "str"},
+        "health_state": {"key": "healthState", "type": "str"},
+        "unhealthy_evaluation": {"key": "unhealthyEvaluation", "type": "str"},
+        "identity_refs": {"key": "identityRefs", "type": "[ServiceIdentity]"},
+        "dns_name": {"key": "dnsName", "type": "str"},
     }
 
-    def __init__(self, *, description: str=None, replica_count: int=None, execution_policy=None, auto_scaling_policies=None, identity_refs=None, dns_name: str=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        description: str = None,
+        replica_count: int = None,
+        execution_policy=None,
+        auto_scaling_policies=None,
+        identity_refs=None,
+        dns_name: str = None,
+        **kwargs
+    ) -> None:
         super(ServiceProperties, self).__init__(**kwargs)
         self.description = description
         self.replica_count = replica_count
@@ -20060,15 +23183,15 @@ class ServiceReplicaProperties(Model):
     """
 
     _validation = {
-        'os_type': {'required': True},
-        'code_packages': {'required': True},
+        "os_type": {"required": True},
+        "code_packages": {"required": True},
     }
 
     _attribute_map = {
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'code_packages': {'key': 'codePackages', 'type': '[ContainerCodePackageProperties]'},
-        'network_refs': {'key': 'networkRefs', 'type': '[NetworkRef]'},
-        'diagnostics': {'key': 'diagnostics', 'type': 'DiagnosticsRef'},
+        "os_type": {"key": "osType", "type": "str"},
+        "code_packages": {"key": "codePackages", "type": "[ContainerCodePackageProperties]"},
+        "network_refs": {"key": "networkRefs", "type": "[NetworkRef]"},
+        "diagnostics": {"key": "diagnostics", "type": "DiagnosticsRef"},
     }
 
     def __init__(self, *, os_type, code_packages, network_refs=None, diagnostics=None, **kwargs) -> None:
@@ -20103,21 +23226,25 @@ class ServiceReplicaDescription(ServiceReplicaProperties):
     """
 
     _validation = {
-        'os_type': {'required': True},
-        'code_packages': {'required': True},
-        'replica_name': {'required': True},
+        "os_type": {"required": True},
+        "code_packages": {"required": True},
+        "replica_name": {"required": True},
     }
 
     _attribute_map = {
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'code_packages': {'key': 'codePackages', 'type': '[ContainerCodePackageProperties]'},
-        'network_refs': {'key': 'networkRefs', 'type': '[NetworkRef]'},
-        'diagnostics': {'key': 'diagnostics', 'type': 'DiagnosticsRef'},
-        'replica_name': {'key': 'replicaName', 'type': 'str'},
+        "os_type": {"key": "osType", "type": "str"},
+        "code_packages": {"key": "codePackages", "type": "[ContainerCodePackageProperties]"},
+        "network_refs": {"key": "networkRefs", "type": "[NetworkRef]"},
+        "diagnostics": {"key": "diagnostics", "type": "DiagnosticsRef"},
+        "replica_name": {"key": "replicaName", "type": "str"},
     }
 
-    def __init__(self, *, os_type, code_packages, replica_name: str, network_refs=None, diagnostics=None, **kwargs) -> None:
-        super(ServiceReplicaDescription, self).__init__(os_type=os_type, code_packages=code_packages, network_refs=network_refs, diagnostics=diagnostics, **kwargs)
+    def __init__(
+        self, *, os_type, code_packages, replica_name: str, network_refs=None, diagnostics=None, **kwargs
+    ) -> None:
+        super(ServiceReplicaDescription, self).__init__(
+            os_type=os_type, code_packages=code_packages, network_refs=network_refs, diagnostics=diagnostics, **kwargs
+        )
         self.replica_name = replica_name
 
 
@@ -20175,34 +23302,49 @@ class ServiceResourceDescription(Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'os_type': {'required': True},
-        'code_packages': {'required': True},
-        'status': {'readonly': True},
-        'status_details': {'readonly': True},
-        'health_state': {'readonly': True},
-        'unhealthy_evaluation': {'readonly': True},
+        "name": {"required": True},
+        "os_type": {"required": True},
+        "code_packages": {"required": True},
+        "status": {"readonly": True},
+        "status_details": {"readonly": True},
+        "health_state": {"readonly": True},
+        "unhealthy_evaluation": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'code_packages': {'key': 'properties.codePackages', 'type': '[ContainerCodePackageProperties]'},
-        'network_refs': {'key': 'properties.networkRefs', 'type': '[NetworkRef]'},
-        'diagnostics': {'key': 'properties.diagnostics', 'type': 'DiagnosticsRef'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'replica_count': {'key': 'properties.replicaCount', 'type': 'int'},
-        'execution_policy': {'key': 'properties.executionPolicy', 'type': 'ExecutionPolicy'},
-        'auto_scaling_policies': {'key': 'properties.autoScalingPolicies', 'type': '[AutoScalingPolicy]'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'status_details': {'key': 'properties.statusDetails', 'type': 'str'},
-        'health_state': {'key': 'properties.healthState', 'type': 'str'},
-        'unhealthy_evaluation': {'key': 'properties.unhealthyEvaluation', 'type': 'str'},
-        'identity_refs': {'key': 'properties.identityRefs', 'type': '[ServiceIdentity]'},
-        'dns_name': {'key': 'properties.dnsName', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "os_type": {"key": "properties.osType", "type": "str"},
+        "code_packages": {"key": "properties.codePackages", "type": "[ContainerCodePackageProperties]"},
+        "network_refs": {"key": "properties.networkRefs", "type": "[NetworkRef]"},
+        "diagnostics": {"key": "properties.diagnostics", "type": "DiagnosticsRef"},
+        "description": {"key": "properties.description", "type": "str"},
+        "replica_count": {"key": "properties.replicaCount", "type": "int"},
+        "execution_policy": {"key": "properties.executionPolicy", "type": "ExecutionPolicy"},
+        "auto_scaling_policies": {"key": "properties.autoScalingPolicies", "type": "[AutoScalingPolicy]"},
+        "status": {"key": "properties.status", "type": "str"},
+        "status_details": {"key": "properties.statusDetails", "type": "str"},
+        "health_state": {"key": "properties.healthState", "type": "str"},
+        "unhealthy_evaluation": {"key": "properties.unhealthyEvaluation", "type": "str"},
+        "identity_refs": {"key": "properties.identityRefs", "type": "[ServiceIdentity]"},
+        "dns_name": {"key": "properties.dnsName", "type": "str"},
     }
 
-    def __init__(self, *, name: str, os_type, code_packages, network_refs=None, diagnostics=None, description: str=None, replica_count: int=None, execution_policy=None, auto_scaling_policies=None, identity_refs=None, dns_name: str=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str,
+        os_type,
+        code_packages,
+        network_refs=None,
+        diagnostics=None,
+        description: str = None,
+        replica_count: int = None,
+        execution_policy=None,
+        auto_scaling_policies=None,
+        identity_refs=None,
+        dns_name: str = None,
+        **kwargs
+    ) -> None:
         super(ServiceResourceDescription, self).__init__(**kwargs)
         self.name = name
         self.os_type = os_type
@@ -20257,26 +23399,38 @@ class ServicesHealthEvaluation(HealthEvaluation):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'service_type_name': {'key': 'ServiceTypeName', 'type': 'str'},
-        'max_percent_unhealthy_services': {'key': 'MaxPercentUnhealthyServices', 'type': 'int'},
-        'total_count': {'key': 'TotalCount', 'type': 'long'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "description": {"key": "Description", "type": "str"},
+        "kind": {"key": "Kind", "type": "str"},
+        "service_type_name": {"key": "ServiceTypeName", "type": "str"},
+        "max_percent_unhealthy_services": {"key": "MaxPercentUnhealthyServices", "type": "int"},
+        "total_count": {"key": "TotalCount", "type": "long"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, description: str=None, service_type_name: str=None, max_percent_unhealthy_services: int=None, total_count: int=None, unhealthy_evaluations=None, **kwargs) -> None:
-        super(ServicesHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description, **kwargs)
+    def __init__(
+        self,
+        *,
+        aggregated_health_state=None,
+        description: str = None,
+        service_type_name: str = None,
+        max_percent_unhealthy_services: int = None,
+        total_count: int = None,
+        unhealthy_evaluations=None,
+        **kwargs
+    ) -> None:
+        super(ServicesHealthEvaluation, self).__init__(
+            aggregated_health_state=aggregated_health_state, description=description, **kwargs
+        )
         self.service_type_name = service_type_name
         self.max_percent_unhealthy_services = max_percent_unhealthy_services
         self.total_count = total_count
         self.unhealthy_evaluations = unhealthy_evaluations
-        self.kind = 'Services'
+        self.kind = "Services"
 
 
 class ServiceTypeDescription(Model):
@@ -20315,24 +23469,37 @@ class ServiceTypeDescription(Model):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'is_stateful': {'key': 'IsStateful', 'type': 'bool'},
-        'service_type_name': {'key': 'ServiceTypeName', 'type': 'str'},
-        'placement_constraints': {'key': 'PlacementConstraints', 'type': 'str'},
-        'load_metrics': {'key': 'LoadMetrics', 'type': '[ServiceLoadMetricDescription]'},
-        'service_placement_policies': {'key': 'ServicePlacementPolicies', 'type': '[ServicePlacementPolicyDescription]'},
-        'extensions': {'key': 'Extensions', 'type': '[ServiceTypeExtensionDescription]'},
-        'kind': {'key': 'Kind', 'type': 'str'},
+        "is_stateful": {"key": "IsStateful", "type": "bool"},
+        "service_type_name": {"key": "ServiceTypeName", "type": "str"},
+        "placement_constraints": {"key": "PlacementConstraints", "type": "str"},
+        "load_metrics": {"key": "LoadMetrics", "type": "[ServiceLoadMetricDescription]"},
+        "service_placement_policies": {
+            "key": "ServicePlacementPolicies",
+            "type": "[ServicePlacementPolicyDescription]",
+        },
+        "extensions": {"key": "Extensions", "type": "[ServiceTypeExtensionDescription]"},
+        "kind": {"key": "Kind", "type": "str"},
     }
 
     _subtype_map = {
-        'kind': {'Stateful': 'StatefulServiceTypeDescription', 'Stateless': 'StatelessServiceTypeDescription'}
+        "kind": {"Stateful": "StatefulServiceTypeDescription", "Stateless": "StatelessServiceTypeDescription"}
     }
 
-    def __init__(self, *, is_stateful: bool=None, service_type_name: str=None, placement_constraints: str=None, load_metrics=None, service_placement_policies=None, extensions=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        is_stateful: bool = None,
+        service_type_name: str = None,
+        placement_constraints: str = None,
+        load_metrics=None,
+        service_placement_policies=None,
+        extensions=None,
+        **kwargs
+    ) -> None:
         super(ServiceTypeDescription, self).__init__(**kwargs)
         self.is_stateful = is_stateful
         self.service_type_name = service_type_name
@@ -20353,11 +23520,11 @@ class ServiceTypeExtensionDescription(Model):
     """
 
     _attribute_map = {
-        'key': {'key': 'Key', 'type': 'str'},
-        'value': {'key': 'Value', 'type': 'str'},
+        "key": {"key": "Key", "type": "str"},
+        "value": {"key": "Value", "type": "str"},
     }
 
-    def __init__(self, *, key: str=None, value: str=None, **kwargs) -> None:
+    def __init__(self, *, key: str = None, value: str = None, **kwargs) -> None:
         super(ServiceTypeExtensionDescription, self).__init__(**kwargs)
         self.key = key
         self.value = value
@@ -20406,12 +23573,25 @@ class ServiceTypeHealthPolicy(Model):
     """
 
     _attribute_map = {
-        'max_percent_unhealthy_partitions_per_service': {'key': 'MaxPercentUnhealthyPartitionsPerService', 'type': 'int'},
-        'max_percent_unhealthy_replicas_per_partition': {'key': 'MaxPercentUnhealthyReplicasPerPartition', 'type': 'int'},
-        'max_percent_unhealthy_services': {'key': 'MaxPercentUnhealthyServices', 'type': 'int'},
+        "max_percent_unhealthy_partitions_per_service": {
+            "key": "MaxPercentUnhealthyPartitionsPerService",
+            "type": "int",
+        },
+        "max_percent_unhealthy_replicas_per_partition": {
+            "key": "MaxPercentUnhealthyReplicasPerPartition",
+            "type": "int",
+        },
+        "max_percent_unhealthy_services": {"key": "MaxPercentUnhealthyServices", "type": "int"},
     }
 
-    def __init__(self, *, max_percent_unhealthy_partitions_per_service: int=0, max_percent_unhealthy_replicas_per_partition: int=0, max_percent_unhealthy_services: int=0, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        max_percent_unhealthy_partitions_per_service: int = 0,
+        max_percent_unhealthy_replicas_per_partition: int = 0,
+        max_percent_unhealthy_services: int = 0,
+        **kwargs
+    ) -> None:
         super(ServiceTypeHealthPolicy, self).__init__(**kwargs)
         self.max_percent_unhealthy_partitions_per_service = max_percent_unhealthy_partitions_per_service
         self.max_percent_unhealthy_replicas_per_partition = max_percent_unhealthy_replicas_per_partition
@@ -20432,13 +23612,13 @@ class ServiceTypeHealthPolicyMapItem(Model):
     """
 
     _validation = {
-        'key': {'required': True},
-        'value': {'required': True},
+        "key": {"required": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'key': {'key': 'Key', 'type': 'str'},
-        'value': {'key': 'Value', 'type': 'ServiceTypeHealthPolicy'},
+        "key": {"key": "Key", "type": "str"},
+        "value": {"key": "Value", "type": "ServiceTypeHealthPolicy"},
     }
 
     def __init__(self, *, key: str, value, **kwargs) -> None:
@@ -20468,13 +23648,21 @@ class ServiceTypeInfo(Model):
     """
 
     _attribute_map = {
-        'service_type_description': {'key': 'ServiceTypeDescription', 'type': 'ServiceTypeDescription'},
-        'service_manifest_name': {'key': 'ServiceManifestName', 'type': 'str'},
-        'service_manifest_version': {'key': 'ServiceManifestVersion', 'type': 'str'},
-        'is_service_group': {'key': 'IsServiceGroup', 'type': 'bool'},
+        "service_type_description": {"key": "ServiceTypeDescription", "type": "ServiceTypeDescription"},
+        "service_manifest_name": {"key": "ServiceManifestName", "type": "str"},
+        "service_manifest_version": {"key": "ServiceManifestVersion", "type": "str"},
+        "is_service_group": {"key": "IsServiceGroup", "type": "bool"},
     }
 
-    def __init__(self, *, service_type_description=None, service_manifest_name: str=None, service_manifest_version: str=None, is_service_group: bool=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        service_type_description=None,
+        service_manifest_name: str = None,
+        service_manifest_version: str = None,
+        is_service_group: bool = None,
+        **kwargs
+    ) -> None:
         super(ServiceTypeInfo, self).__init__(**kwargs)
         self.service_type_description = service_type_description
         self.service_manifest_name = service_manifest_name
@@ -20491,10 +23679,10 @@ class ServiceTypeManifest(Model):
     """
 
     _attribute_map = {
-        'manifest': {'key': 'Manifest', 'type': 'str'},
+        "manifest": {"key": "Manifest", "type": "str"},
     }
 
-    def __init__(self, *, manifest: str=None, **kwargs) -> None:
+    def __init__(self, *, manifest: str = None, **kwargs) -> None:
         super(ServiceTypeManifest, self).__init__(**kwargs)
         self.manifest = manifest
 
@@ -20592,28 +23780,48 @@ class ServiceUpdateDescription(Model):
     """
 
     _validation = {
-        'service_kind': {'required': True},
+        "service_kind": {"required": True},
     }
 
     _attribute_map = {
-        'flags': {'key': 'Flags', 'type': 'str'},
-        'placement_constraints': {'key': 'PlacementConstraints', 'type': 'str'},
-        'correlation_scheme': {'key': 'CorrelationScheme', 'type': '[ServiceCorrelationDescription]'},
-        'load_metrics': {'key': 'LoadMetrics', 'type': '[ServiceLoadMetricDescription]'},
-        'service_placement_policies': {'key': 'ServicePlacementPolicies', 'type': '[ServicePlacementPolicyDescription]'},
-        'default_move_cost': {'key': 'DefaultMoveCost', 'type': 'str'},
-        'scaling_policies': {'key': 'ScalingPolicies', 'type': '[ScalingPolicyDescription]'},
-        'service_dns_name': {'key': 'ServiceDnsName', 'type': 'str'},
-        'tags_for_placement': {'key': 'TagsForPlacement', 'type': 'NodeTagsDescription'},
-        'tags_for_running': {'key': 'TagsForRunning', 'type': 'NodeTagsDescription'},
-        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
+        "flags": {"key": "Flags", "type": "str"},
+        "placement_constraints": {"key": "PlacementConstraints", "type": "str"},
+        "correlation_scheme": {"key": "CorrelationScheme", "type": "[ServiceCorrelationDescription]"},
+        "load_metrics": {"key": "LoadMetrics", "type": "[ServiceLoadMetricDescription]"},
+        "service_placement_policies": {
+            "key": "ServicePlacementPolicies",
+            "type": "[ServicePlacementPolicyDescription]",
+        },
+        "default_move_cost": {"key": "DefaultMoveCost", "type": "str"},
+        "scaling_policies": {"key": "ScalingPolicies", "type": "[ScalingPolicyDescription]"},
+        "service_dns_name": {"key": "ServiceDnsName", "type": "str"},
+        "tags_for_placement": {"key": "TagsForPlacement", "type": "NodeTagsDescription"},
+        "tags_for_running": {"key": "TagsForRunning", "type": "NodeTagsDescription"},
+        "service_kind": {"key": "ServiceKind", "type": "str"},
     }
 
     _subtype_map = {
-        'service_kind': {'Stateful': 'StatefulServiceUpdateDescription', 'Stateless': 'StatelessServiceUpdateDescription'}
+        "service_kind": {
+            "Stateful": "StatefulServiceUpdateDescription",
+            "Stateless": "StatelessServiceUpdateDescription",
+        }
     }
 
-    def __init__(self, *, flags: str=None, placement_constraints: str=None, correlation_scheme=None, load_metrics=None, service_placement_policies=None, default_move_cost=None, scaling_policies=None, service_dns_name: str=None, tags_for_placement=None, tags_for_running=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        flags: str = None,
+        placement_constraints: str = None,
+        correlation_scheme=None,
+        load_metrics=None,
+        service_placement_policies=None,
+        default_move_cost=None,
+        scaling_policies=None,
+        service_dns_name: str = None,
+        tags_for_placement=None,
+        tags_for_running=None,
+        **kwargs
+    ) -> None:
         super(ServiceUpdateDescription, self).__init__(**kwargs)
         self.flags = flags
         self.placement_constraints = placement_constraints
@@ -20643,12 +23851,19 @@ class ServiceUpgradeProgress(Model):
     """
 
     _attribute_map = {
-        'service_name': {'key': 'ServiceName', 'type': 'str'},
-        'completed_replica_count': {'key': 'CompletedReplicaCount', 'type': 'str'},
-        'pending_replica_count': {'key': 'PendingReplicaCount', 'type': 'str'},
+        "service_name": {"key": "ServiceName", "type": "str"},
+        "completed_replica_count": {"key": "CompletedReplicaCount", "type": "str"},
+        "pending_replica_count": {"key": "PendingReplicaCount", "type": "str"},
     }
 
-    def __init__(self, *, service_name: str=None, completed_replica_count: str=None, pending_replica_count: str=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        service_name: str = None,
+        completed_replica_count: str = None,
+        pending_replica_count: str = None,
+        **kwargs
+    ) -> None:
         super(ServiceUpgradeProgress, self).__init__(**kwargs)
         self.service_name = service_name
         self.completed_replica_count = completed_replica_count
@@ -20672,12 +23887,12 @@ class Setting(Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, type="ClearText", name: str=None, value: str=None, **kwargs) -> None:
+    def __init__(self, *, type="ClearText", name: str = None, value: str = None, **kwargs) -> None:
         super(Setting, self).__init__(**kwargs)
         self.type = type
         self.name = name
@@ -20702,17 +23917,17 @@ class SingletonPartitionInformation(PartitionInformation):
     """
 
     _validation = {
-        'service_partition_kind': {'required': True},
+        "service_partition_kind": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str'},
-        'service_partition_kind': {'key': 'ServicePartitionKind', 'type': 'str'},
+        "id": {"key": "Id", "type": "str"},
+        "service_partition_kind": {"key": "ServicePartitionKind", "type": "str"},
     }
 
-    def __init__(self, *, id: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str = None, **kwargs) -> None:
         super(SingletonPartitionInformation, self).__init__(id=id, **kwargs)
-        self.service_partition_kind = 'Singleton'
+        self.service_partition_kind = "Singleton"
 
 
 class SingletonPartitionSchemeDescription(PartitionSchemeDescription):
@@ -20726,16 +23941,16 @@ class SingletonPartitionSchemeDescription(PartitionSchemeDescription):
     """
 
     _validation = {
-        'partition_scheme': {'required': True},
+        "partition_scheme": {"required": True},
     }
 
     _attribute_map = {
-        'partition_scheme': {'key': 'PartitionScheme', 'type': 'str'},
+        "partition_scheme": {"key": "PartitionScheme", "type": "str"},
     }
 
     def __init__(self, **kwargs) -> None:
         super(SingletonPartitionSchemeDescription, self).__init__(**kwargs)
-        self.partition_scheme = 'Singleton'
+        self.partition_scheme = "Singleton"
 
 
 class StartClusterUpgradeDescription(Model):
@@ -20808,22 +24023,45 @@ class StartClusterUpgradeDescription(Model):
     """
 
     _attribute_map = {
-        'code_version': {'key': 'CodeVersion', 'type': 'str'},
-        'config_version': {'key': 'ConfigVersion', 'type': 'str'},
-        'upgrade_kind': {'key': 'UpgradeKind', 'type': 'str'},
-        'rolling_upgrade_mode': {'key': 'RollingUpgradeMode', 'type': 'str'},
-        'upgrade_replica_set_check_timeout_in_seconds': {'key': 'UpgradeReplicaSetCheckTimeoutInSeconds', 'type': 'long'},
-        'force_restart': {'key': 'ForceRestart', 'type': 'bool'},
-        'sort_order': {'key': 'SortOrder', 'type': 'str'},
-        'monitoring_policy': {'key': 'MonitoringPolicy', 'type': 'MonitoringPolicyDescription'},
-        'cluster_health_policy': {'key': 'ClusterHealthPolicy', 'type': 'ClusterHealthPolicy'},
-        'enable_delta_health_evaluation': {'key': 'EnableDeltaHealthEvaluation', 'type': 'bool'},
-        'cluster_upgrade_health_policy': {'key': 'ClusterUpgradeHealthPolicy', 'type': 'ClusterUpgradeHealthPolicyObject'},
-        'application_health_policy_map': {'key': 'ApplicationHealthPolicyMap', 'type': 'ApplicationHealthPolicies'},
-        'instance_close_delay_duration_in_seconds': {'key': 'InstanceCloseDelayDurationInSeconds', 'type': 'long'},
+        "code_version": {"key": "CodeVersion", "type": "str"},
+        "config_version": {"key": "ConfigVersion", "type": "str"},
+        "upgrade_kind": {"key": "UpgradeKind", "type": "str"},
+        "rolling_upgrade_mode": {"key": "RollingUpgradeMode", "type": "str"},
+        "upgrade_replica_set_check_timeout_in_seconds": {
+            "key": "UpgradeReplicaSetCheckTimeoutInSeconds",
+            "type": "long",
+        },
+        "force_restart": {"key": "ForceRestart", "type": "bool"},
+        "sort_order": {"key": "SortOrder", "type": "str"},
+        "monitoring_policy": {"key": "MonitoringPolicy", "type": "MonitoringPolicyDescription"},
+        "cluster_health_policy": {"key": "ClusterHealthPolicy", "type": "ClusterHealthPolicy"},
+        "enable_delta_health_evaluation": {"key": "EnableDeltaHealthEvaluation", "type": "bool"},
+        "cluster_upgrade_health_policy": {
+            "key": "ClusterUpgradeHealthPolicy",
+            "type": "ClusterUpgradeHealthPolicyObject",
+        },
+        "application_health_policy_map": {"key": "ApplicationHealthPolicyMap", "type": "ApplicationHealthPolicies"},
+        "instance_close_delay_duration_in_seconds": {"key": "InstanceCloseDelayDurationInSeconds", "type": "long"},
     }
 
-    def __init__(self, *, code_version: str=None, config_version: str=None, upgrade_kind="Rolling", rolling_upgrade_mode="UnmonitoredAuto", upgrade_replica_set_check_timeout_in_seconds: int=None, force_restart: bool=None, sort_order="Default", monitoring_policy=None, cluster_health_policy=None, enable_delta_health_evaluation: bool=None, cluster_upgrade_health_policy=None, application_health_policy_map=None, instance_close_delay_duration_in_seconds: int=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        code_version: str = None,
+        config_version: str = None,
+        upgrade_kind="Rolling",
+        rolling_upgrade_mode="UnmonitoredAuto",
+        upgrade_replica_set_check_timeout_in_seconds: int = None,
+        force_restart: bool = None,
+        sort_order="Default",
+        monitoring_policy=None,
+        cluster_health_policy=None,
+        enable_delta_health_evaluation: bool = None,
+        cluster_upgrade_health_policy=None,
+        application_health_policy_map=None,
+        instance_close_delay_duration_in_seconds: int = None,
+        **kwargs
+    ) -> None:
         super(StartClusterUpgradeDescription, self).__init__(**kwargs)
         self.code_version = code_version
         self.config_version = config_version
@@ -20856,20 +24094,20 @@ class StartedChaosEvent(ChaosEvent):
     """
 
     _validation = {
-        'time_stamp_utc': {'required': True},
-        'kind': {'required': True},
+        "time_stamp_utc": {"required": True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'time_stamp_utc': {'key': 'TimeStampUtc', 'type': 'iso-8601'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'chaos_parameters': {'key': 'ChaosParameters', 'type': 'ChaosParameters'},
+        "time_stamp_utc": {"key": "TimeStampUtc", "type": "iso-8601"},
+        "kind": {"key": "Kind", "type": "str"},
+        "chaos_parameters": {"key": "ChaosParameters", "type": "ChaosParameters"},
     }
 
     def __init__(self, *, time_stamp_utc, chaos_parameters=None, **kwargs) -> None:
         super(StartedChaosEvent, self).__init__(time_stamp_utc=time_stamp_utc, **kwargs)
         self.chaos_parameters = chaos_parameters
-        self.kind = 'Started'
+        self.kind = "Started"
 
 
 class StatefulReplicaHealthReportExpiredEvent(ReplicaEvent):
@@ -20925,43 +24163,70 @@ class StatefulReplicaHealthReportExpiredEvent(ReplicaEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'partition_id': {'required': True},
-        'replica_id': {'required': True},
-        'replica_instance_id': {'required': True},
-        'source_id': {'required': True},
-        'property': {'required': True},
-        'health_state': {'required': True},
-        'time_to_live_ms': {'required': True},
-        'sequence_number': {'required': True},
-        'description': {'required': True},
-        'remove_when_expired': {'required': True},
-        'source_utc_timestamp': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "partition_id": {"required": True},
+        "replica_id": {"required": True},
+        "replica_instance_id": {"required": True},
+        "source_id": {"required": True},
+        "property": {"required": True},
+        "health_state": {"required": True},
+        "time_to_live_ms": {"required": True},
+        "sequence_number": {"required": True},
+        "description": {"required": True},
+        "remove_when_expired": {"required": True},
+        "source_utc_timestamp": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'replica_id': {'key': 'ReplicaId', 'type': 'long'},
-        'replica_instance_id': {'key': 'ReplicaInstanceId', 'type': 'long'},
-        'source_id': {'key': 'SourceId', 'type': 'str'},
-        'property': {'key': 'Property', 'type': 'str'},
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'time_to_live_ms': {'key': 'TimeToLiveMs', 'type': 'long'},
-        'sequence_number': {'key': 'SequenceNumber', 'type': 'long'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'remove_when_expired': {'key': 'RemoveWhenExpired', 'type': 'bool'},
-        'source_utc_timestamp': {'key': 'SourceUtcTimestamp', 'type': 'iso-8601'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "replica_id": {"key": "ReplicaId", "type": "long"},
+        "replica_instance_id": {"key": "ReplicaInstanceId", "type": "long"},
+        "source_id": {"key": "SourceId", "type": "str"},
+        "property": {"key": "Property", "type": "str"},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "time_to_live_ms": {"key": "TimeToLiveMs", "type": "long"},
+        "sequence_number": {"key": "SequenceNumber", "type": "long"},
+        "description": {"key": "Description", "type": "str"},
+        "remove_when_expired": {"key": "RemoveWhenExpired", "type": "bool"},
+        "source_utc_timestamp": {"key": "SourceUtcTimestamp", "type": "iso-8601"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, partition_id: str, replica_id: int, replica_instance_id: int, source_id: str, property: str, health_state: str, time_to_live_ms: int, sequence_number: int, description: str, remove_when_expired: bool, source_utc_timestamp, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(StatefulReplicaHealthReportExpiredEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, partition_id=partition_id, replica_id=replica_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        partition_id: str,
+        replica_id: int,
+        replica_instance_id: int,
+        source_id: str,
+        property: str,
+        health_state: str,
+        time_to_live_ms: int,
+        sequence_number: int,
+        description: str,
+        remove_when_expired: bool,
+        source_utc_timestamp,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(StatefulReplicaHealthReportExpiredEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            partition_id=partition_id,
+            replica_id=replica_id,
+            **kwargs
+        )
         self.replica_instance_id = replica_instance_id
         self.source_id = source_id
         self.property = property
@@ -20971,7 +24236,7 @@ class StatefulReplicaHealthReportExpiredEvent(ReplicaEvent):
         self.description = description
         self.remove_when_expired = remove_when_expired
         self.source_utc_timestamp = source_utc_timestamp
-        self.kind = 'StatefulReplicaHealthReportExpired'
+        self.kind = "StatefulReplicaHealthReportExpired"
 
 
 class StatefulReplicaNewHealthReportEvent(ReplicaEvent):
@@ -21027,43 +24292,70 @@ class StatefulReplicaNewHealthReportEvent(ReplicaEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'partition_id': {'required': True},
-        'replica_id': {'required': True},
-        'replica_instance_id': {'required': True},
-        'source_id': {'required': True},
-        'property': {'required': True},
-        'health_state': {'required': True},
-        'time_to_live_ms': {'required': True},
-        'sequence_number': {'required': True},
-        'description': {'required': True},
-        'remove_when_expired': {'required': True},
-        'source_utc_timestamp': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "partition_id": {"required": True},
+        "replica_id": {"required": True},
+        "replica_instance_id": {"required": True},
+        "source_id": {"required": True},
+        "property": {"required": True},
+        "health_state": {"required": True},
+        "time_to_live_ms": {"required": True},
+        "sequence_number": {"required": True},
+        "description": {"required": True},
+        "remove_when_expired": {"required": True},
+        "source_utc_timestamp": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'replica_id': {'key': 'ReplicaId', 'type': 'long'},
-        'replica_instance_id': {'key': 'ReplicaInstanceId', 'type': 'long'},
-        'source_id': {'key': 'SourceId', 'type': 'str'},
-        'property': {'key': 'Property', 'type': 'str'},
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'time_to_live_ms': {'key': 'TimeToLiveMs', 'type': 'long'},
-        'sequence_number': {'key': 'SequenceNumber', 'type': 'long'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'remove_when_expired': {'key': 'RemoveWhenExpired', 'type': 'bool'},
-        'source_utc_timestamp': {'key': 'SourceUtcTimestamp', 'type': 'iso-8601'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "replica_id": {"key": "ReplicaId", "type": "long"},
+        "replica_instance_id": {"key": "ReplicaInstanceId", "type": "long"},
+        "source_id": {"key": "SourceId", "type": "str"},
+        "property": {"key": "Property", "type": "str"},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "time_to_live_ms": {"key": "TimeToLiveMs", "type": "long"},
+        "sequence_number": {"key": "SequenceNumber", "type": "long"},
+        "description": {"key": "Description", "type": "str"},
+        "remove_when_expired": {"key": "RemoveWhenExpired", "type": "bool"},
+        "source_utc_timestamp": {"key": "SourceUtcTimestamp", "type": "iso-8601"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, partition_id: str, replica_id: int, replica_instance_id: int, source_id: str, property: str, health_state: str, time_to_live_ms: int, sequence_number: int, description: str, remove_when_expired: bool, source_utc_timestamp, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(StatefulReplicaNewHealthReportEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, partition_id=partition_id, replica_id=replica_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        partition_id: str,
+        replica_id: int,
+        replica_instance_id: int,
+        source_id: str,
+        property: str,
+        health_state: str,
+        time_to_live_ms: int,
+        sequence_number: int,
+        description: str,
+        remove_when_expired: bool,
+        source_utc_timestamp,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(StatefulReplicaNewHealthReportEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            partition_id=partition_id,
+            replica_id=replica_id,
+            **kwargs
+        )
         self.replica_instance_id = replica_instance_id
         self.source_id = source_id
         self.property = property
@@ -21073,7 +24365,7 @@ class StatefulReplicaNewHealthReportEvent(ReplicaEvent):
         self.description = description
         self.remove_when_expired = remove_when_expired
         self.source_utc_timestamp = source_utc_timestamp
-        self.kind = 'StatefulReplicaNewHealthReport'
+        self.kind = "StatefulReplicaNewHealthReport"
 
 
 class StatefulServiceDescription(ServiceDescription):
@@ -21197,53 +24489,105 @@ class StatefulServiceDescription(ServiceDescription):
     """
 
     _validation = {
-        'service_name': {'required': True},
-        'service_type_name': {'required': True},
-        'partition_description': {'required': True},
-        'service_kind': {'required': True},
-        'target_replica_set_size': {'required': True, 'minimum': 1},
-        'min_replica_set_size': {'required': True, 'minimum': 1},
-        'has_persisted_state': {'required': True},
-        'replica_restart_wait_duration_seconds': {'maximum': 4294967295, 'minimum': 0},
-        'quorum_loss_wait_duration_seconds': {'maximum': 4294967295, 'minimum': 0},
-        'stand_by_replica_keep_duration_seconds': {'maximum': 4294967295, 'minimum': 0},
-        'service_placement_time_limit_seconds': {'maximum': 4294967295, 'minimum': 0},
-        'auxiliary_replica_count': {'minimum': 0},
+        "service_name": {"required": True},
+        "service_type_name": {"required": True},
+        "partition_description": {"required": True},
+        "service_kind": {"required": True},
+        "target_replica_set_size": {"required": True, "minimum": 1},
+        "min_replica_set_size": {"required": True, "minimum": 1},
+        "has_persisted_state": {"required": True},
+        "replica_restart_wait_duration_seconds": {"maximum": 4294967295, "minimum": 0},
+        "quorum_loss_wait_duration_seconds": {"maximum": 4294967295, "minimum": 0},
+        "stand_by_replica_keep_duration_seconds": {"maximum": 4294967295, "minimum": 0},
+        "service_placement_time_limit_seconds": {"maximum": 4294967295, "minimum": 0},
+        "auxiliary_replica_count": {"minimum": 0},
     }
 
     _attribute_map = {
-        'application_name': {'key': 'ApplicationName', 'type': 'str'},
-        'service_name': {'key': 'ServiceName', 'type': 'str'},
-        'service_type_name': {'key': 'ServiceTypeName', 'type': 'str'},
-        'initialization_data': {'key': 'InitializationData', 'type': '[int]'},
-        'partition_description': {'key': 'PartitionDescription', 'type': 'PartitionSchemeDescription'},
-        'placement_constraints': {'key': 'PlacementConstraints', 'type': 'str'},
-        'correlation_scheme': {'key': 'CorrelationScheme', 'type': '[ServiceCorrelationDescription]'},
-        'service_load_metrics': {'key': 'ServiceLoadMetrics', 'type': '[ServiceLoadMetricDescription]'},
-        'service_placement_policies': {'key': 'ServicePlacementPolicies', 'type': '[ServicePlacementPolicyDescription]'},
-        'default_move_cost': {'key': 'DefaultMoveCost', 'type': 'str'},
-        'is_default_move_cost_specified': {'key': 'IsDefaultMoveCostSpecified', 'type': 'bool'},
-        'service_package_activation_mode': {'key': 'ServicePackageActivationMode', 'type': 'str'},
-        'service_dns_name': {'key': 'ServiceDnsName', 'type': 'str'},
-        'scaling_policies': {'key': 'ScalingPolicies', 'type': '[ScalingPolicyDescription]'},
-        'tags_required_to_place': {'key': 'TagsRequiredToPlace', 'type': 'NodeTagsDescription'},
-        'tags_required_to_run': {'key': 'TagsRequiredToRun', 'type': 'NodeTagsDescription'},
-        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
-        'target_replica_set_size': {'key': 'TargetReplicaSetSize', 'type': 'int'},
-        'min_replica_set_size': {'key': 'MinReplicaSetSize', 'type': 'int'},
-        'has_persisted_state': {'key': 'HasPersistedState', 'type': 'bool'},
-        'flags': {'key': 'Flags', 'type': 'int'},
-        'replica_restart_wait_duration_seconds': {'key': 'ReplicaRestartWaitDurationSeconds', 'type': 'long'},
-        'quorum_loss_wait_duration_seconds': {'key': 'QuorumLossWaitDurationSeconds', 'type': 'long'},
-        'stand_by_replica_keep_duration_seconds': {'key': 'StandByReplicaKeepDurationSeconds', 'type': 'long'},
-        'service_placement_time_limit_seconds': {'key': 'ServicePlacementTimeLimitSeconds', 'type': 'long'},
-        'drop_source_replica_on_move': {'key': 'DropSourceReplicaOnMove', 'type': 'bool'},
-        'replica_lifecycle_description': {'key': 'ReplicaLifecycleDescription', 'type': 'ReplicaLifecycleDescription'},
-        'auxiliary_replica_count': {'key': 'AuxiliaryReplicaCount', 'type': 'int'},
+        "application_name": {"key": "ApplicationName", "type": "str"},
+        "service_name": {"key": "ServiceName", "type": "str"},
+        "service_type_name": {"key": "ServiceTypeName", "type": "str"},
+        "initialization_data": {"key": "InitializationData", "type": "[int]"},
+        "partition_description": {"key": "PartitionDescription", "type": "PartitionSchemeDescription"},
+        "placement_constraints": {"key": "PlacementConstraints", "type": "str"},
+        "correlation_scheme": {"key": "CorrelationScheme", "type": "[ServiceCorrelationDescription]"},
+        "service_load_metrics": {"key": "ServiceLoadMetrics", "type": "[ServiceLoadMetricDescription]"},
+        "service_placement_policies": {
+            "key": "ServicePlacementPolicies",
+            "type": "[ServicePlacementPolicyDescription]",
+        },
+        "default_move_cost": {"key": "DefaultMoveCost", "type": "str"},
+        "is_default_move_cost_specified": {"key": "IsDefaultMoveCostSpecified", "type": "bool"},
+        "service_package_activation_mode": {"key": "ServicePackageActivationMode", "type": "str"},
+        "service_dns_name": {"key": "ServiceDnsName", "type": "str"},
+        "scaling_policies": {"key": "ScalingPolicies", "type": "[ScalingPolicyDescription]"},
+        "tags_required_to_place": {"key": "TagsRequiredToPlace", "type": "NodeTagsDescription"},
+        "tags_required_to_run": {"key": "TagsRequiredToRun", "type": "NodeTagsDescription"},
+        "service_kind": {"key": "ServiceKind", "type": "str"},
+        "target_replica_set_size": {"key": "TargetReplicaSetSize", "type": "int"},
+        "min_replica_set_size": {"key": "MinReplicaSetSize", "type": "int"},
+        "has_persisted_state": {"key": "HasPersistedState", "type": "bool"},
+        "flags": {"key": "Flags", "type": "int"},
+        "replica_restart_wait_duration_seconds": {"key": "ReplicaRestartWaitDurationSeconds", "type": "long"},
+        "quorum_loss_wait_duration_seconds": {"key": "QuorumLossWaitDurationSeconds", "type": "long"},
+        "stand_by_replica_keep_duration_seconds": {"key": "StandByReplicaKeepDurationSeconds", "type": "long"},
+        "service_placement_time_limit_seconds": {"key": "ServicePlacementTimeLimitSeconds", "type": "long"},
+        "drop_source_replica_on_move": {"key": "DropSourceReplicaOnMove", "type": "bool"},
+        "replica_lifecycle_description": {"key": "ReplicaLifecycleDescription", "type": "ReplicaLifecycleDescription"},
+        "auxiliary_replica_count": {"key": "AuxiliaryReplicaCount", "type": "int"},
     }
 
-    def __init__(self, *, service_name: str, service_type_name: str, partition_description, target_replica_set_size: int, min_replica_set_size: int, has_persisted_state: bool, application_name: str=None, initialization_data=None, placement_constraints: str=None, correlation_scheme=None, service_load_metrics=None, service_placement_policies=None, default_move_cost=None, is_default_move_cost_specified: bool=None, service_package_activation_mode=None, service_dns_name: str=None, scaling_policies=None, tags_required_to_place=None, tags_required_to_run=None, flags: int=None, replica_restart_wait_duration_seconds: int=None, quorum_loss_wait_duration_seconds: int=None, stand_by_replica_keep_duration_seconds: int=None, service_placement_time_limit_seconds: int=None, drop_source_replica_on_move: bool=None, replica_lifecycle_description=None, auxiliary_replica_count: int=None, **kwargs) -> None:
-        super(StatefulServiceDescription, self).__init__(application_name=application_name, service_name=service_name, service_type_name=service_type_name, initialization_data=initialization_data, partition_description=partition_description, placement_constraints=placement_constraints, correlation_scheme=correlation_scheme, service_load_metrics=service_load_metrics, service_placement_policies=service_placement_policies, default_move_cost=default_move_cost, is_default_move_cost_specified=is_default_move_cost_specified, service_package_activation_mode=service_package_activation_mode, service_dns_name=service_dns_name, scaling_policies=scaling_policies, tags_required_to_place=tags_required_to_place, tags_required_to_run=tags_required_to_run, **kwargs)
+    def __init__(
+        self,
+        *,
+        service_name: str,
+        service_type_name: str,
+        partition_description,
+        target_replica_set_size: int,
+        min_replica_set_size: int,
+        has_persisted_state: bool,
+        application_name: str = None,
+        initialization_data=None,
+        placement_constraints: str = None,
+        correlation_scheme=None,
+        service_load_metrics=None,
+        service_placement_policies=None,
+        default_move_cost=None,
+        is_default_move_cost_specified: bool = None,
+        service_package_activation_mode=None,
+        service_dns_name: str = None,
+        scaling_policies=None,
+        tags_required_to_place=None,
+        tags_required_to_run=None,
+        flags: int = None,
+        replica_restart_wait_duration_seconds: int = None,
+        quorum_loss_wait_duration_seconds: int = None,
+        stand_by_replica_keep_duration_seconds: int = None,
+        service_placement_time_limit_seconds: int = None,
+        drop_source_replica_on_move: bool = None,
+        replica_lifecycle_description=None,
+        auxiliary_replica_count: int = None,
+        **kwargs
+    ) -> None:
+        super(StatefulServiceDescription, self).__init__(
+            application_name=application_name,
+            service_name=service_name,
+            service_type_name=service_type_name,
+            initialization_data=initialization_data,
+            partition_description=partition_description,
+            placement_constraints=placement_constraints,
+            correlation_scheme=correlation_scheme,
+            service_load_metrics=service_load_metrics,
+            service_placement_policies=service_placement_policies,
+            default_move_cost=default_move_cost,
+            is_default_move_cost_specified=is_default_move_cost_specified,
+            service_package_activation_mode=service_package_activation_mode,
+            service_dns_name=service_dns_name,
+            scaling_policies=scaling_policies,
+            tags_required_to_place=tags_required_to_place,
+            tags_required_to_run=tags_required_to_run,
+            **kwargs
+        )
         self.target_replica_set_size = target_replica_set_size
         self.min_replica_set_size = min_replica_set_size
         self.has_persisted_state = has_persisted_state
@@ -21255,7 +24599,7 @@ class StatefulServiceDescription(ServiceDescription):
         self.drop_source_replica_on_move = drop_source_replica_on_move
         self.replica_lifecycle_description = replica_lifecycle_description
         self.auxiliary_replica_count = auxiliary_replica_count
-        self.service_kind = 'Stateful'
+        self.service_kind = "Stateful"
 
 
 class StatefulServiceInfo(ServiceInfo):
@@ -21295,25 +24639,46 @@ class StatefulServiceInfo(ServiceInfo):
     """
 
     _validation = {
-        'service_kind': {'required': True},
+        "service_kind": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str'},
-        'name': {'key': 'Name', 'type': 'str'},
-        'type_name': {'key': 'TypeName', 'type': 'str'},
-        'manifest_version': {'key': 'ManifestVersion', 'type': 'str'},
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'service_status': {'key': 'ServiceStatus', 'type': 'str'},
-        'is_service_group': {'key': 'IsServiceGroup', 'type': 'bool'},
-        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
-        'has_persisted_state': {'key': 'HasPersistedState', 'type': 'bool'},
+        "id": {"key": "Id", "type": "str"},
+        "name": {"key": "Name", "type": "str"},
+        "type_name": {"key": "TypeName", "type": "str"},
+        "manifest_version": {"key": "ManifestVersion", "type": "str"},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "service_status": {"key": "ServiceStatus", "type": "str"},
+        "is_service_group": {"key": "IsServiceGroup", "type": "bool"},
+        "service_kind": {"key": "ServiceKind", "type": "str"},
+        "has_persisted_state": {"key": "HasPersistedState", "type": "bool"},
     }
 
-    def __init__(self, *, id: str=None, name: str=None, type_name: str=None, manifest_version: str=None, health_state=None, service_status=None, is_service_group: bool=None, has_persisted_state: bool=None, **kwargs) -> None:
-        super(StatefulServiceInfo, self).__init__(id=id, name=name, type_name=type_name, manifest_version=manifest_version, health_state=health_state, service_status=service_status, is_service_group=is_service_group, **kwargs)
+    def __init__(
+        self,
+        *,
+        id: str = None,
+        name: str = None,
+        type_name: str = None,
+        manifest_version: str = None,
+        health_state=None,
+        service_status=None,
+        is_service_group: bool = None,
+        has_persisted_state: bool = None,
+        **kwargs
+    ) -> None:
+        super(StatefulServiceInfo, self).__init__(
+            id=id,
+            name=name,
+            type_name=type_name,
+            manifest_version=manifest_version,
+            health_state=health_state,
+            service_status=service_status,
+            is_service_group=is_service_group,
+            **kwargs
+        )
         self.has_persisted_state = has_persisted_state
-        self.service_kind = 'Stateful'
+        self.service_kind = "Stateful"
 
 
 class StatefulServicePartitionInfo(ServicePartitionInfo):
@@ -21359,29 +24724,46 @@ class StatefulServicePartitionInfo(ServicePartitionInfo):
     """
 
     _validation = {
-        'service_kind': {'required': True},
+        "service_kind": {"required": True},
     }
 
     _attribute_map = {
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'partition_status': {'key': 'PartitionStatus', 'type': 'str'},
-        'partition_information': {'key': 'PartitionInformation', 'type': 'PartitionInformation'},
-        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
-        'target_replica_set_size': {'key': 'TargetReplicaSetSize', 'type': 'long'},
-        'min_replica_set_size': {'key': 'MinReplicaSetSize', 'type': 'long'},
-        'auxiliary_replica_count': {'key': 'AuxiliaryReplicaCount', 'type': 'long'},
-        'last_quorum_loss_duration': {'key': 'LastQuorumLossDuration', 'type': 'duration'},
-        'primary_epoch': {'key': 'PrimaryEpoch', 'type': 'Epoch'},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "partition_status": {"key": "PartitionStatus", "type": "str"},
+        "partition_information": {"key": "PartitionInformation", "type": "PartitionInformation"},
+        "service_kind": {"key": "ServiceKind", "type": "str"},
+        "target_replica_set_size": {"key": "TargetReplicaSetSize", "type": "long"},
+        "min_replica_set_size": {"key": "MinReplicaSetSize", "type": "long"},
+        "auxiliary_replica_count": {"key": "AuxiliaryReplicaCount", "type": "long"},
+        "last_quorum_loss_duration": {"key": "LastQuorumLossDuration", "type": "duration"},
+        "primary_epoch": {"key": "PrimaryEpoch", "type": "Epoch"},
     }
 
-    def __init__(self, *, health_state=None, partition_status=None, partition_information=None, target_replica_set_size: int=None, min_replica_set_size: int=None, auxiliary_replica_count: int=None, last_quorum_loss_duration=None, primary_epoch=None, **kwargs) -> None:
-        super(StatefulServicePartitionInfo, self).__init__(health_state=health_state, partition_status=partition_status, partition_information=partition_information, **kwargs)
+    def __init__(
+        self,
+        *,
+        health_state=None,
+        partition_status=None,
+        partition_information=None,
+        target_replica_set_size: int = None,
+        min_replica_set_size: int = None,
+        auxiliary_replica_count: int = None,
+        last_quorum_loss_duration=None,
+        primary_epoch=None,
+        **kwargs
+    ) -> None:
+        super(StatefulServicePartitionInfo, self).__init__(
+            health_state=health_state,
+            partition_status=partition_status,
+            partition_information=partition_information,
+            **kwargs
+        )
         self.target_replica_set_size = target_replica_set_size
         self.min_replica_set_size = min_replica_set_size
         self.auxiliary_replica_count = auxiliary_replica_count
         self.last_quorum_loss_duration = last_quorum_loss_duration
         self.primary_epoch = primary_epoch
-        self.service_kind = 'Stateful'
+        self.service_kind = "Stateful"
 
 
 class StatefulServiceReplicaHealth(ReplicaHealth):
@@ -21423,23 +24805,40 @@ class StatefulServiceReplicaHealth(ReplicaHealth):
     """
 
     _validation = {
-        'service_kind': {'required': True},
+        "service_kind": {"required": True},
     }
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'health_events': {'key': 'HealthEvents', 'type': '[HealthEvent]'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
-        'health_statistics': {'key': 'HealthStatistics', 'type': 'HealthStatistics'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
-        'replica_id': {'key': 'ReplicaId', 'type': 'str'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "health_events": {"key": "HealthEvents", "type": "[HealthEvent]"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
+        "health_statistics": {"key": "HealthStatistics", "type": "HealthStatistics"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "service_kind": {"key": "ServiceKind", "type": "str"},
+        "replica_id": {"key": "ReplicaId", "type": "str"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, health_events=None, unhealthy_evaluations=None, health_statistics=None, partition_id: str=None, replica_id: str=None, **kwargs) -> None:
-        super(StatefulServiceReplicaHealth, self).__init__(aggregated_health_state=aggregated_health_state, health_events=health_events, unhealthy_evaluations=unhealthy_evaluations, health_statistics=health_statistics, partition_id=partition_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        aggregated_health_state=None,
+        health_events=None,
+        unhealthy_evaluations=None,
+        health_statistics=None,
+        partition_id: str = None,
+        replica_id: str = None,
+        **kwargs
+    ) -> None:
+        super(StatefulServiceReplicaHealth, self).__init__(
+            aggregated_health_state=aggregated_health_state,
+            health_events=health_events,
+            unhealthy_evaluations=unhealthy_evaluations,
+            health_statistics=health_statistics,
+            partition_id=partition_id,
+            **kwargs
+        )
         self.replica_id = replica_id
-        self.service_kind = 'Stateful'
+        self.service_kind = "Stateful"
 
 
 class StatefulServiceReplicaHealthState(ReplicaHealthState):
@@ -21470,20 +24869,24 @@ class StatefulServiceReplicaHealthState(ReplicaHealthState):
     """
 
     _validation = {
-        'service_kind': {'required': True},
+        "service_kind": {"required": True},
     }
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
-        'replica_id': {'key': 'ReplicaId', 'type': 'str'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "service_kind": {"key": "ServiceKind", "type": "str"},
+        "replica_id": {"key": "ReplicaId", "type": "str"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, partition_id: str=None, replica_id: str=None, **kwargs) -> None:
-        super(StatefulServiceReplicaHealthState, self).__init__(aggregated_health_state=aggregated_health_state, partition_id=partition_id, **kwargs)
+    def __init__(
+        self, *, aggregated_health_state=None, partition_id: str = None, replica_id: str = None, **kwargs
+    ) -> None:
+        super(StatefulServiceReplicaHealthState, self).__init__(
+            aggregated_health_state=aggregated_health_state, partition_id=partition_id, **kwargs
+        )
         self.replica_id = replica_id
-        self.service_kind = 'Stateful'
+        self.service_kind = "Stateful"
 
 
 class StatefulServiceReplicaInfo(ReplicaInfo):
@@ -21525,25 +24928,43 @@ class StatefulServiceReplicaInfo(ReplicaInfo):
     """
 
     _validation = {
-        'service_kind': {'required': True},
+        "service_kind": {"required": True},
     }
 
     _attribute_map = {
-        'replica_status': {'key': 'ReplicaStatus', 'type': 'str'},
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'address': {'key': 'Address', 'type': 'str'},
-        'last_in_build_duration_in_seconds': {'key': 'LastInBuildDurationInSeconds', 'type': 'str'},
-        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
-        'replica_role': {'key': 'ReplicaRole', 'type': 'str'},
-        'replica_id': {'key': 'ReplicaId', 'type': 'str'},
+        "replica_status": {"key": "ReplicaStatus", "type": "str"},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "address": {"key": "Address", "type": "str"},
+        "last_in_build_duration_in_seconds": {"key": "LastInBuildDurationInSeconds", "type": "str"},
+        "service_kind": {"key": "ServiceKind", "type": "str"},
+        "replica_role": {"key": "ReplicaRole", "type": "str"},
+        "replica_id": {"key": "ReplicaId", "type": "str"},
     }
 
-    def __init__(self, *, replica_status=None, health_state=None, node_name: str=None, address: str=None, last_in_build_duration_in_seconds: str=None, replica_role=None, replica_id: str=None, **kwargs) -> None:
-        super(StatefulServiceReplicaInfo, self).__init__(replica_status=replica_status, health_state=health_state, node_name=node_name, address=address, last_in_build_duration_in_seconds=last_in_build_duration_in_seconds, **kwargs)
+    def __init__(
+        self,
+        *,
+        replica_status=None,
+        health_state=None,
+        node_name: str = None,
+        address: str = None,
+        last_in_build_duration_in_seconds: str = None,
+        replica_role=None,
+        replica_id: str = None,
+        **kwargs
+    ) -> None:
+        super(StatefulServiceReplicaInfo, self).__init__(
+            replica_status=replica_status,
+            health_state=health_state,
+            node_name=node_name,
+            address=address,
+            last_in_build_duration_in_seconds=last_in_build_duration_in_seconds,
+            **kwargs
+        )
         self.replica_role = replica_role
         self.replica_id = replica_id
-        self.service_kind = 'Stateful'
+        self.service_kind = "Stateful"
 
 
 class StatefulServiceTypeDescription(ServiceTypeDescription):
@@ -21582,24 +25003,46 @@ class StatefulServiceTypeDescription(ServiceTypeDescription):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'is_stateful': {'key': 'IsStateful', 'type': 'bool'},
-        'service_type_name': {'key': 'ServiceTypeName', 'type': 'str'},
-        'placement_constraints': {'key': 'PlacementConstraints', 'type': 'str'},
-        'load_metrics': {'key': 'LoadMetrics', 'type': '[ServiceLoadMetricDescription]'},
-        'service_placement_policies': {'key': 'ServicePlacementPolicies', 'type': '[ServicePlacementPolicyDescription]'},
-        'extensions': {'key': 'Extensions', 'type': '[ServiceTypeExtensionDescription]'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'has_persisted_state': {'key': 'HasPersistedState', 'type': 'bool'},
+        "is_stateful": {"key": "IsStateful", "type": "bool"},
+        "service_type_name": {"key": "ServiceTypeName", "type": "str"},
+        "placement_constraints": {"key": "PlacementConstraints", "type": "str"},
+        "load_metrics": {"key": "LoadMetrics", "type": "[ServiceLoadMetricDescription]"},
+        "service_placement_policies": {
+            "key": "ServicePlacementPolicies",
+            "type": "[ServicePlacementPolicyDescription]",
+        },
+        "extensions": {"key": "Extensions", "type": "[ServiceTypeExtensionDescription]"},
+        "kind": {"key": "Kind", "type": "str"},
+        "has_persisted_state": {"key": "HasPersistedState", "type": "bool"},
     }
 
-    def __init__(self, *, is_stateful: bool=None, service_type_name: str=None, placement_constraints: str=None, load_metrics=None, service_placement_policies=None, extensions=None, has_persisted_state: bool=None, **kwargs) -> None:
-        super(StatefulServiceTypeDescription, self).__init__(is_stateful=is_stateful, service_type_name=service_type_name, placement_constraints=placement_constraints, load_metrics=load_metrics, service_placement_policies=service_placement_policies, extensions=extensions, **kwargs)
+    def __init__(
+        self,
+        *,
+        is_stateful: bool = None,
+        service_type_name: str = None,
+        placement_constraints: str = None,
+        load_metrics=None,
+        service_placement_policies=None,
+        extensions=None,
+        has_persisted_state: bool = None,
+        **kwargs
+    ) -> None:
+        super(StatefulServiceTypeDescription, self).__init__(
+            is_stateful=is_stateful,
+            service_type_name=service_type_name,
+            placement_constraints=placement_constraints,
+            load_metrics=load_metrics,
+            service_placement_policies=service_placement_policies,
+            extensions=extensions,
+            **kwargs
+        )
         self.has_persisted_state = has_persisted_state
-        self.kind = 'Stateful'
+        self.kind = "Stateful"
 
 
 class StatefulServiceUpdateDescription(ServiceUpdateDescription):
@@ -21720,37 +25163,75 @@ class StatefulServiceUpdateDescription(ServiceUpdateDescription):
     """
 
     _validation = {
-        'service_kind': {'required': True},
-        'target_replica_set_size': {'minimum': 1},
-        'min_replica_set_size': {'minimum': 1},
-        'auxiliary_replica_count': {'minimum': 0},
+        "service_kind": {"required": True},
+        "target_replica_set_size": {"minimum": 1},
+        "min_replica_set_size": {"minimum": 1},
+        "auxiliary_replica_count": {"minimum": 0},
     }
 
     _attribute_map = {
-        'flags': {'key': 'Flags', 'type': 'str'},
-        'placement_constraints': {'key': 'PlacementConstraints', 'type': 'str'},
-        'correlation_scheme': {'key': 'CorrelationScheme', 'type': '[ServiceCorrelationDescription]'},
-        'load_metrics': {'key': 'LoadMetrics', 'type': '[ServiceLoadMetricDescription]'},
-        'service_placement_policies': {'key': 'ServicePlacementPolicies', 'type': '[ServicePlacementPolicyDescription]'},
-        'default_move_cost': {'key': 'DefaultMoveCost', 'type': 'str'},
-        'scaling_policies': {'key': 'ScalingPolicies', 'type': '[ScalingPolicyDescription]'},
-        'service_dns_name': {'key': 'ServiceDnsName', 'type': 'str'},
-        'tags_for_placement': {'key': 'TagsForPlacement', 'type': 'NodeTagsDescription'},
-        'tags_for_running': {'key': 'TagsForRunning', 'type': 'NodeTagsDescription'},
-        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
-        'target_replica_set_size': {'key': 'TargetReplicaSetSize', 'type': 'int'},
-        'min_replica_set_size': {'key': 'MinReplicaSetSize', 'type': 'int'},
-        'replica_restart_wait_duration_seconds': {'key': 'ReplicaRestartWaitDurationSeconds', 'type': 'str'},
-        'quorum_loss_wait_duration_seconds': {'key': 'QuorumLossWaitDurationSeconds', 'type': 'str'},
-        'stand_by_replica_keep_duration_seconds': {'key': 'StandByReplicaKeepDurationSeconds', 'type': 'str'},
-        'service_placement_time_limit_seconds': {'key': 'ServicePlacementTimeLimitSeconds', 'type': 'str'},
-        'drop_source_replica_on_move': {'key': 'DropSourceReplicaOnMove', 'type': 'bool'},
-        'replica_lifecycle_description': {'key': 'ReplicaLifecycleDescription', 'type': 'ReplicaLifecycleDescription'},
-        'auxiliary_replica_count': {'key': 'AuxiliaryReplicaCount', 'type': 'int'},
+        "flags": {"key": "Flags", "type": "str"},
+        "placement_constraints": {"key": "PlacementConstraints", "type": "str"},
+        "correlation_scheme": {"key": "CorrelationScheme", "type": "[ServiceCorrelationDescription]"},
+        "load_metrics": {"key": "LoadMetrics", "type": "[ServiceLoadMetricDescription]"},
+        "service_placement_policies": {
+            "key": "ServicePlacementPolicies",
+            "type": "[ServicePlacementPolicyDescription]",
+        },
+        "default_move_cost": {"key": "DefaultMoveCost", "type": "str"},
+        "scaling_policies": {"key": "ScalingPolicies", "type": "[ScalingPolicyDescription]"},
+        "service_dns_name": {"key": "ServiceDnsName", "type": "str"},
+        "tags_for_placement": {"key": "TagsForPlacement", "type": "NodeTagsDescription"},
+        "tags_for_running": {"key": "TagsForRunning", "type": "NodeTagsDescription"},
+        "service_kind": {"key": "ServiceKind", "type": "str"},
+        "target_replica_set_size": {"key": "TargetReplicaSetSize", "type": "int"},
+        "min_replica_set_size": {"key": "MinReplicaSetSize", "type": "int"},
+        "replica_restart_wait_duration_seconds": {"key": "ReplicaRestartWaitDurationSeconds", "type": "str"},
+        "quorum_loss_wait_duration_seconds": {"key": "QuorumLossWaitDurationSeconds", "type": "str"},
+        "stand_by_replica_keep_duration_seconds": {"key": "StandByReplicaKeepDurationSeconds", "type": "str"},
+        "service_placement_time_limit_seconds": {"key": "ServicePlacementTimeLimitSeconds", "type": "str"},
+        "drop_source_replica_on_move": {"key": "DropSourceReplicaOnMove", "type": "bool"},
+        "replica_lifecycle_description": {"key": "ReplicaLifecycleDescription", "type": "ReplicaLifecycleDescription"},
+        "auxiliary_replica_count": {"key": "AuxiliaryReplicaCount", "type": "int"},
     }
 
-    def __init__(self, *, flags: str=None, placement_constraints: str=None, correlation_scheme=None, load_metrics=None, service_placement_policies=None, default_move_cost=None, scaling_policies=None, service_dns_name: str=None, tags_for_placement=None, tags_for_running=None, target_replica_set_size: int=None, min_replica_set_size: int=None, replica_restart_wait_duration_seconds: str=None, quorum_loss_wait_duration_seconds: str=None, stand_by_replica_keep_duration_seconds: str=None, service_placement_time_limit_seconds: str=None, drop_source_replica_on_move: bool=None, replica_lifecycle_description=None, auxiliary_replica_count: int=None, **kwargs) -> None:
-        super(StatefulServiceUpdateDescription, self).__init__(flags=flags, placement_constraints=placement_constraints, correlation_scheme=correlation_scheme, load_metrics=load_metrics, service_placement_policies=service_placement_policies, default_move_cost=default_move_cost, scaling_policies=scaling_policies, service_dns_name=service_dns_name, tags_for_placement=tags_for_placement, tags_for_running=tags_for_running, **kwargs)
+    def __init__(
+        self,
+        *,
+        flags: str = None,
+        placement_constraints: str = None,
+        correlation_scheme=None,
+        load_metrics=None,
+        service_placement_policies=None,
+        default_move_cost=None,
+        scaling_policies=None,
+        service_dns_name: str = None,
+        tags_for_placement=None,
+        tags_for_running=None,
+        target_replica_set_size: int = None,
+        min_replica_set_size: int = None,
+        replica_restart_wait_duration_seconds: str = None,
+        quorum_loss_wait_duration_seconds: str = None,
+        stand_by_replica_keep_duration_seconds: str = None,
+        service_placement_time_limit_seconds: str = None,
+        drop_source_replica_on_move: bool = None,
+        replica_lifecycle_description=None,
+        auxiliary_replica_count: int = None,
+        **kwargs
+    ) -> None:
+        super(StatefulServiceUpdateDescription, self).__init__(
+            flags=flags,
+            placement_constraints=placement_constraints,
+            correlation_scheme=correlation_scheme,
+            load_metrics=load_metrics,
+            service_placement_policies=service_placement_policies,
+            default_move_cost=default_move_cost,
+            scaling_policies=scaling_policies,
+            service_dns_name=service_dns_name,
+            tags_for_placement=tags_for_placement,
+            tags_for_running=tags_for_running,
+            **kwargs
+        )
         self.target_replica_set_size = target_replica_set_size
         self.min_replica_set_size = min_replica_set_size
         self.replica_restart_wait_duration_seconds = replica_restart_wait_duration_seconds
@@ -21760,7 +25241,7 @@ class StatefulServiceUpdateDescription(ServiceUpdateDescription):
         self.drop_source_replica_on_move = drop_source_replica_on_move
         self.replica_lifecycle_description = replica_lifecycle_description
         self.auxiliary_replica_count = auxiliary_replica_count
-        self.service_kind = 'Stateful'
+        self.service_kind = "Stateful"
 
 
 class StatelessReplicaHealthReportExpiredEvent(ReplicaEvent):
@@ -21814,41 +25295,67 @@ class StatelessReplicaHealthReportExpiredEvent(ReplicaEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'partition_id': {'required': True},
-        'replica_id': {'required': True},
-        'source_id': {'required': True},
-        'property': {'required': True},
-        'health_state': {'required': True},
-        'time_to_live_ms': {'required': True},
-        'sequence_number': {'required': True},
-        'description': {'required': True},
-        'remove_when_expired': {'required': True},
-        'source_utc_timestamp': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "partition_id": {"required": True},
+        "replica_id": {"required": True},
+        "source_id": {"required": True},
+        "property": {"required": True},
+        "health_state": {"required": True},
+        "time_to_live_ms": {"required": True},
+        "sequence_number": {"required": True},
+        "description": {"required": True},
+        "remove_when_expired": {"required": True},
+        "source_utc_timestamp": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'replica_id': {'key': 'ReplicaId', 'type': 'long'},
-        'source_id': {'key': 'SourceId', 'type': 'str'},
-        'property': {'key': 'Property', 'type': 'str'},
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'time_to_live_ms': {'key': 'TimeToLiveMs', 'type': 'long'},
-        'sequence_number': {'key': 'SequenceNumber', 'type': 'long'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'remove_when_expired': {'key': 'RemoveWhenExpired', 'type': 'bool'},
-        'source_utc_timestamp': {'key': 'SourceUtcTimestamp', 'type': 'iso-8601'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "replica_id": {"key": "ReplicaId", "type": "long"},
+        "source_id": {"key": "SourceId", "type": "str"},
+        "property": {"key": "Property", "type": "str"},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "time_to_live_ms": {"key": "TimeToLiveMs", "type": "long"},
+        "sequence_number": {"key": "SequenceNumber", "type": "long"},
+        "description": {"key": "Description", "type": "str"},
+        "remove_when_expired": {"key": "RemoveWhenExpired", "type": "bool"},
+        "source_utc_timestamp": {"key": "SourceUtcTimestamp", "type": "iso-8601"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, partition_id: str, replica_id: int, source_id: str, property: str, health_state: str, time_to_live_ms: int, sequence_number: int, description: str, remove_when_expired: bool, source_utc_timestamp, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(StatelessReplicaHealthReportExpiredEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, partition_id=partition_id, replica_id=replica_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        partition_id: str,
+        replica_id: int,
+        source_id: str,
+        property: str,
+        health_state: str,
+        time_to_live_ms: int,
+        sequence_number: int,
+        description: str,
+        remove_when_expired: bool,
+        source_utc_timestamp,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(StatelessReplicaHealthReportExpiredEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            partition_id=partition_id,
+            replica_id=replica_id,
+            **kwargs
+        )
         self.source_id = source_id
         self.property = property
         self.health_state = health_state
@@ -21857,7 +25364,7 @@ class StatelessReplicaHealthReportExpiredEvent(ReplicaEvent):
         self.description = description
         self.remove_when_expired = remove_when_expired
         self.source_utc_timestamp = source_utc_timestamp
-        self.kind = 'StatelessReplicaHealthReportExpired'
+        self.kind = "StatelessReplicaHealthReportExpired"
 
 
 class StatelessReplicaNewHealthReportEvent(ReplicaEvent):
@@ -21911,41 +25418,67 @@ class StatelessReplicaNewHealthReportEvent(ReplicaEvent):
     """
 
     _validation = {
-        'event_instance_id': {'required': True},
-        'time_stamp': {'required': True},
-        'kind': {'required': True},
-        'partition_id': {'required': True},
-        'replica_id': {'required': True},
-        'source_id': {'required': True},
-        'property': {'required': True},
-        'health_state': {'required': True},
-        'time_to_live_ms': {'required': True},
-        'sequence_number': {'required': True},
-        'description': {'required': True},
-        'remove_when_expired': {'required': True},
-        'source_utc_timestamp': {'required': True},
+        "event_instance_id": {"required": True},
+        "time_stamp": {"required": True},
+        "kind": {"required": True},
+        "partition_id": {"required": True},
+        "replica_id": {"required": True},
+        "source_id": {"required": True},
+        "property": {"required": True},
+        "health_state": {"required": True},
+        "time_to_live_ms": {"required": True},
+        "sequence_number": {"required": True},
+        "description": {"required": True},
+        "remove_when_expired": {"required": True},
+        "source_utc_timestamp": {"required": True},
     }
 
     _attribute_map = {
-        'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
-        'category': {'key': 'Category', 'type': 'str'},
-        'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
-        'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'replica_id': {'key': 'ReplicaId', 'type': 'long'},
-        'source_id': {'key': 'SourceId', 'type': 'str'},
-        'property': {'key': 'Property', 'type': 'str'},
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'time_to_live_ms': {'key': 'TimeToLiveMs', 'type': 'long'},
-        'sequence_number': {'key': 'SequenceNumber', 'type': 'long'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'remove_when_expired': {'key': 'RemoveWhenExpired', 'type': 'bool'},
-        'source_utc_timestamp': {'key': 'SourceUtcTimestamp', 'type': 'iso-8601'},
+        "event_instance_id": {"key": "EventInstanceId", "type": "str"},
+        "category": {"key": "Category", "type": "str"},
+        "time_stamp": {"key": "TimeStamp", "type": "iso-8601"},
+        "has_correlated_events": {"key": "HasCorrelatedEvents", "type": "bool"},
+        "kind": {"key": "Kind", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "replica_id": {"key": "ReplicaId", "type": "long"},
+        "source_id": {"key": "SourceId", "type": "str"},
+        "property": {"key": "Property", "type": "str"},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "time_to_live_ms": {"key": "TimeToLiveMs", "type": "long"},
+        "sequence_number": {"key": "SequenceNumber", "type": "long"},
+        "description": {"key": "Description", "type": "str"},
+        "remove_when_expired": {"key": "RemoveWhenExpired", "type": "bool"},
+        "source_utc_timestamp": {"key": "SourceUtcTimestamp", "type": "iso-8601"},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, partition_id: str, replica_id: int, source_id: str, property: str, health_state: str, time_to_live_ms: int, sequence_number: int, description: str, remove_when_expired: bool, source_utc_timestamp, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
-        super(StatelessReplicaNewHealthReportEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, partition_id=partition_id, replica_id=replica_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        event_instance_id: str,
+        time_stamp,
+        partition_id: str,
+        replica_id: int,
+        source_id: str,
+        property: str,
+        health_state: str,
+        time_to_live_ms: int,
+        sequence_number: int,
+        description: str,
+        remove_when_expired: bool,
+        source_utc_timestamp,
+        category: str = None,
+        has_correlated_events: bool = None,
+        **kwargs
+    ) -> None:
+        super(StatelessReplicaNewHealthReportEvent, self).__init__(
+            event_instance_id=event_instance_id,
+            category=category,
+            time_stamp=time_stamp,
+            has_correlated_events=has_correlated_events,
+            partition_id=partition_id,
+            replica_id=replica_id,
+            **kwargs
+        )
         self.source_id = source_id
         self.property = property
         self.health_state = health_state
@@ -21954,7 +25487,7 @@ class StatelessReplicaNewHealthReportEvent(ReplicaEvent):
         self.description = description
         self.remove_when_expired = remove_when_expired
         self.source_utc_timestamp = source_utc_timestamp
-        self.kind = 'StatelessReplicaNewHealthReport'
+        self.kind = "StatelessReplicaNewHealthReport"
 
 
 class StatelessServiceDescription(ServiceDescription):
@@ -22089,44 +25622,95 @@ class StatelessServiceDescription(ServiceDescription):
     """
 
     _validation = {
-        'service_name': {'required': True},
-        'service_type_name': {'required': True},
-        'partition_description': {'required': True},
-        'service_kind': {'required': True},
-        'instance_count': {'required': True, 'minimum': -1},
-        'instance_close_delay_duration_seconds': {'maximum': 4294967295, 'minimum': 0},
-        'instance_restart_wait_duration_seconds': {'maximum': 4294967295, 'minimum': 0},
+        "service_name": {"required": True},
+        "service_type_name": {"required": True},
+        "partition_description": {"required": True},
+        "service_kind": {"required": True},
+        "instance_count": {"required": True, "minimum": -1},
+        "instance_close_delay_duration_seconds": {"maximum": 4294967295, "minimum": 0},
+        "instance_restart_wait_duration_seconds": {"maximum": 4294967295, "minimum": 0},
     }
 
     _attribute_map = {
-        'application_name': {'key': 'ApplicationName', 'type': 'str'},
-        'service_name': {'key': 'ServiceName', 'type': 'str'},
-        'service_type_name': {'key': 'ServiceTypeName', 'type': 'str'},
-        'initialization_data': {'key': 'InitializationData', 'type': '[int]'},
-        'partition_description': {'key': 'PartitionDescription', 'type': 'PartitionSchemeDescription'},
-        'placement_constraints': {'key': 'PlacementConstraints', 'type': 'str'},
-        'correlation_scheme': {'key': 'CorrelationScheme', 'type': '[ServiceCorrelationDescription]'},
-        'service_load_metrics': {'key': 'ServiceLoadMetrics', 'type': '[ServiceLoadMetricDescription]'},
-        'service_placement_policies': {'key': 'ServicePlacementPolicies', 'type': '[ServicePlacementPolicyDescription]'},
-        'default_move_cost': {'key': 'DefaultMoveCost', 'type': 'str'},
-        'is_default_move_cost_specified': {'key': 'IsDefaultMoveCostSpecified', 'type': 'bool'},
-        'service_package_activation_mode': {'key': 'ServicePackageActivationMode', 'type': 'str'},
-        'service_dns_name': {'key': 'ServiceDnsName', 'type': 'str'},
-        'scaling_policies': {'key': 'ScalingPolicies', 'type': '[ScalingPolicyDescription]'},
-        'tags_required_to_place': {'key': 'TagsRequiredToPlace', 'type': 'NodeTagsDescription'},
-        'tags_required_to_run': {'key': 'TagsRequiredToRun', 'type': 'NodeTagsDescription'},
-        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
-        'instance_count': {'key': 'InstanceCount', 'type': 'int'},
-        'min_instance_count': {'key': 'MinInstanceCount', 'type': 'int'},
-        'min_instance_percentage': {'key': 'MinInstancePercentage', 'type': 'int'},
-        'flags': {'key': 'Flags', 'type': 'int'},
-        'instance_close_delay_duration_seconds': {'key': 'InstanceCloseDelayDurationSeconds', 'type': 'long'},
-        'instance_lifecycle_description': {'key': 'InstanceLifecycleDescription', 'type': 'InstanceLifecycleDescription'},
-        'instance_restart_wait_duration_seconds': {'key': 'InstanceRestartWaitDurationSeconds', 'type': 'long'},
+        "application_name": {"key": "ApplicationName", "type": "str"},
+        "service_name": {"key": "ServiceName", "type": "str"},
+        "service_type_name": {"key": "ServiceTypeName", "type": "str"},
+        "initialization_data": {"key": "InitializationData", "type": "[int]"},
+        "partition_description": {"key": "PartitionDescription", "type": "PartitionSchemeDescription"},
+        "placement_constraints": {"key": "PlacementConstraints", "type": "str"},
+        "correlation_scheme": {"key": "CorrelationScheme", "type": "[ServiceCorrelationDescription]"},
+        "service_load_metrics": {"key": "ServiceLoadMetrics", "type": "[ServiceLoadMetricDescription]"},
+        "service_placement_policies": {
+            "key": "ServicePlacementPolicies",
+            "type": "[ServicePlacementPolicyDescription]",
+        },
+        "default_move_cost": {"key": "DefaultMoveCost", "type": "str"},
+        "is_default_move_cost_specified": {"key": "IsDefaultMoveCostSpecified", "type": "bool"},
+        "service_package_activation_mode": {"key": "ServicePackageActivationMode", "type": "str"},
+        "service_dns_name": {"key": "ServiceDnsName", "type": "str"},
+        "scaling_policies": {"key": "ScalingPolicies", "type": "[ScalingPolicyDescription]"},
+        "tags_required_to_place": {"key": "TagsRequiredToPlace", "type": "NodeTagsDescription"},
+        "tags_required_to_run": {"key": "TagsRequiredToRun", "type": "NodeTagsDescription"},
+        "service_kind": {"key": "ServiceKind", "type": "str"},
+        "instance_count": {"key": "InstanceCount", "type": "int"},
+        "min_instance_count": {"key": "MinInstanceCount", "type": "int"},
+        "min_instance_percentage": {"key": "MinInstancePercentage", "type": "int"},
+        "flags": {"key": "Flags", "type": "int"},
+        "instance_close_delay_duration_seconds": {"key": "InstanceCloseDelayDurationSeconds", "type": "long"},
+        "instance_lifecycle_description": {
+            "key": "InstanceLifecycleDescription",
+            "type": "InstanceLifecycleDescription",
+        },
+        "instance_restart_wait_duration_seconds": {"key": "InstanceRestartWaitDurationSeconds", "type": "long"},
     }
 
-    def __init__(self, *, service_name: str, service_type_name: str, partition_description, instance_count: int, application_name: str=None, initialization_data=None, placement_constraints: str=None, correlation_scheme=None, service_load_metrics=None, service_placement_policies=None, default_move_cost=None, is_default_move_cost_specified: bool=None, service_package_activation_mode=None, service_dns_name: str=None, scaling_policies=None, tags_required_to_place=None, tags_required_to_run=None, min_instance_count: int=None, min_instance_percentage: int=None, flags: int=None, instance_close_delay_duration_seconds: int=None, instance_lifecycle_description=None, instance_restart_wait_duration_seconds: int=None, **kwargs) -> None:
-        super(StatelessServiceDescription, self).__init__(application_name=application_name, service_name=service_name, service_type_name=service_type_name, initialization_data=initialization_data, partition_description=partition_description, placement_constraints=placement_constraints, correlation_scheme=correlation_scheme, service_load_metrics=service_load_metrics, service_placement_policies=service_placement_policies, default_move_cost=default_move_cost, is_default_move_cost_specified=is_default_move_cost_specified, service_package_activation_mode=service_package_activation_mode, service_dns_name=service_dns_name, scaling_policies=scaling_policies, tags_required_to_place=tags_required_to_place, tags_required_to_run=tags_required_to_run, **kwargs)
+    def __init__(
+        self,
+        *,
+        service_name: str,
+        service_type_name: str,
+        partition_description,
+        instance_count: int,
+        application_name: str = None,
+        initialization_data=None,
+        placement_constraints: str = None,
+        correlation_scheme=None,
+        service_load_metrics=None,
+        service_placement_policies=None,
+        default_move_cost=None,
+        is_default_move_cost_specified: bool = None,
+        service_package_activation_mode=None,
+        service_dns_name: str = None,
+        scaling_policies=None,
+        tags_required_to_place=None,
+        tags_required_to_run=None,
+        min_instance_count: int = None,
+        min_instance_percentage: int = None,
+        flags: int = None,
+        instance_close_delay_duration_seconds: int = None,
+        instance_lifecycle_description=None,
+        instance_restart_wait_duration_seconds: int = None,
+        **kwargs
+    ) -> None:
+        super(StatelessServiceDescription, self).__init__(
+            application_name=application_name,
+            service_name=service_name,
+            service_type_name=service_type_name,
+            initialization_data=initialization_data,
+            partition_description=partition_description,
+            placement_constraints=placement_constraints,
+            correlation_scheme=correlation_scheme,
+            service_load_metrics=service_load_metrics,
+            service_placement_policies=service_placement_policies,
+            default_move_cost=default_move_cost,
+            is_default_move_cost_specified=is_default_move_cost_specified,
+            service_package_activation_mode=service_package_activation_mode,
+            service_dns_name=service_dns_name,
+            scaling_policies=scaling_policies,
+            tags_required_to_place=tags_required_to_place,
+            tags_required_to_run=tags_required_to_run,
+            **kwargs
+        )
         self.instance_count = instance_count
         self.min_instance_count = min_instance_count
         self.min_instance_percentage = min_instance_percentage
@@ -22134,7 +25718,7 @@ class StatelessServiceDescription(ServiceDescription):
         self.instance_close_delay_duration_seconds = instance_close_delay_duration_seconds
         self.instance_lifecycle_description = instance_lifecycle_description
         self.instance_restart_wait_duration_seconds = instance_restart_wait_duration_seconds
-        self.service_kind = 'Stateless'
+        self.service_kind = "Stateless"
 
 
 class StatelessServiceInfo(ServiceInfo):
@@ -22172,23 +25756,43 @@ class StatelessServiceInfo(ServiceInfo):
     """
 
     _validation = {
-        'service_kind': {'required': True},
+        "service_kind": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str'},
-        'name': {'key': 'Name', 'type': 'str'},
-        'type_name': {'key': 'TypeName', 'type': 'str'},
-        'manifest_version': {'key': 'ManifestVersion', 'type': 'str'},
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'service_status': {'key': 'ServiceStatus', 'type': 'str'},
-        'is_service_group': {'key': 'IsServiceGroup', 'type': 'bool'},
-        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
+        "id": {"key": "Id", "type": "str"},
+        "name": {"key": "Name", "type": "str"},
+        "type_name": {"key": "TypeName", "type": "str"},
+        "manifest_version": {"key": "ManifestVersion", "type": "str"},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "service_status": {"key": "ServiceStatus", "type": "str"},
+        "is_service_group": {"key": "IsServiceGroup", "type": "bool"},
+        "service_kind": {"key": "ServiceKind", "type": "str"},
     }
 
-    def __init__(self, *, id: str=None, name: str=None, type_name: str=None, manifest_version: str=None, health_state=None, service_status=None, is_service_group: bool=None, **kwargs) -> None:
-        super(StatelessServiceInfo, self).__init__(id=id, name=name, type_name=type_name, manifest_version=manifest_version, health_state=health_state, service_status=service_status, is_service_group=is_service_group, **kwargs)
-        self.service_kind = 'Stateless'
+    def __init__(
+        self,
+        *,
+        id: str = None,
+        name: str = None,
+        type_name: str = None,
+        manifest_version: str = None,
+        health_state=None,
+        service_status=None,
+        is_service_group: bool = None,
+        **kwargs
+    ) -> None:
+        super(StatelessServiceInfo, self).__init__(
+            id=id,
+            name=name,
+            type_name=type_name,
+            manifest_version=manifest_version,
+            health_state=health_state,
+            service_status=service_status,
+            is_service_group=is_service_group,
+            **kwargs
+        )
+        self.service_kind = "Stateless"
 
 
 class StatelessServiceInstanceHealth(ReplicaHealth):
@@ -22228,23 +25832,40 @@ class StatelessServiceInstanceHealth(ReplicaHealth):
     """
 
     _validation = {
-        'service_kind': {'required': True},
+        "service_kind": {"required": True},
     }
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'health_events': {'key': 'HealthEvents', 'type': '[HealthEvent]'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
-        'health_statistics': {'key': 'HealthStatistics', 'type': 'HealthStatistics'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
-        'instance_id': {'key': 'InstanceId', 'type': 'str'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "health_events": {"key": "HealthEvents", "type": "[HealthEvent]"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
+        "health_statistics": {"key": "HealthStatistics", "type": "HealthStatistics"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "service_kind": {"key": "ServiceKind", "type": "str"},
+        "instance_id": {"key": "InstanceId", "type": "str"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, health_events=None, unhealthy_evaluations=None, health_statistics=None, partition_id: str=None, instance_id: str=None, **kwargs) -> None:
-        super(StatelessServiceInstanceHealth, self).__init__(aggregated_health_state=aggregated_health_state, health_events=health_events, unhealthy_evaluations=unhealthy_evaluations, health_statistics=health_statistics, partition_id=partition_id, **kwargs)
+    def __init__(
+        self,
+        *,
+        aggregated_health_state=None,
+        health_events=None,
+        unhealthy_evaluations=None,
+        health_statistics=None,
+        partition_id: str = None,
+        instance_id: str = None,
+        **kwargs
+    ) -> None:
+        super(StatelessServiceInstanceHealth, self).__init__(
+            aggregated_health_state=aggregated_health_state,
+            health_events=health_events,
+            unhealthy_evaluations=unhealthy_evaluations,
+            health_statistics=health_statistics,
+            partition_id=partition_id,
+            **kwargs
+        )
         self.instance_id = instance_id
-        self.service_kind = 'Stateless'
+        self.service_kind = "Stateless"
 
 
 class StatelessServiceInstanceHealthState(ReplicaHealthState):
@@ -22270,20 +25891,24 @@ class StatelessServiceInstanceHealthState(ReplicaHealthState):
     """
 
     _validation = {
-        'service_kind': {'required': True},
+        "service_kind": {"required": True},
     }
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
-        'replica_id': {'key': 'ReplicaId', 'type': 'str'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "service_kind": {"key": "ServiceKind", "type": "str"},
+        "replica_id": {"key": "ReplicaId", "type": "str"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, partition_id: str=None, replica_id: str=None, **kwargs) -> None:
-        super(StatelessServiceInstanceHealthState, self).__init__(aggregated_health_state=aggregated_health_state, partition_id=partition_id, **kwargs)
+    def __init__(
+        self, *, aggregated_health_state=None, partition_id: str = None, replica_id: str = None, **kwargs
+    ) -> None:
+        super(StatelessServiceInstanceHealthState, self).__init__(
+            aggregated_health_state=aggregated_health_state, partition_id=partition_id, **kwargs
+        )
         self.replica_id = replica_id
-        self.service_kind = 'Stateless'
+        self.service_kind = "Stateless"
 
 
 class StatelessServiceInstanceInfo(ReplicaInfo):
@@ -22319,23 +25944,40 @@ class StatelessServiceInstanceInfo(ReplicaInfo):
     """
 
     _validation = {
-        'service_kind': {'required': True},
+        "service_kind": {"required": True},
     }
 
     _attribute_map = {
-        'replica_status': {'key': 'ReplicaStatus', 'type': 'str'},
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'node_name': {'key': 'NodeName', 'type': 'str'},
-        'address': {'key': 'Address', 'type': 'str'},
-        'last_in_build_duration_in_seconds': {'key': 'LastInBuildDurationInSeconds', 'type': 'str'},
-        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
-        'instance_id': {'key': 'InstanceId', 'type': 'str'},
+        "replica_status": {"key": "ReplicaStatus", "type": "str"},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "node_name": {"key": "NodeName", "type": "str"},
+        "address": {"key": "Address", "type": "str"},
+        "last_in_build_duration_in_seconds": {"key": "LastInBuildDurationInSeconds", "type": "str"},
+        "service_kind": {"key": "ServiceKind", "type": "str"},
+        "instance_id": {"key": "InstanceId", "type": "str"},
     }
 
-    def __init__(self, *, replica_status=None, health_state=None, node_name: str=None, address: str=None, last_in_build_duration_in_seconds: str=None, instance_id: str=None, **kwargs) -> None:
-        super(StatelessServiceInstanceInfo, self).__init__(replica_status=replica_status, health_state=health_state, node_name=node_name, address=address, last_in_build_duration_in_seconds=last_in_build_duration_in_seconds, **kwargs)
+    def __init__(
+        self,
+        *,
+        replica_status=None,
+        health_state=None,
+        node_name: str = None,
+        address: str = None,
+        last_in_build_duration_in_seconds: str = None,
+        instance_id: str = None,
+        **kwargs
+    ) -> None:
+        super(StatelessServiceInstanceInfo, self).__init__(
+            replica_status=replica_status,
+            health_state=health_state,
+            node_name=node_name,
+            address=address,
+            last_in_build_duration_in_seconds=last_in_build_duration_in_seconds,
+            **kwargs
+        )
         self.instance_id = instance_id
-        self.service_kind = 'Stateless'
+        self.service_kind = "Stateless"
 
 
 class StatelessServicePartitionInfo(ServicePartitionInfo):
@@ -22383,25 +26025,40 @@ class StatelessServicePartitionInfo(ServicePartitionInfo):
     """
 
     _validation = {
-        'service_kind': {'required': True},
+        "service_kind": {"required": True},
     }
 
     _attribute_map = {
-        'health_state': {'key': 'HealthState', 'type': 'str'},
-        'partition_status': {'key': 'PartitionStatus', 'type': 'str'},
-        'partition_information': {'key': 'PartitionInformation', 'type': 'PartitionInformation'},
-        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
-        'instance_count': {'key': 'InstanceCount', 'type': 'long'},
-        'min_instance_count': {'key': 'MinInstanceCount', 'type': 'int'},
-        'min_instance_percentage': {'key': 'MinInstancePercentage', 'type': 'int'},
+        "health_state": {"key": "HealthState", "type": "str"},
+        "partition_status": {"key": "PartitionStatus", "type": "str"},
+        "partition_information": {"key": "PartitionInformation", "type": "PartitionInformation"},
+        "service_kind": {"key": "ServiceKind", "type": "str"},
+        "instance_count": {"key": "InstanceCount", "type": "long"},
+        "min_instance_count": {"key": "MinInstanceCount", "type": "int"},
+        "min_instance_percentage": {"key": "MinInstancePercentage", "type": "int"},
     }
 
-    def __init__(self, *, health_state=None, partition_status=None, partition_information=None, instance_count: int=None, min_instance_count: int=None, min_instance_percentage: int=None, **kwargs) -> None:
-        super(StatelessServicePartitionInfo, self).__init__(health_state=health_state, partition_status=partition_status, partition_information=partition_information, **kwargs)
+    def __init__(
+        self,
+        *,
+        health_state=None,
+        partition_status=None,
+        partition_information=None,
+        instance_count: int = None,
+        min_instance_count: int = None,
+        min_instance_percentage: int = None,
+        **kwargs
+    ) -> None:
+        super(StatelessServicePartitionInfo, self).__init__(
+            health_state=health_state,
+            partition_status=partition_status,
+            partition_information=partition_information,
+            **kwargs
+        )
         self.instance_count = instance_count
         self.min_instance_count = min_instance_count
         self.min_instance_percentage = min_instance_percentage
-        self.service_kind = 'Stateless'
+        self.service_kind = "Stateless"
 
 
 class StatelessServiceTypeDescription(ServiceTypeDescription):
@@ -22441,24 +26098,46 @@ class StatelessServiceTypeDescription(ServiceTypeDescription):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'is_stateful': {'key': 'IsStateful', 'type': 'bool'},
-        'service_type_name': {'key': 'ServiceTypeName', 'type': 'str'},
-        'placement_constraints': {'key': 'PlacementConstraints', 'type': 'str'},
-        'load_metrics': {'key': 'LoadMetrics', 'type': '[ServiceLoadMetricDescription]'},
-        'service_placement_policies': {'key': 'ServicePlacementPolicies', 'type': '[ServicePlacementPolicyDescription]'},
-        'extensions': {'key': 'Extensions', 'type': '[ServiceTypeExtensionDescription]'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'use_implicit_host': {'key': 'UseImplicitHost', 'type': 'bool'},
+        "is_stateful": {"key": "IsStateful", "type": "bool"},
+        "service_type_name": {"key": "ServiceTypeName", "type": "str"},
+        "placement_constraints": {"key": "PlacementConstraints", "type": "str"},
+        "load_metrics": {"key": "LoadMetrics", "type": "[ServiceLoadMetricDescription]"},
+        "service_placement_policies": {
+            "key": "ServicePlacementPolicies",
+            "type": "[ServicePlacementPolicyDescription]",
+        },
+        "extensions": {"key": "Extensions", "type": "[ServiceTypeExtensionDescription]"},
+        "kind": {"key": "Kind", "type": "str"},
+        "use_implicit_host": {"key": "UseImplicitHost", "type": "bool"},
     }
 
-    def __init__(self, *, is_stateful: bool=None, service_type_name: str=None, placement_constraints: str=None, load_metrics=None, service_placement_policies=None, extensions=None, use_implicit_host: bool=None, **kwargs) -> None:
-        super(StatelessServiceTypeDescription, self).__init__(is_stateful=is_stateful, service_type_name=service_type_name, placement_constraints=placement_constraints, load_metrics=load_metrics, service_placement_policies=service_placement_policies, extensions=extensions, **kwargs)
+    def __init__(
+        self,
+        *,
+        is_stateful: bool = None,
+        service_type_name: str = None,
+        placement_constraints: str = None,
+        load_metrics=None,
+        service_placement_policies=None,
+        extensions=None,
+        use_implicit_host: bool = None,
+        **kwargs
+    ) -> None:
+        super(StatelessServiceTypeDescription, self).__init__(
+            is_stateful=is_stateful,
+            service_type_name=service_type_name,
+            placement_constraints=placement_constraints,
+            load_metrics=load_metrics,
+            service_placement_policies=service_placement_policies,
+            extensions=extensions,
+            **kwargs
+        )
         self.use_implicit_host = use_implicit_host
-        self.kind = 'Stateless'
+        self.kind = "Stateless"
 
 
 class StatelessServiceUpdateDescription(ServiceUpdateDescription):
@@ -22599,39 +26278,77 @@ class StatelessServiceUpdateDescription(ServiceUpdateDescription):
     """
 
     _validation = {
-        'service_kind': {'required': True},
-        'instance_count': {'minimum': -1},
+        "service_kind": {"required": True},
+        "instance_count": {"minimum": -1},
     }
 
     _attribute_map = {
-        'flags': {'key': 'Flags', 'type': 'str'},
-        'placement_constraints': {'key': 'PlacementConstraints', 'type': 'str'},
-        'correlation_scheme': {'key': 'CorrelationScheme', 'type': '[ServiceCorrelationDescription]'},
-        'load_metrics': {'key': 'LoadMetrics', 'type': '[ServiceLoadMetricDescription]'},
-        'service_placement_policies': {'key': 'ServicePlacementPolicies', 'type': '[ServicePlacementPolicyDescription]'},
-        'default_move_cost': {'key': 'DefaultMoveCost', 'type': 'str'},
-        'scaling_policies': {'key': 'ScalingPolicies', 'type': '[ScalingPolicyDescription]'},
-        'service_dns_name': {'key': 'ServiceDnsName', 'type': 'str'},
-        'tags_for_placement': {'key': 'TagsForPlacement', 'type': 'NodeTagsDescription'},
-        'tags_for_running': {'key': 'TagsForRunning', 'type': 'NodeTagsDescription'},
-        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
-        'instance_count': {'key': 'InstanceCount', 'type': 'int'},
-        'min_instance_count': {'key': 'MinInstanceCount', 'type': 'int'},
-        'min_instance_percentage': {'key': 'MinInstancePercentage', 'type': 'int'},
-        'instance_close_delay_duration_seconds': {'key': 'InstanceCloseDelayDurationSeconds', 'type': 'str'},
-        'instance_lifecycle_description': {'key': 'InstanceLifecycleDescription', 'type': 'InstanceLifecycleDescription'},
-        'instance_restart_wait_duration_seconds': {'key': 'InstanceRestartWaitDurationSeconds', 'type': 'str'},
+        "flags": {"key": "Flags", "type": "str"},
+        "placement_constraints": {"key": "PlacementConstraints", "type": "str"},
+        "correlation_scheme": {"key": "CorrelationScheme", "type": "[ServiceCorrelationDescription]"},
+        "load_metrics": {"key": "LoadMetrics", "type": "[ServiceLoadMetricDescription]"},
+        "service_placement_policies": {
+            "key": "ServicePlacementPolicies",
+            "type": "[ServicePlacementPolicyDescription]",
+        },
+        "default_move_cost": {"key": "DefaultMoveCost", "type": "str"},
+        "scaling_policies": {"key": "ScalingPolicies", "type": "[ScalingPolicyDescription]"},
+        "service_dns_name": {"key": "ServiceDnsName", "type": "str"},
+        "tags_for_placement": {"key": "TagsForPlacement", "type": "NodeTagsDescription"},
+        "tags_for_running": {"key": "TagsForRunning", "type": "NodeTagsDescription"},
+        "service_kind": {"key": "ServiceKind", "type": "str"},
+        "instance_count": {"key": "InstanceCount", "type": "int"},
+        "min_instance_count": {"key": "MinInstanceCount", "type": "int"},
+        "min_instance_percentage": {"key": "MinInstancePercentage", "type": "int"},
+        "instance_close_delay_duration_seconds": {"key": "InstanceCloseDelayDurationSeconds", "type": "str"},
+        "instance_lifecycle_description": {
+            "key": "InstanceLifecycleDescription",
+            "type": "InstanceLifecycleDescription",
+        },
+        "instance_restart_wait_duration_seconds": {"key": "InstanceRestartWaitDurationSeconds", "type": "str"},
     }
 
-    def __init__(self, *, flags: str=None, placement_constraints: str=None, correlation_scheme=None, load_metrics=None, service_placement_policies=None, default_move_cost=None, scaling_policies=None, service_dns_name: str=None, tags_for_placement=None, tags_for_running=None, instance_count: int=None, min_instance_count: int=None, min_instance_percentage: int=None, instance_close_delay_duration_seconds: str=None, instance_lifecycle_description=None, instance_restart_wait_duration_seconds: str=None, **kwargs) -> None:
-        super(StatelessServiceUpdateDescription, self).__init__(flags=flags, placement_constraints=placement_constraints, correlation_scheme=correlation_scheme, load_metrics=load_metrics, service_placement_policies=service_placement_policies, default_move_cost=default_move_cost, scaling_policies=scaling_policies, service_dns_name=service_dns_name, tags_for_placement=tags_for_placement, tags_for_running=tags_for_running, **kwargs)
+    def __init__(
+        self,
+        *,
+        flags: str = None,
+        placement_constraints: str = None,
+        correlation_scheme=None,
+        load_metrics=None,
+        service_placement_policies=None,
+        default_move_cost=None,
+        scaling_policies=None,
+        service_dns_name: str = None,
+        tags_for_placement=None,
+        tags_for_running=None,
+        instance_count: int = None,
+        min_instance_count: int = None,
+        min_instance_percentage: int = None,
+        instance_close_delay_duration_seconds: str = None,
+        instance_lifecycle_description=None,
+        instance_restart_wait_duration_seconds: str = None,
+        **kwargs
+    ) -> None:
+        super(StatelessServiceUpdateDescription, self).__init__(
+            flags=flags,
+            placement_constraints=placement_constraints,
+            correlation_scheme=correlation_scheme,
+            load_metrics=load_metrics,
+            service_placement_policies=service_placement_policies,
+            default_move_cost=default_move_cost,
+            scaling_policies=scaling_policies,
+            service_dns_name=service_dns_name,
+            tags_for_placement=tags_for_placement,
+            tags_for_running=tags_for_running,
+            **kwargs
+        )
         self.instance_count = instance_count
         self.min_instance_count = min_instance_count
         self.min_instance_percentage = min_instance_percentage
         self.instance_close_delay_duration_seconds = instance_close_delay_duration_seconds
         self.instance_lifecycle_description = instance_lifecycle_description
         self.instance_restart_wait_duration_seconds = instance_restart_wait_duration_seconds
-        self.service_kind = 'Stateless'
+        self.service_kind = "Stateless"
 
 
 class StoppedChaosEvent(ChaosEvent):
@@ -22651,20 +26368,20 @@ class StoppedChaosEvent(ChaosEvent):
     """
 
     _validation = {
-        'time_stamp_utc': {'required': True},
-        'kind': {'required': True},
+        "time_stamp_utc": {"required": True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'time_stamp_utc': {'key': 'TimeStampUtc', 'type': 'iso-8601'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'reason': {'key': 'Reason', 'type': 'str'},
+        "time_stamp_utc": {"key": "TimeStampUtc", "type": "iso-8601"},
+        "kind": {"key": "Kind", "type": "str"},
+        "reason": {"key": "Reason", "type": "str"},
     }
 
-    def __init__(self, *, time_stamp_utc, reason: str=None, **kwargs) -> None:
+    def __init__(self, *, time_stamp_utc, reason: str = None, **kwargs) -> None:
         super(StoppedChaosEvent, self).__init__(time_stamp_utc=time_stamp_utc, **kwargs)
         self.reason = reason
-        self.kind = 'Stopped'
+        self.kind = "Stopped"
 
 
 class StringPropertyValue(PropertyValue):
@@ -22679,19 +26396,19 @@ class StringPropertyValue(PropertyValue):
     """
 
     _validation = {
-        'kind': {'required': True},
-        'data': {'required': True},
+        "kind": {"required": True},
+        "data": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'data': {'key': 'Data', 'type': 'str'},
+        "kind": {"key": "Kind", "type": "str"},
+        "data": {"key": "Data", "type": "str"},
     }
 
     def __init__(self, *, data: str, **kwargs) -> None:
         super(StringPropertyValue, self).__init__(**kwargs)
         self.data = data
-        self.kind = 'String'
+        self.kind = "String"
 
 
 class SuccessfulPropertyBatchInfo(PropertyBatchInfo):
@@ -22710,18 +26427,18 @@ class SuccessfulPropertyBatchInfo(PropertyBatchInfo):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'properties': {'key': 'Properties', 'type': '{PropertyInfo}'},
+        "kind": {"key": "Kind", "type": "str"},
+        "properties": {"key": "Properties", "type": "{PropertyInfo}"},
     }
 
     def __init__(self, *, properties=None, **kwargs) -> None:
         super(SuccessfulPropertyBatchInfo, self).__init__(**kwargs)
         self.properties = properties
-        self.kind = 'Successful'
+        self.kind = "Successful"
 
 
 class SystemApplicationHealthEvaluation(HealthEvaluation):
@@ -22752,20 +26469,24 @@ class SystemApplicationHealthEvaluation(HealthEvaluation):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "description": {"key": "Description", "type": "str"},
+        "kind": {"key": "Kind", "type": "str"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, description: str=None, unhealthy_evaluations=None, **kwargs) -> None:
-        super(SystemApplicationHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description, **kwargs)
+    def __init__(
+        self, *, aggregated_health_state=None, description: str = None, unhealthy_evaluations=None, **kwargs
+    ) -> None:
+        super(SystemApplicationHealthEvaluation, self).__init__(
+            aggregated_health_state=aggregated_health_state, description=description, **kwargs
+        )
         self.unhealthy_evaluations = unhealthy_evaluations
-        self.kind = 'SystemApplication'
+        self.kind = "SystemApplication"
 
 
 class TcpConfig(Model):
@@ -22784,15 +26505,15 @@ class TcpConfig(Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'port': {'required': True},
-        'destination': {'required': True},
+        "name": {"required": True},
+        "port": {"required": True},
+        "destination": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'port': {'key': 'port', 'type': 'int'},
-        'destination': {'key': 'destination', 'type': 'GatewayDestination'},
+        "name": {"key": "name", "type": "str"},
+        "port": {"key": "port", "type": "int"},
+        "destination": {"key": "destination", "type": "GatewayDestination"},
     }
 
     def __init__(self, *, name: str, port: int, destination, **kwargs) -> None:
@@ -22824,20 +26545,20 @@ class TestErrorChaosEvent(ChaosEvent):
     """
 
     _validation = {
-        'time_stamp_utc': {'required': True},
-        'kind': {'required': True},
+        "time_stamp_utc": {"required": True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'time_stamp_utc': {'key': 'TimeStampUtc', 'type': 'iso-8601'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'reason': {'key': 'Reason', 'type': 'str'},
+        "time_stamp_utc": {"key": "TimeStampUtc", "type": "iso-8601"},
+        "kind": {"key": "Kind", "type": "str"},
+        "reason": {"key": "Reason", "type": "str"},
     }
 
-    def __init__(self, *, time_stamp_utc, reason: str=None, **kwargs) -> None:
+    def __init__(self, *, time_stamp_utc, reason: str = None, **kwargs) -> None:
         super(TestErrorChaosEvent, self).__init__(time_stamp_utc=time_stamp_utc, **kwargs)
         self.reason = reason
-        self.kind = 'TestError'
+        self.kind = "TestError"
 
 
 class TimeBasedBackupScheduleDescription(BackupScheduleDescription):
@@ -22863,16 +26584,16 @@ class TimeBasedBackupScheduleDescription(BackupScheduleDescription):
     """
 
     _validation = {
-        'schedule_kind': {'required': True},
-        'schedule_frequency_type': {'required': True},
-        'run_times': {'required': True},
+        "schedule_kind": {"required": True},
+        "schedule_frequency_type": {"required": True},
+        "run_times": {"required": True},
     }
 
     _attribute_map = {
-        'schedule_kind': {'key': 'ScheduleKind', 'type': 'str'},
-        'schedule_frequency_type': {'key': 'ScheduleFrequencyType', 'type': 'str'},
-        'run_days': {'key': 'RunDays', 'type': '[str]'},
-        'run_times': {'key': 'RunTimes', 'type': '[iso-8601]'},
+        "schedule_kind": {"key": "ScheduleKind", "type": "str"},
+        "schedule_frequency_type": {"key": "ScheduleFrequencyType", "type": "str"},
+        "run_days": {"key": "RunDays", "type": "[str]"},
+        "run_times": {"key": "RunTimes", "type": "[iso-8601]"},
     }
 
     def __init__(self, *, schedule_frequency_type, run_times, run_days=None, **kwargs) -> None:
@@ -22880,7 +26601,7 @@ class TimeBasedBackupScheduleDescription(BackupScheduleDescription):
         self.schedule_frequency_type = schedule_frequency_type
         self.run_days = run_days
         self.run_times = run_times
-        self.schedule_kind = 'TimeBased'
+        self.schedule_kind = "TimeBased"
 
 
 class TimeOfDay(Model):
@@ -22895,16 +26616,16 @@ class TimeOfDay(Model):
     """
 
     _validation = {
-        'hour': {'maximum': 23, 'minimum': 0},
-        'minute': {'maximum': 59, 'minimum': 0},
+        "hour": {"maximum": 23, "minimum": 0},
+        "minute": {"maximum": 59, "minimum": 0},
     }
 
     _attribute_map = {
-        'hour': {'key': 'Hour', 'type': 'int'},
-        'minute': {'key': 'Minute', 'type': 'int'},
+        "hour": {"key": "Hour", "type": "int"},
+        "minute": {"key": "Minute", "type": "int"},
     }
 
-    def __init__(self, *, hour: int=None, minute: int=None, **kwargs) -> None:
+    def __init__(self, *, hour: int = None, minute: int = None, **kwargs) -> None:
         super(TimeOfDay, self).__init__(**kwargs)
         self.hour = hour
         self.minute = minute
@@ -22922,8 +26643,8 @@ class TimeRange(Model):
     """
 
     _attribute_map = {
-        'start_time': {'key': 'StartTime', 'type': 'TimeOfDay'},
-        'end_time': {'key': 'EndTime', 'type': 'TimeOfDay'},
+        "start_time": {"key": "StartTime", "type": "TimeOfDay"},
+        "end_time": {"key": "EndTime", "type": "TimeOfDay"},
     }
 
     def __init__(self, *, start_time=None, end_time=None, **kwargs) -> None:
@@ -22953,17 +26674,17 @@ class UniformInt64RangePartitionSchemeDescription(PartitionSchemeDescription):
     """
 
     _validation = {
-        'partition_scheme': {'required': True},
-        'count': {'required': True},
-        'low_key': {'required': True},
-        'high_key': {'required': True},
+        "partition_scheme": {"required": True},
+        "count": {"required": True},
+        "low_key": {"required": True},
+        "high_key": {"required": True},
     }
 
     _attribute_map = {
-        'partition_scheme': {'key': 'PartitionScheme', 'type': 'str'},
-        'count': {'key': 'Count', 'type': 'int'},
-        'low_key': {'key': 'LowKey', 'type': 'str'},
-        'high_key': {'key': 'HighKey', 'type': 'str'},
+        "partition_scheme": {"key": "PartitionScheme", "type": "str"},
+        "count": {"key": "Count", "type": "int"},
+        "low_key": {"key": "LowKey", "type": "str"},
+        "high_key": {"key": "HighKey", "type": "str"},
     }
 
     def __init__(self, *, count: int, low_key: str, high_key: str, **kwargs) -> None:
@@ -22971,7 +26692,7 @@ class UniformInt64RangePartitionSchemeDescription(PartitionSchemeDescription):
         self.count = count
         self.low_key = low_key
         self.high_key = high_key
-        self.partition_scheme = 'UniformInt64Range'
+        self.partition_scheme = "UniformInt64Range"
 
 
 class UnplacedReplicaInformation(Model):
@@ -22987,12 +26708,14 @@ class UnplacedReplicaInformation(Model):
     """
 
     _attribute_map = {
-        'service_name': {'key': 'ServiceName', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'unplaced_replica_details': {'key': 'UnplacedReplicaDetails', 'type': '[str]'},
+        "service_name": {"key": "ServiceName", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "unplaced_replica_details": {"key": "UnplacedReplicaDetails", "type": "[str]"},
     }
 
-    def __init__(self, *, service_name: str=None, partition_id: str=None, unplaced_replica_details=None, **kwargs) -> None:
+    def __init__(
+        self, *, service_name: str = None, partition_id: str = None, unplaced_replica_details=None, **kwargs
+    ) -> None:
         super(UnplacedReplicaInformation, self).__init__(**kwargs)
         self.service_name = service_name
         self.partition_id = partition_id
@@ -23018,15 +26741,15 @@ class UnprovisionApplicationTypeDescriptionInfo(Model):
     """
 
     _validation = {
-        'application_type_version': {'required': True},
+        "application_type_version": {"required": True},
     }
 
     _attribute_map = {
-        'application_type_version': {'key': 'ApplicationTypeVersion', 'type': 'str'},
-        'async_property': {'key': 'Async', 'type': 'bool'},
+        "application_type_version": {"key": "ApplicationTypeVersion", "type": "str"},
+        "async_property": {"key": "Async", "type": "bool"},
     }
 
-    def __init__(self, *, application_type_version: str, async_property: bool=None, **kwargs) -> None:
+    def __init__(self, *, application_type_version: str, async_property: bool = None, **kwargs) -> None:
         super(UnprovisionApplicationTypeDescriptionInfo, self).__init__(**kwargs)
         self.application_type_version = application_type_version
         self.async_property = async_property
@@ -23042,11 +26765,11 @@ class UnprovisionFabricDescription(Model):
     """
 
     _attribute_map = {
-        'code_version': {'key': 'CodeVersion', 'type': 'str'},
-        'config_version': {'key': 'ConfigVersion', 'type': 'str'},
+        "code_version": {"key": "CodeVersion", "type": "str"},
+        "config_version": {"key": "ConfigVersion", "type": "str"},
     }
 
-    def __init__(self, *, code_version: str=None, config_version: str=None, **kwargs) -> None:
+    def __init__(self, *, code_version: str = None, config_version: str = None, **kwargs) -> None:
         super(UnprovisionFabricDescription, self).__init__(**kwargs)
         self.code_version = code_version
         self.config_version = config_version
@@ -23083,15 +26806,28 @@ class UpdateClusterUpgradeDescription(Model):
     """
 
     _attribute_map = {
-        'upgrade_kind': {'key': 'UpgradeKind', 'type': 'str'},
-        'update_description': {'key': 'UpdateDescription', 'type': 'RollingUpgradeUpdateDescription'},
-        'cluster_health_policy': {'key': 'ClusterHealthPolicy', 'type': 'ClusterHealthPolicy'},
-        'enable_delta_health_evaluation': {'key': 'EnableDeltaHealthEvaluation', 'type': 'bool'},
-        'cluster_upgrade_health_policy': {'key': 'ClusterUpgradeHealthPolicy', 'type': 'ClusterUpgradeHealthPolicyObject'},
-        'application_health_policy_map': {'key': 'ApplicationHealthPolicyMap', 'type': 'ApplicationHealthPolicies'},
+        "upgrade_kind": {"key": "UpgradeKind", "type": "str"},
+        "update_description": {"key": "UpdateDescription", "type": "RollingUpgradeUpdateDescription"},
+        "cluster_health_policy": {"key": "ClusterHealthPolicy", "type": "ClusterHealthPolicy"},
+        "enable_delta_health_evaluation": {"key": "EnableDeltaHealthEvaluation", "type": "bool"},
+        "cluster_upgrade_health_policy": {
+            "key": "ClusterUpgradeHealthPolicy",
+            "type": "ClusterUpgradeHealthPolicyObject",
+        },
+        "application_health_policy_map": {"key": "ApplicationHealthPolicyMap", "type": "ApplicationHealthPolicies"},
     }
 
-    def __init__(self, *, upgrade_kind="Rolling", update_description=None, cluster_health_policy=None, enable_delta_health_evaluation: bool=None, cluster_upgrade_health_policy=None, application_health_policy_map=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        upgrade_kind="Rolling",
+        update_description=None,
+        cluster_health_policy=None,
+        enable_delta_health_evaluation: bool = None,
+        cluster_upgrade_health_policy=None,
+        application_health_policy_map=None,
+        **kwargs
+    ) -> None:
         super(UpdateClusterUpgradeDescription, self).__init__(**kwargs)
         self.upgrade_kind = upgrade_kind
         self.update_description = update_description
@@ -23114,11 +26850,11 @@ class UpdatePartitionLoadResult(Model):
     """
 
     _attribute_map = {
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'partition_error_code': {'key': 'PartitionErrorCode', 'type': 'int'},
+        "partition_id": {"key": "PartitionId", "type": "str"},
+        "partition_error_code": {"key": "PartitionErrorCode", "type": "int"},
     }
 
-    def __init__(self, *, partition_id: str=None, partition_error_code: int=None, **kwargs) -> None:
+    def __init__(self, *, partition_id: str = None, partition_error_code: int = None, **kwargs) -> None:
         super(UpdatePartitionLoadResult, self).__init__(**kwargs)
         self.partition_id = partition_id
         self.partition_error_code = partition_error_code
@@ -23168,30 +26904,44 @@ class UpgradeDomainDeltaNodesCheckHealthEvaluation(HealthEvaluation):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'upgrade_domain_name': {'key': 'UpgradeDomainName', 'type': 'str'},
-        'baseline_error_count': {'key': 'BaselineErrorCount', 'type': 'long'},
-        'baseline_total_count': {'key': 'BaselineTotalCount', 'type': 'long'},
-        'max_percent_delta_unhealthy_nodes': {'key': 'MaxPercentDeltaUnhealthyNodes', 'type': 'int'},
-        'total_count': {'key': 'TotalCount', 'type': 'long'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "description": {"key": "Description", "type": "str"},
+        "kind": {"key": "Kind", "type": "str"},
+        "upgrade_domain_name": {"key": "UpgradeDomainName", "type": "str"},
+        "baseline_error_count": {"key": "BaselineErrorCount", "type": "long"},
+        "baseline_total_count": {"key": "BaselineTotalCount", "type": "long"},
+        "max_percent_delta_unhealthy_nodes": {"key": "MaxPercentDeltaUnhealthyNodes", "type": "int"},
+        "total_count": {"key": "TotalCount", "type": "long"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, description: str=None, upgrade_domain_name: str=None, baseline_error_count: int=None, baseline_total_count: int=None, max_percent_delta_unhealthy_nodes: int=None, total_count: int=None, unhealthy_evaluations=None, **kwargs) -> None:
-        super(UpgradeDomainDeltaNodesCheckHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description, **kwargs)
+    def __init__(
+        self,
+        *,
+        aggregated_health_state=None,
+        description: str = None,
+        upgrade_domain_name: str = None,
+        baseline_error_count: int = None,
+        baseline_total_count: int = None,
+        max_percent_delta_unhealthy_nodes: int = None,
+        total_count: int = None,
+        unhealthy_evaluations=None,
+        **kwargs
+    ) -> None:
+        super(UpgradeDomainDeltaNodesCheckHealthEvaluation, self).__init__(
+            aggregated_health_state=aggregated_health_state, description=description, **kwargs
+        )
         self.upgrade_domain_name = upgrade_domain_name
         self.baseline_error_count = baseline_error_count
         self.baseline_total_count = baseline_total_count
         self.max_percent_delta_unhealthy_nodes = max_percent_delta_unhealthy_nodes
         self.total_count = total_count
         self.unhealthy_evaluations = unhealthy_evaluations
-        self.kind = 'UpgradeDomainDeltaNodesCheck'
+        self.kind = "UpgradeDomainDeltaNodesCheck"
 
 
 class UpgradeDomainDeployedApplicationsHealthEvaluation(HealthEvaluation):
@@ -23232,26 +26982,41 @@ class UpgradeDomainDeployedApplicationsHealthEvaluation(HealthEvaluation):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'upgrade_domain_name': {'key': 'UpgradeDomainName', 'type': 'str'},
-        'max_percent_unhealthy_deployed_applications': {'key': 'MaxPercentUnhealthyDeployedApplications', 'type': 'int'},
-        'total_count': {'key': 'TotalCount', 'type': 'long'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "description": {"key": "Description", "type": "str"},
+        "kind": {"key": "Kind", "type": "str"},
+        "upgrade_domain_name": {"key": "UpgradeDomainName", "type": "str"},
+        "max_percent_unhealthy_deployed_applications": {
+            "key": "MaxPercentUnhealthyDeployedApplications",
+            "type": "int",
+        },
+        "total_count": {"key": "TotalCount", "type": "long"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, description: str=None, upgrade_domain_name: str=None, max_percent_unhealthy_deployed_applications: int=None, total_count: int=None, unhealthy_evaluations=None, **kwargs) -> None:
-        super(UpgradeDomainDeployedApplicationsHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description, **kwargs)
+    def __init__(
+        self,
+        *,
+        aggregated_health_state=None,
+        description: str = None,
+        upgrade_domain_name: str = None,
+        max_percent_unhealthy_deployed_applications: int = None,
+        total_count: int = None,
+        unhealthy_evaluations=None,
+        **kwargs
+    ) -> None:
+        super(UpgradeDomainDeployedApplicationsHealthEvaluation, self).__init__(
+            aggregated_health_state=aggregated_health_state, description=description, **kwargs
+        )
         self.upgrade_domain_name = upgrade_domain_name
         self.max_percent_unhealthy_deployed_applications = max_percent_unhealthy_deployed_applications
         self.total_count = total_count
         self.unhealthy_evaluations = unhealthy_evaluations
-        self.kind = 'UpgradeDomainDeployedApplications'
+        self.kind = "UpgradeDomainDeployedApplications"
 
 
 class UpgradeDomainInfo(Model):
@@ -23265,11 +27030,11 @@ class UpgradeDomainInfo(Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'state': {'key': 'State', 'type': 'str'},
+        "name": {"key": "Name", "type": "str"},
+        "state": {"key": "State", "type": "str"},
     }
 
-    def __init__(self, *, name: str=None, state=None, **kwargs) -> None:
+    def __init__(self, *, name: str = None, state=None, **kwargs) -> None:
         super(UpgradeDomainInfo, self).__init__(**kwargs)
         self.name = name
         self.state = state
@@ -23311,26 +27076,38 @@ class UpgradeDomainNodesHealthEvaluation(HealthEvaluation):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'upgrade_domain_name': {'key': 'UpgradeDomainName', 'type': 'str'},
-        'max_percent_unhealthy_nodes': {'key': 'MaxPercentUnhealthyNodes', 'type': 'int'},
-        'total_count': {'key': 'TotalCount', 'type': 'long'},
-        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
+        "aggregated_health_state": {"key": "AggregatedHealthState", "type": "str"},
+        "description": {"key": "Description", "type": "str"},
+        "kind": {"key": "Kind", "type": "str"},
+        "upgrade_domain_name": {"key": "UpgradeDomainName", "type": "str"},
+        "max_percent_unhealthy_nodes": {"key": "MaxPercentUnhealthyNodes", "type": "int"},
+        "total_count": {"key": "TotalCount", "type": "long"},
+        "unhealthy_evaluations": {"key": "UnhealthyEvaluations", "type": "[HealthEvaluationWrapper]"},
     }
 
-    def __init__(self, *, aggregated_health_state=None, description: str=None, upgrade_domain_name: str=None, max_percent_unhealthy_nodes: int=None, total_count: int=None, unhealthy_evaluations=None, **kwargs) -> None:
-        super(UpgradeDomainNodesHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description, **kwargs)
+    def __init__(
+        self,
+        *,
+        aggregated_health_state=None,
+        description: str = None,
+        upgrade_domain_name: str = None,
+        max_percent_unhealthy_nodes: int = None,
+        total_count: int = None,
+        unhealthy_evaluations=None,
+        **kwargs
+    ) -> None:
+        super(UpgradeDomainNodesHealthEvaluation, self).__init__(
+            aggregated_health_state=aggregated_health_state, description=description, **kwargs
+        )
         self.upgrade_domain_name = upgrade_domain_name
         self.max_percent_unhealthy_nodes = max_percent_unhealthy_nodes
         self.total_count = total_count
         self.unhealthy_evaluations = unhealthy_evaluations
-        self.kind = 'UpgradeDomainNodes'
+        self.kind = "UpgradeDomainNodes"
 
 
 class UpgradeOrchestrationServiceState(Model):
@@ -23342,10 +27119,10 @@ class UpgradeOrchestrationServiceState(Model):
     """
 
     _attribute_map = {
-        'service_state': {'key': 'ServiceState', 'type': 'str'},
+        "service_state": {"key": "ServiceState", "type": "str"},
     }
 
-    def __init__(self, *, service_state: str=None, **kwargs) -> None:
+    def __init__(self, *, service_state: str = None, **kwargs) -> None:
         super(UpgradeOrchestrationServiceState, self).__init__(**kwargs)
         self.service_state = service_state
 
@@ -23369,14 +27146,23 @@ class UpgradeOrchestrationServiceStateSummary(Model):
     """
 
     _attribute_map = {
-        'current_code_version': {'key': 'CurrentCodeVersion', 'type': 'str'},
-        'current_manifest_version': {'key': 'CurrentManifestVersion', 'type': 'str'},
-        'target_code_version': {'key': 'TargetCodeVersion', 'type': 'str'},
-        'target_manifest_version': {'key': 'TargetManifestVersion', 'type': 'str'},
-        'pending_upgrade_type': {'key': 'PendingUpgradeType', 'type': 'str'},
+        "current_code_version": {"key": "CurrentCodeVersion", "type": "str"},
+        "current_manifest_version": {"key": "CurrentManifestVersion", "type": "str"},
+        "target_code_version": {"key": "TargetCodeVersion", "type": "str"},
+        "target_manifest_version": {"key": "TargetManifestVersion", "type": "str"},
+        "pending_upgrade_type": {"key": "PendingUpgradeType", "type": "str"},
     }
 
-    def __init__(self, *, current_code_version: str=None, current_manifest_version: str=None, target_code_version: str=None, target_manifest_version: str=None, pending_upgrade_type: str=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        current_code_version: str = None,
+        current_manifest_version: str = None,
+        target_code_version: str = None,
+        target_manifest_version: str = None,
+        pending_upgrade_type: str = None,
+        **kwargs
+    ) -> None:
         super(UpgradeOrchestrationServiceStateSummary, self).__init__(**kwargs)
         self.current_code_version = current_code_version
         self.current_manifest_version = current_manifest_version
@@ -23396,11 +27182,11 @@ class UpgradeUnitInfo(Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'state': {'key': 'State', 'type': 'str'},
+        "name": {"key": "Name", "type": "str"},
+        "state": {"key": "State", "type": "str"},
     }
 
-    def __init__(self, *, name: str=None, state=None, **kwargs) -> None:
+    def __init__(self, *, name: str = None, state=None, **kwargs) -> None:
         super(UpgradeUnitInfo, self).__init__(**kwargs)
         self.name = name
         self.state = state
@@ -23418,11 +27204,11 @@ class UploadChunkRange(Model):
     """
 
     _attribute_map = {
-        'start_position': {'key': 'StartPosition', 'type': 'str'},
-        'end_position': {'key': 'EndPosition', 'type': 'str'},
+        "start_position": {"key": "StartPosition", "type": "str"},
+        "end_position": {"key": "EndPosition", "type": "str"},
     }
 
-    def __init__(self, *, start_position: str=None, end_position: str=None, **kwargs) -> None:
+    def __init__(self, *, start_position: str = None, end_position: str = None, **kwargs) -> None:
         super(UploadChunkRange, self).__init__(**kwargs)
         self.start_position = start_position
         self.end_position = end_position
@@ -23439,7 +27225,7 @@ class UploadSession(Model):
     """
 
     _attribute_map = {
-        'upload_sessions': {'key': 'UploadSessions', 'type': '[UploadSessionInfo]'},
+        "upload_sessions": {"key": "UploadSessions", "type": "[UploadSessionInfo]"},
     }
 
     def __init__(self, *, upload_sessions=None, **kwargs) -> None:
@@ -23468,14 +27254,23 @@ class UploadSessionInfo(Model):
     """
 
     _attribute_map = {
-        'store_relative_path': {'key': 'StoreRelativePath', 'type': 'str'},
-        'session_id': {'key': 'SessionId', 'type': 'str'},
-        'modified_date': {'key': 'ModifiedDate', 'type': 'iso-8601'},
-        'file_size': {'key': 'FileSize', 'type': 'str'},
-        'expected_ranges': {'key': 'ExpectedRanges', 'type': '[UploadChunkRange]'},
+        "store_relative_path": {"key": "StoreRelativePath", "type": "str"},
+        "session_id": {"key": "SessionId", "type": "str"},
+        "modified_date": {"key": "ModifiedDate", "type": "iso-8601"},
+        "file_size": {"key": "FileSize", "type": "str"},
+        "expected_ranges": {"key": "ExpectedRanges", "type": "[UploadChunkRange]"},
     }
 
-    def __init__(self, *, store_relative_path: str=None, session_id: str=None, modified_date=None, file_size: str=None, expected_ranges=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        store_relative_path: str = None,
+        session_id: str = None,
+        modified_date=None,
+        file_size: str = None,
+        expected_ranges=None,
+        **kwargs
+    ) -> None:
         super(UploadSessionInfo, self).__init__(**kwargs)
         self.store_relative_path = store_relative_path
         self.session_id = session_id
@@ -23495,11 +27290,11 @@ class UsageInfo(Model):
     """
 
     _attribute_map = {
-        'used_space': {'key': 'UsedSpace', 'type': 'str'},
-        'file_count': {'key': 'FileCount', 'type': 'str'},
+        "used_space": {"key": "UsedSpace", "type": "str"},
+        "file_count": {"key": "FileCount", "type": "str"},
     }
 
-    def __init__(self, *, used_space: str=None, file_count: str=None, **kwargs) -> None:
+    def __init__(self, *, used_space: str = None, file_count: str = None, **kwargs) -> None:
         super(UsageInfo, self).__init__(**kwargs)
         self.used_space = used_space
         self.file_count = file_count
@@ -23519,11 +27314,11 @@ class ValidateClusterUpgradeResult(Model):
     """
 
     _attribute_map = {
-        'service_host_upgrade_impact': {'key': 'ServiceHostUpgradeImpact', 'type': 'str'},
-        'validation_details': {'key': 'ValidationDetails', 'type': 'str'},
+        "service_host_upgrade_impact": {"key": "ServiceHostUpgradeImpact", "type": "str"},
+        "validation_details": {"key": "ValidationDetails", "type": "str"},
     }
 
-    def __init__(self, *, service_host_upgrade_impact=None, validation_details: str=None, **kwargs) -> None:
+    def __init__(self, *, service_host_upgrade_impact=None, validation_details: str = None, **kwargs) -> None:
         super(ValidateClusterUpgradeResult, self).__init__(**kwargs)
         self.service_host_upgrade_impact = service_host_upgrade_impact
         self.validation_details = validation_details
@@ -23547,20 +27342,20 @@ class ValidationFailedChaosEvent(ChaosEvent):
     """
 
     _validation = {
-        'time_stamp_utc': {'required': True},
-        'kind': {'required': True},
+        "time_stamp_utc": {"required": True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'time_stamp_utc': {'key': 'TimeStampUtc', 'type': 'iso-8601'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'reason': {'key': 'Reason', 'type': 'str'},
+        "time_stamp_utc": {"key": "TimeStampUtc", "type": "iso-8601"},
+        "kind": {"key": "Kind", "type": "str"},
+        "reason": {"key": "Reason", "type": "str"},
     }
 
-    def __init__(self, *, time_stamp_utc, reason: str=None, **kwargs) -> None:
+    def __init__(self, *, time_stamp_utc, reason: str = None, **kwargs) -> None:
         super(ValidationFailedChaosEvent, self).__init__(time_stamp_utc=time_stamp_utc, **kwargs)
         self.reason = reason
-        self.kind = 'ValidationFailed'
+        self.kind = "ValidationFailed"
 
 
 class VolumeProviderParametersAzureFile(Model):
@@ -23580,17 +27375,17 @@ class VolumeProviderParametersAzureFile(Model):
     """
 
     _validation = {
-        'account_name': {'required': True},
-        'share_name': {'required': True},
+        "account_name": {"required": True},
+        "share_name": {"required": True},
     }
 
     _attribute_map = {
-        'account_name': {'key': 'accountName', 'type': 'str'},
-        'account_key': {'key': 'accountKey', 'type': 'str'},
-        'share_name': {'key': 'shareName', 'type': 'str'},
+        "account_name": {"key": "accountName", "type": "str"},
+        "account_key": {"key": "accountKey", "type": "str"},
+        "share_name": {"key": "shareName", "type": "str"},
     }
 
-    def __init__(self, *, account_name: str, share_name: str, account_key: str=None, **kwargs) -> None:
+    def __init__(self, *, account_name: str, share_name: str, account_key: str = None, **kwargs) -> None:
         super(VolumeProviderParametersAzureFile, self).__init__(**kwargs)
         self.account_name = account_name
         self.account_key = account_key
@@ -23625,24 +27420,24 @@ class VolumeResourceDescription(Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'status': {'readonly': True},
-        'status_details': {'readonly': True},
-        'provider': {'required': True, 'constant': True},
+        "name": {"required": True},
+        "status": {"readonly": True},
+        "status_details": {"readonly": True},
+        "provider": {"required": True, "constant": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'status_details': {'key': 'properties.statusDetails', 'type': 'str'},
-        'provider': {'key': 'properties.provider', 'type': 'str'},
-        'azure_file_parameters': {'key': 'properties.azureFileParameters', 'type': 'VolumeProviderParametersAzureFile'},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "status_details": {"key": "properties.statusDetails", "type": "str"},
+        "provider": {"key": "properties.provider", "type": "str"},
+        "azure_file_parameters": {"key": "properties.azureFileParameters", "type": "VolumeProviderParametersAzureFile"},
     }
 
     provider = "SFAzureFile"
 
-    def __init__(self, *, name: str, description: str=None, azure_file_parameters=None, **kwargs) -> None:
+    def __init__(self, *, name: str, description: str = None, azure_file_parameters=None, **kwargs) -> None:
         super(VolumeResourceDescription, self).__init__(**kwargs)
         self.name = name
         self.description = description
@@ -23667,17 +27462,17 @@ class WaitForInbuildReplicaSafetyCheck(PartitionSafetyCheck):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
+        "kind": {"key": "Kind", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
     }
 
-    def __init__(self, *, partition_id: str=None, **kwargs) -> None:
+    def __init__(self, *, partition_id: str = None, **kwargs) -> None:
         super(WaitForInbuildReplicaSafetyCheck, self).__init__(partition_id=partition_id, **kwargs)
-        self.kind = 'WaitForInbuildReplica'
+        self.kind = "WaitForInbuildReplica"
 
 
 class WaitForPrimaryPlacementSafetyCheck(PartitionSafetyCheck):
@@ -23694,17 +27489,17 @@ class WaitForPrimaryPlacementSafetyCheck(PartitionSafetyCheck):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
+        "kind": {"key": "Kind", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
     }
 
-    def __init__(self, *, partition_id: str=None, **kwargs) -> None:
+    def __init__(self, *, partition_id: str = None, **kwargs) -> None:
         super(WaitForPrimaryPlacementSafetyCheck, self).__init__(partition_id=partition_id, **kwargs)
-        self.kind = 'WaitForPrimaryPlacement'
+        self.kind = "WaitForPrimaryPlacement"
 
 
 class WaitForPrimarySwapSafetyCheck(PartitionSafetyCheck):
@@ -23722,17 +27517,17 @@ class WaitForPrimarySwapSafetyCheck(PartitionSafetyCheck):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
+        "kind": {"key": "Kind", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
     }
 
-    def __init__(self, *, partition_id: str=None, **kwargs) -> None:
+    def __init__(self, *, partition_id: str = None, **kwargs) -> None:
         super(WaitForPrimarySwapSafetyCheck, self).__init__(partition_id=partition_id, **kwargs)
-        self.kind = 'WaitForPrimarySwap'
+        self.kind = "WaitForPrimarySwap"
 
 
 class WaitForReconfigurationSafetyCheck(PartitionSafetyCheck):
@@ -23749,17 +27544,17 @@ class WaitForReconfigurationSafetyCheck(PartitionSafetyCheck):
     """
 
     _validation = {
-        'kind': {'required': True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'partition_id': {'key': 'PartitionId', 'type': 'str'},
+        "kind": {"key": "Kind", "type": "str"},
+        "partition_id": {"key": "PartitionId", "type": "str"},
     }
 
-    def __init__(self, *, partition_id: str=None, **kwargs) -> None:
+    def __init__(self, *, partition_id: str = None, **kwargs) -> None:
         super(WaitForReconfigurationSafetyCheck, self).__init__(partition_id=partition_id, **kwargs)
-        self.kind = 'WaitForReconfiguration'
+        self.kind = "WaitForReconfiguration"
 
 
 class WaitingChaosEvent(ChaosEvent):
@@ -23780,17 +27575,17 @@ class WaitingChaosEvent(ChaosEvent):
     """
 
     _validation = {
-        'time_stamp_utc': {'required': True},
-        'kind': {'required': True},
+        "time_stamp_utc": {"required": True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'time_stamp_utc': {'key': 'TimeStampUtc', 'type': 'iso-8601'},
-        'kind': {'key': 'Kind', 'type': 'str'},
-        'reason': {'key': 'Reason', 'type': 'str'},
+        "time_stamp_utc": {"key": "TimeStampUtc", "type": "iso-8601"},
+        "kind": {"key": "Kind", "type": "str"},
+        "reason": {"key": "Reason", "type": "str"},
     }
 
-    def __init__(self, *, time_stamp_utc, reason: str=None, **kwargs) -> None:
+    def __init__(self, *, time_stamp_utc, reason: str = None, **kwargs) -> None:
         super(WaitingChaosEvent, self).__init__(time_stamp_utc=time_stamp_utc, **kwargs)
         self.reason = reason
-        self.kind = 'Waiting'
+        self.kind = "Waiting"

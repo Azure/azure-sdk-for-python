@@ -13,7 +13,6 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _ONE_SETTINGS_CHANGE_VERSION_KEY,
 )
 
-
 logger = logging.getLogger(__name__)
 
 

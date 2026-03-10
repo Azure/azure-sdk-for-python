@@ -61,40 +61,40 @@ class Share(ARMBaseModel):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'share_status': {'required': True},
-        'monitoring_status': {'required': True},
-        'access_protocol': {'required': True},
-        'share_mappings': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "share_status": {"required": True},
+        "monitoring_status": {"required": True},
+        "access_protocol": {"required": True},
+        "share_mappings": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'share_status': {'key': 'properties.shareStatus', 'type': 'str'},
-        'monitoring_status': {'key': 'properties.monitoringStatus', 'type': 'str'},
-        'azure_container_info': {'key': 'properties.azureContainerInfo', 'type': 'AzureContainerInfo'},
-        'access_protocol': {'key': 'properties.accessProtocol', 'type': 'str'},
-        'user_access_rights': {'key': 'properties.userAccessRights', 'type': '[UserAccessRight]'},
-        'client_access_rights': {'key': 'properties.clientAccessRights', 'type': '[ClientAccessRight]'},
-        'refresh_details': {'key': 'properties.refreshDetails', 'type': 'RefreshDetails'},
-        'share_mappings': {'key': 'properties.shareMappings', 'type': '[MountPointMap]'},
-        'data_policy': {'key': 'properties.dataPolicy', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "share_status": {"key": "properties.shareStatus", "type": "str"},
+        "monitoring_status": {"key": "properties.monitoringStatus", "type": "str"},
+        "azure_container_info": {"key": "properties.azureContainerInfo", "type": "AzureContainerInfo"},
+        "access_protocol": {"key": "properties.accessProtocol", "type": "str"},
+        "user_access_rights": {"key": "properties.userAccessRights", "type": "[UserAccessRight]"},
+        "client_access_rights": {"key": "properties.clientAccessRights", "type": "[ClientAccessRight]"},
+        "refresh_details": {"key": "properties.refreshDetails", "type": "RefreshDetails"},
+        "share_mappings": {"key": "properties.shareMappings", "type": "[MountPointMap]"},
+        "data_policy": {"key": "properties.dataPolicy", "type": "str"},
     }
 
     def __init__(self, **kwargs):
         super(Share, self).__init__(**kwargs)
-        self.description = kwargs.get('description', None)
-        self.share_status = kwargs.get('share_status', None)
-        self.monitoring_status = kwargs.get('monitoring_status', None)
-        self.azure_container_info = kwargs.get('azure_container_info', None)
-        self.access_protocol = kwargs.get('access_protocol', None)
-        self.user_access_rights = kwargs.get('user_access_rights', None)
-        self.client_access_rights = kwargs.get('client_access_rights', None)
-        self.refresh_details = kwargs.get('refresh_details', None)
+        self.description = kwargs.get("description", None)
+        self.share_status = kwargs.get("share_status", None)
+        self.monitoring_status = kwargs.get("monitoring_status", None)
+        self.azure_container_info = kwargs.get("azure_container_info", None)
+        self.access_protocol = kwargs.get("access_protocol", None)
+        self.user_access_rights = kwargs.get("user_access_rights", None)
+        self.client_access_rights = kwargs.get("client_access_rights", None)
+        self.refresh_details = kwargs.get("refresh_details", None)
         self.share_mappings = None
-        self.data_policy = kwargs.get('data_policy', None)
+        self.data_policy = kwargs.get("data_policy", None)

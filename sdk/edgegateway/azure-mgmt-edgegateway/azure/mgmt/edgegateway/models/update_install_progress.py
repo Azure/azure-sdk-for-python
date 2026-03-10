@@ -27,15 +27,15 @@ class UpdateInstallProgress(Model):
     """
 
     _validation = {
-        'percent_complete': {'readonly': True},
-        'number_of_updates_to_install': {'readonly': True},
-        'number_of_updates_installed': {'readonly': True},
+        "percent_complete": {"readonly": True},
+        "number_of_updates_to_install": {"readonly": True},
+        "number_of_updates_installed": {"readonly": True},
     }
 
     _attribute_map = {
-        'percent_complete': {'key': 'percentComplete', 'type': 'int'},
-        'number_of_updates_to_install': {'key': 'numberOfUpdatesToInstall', 'type': 'int'},
-        'number_of_updates_installed': {'key': 'numberOfUpdatesInstalled', 'type': 'int'},
+        "percent_complete": {"key": "percentComplete", "type": "int"},
+        "number_of_updates_to_install": {"key": "numberOfUpdatesToInstall", "type": "int"},
+        "number_of_updates_installed": {"key": "numberOfUpdatesInstalled", "type": "int"},
     }
 
     def __init__(self, **kwargs):

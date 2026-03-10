@@ -19,10 +19,7 @@ class TestAudioAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(WHISPER_AZURE, GA), (WHISPER_AZURE, PREVIEW), (OPENAI, "v1")]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(WHISPER_AZURE, GA), (WHISPER_AZURE, PREVIEW), (OPENAI, "v1")])
     async def test_transcribe(self, client_async, api_type, api_version, **kwargs):
 
         result = await client_async.audio.transcriptions.create(
@@ -46,10 +43,7 @@ class TestAudioAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(WHISPER_AZURE, GA), (WHISPER_AZURE, PREVIEW), (OPENAI, "v1")]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(WHISPER_AZURE, GA), (WHISPER_AZURE, PREVIEW), (OPENAI, "v1")])
     async def test_translate(self, client_async, api_type, api_version, **kwargs):
 
         result = await client_async.audio.translations.create(
@@ -81,14 +75,16 @@ class TestAudioAsync(AzureRecordedTestCase):
             response_format="verbose_json",
             **kwargs,
         )
-        assert result.text == "The ocelot, Lepardus paradalis, is a small wild cat native to the southwestern " \
-            "United States, Mexico, and Central and South America. This medium-sized cat is characterized by " \
-            "solid black spots and streaks on its coat, round ears, and white neck and undersides. It weighs " \
-            "between 8 and 15.5 kilograms, 18 and 34 pounds, and reaches 40 to 50 centimeters – 16 to 20 inches " \
-            "– at the shoulders. It was first described by Carl Linnaeus in 1758. Two subspecies are recognized, " \
-            "L. p. paradalis and L. p. mitis. Typically active during twilight and at night, the ocelot tends to " \
-            "be solitary and territorial. It is efficient at climbing, leaping, and swimming. It preys on small " \
+        assert (
+            result.text == "The ocelot, Lepardus paradalis, is a small wild cat native to the southwestern "
+            "United States, Mexico, and Central and South America. This medium-sized cat is characterized by "
+            "solid black spots and streaks on its coat, round ears, and white neck and undersides. It weighs "
+            "between 8 and 15.5 kilograms, 18 and 34 pounds, and reaches 40 to 50 centimeters – 16 to 20 inches "
+            "– at the shoulders. It was first described by Carl Linnaeus in 1758. Two subspecies are recognized, "
+            "L. p. paradalis and L. p. mitis. Typically active during twilight and at night, the ocelot tends to "
+            "be solitary and territorial. It is efficient at climbing, leaping, and swimming. It preys on small "
             "terrestrial mammals such as armadillo, opossum, and lagomorphs."
+        )
         assert result.task == "transcribe"
         assert result.language == "english"
         assert result.duration == 56.25
@@ -150,14 +146,16 @@ class TestAudioAsync(AzureRecordedTestCase):
             response_format="verbose_json",
             **kwargs,
         )
-        assert result.text == "The ocelot, Lepardus paradalis, is a small wild cat native to the southwestern " \
-            "United States, Mexico, and Central and South America. This medium-sized cat is characterized by " \
-            "solid black spots and streaks on its coat, round ears, and white neck and undersides. It weighs " \
-            "between 8 and 15.5 kilograms, 18 and 34 pounds, and reaches 40 to 50 centimeters – 16 to 20 inches " \
-            "– at the shoulders. It was first described by Carl Linnaeus in 1758. Two subspecies are recognized, " \
-            "L. p. paradalis and L. p. mitis. Typically active during twilight and at night, the ocelot tends to " \
-            "be solitary and territorial. It is efficient at climbing, leaping, and swimming. It preys on small " \
+        assert (
+            result.text == "The ocelot, Lepardus paradalis, is a small wild cat native to the southwestern "
+            "United States, Mexico, and Central and South America. This medium-sized cat is characterized by "
+            "solid black spots and streaks on its coat, round ears, and white neck and undersides. It weighs "
+            "between 8 and 15.5 kilograms, 18 and 34 pounds, and reaches 40 to 50 centimeters – 16 to 20 inches "
+            "– at the shoulders. It was first described by Carl Linnaeus in 1758. Two subspecies are recognized, "
+            "L. p. paradalis and L. p. mitis. Typically active during twilight and at night, the ocelot tends to "
+            "be solitary and territorial. It is efficient at climbing, leaping, and swimming. It preys on small "
             "terrestrial mammals such as armadillo, opossum, and lagomorphs."
+        )
         assert result.task == "translate"
         assert result.language == "english"
         assert result.duration == 56.25
@@ -238,10 +236,7 @@ class TestAudioAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(TTS_AZURE, PREVIEW), (TTS_OPENAI, "v1")]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(TTS_AZURE, PREVIEW), (TTS_OPENAI, "v1")])
     async def test_tts(self, client_async, api_type, api_version, **kwargs):
 
         speech_file_path = pathlib.Path(__file__).parent / f"{uuid.uuid4()}.mp3"
@@ -264,9 +259,7 @@ class TestAudioAsync(AzureRecordedTestCase):
     async def test_tts_hd(self, client_async, api_type, api_version, **kwargs):
 
         async with client_async.audio.speech.with_streaming_response.create(
-            voice="echo",
-            input="The quick brown fox jumped over the lazy dog.",
-            model="tts-1-hd"
+            voice="echo", input="The quick brown fox jumped over the lazy dog.", model="tts-1-hd"
         ) as response:
             await response.read()
 
@@ -278,10 +271,7 @@ class TestAudioAsync(AzureRecordedTestCase):
         speech_file_path = pathlib.Path(__file__).parent / f"{uuid.uuid4()}.flac"
         try:
             response = await client_async.audio.speech.create(
-                voice="fable",
-                input="The quick brown fox jumped over the lazy dog.",
-                response_format="flac",
-                **kwargs
+                voice="fable", input="The quick brown fox jumped over the lazy dog.", response_format="flac", **kwargs
             )
             assert response.encoding
             assert response.content
@@ -298,10 +288,7 @@ class TestAudioAsync(AzureRecordedTestCase):
         speech_file_path = pathlib.Path(__file__).parent / f"{uuid.uuid4()}.mp3"
         try:
             response = await client_async.audio.speech.create(
-                voice="onyx",
-                input="The quick brown fox jumped over the lazy dog.",
-                speed=3.0,
-                **kwargs
+                voice="onyx", input="The quick brown fox jumped over the lazy dog.", speed=3.0, **kwargs
             )
             assert response.encoding
             assert response.content

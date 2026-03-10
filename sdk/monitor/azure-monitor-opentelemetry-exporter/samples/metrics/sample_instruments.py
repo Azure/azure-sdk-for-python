@@ -6,6 +6,7 @@ An example to show an application using all instruments in the OpenTelemetry SDK
 and recorded using the sdk are tracked and telemetry is exported to application insights with the
 AzureMonitorMetricExporter.
 """
+
 import os
 from typing import Iterable
 

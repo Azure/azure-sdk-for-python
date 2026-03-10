@@ -1667,7 +1667,9 @@ class RedTeam:
     ):
         """Process orchestrator tasks either in parallel or sequentially."""
         if parallel_execution and orchestrator_tasks:
-            tqdm.write(f"⚙️ Processing {len(orchestrator_tasks)} tasks in parallel (max {max_parallel_tasks} at a time)")
+            tqdm.write(
+                f"⚙️ Processing {len(orchestrator_tasks)} tasks in parallel (max {max_parallel_tasks} at a time)"
+            )
 
             # Process tasks in batches
             for i in range(0, len(orchestrator_tasks), max_parallel_tasks):

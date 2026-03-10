@@ -30,7 +30,6 @@ import logging
 
 from azure.core.exceptions import ODataV4Format
 
-
 _LOGGER = logging.getLogger(__name__)
 
 

@@ -20,7 +20,6 @@ USAGE:
         For example, providing "folder1" would create a job that would process documents like "https://<storageaccount>.blob.core.windows.net/<container>/folder1/document1.txt".
 """
 
-
 import asyncio
 from azure.core.polling import AsyncLROPoller
 from azure.health.deidentification.aio import DeidentificationClient

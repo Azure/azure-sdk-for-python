@@ -11,7 +11,13 @@ from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TypeVa
 import warnings
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -19,10 +25,47 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ..._vendor import _convert_request
-from ...operations._operations import build_classification_rules_create_or_update_request, build_classification_rules_delete_request, build_classification_rules_get_request, build_classification_rules_list_all_request, build_classification_rules_list_versions_by_classification_rule_name_request, build_classification_rules_tag_classification_version_request, build_data_sources_create_or_update_request, build_data_sources_delete_request, build_data_sources_get_request, build_data_sources_list_all_request, build_filters_create_or_update_request, build_filters_get_request, build_key_vault_connections_create_request, build_key_vault_connections_delete_request, build_key_vault_connections_get_request, build_key_vault_connections_list_all_request, build_scan_result_cancel_scan_request, build_scan_result_list_scan_history_request, build_scan_result_run_scan_request, build_scan_rulesets_create_or_update_request, build_scan_rulesets_delete_request, build_scan_rulesets_get_request, build_scan_rulesets_list_all_request, build_scans_create_or_update_request, build_scans_delete_request, build_scans_get_request, build_scans_list_by_data_source_request, build_system_scan_rulesets_get_by_version_request, build_system_scan_rulesets_get_latest_request, build_system_scan_rulesets_get_request, build_system_scan_rulesets_list_all_request, build_system_scan_rulesets_list_versions_by_data_source_request, build_triggers_create_trigger_request, build_triggers_delete_trigger_request, build_triggers_get_trigger_request
+from ...operations._operations import (
+    build_classification_rules_create_or_update_request,
+    build_classification_rules_delete_request,
+    build_classification_rules_get_request,
+    build_classification_rules_list_all_request,
+    build_classification_rules_list_versions_by_classification_rule_name_request,
+    build_classification_rules_tag_classification_version_request,
+    build_data_sources_create_or_update_request,
+    build_data_sources_delete_request,
+    build_data_sources_get_request,
+    build_data_sources_list_all_request,
+    build_filters_create_or_update_request,
+    build_filters_get_request,
+    build_key_vault_connections_create_request,
+    build_key_vault_connections_delete_request,
+    build_key_vault_connections_get_request,
+    build_key_vault_connections_list_all_request,
+    build_scan_result_cancel_scan_request,
+    build_scan_result_list_scan_history_request,
+    build_scan_result_run_scan_request,
+    build_scan_rulesets_create_or_update_request,
+    build_scan_rulesets_delete_request,
+    build_scan_rulesets_get_request,
+    build_scan_rulesets_list_all_request,
+    build_scans_create_or_update_request,
+    build_scans_delete_request,
+    build_scans_get_request,
+    build_scans_list_by_data_source_request,
+    build_system_scan_rulesets_get_by_version_request,
+    build_system_scan_rulesets_get_latest_request,
+    build_system_scan_rulesets_get_request,
+    build_system_scan_rulesets_list_all_request,
+    build_system_scan_rulesets_list_versions_by_data_source_request,
+    build_triggers_create_trigger_request,
+    build_triggers_delete_trigger_request,
+    build_triggers_get_trigger_request,
+)
 
-T = TypeVar('T')
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class KeyVaultConnectionsOperations:
     """KeyVaultConnectionsOperations async operations.
@@ -43,11 +86,7 @@ class KeyVaultConnectionsOperations:
         self._config = config
 
     @distributed_trace_async
-    async def get(
-        self,
-        key_vault_name: str,
-        **kwargs: Any
-    ) -> Any:
+    async def get(self, key_vault_name: str, **kwargs: Any) -> Any:
         """Gets key vault information.
 
         :param key_vault_name:
@@ -69,23 +108,22 @@ class KeyVaultConnectionsOperations:
                     }
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_key_vault_connections_get_request(
             key_vault_name=key_vault_name,
-            template_url=self.get.metadata['url'],
+            template_url=self.get.metadata["url"],
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -102,16 +140,10 @@ class KeyVaultConnectionsOperations:
 
         return deserialized
 
-    get.metadata = {'url': '/azureKeyVaults/{keyVaultName}'}  # type: ignore
-
+    get.metadata = {"url": "/azureKeyVaults/{keyVaultName}"}  # type: ignore
 
     @distributed_trace_async
-    async def create(
-        self,
-        key_vault_name: str,
-        body: Any,
-        **kwargs: Any
-    ) -> Any:
+    async def create(self, key_vault_name: str, body: Any, **kwargs: Any) -> Any:
         """Creates an instance of a key vault connection.
 
         :param key_vault_name:
@@ -145,13 +177,11 @@ class KeyVaultConnectionsOperations:
                     }
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         json = body
 
@@ -159,14 +189,16 @@ class KeyVaultConnectionsOperations:
             key_vault_name=key_vault_name,
             content_type=content_type,
             json=json,
-            template_url=self.create.metadata['url'],
+            template_url=self.create.metadata["url"],
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -183,15 +215,10 @@ class KeyVaultConnectionsOperations:
 
         return deserialized
 
-    create.metadata = {'url': '/azureKeyVaults/{keyVaultName}'}  # type: ignore
-
+    create.metadata = {"url": "/azureKeyVaults/{keyVaultName}"}  # type: ignore
 
     @distributed_trace_async
-    async def delete(
-        self,
-        key_vault_name: str,
-        **kwargs: Any
-    ) -> Optional[Any]:
+    async def delete(self, key_vault_name: str, **kwargs: Any) -> Optional[Any]:
         """Deletes the key vault connection associated with the account.
 
         :param key_vault_name:
@@ -213,23 +240,22 @@ class KeyVaultConnectionsOperations:
                     }
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Any]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[Any]]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_key_vault_connections_delete_request(
             key_vault_name=key_vault_name,
-            template_url=self.delete.metadata['url'],
+            template_url=self.delete.metadata["url"],
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 204]:
@@ -248,14 +274,10 @@ class KeyVaultConnectionsOperations:
 
         return deserialized
 
-    delete.metadata = {'url': '/azureKeyVaults/{keyVaultName}'}  # type: ignore
-
+    delete.metadata = {"url": "/azureKeyVaults/{keyVaultName}"}  # type: ignore
 
     @distributed_trace
-    def list_all(
-        self,
-        **kwargs: Any
-    ) -> AsyncIterable[Any]:
+    def list_all(self, **kwargs: Any) -> AsyncIterable[Any]:
         """List key vault connections in account.
 
         :return: An iterator like instance of JSON object
@@ -281,36 +303,41 @@ class KeyVaultConnectionsOperations:
                     ]
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_key_vault_connections_list_all_request(
-                    template_url=self.list_all.metadata['url'],
+                    template_url=self.list_all.metadata["url"],
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                
+
                 request = build_key_vault_connections_list_all_request(
                     template_url=next_link,
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.method = "GET"
             return request
@@ -334,11 +361,11 @@ class KeyVaultConnectionsOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_all.metadata = {'url': '/azureKeyVaults'}  # type: ignore
+    list_all.metadata = {"url": "/azureKeyVaults"}  # type: ignore
+
+
 class ClassificationRulesOperations:
     """ClassificationRulesOperations async operations.
 
@@ -358,11 +385,7 @@ class ClassificationRulesOperations:
         self._config = config
 
     @distributed_trace_async
-    async def get(
-        self,
-        classification_rule_name: str,
-        **kwargs: Any
-    ) -> Any:
+    async def get(self, classification_rule_name: str, **kwargs: Any) -> Any:
         """Get a classification rule.
 
         :param classification_rule_name:
@@ -381,23 +404,22 @@ class ClassificationRulesOperations:
                     kind: ClassificationRule
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_classification_rules_get_request(
             classification_rule_name=classification_rule_name,
-            template_url=self.get.metadata['url'],
+            template_url=self.get.metadata["url"],
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -414,16 +436,10 @@ class ClassificationRulesOperations:
 
         return deserialized
 
-    get.metadata = {'url': '/classificationrules/{classificationRuleName}'}  # type: ignore
-
+    get.metadata = {"url": "/classificationrules/{classificationRuleName}"}  # type: ignore
 
     @distributed_trace_async
-    async def create_or_update(
-        self,
-        classification_rule_name: str,
-        body: Any = None,
-        **kwargs: Any
-    ) -> Any:
+    async def create_or_update(self, classification_rule_name: str, body: Any = None, **kwargs: Any) -> Any:
         """Creates or Updates a classification rule.
 
         :param classification_rule_name:
@@ -453,13 +469,11 @@ class ClassificationRulesOperations:
                     kind: ClassificationRule
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
             json = body
@@ -470,14 +484,16 @@ class ClassificationRulesOperations:
             classification_rule_name=classification_rule_name,
             content_type=content_type,
             json=json,
-            template_url=self.create_or_update.metadata['url'],
+            template_url=self.create_or_update.metadata["url"],
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
@@ -501,15 +517,10 @@ class ClassificationRulesOperations:
 
         return deserialized
 
-    create_or_update.metadata = {'url': '/classificationrules/{classificationRuleName}'}  # type: ignore
-
+    create_or_update.metadata = {"url": "/classificationrules/{classificationRuleName}"}  # type: ignore
 
     @distributed_trace_async
-    async def delete(
-        self,
-        classification_rule_name: str,
-        **kwargs: Any
-    ) -> Optional[Any]:
+    async def delete(self, classification_rule_name: str, **kwargs: Any) -> Optional[Any]:
         """Deletes a classification rule.
 
         :param classification_rule_name:
@@ -528,23 +539,22 @@ class ClassificationRulesOperations:
                     kind: ClassificationRule
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Any]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[Any]]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_classification_rules_delete_request(
             classification_rule_name=classification_rule_name,
-            template_url=self.delete.metadata['url'],
+            template_url=self.delete.metadata["url"],
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 204]:
@@ -563,14 +573,10 @@ class ClassificationRulesOperations:
 
         return deserialized
 
-    delete.metadata = {'url': '/classificationrules/{classificationRuleName}'}  # type: ignore
-
+    delete.metadata = {"url": "/classificationrules/{classificationRuleName}"}  # type: ignore
 
     @distributed_trace
-    def list_all(
-        self,
-        **kwargs: Any
-    ) -> AsyncIterable[Any]:
+    def list_all(self, **kwargs: Any) -> AsyncIterable[Any]:
         """List classification rules in Account.
 
         :return: An iterator like instance of JSON object
@@ -593,36 +599,41 @@ class ClassificationRulesOperations:
                     ]
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_classification_rules_list_all_request(
-                    template_url=self.list_all.metadata['url'],
+                    template_url=self.list_all.metadata["url"],
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                
+
                 request = build_classification_rules_list_all_request(
                     template_url=next_link,
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.method = "GET"
             return request
@@ -646,17 +657,13 @@ class ClassificationRulesOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_all.metadata = {'url': '/classificationrules'}  # type: ignore
+    list_all.metadata = {"url": "/classificationrules"}  # type: ignore
 
     @distributed_trace
     def list_versions_by_classification_rule_name(
-        self,
-        classification_rule_name: str,
-        **kwargs: Any
+        self, classification_rule_name: str, **kwargs: Any
     ) -> AsyncIterable[Any]:
         """Lists the rule versions of a classification rule.
 
@@ -682,38 +689,43 @@ class ClassificationRulesOperations:
                     ]
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_classification_rules_list_versions_by_classification_rule_name_request(
                     classification_rule_name=classification_rule_name,
-                    template_url=self.list_versions_by_classification_rule_name.metadata['url'],
+                    template_url=self.list_versions_by_classification_rule_name.metadata["url"],
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                
+
                 request = build_classification_rules_list_versions_by_classification_rule_name_request(
                     classification_rule_name=classification_rule_name,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.method = "GET"
             return request
@@ -737,20 +749,13 @@ class ClassificationRulesOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_versions_by_classification_rule_name.metadata = {'url': '/classificationrules/{classificationRuleName}/versions'}  # type: ignore
+    list_versions_by_classification_rule_name.metadata = {"url": "/classificationrules/{classificationRuleName}/versions"}  # type: ignore
 
     @distributed_trace_async
     async def tag_classification_version(
-        self,
-        classification_rule_name: str,
-        classification_rule_version: int,
-        *,
-        action: str,
-        **kwargs: Any
+        self, classification_rule_name: str, classification_rule_version: int, *, action: str, **kwargs: Any
     ) -> Any:
         """Sets Classification Action on a specific classification rule version.
 
@@ -790,25 +795,24 @@ class ClassificationRulesOperations:
                     "status": "str"  # Optional. Possible values include: "Accepted", "InProgress", "TransientFailure", "Succeeded", "Failed", "Canceled".
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_classification_rules_tag_classification_version_request(
             classification_rule_name=classification_rule_name,
             classification_rule_version=classification_rule_version,
             action=action,
-            template_url=self.tag_classification_version.metadata['url'],
+            template_url=self.tag_classification_version.metadata["url"],
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -825,7 +829,8 @@ class ClassificationRulesOperations:
 
         return deserialized
 
-    tag_classification_version.metadata = {'url': '/classificationrules/{classificationRuleName}/versions/{classificationRuleVersion}/:tag'}  # type: ignore
+    tag_classification_version.metadata = {"url": "/classificationrules/{classificationRuleName}/versions/{classificationRuleVersion}/:tag"}  # type: ignore
+
 
 class DataSourcesOperations:
     """DataSourcesOperations async operations.
@@ -846,12 +851,7 @@ class DataSourcesOperations:
         self._config = config
 
     @distributed_trace_async
-    async def create_or_update(
-        self,
-        data_source_name: str,
-        body: Any = None,
-        **kwargs: Any
-    ) -> Any:
+    async def create_or_update(self, data_source_name: str, body: Any = None, **kwargs: Any) -> Any:
         """Creates or Updates a data source.
 
         :param data_source_name:
@@ -987,13 +987,11 @@ class DataSourcesOperations:
                     kind: DataSource
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
             json = body
@@ -1004,14 +1002,16 @@ class DataSourcesOperations:
             data_source_name=data_source_name,
             content_type=content_type,
             json=json,
-            template_url=self.create_or_update.metadata['url'],
+            template_url=self.create_or_update.metadata["url"],
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
@@ -1035,15 +1035,10 @@ class DataSourcesOperations:
 
         return deserialized
 
-    create_or_update.metadata = {'url': '/datasources/{dataSourceName}'}  # type: ignore
-
+    create_or_update.metadata = {"url": "/datasources/{dataSourceName}"}  # type: ignore
 
     @distributed_trace_async
-    async def get(
-        self,
-        data_source_name: str,
-        **kwargs: Any
-    ) -> Any:
+    async def get(self, data_source_name: str, **kwargs: Any) -> Any:
         """Get a data source.
 
         :param data_source_name:
@@ -1115,23 +1110,22 @@ class DataSourcesOperations:
                     kind: DataSource
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_data_sources_get_request(
             data_source_name=data_source_name,
-            template_url=self.get.metadata['url'],
+            template_url=self.get.metadata["url"],
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1148,15 +1142,10 @@ class DataSourcesOperations:
 
         return deserialized
 
-    get.metadata = {'url': '/datasources/{dataSourceName}'}  # type: ignore
-
+    get.metadata = {"url": "/datasources/{dataSourceName}"}  # type: ignore
 
     @distributed_trace_async
-    async def delete(
-        self,
-        data_source_name: str,
-        **kwargs: Any
-    ) -> Optional[Any]:
+    async def delete(self, data_source_name: str, **kwargs: Any) -> Optional[Any]:
         """Deletes a data source.
 
         :param data_source_name:
@@ -1228,23 +1217,22 @@ class DataSourcesOperations:
                     kind: DataSource
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Any]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[Any]]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_data_sources_delete_request(
             data_source_name=data_source_name,
-            template_url=self.delete.metadata['url'],
+            template_url=self.delete.metadata["url"],
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 204]:
@@ -1263,14 +1251,10 @@ class DataSourcesOperations:
 
         return deserialized
 
-    delete.metadata = {'url': '/datasources/{dataSourceName}'}  # type: ignore
-
+    delete.metadata = {"url": "/datasources/{dataSourceName}"}  # type: ignore
 
     @distributed_trace
-    def list_all(
-        self,
-        **kwargs: Any
-    ) -> AsyncIterable[Any]:
+    def list_all(self, **kwargs: Any) -> AsyncIterable[Any]:
         """List data sources in Data catalog.
 
         :return: An iterator like instance of JSON object
@@ -1346,36 +1330,41 @@ class DataSourcesOperations:
                     ]
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_data_sources_list_all_request(
-                    template_url=self.list_all.metadata['url'],
+                    template_url=self.list_all.metadata["url"],
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                
+
                 request = build_data_sources_list_all_request(
                     template_url=next_link,
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.method = "GET"
             return request
@@ -1399,11 +1388,11 @@ class DataSourcesOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_all.metadata = {'url': '/datasources'}  # type: ignore
+    list_all.metadata = {"url": "/datasources"}  # type: ignore
+
+
 class FiltersOperations:
     """FiltersOperations async operations.
 
@@ -1423,12 +1412,7 @@ class FiltersOperations:
         self._config = config
 
     @distributed_trace_async
-    async def get(
-        self,
-        data_source_name: str,
-        scan_name: str,
-        **kwargs: Any
-    ) -> Any:
+    async def get(self, data_source_name: str, scan_name: str, **kwargs: Any) -> Any:
         """Get a filter.
 
         :param data_source_name:
@@ -1456,24 +1440,23 @@ class FiltersOperations:
                     }
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_filters_get_request(
             data_source_name=data_source_name,
             scan_name=scan_name,
-            template_url=self.get.metadata['url'],
+            template_url=self.get.metadata["url"],
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1490,17 +1473,10 @@ class FiltersOperations:
 
         return deserialized
 
-    get.metadata = {'url': '/datasources/{dataSourceName}/scans/{scanName}/filters/custom'}  # type: ignore
-
+    get.metadata = {"url": "/datasources/{dataSourceName}/scans/{scanName}/filters/custom"}  # type: ignore
 
     @distributed_trace_async
-    async def create_or_update(
-        self,
-        data_source_name: str,
-        scan_name: str,
-        body: Any = None,
-        **kwargs: Any
-    ) -> Any:
+    async def create_or_update(self, data_source_name: str, scan_name: str, body: Any = None, **kwargs: Any) -> Any:
         """Creates or updates a filter.
 
         :param data_source_name:
@@ -1544,13 +1520,11 @@ class FiltersOperations:
                     }
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
             json = body
@@ -1562,14 +1536,16 @@ class FiltersOperations:
             scan_name=scan_name,
             content_type=content_type,
             json=json,
-            template_url=self.create_or_update.metadata['url'],
+            template_url=self.create_or_update.metadata["url"],
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
@@ -1593,7 +1569,8 @@ class FiltersOperations:
 
         return deserialized
 
-    create_or_update.metadata = {'url': '/datasources/{dataSourceName}/scans/{scanName}/filters/custom'}  # type: ignore
+    create_or_update.metadata = {"url": "/datasources/{dataSourceName}/scans/{scanName}/filters/custom"}  # type: ignore
+
 
 class ScansOperations:
     """ScansOperations async operations.
@@ -1614,13 +1591,7 @@ class ScansOperations:
         self._config = config
 
     @distributed_trace_async
-    async def create_or_update(
-        self,
-        data_source_name: str,
-        scan_name: str,
-        body: Any,
-        **kwargs: Any
-    ) -> Any:
+    async def create_or_update(self, data_source_name: str, scan_name: str, body: Any, **kwargs: Any) -> Any:
         """Creates an instance of a scan.
 
         :param data_source_name:
@@ -1744,13 +1715,11 @@ class ScansOperations:
                     kind: Scan
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         json = body
 
@@ -1759,14 +1728,16 @@ class ScansOperations:
             scan_name=scan_name,
             content_type=content_type,
             json=json,
-            template_url=self.create_or_update.metadata['url'],
+            template_url=self.create_or_update.metadata["url"],
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
@@ -1790,16 +1761,10 @@ class ScansOperations:
 
         return deserialized
 
-    create_or_update.metadata = {'url': '/datasources/{dataSourceName}/scans/{scanName}'}  # type: ignore
-
+    create_or_update.metadata = {"url": "/datasources/{dataSourceName}/scans/{scanName}"}  # type: ignore
 
     @distributed_trace_async
-    async def get(
-        self,
-        data_source_name: str,
-        scan_name: str,
-        **kwargs: Any
-    ) -> Any:
+    async def get(self, data_source_name: str, scan_name: str, **kwargs: Any) -> Any:
         """Gets a scan information.
 
         :param data_source_name:
@@ -1866,24 +1831,23 @@ class ScansOperations:
                     kind: Scan
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_scans_get_request(
             data_source_name=data_source_name,
             scan_name=scan_name,
-            template_url=self.get.metadata['url'],
+            template_url=self.get.metadata["url"],
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1900,16 +1864,10 @@ class ScansOperations:
 
         return deserialized
 
-    get.metadata = {'url': '/datasources/{dataSourceName}/scans/{scanName}'}  # type: ignore
-
+    get.metadata = {"url": "/datasources/{dataSourceName}/scans/{scanName}"}  # type: ignore
 
     @distributed_trace_async
-    async def delete(
-        self,
-        data_source_name: str,
-        scan_name: str,
-        **kwargs: Any
-    ) -> Optional[Any]:
+    async def delete(self, data_source_name: str, scan_name: str, **kwargs: Any) -> Optional[Any]:
         """Deletes the scan associated with the data source.
 
         :param data_source_name:
@@ -1976,24 +1934,23 @@ class ScansOperations:
                     kind: Scan
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Any]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[Any]]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_scans_delete_request(
             data_source_name=data_source_name,
             scan_name=scan_name,
-            template_url=self.delete.metadata['url'],
+            template_url=self.delete.metadata["url"],
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 204]:
@@ -2012,15 +1969,10 @@ class ScansOperations:
 
         return deserialized
 
-    delete.metadata = {'url': '/datasources/{dataSourceName}/scans/{scanName}'}  # type: ignore
-
+    delete.metadata = {"url": "/datasources/{dataSourceName}/scans/{scanName}"}  # type: ignore
 
     @distributed_trace
-    def list_by_data_source(
-        self,
-        data_source_name: str,
-        **kwargs: Any
-    ) -> AsyncIterable[Any]:
+    def list_by_data_source(self, data_source_name: str, **kwargs: Any) -> AsyncIterable[Any]:
         """List scans in data source.
 
         :param data_source_name:
@@ -2091,38 +2043,43 @@ class ScansOperations:
                     ]
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_scans_list_by_data_source_request(
                     data_source_name=data_source_name,
-                    template_url=self.list_by_data_source.metadata['url'],
+                    template_url=self.list_by_data_source.metadata["url"],
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                
+
                 request = build_scans_list_by_data_source_request(
                     data_source_name=data_source_name,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.method = "GET"
             return request
@@ -2146,11 +2103,11 @@ class ScansOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_by_data_source.metadata = {'url': '/datasources/{dataSourceName}/scans'}  # type: ignore
+    list_by_data_source.metadata = {"url": "/datasources/{dataSourceName}/scans"}  # type: ignore
+
+
 class ScanResultOperations:
     """ScanResultOperations async operations.
 
@@ -2171,13 +2128,7 @@ class ScanResultOperations:
 
     @distributed_trace_async
     async def run_scan(
-        self,
-        data_source_name: str,
-        scan_name: str,
-        run_id: str,
-        *,
-        scan_level: Optional[str] = None,
-        **kwargs: Any
+        self, data_source_name: str, scan_name: str, run_id: str, *, scan_level: Optional[str] = None, **kwargs: Any
     ) -> Any:
         """Runs the scan.
 
@@ -2219,26 +2170,25 @@ class ScanResultOperations:
                     "status": "str"  # Optional. Possible values include: "Accepted", "InProgress", "TransientFailure", "Succeeded", "Failed", "Canceled".
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_scan_result_run_scan_request(
             data_source_name=data_source_name,
             scan_name=scan_name,
             run_id=run_id,
             scan_level=scan_level,
-            template_url=self.run_scan.metadata['url'],
+            template_url=self.run_scan.metadata["url"],
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -2255,17 +2205,10 @@ class ScanResultOperations:
 
         return deserialized
 
-    run_scan.metadata = {'url': '/datasources/{dataSourceName}/scans/{scanName}/runs/{runId}'}  # type: ignore
-
+    run_scan.metadata = {"url": "/datasources/{dataSourceName}/scans/{scanName}/runs/{runId}"}  # type: ignore
 
     @distributed_trace_async
-    async def cancel_scan(
-        self,
-        data_source_name: str,
-        scan_name: str,
-        run_id: str,
-        **kwargs: Any
-    ) -> Any:
+    async def cancel_scan(self, data_source_name: str, scan_name: str, run_id: str, **kwargs: Any) -> Any:
         """Cancels a scan.
 
         :param data_source_name:
@@ -2304,25 +2247,24 @@ class ScanResultOperations:
                     "status": "str"  # Optional. Possible values include: "Accepted", "InProgress", "TransientFailure", "Succeeded", "Failed", "Canceled".
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_scan_result_cancel_scan_request(
             data_source_name=data_source_name,
             scan_name=scan_name,
             run_id=run_id,
-            template_url=self.cancel_scan.metadata['url'],
+            template_url=self.cancel_scan.metadata["url"],
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -2339,16 +2281,10 @@ class ScanResultOperations:
 
         return deserialized
 
-    cancel_scan.metadata = {'url': '/datasources/{dataSourceName}/scans/{scanName}/runs/{runId}/:cancel'}  # type: ignore
-
+    cancel_scan.metadata = {"url": "/datasources/{dataSourceName}/scans/{scanName}/runs/{runId}/:cancel"}  # type: ignore
 
     @distributed_trace
-    def list_scan_history(
-        self,
-        data_source_name: str,
-        scan_name: str,
-        **kwargs: Any
-    ) -> AsyncIterable[Any]:
+    def list_scan_history(self, data_source_name: str, scan_name: str, **kwargs: Any) -> AsyncIterable[Any]:
         """Lists the scan history of a scan.
 
         :param data_source_name:
@@ -2414,27 +2350,28 @@ class ScanResultOperations:
                     ]
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_scan_result_list_scan_history_request(
                     data_source_name=data_source_name,
                     scan_name=scan_name,
-                    template_url=self.list_scan_history.metadata['url'],
+                    template_url=self.list_scan_history.metadata["url"],
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                
+
                 request = build_scan_result_list_scan_history_request(
                     data_source_name=data_source_name,
                     scan_name=scan_name,
@@ -2442,12 +2379,16 @@ class ScanResultOperations:
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.method = "GET"
             return request
@@ -2471,11 +2412,11 @@ class ScanResultOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_scan_history.metadata = {'url': '/datasources/{dataSourceName}/scans/{scanName}/runs'}  # type: ignore
+    list_scan_history.metadata = {"url": "/datasources/{dataSourceName}/scans/{scanName}/runs"}  # type: ignore
+
+
 class ScanRulesetsOperations:
     """ScanRulesetsOperations async operations.
 
@@ -2495,11 +2436,7 @@ class ScanRulesetsOperations:
         self._config = config
 
     @distributed_trace_async
-    async def get(
-        self,
-        scan_ruleset_name: str,
-        **kwargs: Any
-    ) -> Any:
+    async def get(self, scan_ruleset_name: str, **kwargs: Any) -> Any:
         """Get a scan ruleset.
 
         :param scan_ruleset_name:
@@ -2521,23 +2458,22 @@ class ScanRulesetsOperations:
                     kind: ScanRuleset
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_scan_rulesets_get_request(
             scan_ruleset_name=scan_ruleset_name,
-            template_url=self.get.metadata['url'],
+            template_url=self.get.metadata["url"],
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2554,16 +2490,10 @@ class ScanRulesetsOperations:
 
         return deserialized
 
-    get.metadata = {'url': '/scanrulesets/{scanRulesetName}'}  # type: ignore
-
+    get.metadata = {"url": "/scanrulesets/{scanRulesetName}"}  # type: ignore
 
     @distributed_trace_async
-    async def create_or_update(
-        self,
-        scan_ruleset_name: str,
-        body: Any = None,
-        **kwargs: Any
-    ) -> Any:
+    async def create_or_update(self, scan_ruleset_name: str, body: Any = None, **kwargs: Any) -> Any:
         """Creates or Updates a scan ruleset.
 
         :param scan_ruleset_name:
@@ -2599,13 +2529,11 @@ class ScanRulesetsOperations:
                     kind: ScanRuleset
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
             json = body
@@ -2616,14 +2544,16 @@ class ScanRulesetsOperations:
             scan_ruleset_name=scan_ruleset_name,
             content_type=content_type,
             json=json,
-            template_url=self.create_or_update.metadata['url'],
+            template_url=self.create_or_update.metadata["url"],
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
@@ -2647,15 +2577,10 @@ class ScanRulesetsOperations:
 
         return deserialized
 
-    create_or_update.metadata = {'url': '/scanrulesets/{scanRulesetName}'}  # type: ignore
-
+    create_or_update.metadata = {"url": "/scanrulesets/{scanRulesetName}"}  # type: ignore
 
     @distributed_trace_async
-    async def delete(
-        self,
-        scan_ruleset_name: str,
-        **kwargs: Any
-    ) -> Optional[Any]:
+    async def delete(self, scan_ruleset_name: str, **kwargs: Any) -> Optional[Any]:
         """Deletes a scan ruleset.
 
         :param scan_ruleset_name:
@@ -2677,23 +2602,22 @@ class ScanRulesetsOperations:
                     kind: ScanRuleset
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Any]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[Any]]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_scan_rulesets_delete_request(
             scan_ruleset_name=scan_ruleset_name,
-            template_url=self.delete.metadata['url'],
+            template_url=self.delete.metadata["url"],
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 204]:
@@ -2712,14 +2636,10 @@ class ScanRulesetsOperations:
 
         return deserialized
 
-    delete.metadata = {'url': '/scanrulesets/{scanRulesetName}'}  # type: ignore
-
+    delete.metadata = {"url": "/scanrulesets/{scanRulesetName}"}  # type: ignore
 
     @distributed_trace
-    def list_all(
-        self,
-        **kwargs: Any
-    ) -> AsyncIterable[Any]:
+    def list_all(self, **kwargs: Any) -> AsyncIterable[Any]:
         """List scan rulesets in Data catalog.
 
         :return: An iterator like instance of JSON object
@@ -2745,36 +2665,41 @@ class ScanRulesetsOperations:
                     ]
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_scan_rulesets_list_all_request(
-                    template_url=self.list_all.metadata['url'],
+                    template_url=self.list_all.metadata["url"],
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                
+
                 request = build_scan_rulesets_list_all_request(
                     template_url=next_link,
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.method = "GET"
             return request
@@ -2798,11 +2723,11 @@ class ScanRulesetsOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_all.metadata = {'url': '/scanrulesets'}  # type: ignore
+    list_all.metadata = {"url": "/scanrulesets"}  # type: ignore
+
+
 class SystemScanRulesetsOperations:
     """SystemScanRulesetsOperations async operations.
 
@@ -2822,10 +2747,7 @@ class SystemScanRulesetsOperations:
         self._config = config
 
     @distributed_trace
-    def list_all(
-        self,
-        **kwargs: Any
-    ) -> AsyncIterable[Any]:
+    def list_all(self, **kwargs: Any) -> AsyncIterable[Any]:
         """List all system scan rulesets for an account.
 
         :return: An iterator like instance of JSON object
@@ -2851,36 +2773,41 @@ class SystemScanRulesetsOperations:
                     ]
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_system_scan_rulesets_list_all_request(
-                    template_url=self.list_all.metadata['url'],
+                    template_url=self.list_all.metadata["url"],
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                
+
                 request = build_system_scan_rulesets_list_all_request(
                     template_url=next_link,
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.method = "GET"
             return request
@@ -2904,18 +2831,12 @@ class SystemScanRulesetsOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_all.metadata = {'url': '/systemScanRulesets'}  # type: ignore
+    list_all.metadata = {"url": "/systemScanRulesets"}  # type: ignore
 
     @distributed_trace_async
-    async def get(
-        self,
-        data_source_type: str,
-        **kwargs: Any
-    ) -> Any:
+    async def get(self, data_source_type: str, **kwargs: Any) -> Any:
         """Get a system scan ruleset for a data source.
 
         :param data_source_type: Possible values are: "None", "AzureSubscription",
@@ -2942,23 +2863,22 @@ class SystemScanRulesetsOperations:
                     kind: SystemScanRuleset
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_system_scan_rulesets_get_request(
             data_source_type=data_source_type,
-            template_url=self.get.metadata['url'],
+            template_url=self.get.metadata["url"],
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2975,17 +2895,10 @@ class SystemScanRulesetsOperations:
 
         return deserialized
 
-    get.metadata = {'url': '/systemScanRulesets/datasources/{dataSourceType}'}  # type: ignore
-
+    get.metadata = {"url": "/systemScanRulesets/datasources/{dataSourceType}"}  # type: ignore
 
     @distributed_trace_async
-    async def get_by_version(
-        self,
-        version: int,
-        *,
-        data_source_type: Optional[str] = None,
-        **kwargs: Any
-    ) -> Any:
+    async def get_by_version(self, version: int, *, data_source_type: Optional[str] = None, **kwargs: Any) -> Any:
         """Get a scan ruleset by version.
 
         :param version:
@@ -3014,24 +2927,23 @@ class SystemScanRulesetsOperations:
                     kind: SystemScanRuleset
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_system_scan_rulesets_get_by_version_request(
             version=version,
             data_source_type=data_source_type,
-            template_url=self.get_by_version.metadata['url'],
+            template_url=self.get_by_version.metadata["url"],
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -3048,16 +2960,10 @@ class SystemScanRulesetsOperations:
 
         return deserialized
 
-    get_by_version.metadata = {'url': '/systemScanRulesets/versions/{version}'}  # type: ignore
-
+    get_by_version.metadata = {"url": "/systemScanRulesets/versions/{version}"}  # type: ignore
 
     @distributed_trace_async
-    async def get_latest(
-        self,
-        *,
-        data_source_type: Optional[str] = None,
-        **kwargs: Any
-    ) -> Any:
+    async def get_latest(self, *, data_source_type: Optional[str] = None, **kwargs: Any) -> Any:
         """Get the latest version of a system scan ruleset.
 
         :keyword data_source_type: Possible values are: "None", "AzureSubscription",
@@ -3084,23 +2990,22 @@ class SystemScanRulesetsOperations:
                     kind: SystemScanRuleset
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_system_scan_rulesets_get_latest_request(
             data_source_type=data_source_type,
-            template_url=self.get_latest.metadata['url'],
+            template_url=self.get_latest.metadata["url"],
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -3117,15 +3022,11 @@ class SystemScanRulesetsOperations:
 
         return deserialized
 
-    get_latest.metadata = {'url': '/systemScanRulesets/versions/latest'}  # type: ignore
-
+    get_latest.metadata = {"url": "/systemScanRulesets/versions/latest"}  # type: ignore
 
     @distributed_trace
     def list_versions_by_data_source(
-        self,
-        *,
-        data_source_type: Optional[str] = None,
-        **kwargs: Any
+        self, *, data_source_type: Optional[str] = None, **kwargs: Any
     ) -> AsyncIterable[Any]:
         """List system scan ruleset versions in Data catalog.
 
@@ -3159,38 +3060,43 @@ class SystemScanRulesetsOperations:
                     ]
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_system_scan_rulesets_list_versions_by_data_source_request(
                     data_source_type=data_source_type,
-                    template_url=self.list_versions_by_data_source.metadata['url'],
+                    template_url=self.list_versions_by_data_source.metadata["url"],
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                
+
                 request = build_system_scan_rulesets_list_versions_by_data_source_request(
                     data_source_type=data_source_type,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.method = "GET"
             return request
@@ -3214,11 +3120,11 @@ class SystemScanRulesetsOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_versions_by_data_source.metadata = {'url': '/systemScanRulesets/versions'}  # type: ignore
+    list_versions_by_data_source.metadata = {"url": "/systemScanRulesets/versions"}  # type: ignore
+
+
 class TriggersOperations:
     """TriggersOperations async operations.
 
@@ -3238,12 +3144,7 @@ class TriggersOperations:
         self._config = config
 
     @distributed_trace_async
-    async def get_trigger(
-        self,
-        data_source_name: str,
-        scan_name: str,
-        **kwargs: Any
-    ) -> Any:
+    async def get_trigger(self, data_source_name: str, scan_name: str, **kwargs: Any) -> Any:
         """Gets trigger information.
 
         :param data_source_name:
@@ -3298,24 +3199,23 @@ class TriggersOperations:
                     }
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_triggers_get_trigger_request(
             data_source_name=data_source_name,
             scan_name=scan_name,
-            template_url=self.get_trigger.metadata['url'],
+            template_url=self.get_trigger.metadata["url"],
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -3332,17 +3232,10 @@ class TriggersOperations:
 
         return deserialized
 
-    get_trigger.metadata = {'url': '/datasources/{dataSourceName}/scans/{scanName}/triggers/default'}  # type: ignore
-
+    get_trigger.metadata = {"url": "/datasources/{dataSourceName}/scans/{scanName}/triggers/default"}  # type: ignore
 
     @distributed_trace_async
-    async def create_trigger(
-        self,
-        data_source_name: str,
-        scan_name: str,
-        body: Any,
-        **kwargs: Any
-    ) -> Any:
+    async def create_trigger(self, data_source_name: str, scan_name: str, body: Any, **kwargs: Any) -> Any:
         """Creates an instance of a trigger.
 
         :param data_source_name:
@@ -3440,13 +3333,11 @@ class TriggersOperations:
                     }
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         json = body
 
@@ -3455,14 +3346,16 @@ class TriggersOperations:
             scan_name=scan_name,
             content_type=content_type,
             json=json,
-            template_url=self.create_trigger.metadata['url'],
+            template_url=self.create_trigger.metadata["url"],
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
@@ -3486,16 +3379,10 @@ class TriggersOperations:
 
         return deserialized
 
-    create_trigger.metadata = {'url': '/datasources/{dataSourceName}/scans/{scanName}/triggers/default'}  # type: ignore
-
+    create_trigger.metadata = {"url": "/datasources/{dataSourceName}/scans/{scanName}/triggers/default"}  # type: ignore
 
     @distributed_trace_async
-    async def delete_trigger(
-        self,
-        data_source_name: str,
-        scan_name: str,
-        **kwargs: Any
-    ) -> Optional[Any]:
+    async def delete_trigger(self, data_source_name: str, scan_name: str, **kwargs: Any) -> Optional[Any]:
         """Deletes the trigger associated with the scan.
 
         :param data_source_name:
@@ -3550,24 +3437,23 @@ class TriggersOperations:
                     }
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Any]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[Any]]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_triggers_delete_trigger_request(
             data_source_name=data_source_name,
             scan_name=scan_name,
-            template_url=self.delete_trigger.metadata['url'],
+            template_url=self.delete_trigger.metadata["url"],
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 204]:
@@ -3586,5 +3472,4 @@ class TriggersOperations:
 
         return deserialized
 
-    delete_trigger.metadata = {'url': '/datasources/{dataSourceName}/scans/{scanName}/triggers/default'}  # type: ignore
-
+    delete_trigger.metadata = {"url": "/datasources/{dataSourceName}/scans/{scanName}/triggers/default"}  # type: ignore

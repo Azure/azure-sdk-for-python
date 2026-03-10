@@ -13,10 +13,10 @@ import test_config
 from azure.cosmos import DatabaseProxy
 from azure.cosmos.partition_key import PartitionKey
 
+
 @pytest.mark.cosmosQuery
 class TestMultiOrderBy(unittest.TestCase):
-    """Multi Orderby and Composite Indexes Tests.
-    """
+    """Multi Orderby and Composite Indexes Tests."""
 
     NUMBER_FIELD = "numberField"
     STRING_FIELD = "stringField"
@@ -45,14 +45,21 @@ class TestMultiOrderBy(unittest.TestCase):
         cls.database = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
 
     def generate_multi_orderby_item(self):
-        item = {'id': str(uuid.uuid4()), self.NUMBER_FIELD: random.randint(0, 5),
-                self.NUMBER_FIELD_2: random.randint(0, 5), self.BOOL_FIELD: random.randint(0, 2) % 2 == 0,
-                self.STRING_FIELD: str(random.randint(0, 5)), self.STRING_FIELD_2: str(random.randint(0, 5)),
-                self.NULL_FIELD: None, self.OBJECT_FIELD: "", self.ARRAY_FIELD: [],
-                self.SHORT_STRING_FIELD: "a" + str(random.randint(0, 100)),
-                self.MEDIUM_STRING_FIELD: "a" + str(random.randint(0, 128) + 100),
-                self.LONG_STRING_FIELD: "a" + str(random.randint(0, 255) + 128),
-                self.PARTITION_KEY: random.randint(0, 5)}
+        item = {
+            "id": str(uuid.uuid4()),
+            self.NUMBER_FIELD: random.randint(0, 5),
+            self.NUMBER_FIELD_2: random.randint(0, 5),
+            self.BOOL_FIELD: random.randint(0, 2) % 2 == 0,
+            self.STRING_FIELD: str(random.randint(0, 5)),
+            self.STRING_FIELD_2: str(random.randint(0, 5)),
+            self.NULL_FIELD: None,
+            self.OBJECT_FIELD: "",
+            self.ARRAY_FIELD: [],
+            self.SHORT_STRING_FIELD: "a" + str(random.randint(0, 100)),
+            self.MEDIUM_STRING_FIELD: "a" + str(random.randint(0, 128) + 100),
+            self.LONG_STRING_FIELD: "a" + str(random.randint(0, 255) + 128),
+            self.PARTITION_KEY: random.randint(0, 5),
+        }
         return item
 
     def create_random_items(self, container, number_of_items, number_of_duplicates):
@@ -63,29 +70,29 @@ class TestMultiOrderBy(unittest.TestCase):
             for j in range(0, number_of_duplicates):
                 # Add the item itself for exact duplicates
                 clone = multi_orderby_item.copy()
-                clone['id'] = str(uuid.uuid4())
+                clone["id"] = str(uuid.uuid4())
                 self.items.append(clone)
 
                 # Permute all the fields so that there are duplicates with tie breaks
                 number_clone = multi_orderby_item.copy()
                 number_clone[self.NUMBER_FIELD] = random.randint(0, 5)
-                number_clone['id'] = str(uuid.uuid4())
+                number_clone["id"] = str(uuid.uuid4())
                 self.items.append(number_clone)
 
                 string_clone = multi_orderby_item.copy()
                 string_clone[self.STRING_FIELD] = str(random.randint(0, 5))
-                string_clone['id'] = str(uuid.uuid4())
+                string_clone["id"] = str(uuid.uuid4())
                 self.items.append(string_clone)
 
                 bool_clone = multi_orderby_item.copy()
                 bool_clone[self.BOOL_FIELD] = random.randint(0, 2) % 2 == 0
-                bool_clone['id'] = str(uuid.uuid4())
+                bool_clone["id"] = str(uuid.uuid4())
                 self.items.append(bool_clone)
 
                 # Also fuzz what partition it goes to
                 partition_clone = multi_orderby_item.copy()
                 partition_clone[self.PARTITION_KEY] = random.randint(0, 5)
-                partition_clone['id'] = str(uuid.uuid4())
+                partition_clone["id"] = str(uuid.uuid4())
                 self.items.append(partition_clone)
 
         for item in self.items:
@@ -95,98 +102,44 @@ class TestMultiOrderBy(unittest.TestCase):
         indexingPolicy = {
             "indexingMode": "consistent",
             "automatic": True,
-            "includedPaths": [
-                {
-                    "path": "/*",
-                    "indexes": []
-                }
-            ],
-            "excludedPaths": [
-                {
-                    "path": "/\"_etag\"/?"
-                }
-            ],
+            "includedPaths": [{"path": "/*", "indexes": []}],
+            "excludedPaths": [{"path": '/"_etag"/?'}],
             "compositeIndexes": [
+                [{"path": "/numberField", "order": "ascending"}, {"path": "/stringField", "order": "descending"}],
                 [
-                    {
-                        "path": "/numberField",
-                        "order": "ascending"
-                    },
-                    {
-                        "path": "/stringField",
-                        "order": "descending"
-                    }
+                    {"path": "/numberField", "order": "descending"},
+                    {"path": "/stringField", "order": "ascending"},
+                    {"path": "/numberField2", "order": "descending"},
+                    {"path": "/stringField2", "order": "ascending"},
                 ],
                 [
-                    {
-                        "path": "/numberField",
-                        "order": "descending"
-                    },
-                    {
-                        "path": "/stringField",
-                        "order": "ascending"
-                    },
-                    {
-                        "path": "/numberField2",
-                        "order": "descending"
-                    },
-                    {
-                        "path": "/stringField2",
-                        "order": "ascending"
-                    }
+                    {"path": "/numberField", "order": "descending"},
+                    {"path": "/stringField", "order": "ascending"},
+                    {"path": "/boolField", "order": "descending"},
+                    {"path": "/nullField", "order": "ascending"},
                 ],
                 [
-                    {
-                        "path": "/numberField",
-                        "order": "descending"
-                    },
-                    {
-                        "path": "/stringField",
-                        "order": "ascending"
-                    },
-                    {
-                        "path": "/boolField",
-                        "order": "descending"
-                    },
-                    {
-                        "path": "/nullField",
-                        "order": "ascending"
-                    }
+                    {"path": "/stringField", "order": "ascending"},
+                    {"path": "/shortStringField", "order": "ascending"},
+                    {"path": "/mediumStringField", "order": "ascending"},
+                    {"path": "/longStringField", "order": "ascending"},
                 ],
-                [
-                    {
-                        "path": "/stringField",
-                        "order": "ascending"
-                    },
-                    {
-                        "path": "/shortStringField",
-                        "order": "ascending"
-                    },
-                    {
-                        "path": "/mediumStringField",
-                        "order": "ascending"
-                    },
-                    {
-                        "path": "/longStringField",
-                        "order": "ascending"
-                    }
-                ]
-            ]
+            ],
         }
 
-        options = {'offerThroughput': 25100}
+        options = {"offerThroughput": 25100}
         created_container = self.database.create_container(
-            id='multi_orderby_container' + str(uuid.uuid4()),
+            id="multi_orderby_container" + str(uuid.uuid4()),
             indexing_policy=indexingPolicy,
-            partition_key=PartitionKey(path='/pk'),
-            request_options=options
+            partition_key=PartitionKey(path="/pk"),
+            request_options=options,
         )
 
         number_of_items = 5
         self.create_random_items(created_container, number_of_items, number_of_items)
 
         bool_vals = [True, False]
-        composite_indexes = indexingPolicy['compositeIndexes']
+        composite_indexes = indexingPolicy["compositeIndexes"]
         for composite_index in composite_indexes:
             # for every order
             for invert in bool_vals:
@@ -199,12 +152,12 @@ class TestMultiOrderBy(unittest.TestCase):
                         orderby_items = []
                         select_items = []
                         for composite_path in composite_index:
-                            is_desc = True if composite_path['order'] == "descending" else False
+                            is_desc = True if composite_path["order"] == "descending" else False
                             if invert:
                                 is_desc = not is_desc
 
                             is_desc_string = "DESC" if is_desc else "ASC"
-                            composite_path_name = composite_path['path'].replace("/", "")
+                            composite_path_name = composite_path["path"].replace("/", "")
                             orderby_items_string = "root." + composite_path_name + " " + is_desc_string
                             select_items_string = "root." + composite_path_name
                             orderby_items.append(orderby_items_string)
@@ -223,15 +176,26 @@ class TestMultiOrderBy(unittest.TestCase):
 
                         top_string = "TOP " + str(top_count) if has_top else ""
                         where_string = "WHERE root." + self.NUMBER_FIELD + " % 2 = 0" if has_filter else ""
-                        query = "SELECT " + top_string + " [" + select_item_builder + "] " + \
-                                "FROM root " + where_string + " " + \
-                                "ORDER BY " + orderby_item_builder  # nosec
+                        query = (
+                            "SELECT "
+                            + top_string
+                            + " ["
+                            + select_item_builder
+                            + "] "
+                            + "FROM root "
+                            + where_string
+                            + " "
+                            + "ORDER BY "
+                            + orderby_item_builder
+                        )  # nosec
 
                         expected_ordered_list = self.top(
-                            self.sort(self.filter(self.items, has_filter), composite_index, invert), has_top, top_count)
+                            self.sort(self.filter(self.items, has_filter), composite_index, invert), has_top, top_count
+                        )
 
                         result_ordered_list = list(
-                            created_container.query_items(query=query, enable_cross_partition_query=True))
+                            created_container.query_items(query=query, enable_cross_partition_query=True)
+                        )
 
                         self.validate_results(expected_ordered_list, result_ordered_list, composite_index)
 
@@ -243,13 +207,14 @@ class TestMultiOrderBy(unittest.TestCase):
     def sort(self, items, composite_index, invert):
         current_docs = items
         for composite_path in reversed(composite_index):
-            order = composite_path['order']
+            order = composite_path["order"]
             if invert:
                 order = "ascending" if order == "descending" else "descending"
-            path = composite_path['path'].replace("/", "")
+            path = composite_path["path"].replace("/", "")
             if self.NULL_FIELD not in path:
-                current_docs = sorted(current_docs, key=lambda x: x[path],
-                                      reverse=True if order == "descending" else False)
+                current_docs = sorted(
+                    current_docs, key=lambda x: x[path], reverse=True if order == "descending" else False
+                )
         return current_docs
 
     def filter(self, items, has_filter):
@@ -259,11 +224,11 @@ class TestMultiOrderBy(unittest.TestCase):
         self.assertEqual(len(expected_ordered_list), len(result_ordered_list))
 
         for i in range(0, len(expected_ordered_list)):
-            result_values = result_ordered_list[i]['$1']
+            result_values = result_ordered_list[i]["$1"]
             self.assertEqual(len(result_values), len(composite_index))
 
             for j in range(0, len(composite_index)):
-                path = composite_index[j]['path'].replace("/", "")
+                path = composite_index[j]["path"].replace("/", "")
                 if self.NULL_FIELD in path:
                     self.assertIsNone(expected_ordered_list[i][path])
                     self.assertIsNone(result_values[j])
@@ -271,5 +236,5 @@ class TestMultiOrderBy(unittest.TestCase):
                     self.assertEqual(expected_ordered_list[i][path], result_values[j])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

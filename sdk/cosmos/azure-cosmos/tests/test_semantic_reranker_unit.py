@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # cspell:ignore rerank reranker reranking
 """Unit tests for semantic reranker inference service timeout policy."""
+
 import asyncio
 import os
 import unittest
@@ -36,19 +37,16 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         service = _InferenceService(mock_connection)
 
         with patch.object(
-            service._inference_pipeline_client._pipeline, "run",
-            side_effect=ServiceRequestError("Connection timeout")
+            service._inference_pipeline_client._pipeline, "run", side_effect=ServiceRequestError("Connection timeout")
         ):
             with self.assertRaises(exceptions.CosmosHttpResponseError) as ctx:
-                service.rerank(
-                    reranking_context="test query",
-                    documents=["doc1", "doc2"]
-                )
+                service.rerank(reranking_context="test query", documents=["doc1", "doc2"])
             self.assertEqual(ctx.exception.status_code, 408)
             self.assertIn("Inference Service Request Timeout", str(ctx.exception))
 
     def test_async_inference_timeout_raises_408(self):
         """Test that async inference service converts ServiceRequestError to 408."""
+
         async def run_test():
             from azure.cosmos.aio._inference_service_async import _InferenceService
 
@@ -57,14 +55,12 @@ class TestInferenceServiceTimeout(unittest.TestCase):
             service = _InferenceService(mock_connection)
 
             with patch.object(
-                service._inference_pipeline_client._pipeline, "run",
-                side_effect=ServiceRequestError("Connection timeout")
+                service._inference_pipeline_client._pipeline,
+                "run",
+                side_effect=ServiceRequestError("Connection timeout"),
             ):
                 with self.assertRaises(exceptions.CosmosHttpResponseError) as ctx:
-                    await service.rerank(
-                        reranking_context="test query",
-                        documents=["doc1", "doc2"]
-                    )
+                    await service.rerank(reranking_context="test query", documents=["doc1", "doc2"])
                 self.assertEqual(ctx.exception.status_code, 408)
                 self.assertIn("Inference Service Request Timeout", str(ctx.exception))
 
@@ -101,14 +97,8 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         mock_response.http_response.headers = {}
         mock_response.http_response.body.return_value = b'{"Scores": []}'
 
-        with patch.object(
-            service._inference_pipeline_client._pipeline, "run",
-            return_value=mock_response
-        ) as mock_run:
-            service.rerank(
-                reranking_context="test query",
-                documents=["doc1"]
-            )
+        with patch.object(service._inference_pipeline_client._pipeline, "run", return_value=mock_response) as mock_run:
+            service.rerank(reranking_context="test query", documents=["doc1"])
             mock_run.assert_called_once()
             call_kwargs = mock_run.call_args[1]
             self.assertEqual(call_kwargs["connection_timeout"], 7)
@@ -116,6 +106,7 @@ class TestInferenceServiceTimeout(unittest.TestCase):
 
     def test_async_inference_passes_timeout_to_pipeline(self):
         """Test that async inference service passes timeout kwargs to pipeline.run()."""
+
         async def run_test():
             from azure.cosmos.aio._inference_service_async import _InferenceService
 
@@ -129,13 +120,9 @@ class TestInferenceServiceTimeout(unittest.TestCase):
             mock_response.http_response.body.return_value = b'{"Scores": []}'
 
             with patch.object(
-                service._inference_pipeline_client._pipeline, "run",
-                return_value=mock_response
+                service._inference_pipeline_client._pipeline, "run", return_value=mock_response
             ) as mock_run:
-                await service.rerank(
-                    reranking_context="test query",
-                    documents=["doc1"]
-                )
+                await service.rerank(reranking_context="test query", documents=["doc1"])
                 mock_run.assert_called_once()
                 call_kwargs = mock_run.call_args[1]
                 self.assertEqual(call_kwargs["connection_timeout"], 12)
@@ -151,19 +138,16 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         service = _InferenceService(mock_connection)
 
         with patch.object(
-            service._inference_pipeline_client._pipeline, "run",
-            side_effect=ServiceResponseError("Read timeout")
+            service._inference_pipeline_client._pipeline, "run", side_effect=ServiceResponseError("Read timeout")
         ):
             with self.assertRaises(exceptions.CosmosHttpResponseError) as ctx:
-                service.rerank(
-                    reranking_context="test query",
-                    documents=["doc1", "doc2"]
-                )
+                service.rerank(reranking_context="test query", documents=["doc1", "doc2"])
             self.assertEqual(ctx.exception.status_code, 408)
             self.assertIn("Inference Service Request Timeout", str(ctx.exception))
 
     def test_async_inference_response_timeout_raises_408(self):
         """Test that async inference service converts ServiceResponseError to 408."""
+
         async def run_test():
             from azure.cosmos.aio._inference_service_async import _InferenceService
 
@@ -172,14 +156,10 @@ class TestInferenceServiceTimeout(unittest.TestCase):
             service = _InferenceService(mock_connection)
 
             with patch.object(
-                service._inference_pipeline_client._pipeline, "run",
-                side_effect=ServiceResponseError("Read timeout")
+                service._inference_pipeline_client._pipeline, "run", side_effect=ServiceResponseError("Read timeout")
             ):
                 with self.assertRaises(exceptions.CosmosHttpResponseError) as ctx:
-                    await service.rerank(
-                        reranking_context="test query",
-                        documents=["doc1", "doc2"]
-                    )
+                    await service.rerank(reranking_context="test query", documents=["doc1", "doc2"])
                 self.assertEqual(ctx.exception.status_code, 408)
                 self.assertIn("Inference Service Request Timeout", str(ctx.exception))
 

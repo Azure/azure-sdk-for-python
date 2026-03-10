@@ -30,7 +30,7 @@ class TestClient(AzureRecordedTestCase):
 
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": "Who won the world series in 2020?"}
+            {"role": "user", "content": "Who won the world series in 2020?"},
         ]
 
         with pytest.raises(openai.NotFoundError) as e:
@@ -45,12 +45,14 @@ class TestClient(AzureRecordedTestCase):
         client = openai.AzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
             azure_deployment=ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME,
-            azure_ad_token_provider=get_bearer_token_provider(get_credential(), "https://cognitiveservices.azure.com/.default"),
+            azure_ad_token_provider=get_bearer_token_provider(
+                get_credential(), "https://cognitiveservices.azure.com/.default"
+            ),
             api_version=LATEST,
         )
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": "Who won the world series in 2020?"}
+            {"role": "user", "content": "Who won the world series in 2020?"},
         ]
 
         completion = client.chat.completions.create(messages=messages, model="placeholder")
@@ -71,8 +73,10 @@ class TestClient(AzureRecordedTestCase):
         with pytest.raises(openai.BadRequestError) as e:
             client.embeddings.create(input=["Hello world!"], model="placeholder")
         assert e.value.status_code == 400
-        assert "The embeddings operation does not work with the specified model, " \
-        f"{ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME}. Please choose different model and try again" in e.value.message 
+        assert (
+            "The embeddings operation does not work with the specified model, "
+            f"{ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME}. Please choose different model and try again" in e.value.message
+        )
 
     @configure
     @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
@@ -81,7 +85,9 @@ class TestClient(AzureRecordedTestCase):
         client = openai.AzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
             azure_deployment=ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME,
-            azure_ad_token_provider=get_bearer_token_provider(get_credential(), "https://cognitiveservices.azure.com/.default"),
+            azure_ad_token_provider=get_bearer_token_provider(
+                get_credential(), "https://cognitiveservices.azure.com/.default"
+            ),
             api_version=LATEST,
         )
         model = client.models.retrieve(**kwargs)
@@ -93,12 +99,14 @@ class TestClient(AzureRecordedTestCase):
 
         client = openai.AzureOpenAI(
             base_url=f"{os.getenv(ENV_AZURE_OPENAI_ENDPOINT)}/openai/deployments/{ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME}",
-            azure_ad_token_provider=get_bearer_token_provider(get_credential(), "https://cognitiveservices.azure.com/.default"),
+            azure_ad_token_provider=get_bearer_token_provider(
+                get_credential(), "https://cognitiveservices.azure.com/.default"
+            ),
             api_version=LATEST,
         )
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": "Who won the world series in 2020?"}
+            {"role": "user", "content": "Who won the world series in 2020?"},
         ]
 
         completion = client.chat.completions.create(messages=messages, **kwargs)
@@ -120,7 +128,7 @@ class TestClient(AzureRecordedTestCase):
     def test_client_str_token(self, client, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": "Who won the world series in 2020?"}
+            {"role": "user", "content": "Who won the world series in 2020?"},
         ]
         client = openai.AzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
@@ -151,7 +159,10 @@ class TestClient(AzureRecordedTestCase):
                 api_key=None,
                 api_version=LATEST,
             )
-        assert 'Missing credentials. Please pass one of `api_key`, `azure_ad_token`, `azure_ad_token_provider`, or the `AZURE_OPENAI_API_KEY` or `AZURE_OPENAI_AD_TOKEN` environment variables.' in str(e.value.args)
+        assert (
+            "Missing credentials. Please pass one of `api_key`, `azure_ad_token`, `azure_ad_token_provider`, or the `AZURE_OPENAI_API_KEY` or `AZURE_OPENAI_AD_TOKEN` environment variables."
+            in str(e.value.args)
+        )
 
     @configure
     @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
@@ -159,14 +170,14 @@ class TestClient(AzureRecordedTestCase):
 
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": "Who won the world series in 2020?"}
+            {"role": "user", "content": "Who won the world series in 2020?"},
         ]
         client = openai.AzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
             azure_ad_token="None",
             api_version=LATEST,
         )
-        with pytest.raises(openai.AuthenticationError) as e: 
+        with pytest.raises(openai.AuthenticationError) as e:
             client.chat.completions.create(messages=messages, **kwargs)
         assert e.value.status_code == 401
 
@@ -176,7 +187,7 @@ class TestClient(AzureRecordedTestCase):
 
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": "Who won the world series in 2020?"}
+            {"role": "user", "content": "Who won the world series in 2020?"},
         ]
         client = openai.AzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
@@ -185,7 +196,9 @@ class TestClient(AzureRecordedTestCase):
         )
         with pytest.raises(ValueError) as e:
             client.chat.completions.create(messages=messages, **kwargs)
-        assert "Expected `azure_ad_token_provider` argument to return a string but it returned None" in str(e.value.args)
+        assert "Expected `azure_ad_token_provider` argument to return a string but it returned None" in str(
+            e.value.args
+        )
 
     @configure
     @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
@@ -199,7 +212,7 @@ class TestClient(AzureRecordedTestCase):
                 client = openai.AzureOpenAI()
                 messages = [
                     {"role": "system", "content": "You are a helpful assistant."},
-                    {"role": "user", "content": "Who won the world series in 2020?"}
+                    {"role": "user", "content": "Who won the world series in 2020?"},
                 ]
                 completion = client.chat.completions.create(messages=messages, **kwargs)
                 assert completion.id
@@ -208,16 +221,18 @@ class TestClient(AzureRecordedTestCase):
                 assert completion.created
                 assert completion.usage.completion_tokens is not None
                 assert completion.usage.prompt_tokens is not None
-                assert completion.usage.total_tokens == completion.usage.completion_tokens + completion.usage.prompt_tokens
+                assert (
+                    completion.usage.total_tokens == completion.usage.completion_tokens + completion.usage.prompt_tokens
+                )
                 assert len(completion.choices) == 1
                 assert completion.choices[0].finish_reason
                 assert completion.choices[0].index is not None
                 assert completion.choices[0].message.content is not None
                 assert completion.choices[0].message.role
             finally:
-                del os.environ['AZURE_OPENAI_ENDPOINT']
-                del os.environ['AZURE_OPENAI_API_KEY']
-                del os.environ['OPENAI_API_VERSION']
+                del os.environ["AZURE_OPENAI_ENDPOINT"]
+                del os.environ["AZURE_OPENAI_API_KEY"]
+                del os.environ["OPENAI_API_VERSION"]
 
     @configure
     @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
@@ -225,13 +240,15 @@ class TestClient(AzureRecordedTestCase):
         with reload():
             os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
             os.environ["OPENAI_API_VERSION"] = LATEST
-            os.environ["AZURE_OPENAI_AD_TOKEN"] = get_credential().get_token("https://cognitiveservices.azure.com/.default").token
+            os.environ["AZURE_OPENAI_AD_TOKEN"] = (
+                get_credential().get_token("https://cognitiveservices.azure.com/.default").token
+            )
 
             try:
                 client = openai.AzureOpenAI()
                 messages = [
                     {"role": "system", "content": "You are a helpful assistant."},
-                    {"role": "user", "content": "Who won the world series in 2020?"}
+                    {"role": "user", "content": "Who won the world series in 2020?"},
                 ]
                 completion = client.chat.completions.create(messages=messages, **kwargs)
                 assert completion.id
@@ -240,16 +257,18 @@ class TestClient(AzureRecordedTestCase):
                 assert completion.created
                 assert completion.usage.completion_tokens is not None
                 assert completion.usage.prompt_tokens is not None
-                assert completion.usage.total_tokens == completion.usage.completion_tokens + completion.usage.prompt_tokens
+                assert (
+                    completion.usage.total_tokens == completion.usage.completion_tokens + completion.usage.prompt_tokens
+                )
                 assert len(completion.choices) == 1
                 assert completion.choices[0].finish_reason
                 assert completion.choices[0].index is not None
                 assert completion.choices[0].message.content is not None
                 assert completion.choices[0].message.role
             finally:
-                del os.environ['AZURE_OPENAI_ENDPOINT']
-                del os.environ['AZURE_OPENAI_AD_TOKEN']
-                del os.environ['OPENAI_API_VERSION']
+                del os.environ["AZURE_OPENAI_ENDPOINT"]
+                del os.environ["AZURE_OPENAI_AD_TOKEN"]
+                del os.environ["OPENAI_API_VERSION"]
 
     @pytest.mark.parametrize(
         "headers,timeout",
@@ -271,9 +290,7 @@ class TestClient(AzureRecordedTestCase):
         response_headers = httpx.Headers(headers)
         options = openai._models.FinalRequestOptions(method="post", url="/completions")
         retry_timeout = client._calculate_retry_timeout(
-            remaining_retries=2,
-            options=options,
-            response_headers=response_headers
+            remaining_retries=2, options=options, response_headers=response_headers
         )
         if headers is None or headers == {} or headers.get("retry-after-ms") == "invalid":
             assert retry_timeout  # uses the default implementation

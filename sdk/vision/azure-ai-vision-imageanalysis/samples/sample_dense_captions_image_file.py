@@ -15,7 +15,7 @@ DESCRIPTION:
     The synchronous (blocking) `analyze` method call returns an `ImageAnalysisResult` object.
     Its `dense_captions` property (a `DenseCaptionsResult` object) includes a list of up to 10 `DenseCaption`
     objects. Each one of them contains:
-    - The text of the caption. Captions are only supported in English at the moment. 
+    - The text of the caption. Captions are only supported in English at the moment.
     - A confidence score in the range [0, 1], with higher values indicating greater confidences in
       the caption.
     - A `BoundingBox` coordinates in pixels, for a rectangular marking the area in the image associated
@@ -48,10 +48,7 @@ def sample_dense_captions_image_file():
         exit()
 
     # Create an Image Analysis client.
-    client = ImageAnalysisClient(
-        endpoint=endpoint,
-        credential=AzureKeyCredential(key)
-    )
+    client = ImageAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Load image to analyze into a 'bytes' object.
     with open("sample.jpg", "rb") as f:

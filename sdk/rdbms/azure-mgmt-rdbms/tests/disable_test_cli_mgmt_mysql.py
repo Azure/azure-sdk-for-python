@@ -22,7 +22,7 @@ import unittest
 import azure.mgmt.rdbms.mysql
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
-AZURE_LOCATION = 'eastus'
+AZURE_LOCATION = "eastus"
 ZERO = dt.timedelta(0)
 
 
@@ -43,11 +43,9 @@ class MgmtMySQLTest(AzureMgmtTestCase):
 
     def setUp(self):
         super(MgmtMySQLTest, self).setUp()
-        self.mgmt_client = self.create_mgmt_client(
-            azure.mgmt.rdbms.mysql.MySQLManagementClient
-        )
+        self.mgmt_client = self.create_mgmt_client(azure.mgmt.rdbms.mysql.MySQLManagementClient)
 
-    @unittest.skip('hard to test')
+    @unittest.skip("hard to test")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_mysql(self, resource_group):
         SERVER_NAME = "testserver21341"
@@ -73,19 +71,12 @@ class MgmtMySQLTest(AzureMgmtTestCase):
                 "storage_profile": {
                     "storage_mb": "128000",
                     "backup_retention_days": "7",
-                    "geo_redundant_backup": "Enabled"
+                    "geo_redundant_backup": "Enabled",
                 },
-                "create_mode": "Default"
+                "create_mode": "Default",
             },
-            "sku": {
-                "name": "GP_Gen5_2",
-                "tier": "GeneralPurpose",
-                "capacity": "2",
-                "family": "Gen5"
-            },
-            "tags": {
-                "elastic_server": "1"
-            }
+            "sku": {"name": "GP_Gen5_2", "tier": "GeneralPurpose", "capacity": "2", "family": "Gen5"},
+            "tags": {"elastic_server": "1"},
         }
         result = self.mgmt_client.servers.begin_create(resource_group.name, SERVER_NAME, BODY)
         result = result.result()
@@ -115,8 +106,14 @@ class MgmtMySQLTest(AzureMgmtTestCase):
             "location": "eastus",
             "properties": {
                 "create_mode": "Replica",
-                "source_server_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.DBforMySQL/servers/" + SERVER_NAME + ""
-            }
+                "source_server_id": "/subscriptions/"
+                + SUBSCRIPTION_ID
+                + "/resourceGroups/"
+                + RESOURCE_GROUP
+                + "/providers/Microsoft.DBforMySQL/servers/"
+                + SERVER_NAME
+                + "",
+            },
         }
         result = self.mgmt_client.servers.begin_create(resource_group.name, SERVER_REPLICA_NAME, BODY)
         result = result.result()
@@ -144,13 +141,10 @@ class MgmtMySQLTest(AzureMgmtTestCase):
         # result = result.result()
 
         # DatabaseCreate[put]
-        BODY = {
-            "properties": {
-                "charset": "utf8",
-                "collation": "utf8_general_ci"
-            }
-        }
-        result = self.mgmt_client.databases.begin_create_or_update(resource_group.name, SERVER_NAME, DATABASE_NAME, BODY)
+        BODY = {"properties": {"charset": "utf8", "collation": "utf8_general_ci"}}
+        result = self.mgmt_client.databases.begin_create_or_update(
+            resource_group.name, SERVER_NAME, DATABASE_NAME, BODY
+        )
         result = result.result()
 
         # FirewallRuleCreate[put]
@@ -161,8 +155,11 @@ class MgmtMySQLTest(AzureMgmtTestCase):
         #   }
         # }
         from azure.mgmt.rdbms.mysql.models import FirewallRule
-        firewall_rule = FirewallRule(start_ip_address='0.0.0.0', end_ip_address='255.255.255.255')
-        result = self.mgmt_client.firewall_rules.begin_create_or_update(resource_group.name, SERVER_NAME, FIREWALL_RULE_NAME, firewall_rule)
+
+        firewall_rule = FirewallRule(start_ip_address="0.0.0.0", end_ip_address="255.255.255.255")
+        result = self.mgmt_client.firewall_rules.begin_create_or_update(
+            resource_group.name, SERVER_NAME, FIREWALL_RULE_NAME, firewall_rule
+        )
         result = result.result()
 
         # ConfigurationCreateOrUpdate[put]
@@ -193,40 +190,29 @@ class MgmtMySQLTest(AzureMgmtTestCase):
             "properties": {
                 "state": "Enabled",
                 "email_account_admins": True,
-                "email_addresses": [
-                    "testSecurityAlert@microsoft.com"
-                ],
-                "disabled_alerts": [
-                    "Access_Anomaly",
-                    "Usage_Anomaly"
-                ],
+                "email_addresses": ["testSecurityAlert@microsoft.com"],
+                "disabled_alerts": ["Access_Anomaly", "Usage_Anomaly"],
                 "retention_days": "5",
                 "storage_account_access_key": "sdlfkjabc+sdlfkjsdlkfsjdfLDKFTERLKFDFKLjsdfksjdflsdkfD2342309432849328476458/3RSD==",
-                "storage_endpoint": "https://mystorage.blob.core.windows.net"
+                "storage_endpoint": "https://mystorage.blob.core.windows.net",
             }
         }
-        result = self.mgmt_client.server_security_alert_policies.begin_create_or_update(resource_group.name,
-                                                                                        SERVER_NAME,
-                                                                                        SECURITY_ALERT_POLICY_NAME,
-                                                                                        BODY)
+        result = self.mgmt_client.server_security_alert_policies.begin_create_or_update(
+            resource_group.name, SERVER_NAME, SECURITY_ALERT_POLICY_NAME, BODY
+        )
         result = result.result()
 
         # Update a server's threat detection policy with minimal parameters[put]
-        BODY = {
-            "properties": {
-                "state": "Disabled",
-                "email_account_admins": True
-            }
-        }
-        result = self.mgmt_client.server_security_alert_policies.begin_create_or_update(resource_group.name,
-                                                                                        SERVER_NAME,
-                                                                                        SECURITY_ALERT_POLICY_NAME,
-                                                                                        BODY)
+        BODY = {"properties": {"state": "Disabled", "email_account_admins": True}}
+        result = self.mgmt_client.server_security_alert_policies.begin_create_or_update(
+            resource_group.name, SERVER_NAME, SECURITY_ALERT_POLICY_NAME, BODY
+        )
         result = result.result()
 
         # Get a server's threat detection policy[get]
-        result = self.mgmt_client.server_security_alert_policies.get(resource_group.name, SERVER_NAME,
-                                                                     SECURITY_ALERT_POLICY_NAME)
+        result = self.mgmt_client.server_security_alert_policies.get(
+            resource_group.name, SERVER_NAME, SECURITY_ALERT_POLICY_NAME
+        )
 
         # # Gets a virtual network rule[get]
         # result = self.mgmt_client.virtual_network_rules.get(resource_group.name, SERVER_NAME, VIRTUAL_NETWORK_RULE_NAME)
@@ -278,12 +264,7 @@ class MgmtMySQLTest(AzureMgmtTestCase):
         result = result.result()
 
         # ServerUpdate[patch]
-        BODY = {
-            "properties": {
-                "administrator_login_password": "newpa$$w0rd",
-                "ssl_enforcement": "Disabled"
-            }
-        }
+        BODY = {"properties": {"administrator_login_password": "newpa$$w0rd", "ssl_enforcement": "Disabled"}}
         result = self.mgmt_client.servers.begin_update(resource_group.name, SERVER_NAME, BODY)
         result = result.result()
 
@@ -294,6 +275,7 @@ class MgmtMySQLTest(AzureMgmtTestCase):
         # }
         NAME = self.create_random_name("name1")
         from azure.mgmt.rdbms.mysql.models import NameAvailabilityRequest
+
         nameAvailabilityRequest = NameAvailabilityRequest(name=NAME, type="Microsoft.DBforMySQL")
         result = self.mgmt_client.check_name_availability.execute(nameAvailabilityRequest)
 
@@ -315,5 +297,5 @@ class MgmtMySQLTest(AzureMgmtTestCase):
 
 
 # ------------------------------------------------------------------------------
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

@@ -34,9 +34,7 @@ def _get_error_message(history):
         else:
             attempts.append(credential_name)
     return """
-Attempted credentials:\n\t{}""".format(
-        "\n\t".join(attempts)
-    )
+Attempted credentials:\n\t{}""".format("\n\t".join(attempts))
 
 
 class ChainedTokenCredential:

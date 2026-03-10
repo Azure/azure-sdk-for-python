@@ -11,7 +11,7 @@ from ._utils.serialization import Serializer
 
 
 def get_timespan_iso8601_endpoints(
-    timespan: Optional[Union[timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]] = None
+    timespan: Optional[Union[timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]] = None,
 ) -> Tuple[Optional[str], Optional[str]]:
 
     if not timespan:

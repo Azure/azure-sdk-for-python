@@ -7,12 +7,13 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 from typing import List, Optional, Tuple, Union, cast, Any, MutableMapping, overload, Mapping
 from ._models import (
     MetadataFilter as MetadataFilterGenerated,
     AnswersFromTextOptions as AnswersFromTextOptionsGenerated,
     TextDocument,
-    MetadataRecord
+    MetadataRecord,
 )
 
 JSON = MutableMapping[str, Any]
@@ -27,23 +28,20 @@ class MetadataFilter(MetadataFilterGenerated):
      "AND", "OR".
     :vartype logical_operation: str
     """
+
     @overload
     def __init__(
         self,
         *,
         metadata: Optional[List[Tuple[str, str]]] = None,
         logical_operation: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:  # pragma: no cover - overload definition
         """Overload accepting list of (key, value) tuples."""
 
     @overload
     def __init__(
-        self,
-        *,
-        metadata: Optional[List[MetadataRecord]] = None,
-        logical_operation: Optional[str] = None,
-        **kwargs: Any
+        self, *, metadata: Optional[List[MetadataRecord]] = None, logical_operation: Optional[str] = None, **kwargs: Any
     ) -> None:  # pragma: no cover - overload definition
         """Overload accepting list of MetadataRecord objects."""
 
@@ -74,12 +72,11 @@ class MetadataFilter(MetadataFilterGenerated):
                 elif isinstance(item, MetadataRecord):
                     converted.append(item)
                 else:
-                    raise TypeError(
-                        f"metadata items must be tuples or MetadataRecord objects, got {type(item)}"
-                    )
+                    raise TypeError(f"metadata items must be tuples or MetadataRecord objects, got {type(item)}")
         else:
             converted = None
         super().__init__(metadata=converted, logical_operation=logical_operation, **kwargs)
+
 
 class AnswersFromTextOptions(AnswersFromTextOptionsGenerated):
     """The question and text record parameters to answer.
@@ -102,7 +99,7 @@ class AnswersFromTextOptions(AnswersFromTextOptionsGenerated):
         question: str,
         text_documents: List[Union[str, TextDocument]],
         language: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """
         :keyword question: Required. User question to query against the given text records.
@@ -119,7 +116,7 @@ class AnswersFromTextOptions(AnswersFromTextOptionsGenerated):
             text_documents=cast(List[TextDocument], text_documents),
             language=language,
             string_index_type="UnicodeCodePoint",
-            **kwargs
+            **kwargs,
         )
 
 
@@ -127,6 +124,7 @@ __all__: List[str] = [
     "MetadataFilter",
     "AnswersFromTextOptions",
 ]
+
 
 def patch_sdk():
     """Do not remove from this file.

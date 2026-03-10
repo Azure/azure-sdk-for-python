@@ -9,15 +9,15 @@ import time
 
 from azure.core.credentials import AzureKeyCredential, AccessToken
 
-
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any
 
 ACCOUNT_KEY_VALID_YEARS = 10
 
+
 class MixedRealityAccountKeyCredential(object):
-    """ Represents an object used for Mixed Reality account key authentication.
+    """Represents an object used for Mixed Reality account key authentication.
 
     :param str account_id: The Mixed Reality service account identifier.
     :param AzureKeyCredential account_key: The Mixed Reality service account primary or secondary key credential.
@@ -28,7 +28,7 @@ class MixedRealityAccountKeyCredential(object):
         self.account_id = account_id
         self.account_key = account_key
 
-    def get_token(self, *scopes, **kwargs): #pylint: disable=unused-argument
+    def get_token(self, *scopes, **kwargs):  # pylint: disable=unused-argument
         # type: (*str, **Any) -> AccessToken
 
         token = self.account_id + ":" + self.account_key.key
@@ -39,6 +39,7 @@ class MixedRealityAccountKeyCredential(object):
         expiration_timestamp = int(time.mktime(expiration_date.timetuple()))
 
         return AccessToken(token, expiration_timestamp)
+
 
 def _add_years(date_to_update, years):
     try:

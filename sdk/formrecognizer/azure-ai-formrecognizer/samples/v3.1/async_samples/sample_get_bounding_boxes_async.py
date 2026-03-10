@@ -33,8 +33,7 @@ import asyncio
 
 
 def format_bounding_box(bounding_box):
-    """The points are listed in clockwise order: top-left, top-right, bottom-right, bottom-left.
-    """
+    """The points are listed in clockwise order: top-left, top-right, bottom-right, bottom-left."""
     if not bounding_box:
         return "N/A"
     return ", ".join(["[{}, {}]".format(p.x, p.y) for p in bounding_box])
@@ -50,12 +49,11 @@ class GetBoundingBoxesSampleAsync(object):
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
         model_id = os.getenv("CUSTOM_TRAINED_MODEL_ID", custom_model_id)
 
-        form_recognizer_client = FormRecognizerClient(
-            endpoint=endpoint, credential=AzureKeyCredential(key)
-        )
+        form_recognizer_client = FormRecognizerClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
-                                                            "..", "..", "..", "./sample_forms/forms/Form_1.jpg"))
+        path_to_sample_forms = os.path.abspath(
+            os.path.join(os.path.abspath(__file__), "..", "..", "..", "./sample_forms/forms/Form_1.jpg")
+        )
         async with form_recognizer_client:
             # Make sure your form's type is included in the list of form types the custom model can recognize
             with open(path_to_sample_forms, "rb") as f:
@@ -65,56 +63,62 @@ class GetBoundingBoxesSampleAsync(object):
 
             forms = await poller.result()
             for idx, form in enumerate(forms):
-                print("--------RECOGNIZING FORM #{}--------".format(idx+1))
+                print("--------RECOGNIZING FORM #{}--------".format(idx + 1))
                 print("Form has type: {}".format(form.form_type))
                 for name, field in form.fields.items():
                     # each field is of type FormField
-                    print("...Field '{}' has label '{}' with value '{}' within bounding box '{}', with a confidence score of {}".format(
-                        name,
-                        field.label_data.text if field.label_data else name,
-                        field.value,
-                        format_bounding_box(field.value_data.bounding_box),
-                        field.confidence
-                    ))
+                    print(
+                        "...Field '{}' has label '{}' with value '{}' within bounding box '{}', with a confidence score of {}".format(
+                            name,
+                            field.label_data.text if field.label_data else name,
+                            field.value,
+                            format_bounding_box(field.value_data.bounding_box),
+                            field.confidence,
+                        )
+                    )
                 for page in form.pages:
-                    print("-------Recognizing Page #{} of Form #{}-------".format(page.page_number, idx+1))
-                    print("Page has width '{}' and height '{}' measure with unit: {}, and has text angle '{}'".format(
-                        page.width, page.height, page.unit, page.text_angle
-                    ))
+                    print("-------Recognizing Page #{} of Form #{}-------".format(page.page_number, idx + 1))
+                    print(
+                        "Page has width '{}' and height '{}' measure with unit: {}, and has text angle '{}'".format(
+                            page.width, page.height, page.unit, page.text_angle
+                        )
+                    )
                     for table in page.tables:
                         print("Table on page has the following cells:")
                         for cell in table.cells:
                             print(
                                 "...Cell[{}][{}] has text '{}' with confidence {} based on the following words: ".format(
                                     cell.row_index, cell.column_index, cell.text, cell.confidence
-                                ))
+                                )
+                            )
                             # field_elements is only populated if you set include_field_elements=True
                             # It is a heterogeneous list of FormWord, FormLine, and FormSelectionMark
                             for element in cell.field_elements:
                                 if element.kind == "word":
-                                    print("......Word '{}' within bounding box '{}' has a confidence of {}".format(
-                                        element.text,
-                                        format_bounding_box(element.bounding_box),
-                                        element.confidence
-                                    ))
+                                    print(
+                                        "......Word '{}' within bounding box '{}' has a confidence of {}".format(
+                                            element.text, format_bounding_box(element.bounding_box), element.confidence
+                                        )
+                                    )
                                 elif element.kind == "line":
-                                    print("......Line '{}' within bounding box '{}' has the following words: ".format(
-                                        element.text,
-                                        format_bounding_box(element.bounding_box)
-                                    ))
+                                    print(
+                                        "......Line '{}' within bounding box '{}' has the following words: ".format(
+                                            element.text, format_bounding_box(element.bounding_box)
+                                        )
+                                    )
                                     for word in element.words:
-                                        print(".........Word '{}' within bounding box '{}' has a confidence of {}".format(
-                                            word.text,
-                                            format_bounding_box(word.bounding_box),
-                                            word.confidence
-                                        ))
+                                        print(
+                                            ".........Word '{}' within bounding box '{}' has a confidence of {}".format(
+                                                word.text, format_bounding_box(word.bounding_box), word.confidence
+                                            )
+                                        )
                                 elif element.kind == "selectionMark":
-                                    print("......Selection mark is '{}' within bounding box '{}' "
-                                          "and has a confidence of {}".format(
-                                            element.state,
-                                            format_bounding_box(element.bounding_box),
-                                            element.confidence
-                                            ))
+                                    print(
+                                        "......Selection mark is '{}' within bounding box '{}' "
+                                        "and has a confidence of {}".format(
+                                            element.state, format_bounding_box(element.bounding_box), element.confidence
+                                        )
+                                    )
 
                     print("---------------------------------------------------")
                 print("-----------------------------------")
@@ -134,17 +138,16 @@ async def main():
         if not endpoint or not key:
             raise ValueError("Please provide endpoint and API key to run the samples.")
 
-        form_training_client = FormTrainingClient(
-            endpoint=endpoint, credential=AzureKeyCredential(key)
-        )
+        form_training_client = FormTrainingClient(endpoint=endpoint, credential=AzureKeyCredential(key))
         async with form_training_client:
             container_sas_url = os.getenv("CONTAINER_SAS_URL_V2")
             if container_sas_url is not None:
-                model = await (await form_training_client.begin_training(
-                    container_sas_url, use_training_labels=False)).result()
+                model = await (
+                    await form_training_client.begin_training(container_sas_url, use_training_labels=False)
+                ).result()
                 model_id = model.model_id
     await sample.get_bounding_boxes(model_id)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

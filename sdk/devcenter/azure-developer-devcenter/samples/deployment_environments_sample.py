@@ -30,7 +30,7 @@ FILE: deployment_environments_sample.py
 
 DESCRIPTION:
     This sample demonstrates how to create and delete Environments using python DevCenterClient. For this sample,
-    you must have previously configured a DevCenter, Project, Catalog, Environment Definition and Environment Type. 
+    you must have previously configured a DevCenter, Project, Catalog, Environment Definition and Environment Type.
     More details   on how to configure those requirements at https://learn.microsoft.com/azure/deployment-environments/
 
 USAGE:
@@ -39,6 +39,7 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) DEVCENTER_ENDPOINT - the endpoint for your devcenter
 """
+
 
 def environment_create_and_delete():
     # [START environment_create_and_delete]

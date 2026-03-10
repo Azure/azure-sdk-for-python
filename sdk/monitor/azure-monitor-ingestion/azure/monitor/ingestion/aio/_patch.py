@@ -6,6 +6,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 from typing import List, Any, TYPE_CHECKING
 from ._client import LogsIngestionClient as GeneratedClient
 from .._version import SDK_MONIKER

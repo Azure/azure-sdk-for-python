@@ -38,7 +38,8 @@ class MeshNetworkOperations(object):
         self.api_version = "6.4-preview"
 
     def create_or_update(
-            self, network_resource_name, name, properties, custom_headers=None, raw=False, **operation_config):
+        self, network_resource_name, name, properties, custom_headers=None, raw=False, **operation_config
+    ):
         """Creates or updates a Network resource.
 
         Creates a Network resource with the specified name, description and
@@ -67,25 +68,27 @@ class MeshNetworkOperations(object):
         network_resource_description = models.NetworkResourceDescription(name=name, properties=properties)
 
         # Construct URL
-        url = self.create_or_update.metadata['url']
+        url = self.create_or_update.metadata["url"]
         path_format_arguments = {
-            'networkResourceName': self._serialize.url("network_resource_name", network_resource_name, 'str', skip_quote=True)
+            "networkResourceName": self._serialize.url(
+                "network_resource_name", network_resource_name, "str", skip_quote=True
+            )
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Accept"] = "application/json"
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(network_resource_description, 'NetworkResourceDescription')
+        body_content = self._serialize.body(network_resource_description, "NetworkResourceDescription")
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -96,19 +99,19 @@ class MeshNetworkOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('NetworkResourceDescription', response)
+            deserialized = self._deserialize("NetworkResourceDescription", response)
         if response.status_code == 201:
-            deserialized = self._deserialize('NetworkResourceDescription', response)
+            deserialized = self._deserialize("NetworkResourceDescription", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/Resources/Networks/{networkResourceName}'}
 
-    def get(
-            self, network_resource_name, custom_headers=None, raw=False, **operation_config):
+    create_or_update.metadata = {"url": "/Resources/Networks/{networkResourceName}"}
+
+    def get(self, network_resource_name, custom_headers=None, raw=False, **operation_config):
         """Gets the Network resource with the given name.
 
         Gets the information about the Network resource with the given name.
@@ -129,19 +132,21 @@ class MeshNetworkOperations(object):
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.get.metadata["url"]
         path_format_arguments = {
-            'networkResourceName': self._serialize.url("network_resource_name", network_resource_name, 'str', skip_quote=True)
+            "networkResourceName": self._serialize.url(
+                "network_resource_name", network_resource_name, "str", skip_quote=True
+            )
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -154,17 +159,17 @@ class MeshNetworkOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('NetworkResourceDescription', response)
+            deserialized = self._deserialize("NetworkResourceDescription", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/Resources/Networks/{networkResourceName}'}
 
-    def delete(
-            self, network_resource_name, custom_headers=None, raw=False, **operation_config):
+    get.metadata = {"url": "/Resources/Networks/{networkResourceName}"}
+
+    def delete(self, network_resource_name, custom_headers=None, raw=False, **operation_config):
         """Deletes the Network resource.
 
         Deletes the Network resource identified by the name.
@@ -182,15 +187,17 @@ class MeshNetworkOperations(object):
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
         # Construct URL
-        url = self.delete.metadata['url']
+        url = self.delete.metadata["url"]
         path_format_arguments = {
-            'networkResourceName': self._serialize.url("network_resource_name", network_resource_name, 'str', skip_quote=True)
+            "networkResourceName": self._serialize.url(
+                "network_resource_name", network_resource_name, "str", skip_quote=True
+            )
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
 
         # Construct headers
         header_parameters = {}
@@ -207,10 +214,10 @@ class MeshNetworkOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/Resources/Networks/{networkResourceName}'}
 
-    def list(
-            self, custom_headers=None, raw=False, **operation_config):
+    delete.metadata = {"url": "/Resources/Networks/{networkResourceName}"}
+
+    def list(self, custom_headers=None, raw=False, **operation_config):
         """Lists all the network resources.
 
         Gets the information about all network resources in a given resource
@@ -231,15 +238,15 @@ class MeshNetworkOperations(object):
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
         # Construct URL
-        url = self.list.metadata['url']
+        url = self.list.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -252,11 +259,12 @@ class MeshNetworkOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PagedNetworkResourceDescriptionList', response)
+            deserialized = self._deserialize("PagedNetworkResourceDescriptionList", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/Resources/Networks'}
+
+    list.metadata = {"url": "/Resources/Networks"}

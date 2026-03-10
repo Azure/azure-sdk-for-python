@@ -40,7 +40,8 @@ class UsersOperations(object):
         self.config = config
 
     def list_by_data_box_edge_device(
-            self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+        self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config
+    ):
         """Gets all the users registered on a data box edge/gateway device.
 
         :param device_name: The device name.
@@ -57,21 +58,24 @@ class UsersOperations(object):
          ~azure.mgmt.edgegateway.models.UserPaged[~azure.mgmt.edgegateway.models.User]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_data_box_edge_device.metadata['url']
+                url = self.list_by_data_box_edge_device.metadata["url"]
                 path_format_arguments = {
-                    'deviceName': self._serialize.url("device_name", device_name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
+                    "deviceName": self._serialize.url("device_name", device_name, "str"),
+                    "subscriptionId": self._serialize.url(
+                        "self.config.subscription_id", self.config.subscription_id, "str"
+                    ),
+                    "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, "str"),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
 
             else:
                 url = next_link
@@ -79,13 +83,15 @@ class UsersOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
+            header_parameters["Accept"] = "application/json"
             if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+                header_parameters["x-ms-client-request-id"] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
             if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                header_parameters["accept-language"] = self._serialize.header(
+                    "self.config.accept_language", self.config.accept_language, "str"
+                )
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
@@ -93,7 +99,7 @@ class UsersOperations(object):
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
+                exp.request_id = response.headers.get("x-ms-request-id")
                 raise exp
 
             return response
@@ -107,10 +113,12 @@ class UsersOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_data_box_edge_device.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}/users'}
 
-    def get(
-            self, device_name, name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+    list_by_data_box_edge_device.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}/users"
+    }
+
+    def get(self, device_name, name, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """Gets the properties of the specified user.
 
         :param device_name: The device name.
@@ -130,28 +138,30 @@ class UsersOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.get.metadata["url"]
         path_format_arguments = {
-            'deviceName': self._serialize.url("device_name", device_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
+            "deviceName": self._serialize.url("device_name", device_name, "str"),
+            "name": self._serialize.url("name", name, "str"),
+            "subscriptionId": self._serialize.url("self.config.subscription_id", self.config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, "str"),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters["x-ms-client-request-id"] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            header_parameters["accept-language"] = self._serialize.header(
+                "self.config.accept_language", self.config.accept_language, "str"
+            )
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -159,53 +169,66 @@ class UsersOperations(object):
 
         if response.status_code not in [200]:
             exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
+            exp.request_id = response.headers.get("x-ms-request-id")
             raise exp
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('User', response)
+            deserialized = self._deserialize("User", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}/users/{name}'}
 
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}/users/{name}"
+    }
 
     def _create_or_update_initial(
-            self, device_name, name, resource_group_name, encrypted_password=None, share_access_rights=None, custom_headers=None, raw=False, **operation_config):
+        self,
+        device_name,
+        name,
+        resource_group_name,
+        encrypted_password=None,
+        share_access_rights=None,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         user = models.User(encrypted_password=encrypted_password, share_access_rights=share_access_rights)
 
         # Construct URL
-        url = self.create_or_update.metadata['url']
+        url = self.create_or_update.metadata["url"]
         path_format_arguments = {
-            'deviceName': self._serialize.url("device_name", device_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
+            "deviceName": self._serialize.url("device_name", device_name, "str"),
+            "name": self._serialize.url("name", name, "str"),
+            "subscriptionId": self._serialize.url("self.config.subscription_id", self.config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, "str"),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Accept"] = "application/json"
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters["x-ms-client-request-id"] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            header_parameters["accept-language"] = self._serialize.header(
+                "self.config.accept_language", self.config.accept_language, "str"
+            )
 
         # Construct body
-        body_content = self._serialize.body(user, 'User')
+        body_content = self._serialize.body(user, "User")
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -213,13 +236,13 @@ class UsersOperations(object):
 
         if response.status_code not in [200, 202]:
             exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
+            exp.request_id = response.headers.get("x-ms-request-id")
             raise exp
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('User', response)
+            deserialized = self._deserialize("User", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -228,7 +251,17 @@ class UsersOperations(object):
         return deserialized
 
     def create_or_update(
-            self, device_name, name, resource_group_name, encrypted_password=None, share_access_rights=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        self,
+        device_name,
+        name,
+        resource_group_name,
+        encrypted_password=None,
+        share_access_rights=None,
+        custom_headers=None,
+        raw=False,
+        polling=True,
+        **operation_config
+    ):
         """Creates a new user or updates an existing user's information on a data
         box edge/gateway device.
 
@@ -270,7 +303,7 @@ class UsersOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('User', response)
+            deserialized = self._deserialize("User", response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -278,40 +311,46 @@ class UsersOperations(object):
 
             return deserialized
 
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
+        lro_delay = operation_config.get("long_running_operation_timeout", self.config.long_running_operation_timeout)
+        if polling is True:
+            polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False:
+            polling_method = NoPolling()
+        else:
+            polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}/users/{name}'}
 
+    create_or_update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}/users/{name}"
+    }
 
     def _delete_initial(
-            self, device_name, name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+        self, device_name, name, resource_group_name, custom_headers=None, raw=False, **operation_config
+    ):
         # Construct URL
-        url = self.delete.metadata['url']
+        url = self.delete.metadata["url"]
         path_format_arguments = {
-            'deviceName': self._serialize.url("device_name", device_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
+            "deviceName": self._serialize.url("device_name", device_name, "str"),
+            "name": self._serialize.url("name", name, "str"),
+            "subscriptionId": self._serialize.url("self.config.subscription_id", self.config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, "str"),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
 
         # Construct headers
         header_parameters = {}
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters["x-ms-client-request-id"] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            header_parameters["accept-language"] = self._serialize.header(
+                "self.config.accept_language", self.config.accept_language, "str"
+            )
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -319,7 +358,7 @@ class UsersOperations(object):
 
         if response.status_code not in [200, 202, 204]:
             exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
+            exp.request_id = response.headers.get("x-ms-request-id")
             raise exp
 
         if raw:
@@ -327,7 +366,8 @@ class UsersOperations(object):
             return client_raw_response
 
     def delete(
-            self, device_name, name, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        self, device_name, name, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config
+    ):
         """Deletes the user on a databox edge/gateway device.
 
         :param device_name: The device name.
@@ -361,11 +401,15 @@ class UsersOperations(object):
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
 
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
+        lro_delay = operation_config.get("long_running_operation_timeout", self.config.long_running_operation_timeout)
+        if polling is True:
+            polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False:
+            polling_method = NoPolling()
+        else:
+            polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}/users/{name}'}
+
+    delete.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}/users/{name}"
+    }

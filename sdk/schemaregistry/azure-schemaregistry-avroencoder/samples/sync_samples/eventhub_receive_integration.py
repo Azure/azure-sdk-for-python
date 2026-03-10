@@ -27,36 +27,37 @@ This example uses DefaultAzureCredential, which requests a token from Azure Acti
 For more information on DefaultAzureCredential, see
  https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
 """
+
 import os
 from azure.eventhub import EventHubConsumerClient
 from azure.identity import DefaultAzureCredential
 from azure.schemaregistry import SchemaRegistryClient
 from azure.schemaregistry.encoder.avroencoder import AvroEncoder
 
-EVENTHUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+EVENTHUB_CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
+EVENTHUB_NAME = os.environ["EVENT_HUB_NAME"]
 
-SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ['SCHEMAREGISTRY_AVRO_FULLY_QUALIFIED_NAMESPACE']
-GROUP_NAME = os.environ['SCHEMAREGISTRY_GROUP']
+SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ["SCHEMAREGISTRY_AVRO_FULLY_QUALIFIED_NAMESPACE"]
+GROUP_NAME = os.environ["SCHEMAREGISTRY_GROUP"]
 
 
 def on_event(partition_context, event):
     print(f"Received event from partition: {partition_context.partition_id}.")
 
     bytes_payload = b"".join(b for b in event.body)
-    print(f'The received bytes of the EventData is {bytes_payload!r}.')
+    print(f"The received bytes of the EventData is {bytes_payload!r}.")
 
     # Use the decode method to decode the payload of the event.
     # The decode method will extract the schema id from the content_type, and automatically retrieve the Avro Schema
     # from the Schema Registry Service. The schema will be cached locally for future usage.
     decoded_content = avro_encoder.decode(event)
-    print(f'The dict content after decoding is {decoded_content}')
+    print(f"The dict content after decoding is {decoded_content}")
 
 
 # create an EventHubConsumerClient instance
 eventhub_consumer = EventHubConsumerClient.from_connection_string(
     conn_str=EVENTHUB_CONNECTION_STR,
-    consumer_group='$Default',
+    consumer_group="$Default",
     eventhub_name=EVENTHUB_NAME,
 )
 
@@ -64,11 +65,10 @@ eventhub_consumer = EventHubConsumerClient.from_connection_string(
 # create a AvroEncoder instance
 avro_encoder = AvroEncoder(
     client=SchemaRegistryClient(
-        fully_qualified_namespace=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE,
-        credential=DefaultAzureCredential()
+        fully_qualified_namespace=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE, credential=DefaultAzureCredential()
     ),
     group_name=GROUP_NAME,
-    auto_register=True
+    auto_register=True,
 )
 
 
@@ -79,4 +79,4 @@ try:
             starting_position="-1",  # "-1" is from the beginning of the partition.
         )
 except KeyboardInterrupt:
-    print('Stopped receiving.')
+    print("Stopped receiving.")

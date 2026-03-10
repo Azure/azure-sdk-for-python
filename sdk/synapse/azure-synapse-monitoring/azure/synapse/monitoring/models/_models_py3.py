@@ -48,21 +48,21 @@ class SparkJob(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'state': {'key': 'state', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'submitter': {'key': 'submitter', 'type': 'str'},
-        'compute': {'key': 'compute', 'type': 'str'},
-        'spark_application_id': {'key': 'sparkApplicationId', 'type': 'str'},
-        'livy_id': {'key': 'livyId', 'type': 'str'},
-        'timing': {'key': 'timing', 'type': '[str]'},
-        'spark_job_definition': {'key': 'sparkJobDefinition', 'type': 'str'},
-        'pipeline': {'key': 'pipeline', 'type': '[SparkJob]'},
-        'job_type': {'key': 'jobType', 'type': 'str'},
-        'submit_time': {'key': 'submitTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'queued_duration': {'key': 'queuedDuration', 'type': 'str'},
-        'running_duration': {'key': 'runningDuration', 'type': 'str'},
-        'total_duration': {'key': 'totalDuration', 'type': 'str'},
+        "state": {"key": "state", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "submitter": {"key": "submitter", "type": "str"},
+        "compute": {"key": "compute", "type": "str"},
+        "spark_application_id": {"key": "sparkApplicationId", "type": "str"},
+        "livy_id": {"key": "livyId", "type": "str"},
+        "timing": {"key": "timing", "type": "[str]"},
+        "spark_job_definition": {"key": "sparkJobDefinition", "type": "str"},
+        "pipeline": {"key": "pipeline", "type": "[SparkJob]"},
+        "job_type": {"key": "jobType", "type": "str"},
+        "submit_time": {"key": "submitTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "queued_duration": {"key": "queuedDuration", "type": "str"},
+        "running_duration": {"key": "runningDuration", "type": "str"},
+        "total_duration": {"key": "totalDuration", "type": "str"},
     }
 
     def __init__(
@@ -113,17 +113,11 @@ class SparkJobListViewResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'n_jobs': {'key': 'nJobs', 'type': 'int'},
-        'spark_jobs': {'key': 'sparkJobs', 'type': '[SparkJob]'},
+        "n_jobs": {"key": "nJobs", "type": "int"},
+        "spark_jobs": {"key": "sparkJobs", "type": "[SparkJob]"},
     }
 
-    def __init__(
-        self,
-        *,
-        n_jobs: Optional[int] = None,
-        spark_jobs: Optional[List["SparkJob"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, n_jobs: Optional[int] = None, spark_jobs: Optional[List["SparkJob"]] = None, **kwargs):
         super(SparkJobListViewResponse, self).__init__(**kwargs)
         self.n_jobs = n_jobs
         self.spark_jobs = spark_jobs
@@ -137,14 +131,9 @@ class SqlQueryStringDataModel(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'query': {'key': 'query', 'type': 'str'},
+        "query": {"key": "query", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        query: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, query: Optional[str] = None, **kwargs):
         super(SqlQueryStringDataModel, self).__init__(**kwargs)
         self.query = query

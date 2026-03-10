@@ -28,8 +28,11 @@ from azure.cosmos._execution_context.aio import endpoint_component, multi_execut
 from azure.cosmos._execution_context.aio import non_streaming_order_by_aggregator, hybrid_search_aggregator
 from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.aio.base_execution_context import _DefaultQueryExecutionContext
-from azure.cosmos._execution_context.execution_dispatcher import _is_partitioned_execution_info,\
-    _is_hybrid_search_query, _verify_valid_hybrid_search_query
+from azure.cosmos._execution_context.execution_dispatcher import (
+    _is_partitioned_execution_info,
+    _is_hybrid_search_query,
+    _verify_valid_hybrid_search_query,
+)
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
 from azure.cosmos.documents import _DistinctType
 from azure.cosmos.exceptions import CosmosHttpResponseError
@@ -37,6 +40,7 @@ from azure.cosmos.http_constants import StatusCodes
 from ..._constants import _Constants as Constants
 
 # pylint: disable=protected-access
+
 
 class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disable=abstract-method
     """Represents a proxy execution context wrapper.
@@ -47,8 +51,9 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
     to _MultiExecutionContextAggregator
     """
 
-    def __init__(self, client, resource_link, query, options, fetch_function,
-                 response_hook, raw_response_hook, resource_type):
+    def __init__(
+        self, client, resource_link, query, options, fetch_function, response_hook, raw_response_hook, resource_type
+    ):
         """
         Constructor
         """
@@ -69,15 +74,15 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         query_plan = await self._client._GetQueryPlanThroughGateway(
             query_to_use,
             self._resource_link,
-            self._options.get('excludedLocations'),
-            read_timeout=self._options.get('read_timeout')
+            self._options.get("excludedLocations"),
+            read_timeout=self._options.get("read_timeout"),
         )
         query_execution_info = _PartitionedQueryExecutionInfo(query_plan)
         qe_info = getattr(query_execution_info, "_query_execution_info", None)
         if isinstance(qe_info, dict) and isinstance(query_to_use, dict):
             params = query_to_use.get("parameters")
             if params is not None:
-                query_execution_info._query_execution_info['parameters'] = params
+                query_execution_info._query_execution_info["parameters"] = params
 
         self._execution_context = await self._create_pipelined_execution_context(query_execution_info)
 
@@ -122,51 +127,69 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
 
         assert self._resource_link, "code bug, resource_link is required."
         if query_execution_info.has_aggregates() and not query_execution_info.has_select_value():
-            if self._options and ("enableCrossPartitionQuery" in self._options
-                                  and self._options["enableCrossPartitionQuery"]):
-                raise CosmosHttpResponseError(StatusCodes.BAD_REQUEST,
-                                  "Cross partition query only supports 'VALUE <AggregateFunc>' for aggregates")
+            if self._options and (
+                "enableCrossPartitionQuery" in self._options and self._options["enableCrossPartitionQuery"]
+            ):
+                raise CosmosHttpResponseError(
+                    StatusCodes.BAD_REQUEST,
+                    "Cross partition query only supports 'VALUE <AggregateFunc>' for aggregates",
+                )
 
         # throw exception here for vector search query without limit filter or limit > max_limit
         if query_execution_info.get_non_streaming_order_by():
-            total_item_buffer = (query_execution_info.get_top() or 0) or \
-                                ((query_execution_info.get_limit() or 0) + (query_execution_info.get_offset() or 0))
+            total_item_buffer = (query_execution_info.get_top() or 0) or (
+                (query_execution_info.get_limit() or 0) + (query_execution_info.get_offset() or 0)
+            )
             if total_item_buffer == 0:
-                raise ValueError("Executing a vector search query without TOP or LIMIT can consume many" +
-                                 " RUs very fast and have long runtimes. Please ensure you are using one" +
-                                 " of the two filters with your vector search query.")
-            if total_item_buffer > int(os.environ.get(Constants.MAX_ITEM_BUFFER_VS_CONFIG,
-                                                      Constants.MAX_ITEM_BUFFER_VS_CONFIG_DEFAULT)):
-                raise ValueError("Executing a vector search query with more items than the max is not allowed. " +
-                                 "Please ensure you are using a limit smaller than the max, or change the max.")
-            execution_context_aggregator =\
-                non_streaming_order_by_aggregator._NonStreamingOrderByContextAggregator(self._client,
-                                                                                        self._resource_link,
-                                                                                        self._query,
-                                                                                        self._options,
-                                                                                        query_execution_info,
-                                                                                        self._response_hook,
-                                                                                        self._raw_response_hook)
+                raise ValueError(
+                    "Executing a vector search query without TOP or LIMIT can consume many"
+                    + " RUs very fast and have long runtimes. Please ensure you are using one"
+                    + " of the two filters with your vector search query."
+                )
+            if total_item_buffer > int(
+                os.environ.get(Constants.MAX_ITEM_BUFFER_VS_CONFIG, Constants.MAX_ITEM_BUFFER_VS_CONFIG_DEFAULT)
+            ):
+                raise ValueError(
+                    "Executing a vector search query with more items than the max is not allowed. "
+                    + "Please ensure you are using a limit smaller than the max, or change the max."
+                )
+            execution_context_aggregator = non_streaming_order_by_aggregator._NonStreamingOrderByContextAggregator(
+                self._client,
+                self._resource_link,
+                self._query,
+                self._options,
+                query_execution_info,
+                self._response_hook,
+                self._raw_response_hook,
+            )
             await execution_context_aggregator._configure_partition_ranges()
         elif query_execution_info.has_hybrid_search_query_info():
-            hybrid_search_query_info = query_execution_info._query_execution_info['hybridSearchQueryInfo']
+            hybrid_search_query_info = query_execution_info._query_execution_info["hybridSearchQueryInfo"]
             _verify_valid_hybrid_search_query(hybrid_search_query_info)
-            execution_context_aggregator = \
-                hybrid_search_aggregator._HybridSearchContextAggregator(self._client,
-                                                                        self._resource_link,
-                                                                        self._options,
-                                                                        query_execution_info,
-                                                                        hybrid_search_query_info,
-                                                                        self._response_hook,
-                                                                        self._raw_response_hook)
+            execution_context_aggregator = hybrid_search_aggregator._HybridSearchContextAggregator(
+                self._client,
+                self._resource_link,
+                self._options,
+                query_execution_info,
+                hybrid_search_query_info,
+                self._response_hook,
+                self._raw_response_hook,
+            )
             await execution_context_aggregator._run_hybrid_search()
         else:
             execution_context_aggregator = multi_execution_aggregator._MultiExecutionContextAggregator(
-                self._client, self._resource_link, self._query, self._options, query_execution_info,
-                self._response_hook, self._raw_response_hook)
+                self._client,
+                self._resource_link,
+                self._query,
+                self._options,
+                query_execution_info,
+                self._response_hook,
+                self._raw_response_hook,
+            )
             await execution_context_aggregator._configure_partition_ranges()
-        return _PipelineExecutionContext(self._client, self._options, execution_context_aggregator,
-                                         query_execution_info)
+        return _PipelineExecutionContext(
+            self._client, self._options, execution_context_aggregator, query_execution_info
+        )
 
 
 class _PipelineExecutionContext(_QueryExecutionContextBase):  # pylint: disable=abstract-method

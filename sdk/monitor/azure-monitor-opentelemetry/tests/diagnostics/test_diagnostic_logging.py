@@ -11,7 +11,6 @@ from unittest.mock import patch
 
 import azure.monitor.opentelemetry._diagnostics.diagnostic_logging as diagnostic_logger
 
-
 TEST_SITE_NAME = "TEST_SITE_NAME"
 TEST_CUSTOMER_IKEY = "TEST_CUSTOMER_IKEY"
 TEST_EXTENSION_VERSION = "TEST_EXTENSION_VERSION"

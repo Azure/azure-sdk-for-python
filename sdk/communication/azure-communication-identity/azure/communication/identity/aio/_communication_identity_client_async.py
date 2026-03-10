@@ -87,7 +87,9 @@ class CommunicationIdentityClient:
 
     @distributed_trace_async
     async def create_user_and_token(
-        self, scopes: List[Union[str, CommunicationTokenScope]], *,
+        self,
+        scopes: List[Union[str, CommunicationTokenScope]],
+        *,
         token_expires_in: Optional[timedelta] = None,
         **kwargs
     ) -> Tuple["CommunicationUserIdentifier", AccessToken]:
@@ -136,8 +138,10 @@ class CommunicationIdentityClient:
 
     @distributed_trace_async
     async def get_token(
-        self, user: CommunicationUserIdentifier,
-        scopes: List[Union[str, CommunicationTokenScope]], *,
+        self,
+        user: CommunicationUserIdentifier,
+        scopes: List[Union[str, CommunicationTokenScope]],
+        *,
         token_expires_in: Optional[timedelta] = None,
         **kwargs
     ) -> AccessToken:

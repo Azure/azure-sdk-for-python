@@ -12,7 +12,6 @@ from testcase import FormRecognizerTest
 from conftest import skip_flaky_test
 from preparers import FormRecognizerPreparer, get_sync_client
 
-
 get_fr_client = functools.partial(get_sync_client, FormRecognizerClient)
 
 
@@ -33,13 +32,15 @@ class TestBusinessCardFromUrl(FormRecognizerTest):
 
         for name, field in business_card.fields.items():
             for f in field.value:
-                self.assertFieldElementsHasValues(f.value_data.field_elements, business_card.page_range.first_page_number)
-        
+                self.assertFieldElementsHasValues(
+                    f.value_data.field_elements, business_card.page_range.first_page_number
+                )
+
         # check dict values
         assert len(business_card.fields.get("ContactNames").value) == 1
         assert business_card.fields.get("ContactNames").value[0].value_data.page_number == 1
-        assert business_card.fields.get("ContactNames").value[0].value['FirstName'].value == 'Avery'
-        assert business_card.fields.get("ContactNames").value[0].value['LastName'].value == 'Smith'
+        assert business_card.fields.get("ContactNames").value[0].value["FirstName"].value == "Avery"
+        assert business_card.fields.get("ContactNames").value[0].value["LastName"].value == "Smith"
 
         assert len(business_card.fields.get("JobTitles").value) == 1
         assert business_card.fields.get("JobTitles").value[0].value == "Senior Researcher"
@@ -74,4 +75,6 @@ class TestBusinessCardFromUrl(FormRecognizerTest):
         client = get_fr_client(api_version=FormRecognizerApiVersion.V2_0)
         with pytest.raises(ValueError) as e:
             client.begin_recognize_business_cards_from_url(self.business_card_url_jpg)
-        assert "Method 'begin_recognize_business_cards_from_url' is only available for API version V2_1 and up" in str(e.value)
+        assert "Method 'begin_recognize_business_cards_from_url' is only available for API version V2_1 and up" in str(
+            e.value
+        )

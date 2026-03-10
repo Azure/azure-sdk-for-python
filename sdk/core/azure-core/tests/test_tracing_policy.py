@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for the distributed tracing policy."""
+
 import logging
 import time
 import urllib

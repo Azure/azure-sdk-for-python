@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 
 """This file stores constants that will be used in mldesigner package."""
+
 from azure.ai.ml._internal._schema.component import NodeType as V1NodeType
 from azure.ai.ml._internal.entities import (
     Ae365exepool,

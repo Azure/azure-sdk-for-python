@@ -17,13 +17,13 @@ from ._operations import SystemScanRulesetsOperations
 from ._operations import TriggersOperations
 
 __all__ = [
-    'KeyVaultConnectionsOperations',
-    'ClassificationRulesOperations',
-    'DataSourcesOperations',
-    'FiltersOperations',
-    'ScansOperations',
-    'ScanResultOperations',
-    'ScanRulesetsOperations',
-    'SystemScanRulesetsOperations',
-    'TriggersOperations',
+    "KeyVaultConnectionsOperations",
+    "ClassificationRulesOperations",
+    "DataSourcesOperations",
+    "FiltersOperations",
+    "ScansOperations",
+    "ScanResultOperations",
+    "ScanRulesetsOperations",
+    "SystemScanRulesetsOperations",
+    "TriggersOperations",
 ]

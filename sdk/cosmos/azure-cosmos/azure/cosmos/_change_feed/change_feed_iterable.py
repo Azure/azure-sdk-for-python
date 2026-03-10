@@ -19,8 +19,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Iterable change feed results in the Azure Cosmos database service.
-"""
+"""Iterable change feed results in the Azure Cosmos database service."""
+
 from typing import Any, Tuple, Optional, Callable, cast, Union
 
 from azure.core.paging import PageIterator
@@ -63,8 +63,11 @@ class ChangeFeedIterable(PageIterator):
             raise ValueError("Missing changeFeedStateContext in feed options")
 
         change_feed_state_context = self._options.pop("changeFeedStateContext")
-        continuation = continuation_token if continuation_token is not None\
+        continuation = (
+            continuation_token
+            if continuation_token is not None
             else change_feed_state_context.pop("continuation", None)
+        )
 
         # analysis and validate continuation token
         # there are two types of continuation token we support currently:
@@ -74,7 +77,7 @@ class ChangeFeedIterable(PageIterator):
         # v2 version: the continuation token will be base64 encoded composition token
         # which includes full change feed state
         if continuation is not None:
-            if continuation.isdigit() or continuation.strip('\'"').isdigit():
+            if continuation.isdigit() or continuation.strip("'\"").isdigit():
                 change_feed_state_context["continuationPkRangeId"] = continuation
             else:
                 change_feed_state_context["continuationFeedRange"] = continuation
@@ -83,14 +86,13 @@ class ChangeFeedIterable(PageIterator):
         self._options["changeFeedStateContext"] = change_feed_state_context
 
         super(ChangeFeedIterable, self).__init__(
-            self._fetch_next,
-            self._unpack, # type: ignore[arg-type]
-            continuation_token=continuation_token)
+            self._fetch_next, self._unpack, continuation_token=continuation_token  # type: ignore[arg-type]
+        )
 
     def _unpack(self, block: list[dict[str, Any]]) -> Tuple[Optional[str], list[dict[str, Any]]]:
         continuation: Optional[str] = None
         if self._client.last_response_headers:
-            continuation = self._client.last_response_headers.get('etag')
+            continuation = self._client.last_response_headers.get("etag")
 
         if block:
             self._did_a_call_already = False
@@ -115,27 +117,19 @@ class ChangeFeedIterable(PageIterator):
 
     def _initialize_change_feed_fetcher(self) -> None:
         change_feed_state_context = self._options.pop("changeFeedStateContext")
-        change_feed_state = \
-            ChangeFeedState.from_json(
-                self._collection_link,
-                cast(str, self._options.get("containerRID")),
-                change_feed_state_context)
+        change_feed_state = ChangeFeedState.from_json(
+            self._collection_link, cast(str, self._options.get("containerRID")), change_feed_state_context
+        )
 
         self._options["changeFeedState"] = change_feed_state
 
         if change_feed_state.version == ChangeFeedStateVersion.V1:
             self._change_feed_fetcher = ChangeFeedFetcherV1(
-                self._client,
-                self._collection_link,
-                self._options,
-                self._fetch_function
+                self._client, self._collection_link, self._options, self._fetch_function
             )
         else:
             self._change_feed_fetcher = ChangeFeedFetcherV2(
-                self._client,
-                self._collection_link,
-                self._options,
-                self._fetch_function
+                self._client, self._collection_link, self._options, self._fetch_function
             )
 
     def _validate_change_feed_state_context(self, change_feed_state_context: dict[str, Any]) -> None:
@@ -151,9 +145,13 @@ class ChangeFeedIterable(PageIterator):
         else:
             # validation when no continuation is passed
             exclusive_keys = ["partitionKeyRangeId", "partitionKey", "feedRange"]
-            count = sum(1 for key in exclusive_keys if
-                        key in change_feed_state_context and change_feed_state_context[key] is not None)
+            count = sum(
+                1
+                for key in exclusive_keys
+                if key in change_feed_state_context and change_feed_state_context[key] is not None
+            )
             if count > 1:
                 raise ValueError(
                     "partition_key_range_id, partition_key, feed_range are exclusive parameters,"
-                    " please only set one of them")
+                    " please only set one of them"
+                )

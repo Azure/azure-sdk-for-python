@@ -38,7 +38,15 @@ class MeshSecretValueOperations(object):
         self.api_version = "6.4-preview"
 
     def add_value(
-            self, secret_resource_name, secret_value_resource_name, name, value=None, custom_headers=None, raw=False, **operation_config):
+        self,
+        secret_resource_name,
+        secret_value_resource_name,
+        name,
+        value=None,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Adds the specified value as a new version of the specified secret
         resource.
 
@@ -70,26 +78,30 @@ class MeshSecretValueOperations(object):
         secret_value_resource_description = models.SecretValueResourceDescription(name=name, value=value)
 
         # Construct URL
-        url = self.add_value.metadata['url']
+        url = self.add_value.metadata["url"]
         path_format_arguments = {
-            'secretResourceName': self._serialize.url("secret_resource_name", secret_resource_name, 'str', skip_quote=True),
-            'secretValueResourceName': self._serialize.url("secret_value_resource_name", secret_value_resource_name, 'str', skip_quote=True)
+            "secretResourceName": self._serialize.url(
+                "secret_resource_name", secret_resource_name, "str", skip_quote=True
+            ),
+            "secretValueResourceName": self._serialize.url(
+                "secret_value_resource_name", secret_value_resource_name, "str", skip_quote=True
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Accept"] = "application/json"
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(secret_value_resource_description, 'SecretValueResourceDescription')
+        body_content = self._serialize.body(secret_value_resource_description, "SecretValueResourceDescription")
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -100,19 +112,19 @@ class MeshSecretValueOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('SecretValueResourceDescription', response)
+            deserialized = self._deserialize("SecretValueResourceDescription", response)
         if response.status_code == 201:
-            deserialized = self._deserialize('SecretValueResourceDescription', response)
+            deserialized = self._deserialize("SecretValueResourceDescription", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    add_value.metadata = {'url': '/Resources/Secrets/{secretResourceName}/values/{secretValueResourceName}'}
 
-    def get(
-            self, secret_resource_name, secret_value_resource_name, custom_headers=None, raw=False, **operation_config):
+    add_value.metadata = {"url": "/Resources/Secrets/{secretResourceName}/values/{secretValueResourceName}"}
+
+    def get(self, secret_resource_name, secret_value_resource_name, custom_headers=None, raw=False, **operation_config):
         """Gets the specified secret value resource.
 
         Get the information about the specified named secret value resources.
@@ -136,20 +148,24 @@ class MeshSecretValueOperations(object):
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.get.metadata["url"]
         path_format_arguments = {
-            'secretResourceName': self._serialize.url("secret_resource_name", secret_resource_name, 'str', skip_quote=True),
-            'secretValueResourceName': self._serialize.url("secret_value_resource_name", secret_value_resource_name, 'str', skip_quote=True)
+            "secretResourceName": self._serialize.url(
+                "secret_resource_name", secret_resource_name, "str", skip_quote=True
+            ),
+            "secretValueResourceName": self._serialize.url(
+                "secret_value_resource_name", secret_value_resource_name, "str", skip_quote=True
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -162,17 +178,19 @@ class MeshSecretValueOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('SecretValueResourceDescription', response)
+            deserialized = self._deserialize("SecretValueResourceDescription", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/Resources/Secrets/{secretResourceName}/values/{secretValueResourceName}'}
+
+    get.metadata = {"url": "/Resources/Secrets/{secretResourceName}/values/{secretValueResourceName}"}
 
     def delete(
-            self, secret_resource_name, secret_value_resource_name, custom_headers=None, raw=False, **operation_config):
+        self, secret_resource_name, secret_value_resource_name, custom_headers=None, raw=False, **operation_config
+    ):
         """Deletes the specified  value of the named secret resource.
 
         Deletes the secret value resource identified by the name. The name of
@@ -195,16 +213,20 @@ class MeshSecretValueOperations(object):
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
         # Construct URL
-        url = self.delete.metadata['url']
+        url = self.delete.metadata["url"]
         path_format_arguments = {
-            'secretResourceName': self._serialize.url("secret_resource_name", secret_resource_name, 'str', skip_quote=True),
-            'secretValueResourceName': self._serialize.url("secret_value_resource_name", secret_value_resource_name, 'str', skip_quote=True)
+            "secretResourceName": self._serialize.url(
+                "secret_resource_name", secret_resource_name, "str", skip_quote=True
+            ),
+            "secretValueResourceName": self._serialize.url(
+                "secret_value_resource_name", secret_value_resource_name, "str", skip_quote=True
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
 
         # Construct headers
         header_parameters = {}
@@ -221,10 +243,10 @@ class MeshSecretValueOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/Resources/Secrets/{secretResourceName}/values/{secretValueResourceName}'}
 
-    def list(
-            self, secret_resource_name, custom_headers=None, raw=False, **operation_config):
+    delete.metadata = {"url": "/Resources/Secrets/{secretResourceName}/values/{secretValueResourceName}"}
+
+    def list(self, secret_resource_name, custom_headers=None, raw=False, **operation_config):
         """List names of all values of the specified secret resource.
 
         Gets information about all secret value resources of the specified
@@ -247,19 +269,21 @@ class MeshSecretValueOperations(object):
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
         # Construct URL
-        url = self.list.metadata['url']
+        url = self.list.metadata["url"]
         path_format_arguments = {
-            'secretResourceName': self._serialize.url("secret_resource_name", secret_resource_name, 'str', skip_quote=True)
+            "secretResourceName": self._serialize.url(
+                "secret_resource_name", secret_resource_name, "str", skip_quote=True
+            )
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -272,17 +296,19 @@ class MeshSecretValueOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PagedSecretValueResourceDescriptionList', response)
+            deserialized = self._deserialize("PagedSecretValueResourceDescriptionList", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/Resources/Secrets/{secretResourceName}/values'}
+
+    list.metadata = {"url": "/Resources/Secrets/{secretResourceName}/values"}
 
     def show(
-            self, secret_resource_name, secret_value_resource_name, custom_headers=None, raw=False, **operation_config):
+        self, secret_resource_name, secret_value_resource_name, custom_headers=None, raw=False, **operation_config
+    ):
         """Lists the specified value of the secret resource.
 
         Lists the decrypted value of the specified named value of the secret
@@ -305,20 +331,24 @@ class MeshSecretValueOperations(object):
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
         # Construct URL
-        url = self.show.metadata['url']
+        url = self.show.metadata["url"]
         path_format_arguments = {
-            'secretResourceName': self._serialize.url("secret_resource_name", secret_resource_name, 'str', skip_quote=True),
-            'secretValueResourceName': self._serialize.url("secret_value_resource_name", secret_value_resource_name, 'str', skip_quote=True)
+            "secretResourceName": self._serialize.url(
+                "secret_resource_name", secret_resource_name, "str", skip_quote=True
+            ),
+            "secretValueResourceName": self._serialize.url(
+                "secret_value_resource_name", secret_value_resource_name, "str", skip_quote=True
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -331,11 +361,12 @@ class MeshSecretValueOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('SecretValue', response)
+            deserialized = self._deserialize("SecretValue", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    show.metadata = {'url': '/Resources/Secrets/{secretResourceName}/values/{secretValueResourceName}/list_value'}
+
+    show.metadata = {"url": "/Resources/Secrets/{secretResourceName}/values/{secretValueResourceName}/list_value"}

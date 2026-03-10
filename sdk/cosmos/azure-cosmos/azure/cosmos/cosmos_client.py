@@ -19,8 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Create, read, and delete databases in the Azure Cosmos DB SQL API service.
-"""
+"""Create, read, and delete databases in the Azure Cosmos DB SQL API service."""
 
 import warnings
 from typing import Any, Iterable, Mapping, Optional, Union, cast, Callable, overload, Literal, TYPE_CHECKING
@@ -47,17 +46,15 @@ __all__ = ("CosmosClient",)
 
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
-CredentialType = Union[
-    TokenCredential, CredentialDict, str, Mapping[str, Any], Iterable[Mapping[str, Any]]
-]
+CredentialType = Union[TokenCredential, CredentialDict, str, Mapping[str, Any], Iterable[Mapping[str, Any]]]
 
 
 def _parse_connection_str(conn_str: str, credential: Optional[Any]) -> dict[str, str]:
     conn_str = conn_str.rstrip(";")
     conn_settings = dict([s.split("=", 1) for s in conn_str.split(";")])
-    if 'AccountEndpoint' not in conn_settings:
+    if "AccountEndpoint" not in conn_settings:
         raise ValueError("Connection string missing setting 'AccountEndpoint'.")
-    if not credential and 'AccountKey' not in conn_settings:
+    if not credential and "AccountKey" not in conn_settings:
         raise ValueError("Connection string missing setting 'AccountKey'.")
     return conn_settings
 
@@ -65,92 +62,98 @@ def _parse_connection_str(conn_str: str, credential: Optional[Any]) -> dict[str,
 def _build_auth(credential: CredentialType) -> CredentialDict:
     auth: CredentialDict = {}
     if isinstance(credential, str):
-        auth['masterKey'] = credential
+        auth["masterKey"] = credential
     elif isinstance(credential, Mapping):
-        if any(k for k in credential.keys() if k in ['masterKey', 'resourceTokens', 'permissionFeed']):
+        if any(k for k in credential.keys() if k in ["masterKey", "resourceTokens", "permissionFeed"]):
             return cast(CredentialDict, credential)  # Backwards compatible
-        auth['resourceTokens'] = credential
+        auth["resourceTokens"] = credential
     elif isinstance(credential, Iterable):
-        auth['permissionFeed'] = cast(Iterable[Mapping[str, Any]], credential)
+        auth["permissionFeed"] = cast(Iterable[Mapping[str, Any]], credential)
     elif isinstance(credential, TokenCredential):
-        auth['clientSecretCredential'] = credential
+        auth["clientSecretCredential"] = credential
     else:
         raise TypeError(
             "Unrecognized credential type. Please supply the master key as a string "
             "or a dictionary, or resource tokens, or a list of permissions, or any instance of a class implementing"
-            " TokenCredential (see azure.identity module for specific implementations such as ClientSecretCredential).")
+            " TokenCredential (see azure.identity module for specific implementations such as ClientSecretCredential)."
+        )
     return auth
 
 
 def _build_connection_policy(kwargs: dict[str, Any]) -> ConnectionPolicy:
     # pylint: disable=protected-access
-    policy = kwargs.pop('connection_policy', ConnectionPolicy())
+    policy = kwargs.pop("connection_policy", ConnectionPolicy())
 
     # Connection config
     # `request_timeout` is supported as a legacy parameter later replaced by `connection_timeout`
-    if 'request_timeout' in kwargs:
-        policy.RequestTimeout = kwargs.pop('request_timeout') / 1000.0
+    if "request_timeout" in kwargs:
+        policy.RequestTimeout = kwargs.pop("request_timeout") / 1000.0
     else:
-        policy.RequestTimeout = kwargs.pop('connection_timeout', policy.RequestTimeout)
-    policy.ConnectionMode = kwargs.pop('connection_mode', policy.ConnectionMode)
-    policy.ProxyConfiguration = kwargs.pop('proxy_config', policy.ProxyConfiguration)
-    policy.EnableEndpointDiscovery = kwargs.pop('enable_endpoint_discovery', policy.EnableEndpointDiscovery)
-    policy.PreferredLocations = kwargs.pop('preferred_locations', policy.PreferredLocations)
+        policy.RequestTimeout = kwargs.pop("connection_timeout", policy.RequestTimeout)
+    policy.ConnectionMode = kwargs.pop("connection_mode", policy.ConnectionMode)
+    policy.ProxyConfiguration = kwargs.pop("proxy_config", policy.ProxyConfiguration)
+    policy.EnableEndpointDiscovery = kwargs.pop("enable_endpoint_discovery", policy.EnableEndpointDiscovery)
+    policy.PreferredLocations = kwargs.pop("preferred_locations", policy.PreferredLocations)
     # TODO: Consider storing callback method instead, such as 'Supplier' in JAVA SDK
-    excluded_locations = kwargs.pop('excluded_locations', policy.ExcludedLocations)
+    excluded_locations = kwargs.pop("excluded_locations", policy.ExcludedLocations)
     if excluded_locations:
         policy.ExcludedLocations = excluded_locations
-    policy.UseMultipleWriteLocations = kwargs.pop('multiple_write_locations', policy.UseMultipleWriteLocations)
+    policy.UseMultipleWriteLocations = kwargs.pop("multiple_write_locations", policy.UseMultipleWriteLocations)
 
     # SSL config
-    verify = kwargs.pop('connection_verify', None)
+    verify = kwargs.pop("connection_verify", None)
     policy.DisableSSLVerification = not bool(verify if verify is not None else True)
-    ssl = kwargs.pop('ssl_config', policy.SSLConfiguration)
+    ssl = kwargs.pop("ssl_config", policy.SSLConfiguration)
     if ssl:
-        ssl.SSLCertFile = kwargs.pop('connection_cert', ssl.SSLCertFile)
+        ssl.SSLCertFile = kwargs.pop("connection_cert", ssl.SSLCertFile)
         ssl.SSLCaCerts = verify or ssl.SSLCaCerts
         policy.SSLConfiguration = ssl
 
     # Retry config
-    retry_options = kwargs.pop('retry_options', None)
+    retry_options = kwargs.pop("retry_options", None)
     if retry_options is not None:
         warnings.warn(
             "'retry_options' has been deprecated and will be removed from the SDK in a future release.",
-            DeprecationWarning
+            DeprecationWarning,
         )
     retry_options = policy.RetryOptions
-    total_retries = kwargs.pop('retry_total', None)
-    total_throttle_retries = kwargs.pop('retry_throttle_total', None)
-    retry_options._max_retry_attempt_count = \
+    total_retries = kwargs.pop("retry_total", None)
+    total_throttle_retries = kwargs.pop("retry_throttle_total", None)
+    retry_options._max_retry_attempt_count = (
         total_throttle_retries or total_retries or retry_options._max_retry_attempt_count
-    retry_options._fixed_retry_interval_in_milliseconds = kwargs.pop('retry_fixed_interval', None) or \
-        retry_options._fixed_retry_interval_in_milliseconds
-    max_backoff = kwargs.pop('retry_backoff_max', None)
-    max_throttle_backoff = kwargs.pop('retry_throttle_backoff_max', None)
-    retry_options._max_wait_time_in_seconds = \
+    )
+    retry_options._fixed_retry_interval_in_milliseconds = (
+        kwargs.pop("retry_fixed_interval", None) or retry_options._fixed_retry_interval_in_milliseconds
+    )
+    max_backoff = kwargs.pop("retry_backoff_max", None)
+    max_throttle_backoff = kwargs.pop("retry_throttle_backoff_max", None)
+    retry_options._max_wait_time_in_seconds = (
         max_throttle_backoff or max_backoff or retry_options._max_wait_time_in_seconds
+    )
     policy.RetryOptions = retry_options
-    connection_retry = kwargs.pop('connection_retry_policy', None)
+    connection_retry = kwargs.pop("connection_retry_policy", None)
     if connection_retry is not None:
         warnings.warn(
             "'connection_retry_policy' has been deprecated and will be removed from the SDK in a future release.",
-            DeprecationWarning
+            DeprecationWarning,
         )
     if not connection_retry:
         connection_retry = ConnectionRetryPolicy(
             retry_total=total_retries,
-            retry_connect=kwargs.pop('retry_connect', None),
-            retry_read=kwargs.pop('retry_read', None),
-            retry_status=kwargs.pop('retry_status', None),
+            retry_connect=kwargs.pop("retry_connect", None),
+            retry_read=kwargs.pop("retry_read", None),
+            retry_status=kwargs.pop("retry_status", None),
             retry_backoff_max=max_backoff or retry_options._max_wait_time_in_seconds,
-            retry_mode=kwargs.pop('retry_mode', RetryMode.Fixed),
-            retry_on_status_codes=kwargs.pop('retry_on_status_codes', []),
-            retry_backoff_factor=kwargs.pop('retry_backoff_factor', 1),
+            retry_mode=kwargs.pop("retry_mode", RetryMode.Fixed),
+            retry_on_status_codes=kwargs.pop("retry_on_status_codes", []),
+            retry_backoff_factor=kwargs.pop("retry_backoff_factor", 1),
         )
     policy.ConnectionRetryConfiguration = connection_retry
-    policy.ResponsePayloadOnWriteDisabled = kwargs.pop('no_response_on_write', False)
+    policy.ResponsePayloadOnWriteDisabled = kwargs.pop("no_response_on_write", False)
     policy.RetryNonIdempotentWrites = kwargs.pop(Constants.Kwargs.RETRY_WRITE, False)
     return policy
+
+
 class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     """A client-side logical representation of an Azure Cosmos DB account.
 
@@ -197,7 +200,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         Must be used along with a logger to work.
     :keyword ~logging.Logger logger: Logger to be used for collecting request diagnostics. Can be passed in at client
         level (to log all requests) or at a single request level. Requests will be logged at INFO level.
-    :keyword bool no_response_on_write: Indicates whether service should be instructed to skip sending 
+    :keyword bool no_response_on_write: Indicates whether service should be instructed to skip sending
         response payloads on write operations for items.
     :keyword int throughput_bucket: The desired throughput bucket for the client
     :keyword str user_agent_suffix: Allows user agent suffix to be specified when creating client
@@ -225,10 +228,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         url: str,
         credential: Union[TokenCredential, str, dict[str, Any]],
         consistency_level: Optional[str] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
-        """Instantiate a new CosmosClient.
-        """
+        """Instantiate a new CosmosClient."""
 
         auth = _build_auth(credential)
         connection_policy = _build_connection_policy(kwargs)
@@ -239,7 +241,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             connection_policy=connection_policy,
             availability_strategy=kwargs.pop("availability_strategy", False),
             availability_strategy_executor=kwargs.pop("availability_strategy_executor", None),
-            **kwargs
+            **kwargs,
         )
 
     def __repr__(self) -> str:
@@ -258,8 +260,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         conn_str: str,
         credential: Optional[Union[TokenCredential, str, dict[str, Any]]] = None,
         consistency_level: Optional[str] = None,
-        **kwargs
-    ) -> 'CosmosClient':
+        **kwargs,
+    ) -> "CosmosClient":
         """Create a CosmosClient instance from a connection string.
 
         This can be retrieved from the Azure portal.For full list of optional
@@ -276,10 +278,10 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         """
         settings = _parse_connection_str(conn_str, credential)
         return cls(
-            url=settings['AccountEndpoint'],
-            credential=credential or settings['AccountKey'],
+            url=settings["AccountEndpoint"],
+            credential=credential or settings["AccountKey"],
             consistency_level=consistency_level,
-            **kwargs
+            **kwargs,
         )
 
     @overload
@@ -287,12 +289,12 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         self,
         id: str,
         *,
-        offer_throughput: Optional[Union[int, 'ThroughputProperties']] = None,
+        offer_throughput: Optional[Union[int, "ThroughputProperties"]] = None,
         initial_headers: Optional[dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         throughput_bucket: Optional[int] = None,
         return_properties: Literal[False] = False,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> DatabaseProxy:
         """Create a new database with the given ID (name).
 
@@ -325,12 +327,12 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         self,
         id: str,
         *,
-        offer_throughput: Optional[Union[int, 'ThroughputProperties']] = None,
+        offer_throughput: Optional[Union[int, "ThroughputProperties"]] = None,
         initial_headers: Optional[dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         throughput_bucket: Optional[int] = None,
         return_properties: Literal[True],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> tuple[DatabaseProxy, CosmosDict]:
         """Create a new database with the given ID (name).
 
@@ -359,9 +361,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
     @distributed_trace
     def create_database(  # pylint:disable=docstring-missing-param, docstring-should-be-keyword
-        self,
-        *args: Any,
-        **kwargs: Any
+        self, *args: Any, **kwargs: Any
     ) -> Union[DatabaseProxy, tuple[DatabaseProxy, CosmosDict]]:
         """Create a new database with the given ID (name).
 
@@ -388,24 +388,27 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 :dedent: 0
                 :caption: Create a database in the Cosmos DB account:
         """
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get("session_token")
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                UserWarning)
-        etag = kwargs.get('etag')
+                UserWarning,
+            )
+        etag = kwargs.get("etag")
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                UserWarning)
-        match_condition = kwargs.get('match_condition')
+                UserWarning,
+            )
+        match_condition = kwargs.get("match_condition")
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                UserWarning)
+                UserWarning,
+            )
 
         id = args[0] if args else kwargs.pop("id")
         # Keep positional arguments for populate_query_metrics and offer_throughput for backwards compatibility
@@ -418,8 +421,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
         if populate_query_metrics is not None:
             warnings.warn(
-                "The 'populate_query_metrics' flag does not apply to this method"
-                " and will be removed in the future",
+                "The 'populate_query_metrics' flag does not apply to this method" " and will be removed in the future",
                 UserWarning,
             )
 
@@ -435,12 +437,12 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         self,
         id: str,
         *,
-        offer_throughput: Optional[Union[int, 'ThroughputProperties']] = None,
+        offer_throughput: Optional[Union[int, "ThroughputProperties"]] = None,
         initial_headers: Optional[dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         throughput_bucket: Optional[int] = None,
         return_properties: Literal[False] = False,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> DatabaseProxy:
         """
         Create the database if it does not exist already.
@@ -466,15 +468,15 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
     @overload
     def create_database_if_not_exists(  # pylint:disable=docstring-missing-param
-            self,
-            id: str,
-            *,
-            offer_throughput: Optional[Union[int, 'ThroughputProperties']] = None,
-            initial_headers: Optional[dict[str, str]] = None,
-            response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
-            throughput_bucket: Optional[int] = None,
-            return_properties: Literal[True],
-            **kwargs: Any
+        self,
+        id: str,
+        *,
+        offer_throughput: Optional[Union[int, "ThroughputProperties"]] = None,
+        initial_headers: Optional[dict[str, str]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
+        throughput_bucket: Optional[int] = None,
+        return_properties: Literal[True],
+        **kwargs: Any,
     ) -> tuple[DatabaseProxy, CosmosDict]:
         """
         Create the database if it does not exist already.
@@ -500,9 +502,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
     @distributed_trace
     def create_database_if_not_exists(  # pylint:disable=docstring-missing-param, docstring-should-be-keyword
-        self,
-        *args: Any,
-        **kwargs: Any
+        self, *args: Any, **kwargs: Any
     ) -> Union[DatabaseProxy, tuple[DatabaseProxy, CosmosDict]]:
         """
         Create the database if it does not exist already.
@@ -527,24 +527,27 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
         """
 
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get("session_token")
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                UserWarning)
-        etag = kwargs.get('etag')
+                UserWarning,
+            )
+        etag = kwargs.get("etag")
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                UserWarning)
-        match_condition = kwargs.get('match_condition')
+                UserWarning,
+            )
+        match_condition = kwargs.get("match_condition")
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                UserWarning)
+                UserWarning,
+            )
 
         id = args[0] if args else kwargs.pop("id")
         # Keep positional arguments for populate_query_metrics and offer_throughput for backwards compatibility
@@ -556,19 +559,13 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         return_properties = kwargs.pop("return_properties", False)
         try:
             database_proxy = self.get_database_client(id)
-            result = database_proxy.read(
-                populate_query_metrics=populate_query_metrics,
-                **kwargs
-            )
+            result = database_proxy.read(populate_query_metrics=populate_query_metrics, **kwargs)
             if not return_properties:
                 return database_proxy
             return database_proxy, result
         except CosmosResourceNotFoundError:
             return self.create_database(
-                id,
-                offer_throughput=offer_throughput,
-                return_properties=return_properties,
-                **kwargs
+                id, offer_throughput=offer_throughput, return_properties=return_properties, **kwargs
             )
 
     def get_database_client(self, database: Union[str, DatabaseProxy, Mapping[str, Any]]) -> DatabaseProxy:
@@ -597,7 +594,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         initial_headers: Optional[dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         throughput_bucket: Optional[int] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ItemPaged[dict[str, Any]]:
         """List the databases in a Cosmos DB SQL database account.
 
@@ -609,12 +606,13 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :returns: An Iterable of database properties (dicts).
         :rtype: Iterable[dict[str, str]]
         """
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get("session_token")
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                UserWarning)
+                UserWarning,
+            )
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
@@ -644,7 +642,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         initial_headers: Optional[dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         throughput_bucket: Optional[int] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ItemPaged[dict[str, Any]]:
         """Query the databases in a Cosmos DB SQL database account.
 
@@ -666,17 +664,18 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 UserWarning,
             )
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get("session_token")
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                UserWarning)
+                UserWarning,
+            )
 
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers
         if throughput_bucket is not None:
-            kwargs['throughput_bucket'] = throughput_bucket
+            kwargs["throughput_bucket"] = throughput_bucket
         feed_options = build_options(kwargs)
         if enable_cross_partition_query is not None:
             feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
@@ -685,9 +684,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
         if query:
             result = self.client_connection.QueryDatabases(
-                query=query if parameters is None else {'query': query, 'parameters': parameters},
+                query=query if parameters is None else {"query": query, "parameters": parameters},
                 options=feed_options,
-                **kwargs
+                **kwargs,
             )
         else:
             result = self.client_connection.ReadDatabases(options=feed_options, **kwargs)
@@ -704,7 +703,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         initial_headers: Optional[dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         throughput_bucket: Optional[int] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Delete the database with the given ID (name).
 
@@ -718,31 +717,34 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the database couldn't be deleted.
         :rtype: None
         """
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get("session_token")
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                UserWarning)
-        etag = kwargs.get('etag')
+                UserWarning,
+            )
+        etag = kwargs.get("etag")
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                UserWarning)
-        match_condition = kwargs.get('match_condition')
+                UserWarning,
+            )
+        match_condition = kwargs.get("match_condition")
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                UserWarning)
+                UserWarning,
+            )
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 UserWarning,
             )
         if throughput_bucket is not None:
-            kwargs['throughput_bucket'] = throughput_bucket
+            kwargs["throughput_bucket"] = throughput_bucket
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers
         request_options = build_options(kwargs)
@@ -753,10 +755,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
     @distributed_trace
     def get_database_account(
-            self,
-            *,
-            response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
-            **kwargs) -> DatabaseAccount:
+        self, *, response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None, **kwargs
+    ) -> DatabaseAccount:
         """Retrieve the database account information.
 
         :keyword response_hook: A callable invoked with the response metadata.

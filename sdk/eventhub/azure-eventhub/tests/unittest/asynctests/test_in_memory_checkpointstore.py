@@ -2,7 +2,6 @@ import time
 import pytest
 from azure.eventhub.aio._eventprocessor.in_memory_checkpoint_store import InMemoryCheckpointStore
 
-
 TEST_NAMESPACE = "test_namespace"
 TEST_EVENTHUB = "test_eventhub"
 TEST_CONSUMER_GROUP = "test_consumer_group"

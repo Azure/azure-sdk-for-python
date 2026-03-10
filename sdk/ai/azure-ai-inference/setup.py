@@ -11,7 +11,6 @@ import os
 import re
 from setuptools import setup, find_packages
 
-
 PACKAGE_NAME = "azure-ai-inference"
 PACKAGE_PPRINT_NAME = "Azure AI Inference"
 

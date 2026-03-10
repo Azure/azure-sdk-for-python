@@ -21,6 +21,7 @@ class TestConversations(AzureRecordedTestCase):
     def create_client(self, endpoint, key):
         return TextAuthoringClient(endpoint, AzureKeyCredential(key))  # type: ignore[arg-type]
 
+
 class TestConversationsDeleteDeploymentAsync(TestConversations):
 
     @ConversationsPreparer()

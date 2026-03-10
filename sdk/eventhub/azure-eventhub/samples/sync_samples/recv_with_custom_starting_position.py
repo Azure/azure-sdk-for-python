@@ -8,6 +8,7 @@
 """
 An example to show receiving events from Event Hub partitions with custom starting position.
 """
+
 import os
 from azure.eventhub import EventHubConsumerClient, EventHubProducerClient, EventData
 from azure.identity import DefaultAzureCredential

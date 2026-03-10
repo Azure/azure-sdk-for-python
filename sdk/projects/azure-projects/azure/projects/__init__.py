@@ -10,7 +10,6 @@ from ._component import field, AzureInfrastructure, AzureApp
 from ._bicep.expressions import Parameter, MISSING
 from ._version import VERSION
 
-
 __version__ = VERSION
 __all__ = [
     "provision",

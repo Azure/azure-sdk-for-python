@@ -7,6 +7,7 @@ import uuid
 from azure.cosmos import CosmosClient, ContainerProxy, PartitionKey
 import azure.cosmos.exceptions as exceptions
 import config
+
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites -
 #
@@ -20,8 +21,8 @@ import config
 # ----------------------------------------------------------------------------------------------------------
 
 # Use the default emulator settings
-HOST = config.settings['host']
-MASTER_KEY = config.settings['master_key']
+HOST = config.settings["host"]
+MASTER_KEY = config.settings["master_key"]
 DATABASE_ID = "read_items_sync_db"
 CONTAINER_ID = "read_items_sync_container"
 
@@ -34,7 +35,7 @@ def create_items(container: ContainerProxy, num_items: int) -> list:
         doc_id = f"item_{i}_{uuid.uuid4()}"
         # For this sample, the partition key is the same as the item id
         pk_value = doc_id
-        item_body = {'id': doc_id, 'data': i}
+        item_body = {"id": doc_id, "data": i}
         container.create_item(body=item_body)
         items_to_read.append((doc_id, pk_value))
     print(f"{num_items} items created.")
@@ -69,25 +70,22 @@ def demonstrate_read_items(container: ContainerProxy) -> None:
     def response_hook(hook_headers, results):
         """A simple hook to capture the aggregated headers and the final result list."""
         print("Response hook called!")
-        hook_captured_data['hook_headers'] = hook_headers
-        hook_captured_data['results'] = results
-        hook_captured_data['call_count'] = hook_captured_data.get('call_count', 0) + 1
+        hook_captured_data["hook_headers"] = hook_headers
+        hook_captured_data["results"] = results
+        hook_captured_data["call_count"] = hook_captured_data.get("call_count", 0) + 1
 
     items_for_hook = create_items(container, 10)
-    hook_results = container.read_items(
-        items=items_for_hook,
-        response_hook=response_hook
-    )
+    hook_results = container.read_items(items=items_for_hook, response_hook=response_hook)
 
     print(f"Response hook was called {hook_captured_data.get('call_count', 0)} time(s).")
-    if 'hook_headers' in hook_captured_data:
+    if "hook_headers" in hook_captured_data:
         print(f"Aggregated request charge from hook: {hook_captured_data['hook_headers'].get('x-ms-request-charge')}")
     print(f"Result list from hook is the same as returned list: {hook_captured_data['results'] is hook_results}")
 
 
 def run_sample():
     """A synchronous sample for the read_items API."""
-    client = CosmosClient(HOST, {'masterKey': MASTER_KEY})
+    client = CosmosClient(HOST, {"masterKey": MASTER_KEY})
     db = None
     try:
         # Create a database
@@ -96,10 +94,7 @@ def run_sample():
 
         # Create a container with /id as the partition key
         partition_key = PartitionKey(path="/id")
-        container = db.create_container_if_not_exists(
-            id=CONTAINER_ID,
-            partition_key=partition_key
-        )
+        container = db.create_container_if_not_exists(id=CONTAINER_ID, partition_key=partition_key)
         print(f"Container '{CONTAINER_ID}' created or already exists.")
 
         demonstrate_read_items(container)
@@ -118,5 +113,5 @@ def run_sample():
                 print(f"Database '{DATABASE_ID}' was not found, cleanup not needed.")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run_sample()

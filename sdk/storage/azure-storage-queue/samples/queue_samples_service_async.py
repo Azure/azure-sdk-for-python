@@ -20,7 +20,6 @@ USAGE:
     1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
-
 import asyncio
 import os
 import sys

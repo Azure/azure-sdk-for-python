@@ -35,20 +35,20 @@ class User(ARMBaseModel):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'encrypted_password': {'key': 'properties.encryptedPassword', 'type': 'AsymmetricEncryptedSecret'},
-        'share_access_rights': {'key': 'properties.shareAccessRights', 'type': '[ShareAccessRight]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "encrypted_password": {"key": "properties.encryptedPassword", "type": "AsymmetricEncryptedSecret"},
+        "share_access_rights": {"key": "properties.shareAccessRights", "type": "[ShareAccessRight]"},
     }
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
-        self.encrypted_password = kwargs.get('encrypted_password', None)
-        self.share_access_rights = kwargs.get('share_access_rights', None)
+        self.encrypted_password = kwargs.get("encrypted_password", None)
+        self.share_access_rights = kwargs.get("share_access_rights", None)

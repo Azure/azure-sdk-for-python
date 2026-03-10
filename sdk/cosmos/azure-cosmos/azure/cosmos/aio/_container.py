@@ -19,13 +19,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Create, read, update and delete items in the Azure Cosmos DB SQL API service.
-"""
+"""Create, read, update and delete items in the Azure Cosmos DB SQL API service."""
+
 import asyncio  # pylint: disable=do-not-import-asyncio
 import warnings
 from datetime import datetime
-from typing import (Any, Mapping, Optional, Sequence, Union, Tuple, cast, overload, AsyncIterable,
-                    Callable)
+from typing import Any, Mapping, Optional, Sequence, Union, Tuple, cast, overload, AsyncIterable, Callable
 from typing_extensions import Literal
 
 from azure.core import MatchConditions
@@ -38,8 +37,14 @@ from ._cosmos_client_connection_async import CosmosClientConnection
 from ._scripts import ScriptsProxy
 from .. import _utils as utils
 from .._availability_strategy_config import _validate_request_hedging_strategy
-from .._base import (_build_properties_cache, _deserialize_throughput, _replace_throughput,
-                     build_options as _build_options, GenerateGuidId, validate_cache_staleness_value)
+from .._base import (
+    _build_properties_cache,
+    _deserialize_throughput,
+    _replace_throughput,
+    build_options as _build_options,
+    GenerateGuidId,
+    validate_cache_staleness_value,
+)
 from .._change_feed.feed_range_internal import FeedRangeInternalEpk
 
 from .._cosmos_responses import CosmosDict, CosmosList, CosmosAsyncItemPaged
@@ -48,8 +53,13 @@ from .._routing.routing_range import Range
 from .._session_token_helpers import get_latest_session_token
 from ..exceptions import CosmosHttpResponseError
 from ..offer import ThroughputProperties
-from ..partition_key import (_get_partition_key_from_partition_key_definition, PartitionKeyType,
-                             _return_undefined_or_empty_partition_key, NonePartitionKeyValue, NullPartitionKeyValue)
+from ..partition_key import (
+    _get_partition_key_from_partition_key_definition,
+    PartitionKeyType,
+    _return_undefined_or_empty_partition_key,
+    NonePartitionKeyValue,
+    NullPartitionKeyValue,
+)
 
 __all__ = ("ContainerProxy",)
 
@@ -80,7 +90,7 @@ class ContainerProxy:
         client_connection: CosmosClientConnection,
         database_link: str,
         id: str,
-        properties: Optional[dict[str, Any]] = None
+        properties: Optional[dict[str, Any]] = None,
     ) -> None:
         self.client_connection = client_connection
         self.container_cache_lock = asyncio.Lock()
@@ -90,9 +100,9 @@ class ContainerProxy:
         self._is_system_key: Optional[bool] = None
         self._scripts: Optional[ScriptsProxy] = None
         if properties:
-            self.client_connection._set_container_properties_cache(self.container_link,
-                                                                   _build_properties_cache(properties,
-                                                                                           self.container_link))
+            self.client_connection._set_container_properties_cache(
+                self.container_link, _build_properties_cache(properties, self.container_link)
+            )
 
     def __repr__(self) -> str:
         return "<ContainerProxy [{}]>".format(self.container_link)[:1024]
@@ -101,11 +111,11 @@ class ContainerProxy:
         kwargs = {}
         if options:
             if "excludedLocations" in options:
-                kwargs['excluded_locations'] = options['excludedLocations']
+                kwargs["excluded_locations"] = options["excludedLocations"]
             if Constants.OperationStartTime in options:
                 kwargs[Constants.OperationStartTime] = options[Constants.OperationStartTime]
             if "timeout" in options:
-                kwargs['timeout'] = options['timeout']
+                kwargs["timeout"] = options["timeout"]
 
         return await self._get_properties(**kwargs)
 
@@ -144,10 +154,7 @@ class ContainerProxy:
             return "{}/conflicts/{}".format(self.container_link, conflict_or_link)
         return conflict_or_link["_self"]
 
-    async def _set_partition_key(
-        self,
-        partition_key: PartitionKeyType
-    ) -> PartitionKeyType:
+    async def _set_partition_key(self, partition_key: PartitionKeyType) -> PartitionKeyType:
         if partition_key == NonePartitionKeyValue:
             return _return_undefined_or_empty_partition_key(await self.is_system_key)
         if partition_key == NullPartitionKeyValue:
@@ -155,9 +162,8 @@ class ContainerProxy:
         return cast(Union[str, int, float, bool, list[Union[str, int, float, bool]]], partition_key)
 
     async def _get_epk_range_for_partition_key(
-            self,
-            partition_key_value: PartitionKeyType,
-            feed_options: Optional[dict[str, Any]] = None) -> Range:
+        self, partition_key_value: PartitionKeyType, feed_options: Optional[dict[str, Any]] = None
+    ) -> Range:
         container_properties = await self._get_properties_with_options(feed_options)
         partition_key_definition = container_properties["partitionKey"]
         partition_key = _get_partition_key_from_partition_key_definition(partition_key_definition)
@@ -172,7 +178,7 @@ class ContainerProxy:
         populate_quota_info: Optional[bool] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         initial_headers: Optional[dict[str, str]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> CosmosDict:
         """Read the container properties.
 
@@ -190,17 +196,18 @@ class ContainerProxy:
         :returns: Dict representing the retrieved container.
         :rtype: dict[str, Any]
         """
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get("session_token")
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                DeprecationWarning)
+                DeprecationWarning,
+            )
 
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs["priority"] = priority
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs["initial_headers"] = initial_headers
         request_options = _build_options(kwargs)
         if populate_partition_key_range_statistics is not None:
             request_options["populatePartitionKeyRangeStatistics"] = populate_partition_key_range_statistics
@@ -208,8 +215,10 @@ class ContainerProxy:
             request_options["populateQuotaInfo"] = populate_quota_info
         container = await self.client_connection.ReadContainer(self.container_link, options=request_options, **kwargs)
         # Only cache Container Properties that will not change in the lifetime of the container
-        self.client_connection._set_container_properties_cache(self.container_link,  # pylint: disable=protected-access
-                                                               _build_properties_cache(container, self.container_link))
+        self.client_connection._set_container_properties_cache(
+            self.container_link,  # pylint: disable=protected-access
+            _build_properties_cache(container, self.container_link),
+        )
         return container
 
     @distributed_trace_async
@@ -228,7 +237,7 @@ class ContainerProxy:
         retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
         availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> CosmosDict:
         """Create an item in the container.
 
@@ -269,31 +278,33 @@ class ContainerProxy:
         :returns: A CosmosDict representing the new item. The dict will be empty if `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
-        etag = kwargs.get('etag')
+        etag = kwargs.get("etag")
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
+                DeprecationWarning,
+            )
+        match_condition = kwargs.get("match_condition")
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                DeprecationWarning)
+                DeprecationWarning,
+            )
 
         if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
+            kwargs["pre_trigger_include"] = pre_trigger_include
         if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
+            kwargs["post_trigger_include"] = post_trigger_include
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs["session_token"] = session_token
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs["initial_headers"] = initial_headers
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs["priority"] = priority
         if no_response is not None:
-            kwargs['no_response'] = no_response
+            kwargs["no_response"] = no_response
         if retry_write is not None:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
@@ -325,7 +336,7 @@ class ContainerProxy:
         priority: Optional[Literal["High", "Low"]] = None,
         throughput_bucket: Optional[int] = None,
         availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> CosmosDict:
         """Get the item identified by `item`.
 
@@ -372,13 +383,13 @@ class ContainerProxy:
         """
         doc_link = self._get_document_link(item)
         if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
+            kwargs["post_trigger_include"] = post_trigger_include
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs["session_token"] = session_token
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs["initial_headers"] = initial_headers
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs["priority"] = priority
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if availability_strategy is not None:
@@ -405,7 +416,7 @@ class ContainerProxy:
         priority: Optional[Literal["High", "Low"]] = None,
         throughput_bucket: Optional[int] = None,
         availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> AsyncItemPaged[dict[str, Any]]:
         """List all the items in the container.
 
@@ -434,11 +445,11 @@ class ContainerProxy:
         :rtype: AsyncItemPaged[dict[str, Any]]
         """
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs["session_token"] = session_token
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs["initial_headers"] = initial_headers
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs["priority"] = priority
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if availability_strategy is not None:
@@ -464,18 +475,18 @@ class ContainerProxy:
 
     @distributed_trace_async
     async def read_items(
-            self,
-            items: Sequence[Tuple[str, PartitionKeyType]],
-            *,
-            max_concurrency: Optional[int] = None,
-            consistency_level: Optional[str] = None,
-            session_token: Optional[str] = None,
-            initial_headers: Optional[dict[str, str]] = None,
-            excluded_locations: Optional[list[str]] = None,
-            priority: Optional[Literal["High", "Low"]] = None,
-            throughput_bucket: Optional[int] = None,
-            availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
-            **kwargs: Any
+        self,
+        items: Sequence[Tuple[str, PartitionKeyType]],
+        *,
+        max_concurrency: Optional[int] = None,
+        consistency_level: Optional[str] = None,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[dict[str, str]] = None,
+        excluded_locations: Optional[list[str]] = None,
+        priority: Optional[Literal["High", "Low"]] = None,
+        throughput_bucket: Optional[int] = None,
+        availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
+        **kwargs: Any,
     ) -> CosmosList:
         """Reads multiple items from the container.
 
@@ -507,21 +518,21 @@ class ContainerProxy:
         """
 
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs["session_token"] = session_token
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs["initial_headers"] = initial_headers
         if consistency_level is not None:
-            kwargs['consistencyLevel'] = consistency_level
+            kwargs["consistencyLevel"] = consistency_level
         if excluded_locations is not None:
-            kwargs['excludedLocations'] = excluded_locations
+            kwargs["excludedLocations"] = excluded_locations
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs["priority"] = priority
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if availability_strategy is not None:
             kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
 
-        kwargs['max_concurrency'] = max_concurrency
+        kwargs["max_concurrency"] = max_concurrency
         kwargs["containerProperties"] = self._get_properties_with_options
         query_options = _build_options(kwargs)
         await self._get_properties_with_options(query_options)
@@ -530,32 +541,30 @@ class ContainerProxy:
 
         item_tuples = [(item_id, await self._set_partition_key(pk)) for item_id, pk in items]
         return await self.client_connection.read_items(
-            collection_link=self.container_link,
-            items=item_tuples,
-            options= query_options,
-            **kwargs)
+            collection_link=self.container_link, items=item_tuples, options=query_options, **kwargs
+        )
 
     @overload
     def query_items(
-            self,
-            query: str,
-            *,
-            continuation_token_limit: Optional[int] = None,
-            enable_scan_in_query: Optional[bool] = None,
-            initial_headers: Optional[dict[str, str]] = None,
-            max_integrated_cache_staleness_in_ms: Optional[int] = None,
-            max_item_count: Optional[int] = None,
-            parameters: Optional[list[dict[str, object]]] = None,
-            partition_key: PartitionKeyType,
-            populate_index_metrics: Optional[bool] = None,
-            populate_query_metrics: Optional[bool] = None,
-            populate_query_advice: Optional[bool] = None,
-            priority: Optional[Literal["High", "Low"]] = None,
-            response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
-            session_token: Optional[str] = None,
-            throughput_bucket: Optional[int] = None,
-            availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
-            **kwargs: Any
+        self,
+        query: str,
+        *,
+        continuation_token_limit: Optional[int] = None,
+        enable_scan_in_query: Optional[bool] = None,
+        initial_headers: Optional[dict[str, str]] = None,
+        max_integrated_cache_staleness_in_ms: Optional[int] = None,
+        max_item_count: Optional[int] = None,
+        parameters: Optional[list[dict[str, object]]] = None,
+        partition_key: PartitionKeyType,
+        populate_index_metrics: Optional[bool] = None,
+        populate_query_metrics: Optional[bool] = None,
+        populate_query_advice: Optional[bool] = None,
+        priority: Optional[Literal["High", "Low"]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
+        session_token: Optional[str] = None,
+        throughput_bucket: Optional[int] = None,
+        availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
+        **kwargs: Any,
     ) -> CosmosAsyncItemPaged:
         """Return all results matching the given `query`.
 
@@ -629,25 +638,25 @@ class ContainerProxy:
 
     @overload
     def query_items(
-            self,
-            query: str,
-            *,
-            continuation_token_limit: Optional[int] = None,
-            enable_scan_in_query: Optional[bool] = None,
-            feed_range: dict[str, Any],
-            initial_headers: Optional[dict[str, str]] = None,
-            max_integrated_cache_staleness_in_ms: Optional[int] = None,
-            max_item_count: Optional[int] = None,
-            parameters: Optional[list[dict[str, object]]] = None,
-            populate_index_metrics: Optional[bool] = None,
-            populate_query_metrics: Optional[bool] = None,
-            populate_query_advice: Optional[bool] = None,
-            priority: Optional[Literal["High", "Low"]] = None,
-            response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
-            session_token: Optional[str] = None,
-            throughput_bucket: Optional[int] = None,
-            availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
-            **kwargs: Any
+        self,
+        query: str,
+        *,
+        continuation_token_limit: Optional[int] = None,
+        enable_scan_in_query: Optional[bool] = None,
+        feed_range: dict[str, Any],
+        initial_headers: Optional[dict[str, str]] = None,
+        max_integrated_cache_staleness_in_ms: Optional[int] = None,
+        max_item_count: Optional[int] = None,
+        parameters: Optional[list[dict[str, object]]] = None,
+        populate_index_metrics: Optional[bool] = None,
+        populate_query_metrics: Optional[bool] = None,
+        populate_query_advice: Optional[bool] = None,
+        priority: Optional[Literal["High", "Low"]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
+        session_token: Optional[str] = None,
+        throughput_bucket: Optional[int] = None,
+        availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
+        **kwargs: Any,
     ) -> CosmosAsyncItemPaged:
         """Return all results matching the given `query`.
 
@@ -718,24 +727,24 @@ class ContainerProxy:
 
     @overload
     def query_items(
-            self,
-            query: str,
-            *,
-            continuation_token_limit: Optional[int] = None,
-            enable_scan_in_query: Optional[bool] = None,
-            initial_headers: Optional[dict[str, str]] = None,
-            max_integrated_cache_staleness_in_ms: Optional[int] = None,
-            max_item_count: Optional[int] = None,
-            parameters: Optional[list[dict[str, object]]] = None,
-            populate_index_metrics: Optional[bool] = None,
-            populate_query_metrics: Optional[bool] = None,
-            populate_query_advice: Optional[bool] = None,
-            priority: Optional[Literal["High", "Low"]] = None,
-            response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
-            session_token: Optional[str] = None,
-            throughput_bucket: Optional[int] = None,
-            availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
-            **kwargs: Any
+        self,
+        query: str,
+        *,
+        continuation_token_limit: Optional[int] = None,
+        enable_scan_in_query: Optional[bool] = None,
+        initial_headers: Optional[dict[str, str]] = None,
+        max_integrated_cache_staleness_in_ms: Optional[int] = None,
+        max_item_count: Optional[int] = None,
+        parameters: Optional[list[dict[str, object]]] = None,
+        populate_index_metrics: Optional[bool] = None,
+        populate_query_metrics: Optional[bool] = None,
+        populate_query_advice: Optional[bool] = None,
+        priority: Optional[Literal["High", "Low"]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
+        session_token: Optional[str] = None,
+        throughput_bucket: Optional[int] = None,
+        availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
+        **kwargs: Any,
     ) -> CosmosAsyncItemPaged:
         """Return all results matching the given `query`.
 
@@ -804,11 +813,7 @@ class ContainerProxy:
         ...
 
     @distributed_trace
-    def query_items(
-        self,
-        *args: Any,
-        **kwargs: Any
-    ) -> CosmosAsyncItemPaged:
+    def query_items(self, *args: Any, **kwargs: Any) -> CosmosAsyncItemPaged:
         """Return all results matching the given `query`.
 
         You can use any value for the container name in the FROM clause, but
@@ -904,10 +909,13 @@ class ContainerProxy:
             feed_options["responseContinuationTokenLimitInKb"] = kwargs.pop("continuation_token_limit")
 
         # populate availability_strategy
-        if (Constants.Kwargs.AVAILABILITY_STRATEGY in feed_options
-                and feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY] is not None):
-            feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY] =\
-                _validate_request_hedging_strategy(feed_options.pop(Constants.Kwargs.AVAILABILITY_STRATEGY))
+        if (
+            Constants.Kwargs.AVAILABILITY_STRATEGY in feed_options
+            and feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY] is not None
+        ):
+            feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY] = _validate_request_hedging_strategy(
+                feed_options.pop(Constants.Kwargs.AVAILABILITY_STRATEGY)
+            )
 
         feed_options["correlatedActivityId"] = GenerateGuidId()
 
@@ -942,22 +950,22 @@ class ContainerProxy:
             options=feed_options,
             partition_key=feed_options.get("partitionKey"),
             response_hook=response_hook,
-            **kwargs
+            **kwargs,
         )
         return items
 
     @overload
     def query_items_change_feed(
-            self,
-            *,
-            max_item_count: Optional[int] = None,
-            start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
-            partition_key: PartitionKeyType,
-            priority: Optional[Literal["High", "Low"]] = None,
-            mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
-            response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
-            availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
-            **kwargs: Any
+        self,
+        *,
+        max_item_count: Optional[int] = None,
+        start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
+        partition_key: PartitionKeyType,
+        priority: Optional[Literal["High", "Low"]] = None,
+        mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
+        availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
+        **kwargs: Any,
     ) -> AsyncItemPaged[dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
@@ -1000,16 +1008,16 @@ class ContainerProxy:
 
     @overload
     def query_items_change_feed(
-            self,
-            *,
-            feed_range: dict[str, Any],
-            max_item_count: Optional[int] = None,
-            start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
-            priority: Optional[Literal["High", "Low"]] = None,
-            mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
-            response_hook: Optional[Callable[[Mapping[str, Any], dict[str, Any]], None]] = None,
-            availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
-            **kwargs: Any
+        self,
+        *,
+        feed_range: dict[str, Any],
+        max_item_count: Optional[int] = None,
+        start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
+        priority: Optional[Literal["High", "Low"]] = None,
+        mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], dict[str, Any]], None]] = None,
+        availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
+        **kwargs: Any,
     ) -> AsyncItemPaged[dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
@@ -1048,14 +1056,14 @@ class ContainerProxy:
 
     @overload
     def query_items_change_feed(
-            self,
-            *,
-            continuation: str,
-            max_item_count: Optional[int] = None,
-            priority: Optional[Literal["High", "Low"]] = None,
-            availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
-            response_hook: Optional[Callable[[Mapping[str, Any], dict[str, Any]], None]] = None,
-            **kwargs: Any
+        self,
+        *,
+        continuation: str,
+        max_item_count: Optional[int] = None,
+        priority: Optional[Literal["High", "Low"]] = None,
+        availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], dict[str, Any]], None]] = None,
+        **kwargs: Any,
     ) -> AsyncItemPaged[dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
@@ -1085,15 +1093,15 @@ class ContainerProxy:
 
     @overload
     def query_items_change_feed(
-            self,
-            *,
-            max_item_count: Optional[int] = None,
-            start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
-            priority: Optional[Literal["High", "Low"]] = None,
-            mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
-            availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
-            response_hook: Optional[Callable[[Mapping[str, Any], dict[str, Any]], None]] = None,
-            **kwargs: Any
+        self,
+        *,
+        max_item_count: Optional[int] = None,
+        start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
+        priority: Optional[Literal["High", "Low"]] = None,
+        mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
+        availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], dict[str, Any]], None]] = None,
+        **kwargs: Any,
     ) -> AsyncItemPaged[dict[str, Any]]:
         """Get a sorted list of items that were changed in the entire container,
          in the order in which they were modified.
@@ -1132,10 +1140,8 @@ class ContainerProxy:
 
     @distributed_trace
     def query_items_change_feed(  # pylint: disable=unused-argument
-            self,
-            **kwargs: Any
+        self, **kwargs: Any
     ) -> AsyncItemPaged[dict[str, Any]]:
-
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
         :keyword str continuation: The continuation token retrieved from previous response. It contains chang feed mode.
@@ -1182,18 +1188,20 @@ class ContainerProxy:
             change_feed_state_context["mode"] = kwargs.pop("mode")
         if "partition_key_range_id" in kwargs:
             change_feed_state_context["partitionKeyRangeId"] = kwargs.pop("partition_key_range_id")
-        if "is_start_from_beginning" in kwargs and kwargs.pop('is_start_from_beginning') is True:
+        if "is_start_from_beginning" in kwargs and kwargs.pop("is_start_from_beginning") is True:
             change_feed_state_context["startTime"] = "Beginning"
         elif "start_time" in kwargs:
             change_feed_state_context["startTime"] = kwargs.pop("start_time")
         if "partition_key" in kwargs:
             partition_key_value = kwargs.pop("partition_key")
             change_feed_state_context["partitionKey"] = self._set_partition_key(
-                cast(PartitionKeyType, partition_key_value))
+                cast(PartitionKeyType, partition_key_value)
+            )
             change_feed_state_context["partitionKeyFeedRange"] = self._get_epk_range_for_partition_key(
-                partition_key_value, feed_options)
+                partition_key_value, feed_options
+            )
         if "feed_range" in kwargs:
-            change_feed_state_context["feedRange"] = kwargs.pop('feed_range')
+            change_feed_state_context["feedRange"] = kwargs.pop("feed_range")
         if "continuation" in feed_options:
             change_feed_state_context["continuation"] = feed_options.pop("continuation")
 
@@ -1201,10 +1209,13 @@ class ContainerProxy:
         feed_options["containerProperties"] = self._get_properties_with_options(feed_options)
 
         # populate availability_strategy
-        if (Constants.Kwargs.AVAILABILITY_STRATEGY in feed_options
-                and feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY] is not None):
-            feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY] =\
-                _validate_request_hedging_strategy(feed_options.pop(Constants.Kwargs.AVAILABILITY_STRATEGY))
+        if (
+            Constants.Kwargs.AVAILABILITY_STRATEGY in feed_options
+            and feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY] is not None
+        ):
+            feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY] = _validate_request_hedging_strategy(
+                feed_options.pop(Constants.Kwargs.AVAILABILITY_STRATEGY)
+            )
 
         response_hook = kwargs.pop("response_hook", None)
         if hasattr(response_hook, "clear"):
@@ -1234,7 +1245,7 @@ class ContainerProxy:
         retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
         availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> CosmosDict:
         """Insert or update the specified item.
 
@@ -1276,21 +1287,21 @@ class ContainerProxy:
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
+            kwargs["pre_trigger_include"] = pre_trigger_include
         if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
+            kwargs["post_trigger_include"] = post_trigger_include
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs["session_token"] = session_token
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs["initial_headers"] = initial_headers
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs["priority"] = priority
         if etag is not None:
-            kwargs['etag'] = etag
+            kwargs["etag"] = etag
         if match_condition is not None:
-            kwargs['match_condition'] = match_condition
+            kwargs["match_condition"] = match_condition
         if no_response is not None:
-            kwargs['no_response'] = no_response
+            kwargs["no_response"] = no_response
         if retry_write is not None:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
@@ -1303,22 +1314,15 @@ class ContainerProxy:
         request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = await self.client_connection.UpsertItem(
-            database_or_container_link=self.container_link,
-            document=body,
-            options=request_options,
-            **kwargs
+            database_or_container_link=self.container_link, document=body, options=request_options, **kwargs
         )
         return result
 
     @distributed_trace_async
     async def semantic_rerank(
-        self,
-        *,
-        context: str,
-        documents: list[str],
-        options: Optional[dict[str, Any]] = None
+        self, *, context: str, documents: list[str], options: Optional[dict[str, Any]] = None
     ) -> CosmosDict:
-        """ **provisional** Rerank a list of documents using semantic reranking.
+        """**provisional** Rerank a list of documents using semantic reranking.
 
         This method uses a semantic reranker to score and reorder the provided documents
         based on their relevance to the given reranking context.
@@ -1344,13 +1348,11 @@ class ContainerProxy:
         if inference_service is None:
             raise CosmosHttpResponseError(
                 message="Semantic reranking requires AAD credentials (inference service not initialized).",
-                response=None
+                response=None,
             )
 
         result = await inference_service.rerank(
-            reranking_context=context,
-            documents=documents,
-            semantic_reranking_options=options
+            reranking_context=context, documents=documents, semantic_reranking_options=options
         )
 
         return result
@@ -1372,7 +1374,7 @@ class ContainerProxy:
         retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
         availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> CosmosDict:
         """Replaces the specified item if it exists in the container.
 
@@ -1418,21 +1420,21 @@ class ContainerProxy:
         """
         item_link = self._get_document_link(item)
         if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
+            kwargs["pre_trigger_include"] = pre_trigger_include
         if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
+            kwargs["post_trigger_include"] = post_trigger_include
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs["session_token"] = session_token
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs["initial_headers"] = initial_headers
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs["priority"] = priority
         if etag is not None:
-            kwargs['etag'] = etag
+            kwargs["etag"] = etag
         if match_condition is not None:
-            kwargs['match_condition'] = match_condition
+            kwargs["match_condition"] = match_condition
         if no_response is not None:
-            kwargs['no_response'] = no_response
+            kwargs["no_response"] = no_response
         if retry_write is not None:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
@@ -1467,9 +1469,9 @@ class ContainerProxy:
         retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
         availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> CosmosDict:
-        """ Patches the specified item with the provided operations if it
+        """Patches the specified item with the provided operations if it
          exists in the container.
 
         If the item does not already exist in the container, an exception is raised.
@@ -1518,19 +1520,19 @@ class ContainerProxy:
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
+            kwargs["pre_trigger_include"] = pre_trigger_include
         if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
+            kwargs["post_trigger_include"] = post_trigger_include
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs["session_token"] = session_token
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs["priority"] = priority
         if etag is not None:
-            kwargs['etag'] = etag
+            kwargs["etag"] = etag
         if match_condition is not None:
-            kwargs['match_condition'] = match_condition
+            kwargs["match_condition"] = match_condition
         if no_response is not None:
-            kwargs['no_response'] = no_response
+            kwargs["no_response"] = no_response
         if retry_write is not None:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
@@ -1547,7 +1549,8 @@ class ContainerProxy:
 
         item_link = self._get_document_link(item)
         result = await self.client_connection.PatchItem(
-            document_link=item_link, operations=patch_operations, options=request_options, **kwargs)
+            document_link=item_link, operations=patch_operations, options=request_options, **kwargs
+        )
         return result
 
     @distributed_trace_async
@@ -1566,7 +1569,7 @@ class ContainerProxy:
         retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
         availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Delete the specified item from the container.
 
@@ -1610,19 +1613,19 @@ class ContainerProxy:
         :rtype: None
         """
         if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
+            kwargs["pre_trigger_include"] = pre_trigger_include
         if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
+            kwargs["post_trigger_include"] = post_trigger_include
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs["session_token"] = session_token
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs["initial_headers"] = initial_headers
         if etag is not None:
-            kwargs['etag'] = etag
+            kwargs["etag"] = etag
         if match_condition is not None:
-            kwargs['match_condition'] = match_condition
+            kwargs["match_condition"] = match_condition
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs["priority"] = priority
         if retry_write is not None:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
@@ -1639,10 +1642,10 @@ class ContainerProxy:
 
     @distributed_trace_async
     async def get_throughput(
-            self,
-            *,
-            response_hook: Optional[Callable[[Mapping[str, Any], list[dict[str, Any]]], None]] = None,
-            **kwargs: Any
+        self,
+        *,
+        response_hook: Optional[Callable[[Mapping[str, Any], list[dict[str, Any]]], None]] = None,
+        **kwargs: Any,
     ) -> ThroughputProperties:
         """Get the ThroughputProperties object for this container.
 
@@ -1663,8 +1666,9 @@ class ContainerProxy:
             "parameters": [{"name": "@link", "value": link}],
         }
         options = {"containerRID": properties["_rid"]}
-        throughput_properties = [throughput async for throughput in
-                                 self.client_connection.QueryOffers(query_spec, options, **kwargs)]
+        throughput_properties = [
+            throughput async for throughput in self.client_connection.QueryOffers(query_spec, options, **kwargs)
+        ]
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, throughput_properties)
@@ -1677,7 +1681,7 @@ class ContainerProxy:
         throughput: Union[int, ThroughputProperties],
         *,
         response_hook: Optional[Callable[[Mapping[str, Any], CosmosDict], None]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ThroughputProperties:
         """Replace the container's throughput.
 
@@ -1700,13 +1704,18 @@ class ContainerProxy:
             "parameters": [{"name": "@link", "value": link}],
         }
         options = {"containerRID": properties["_rid"]}
-        throughput_properties = [throughput async for throughput in
-                                 self.client_connection.QueryOffers(query_spec, options, **kwargs)]
+        throughput_properties = [
+            throughput async for throughput in self.client_connection.QueryOffers(query_spec, options, **kwargs)
+        ]
 
         new_offer = throughput_properties[0].copy()
         _replace_throughput(throughput=throughput, new_throughput_properties=new_offer)
-        data = await self.client_connection.ReplaceOffer(offer_link=throughput_properties[0]["_self"],
-                                                         offer=throughput_properties[0], response_hook=response_hook, **kwargs)
+        data = await self.client_connection.ReplaceOffer(
+            offer_link=throughput_properties[0]["_self"],
+            offer=throughput_properties[0],
+            response_hook=response_hook,
+            **kwargs,
+        )
 
         return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
 
@@ -1716,7 +1725,7 @@ class ContainerProxy:
         *,
         max_item_count: Optional[int] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[dict[str, Any]]], None]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> AsyncItemPaged[dict[str, Any]]:
         """List all the conflicts in the container.
 
@@ -1748,7 +1757,7 @@ class ContainerProxy:
         partition_key: Optional[PartitionKeyType] = None,
         max_item_count: Optional[int] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[dict[str, Any]]], None]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> AsyncItemPaged[dict[str, Any]]:
         """Return all conflicts matching a given `query`.
 
@@ -1779,7 +1788,7 @@ class ContainerProxy:
             collection_link=self.container_link,
             query=query if parameters is None else {"query": query, "parameters": parameters},
             options=feed_options,
-            **kwargs
+            **kwargs,
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
@@ -1856,7 +1865,7 @@ class ContainerProxy:
         post_trigger_include: Optional[str] = None,
         session_token: Optional[str] = None,
         throughput_bucket: Optional[int] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """The delete by partition key feature is an asynchronous, background operation that allows you to delete all
         documents with the same logical partition key value, using the Cosmos SDK. The delete by partition key
@@ -1879,25 +1888,27 @@ class ContainerProxy:
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :rtype: None
         """
-        etag = kwargs.get('etag')
+        etag = kwargs.get("etag")
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
+                DeprecationWarning,
+            )
+        match_condition = kwargs.get("match_condition")
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                DeprecationWarning)
+                DeprecationWarning,
+            )
 
         if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
+            kwargs["pre_trigger_include"] = pre_trigger_include
         if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
+            kwargs["post_trigger_include"] = post_trigger_include
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs["session_token"] = session_token
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         request_options = _build_options(kwargs)
@@ -1906,8 +1917,9 @@ class ContainerProxy:
         await self._get_properties_with_options(request_options)
         request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
-        await self.client_connection.DeleteAllItemsByPartitionKey(collection_link=self.container_link,
-                                                                  options=request_options, **kwargs)
+        await self.client_connection.DeleteAllItemsByPartitionKey(
+            collection_link=self.container_link, options=request_options, **kwargs
+        )
 
     @distributed_trace_async
     async def execute_item_batch(
@@ -1922,9 +1934,9 @@ class ContainerProxy:
         retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
         availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> CosmosList:
-        """ Executes the transactional batch for the specified partition key.
+        """Executes the transactional batch for the specified partition key.
 
         :param batch_operations: The batch of operations to be executed.
         :type batch_operations: list[Tuple[Any]]
@@ -1958,27 +1970,29 @@ class ContainerProxy:
         :raises ~azure.cosmos.exceptions.CosmosBatchOperationError: A transactional batch operation failed in the batch.
         :rtype: ~azure.cosmos.CosmosList[dict[str, Any]]
         """
-        etag = kwargs.get('etag')
+        etag = kwargs.get("etag")
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
+                DeprecationWarning,
+            )
+        match_condition = kwargs.get("match_condition")
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                DeprecationWarning)
+                DeprecationWarning,
+            )
 
         if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
+            kwargs["pre_trigger_include"] = pre_trigger_include
         if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
+            kwargs["post_trigger_include"] = post_trigger_include
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs["session_token"] = session_token
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs["priority"] = priority
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if retry_write is not None:
@@ -1992,16 +2006,12 @@ class ContainerProxy:
         request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         return await self.client_connection.Batch(
-            collection_link=self.container_link, batch_operations=batch_operations, options=request_options, **kwargs)
+            collection_link=self.container_link, batch_operations=batch_operations, options=request_options, **kwargs
+        )
 
     @distributed_trace
-    def read_feed_ranges(
-            self,
-            *,
-            force_refresh: bool = False,
-            **kwargs: Any
-    ) -> AsyncIterable[dict[str, Any]]:
-        """ Obtains a list of feed ranges that can be used to parallelize feed operations.
+    def read_feed_ranges(self, *, force_refresh: bool = False, **kwargs: Any) -> AsyncIterable[dict[str, Any]]:
+        """Obtains a list of feed ranges that can be used to parallelize feed operations.
 
         :keyword bool force_refresh:
             Flag to indicate whether obtain the list of feed ranges directly from cache or refresh the cache.
@@ -2017,33 +2027,30 @@ class ContainerProxy:
             self.client_connection.refresh_routing_map_provider()
 
         async def get_next(continuation_token: str) -> list[dict[str, Any]]:  # pylint: disable=unused-argument
-            partition_key_ranges = \
-                await self.client_connection._routing_map_provider.get_overlapping_ranges(
-                    # pylint: disable=protected-access
-                    self.container_link,
-                    # default to full range
-                    [Range("", "FF", True, False)],
-                    **kwargs)
+            partition_key_ranges = await self.client_connection._routing_map_provider.get_overlapping_ranges(
+                # pylint: disable=protected-access
+                self.container_link,
+                # default to full range
+                [Range("", "FF", True, False)],
+                **kwargs,
+            )
 
-            feed_ranges = [FeedRangeInternalEpk(Range.PartitionKeyRangeToRange(partitionKeyRange)).to_dict()
-                           for partitionKeyRange in partition_key_ranges]
+            feed_ranges = [
+                FeedRangeInternalEpk(Range.PartitionKeyRangeToRange(partitionKeyRange)).to_dict()
+                for partitionKeyRange in partition_key_ranges
+            ]
 
             return feed_ranges
 
         async def extract_data(feed_ranges_response: list[dict[str, Any]]):
             return None, AsyncList(feed_ranges_response)
 
-        return AsyncItemPaged(
-            get_next,
-            extract_data
-        )
+        return AsyncItemPaged(get_next, extract_data)
 
     async def get_latest_session_token(
-            self,
-            feed_ranges_to_session_tokens: list[Tuple[dict[str, Any], str]],
-            target_feed_range: dict[str, Any]
+        self, feed_ranges_to_session_tokens: list[Tuple[dict[str, Any], str]], target_feed_range: dict[str, Any]
     ) -> str:
-        """ **provisional** This method is still in preview and may be subject to breaking changes.
+        """**provisional** This method is still in preview and may be subject to breaking changes.
 
         Gets the the most up to date session token from the list of session token and feed
         range tuples for a specific target feed range. The feed range can be obtained from a partition key
@@ -2078,8 +2085,7 @@ class ContainerProxy:
         partition_key_value = await self._set_partition_key(partition_key)
         return FeedRangeInternalEpk(await self._get_epk_range_for_partition_key(partition_key_value)).to_dict()
 
-    async def is_feed_range_subset(self, parent_feed_range: dict[str, Any],
-                                   child_feed_range: dict[str, Any]) -> bool:
+    async def is_feed_range_subset(self, parent_feed_range: dict[str, Any], child_feed_range: dict[str, Any]) -> bool:
         """Checks if child feed range is a subset of parent feed range.
         :param parent_feed_range: left feed range
         :type parent_feed_range: dict[str, Any]
@@ -2095,5 +2101,4 @@ class ContainerProxy:
         """
         parent_feed_range_epk = FeedRangeInternalEpk.from_json(parent_feed_range)
         child_feed_range_epk = FeedRangeInternalEpk.from_json(child_feed_range)
-        return child_feed_range_epk.get_normalized_range().is_subset(
-            parent_feed_range_epk.get_normalized_range())
+        return child_feed_range_epk.get_normalized_range().is_subset(parent_feed_range_epk.get_normalized_range())

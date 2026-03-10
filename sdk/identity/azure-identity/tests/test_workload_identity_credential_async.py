@@ -21,7 +21,6 @@ from azure.identity.aio._internal.token_binding_transport_asyncio import CustomA
 from helpers import mock_response, build_aad_response, GET_TOKEN_METHODS
 from proxy_server import TokenProxyTestServer
 
-
 PEM_CERT_PATH = os.path.join(os.path.dirname(__file__), "certificate.pem")
 
 

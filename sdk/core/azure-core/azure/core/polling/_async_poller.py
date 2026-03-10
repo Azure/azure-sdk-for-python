@@ -29,7 +29,6 @@ from typing import Callable, Any, Tuple, Generic, TypeVar, Generator, Awaitable
 from ..exceptions import AzureError
 from ._poller import _SansIONoPolling
 
-
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 DeserializationCallbackType = Any
 

@@ -61,32 +61,45 @@ class Share(ARMBaseModel):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'share_status': {'required': True},
-        'monitoring_status': {'required': True},
-        'access_protocol': {'required': True},
-        'share_mappings': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "share_status": {"required": True},
+        "monitoring_status": {"required": True},
+        "access_protocol": {"required": True},
+        "share_mappings": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'share_status': {'key': 'properties.shareStatus', 'type': 'str'},
-        'monitoring_status': {'key': 'properties.monitoringStatus', 'type': 'str'},
-        'azure_container_info': {'key': 'properties.azureContainerInfo', 'type': 'AzureContainerInfo'},
-        'access_protocol': {'key': 'properties.accessProtocol', 'type': 'str'},
-        'user_access_rights': {'key': 'properties.userAccessRights', 'type': '[UserAccessRight]'},
-        'client_access_rights': {'key': 'properties.clientAccessRights', 'type': '[ClientAccessRight]'},
-        'refresh_details': {'key': 'properties.refreshDetails', 'type': 'RefreshDetails'},
-        'share_mappings': {'key': 'properties.shareMappings', 'type': '[MountPointMap]'},
-        'data_policy': {'key': 'properties.dataPolicy', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "share_status": {"key": "properties.shareStatus", "type": "str"},
+        "monitoring_status": {"key": "properties.monitoringStatus", "type": "str"},
+        "azure_container_info": {"key": "properties.azureContainerInfo", "type": "AzureContainerInfo"},
+        "access_protocol": {"key": "properties.accessProtocol", "type": "str"},
+        "user_access_rights": {"key": "properties.userAccessRights", "type": "[UserAccessRight]"},
+        "client_access_rights": {"key": "properties.clientAccessRights", "type": "[ClientAccessRight]"},
+        "refresh_details": {"key": "properties.refreshDetails", "type": "RefreshDetails"},
+        "share_mappings": {"key": "properties.shareMappings", "type": "[MountPointMap]"},
+        "data_policy": {"key": "properties.dataPolicy", "type": "str"},
     }
 
-    def __init__(self, *, share_status, monitoring_status, access_protocol, description: str=None, azure_container_info=None, user_access_rights=None, client_access_rights=None, refresh_details=None, data_policy=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        share_status,
+        monitoring_status,
+        access_protocol,
+        description: str = None,
+        azure_container_info=None,
+        user_access_rights=None,
+        client_access_rights=None,
+        refresh_details=None,
+        data_policy=None,
+        **kwargs
+    ) -> None:
         super(Share, self).__init__(**kwargs)
         self.description = description
         self.share_status = share_status

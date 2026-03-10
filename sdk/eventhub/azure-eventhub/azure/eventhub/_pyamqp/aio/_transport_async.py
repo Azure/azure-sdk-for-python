@@ -32,7 +32,7 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 # -------------------------------------------------------------------------
 
-import asyncio # pylint:disable=do-not-import-asyncio
+import asyncio  # pylint:disable=do-not-import-asyncio
 import errno
 import socket
 import ssl
@@ -62,7 +62,6 @@ from .._transport import (
     AMQP_PORT,
 )
 from ..error import AuthenticationException, ErrorCondition
-
 
 _LOGGER = logging.getLogger(__name__)
 

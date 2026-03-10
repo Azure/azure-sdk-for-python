@@ -7,10 +7,12 @@
 # --------------------------------------------------------------------------
 
 from ._remote_rendering_rest_client import RemoteRenderingRestClient
-__all__ = ['RemoteRenderingRestClient']
+
+__all__ = ["RemoteRenderingRestClient"]
 
 try:
     from ._patch import patch_sdk  # type: ignore
+
     patch_sdk()
 except ImportError:
     pass

@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-""" Custom Async Polling Methods for Azure Batch Operations."""
+"""Custom Async Polling Methods for Azure Batch Operations."""
 
 import asyncio
 

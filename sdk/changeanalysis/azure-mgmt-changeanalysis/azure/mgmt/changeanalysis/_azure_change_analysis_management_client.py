@@ -49,7 +49,7 @@ class AzureChangeAnalysisManagementClient(object):
     ):
         # type: (...) -> None
         if not base_url:
-            base_url = 'https://management.azure.com'
+            base_url = "https://management.azure.com"
         self._config = AzureChangeAnalysisManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
@@ -58,12 +58,11 @@ class AzureChangeAnalysisManagementClient(object):
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.resource_changes = ResourceChangesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.changes = ChangesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.changes = ChangesOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def close(self):
         # type: () -> None

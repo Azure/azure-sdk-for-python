@@ -41,7 +41,7 @@ class MonitoringClient(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        base_url = '{endpoint}'
+        base_url = "{endpoint}"
         self._config = MonitoringClientConfiguration(credential, endpoint, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
@@ -50,8 +50,7 @@ class MonitoringClient(object):
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
-        self.monitoring = MonitoringOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+        self.monitoring = MonitoringOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, http_request, **kwargs):
         # type: (HttpRequest, Any) -> HttpResponse
@@ -64,7 +63,7 @@ class MonitoringClient(object):
         :rtype: ~azure.core.pipeline.transport.HttpResponse
         """
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
         stream = kwargs.pop("stream", True)

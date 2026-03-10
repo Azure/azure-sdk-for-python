@@ -25,6 +25,7 @@ USAGE:
 import os
 import json
 
+
 def convert_to_and_from_dict():
     path_to_sample_forms = os.path.abspath(
         os.path.join(
@@ -42,12 +43,10 @@ def convert_to_and_from_dict():
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
-    form_recognizer_client = FormRecognizerClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
+    form_recognizer_client = FormRecognizerClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     with open(path_to_sample_forms, "rb") as f:
         poller = form_recognizer_client.begin_recognize_identity_documents(identity_document=f)
-    
+
     id_documents = poller.result()
 
     # convert the received model to a dictionary
@@ -56,7 +55,7 @@ def convert_to_and_from_dict():
     # save the dictionary as JSON content in a JSON file, use the AzureJSONEncoder
     # to help make types, such as dates, JSON serializable
     # NOTE: AzureJSONEncoder is only available with azure.core>=1.18.0.
-    with open('data.json', 'w') as output_file:
+    with open("data.json", "w") as output_file:
         json.dump(recognized_form_dict, output_file, cls=AzureJSONEncoder)
 
     # convert the dictionary back to the original model
@@ -64,7 +63,7 @@ def convert_to_and_from_dict():
 
     # use the model as normal
     for idx, id_document in enumerate(model):
-        print("--------Recognizing converted ID document #{}--------".format(idx+1))
+        print("--------Recognizing converted ID document #{}--------".format(idx + 1))
         first_name = id_document.fields.get("FirstName")
         if first_name:
             print("First Name: {} has confidence: {}".format(first_name.value, first_name.confidence))

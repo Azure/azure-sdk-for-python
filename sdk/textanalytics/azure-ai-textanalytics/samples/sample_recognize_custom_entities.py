@@ -52,9 +52,7 @@ def sample_recognize_custom_entities() -> None:
         document = [fd.read()]
 
     poller = text_analytics_client.begin_recognize_custom_entities(
-        document,
-        project_name=project_name,
-        deployment_name=deployment_name
+        document, project_name=project_name, deployment_name=deployment_name
     )
 
     document_results = poller.result()
@@ -67,8 +65,9 @@ def sample_recognize_custom_entities() -> None:
                     )
                 )
         elif custom_entities_result.is_error is True:
-            print("...Is an error with code '{}' and message '{}'".format(
-                custom_entities_result.error.code, custom_entities_result.error.message
+            print(
+                "...Is an error with code '{}' and message '{}'".format(
+                    custom_entities_result.error.code, custom_entities_result.error.message
                 )
             )
     # [END recognize_custom_entities]

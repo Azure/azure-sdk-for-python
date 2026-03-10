@@ -30,7 +30,9 @@ def test_send_batch_with_invalid_hostname(invalid_hostname, uamqp_transport, cli
         pytest.skip(
             "Skipping on OSX - it keeps reporting 'Unable to set external certificates' " "and blocking other tests"
         )
-    client = EventHubProducerClient.from_connection_string(invalid_hostname, uamqp_transport=uamqp_transport, **client_args)
+    client = EventHubProducerClient.from_connection_string(
+        invalid_hostname, uamqp_transport=uamqp_transport, **client_args
+    )
     with client:
         with pytest.raises(ConnectError):
             batch = EventDataBatch()
@@ -158,7 +160,9 @@ def test_create_batch_with_invalid_hostname_sync(invalid_hostname, uamqp_transpo
         pytest.skip(
             "Skipping on OSX - it keeps reporting 'Unable to set external certificates' " "and blocking other tests"
         )
-    client = EventHubProducerClient.from_connection_string(invalid_hostname, uamqp_transport=uamqp_transport, **client_args)
+    client = EventHubProducerClient.from_connection_string(
+        invalid_hostname, uamqp_transport=uamqp_transport, **client_args
+    )
     with client:
         with pytest.raises(ConnectError):
             client.create_batch(max_size_in_bytes=300)

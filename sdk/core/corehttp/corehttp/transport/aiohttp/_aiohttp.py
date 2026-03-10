@@ -43,7 +43,6 @@ from .._base import _create_connection_config
 from ...rest._aiohttp import RestAioHttpTransportResponse
 from ...utils._utils import get_file_items
 
-
 if TYPE_CHECKING:
     from ...rest import (
         HttpRequest as RestHttpRequest,

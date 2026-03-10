@@ -24,7 +24,9 @@ class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
     async def test_business_card_jpg_include_field_elements(self):
         client = get_fr_client()
         async with client:
-            poller = await client.begin_recognize_business_cards_from_url(self.business_card_url_jpg, include_field_elements=True)
+            poller = await client.begin_recognize_business_cards_from_url(
+                self.business_card_url_jpg, include_field_elements=True
+            )
 
             result = await poller.result()
         assert len(result) == 1
@@ -34,13 +36,15 @@ class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
 
         for name, field in business_card.fields.items():
             for f in field.value:
-                self.assertFieldElementsHasValues(f.value_data.field_elements, business_card.page_range.first_page_number)
+                self.assertFieldElementsHasValues(
+                    f.value_data.field_elements, business_card.page_range.first_page_number
+                )
 
         # check dict values
         assert len(business_card.fields.get("ContactNames").value) == 1
         assert business_card.fields.get("ContactNames").value[0].value_data.page_number == 1
-        assert business_card.fields.get("ContactNames").value[0].value['FirstName'].value == 'Avery'
-        assert business_card.fields.get("ContactNames").value[0].value['LastName'].value == 'Smith'
+        assert business_card.fields.get("ContactNames").value[0].value["FirstName"].value == "Avery"
+        assert business_card.fields.get("ContactNames").value[0].value["LastName"].value == "Smith"
 
         assert len(business_card.fields.get("JobTitles").value) == 1
         assert business_card.fields.get("JobTitles").value[0].value == "Senior Researcher"
@@ -76,4 +80,6 @@ class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
         with pytest.raises(ValueError) as e:
             async with client:
                 await client.begin_recognize_business_cards_from_url(self.business_card_url_jpg)
-        assert "Method 'begin_recognize_business_cards_from_url' is only available for API version V2_1 and up" in str(e.value)
+        assert "Method 'begin_recognize_business_cards_from_url' is only available for API version V2_1 and up" in str(
+            e.value
+        )

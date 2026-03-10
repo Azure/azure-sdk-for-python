@@ -11,8 +11,9 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.credentials import AccessToken
 
+
 class StaticAccessTokenCredential(object):
-    """ Represents a static access token credential.
+    """Represents a static access token credential.
     This implements the TokenCredential protocol.
 
     :param AccessToken access_token: An access token.
@@ -22,6 +23,6 @@ class StaticAccessTokenCredential(object):
         # type: (AccessToken) -> None
         self._access_token = access_token
 
-    def get_token(self, *scopes, **kwargs): #pylint: disable=unused-argument
+    def get_token(self, *scopes, **kwargs):  # pylint: disable=unused-argument
         # type: (*str, **Any) -> AccessToken
         return self._access_token

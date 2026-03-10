@@ -50,7 +50,6 @@ from .pipeline.policies import (
     SensitiveHeaderCleanupPolicy,
 )
 
-
 HTTPRequestType = TypeVar("HTTPRequestType")
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", bound="AsyncContextManager")
 

@@ -115,7 +115,7 @@ class TestManagement(FormRecognizerTest):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )  
+        )
         transport = RequestsTransport()
         ftc = get_ft_client(transport=transport, api_version="2.1")
 

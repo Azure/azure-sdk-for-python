@@ -8,6 +8,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 import base64
 from datetime import datetime
 import json
@@ -197,7 +198,7 @@ class AttestationResult:  # pylint: disable=too-many-instance-attributes
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        self._issuer = kwargs.pop("issuer")  # type:str
+        self._issuer = kwargs.pop("issuer")  # type: str
         self._unique_identifier = kwargs.pop("unique_identifier", None)  # type: Union[str, None]
         self._nonce = kwargs.pop("nonce", None)  # type: Union[str, None]
         self._version = kwargs.pop("version")  # type: str

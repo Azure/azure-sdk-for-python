@@ -29,8 +29,7 @@ PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
 @runtime_checkable
 class TextAnalysisLROPoller(Protocol[PollingReturnType_co]):
-    """Implements a protocol which returned poller objects are consistent with.
-    """
+    """Implements a protocol which returned poller objects are consistent with."""
 
     @property
     def details(self) -> Mapping[str, Any]:
@@ -39,7 +38,6 @@ class TextAnalysisLROPoller(Protocol[PollingReturnType_co]):
         :return: A mapping of details about the long-running operation.
         :rtype: Mapping[str, Any]
         """
-
 
     def continuation_token(self) -> str:
         """Return a continuation token that allows to restart the poller later.
@@ -110,11 +108,9 @@ class TextAnalysisLROPoller(Protocol[PollingReturnType_co]):
 
 class TextAnalyticsOperationResourcePolling(OperationResourcePolling):
     def __init__(
-        self, operation_location_header: str ="operation-location", show_stats: Optional[bool] = False
+        self, operation_location_header: str = "operation-location", show_stats: Optional[bool] = False
     ) -> None:
-        super().__init__(
-            operation_location_header=operation_location_header
-        )
+        super().__init__(operation_location_header=operation_location_header)
         self._show_stats = show_stats
         self._query_params = {"showStats": show_stats}
 
@@ -125,11 +121,7 @@ class TextAnalyticsOperationResourcePolling(OperationResourcePolling):
         # language api compat
         delimiter = "&" if super().get_polling_url().find("?") != -1 else "?"
 
-        return (
-            super().get_polling_url()
-            + delimiter
-            + urlencode(self._query_params)
-        )
+        return super().get_polling_url() + delimiter + urlencode(self._query_params)
 
 
 class TextAnalyticsLROPollingMethod(LROBasePolling):
@@ -165,11 +157,7 @@ class TextAnalyticsLROPollingMethod(LROBasePolling):
         code = response.status_code
         if code in {200, 201, 202, 204}:
             return
-        raise BadStatus(
-            "Invalid return status {!r} for {!r} operation".format(
-                code, response.request.method
-            )
-        )
+        raise BadStatus("Invalid return status {!r} for {!r} operation".format(code, response.request.method))
 
     def _poll(self):
         """Poll status of operation so long as operation is incomplete and
@@ -199,14 +187,10 @@ class TextAnalyticsLROPollingMethod(LROBasePolling):
         final_get_url = self._operation.get_final_get_url(self._pipeline_response)
         if final_get_url:
             self._pipeline_response = self.request_status(final_get_url)
-            TextAnalyticsLROPollingMethod._raise_if_bad_http_status_and_method(
-                self._pipeline_response.http_response
-            )
+            TextAnalyticsLROPollingMethod._raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
 
 
-class AnalyzeHealthcareEntitiesLROPollingMethod(  # pylint: disable=all
-    TextAnalyticsLROPollingMethod
-):
+class AnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsLROPollingMethod):  # pylint: disable=all
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         self._doc_id_order = kwargs.pop("doc_id_order", None)
         self._show_stats = kwargs.pop("show_stats", None)
@@ -216,6 +200,7 @@ class AnalyzeHealthcareEntitiesLROPollingMethod(  # pylint: disable=all
     @property
     def _current_body(self):
         from ._generated.models import JobState
+
         return JobState.deserialize(self._pipeline_response)
 
     @property
@@ -243,9 +228,7 @@ class AnalyzeHealthcareEntitiesLROPollingMethod(  # pylint: disable=all
         return self._get_id_from_headers()
 
     def _get_id_from_headers(self) -> str:
-        return self._initial_response.http_response.headers[
-            "Operation-Location"
-        ].split("/jobs/")[1].split("?")[0]
+        return self._initial_response.http_response.headers["Operation-Location"].split("/jobs/")[1].split("?")[0]
 
     @property
     def display_name(self) -> Optional[str]:
@@ -287,23 +270,14 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller[PollingReturnType_co]):
         }
 
     def __getattr__(self, item: str) -> Any:
-        attrs = [
-            "created_on",
-            "expires_on",
-            "display_name",
-            "last_modified_on",
-            "id"
-        ]
+        attrs = ["created_on", "expires_on", "display_name", "last_modified_on", "id"]
         if item in attrs:
             return self.details[item]
         return self.__getattribute__(item)
 
     @classmethod
     def from_continuation_token(  # type: ignore
-        cls,
-        polling_method: AnalyzeHealthcareEntitiesLROPollingMethod,
-        continuation_token: str,
-        **kwargs: Any
+        cls, polling_method: AnalyzeHealthcareEntitiesLROPollingMethod, continuation_token: str, **kwargs: Any
     ) -> "AnalyzeHealthcareEntitiesLROPoller":  # type: ignore
         """Internal use only.
 
@@ -324,10 +298,7 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller[PollingReturnType_co]):
             TextAnalyticsOperationResourcePolling(show_stats=show_stats)
         ]
         return cls(
-            client,
-            initial_response,
-            functools.partial(deserialization_callback, initial_response),
-            polling_method
+            client, initial_response, functools.partial(deserialization_callback, initial_response), polling_method
         )
 
     @distributed_trace
@@ -355,9 +326,7 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller[PollingReturnType_co]):
             # Join the thread so we no longer have to wait for a result from it.
             getattr(self, "_thread").join(timeout=0)
 
-            client = getattr(
-                self._polling_method, "_text_analytics_client"
-            )
+            client = getattr(self._polling_method, "_text_analytics_client")
             try:
                 return client.begin_cancel_health_job(
                     self.id, polling=TextAnalyticsLROPollingMethod(timeout=polling_interval)
@@ -383,6 +352,7 @@ class AnalyzeActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
     @property
     def _current_body(self):
         from ._generated.models import JobState
+
         return JobState.deserialize(self._pipeline_response)
 
     @property
@@ -440,9 +410,7 @@ class AnalyzeActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
         return self._get_id_from_headers()
 
     def _get_id_from_headers(self) -> str:
-        return self._initial_response.http_response.headers[
-            "Operation-Location"
-        ].split("/jobs/")[1].split("?")[0]
+        return self._initial_response.http_response.headers["Operation-Location"].split("/jobs/")[1].split("?")[0]
 
     def get_continuation_token(self) -> str:
         if self._initial_response.context is not None:
@@ -492,7 +460,7 @@ class AnalyzeActionsLROPoller(LROPoller[PollingReturnType_co]):
             "actions_succeeded_count",
             "total_actions_count",
             "last_modified_on",
-            "id"
+            "id",
         ]
         if item in attrs:
             return self.details[item]
@@ -500,10 +468,7 @@ class AnalyzeActionsLROPoller(LROPoller[PollingReturnType_co]):
 
     @classmethod
     def from_continuation_token(  # type: ignore
-        cls,
-        polling_method: AnalyzeActionsLROPollingMethod,
-        continuation_token: str,
-        **kwargs: Any
+        cls, polling_method: AnalyzeActionsLROPollingMethod, continuation_token: str, **kwargs: Any
     ) -> "AnalyzeActionsLROPoller":  # type: ignore
         """Internal use only.
 
@@ -524,10 +489,7 @@ class AnalyzeActionsLROPoller(LROPoller[PollingReturnType_co]):
             TextAnalyticsOperationResourcePolling(show_stats=show_stats)
         ]
         return cls(
-            client,
-            initial_response,
-            functools.partial(deserialization_callback, initial_response),
-            polling_method
+            client, initial_response, functools.partial(deserialization_callback, initial_response), polling_method
         )
 
     @distributed_trace
@@ -548,4 +510,5 @@ class AnalyzeActionsLROPoller(LROPoller[PollingReturnType_co]):
             raise ValueError("Cancellation not supported by API versions v3.0, v3.1.") from exc
         except HttpResponseError as error:
             from ._response_handlers import process_http_response_error
+
             process_http_response_error(error)

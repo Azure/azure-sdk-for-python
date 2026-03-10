@@ -19,8 +19,9 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
 
-    T = TypeVar('T')
+    T = TypeVar("T")
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+
 
 class RemoteRenderingOperations(object):
     """RemoteRenderingOperations operations.
@@ -69,38 +70,44 @@ class RemoteRenderingOperations(object):
         :rtype: ~azure.mixedreality.remoterendering._generated.models.AssetConversion
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AssetConversion"]
+        cls = kwargs.pop("cls", None)  # type: ClsType["models.AssetConversion"]
         error_map = {
             404: ResourceNotFoundError,
-            400: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
-            409: lambda response: ResourceExistsError(response=response, model=self._deserialize(models.ErrorResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
+            400: lambda response: HttpResponseError(
+                response=response, model=self._deserialize(models.ErrorResponse, response)
+            ),
+            409: lambda response: ResourceExistsError(
+                response=response, model=self._deserialize(models.ErrorResponse, response)
+            ),
+            500: lambda response: HttpResponseError(
+                response=response, model=self._deserialize(models.ErrorResponse, response)
+            ),
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
         api_version = "2021-01-01"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self.create_conversion.metadata['url']  # type: ignore
+        url = self.create_conversion.metadata["url"]  # type: ignore
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'account_id': self._serialize.url("account_id", account_id, 'str'),
-            'conversion_id': self._serialize.url("conversion_id", conversion_id, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "account_id": self._serialize.url("account_id", account_id, "str"),
+            "conversion_id": self._serialize.url("conversion_id", conversion_id, "str"),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
+        header_parameters["Accept"] = "application/json"
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(body, 'CreateAssetConversionSettings')
-        body_content_kwargs['content'] = body_content
+        body_content = self._serialize.body(body, "CreateAssetConversionSettings")
+        body_content_kwargs["content"] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -112,18 +119,19 @@ class RemoteRenderingOperations(object):
 
         response_headers = {}
         if response.status_code == 200:
-            response_headers['MS-CV']=self._deserialize('str', response.headers.get('MS-CV'))
-            deserialized = self._deserialize('AssetConversion', pipeline_response)
+            response_headers["MS-CV"] = self._deserialize("str", response.headers.get("MS-CV"))
+            deserialized = self._deserialize("AssetConversion", pipeline_response)
 
         if response.status_code == 201:
-            response_headers['MS-CV']=self._deserialize('str', response.headers.get('MS-CV'))
-            deserialized = self._deserialize('AssetConversion', pipeline_response)
+            response_headers["MS-CV"] = self._deserialize("str", response.headers.get("MS-CV"))
+            deserialized = self._deserialize("AssetConversion", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    create_conversion.metadata = {'url': '/accounts/{account_id}/conversions/{conversion_id}'}  # type: ignore
+
+    create_conversion.metadata = {"url": "/accounts/{account_id}/conversions/{conversion_id}"}  # type: ignore
 
     def get_conversion(
         self,
@@ -147,31 +155,33 @@ class RemoteRenderingOperations(object):
         :rtype: ~azure.mixedreality.remoterendering._generated.models.AssetConversion
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AssetConversion"]
+        cls = kwargs.pop("cls", None)  # type: ClsType["models.AssetConversion"]
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
+            500: lambda response: HttpResponseError(
+                response=response, model=self._deserialize(models.ErrorResponse, response)
+            ),
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
         api_version = "2021-01-01"
 
         # Construct URL
-        url = self.get_conversion.metadata['url']  # type: ignore
+        url = self.get_conversion.metadata["url"]  # type: ignore
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'account_id': self._serialize.url("account_id", account_id, 'str'),
-            'conversion_id': self._serialize.url("conversion_id", conversion_id, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "account_id": self._serialize.url("account_id", account_id, "str"),
+            "conversion_id": self._serialize.url("conversion_id", conversion_id, "str"),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -182,15 +192,16 @@ class RemoteRenderingOperations(object):
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['MS-CV']=self._deserialize('str', response.headers.get('MS-CV'))
-        response_headers['Retry-After']=self._deserialize('int', response.headers.get('Retry-After'))
-        deserialized = self._deserialize('AssetConversion', pipeline_response)
+        response_headers["MS-CV"] = self._deserialize("str", response.headers.get("MS-CV"))
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+        deserialized = self._deserialize("AssetConversion", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    get_conversion.metadata = {'url': '/accounts/{account_id}/conversions/{conversion_id}'}  # type: ignore
+
+    get_conversion.metadata = {"url": "/accounts/{account_id}/conversions/{conversion_id}"}  # type: ignore
 
     def list_conversions(
         self,
@@ -209,46 +220,52 @@ class RemoteRenderingOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mixedreality.remoterendering._generated.models.ConversionList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConversionList"]
+        cls = kwargs.pop("cls", None)  # type: ClsType["models.ConversionList"]
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
+            500: lambda response: HttpResponseError(
+                response=response, model=self._deserialize(models.ErrorResponse, response)
+            ),
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
         api_version = "2021-01-01"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
+            header_parameters["Accept"] = "application/json"
 
             if not next_link:
                 # Construct URL
-                url = self.list_conversions.metadata['url']  # type: ignore
+                url = self.list_conversions.metadata["url"]  # type: ignore
                 path_format_arguments = {
-                    'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                    'account_id': self._serialize.url("account_id", account_id, 'str'),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                    "account_id": self._serialize.url("account_id", account_id, "str"),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
 
                 request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
                 path_format_arguments = {
-                    'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                    'account_id': self._serialize.url("account_id", account_id, 'str'),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                    "account_id": self._serialize.url("account_id", account_id, "str"),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('ConversionList', pipeline_response)
+            deserialized = self._deserialize("ConversionList", pipeline_response)
             list_of_elem = deserialized.conversions
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -266,10 +283,9 @@ class RemoteRenderingOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list_conversions.metadata = {'url': '/accounts/{account_id}/conversions'}  # type: ignore
+        return ItemPaged(get_next, extract_data)
+
+    list_conversions.metadata = {"url": "/accounts/{account_id}/conversions"}  # type: ignore
 
     def create_session(
         self,
@@ -296,38 +312,44 @@ class RemoteRenderingOperations(object):
         :rtype: ~azure.mixedreality.remoterendering._generated.models.RenderingSession
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RenderingSession"]
+        cls = kwargs.pop("cls", None)  # type: ClsType["models.RenderingSession"]
         error_map = {
             404: ResourceNotFoundError,
-            400: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
-            409: lambda response: ResourceExistsError(response=response, model=self._deserialize(models.ErrorResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
+            400: lambda response: HttpResponseError(
+                response=response, model=self._deserialize(models.ErrorResponse, response)
+            ),
+            409: lambda response: ResourceExistsError(
+                response=response, model=self._deserialize(models.ErrorResponse, response)
+            ),
+            500: lambda response: HttpResponseError(
+                response=response, model=self._deserialize(models.ErrorResponse, response)
+            ),
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
         api_version = "2021-01-01"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self.create_session.metadata['url']  # type: ignore
+        url = self.create_session.metadata["url"]  # type: ignore
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'account_id': self._serialize.url("account_id", account_id, 'str'),
-            'session_id': self._serialize.url("session_id", session_id, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "account_id": self._serialize.url("account_id", account_id, "str"),
+            "session_id": self._serialize.url("session_id", session_id, "str"),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
+        header_parameters["Accept"] = "application/json"
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(body, 'CreateRenderingSessionSettings')
-        body_content_kwargs['content'] = body_content
+        body_content = self._serialize.body(body, "CreateRenderingSessionSettings")
+        body_content_kwargs["content"] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -339,17 +361,18 @@ class RemoteRenderingOperations(object):
 
         response_headers = {}
         if response.status_code == 200:
-            deserialized = self._deserialize('RenderingSession', pipeline_response)
+            deserialized = self._deserialize("RenderingSession", pipeline_response)
 
         if response.status_code == 201:
-            response_headers['MS-CV']=self._deserialize('str', response.headers.get('MS-CV'))
-            deserialized = self._deserialize('RenderingSession', pipeline_response)
+            response_headers["MS-CV"] = self._deserialize("str", response.headers.get("MS-CV"))
+            deserialized = self._deserialize("RenderingSession", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    create_session.metadata = {'url': '/accounts/{account_id}/sessions/{session_id}'}  # type: ignore
+
+    create_session.metadata = {"url": "/accounts/{account_id}/sessions/{session_id}"}  # type: ignore
 
     def get_session(
         self,
@@ -373,31 +396,33 @@ class RemoteRenderingOperations(object):
         :rtype: ~azure.mixedreality.remoterendering._generated.models.RenderingSession
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RenderingSession"]
+        cls = kwargs.pop("cls", None)  # type: ClsType["models.RenderingSession"]
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
+            500: lambda response: HttpResponseError(
+                response=response, model=self._deserialize(models.ErrorResponse, response)
+            ),
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
         api_version = "2021-01-01"
 
         # Construct URL
-        url = self.get_session.metadata['url']  # type: ignore
+        url = self.get_session.metadata["url"]  # type: ignore
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'account_id': self._serialize.url("account_id", account_id, 'str'),
-            'session_id': self._serialize.url("session_id", session_id, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "account_id": self._serialize.url("account_id", account_id, "str"),
+            "session_id": self._serialize.url("session_id", session_id, "str"),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -407,13 +432,14 @@ class RemoteRenderingOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('RenderingSession', pipeline_response)
+        deserialized = self._deserialize("RenderingSession", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_session.metadata = {'url': '/accounts/{account_id}/sessions/{session_id}'}  # type: ignore
+
+    get_session.metadata = {"url": "/accounts/{account_id}/sessions/{session_id}"}  # type: ignore
 
     def update_session(
         self,
@@ -440,38 +466,42 @@ class RemoteRenderingOperations(object):
         :rtype: ~azure.mixedreality.remoterendering._generated.models.RenderingSession
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RenderingSession"]
+        cls = kwargs.pop("cls", None)  # type: ClsType["models.RenderingSession"]
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            422: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
+            422: lambda response: HttpResponseError(
+                response=response, model=self._deserialize(models.ErrorResponse, response)
+            ),
+            500: lambda response: HttpResponseError(
+                response=response, model=self._deserialize(models.ErrorResponse, response)
+            ),
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
         api_version = "2021-01-01"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self.update_session.metadata['url']  # type: ignore
+        url = self.update_session.metadata["url"]  # type: ignore
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'account_id': self._serialize.url("account_id", account_id, 'str'),
-            'session_id': self._serialize.url("session_id", session_id, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "account_id": self._serialize.url("account_id", account_id, "str"),
+            "session_id": self._serialize.url("session_id", session_id, "str"),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
+        header_parameters["Accept"] = "application/json"
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(body, 'UpdateSessionSettings')
-        body_content_kwargs['content'] = body_content
+        body_content = self._serialize.body(body, "UpdateSessionSettings")
+        body_content_kwargs["content"] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -481,13 +511,14 @@ class RemoteRenderingOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('RenderingSession', pipeline_response)
+        deserialized = self._deserialize("RenderingSession", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    update_session.metadata = {'url': '/accounts/{account_id}/sessions/{session_id}'}  # type: ignore
+
+    update_session.metadata = {"url": "/accounts/{account_id}/sessions/{session_id}"}  # type: ignore
 
     def stop_session(
         self,
@@ -511,27 +542,29 @@ class RemoteRenderingOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
+            500: lambda response: HttpResponseError(
+                response=response, model=self._deserialize(models.ErrorResponse, response)
+            ),
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
         api_version = "2021-01-01"
 
         # Construct URL
-        url = self.stop_session.metadata['url']  # type: ignore
+        url = self.stop_session.metadata["url"]  # type: ignore
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'account_id': self._serialize.url("account_id", account_id, 'str'),
-            'session_id': self._serialize.url("session_id", session_id, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "account_id": self._serialize.url("account_id", account_id, "str"),
+            "session_id": self._serialize.url("session_id", session_id, "str"),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -545,12 +578,12 @@ class RemoteRenderingOperations(object):
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['MS-CV']=self._deserialize('str', response.headers.get('MS-CV'))
+        response_headers["MS-CV"] = self._deserialize("str", response.headers.get("MS-CV"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    stop_session.metadata = {'url': '/accounts/{account_id}/sessions/{session_id}/:stop'}  # type: ignore
+    stop_session.metadata = {"url": "/accounts/{account_id}/sessions/{session_id}/:stop"}  # type: ignore
 
     def list_sessions(
         self,
@@ -569,46 +602,52 @@ class RemoteRenderingOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mixedreality.remoterendering._generated.models.SessionsList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SessionsList"]
+        cls = kwargs.pop("cls", None)  # type: ClsType["models.SessionsList"]
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
+            500: lambda response: HttpResponseError(
+                response=response, model=self._deserialize(models.ErrorResponse, response)
+            ),
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
         api_version = "2021-01-01"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
+            header_parameters["Accept"] = "application/json"
 
             if not next_link:
                 # Construct URL
-                url = self.list_sessions.metadata['url']  # type: ignore
+                url = self.list_sessions.metadata["url"]  # type: ignore
                 path_format_arguments = {
-                    'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                    'account_id': self._serialize.url("account_id", account_id, 'str'),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                    "account_id": self._serialize.url("account_id", account_id, "str"),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
 
                 request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
                 path_format_arguments = {
-                    'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                    'account_id': self._serialize.url("account_id", account_id, 'str'),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                    "account_id": self._serialize.url("account_id", account_id, "str"),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('SessionsList', pipeline_response)
+            deserialized = self._deserialize("SessionsList", pipeline_response)
             list_of_elem = deserialized.sessions
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -626,7 +665,6 @@ class RemoteRenderingOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list_sessions.metadata = {'url': '/accounts/{account_id}/sessions'}  # type: ignore
+        return ItemPaged(get_next, extract_data)
+
+    list_sessions.metadata = {"url": "/accounts/{account_id}/sessions"}  # type: ignore

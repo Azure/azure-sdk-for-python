@@ -10,7 +10,6 @@ from azure.core.pipeline.policies import AzureKeyCredentialPolicy, SansIOHTTPPol
 from azure.core.pipeline.transport import HttpTransport
 from azure.core.exceptions import HttpResponseError
 
-
 POLLING_INTERVAL = 1
 COGNITIVE_KEY_HEADER = "Ocp-Apim-Subscription-Key"
 
@@ -145,13 +144,13 @@ def check_beginning_bytes(form):
             return "application/pdf"
         if form[:2] == b"\xff\xd8":
             return "image/jpeg"
-        if form[:4] == b"\x89\x50\x4E\x47":
+        if form[:4] == b"\x89\x50\x4e\x47":
             return "image/png"
-        if form[:4] == b"\x49\x49\x2A\x00":  # little-endian
+        if form[:4] == b"\x49\x49\x2a\x00":  # little-endian
             return "image/tiff"
-        if form[:4] == b"\x4D\x4D\x00\x2A":  # big-endian
+        if form[:4] == b"\x4d\x4d\x00\x2a":  # big-endian
             return "image/tiff"
-        if form[:2] == b"\x42\x4D":
+        if form[:2] == b"\x42\x4d":
             return "image/bmp"
     raise ValueError("Content type could not be auto-detected. Please pass the content_type keyword argument.")
 

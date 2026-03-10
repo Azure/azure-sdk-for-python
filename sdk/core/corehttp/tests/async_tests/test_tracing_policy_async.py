@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 """Tests for the distributed tracing policy."""
+
 import pytest
 
 from corehttp.rest import HttpRequest

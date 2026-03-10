@@ -9,6 +9,7 @@ from testcase import SynapseArtifactsTest, ArtifactsClientPowerShellPreparer
 from azure.core.exceptions import HttpResponseError
 from devtools_testutils import recorded_by_proxy
 
+
 class TestSynapseArtifactsSmoke(SynapseArtifactsTest):
 
     # If endpoint is not unauthorized, `HttpResponseError` will be raised

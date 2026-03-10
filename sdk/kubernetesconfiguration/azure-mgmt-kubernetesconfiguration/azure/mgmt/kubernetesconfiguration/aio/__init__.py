@@ -7,4 +7,5 @@
 # --------------------------------------------------------------------------
 
 from ._source_control_configuration_client import SourceControlConfigurationClient
-__all__ = ['SourceControlConfigurationClient']
+
+__all__ = ["SourceControlConfigurationClient"]

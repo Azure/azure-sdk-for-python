@@ -53,14 +53,19 @@ def _is_hybrid_search_query(query, e):
 
 
 def _verify_valid_hybrid_search_query(hybrid_search_query_info):
-    if not hybrid_search_query_info['take']:
-        raise ValueError("Executing a hybrid search query without TOP or LIMIT can consume many" +
-                         " RUs very fast and have long runtimes. Please ensure you are using one" +
-                         " of the two filters with your hybrid search query.")
-    if hybrid_search_query_info['take'] > int(os.environ.get(Constants.HS_MAX_ITEMS_CONFIG,
-                                                             Constants.HS_MAX_ITEMS_CONFIG_DEFAULT)):
-        raise ValueError("Executing a hybrid search query with more items than the max is not allowed. " +
-                         "Please ensure you are using a limit smaller than the max, or change the max.")
+    if not hybrid_search_query_info["take"]:
+        raise ValueError(
+            "Executing a hybrid search query without TOP or LIMIT can consume many"
+            + " RUs very fast and have long runtimes. Please ensure you are using one"
+            + " of the two filters with your hybrid search query."
+        )
+    if hybrid_search_query_info["take"] > int(
+        os.environ.get(Constants.HS_MAX_ITEMS_CONFIG, Constants.HS_MAX_ITEMS_CONFIG_DEFAULT)
+    ):
+        raise ValueError(
+            "Executing a hybrid search query with more items than the max is not allowed. "
+            + "Please ensure you are using a limit smaller than the max, or change the max."
+        )
 
 
 def _get_partitioned_execution_info(e):
@@ -77,8 +82,9 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
     to _MultiExecutionContextAggregator
     """
 
-    def __init__(self, client, resource_link, query, options, fetch_function, response_hook,
-                 raw_response_hook, resource_type):
+    def __init__(
+        self, client, resource_link, query, options, fetch_function, response_hook, raw_response_hook, resource_type
+    ):
         """
         Constructor
         """
@@ -99,15 +105,15 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         query_plan = self._client._GetQueryPlanThroughGateway(
             query_to_use,
             self._resource_link,
-            self._options.get('excludedLocations'),
-            read_timeout=self._options.get('read_timeout')
+            self._options.get("excludedLocations"),
+            read_timeout=self._options.get("read_timeout"),
         )
         query_execution_info = _PartitionedQueryExecutionInfo(query_plan)
         qe_info = getattr(query_execution_info, "_query_execution_info", None)
         if isinstance(qe_info, dict) and isinstance(query_to_use, dict):
             params = query_to_use.get("parameters")
             if params is not None:
-                query_execution_info._query_execution_info['parameters'] = params
+                query_execution_info._query_execution_info["parameters"] = params
 
         self._execution_context = self._create_pipelined_execution_context(query_execution_info)
 
@@ -151,56 +157,68 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
     def _create_pipelined_execution_context(self, query_execution_info):
         assert self._resource_link, "code bug, resource_link is required."
         if query_execution_info.has_aggregates() and not query_execution_info.has_select_value():
-            if self._options and ("enableCrossPartitionQuery" in self._options
-                                  and self._options["enableCrossPartitionQuery"]):
+            if self._options and (
+                "enableCrossPartitionQuery" in self._options and self._options["enableCrossPartitionQuery"]
+            ):
                 raise CosmosHttpResponseError(
                     StatusCodes.BAD_REQUEST,
-                    "Cross partition query only supports 'VALUE <AggregateFunc>' for aggregates")
+                    "Cross partition query only supports 'VALUE <AggregateFunc>' for aggregates",
+                )
 
         # throw exception here for vector search query without limit filter or limit > max_limit
         if query_execution_info.get_non_streaming_order_by():
-            total_item_buffer = (query_execution_info.get_top() or 0) or \
-                                ((query_execution_info.get_limit() or 0) + (query_execution_info.get_offset() or 0))
+            total_item_buffer = (query_execution_info.get_top() or 0) or (
+                (query_execution_info.get_limit() or 0) + (query_execution_info.get_offset() or 0)
+            )
             if total_item_buffer == 0:
-                raise ValueError("Executing a vector search query without TOP or LIMIT can consume many" +
-                                 " RUs very fast and have long runtimes. Please ensure you are using one" +
-                                 " of the two filters with your vector search query.")
-            if total_item_buffer > int(os.environ.get(Constants.MAX_ITEM_BUFFER_VS_CONFIG,
-                                                      Constants.MAX_ITEM_BUFFER_VS_CONFIG_DEFAULT)):
-                raise ValueError("Executing a vector search query with more items than the max is not allowed. " +
-                                 "Please ensure you are using a limit smaller than the max, or change the max.")
-            execution_context_aggregator = \
-                non_streaming_order_by_aggregator._NonStreamingOrderByContextAggregator(self._client,
-                                                                                        self._resource_link,
-                                                                                        self._query,
-                                                                                        self._options,
-                                                                                        query_execution_info,
-                                                                                        self._response_hook,
-                                                                                        self._raw_response_hook)
+                raise ValueError(
+                    "Executing a vector search query without TOP or LIMIT can consume many"
+                    + " RUs very fast and have long runtimes. Please ensure you are using one"
+                    + " of the two filters with your vector search query."
+                )
+            if total_item_buffer > int(
+                os.environ.get(Constants.MAX_ITEM_BUFFER_VS_CONFIG, Constants.MAX_ITEM_BUFFER_VS_CONFIG_DEFAULT)
+            ):
+                raise ValueError(
+                    "Executing a vector search query with more items than the max is not allowed. "
+                    + "Please ensure you are using a limit smaller than the max, or change the max."
+                )
+            execution_context_aggregator = non_streaming_order_by_aggregator._NonStreamingOrderByContextAggregator(
+                self._client,
+                self._resource_link,
+                self._query,
+                self._options,
+                query_execution_info,
+                self._response_hook,
+                self._raw_response_hook,
+            )
         elif query_execution_info.has_hybrid_search_query_info():
-            hybrid_search_query_info = query_execution_info._query_execution_info['hybridSearchQueryInfo']
+            hybrid_search_query_info = query_execution_info._query_execution_info["hybridSearchQueryInfo"]
             _verify_valid_hybrid_search_query(hybrid_search_query_info)
-            execution_context_aggregator = \
-                hybrid_search_aggregator._HybridSearchContextAggregator(self._client,
-                                                                        self._resource_link,
-                                                                        self._options,
-                                                                        query_execution_info,
-                                                                        hybrid_search_query_info,
-                                                                        self._response_hook,
-                                                                        self._raw_response_hook)
+            execution_context_aggregator = hybrid_search_aggregator._HybridSearchContextAggregator(
+                self._client,
+                self._resource_link,
+                self._options,
+                query_execution_info,
+                hybrid_search_query_info,
+                self._response_hook,
+                self._raw_response_hook,
+            )
             execution_context_aggregator._run_hybrid_search()
         else:
-            execution_context_aggregator = \
-                multi_execution_aggregator._MultiExecutionContextAggregator(self._client,
-                                                                            self._resource_link,
-                                                                            self._query,
-                                                                            self._options,
-                                                                            query_execution_info,
-                                                                            self._response_hook,
-                                                                            self._raw_response_hook)
+            execution_context_aggregator = multi_execution_aggregator._MultiExecutionContextAggregator(
+                self._client,
+                self._resource_link,
+                self._query,
+                self._options,
+                query_execution_info,
+                self._response_hook,
+                self._raw_response_hook,
+            )
             execution_context_aggregator._configure_partition_ranges()
-        return _PipelineExecutionContext(self._client, self._options, execution_context_aggregator,
-                                         query_execution_info)
+        return _PipelineExecutionContext(
+            self._client, self._options, execution_context_aggregator, query_execution_info
+        )
 
     next = __next__  # Python 2 compatibility.
 

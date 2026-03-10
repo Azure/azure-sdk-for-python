@@ -18,8 +18,8 @@ class DataBoxEdgeDevicePaged(Paged):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[DataBoxEdgeDevice]'}
+        "next_link": {"key": "nextLink", "type": "str"},
+        "current_page": {"key": "value", "type": "[DataBoxEdgeDevice]"},
     }
 
     def __init__(self, *args, **kwargs):

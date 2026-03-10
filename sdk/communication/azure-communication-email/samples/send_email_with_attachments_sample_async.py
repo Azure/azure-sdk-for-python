@@ -9,7 +9,7 @@
 """
 FILE: send_email_with_attachments_sample_async.py
 DESCRIPTION:
-    This sample demonstrates sending an email with an attachment. The Email client is 
+    This sample demonstrates sending an email with an attachment. The Email client is
     authenticated using a connection string.
 USAGE:
     python send_email_with_attachment_async.py

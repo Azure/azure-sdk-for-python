@@ -8,6 +8,7 @@
 Unit tests for STAC Collection lifecycle operations (create, update, delete).
 Note: These tests are marked with pytest.mark.live_test_only as they modify collections.
 """
+
 import logging
 import time
 import pytest
@@ -56,28 +57,18 @@ class TestPlanetaryComputerCollectionLifecycle(PlanetaryComputerProClientTestBas
 
         # Check if collection exists and delete it first
         try:
-            existing_collection = client.stac.get_collection(
-                collection_id=test_collection_id
-            )
+            existing_collection = client.stac.get_collection(collection_id=test_collection_id)
             if existing_collection:
-                test_logger.info(
-                    f"Collection '{test_collection_id}' already exists, deleting first..."
-                )
-                delete_poller = client.stac.begin_delete_collection(
-                    collection_id=test_collection_id, polling=True
-                )
+                test_logger.info(f"Collection '{test_collection_id}' already exists, deleting first...")
+                delete_poller = client.stac.begin_delete_collection(collection_id=test_collection_id, polling=True)
                 delete_poller.result()
                 test_logger.info(f"Deleted existing collection '{test_collection_id}'")
         except Exception:
-            test_logger.info(
-                f"Collection '{test_collection_id}' does not exist, proceeding with creation"
-            )
+            test_logger.info(f"Collection '{test_collection_id}' does not exist, proceeding with creation")
 
         # Define collection extents
         spatial_extent = StacExtensionSpatialExtent(bounding_box=[[-180, -90, 180, 90]])
-        temporal_extent = StacCollectionTemporalExtent(
-            interval=[["2020-01-01T00:00:00Z", "2024-12-31T23:59:59Z"]]
-        )
+        temporal_extent = StacCollectionTemporalExtent(interval=[["2020-01-01T00:00:00Z", "2024-12-31T23:59:59Z"]])
         extent = StacExtensionExtent(spatial=spatial_extent, temporal=temporal_extent)
 
         # Create collection payload
@@ -93,15 +84,11 @@ class TestPlanetaryComputerCollectionLifecycle(PlanetaryComputerProClientTestBas
         }
 
         test_logger.info("Calling: begin_create_collection(body=collection_data)")
-        create_poller = client.stac.begin_create_collection(
-            body=collection_data, polling=True
-        )
+        create_poller = client.stac.begin_create_collection(body=collection_data, polling=True)
         result = create_poller.result()
 
         test_logger.info(f"Collection created: {result}")
-        created_collection = client.stac.get_collection(
-            collection_id=test_collection_id
-        )
+        created_collection = client.stac.get_collection(collection_id=test_collection_id)
         assert created_collection is not None
         assert created_collection.id == test_collection_id
         assert created_collection.title == "Test Collection Lifecycle"
@@ -131,18 +118,11 @@ class TestPlanetaryComputerCollectionLifecycle(PlanetaryComputerProClientTestBas
         test_logger.info(
             f"Calling: create_or_replace_collection(collection_id='{test_collection_id}', body=collection)"
         )
-        updated_collection = client.stac.create_or_replace_collection(
-            collection_id=test_collection_id, body=collection
-        )
+        updated_collection = client.stac.create_or_replace_collection(collection_id=test_collection_id, body=collection)
 
         test_logger.info(f"Collection updated: {updated_collection}")
-        updated_collection = client.stac.get_collection(
-            collection_id=test_collection_id
-        )
-        assert (
-            updated_collection.description
-            == "Test collection for lifecycle operations - UPDATED"
-        )
+        updated_collection = client.stac.get_collection(collection_id=test_collection_id)
+        assert updated_collection.description == "Test collection for lifecycle operations - UPDATED"
 
         test_logger.info("Test PASSED\n")
 
@@ -160,12 +140,8 @@ class TestPlanetaryComputerCollectionLifecycle(PlanetaryComputerProClientTestBas
 
         test_collection_id = "test-collection-lifecycle"
 
-        test_logger.info(
-            f"Calling: begin_delete_collection(collection_id='{test_collection_id}')"
-        )
-        delete_poller = client.stac.begin_delete_collection(
-            collection_id=test_collection_id, polling=True
-        )
+        test_logger.info(f"Calling: begin_delete_collection(collection_id='{test_collection_id}')")
+        delete_poller = client.stac.begin_delete_collection(collection_id=test_collection_id, polling=True)
         result = delete_poller.result()
 
         test_logger.info(f"Delete operation completed: {result}")
@@ -175,17 +151,13 @@ class TestPlanetaryComputerCollectionLifecycle(PlanetaryComputerProClientTestBas
             assert False, "Collection should have been deleted"
         except Exception as e:
             test_logger.info(f"Collection successfully deleted (404 expected): {e}")
-            assert (
-                "404" in str(e) or "Not Found" in str(e) or "ResourceNotFound" in str(e)
-            )
+            assert "404" in str(e) or "Not Found" in str(e) or "ResourceNotFound" in str(e)
 
         test_logger.info("Test PASSED\n")
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_04_create_collection_asset(
-        self, planetarycomputer_endpoint, planetarycomputer_collection_id
-    ):
+    def test_04_create_collection_asset(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
         """
         Test creating a collection asset.
         Note: This test uses the existing test collection.
@@ -201,22 +173,12 @@ class TestPlanetaryComputerCollectionLifecycle(PlanetaryComputerProClientTestBas
 
         # Delete the asset if it already exists
         try:
-            test_logger.info(
-                "Checking if asset 'test-asset' already exists and deleting if found..."
-            )
-            client.stac.delete_collection_asset(
-                collection_id=planetarycomputer_collection_id, asset_id="test-asset"
-            )
+            test_logger.info("Checking if asset 'test-asset' already exists and deleting if found...")
+            client.stac.delete_collection_asset(collection_id=planetarycomputer_collection_id, asset_id="test-asset")
             test_logger.info("Deleted existing 'test-asset'")
         except Exception as e:
-            if (
-                "404" in str(e)
-                or "Not Found" in str(e)
-                or "not found" in str(e).lower()
-            ):
-                test_logger.info(
-                    "Asset 'test-asset' does not exist, proceeding with creation"
-                )
+            if "404" in str(e) or "Not Found" in str(e) or "not found" in str(e).lower():
+                test_logger.info("Asset 'test-asset' does not exist, proceeding with creation")
             else:
                 test_logger.warning(f"Error checking/deleting asset: {e}")
 
@@ -246,9 +208,7 @@ class TestPlanetaryComputerCollectionLifecycle(PlanetaryComputerProClientTestBas
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_05_replace_collection_asset(
-        self, planetarycomputer_endpoint, planetarycomputer_collection_id
-    ):
+    def test_05_replace_collection_asset(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
         """
         Test creating or replacing a collection asset.
         """
@@ -287,9 +247,7 @@ class TestPlanetaryComputerCollectionLifecycle(PlanetaryComputerProClientTestBas
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_06_delete_collection_asset(
-        self, planetarycomputer_endpoint, planetarycomputer_collection_id
-    ):
+    def test_06_delete_collection_asset(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
         """
         Test deleting a collection asset.
         First creates an asset specifically for deletion.
@@ -336,12 +294,8 @@ class TestPlanetaryComputerCollectionLifecycle(PlanetaryComputerProClientTestBas
         test_logger.info("Asset deleted successfully")
 
         # Verify deletion by checking collection assets
-        collection = client.stac.get_collection(
-            collection_id=planetarycomputer_collection_id
-        )
+        collection = client.stac.get_collection(collection_id=planetarycomputer_collection_id)
         if hasattr(collection, "assets") and collection.assets:
-            assert (
-                "test-asset-to-be-deleted" not in collection.assets
-            ), "Asset should have been deleted"
+            assert "test-asset-to-be-deleted" not in collection.assets, "Asset should have been deleted"
 
         test_logger.info("Test PASSED\n")

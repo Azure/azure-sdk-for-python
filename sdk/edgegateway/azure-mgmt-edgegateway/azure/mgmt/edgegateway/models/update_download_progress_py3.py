@@ -35,21 +35,21 @@ class UpdateDownloadProgress(Model):
     """
 
     _validation = {
-        'download_phase': {'readonly': True},
-        'percent_complete': {'readonly': True},
-        'total_bytes_to_download': {'readonly': True},
-        'total_bytes_downloaded': {'readonly': True},
-        'number_of_updates_to_download': {'readonly': True},
-        'number_of_updates_downloaded': {'readonly': True},
+        "download_phase": {"readonly": True},
+        "percent_complete": {"readonly": True},
+        "total_bytes_to_download": {"readonly": True},
+        "total_bytes_downloaded": {"readonly": True},
+        "number_of_updates_to_download": {"readonly": True},
+        "number_of_updates_downloaded": {"readonly": True},
     }
 
     _attribute_map = {
-        'download_phase': {'key': 'downloadPhase', 'type': 'str'},
-        'percent_complete': {'key': 'percentComplete', 'type': 'int'},
-        'total_bytes_to_download': {'key': 'totalBytesToDownload', 'type': 'float'},
-        'total_bytes_downloaded': {'key': 'totalBytesDownloaded', 'type': 'float'},
-        'number_of_updates_to_download': {'key': 'numberOfUpdatesToDownload', 'type': 'int'},
-        'number_of_updates_downloaded': {'key': 'numberOfUpdatesDownloaded', 'type': 'int'},
+        "download_phase": {"key": "downloadPhase", "type": "str"},
+        "percent_complete": {"key": "percentComplete", "type": "int"},
+        "total_bytes_to_download": {"key": "totalBytesToDownload", "type": "float"},
+        "total_bytes_downloaded": {"key": "totalBytesDownloaded", "type": "float"},
+        "number_of_updates_to_download": {"key": "numberOfUpdatesToDownload", "type": "int"},
+        "number_of_updates_downloaded": {"key": "numberOfUpdatesDownloaded", "type": "int"},
     }
 
     def __init__(self, **kwargs) -> None:

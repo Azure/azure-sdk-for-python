@@ -14,7 +14,6 @@ from ... import CredentialUnavailableError
 from ..._constants import EnvironmentVariables
 from ..._credentials.managed_identity import validate_identity_config
 
-
 _LOGGER = logging.getLogger(__name__)
 
 

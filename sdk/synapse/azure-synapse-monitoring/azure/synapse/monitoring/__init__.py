@@ -10,10 +10,11 @@ from ._monitoring_client import MonitoringClient
 from ._version import VERSION
 
 __version__ = VERSION
-__all__ = ['MonitoringClient']
+__all__ = ["MonitoringClient"]
 
 try:
     from ._patch import patch_sdk  # type: ignore
+
     patch_sdk()
 except ImportError:
     pass

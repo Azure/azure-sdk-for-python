@@ -21,10 +21,10 @@ USAGE: python hello_world_sample_entra_id_and_bleu.py
     2) AZURE_TENANT_ID: Your Azure tenant ID
     3) AZURE_CLIENT_ID: Your application (client) ID
     4) AZURE_CLIENT_SECRET: Your application client secret
-    
+
     For Azure Bleu (French Sovereign Cloud):
     - Use audience: ["https://appconfig.sovcloud-api.fr/"]
-    
+
     DefaultAzureCredential will attempt multiple authentication methods:
     - Environment variables (AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET)
     - Managed Identity
@@ -33,6 +33,7 @@ USAGE: python hello_world_sample_entra_id_and_bleu.py
     - Azure PowerShell
     - Interactive browser
 """
+
 import os
 from azure.appconfiguration import AzureAppConfigurationClient
 from azure.identity import DefaultAzureCredential

@@ -164,10 +164,8 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
     limits = NestedField(CommandJobLimitsSchema)
     # Change required fields to optional
     command = fields.Str(
-        metadata={
-            "description": "The command run and the parameters passed. \
-            This string may contain place holders of inputs in {}. "
-        },
+        metadata={"description": "The command run and the parameters passed. \
+            This string may contain place holders of inputs in {}. "},
         load_only=True,
     )
     environment = EnvironmentField()

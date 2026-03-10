@@ -38,7 +38,16 @@ class MeshCodePackageOperations(object):
         self.api_version = "6.4-preview"
 
     def get_container_logs(
-            self, application_resource_name, service_resource_name, replica_name, code_package_name, tail=None, custom_headers=None, raw=False, **operation_config):
+        self,
+        application_resource_name,
+        service_resource_name,
+        replica_name,
+        code_package_name,
+        tail=None,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the logs from the container.
 
         Gets the logs for the container of the specified code package of the
@@ -67,24 +76,28 @@ class MeshCodePackageOperations(object):
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
         # Construct URL
-        url = self.get_container_logs.metadata['url']
+        url = self.get_container_logs.metadata["url"]
         path_format_arguments = {
-            'applicationResourceName': self._serialize.url("application_resource_name", application_resource_name, 'str', skip_quote=True),
-            'serviceResourceName': self._serialize.url("service_resource_name", service_resource_name, 'str', skip_quote=True),
-            'replicaName': self._serialize.url("replica_name", replica_name, 'str', skip_quote=True),
-            'codePackageName': self._serialize.url("code_package_name", code_package_name, 'str')
+            "applicationResourceName": self._serialize.url(
+                "application_resource_name", application_resource_name, "str", skip_quote=True
+            ),
+            "serviceResourceName": self._serialize.url(
+                "service_resource_name", service_resource_name, "str", skip_quote=True
+            ),
+            "replicaName": self._serialize.url("replica_name", replica_name, "str", skip_quote=True),
+            "codePackageName": self._serialize.url("code_package_name", code_package_name, "str"),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
         if tail is not None:
-            query_parameters['Tail'] = self._serialize.query("tail", tail, 'str')
+            query_parameters["Tail"] = self._serialize.query("tail", tail, "str")
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -97,11 +110,14 @@ class MeshCodePackageOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ContainerLogs', response)
+            deserialized = self._deserialize("ContainerLogs", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_container_logs.metadata = {'url': '/Resources/Applications/{applicationResourceName}/Services/{serviceResourceName}/Replicas/{replicaName}/CodePackages/{codePackageName}/Logs'}
+
+    get_container_logs.metadata = {
+        "url": "/Resources/Applications/{applicationResourceName}/Services/{serviceResourceName}/Replicas/{replicaName}/CodePackages/{codePackageName}/Logs"
+    }

@@ -9,7 +9,6 @@ import os
 import platform
 from azure.core.exceptions import ClientAuthenticationError
 
-
 _LOGGER = logging.getLogger(__name__)
 
 

@@ -7,4 +7,5 @@
 # --------------------------------------------------------------------------
 
 from ._remote_rendering_rest_client_async import RemoteRenderingRestClient
-__all__ = ['RemoteRenderingRestClient']
+
+__all__ = ["RemoteRenderingRestClient"]

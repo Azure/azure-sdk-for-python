@@ -72,9 +72,7 @@ async def sample_manage_models_async():
         model = await poller.result()
 
         # [START get_document_model_async]
-        my_model = await document_model_admin_client.get_document_model(
-            model_id=model.model_id
-        )
+        my_model = await document_model_admin_client.get_document_model(model_id=model.model_id)
         print(f"\nModel ID: {my_model.model_id}")
         print(f"Description: {my_model.description}")
         print(f"Model created on: {my_model.created_on}")
@@ -83,14 +81,10 @@ async def sample_manage_models_async():
 
         # Finally, we will delete this model by ID
         # [START delete_document_model_async]
-        await document_model_admin_client.delete_document_model(
-            model_id=my_model.model_id
-        )
+        await document_model_admin_client.delete_document_model(model_id=my_model.model_id)
 
         try:
-            await document_model_admin_client.get_document_model(
-                model_id=my_model.model_id
-            )
+            await document_model_admin_client.get_document_model(model_id=my_model.model_id)
         except ResourceNotFoundError:
             print(f"Successfully deleted model with ID {my_model.model_id}")
         # [END delete_document_model_async]

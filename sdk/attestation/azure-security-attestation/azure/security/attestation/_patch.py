@@ -8,6 +8,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 import base64
 import json
 from typing import List, Any, Tuple, Union, Optional, Callable, cast

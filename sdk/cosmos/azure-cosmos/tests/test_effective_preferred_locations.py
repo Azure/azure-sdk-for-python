@@ -8,8 +8,13 @@ import pytest
 from azure.core.exceptions import ServiceRequestError
 
 import test_config
-from azure.cosmos import DatabaseAccount, _location_cache, CosmosClient, _global_endpoint_manager, \
-    _cosmos_client_connection
+from azure.cosmos import (
+    DatabaseAccount,
+    _location_cache,
+    CosmosClient,
+    _global_endpoint_manager,
+    _cosmos_client_connection,
+)
 from azure.cosmos._location_cache import RegionalRoutingContext
 from _fault_injection_transport import FaultInjectionTransport
 from azure.cosmos.exceptions import CosmosHttpResponseError
@@ -20,21 +25,23 @@ REGION_2 = test_config.TestConfig.READ_LOCATION
 REGION_3 = "West US 2"
 ACCOUNT_REGIONS = [REGION_1, REGION_2, REGION_3]
 
+
 @pytest.fixture()
 def setup():
-    if (TestPreferredLocations.master_key == '[YOUR_KEY_HERE]' or
-            TestPreferredLocations.host == '[YOUR_ENDPOINT_HERE]'):
+    if TestPreferredLocations.master_key == "[YOUR_KEY_HERE]" or TestPreferredLocations.host == "[YOUR_ENDPOINT_HERE]":
         raise Exception(
             "You must specify your Azure Cosmos account values for "
             "'masterKey' and 'host' at the top of this class to run the "
-            "tests.")
+            "tests."
+        )
 
     client = CosmosClient(TestPreferredLocations.host, TestPreferredLocations.master_key, consistency_level="Session")
     created_database = client.get_database_client(TestPreferredLocations.TEST_DATABASE_ID)
-    created_collection = created_database.get_container_client(TestPreferredLocations.TEST_CONTAINER_SINGLE_PARTITION_ID)
-    yield {
-        COLLECTION: created_collection
-    }
+    created_collection = created_database.get_container_client(
+        TestPreferredLocations.TEST_CONTAINER_SINGLE_PARTITION_ID
+    )
+    yield {COLLECTION: created_collection}
+
 
 def preferred_locations():
     host = test_config.TestConfig.host
@@ -49,26 +56,31 @@ def preferred_locations():
         ([REGION_2], locational_endpoint),
         ([REGION_3, REGION_1], locational_endpoint),
         ([REGION_1, REGION_3], locational_endpoint),
-        ([REGION_1, REGION_2, REGION_3], locational_endpoint)
+        ([REGION_1, REGION_2, REGION_3], locational_endpoint),
     ]
+
 
 def construct_item():
     return {
         "id": "test_item_no_preferred_locations" + str(uuid.uuid4()),
-        test_config.TestConfig.TEST_CONTAINER_PARTITION_KEY: str(uuid.uuid4())
+        test_config.TestConfig.TEST_CONTAINER_PARTITION_KEY: str(uuid.uuid4()),
     }
+
 
 def error():
     status_codes = [503, 408, 404]
     sub_status = [0, 0, 1002]
     errors = []
     for i, status_code in enumerate(status_codes):
-        errors.append(CosmosHttpResponseError(
-            status_code=status_code,
-            message=f"Error with status code {status_code} and substatus {sub_status[i]}",
-            sub_status=sub_status[i]
-        ))
+        errors.append(
+            CosmosHttpResponseError(
+                status_code=status_code,
+                message=f"Error with status code {status_code} and substatus {sub_status[i]}",
+                sub_status=sub_status[i],
+            )
+        )
     return errors
+
 
 @pytest.mark.unittest
 @pytest.mark.usefixtures("setup")
@@ -81,18 +93,24 @@ class TestPreferredLocations:
 
     def setup_method_with_custom_transport(self, custom_transport, error_lambda, default_endpoint=host, **kwargs):
         uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
-        predicate = lambda r: (FaultInjectionTransport.predicate_is_document_operation(r) and
-                               (FaultInjectionTransport.predicate_targets_region(r, uri_down) or
-                                FaultInjectionTransport.predicate_targets_region(r, default_endpoint)) and
-                               not FaultInjectionTransport.predicate_is_operation_type(r, "ReadFeed")
-                               )
+        predicate = lambda r: (
+            FaultInjectionTransport.predicate_is_document_operation(r)
+            and (
+                FaultInjectionTransport.predicate_targets_region(r, uri_down)
+                or FaultInjectionTransport.predicate_targets_region(r, default_endpoint)
+            )
+            and not FaultInjectionTransport.predicate_is_operation_type(r, "ReadFeed")
+        )
 
-        custom_transport.add_fault(predicate,
-                                   error_lambda)
-        client = CosmosClient(default_endpoint,
-                              self.master_key,
-                              multiple_write_locations=True,
-                              transport=custom_transport, consistency_level="Session", **kwargs)
+        custom_transport.add_fault(predicate, error_lambda)
+        client = CosmosClient(
+            default_endpoint,
+            self.master_key,
+            multiple_write_locations=True,
+            transport=custom_transport,
+            consistency_level="Session",
+            **kwargs,
+        )
         db = client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(self.TEST_CONTAINER_SINGLE_PARTITION_ID)
         return {"client": client, "db": db, "col": container}
@@ -103,14 +121,18 @@ class TestPreferredLocations:
 
         self.original_getDatabaseAccountStub = _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub
         self.original_getDatabaseAccountCheck = _cosmos_client_connection.CosmosClientConnection.health_check
-        _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.MockGetDatabaseAccount(ACCOUNT_REGIONS)
+        _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.MockGetDatabaseAccount(
+            ACCOUNT_REGIONS
+        )
         _cosmos_client_connection.CosmosClientConnection.health_check = self.MockGetDatabaseAccount(ACCOUNT_REGIONS)
         try:
             client = CosmosClient(default_endpoint, self.master_key, preferred_locations=preferred_location)
             # this will setup the location cache
             client.client_connection._global_endpoint_manager.force_refresh_on_startup(None)
         finally:
-            _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
+            _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = (
+                self.original_getDatabaseAccountStub
+            )
             _cosmos_client_connection.CosmosClientConnection.health_check = self.original_getDatabaseAccountCheck
         expected_endpoints = []
 
@@ -140,12 +162,11 @@ class TestPreferredLocations:
 
         # setup fault injection so that first account region fails
         custom_transport = FaultInjectionTransport()
-        error_lambda = lambda r: FaultInjectionTransport.error_after_delay(
-            0,
-            error
-        )
+        error_lambda = lambda r: FaultInjectionTransport.error_after_delay(0, error)
         expected = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
-        fault_setup = self.setup_method_with_custom_transport(custom_transport=custom_transport, error_lambda=error_lambda)
+        fault_setup = self.setup_method_with_custom_transport(
+            custom_transport=custom_transport, error_lambda=error_lambda
+        )
         fault_container = fault_setup["col"]
         response = fault_container.read_item(item=item_to_read["id"], partition_key=item_to_read[self.partition_key])
         request = response.get_response_headers()["_request"]
@@ -154,7 +175,9 @@ class TestPreferredLocations:
 
         # should fail if using excluded locations because no where to failover to
         with pytest.raises(CosmosHttpResponseError):
-            fault_container.read_item(item=item_to_read["id"], partition_key=item_to_read[self.partition_key], excluded_locations=[REGION_2])
+            fault_container.read_item(
+                item=item_to_read["id"], partition_key=item_to_read[self.partition_key], excluded_locations=[REGION_2]
+            )
 
     @pytest.mark.cosmosMultiRegion
     def test_write_no_preferred_locations_with_errors(self, setup):
@@ -163,7 +186,9 @@ class TestPreferredLocations:
         expected = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
         error_lambda = lambda r: FaultInjectionTransport.error_region_down()
 
-        fault_setup = self.setup_method_with_custom_transport(custom_transport=custom_transport, error_lambda=error_lambda)
+        fault_setup = self.setup_method_with_custom_transport(
+            custom_transport=custom_transport, error_lambda=error_lambda
+        )
         fault_container = fault_setup["col"]
         response = fault_container.create_item(body=construct_item())
         request = response.get_response_headers()["_request"]
@@ -176,8 +201,8 @@ class TestPreferredLocations:
 
     class MockGetDatabaseAccount(object):
         def __init__(
-                self,
-                regions: List[str],
+            self,
+            regions: List[str],
         ):
             self.regions = regions
 
@@ -186,14 +211,18 @@ class TestPreferredLocations:
             read_locations = []
             counter = 0
             for loc in read_regions:
-                locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(TestPreferredLocations.host, loc)
-                read_locations.append({'databaseAccountEndpoint': locational_endpoint, 'name': loc})
+                locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(
+                    TestPreferredLocations.host, loc
+                )
+                read_locations.append({"databaseAccountEndpoint": locational_endpoint, "name": loc})
                 counter += 1
             write_regions = [self.regions[0]]
             write_locations = []
             for loc in write_regions:
-                locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(TestPreferredLocations.host, loc)
-                write_locations.append({'databaseAccountEndpoint': locational_endpoint, 'name': loc})
+                locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(
+                    TestPreferredLocations.host, loc
+                )
+                write_locations.append({"databaseAccountEndpoint": locational_endpoint, "name": loc})
             multi_write = False
 
             db_acc = DatabaseAccount()

@@ -10,7 +10,6 @@ from typing import Any, Optional, List, Dict
 
 from ._utils.serialization import Deserializer
 
-
 JSON = Mapping[str, Any]
 
 

@@ -19,7 +19,6 @@ from unittest.mock import Mock, patch
 
 from helpers import build_aad_response, get_discovery_response, id_token_claims, GET_TOKEN_METHODS
 
-
 # fake object for tests which need to exercise request_token but don't care about its return value
 REQUEST_TOKEN_RESULT = build_aad_response(
     access_token="***",

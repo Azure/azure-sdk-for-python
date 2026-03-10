@@ -37,8 +37,7 @@ class MeshServiceOperations(object):
         self.config = config
         self.api_version = "6.4-preview"
 
-    def get(
-            self, application_resource_name, service_resource_name, custom_headers=None, raw=False, **operation_config):
+    def get(self, application_resource_name, service_resource_name, custom_headers=None, raw=False, **operation_config):
         """Gets the Service resource with the given name.
 
         Gets the information about the Service resource with the given name.
@@ -61,20 +60,24 @@ class MeshServiceOperations(object):
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.get.metadata["url"]
         path_format_arguments = {
-            'applicationResourceName': self._serialize.url("application_resource_name", application_resource_name, 'str', skip_quote=True),
-            'serviceResourceName': self._serialize.url("service_resource_name", service_resource_name, 'str', skip_quote=True)
+            "applicationResourceName": self._serialize.url(
+                "application_resource_name", application_resource_name, "str", skip_quote=True
+            ),
+            "serviceResourceName": self._serialize.url(
+                "service_resource_name", service_resource_name, "str", skip_quote=True
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -87,17 +90,17 @@ class MeshServiceOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ServiceResourceDescription', response)
+            deserialized = self._deserialize("ServiceResourceDescription", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/Resources/Applications/{applicationResourceName}/Services/{serviceResourceName}'}
 
-    def list(
-            self, application_resource_name, custom_headers=None, raw=False, **operation_config):
+    get.metadata = {"url": "/Resources/Applications/{applicationResourceName}/Services/{serviceResourceName}"}
+
+    def list(self, application_resource_name, custom_headers=None, raw=False, **operation_config):
         """Lists all the service resources.
 
         Gets the information about all services of an application resource. The
@@ -120,19 +123,21 @@ class MeshServiceOperations(object):
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
         # Construct URL
-        url = self.list.metadata['url']
+        url = self.list.metadata["url"]
         path_format_arguments = {
-            'applicationResourceName': self._serialize.url("application_resource_name", application_resource_name, 'str', skip_quote=True)
+            "applicationResourceName": self._serialize.url(
+                "application_resource_name", application_resource_name, "str", skip_quote=True
+            )
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -145,11 +150,12 @@ class MeshServiceOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PagedServiceResourceDescriptionList', response)
+            deserialized = self._deserialize("PagedServiceResourceDescriptionList", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/Resources/Applications/{applicationResourceName}/Services'}
+
+    list.metadata = {"url": "/Resources/Applications/{applicationResourceName}/Services"}

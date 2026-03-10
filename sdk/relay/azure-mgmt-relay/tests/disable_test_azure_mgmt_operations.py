@@ -14,9 +14,7 @@ class TestMgmtRelay(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
 
-        self.relay_client = self.create_mgmt_client(
-            azure.mgmt.relay.RelayAPI
-        )
+        self.relay_client = self.create_mgmt_client(azure.mgmt.relay.RelayAPI)
 
     @recorded_by_proxy
     def test_operations_list(self):
@@ -25,5 +23,5 @@ class TestMgmtRelay(AzureMgmtRecordedTestCase):
 
 
 # ------------------------------------------------------------------------------
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

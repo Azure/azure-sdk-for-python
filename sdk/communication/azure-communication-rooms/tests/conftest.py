@@ -32,7 +32,7 @@ from devtools_testutils import (
     set_default_session_settings,
     remove_batch_sanitizers,
     add_uri_regex_sanitizer,
-    set_custom_default_matcher
+    set_custom_default_matcher,
 )
 from azure.communication.rooms._shared.utils import parse_connection_str
 

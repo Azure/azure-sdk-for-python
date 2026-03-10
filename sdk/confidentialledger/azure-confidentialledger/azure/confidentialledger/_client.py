@@ -56,9 +56,11 @@ class ConfidentialLedgerClient(_ConfidentialLedgerClientOperationsMixin):
                 # on service-managed redirects. Confidential Ledger redirects are expected to stay within
                 # the same trusted ledger endpoint, so forwarding these sensitive headers is required
                 # for correct authentication behavior.
-                policies.SensitiveHeaderCleanupPolicy(
-                    disable_redirect_cleanup=True, **kwargs
-                ) if self._config.redirect_policy else None,
+                (
+                    policies.SensitiveHeaderCleanupPolicy(disable_redirect_cleanup=True, **kwargs)
+                    if self._config.redirect_policy
+                    else None
+                ),
                 self._config.http_logging_policy,
             ]
         self._client: PipelineClient = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)

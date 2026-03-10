@@ -24,12 +24,12 @@ USAGE:
 
     Set the environment variable PLANETARYCOMPUTER_ENDPOINT with your endpoint URL.
     Set the environment variable PLANETARYCOMPUTER_COLLECTION_ID with your collection ID.
-    
+
     Optional (for managed identity examples):
     Set the environment variable PLANETARYCOMPUTER_INGESTION_CONTAINER_URI with your container URI.
     Set the environment variable PLANETARYCOMPUTER_INGESTION_CATALOG_URL with your source catalog URL.
     Set the environment variable PLANETARYCOMPUTER_MANAGED_IDENTITY_OBJECT_ID with your managed identity object ID.
-    
+
     Optional (for SAS token examples):
     Set the environment variable AZURE_INGESTION_SAS_CONTAINER_URI with your SAS container URI.
     Set the environment variable AZURE_INGESTION_SAS_TOKEN with your SAS token.
@@ -129,7 +129,9 @@ def create_or_replace_source(
     logging.info(f"First call result: {first_result.id}")
 
     # Second call - replaces again with modified token (demonstrates update capability)
-    updated_token = "sp=rl&st=2024-01-01T00:00:00Z&se=2024-12-31T23:59:59Z&sv=2023-01-03&sr=c&sig=UpdatedRandomSignature123456"
+    updated_token = (
+        "sp=rl&st=2024-01-01T00:00:00Z&se=2024-12-31T23:59:59Z&sv=2023-01-03&sr=c&sig=UpdatedRandomSignature123456"
+    )
 
     updated_connection_info = SharedAccessSignatureTokenConnection(
         container_uri=sas_container_uri, shared_access_signature_token=updated_token

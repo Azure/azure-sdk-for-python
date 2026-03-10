@@ -6,6 +6,7 @@
 
 Main areas include managing AutoML tasks.
 """
+
 from azure.ai.ml.entities._job.automl import TrainingSettings
 from azure.ai.ml.entities._job.automl.image import (
     LogTrainingMetrics,

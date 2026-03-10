@@ -17,6 +17,7 @@ from azure.cosmos import http_constants
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.partition_key import PartitionKey
 
+
 @pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosQuery
 class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
@@ -34,12 +35,12 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
 
     @classmethod
     def setUpClass(cls):
-        if (cls.masterKey == '[YOUR_KEY_HERE]' or
-                cls.host == '[YOUR_ENDPOINT_HERE]'):
+        if cls.masterKey == "[YOUR_KEY_HERE]" or cls.host == "[YOUR_ENDPOINT_HERE]":
             raise Exception(
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
-                "tests.")
+                "tests."
+            )
 
     async def asyncSetUp(self):
         use_multiple_write_locations = False
@@ -50,7 +51,8 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
         self.created_container = await self.created_db.create_container(
             self.TEST_CONTAINER_ID,
             PartitionKey(path="/pk"),
-            offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS)
+            offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS,
+        )
 
     async def asyncTearDown(self):
         try:
@@ -61,17 +63,14 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
             await self.client.close()
 
     async def test_first_and_last_slashes_trimmed_for_query_string_async(self):
-        doc_id = 'myId' + str(uuid.uuid4())
-        document_definition = {'pk': 'pk', 'id': doc_id}
+        doc_id = "myId" + str(uuid.uuid4())
+        document_definition = {"pk": "pk", "id": doc_id}
         await self.created_container.create_item(body=document_definition)
 
-        query = 'SELECT * from c'
-        query_iterable = self.created_container.query_items(
-            query=query,
-            partition_key='pk'
-        )
+        query = "SELECT * from c"
+        query_iterable = self.created_container.query_items(query=query, partition_key="pk")
         iter_list = [item async for item in query_iterable]
-        assert iter_list[0]['id'] == doc_id
+        assert iter_list[0]["id"] == doc_id
 
     async def test_query_change_feed_with_pk_async(self):
         # The test targets partition #3
@@ -86,73 +85,68 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
         query_iterable = self.created_container.query_items_change_feed(partition_key=partition_key)
         iter_list = [item async for item in query_iterable]
         assert len(iter_list) == 0
-        if 'Etag' in self.created_container.client_connection.last_response_headers:
-            assert self.created_container.client_connection.last_response_headers['Etag'] != ''
-        elif 'etag' in self.created_container.client_connection.last_response_headers:
-            assert self.created_container.client_connection.last_response_headers['etag'] != ''
+        if "Etag" in self.created_container.client_connection.last_response_headers:
+            assert self.created_container.client_connection.last_response_headers["Etag"] != ""
+        elif "etag" in self.created_container.client_connection.last_response_headers:
+            assert self.created_container.client_connection.last_response_headers["etag"] != ""
         else:
             self.fail("No Etag or etag found in last response headers")
 
         # Read change feed from beginning should return an empty list
         query_iterable = self.created_container.query_items_change_feed(
-            is_start_from_beginning=True,
-            partition_key=partition_key
+            is_start_from_beginning=True, partition_key=partition_key
         )
         iter_list = [item async for item in query_iterable]
         assert len(iter_list) == 0
-        if 'Etag' in self.created_container.client_connection.last_response_headers:
-            continuation1 = self.created_container.client_connection.last_response_headers['Etag']
-        elif 'etag' in self.created_container.client_connection.last_response_headers:
-            continuation1 = self.created_container.client_connection.last_response_headers['etag']
+        if "Etag" in self.created_container.client_connection.last_response_headers:
+            continuation1 = self.created_container.client_connection.last_response_headers["Etag"]
+        elif "etag" in self.created_container.client_connection.last_response_headers:
+            continuation1 = self.created_container.client_connection.last_response_headers["etag"]
         else:
             self.fail("No Etag or etag found in last response headers")
-        assert continuation1 != ''
+        assert continuation1 != ""
 
         # Create a document. Read change feed should return be able to read that document
-        document_definition = {'pk': 'pk', 'id': 'doc1'}
+        document_definition = {"pk": "pk", "id": "doc1"}
         await self.created_container.create_item(body=document_definition)
         query_iterable = self.created_container.query_items_change_feed(
-            is_start_from_beginning=True,
-            partition_key=partition_key
+            is_start_from_beginning=True, partition_key=partition_key
         )
         iter_list = [item async for item in query_iterable]
         assert len(iter_list) == 1
-        assert iter_list[0]['id'] == 'doc1'
-        if 'Etag' in self.created_container.client_connection.last_response_headers:
-            continuation2 = self.created_container.client_connection.last_response_headers['Etag']
-        elif 'etag' in self.created_container.client_connection.last_response_headers:
-            continuation2 = self.created_container.client_connection.last_response_headers['etag']
+        assert iter_list[0]["id"] == "doc1"
+        if "Etag" in self.created_container.client_connection.last_response_headers:
+            continuation2 = self.created_container.client_connection.last_response_headers["Etag"]
+        elif "etag" in self.created_container.client_connection.last_response_headers:
+            continuation2 = self.created_container.client_connection.last_response_headers["etag"]
         else:
             self.fail("No Etag or etag found in last response headers")
-        assert continuation2 != ''
+        assert continuation2 != ""
         assert continuation2 != continuation1
 
         # Create two new documents. Verify that change feed contains the 2 new documents
         # with page size 1 and page size 100
-        document_definition = {'pk': 'pk', 'id': 'doc2'}
+        document_definition = {"pk": "pk", "id": "doc2"}
         await self.created_container.create_item(body=document_definition)
-        document_definition = {'pk': 'pk', 'id': 'doc3'}
+        document_definition = {"pk": "pk", "id": "doc3"}
         await self.created_container.create_item(body=document_definition)
 
         for pageSize in [2, 100]:
             # verify iterator
             query_iterable = self.created_container.query_items_change_feed(
-                continuation=continuation2,
-                max_item_count=pageSize,
-                partition_key=partition_key)
+                continuation=continuation2, max_item_count=pageSize, partition_key=partition_key
+            )
             it = query_iterable.__aiter__()
-            expected_ids = 'doc2.doc3.'
-            actual_ids = ''
+            expected_ids = "doc2.doc3."
+            actual_ids = ""
             async for item in it:
-                actual_ids += item['id'] + '.'
+                actual_ids += item["id"] + "."
             assert actual_ids == expected_ids
 
             # verify by_page
             # the options is not copied, therefore it need to be restored
             query_iterable = self.created_container.query_items_change_feed(
-                continuation=continuation2,
-                max_item_count=pageSize,
-                partition_key=partition_key
+                continuation=continuation2, max_item_count=pageSize, partition_key=partition_key
             )
             count = 0
             expected_count = 2
@@ -163,59 +157,54 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
                 all_fetched_res.append(items)
             assert count == expected_count
 
-            actual_ids = ''
+            actual_ids = ""
             for item in all_fetched_res:
-                actual_ids += item['id'] + '.'
+                actual_ids += item["id"] + "."
             assert actual_ids == expected_ids
 
         # verify reading change feed from the beginning
         query_iterable = self.created_container.query_items_change_feed(
-            is_start_from_beginning=True,
-            partition_key=partition_key
+            is_start_from_beginning=True, partition_key=partition_key
         )
-        expected_ids = ['doc1', 'doc2', 'doc3']
+        expected_ids = ["doc1", "doc2", "doc3"]
         it = query_iterable.__aiter__()
         for i in range(0, len(expected_ids)):
             doc = await it.__anext__()
-            assert doc['id'] == expected_ids[i]
-        if 'Etag' in self.created_container.client_connection.last_response_headers:
-            continuation3 = self.created_container.client_connection.last_response_headers['Etag']
-        elif 'etag' in self.created_container.client_connection.last_response_headers:
-            continuation3 = self.created_container.client_connection.last_response_headers['etag']
+            assert doc["id"] == expected_ids[i]
+        if "Etag" in self.created_container.client_connection.last_response_headers:
+            continuation3 = self.created_container.client_connection.last_response_headers["Etag"]
+        elif "etag" in self.created_container.client_connection.last_response_headers:
+            continuation3 = self.created_container.client_connection.last_response_headers["etag"]
         else:
             self.fail("No Etag or etag found in last response headers")
 
         # verify reading empty change feed
         query_iterable = self.created_container.query_items_change_feed(
-            continuation=continuation3,
-            is_start_from_beginning=True,
-            partition_key=partition_key
+            continuation=continuation3, is_start_from_beginning=True, partition_key=partition_key
         )
         iter_list = [item async for item in query_iterable]
         assert len(iter_list) == 0
 
     async def test_populate_query_metrics_async(self):
-        doc_id = 'MyId' + str(uuid.uuid4())
-        document_definition = {'pk': 'pk', 'id': doc_id}
+        doc_id = "MyId" + str(uuid.uuid4())
+        document_definition = {"pk": "pk", "id": doc_id}
         await self.created_container.create_item(body=document_definition)
 
-        query = 'SELECT * from c'
+        query = "SELECT * from c"
         query_iterable = self.created_container.query_items(
-            query=query,
-            partition_key='pk',
-            populate_query_metrics=True
+            query=query, partition_key="pk", populate_query_metrics=True
         )
 
         iter_list = [item async for item in query_iterable]
-        assert iter_list[0]['id'] == doc_id
+        assert iter_list[0]["id"] == doc_id
 
-        metrics_header_name = 'x-ms-documentdb-query-metrics'
+        metrics_header_name = "x-ms-documentdb-query-metrics"
         assert metrics_header_name in self.created_container.client_connection.last_response_headers
         metrics_header = self.created_container.client_connection.last_response_headers[metrics_header_name]
         # Validate header is well-formed: "key1=value1;key2=value2;etc"
-        metrics = metrics_header.split(';')
+        metrics = metrics_header.split(";")
         assert len(metrics) > 1
-        assert all(['=' in x for x in metrics])
+        assert all(["=" in x for x in metrics])
 
     async def validate_query_requests_count(self, query_iterable, expected_count):
         self.count = 0
@@ -234,11 +223,15 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
 
     @pytest.mark.skip(reason="Emulator does not support query advisor yet")
     async def test_populate_query_advice(self):
-        doc_id = 'MyId' + str(uuid.uuid4())
+        doc_id = "MyId" + str(uuid.uuid4())
         document_definition = {
-            'pk': 'pk', 'id': doc_id, 'name': 'test document',
-            'tags': [{'name': 'python'}, {'name': 'cosmos'}],
-            'timestamp': '2099-01-01T00:00:00Z', 'ticks': 0, 'ts': 0
+            "pk": "pk",
+            "id": doc_id,
+            "name": "test document",
+            "tags": [{"name": "python"}, {"name": "cosmos"}],
+            "timestamp": "2099-01-01T00:00:00Z",
+            "ticks": 0,
+            "ts": 0,
         }
         await self.created_container.create_item(body=document_definition)
 
@@ -247,7 +240,8 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
         # QA1000 - PartialArrayContains: ARRAY_CONTAINS with partial match
         query_iterable = self.created_container.query_items(
             query='SELECT * FROM c WHERE ARRAY_CONTAINS(c.tags, {"name": "python"}, true)',
-            partition_key='pk', populate_query_advice=True
+            partition_key="pk",
+            populate_query_advice=True,
         )
         [item async for item in query_iterable]
         query_advice = self.created_container.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
@@ -256,8 +250,7 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
 
         # QA1002 - Contains: CONTAINS usage
         query_iterable = self.created_container.query_items(
-            query='SELECT * FROM c WHERE CONTAINS(c.name, "test")',
-            partition_key='pk', populate_query_advice=True
+            query='SELECT * FROM c WHERE CONTAINS(c.name, "test")', partition_key="pk", populate_query_advice=True
         )
         [item async for item in query_iterable]
         query_advice = self.created_container.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
@@ -267,7 +260,8 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
         # QA1003 - CaseInsensitiveStartsWithOrStringEquals: case-insensitive STARTSWITH
         query_iterable = self.created_container.query_items(
             query='SELECT * FROM c WHERE STARTSWITH(c.name, "test", true)',
-            partition_key='pk', populate_query_advice=True
+            partition_key="pk",
+            populate_query_advice=True,
         )
         [item async for item in query_iterable]
         query_advice = self.created_container.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
@@ -277,7 +271,8 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
         # QA1004 - CaseInsensitiveEndsWith: case-insensitive ENDSWITH
         query_iterable = self.created_container.query_items(
             query='SELECT * FROM c WHERE ENDSWITH(c.name, "document", true)',
-            partition_key='pk', populate_query_advice=True
+            partition_key="pk",
+            populate_query_advice=True,
         )
         [item async for item in query_iterable]
         query_advice = self.created_container.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
@@ -286,8 +281,9 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
 
         # QA1007 - GetCurrentDateTime: usage of GetCurrentDateTime
         query_iterable = self.created_container.query_items(
-            query='SELECT * FROM c WHERE c.timestamp < GetCurrentDateTime()',
-            partition_key='pk', populate_query_advice=True
+            query="SELECT * FROM c WHERE c.timestamp < GetCurrentDateTime()",
+            partition_key="pk",
+            populate_query_advice=True,
         )
         [item async for item in query_iterable]
         query_advice = self.created_container.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
@@ -296,8 +292,7 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
 
         # QA1008 - GetCurrentTicks: usage of GetCurrentTicks
         query_iterable = self.created_container.query_items(
-            query='SELECT * FROM c WHERE c.ticks < GetCurrentTicks()',
-            partition_key='pk', populate_query_advice=True
+            query="SELECT * FROM c WHERE c.ticks < GetCurrentTicks()", partition_key="pk", populate_query_advice=True
         )
         [item async for item in query_iterable]
         query_advice = self.created_container.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
@@ -306,8 +301,7 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
 
         # QA1009 - GetCurrentTimestamp: usage of GetCurrentTimestamp
         query_iterable = self.created_container.query_items(
-            query='SELECT * FROM c WHERE c.ts < GetCurrentTimestamp()',
-            partition_key='pk', populate_query_advice=True
+            query="SELECT * FROM c WHERE c.ts < GetCurrentTimestamp()", partition_key="pk", populate_query_advice=True
         )
         [item async for item in query_iterable]
         query_advice = self.created_container.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
@@ -319,38 +313,45 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
         return await self.OriginalExecuteFunction(function, *args, **kwargs)
 
     async def test_get_query_plan_through_gateway_async(self):
-        await self._validate_query_plan(query="Select top 10 value count(c.id) from c",
-                                        container_link=self.created_container.container_link,
-                                        top=10,
-                                        order_by=[],
-                                        aggregate=['Count'],
-                                        select_value=True,
-                                        offset=None,
-                                        limit=None,
-                                        distinct=_DistinctType.NoneType)
+        await self._validate_query_plan(
+            query="Select top 10 value count(c.id) from c",
+            container_link=self.created_container.container_link,
+            top=10,
+            order_by=[],
+            aggregate=["Count"],
+            select_value=True,
+            offset=None,
+            limit=None,
+            distinct=_DistinctType.NoneType,
+        )
 
-        await self._validate_query_plan(query="Select * from c order by c._ts offset 5 limit 10",
-                                        container_link=self.created_container.container_link,
-                                        top=None,
-                                        order_by=['Ascending'],
-                                        aggregate=[],
-                                        select_value=False,
-                                        offset=5,
-                                        limit=10,
-                                        distinct=_DistinctType.NoneType)
+        await self._validate_query_plan(
+            query="Select * from c order by c._ts offset 5 limit 10",
+            container_link=self.created_container.container_link,
+            top=None,
+            order_by=["Ascending"],
+            aggregate=[],
+            select_value=False,
+            offset=5,
+            limit=10,
+            distinct=_DistinctType.NoneType,
+        )
 
-        await self._validate_query_plan(query="Select distinct value c.id from c order by c.id",
-                                        container_link=self.created_container.container_link,
-                                        top=None,
-                                        order_by=['Ascending'],
-                                        aggregate=[],
-                                        select_value=True,
-                                        offset=None,
-                                        limit=None,
-                                        distinct=_DistinctType.Ordered)
+        await self._validate_query_plan(
+            query="Select distinct value c.id from c order by c.id",
+            container_link=self.created_container.container_link,
+            top=None,
+            order_by=["Ascending"],
+            aggregate=[],
+            select_value=True,
+            offset=None,
+            limit=None,
+            distinct=_DistinctType.Ordered,
+        )
 
-    async def _validate_query_plan(self, query, container_link, top, order_by, aggregate, select_value, offset, limit,
-                                   distinct):
+    async def _validate_query_plan(
+        self, query, container_link, top, order_by, aggregate, select_value, offset, limit, distinct
+    ):
         query_plan_dict = await self.client.client_connection._GetQueryPlanThroughGateway(query, container_link)
         query_execution_info = _PartitionedQueryExecutionInfo(query_plan_dict)
         assert query_execution_info.has_rewritten_query()
@@ -369,7 +370,7 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
         assert query_execution_info.get_limit() == limit
 
     async def test_unsupported_queries_async(self):
-        queries = ['SELECT COUNT(1) FROM c', 'SELECT COUNT(1) + 5 FROM c', 'SELECT COUNT(1) + SUM(c) FROM c']
+        queries = ["SELECT COUNT(1) FROM c", "SELECT COUNT(1) + 5 FROM c", "SELECT COUNT(1) + SUM(c) FROM c"]
         for query in queries:
             query_iterable = self.created_container.query_items(query=query)
             try:
@@ -385,177 +386,211 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
     async def test_offset_limit_async(self):
         values = []
         for i in range(10):
-            document_definition = {'pk': i, 'id': 'myId' + str(uuid.uuid4()), 'value': i // 3}
+            document_definition = {"pk": i, "id": "myId" + str(uuid.uuid4()), "value": i // 3}
             current_document = await self.created_container.create_item(body=document_definition)
-            values.append(current_document['pk'])
+            values.append(current_document["pk"])
 
         await self.config._validate_distinct_offset_limit(
             created_collection=self.created_container,
             query='SELECT DISTINCT c["value"] from c ORDER BY c.pk OFFSET 0 LIMIT 2',
-            results=[0, 1])
+            results=[0, 1],
+        )
 
         await self.config._validate_distinct_offset_limit(
             created_collection=self.created_container,
             query='SELECT DISTINCT c["value"] from c ORDER BY c.pk OFFSET 2 LIMIT 2',
-            results=[2, 3])
+            results=[2, 3],
+        )
 
         await self.config._validate_distinct_offset_limit(
             created_collection=self.created_container,
             query='SELECT DISTINCT c["value"] from c ORDER BY c.pk OFFSET 4 LIMIT 3',
-            results=[])
+            results=[],
+        )
 
-        await self.config._validate_offset_limit(created_collection=self.created_container,
-                                                 query='SELECT * from c ORDER BY c.pk OFFSET 0 LIMIT 5',
-                                                 results=values[:5])
+        await self.config._validate_offset_limit(
+            created_collection=self.created_container,
+            query="SELECT * from c ORDER BY c.pk OFFSET 0 LIMIT 5",
+            results=values[:5],
+        )
 
-        await self.config._validate_offset_limit(created_collection=self.created_container,
-                                                 query='SELECT * from c ORDER BY c.pk OFFSET 5 LIMIT 10',
-                                                 results=values[5:])
+        await self.config._validate_offset_limit(
+            created_collection=self.created_container,
+            query="SELECT * from c ORDER BY c.pk OFFSET 5 LIMIT 10",
+            results=values[5:],
+        )
 
-        await self.config._validate_offset_limit(created_collection=self.created_container,
-                                                 query='SELECT * from c ORDER BY c.pk OFFSET 10 LIMIT 5',
-                                                 results=[])
+        await self.config._validate_offset_limit(
+            created_collection=self.created_container,
+            query="SELECT * from c ORDER BY c.pk OFFSET 10 LIMIT 5",
+            results=[],
+        )
 
-        await self.config._validate_offset_limit(created_collection=self.created_container,
-                                                 query='SELECT * from c ORDER BY c.pk OFFSET 100 LIMIT 1',
-                                                 results=[])
+        await self.config._validate_offset_limit(
+            created_collection=self.created_container,
+            query="SELECT * from c ORDER BY c.pk OFFSET 100 LIMIT 1",
+            results=[],
+        )
 
     async def test_distinct_async(self):
         created_database = self.created_db
-        distinct_field = 'distinct_field'
+        distinct_field = "distinct_field"
         pk_field = "pk"
         different_field = "different_field"
 
         created_collection = await created_database.create_container(
-            id='collection with composite index ' + str(uuid.uuid4()),
+            id="collection with composite index " + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/pk", kind="Hash"),
             indexing_policy={
                 "compositeIndexes": [
-                    [{"path": "/" + pk_field, "order": "ascending"},
-                     {"path": "/" + distinct_field, "order": "ascending"}],
-                    [{"path": "/" + distinct_field, "order": "ascending"},
-                     {"path": "/" + pk_field, "order": "ascending"}]
+                    [
+                        {"path": "/" + pk_field, "order": "ascending"},
+                        {"path": "/" + distinct_field, "order": "ascending"},
+                    ],
+                    [
+                        {"path": "/" + distinct_field, "order": "ascending"},
+                        {"path": "/" + pk_field, "order": "ascending"},
+                    ],
                 ]
-            }
+            },
         )
         documents = []
         for i in range(5):
             j = i
             while j > i - 5:
-                document_definition = {pk_field: i, 'id': str(uuid.uuid4()), distinct_field: j}
+                document_definition = {pk_field: i, "id": str(uuid.uuid4()), distinct_field: j}
                 documents.append(await created_collection.create_item(body=document_definition))
-                document_definition = {pk_field: i, 'id': str(uuid.uuid4()), distinct_field: j}
+                document_definition = {pk_field: i, "id": str(uuid.uuid4()), distinct_field: j}
                 documents.append(await created_collection.create_item(body=document_definition))
-                document_definition = {pk_field: i, 'id': str(uuid.uuid4())}
+                document_definition = {pk_field: i, "id": str(uuid.uuid4())}
                 documents.append(await created_collection.create_item(body=document_definition))
                 j -= 1
 
         padded_docs = self.config._pad_with_none(documents, distinct_field)
 
-        await self.config._validate_distinct(created_collection=created_collection,  # returns {} and is right number
-                                             query='SELECT distinct c.%s from c' % distinct_field,  # nosec
-                                             results=self.config._get_distinct_docs(padded_docs, distinct_field, None,
-                                                                                    False),
-                                             is_select=True,
-                                             fields=[distinct_field])
+        await self.config._validate_distinct(
+            created_collection=created_collection,  # returns {} and is right number
+            query="SELECT distinct c.%s from c" % distinct_field,  # nosec
+            results=self.config._get_distinct_docs(padded_docs, distinct_field, None, False),
+            is_select=True,
+            fields=[distinct_field],
+        )
 
-        await self.config._validate_distinct(created_collection=created_collection,
-                                             query='SELECT distinct c.%s, c.%s from c' % (distinct_field, pk_field),
-                                             # nosec
-                                             results=self.config._get_distinct_docs(padded_docs, distinct_field,
-                                                                                    pk_field, False),
-                                             is_select=True,
-                                             fields=[distinct_field, pk_field])
+        await self.config._validate_distinct(
+            created_collection=created_collection,
+            query="SELECT distinct c.%s, c.%s from c" % (distinct_field, pk_field),
+            # nosec
+            results=self.config._get_distinct_docs(padded_docs, distinct_field, pk_field, False),
+            is_select=True,
+            fields=[distinct_field, pk_field],
+        )
 
-        await self.config._validate_distinct(created_collection=created_collection,
-                                             query='SELECT distinct value c.%s from c' % distinct_field,  # nosec
-                                             results=self.config._get_distinct_docs(padded_docs, distinct_field, None,
-                                                                                    True),
-                                             is_select=True,
-                                             fields=[distinct_field])
+        await self.config._validate_distinct(
+            created_collection=created_collection,
+            query="SELECT distinct value c.%s from c" % distinct_field,  # nosec
+            results=self.config._get_distinct_docs(padded_docs, distinct_field, None, True),
+            is_select=True,
+            fields=[distinct_field],
+        )
 
-        await self.config._validate_distinct(created_collection=created_collection,
-                                             query='SELECT distinct c.%s from c' % different_field,  # nosec
-                                             results=['None'],
-                                             is_select=True,
-                                             fields=[different_field])
+        await self.config._validate_distinct(
+            created_collection=created_collection,
+            query="SELECT distinct c.%s from c" % different_field,  # nosec
+            results=["None"],
+            is_select=True,
+            fields=[different_field],
+        )
 
         await created_database.delete_container(created_collection.id)
 
     async def test_distinct_on_different_types_and_field_orders_async(self):
         payloads = [
-            {'id': str(uuid.uuid4()), 'f1': 1, 'f2': 'value', 'f3': 100000000000000000, 'f4': [1, 2, '3'],
-             'f5': {'f6': {'f7': 2}}},
-            {'id': str(uuid.uuid4()), 'f2': '\'value', 'f4': [1.0, 2, '3'], 'f5': {'f6': {'f7': 2.0}}, 'f1': 1.0,
-             'f3': 100000000000000000.00},
-            {'id': str(uuid.uuid4()), 'f3': 100000000000000000.0, 'f5': {'f6': {'f7': 2}}, 'f2': '\'value', 'f1': 1,
-             'f4': [1, 2.0, '3']}
+            {
+                "id": str(uuid.uuid4()),
+                "f1": 1,
+                "f2": "value",
+                "f3": 100000000000000000,
+                "f4": [1, 2, "3"],
+                "f5": {"f6": {"f7": 2}},
+            },
+            {
+                "id": str(uuid.uuid4()),
+                "f2": "'value",
+                "f4": [1.0, 2, "3"],
+                "f5": {"f6": {"f7": 2.0}},
+                "f1": 1.0,
+                "f3": 100000000000000000.00,
+            },
+            {
+                "id": str(uuid.uuid4()),
+                "f3": 100000000000000000.0,
+                "f5": {"f6": {"f7": 2}},
+                "f2": "'value",
+                "f1": 1,
+                "f4": [1, 2.0, "3"],
+            },
         ]
         for pay in payloads:
             await self.created_container.create_item(pay)
 
         await self.config._validate_distinct_on_different_types_and_field_orders(
-            collection=self.created_container,
-            query="Select distinct value c.f1 from c",
-            expected_results=[1]
+            collection=self.created_container, query="Select distinct value c.f1 from c", expected_results=[1]
         )
 
         await self.config._validate_distinct_on_different_types_and_field_orders(
             collection=self.created_container,
             query="Select distinct value c.f2 from c",
-            expected_results=['value', '\'value']
+            expected_results=["value", "'value"],
         )
 
         await self.config._validate_distinct_on_different_types_and_field_orders(
             collection=self.created_container,
             query="Select distinct value c.f2 from c order by c.f2",
-            expected_results=['value', '\'value']
+            expected_results=["value", "'value"],
         )
 
         await self.config._validate_distinct_on_different_types_and_field_orders(
             collection=self.created_container,
             query="Select distinct value c.f3 from c",
-            expected_results=[100000000000000000]
+            expected_results=[100000000000000000],
         )
 
         await self.config._validate_distinct_on_different_types_and_field_orders(
-            collection=self.created_container,
-            query="Select distinct value c.f4 from c",
-            expected_results=[[1, 2, '3']]
+            collection=self.created_container, query="Select distinct value c.f4 from c", expected_results=[[1, 2, "3"]]
         )
 
         await self.config._validate_distinct_on_different_types_and_field_orders(
             collection=self.created_container,
             query="Select distinct value c.f5.f6 from c",
-            expected_results=[{'f7': 2}]
+            expected_results=[{"f7": 2}],
         )
 
         await self.config._validate_distinct_on_different_types_and_field_orders(
             collection=self.created_container,
             query="Select distinct c.f1, c.f2, c.f3 from c",
-            expected_results=[{'f1': 1, 'f2': 'value', 'f3': 100000000000000000},
-                              {'f1': 1.0, 'f2': '\'value', 'f3': 100000000000000000.00}]
+            expected_results=[
+                {"f1": 1, "f2": "value", "f3": 100000000000000000},
+                {"f1": 1.0, "f2": "'value", "f3": 100000000000000000.00},
+            ],
         )
 
         await self.config._validate_distinct_on_different_types_and_field_orders(
             collection=self.created_container,
             query="Select distinct c.f1, c.f2, c.f3 from c order by c.f1",
-            expected_results=[{'f1': 1, 'f2': 'value', 'f3': 100000000000000000},
-                              {'f1': 1.0, 'f2': '\'value', 'f3': 100000000000000000.00}]
+            expected_results=[
+                {"f1": 1, "f2": "value", "f3": 100000000000000000},
+                {"f1": 1.0, "f2": "'value", "f3": 100000000000000000.00},
+            ],
         )
 
     async def test_paging_with_continuation_token_async(self):
-        document_definition = {'pk': 'pk', 'id': '1'}
+        document_definition = {"pk": "pk", "id": "1"}
         await self.created_container.upsert_item(body=document_definition)
-        document_definition = {'pk': 'pk', 'id': '2'}
+        document_definition = {"pk": "pk", "id": "2"}
         await self.created_container.upsert_item(body=document_definition)
 
-        query = 'SELECT * from c'
-        query_iterable = self.created_container.query_items(
-            query=query,
-            partition_key='pk',
-            max_item_count=1
-        )
+        query = "SELECT * from c"
+        query_iterable = self.created_container.query_items(query=query, partition_key="pk", max_item_count=1)
         pager = query_iterable.by_page()
         await pager.__anext__()
         token = pager.continuation_token
@@ -565,18 +600,16 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
         pager = query_iterable.by_page(token)
         second_page_fetched_with_continuation_token = [item async for item in await pager.__anext__()][0]
 
-        assert second_page['id'] == second_page_fetched_with_continuation_token['id']
+        assert second_page["id"] == second_page_fetched_with_continuation_token["id"]
 
     async def test_cross_partition_query_with_continuation_token_async(self):
-        document_definition = {'pk': 'pk1', 'id': str(uuid.uuid4())}
+        document_definition = {"pk": "pk1", "id": str(uuid.uuid4())}
         await self.created_container.create_item(body=document_definition)
-        document_definition = {'pk': 'pk2', 'id': str(uuid.uuid4())}
+        document_definition = {"pk": "pk2", "id": str(uuid.uuid4())}
         await self.created_container.create_item(body=document_definition)
 
-        query = 'SELECT * from c'
-        query_iterable = self.created_container.query_items(
-            query=query,
-            max_item_count=1)
+        query = "SELECT * from c"
+        query_iterable = self.created_container.query_items(query=query, max_item_count=1)
         pager = query_iterable.by_page()
         await pager.__anext__()
         token = pager.continuation_token
@@ -585,60 +618,65 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
         pager = query_iterable.by_page(token)
         second_page_fetched_with_continuation_token = [item async for item in await pager.__anext__()][0]
 
-        assert second_page['id'] == second_page_fetched_with_continuation_token['id']
+        assert second_page["id"] == second_page_fetched_with_continuation_token["id"]
 
     async def test_value_max_query_async(self):
         await self.created_container.create_item(
-            {"id": str(uuid.uuid4()), "isComplete": True, "version": 3, "lookupVersion": "console_version"})
+            {"id": str(uuid.uuid4()), "isComplete": True, "version": 3, "lookupVersion": "console_version"}
+        )
         await self.created_container.create_item(
-            {"id": str(uuid.uuid4()), "isComplete": True, "version": 2, "lookupVersion": "console_version"})
+            {"id": str(uuid.uuid4()), "isComplete": True, "version": 2, "lookupVersion": "console_version"}
+        )
         query = "Select value max(c.version) FROM c where c.isComplete = true and c.lookupVersion = @lookupVersion"
-        query_results = self.created_container.query_items(query, parameters=[
-            {"name": "@lookupVersion", "value": "console_version"}
-        ])
+        query_results = self.created_container.query_items(
+            query, parameters=[{"name": "@lookupVersion", "value": "console_version"}]
+        )
         item_list = [item async for item in query_results]
         assert len(item_list) == 1
         assert item_list[0] == 3
 
     async def test_continuation_token_size_limit_query_async(self):
         for i in range(1, 1000):
-            await self.created_container.create_item(body=dict(pk='123', id=str(i), some_value=str(i % 3)))
+            await self.created_container.create_item(body=dict(pk="123", id=str(i), some_value=str(i % 3)))
         query = "Select * from c where c.some_value='2'"
         print("Created 1000 items")
-        response_query = self.created_container.query_items(query, partition_key='123', max_item_count=100,
-                                                            continuation_token_limit=1)
+        response_query = self.created_container.query_items(
+            query, partition_key="123", max_item_count=100, continuation_token_limit=1
+        )
         pager = response_query.by_page()
         await pager.__anext__()
         token = pager.continuation_token
         # Continuation token size should be below 1kb
-        assert len(token.encode('utf-8')) <= 1024
+        assert len(token.encode("utf-8")) <= 1024
         await pager.__anext__()
         token = pager.continuation_token
 
         # verify a second time
-        assert len(token.encode('utf-8')) <= 1024
+        assert len(token.encode("utf-8")) <= 1024
         print("Test done")
 
     async def test_cross_partition_query_response_hook_async(self):
         created_collection = await self.created_db.create_container_if_not_exists(
             id="query_response_hook_test" + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/pk"),
-            offer_throughput=12000
+            offer_throughput=12000,
         )
         items = [
-            {'id': str(uuid.uuid4()), 'pk': '0', 'val': 5},
-            {'id': str(uuid.uuid4()), 'pk': '1', 'val': 10},
-            {'id': str(uuid.uuid4()), 'pk': '0', 'val': 5},
-            {'id': str(uuid.uuid4()), 'pk': '1', 'val': 10},
-            {'id': str(uuid.uuid4()), 'pk': '0', 'val': 5},
-            {'id': str(uuid.uuid4()), 'pk': '1', 'val': 10}
+            {"id": str(uuid.uuid4()), "pk": "0", "val": 5},
+            {"id": str(uuid.uuid4()), "pk": "1", "val": 10},
+            {"id": str(uuid.uuid4()), "pk": "0", "val": 5},
+            {"id": str(uuid.uuid4()), "pk": "1", "val": 10},
+            {"id": str(uuid.uuid4()), "pk": "0", "val": 5},
+            {"id": str(uuid.uuid4()), "pk": "1", "val": 10},
         ]
 
         for item in items:
             await created_collection.create_item(body=item)
 
         response_hook = test_config.ResponseHookCaller()
-        item_list = [item async for item in created_collection.query_items("select * from c", response_hook=response_hook)]
+        item_list = [
+            item async for item in created_collection.query_items("select * from c", response_hook=response_hook)
+        ]
         assert len(item_list) == 6
         assert response_hook.count == 2
         await self.created_db.delete_container(created_collection.id)
@@ -648,92 +686,75 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
         created_collection = await self.created_db.create_container(
             "cross_partition_pagination_test_" + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/pk"),
-            offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS)
-        
+            offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS,
+        )
+
         # Create 30 items across 3 different partitions
         total_items = 30
         items_per_partition = 10
         partitions = ["pk_1", "pk_2", "pk_3"]
-        
+
         for pk in partitions:
             for i in range(items_per_partition):
-                document_definition = {
-                    'pk': pk,
-                    'id': f'{pk}_item_{i}',
-                    'value': i
-                }
+                document_definition = {"pk": pk, "id": f"{pk}_item_{i}", "value": i}
                 await created_collection.create_item(body=document_definition)
-        
+
         # Test cross-partition query with max_item_count
         max_items_per_page = 8
         query = "SELECT * FROM c ORDER BY c['value']"
-        query_iterable = created_collection.query_items(
-            query=query,
-            max_item_count=max_items_per_page
-        )
-        
+        query_iterable = created_collection.query_items(query=query, max_item_count=max_items_per_page)
+
         # Iterate through pages and verify per-page counts
         all_fetched_results = []
         page_count = 0
         item_pages = query_iterable.by_page()
-        
+
         async for page in item_pages:
             page_count += 1
             items_in_page = [item async for item in page]
             all_fetched_results.extend(items_in_page)
-            
+
             # Each page should have at most max_item_count items
             # In cross-partition queries, pages may have fewer items
             assert len(items_in_page) <= max_items_per_page
             assert len(items_in_page) > 0  # Pages should not be empty
-        
+
         # Verify total results match expected count
         assert len(all_fetched_results) == total_items
-        
+
         # Verify we got multiple pages
         assert page_count > 1
-        
+
         await self.created_db.delete_container(created_collection.id)
-    
+
     async def test_cross_partition_query_pagination_counting_results_async(self):
         """Test counting total results while paginating across partitions."""
         created_collection = await self.created_db.create_container(
             "cross_partition_count_test_" + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/pk"),
-            offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS)
-        
+            offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS,
+        )
+
         # Create items across multiple partitions with different counts
-        partitions_config = [
-            ("partition_a", 5),
-            ("partition_b", 8),
-            ("partition_c", 3),
-            ("partition_d", 12)
-        ]
-        
+        partitions_config = [("partition_a", 5), ("partition_b", 8), ("partition_c", 3), ("partition_d", 12)]
+
         total_expected = 0
         for pk, count in partitions_config:
             for i in range(count):
-                document_definition = {
-                    'pk': pk,
-                    'id': f'{pk}_item_{i}',
-                    'name': f'Item {i} in {pk}'
-                }
+                document_definition = {"pk": pk, "id": f"{pk}_item_{i}", "name": f"Item {i} in {pk}"}
                 await created_collection.create_item(body=document_definition)
                 total_expected += 1
-        
+
         # Query across partitions with pagination
         max_items_per_page = 5
         query = "SELECT * FROM c"
-        query_iterable = created_collection.query_items(
-            query=query,
-            max_item_count=max_items_per_page
-        )
-        
+        query_iterable = created_collection.query_items(query=query, max_item_count=max_items_per_page)
+
         # Count items across all pages
         total_count = 0
         page_count = 0
         page_sizes = []
-        
+
         item_pages = query_iterable.by_page()
         async for page in item_pages:
             page_count += 1
@@ -741,18 +762,19 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
             page_size = len(items)
             page_sizes.append(page_size)
             total_count += page_size
-            
+
             # Verify page size constraints
             assert page_size <= max_items_per_page
             assert page_size > 0
-        
+
         # Verify total count matches what we inserted
         assert total_count == total_expected
-        
+
         # Verify we processed multiple pages
         assert page_count > 1
-        
+
         await self.created_db.delete_container(created_collection.id)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

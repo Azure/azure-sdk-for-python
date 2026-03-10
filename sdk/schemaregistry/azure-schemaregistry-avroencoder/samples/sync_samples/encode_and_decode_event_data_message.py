@@ -46,6 +46,7 @@ This example uses ClientSecretCredential, which requests a token from Azure Acti
 For more information on ClientSecretCredential, see:
     https://learn.microsoft.com/python/api/azure-identity/azure.identity.clientsecretcredential?view=azure-python
 """
+
 import os
 
 from azure.identity import ClientSecretCredential
@@ -57,9 +58,7 @@ TENANT_ID = os.environ["AZURE_TENANT_ID"]
 CLIENT_ID = os.environ["AZURE_CLIENT_ID"]
 CLIENT_SECRET = os.environ["AZURE_CLIENT_SECRET"]
 
-SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ[
-    "SCHEMAREGISTRY_AVRO_FULLY_QUALIFIED_NAMESPACE"
-]
+SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ["SCHEMAREGISTRY_AVRO_FULLY_QUALIFIED_NAMESPACE"]
 GROUP_NAME = os.environ["SCHEMAREGISTRY_GROUP"]
 SCHEMA_STRING = """
 {"namespace": "example.avro",
@@ -73,9 +72,7 @@ SCHEMA_STRING = """
 }"""
 
 
-token_credential = ClientSecretCredential(
-    tenant_id=TENANT_ID, client_id=CLIENT_ID, client_secret=CLIENT_SECRET
-)
+token_credential = ClientSecretCredential(tenant_id=TENANT_ID, client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
 
 
 def encode_to_event_data_message(encoder):
@@ -83,14 +80,10 @@ def encode_to_event_data_message(encoder):
     dict_content_alice = {"name": "Alice", "favorite_number": 15, "favorite_color": "green"}
 
     # Schema would be automatically registered into Schema Registry and cached locally.
-    event_data_ben = encoder.encode(
-        dict_content_ben, schema=SCHEMA_STRING, message_type=EventData
-    )
+    event_data_ben = encoder.encode(dict_content_ben, schema=SCHEMA_STRING, message_type=EventData)
 
     # The second call won't trigger a service call.
-    event_data_alice = encoder.encode(
-        dict_content_alice, schema=SCHEMA_STRING, message_type=EventData
-    )
+    event_data_alice = encoder.encode(dict_content_alice, schema=SCHEMA_STRING, message_type=EventData)
 
     print("Encoded content is: ", next(event_data_ben.body))
     print("Encoded content is: ", next(event_data_alice.body))
@@ -115,9 +108,7 @@ if __name__ == "__main__":
         fully_qualified_namespace=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE,
         credential=token_credential,
     )
-    encoder = AvroEncoder(
-        client=schema_registry, group_name=GROUP_NAME, auto_register=True
-    )
+    encoder = AvroEncoder(client=schema_registry, group_name=GROUP_NAME, auto_register=True)
     event_data_ben, event_data_alice = encode_to_event_data_message(encoder)
     decoded_content_ben = decode_event_data_message(encoder, event_data_ben)
     decoded_content_alice = decode_event_data_message(encoder, event_data_alice)

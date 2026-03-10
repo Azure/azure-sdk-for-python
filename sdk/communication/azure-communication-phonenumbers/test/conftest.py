@@ -10,7 +10,6 @@ from devtools_testutils import (
     remove_batch_sanitizers,
 )
 
-
 STATIC_RESERVATION_ID = "6227aeb8-8086-4824-9586-05cafe96f37b"
 
 
@@ -67,6 +66,6 @@ def add_sanitizers(test_proxy):
     #  - AZSDK3493: $..name
     #  - AZSDK2003: Location
     #  - AZSDK4001: Host - We are sanitizing the endpoint above, so this is not needed.
-    #  - AZSDK3430: ..id - For phone number IDs, we are already sanitizing them above. 
+    #  - AZSDK3430: ..id - For phone number IDs, we are already sanitizing them above.
     #                      For reservation IDs, we are sanitizing them to a static ID since they are needed in tests.
     remove_batch_sanitizers(["AZSDK3493", "AZSDK2003", "AZSDK4001", "AZSDK3430"])

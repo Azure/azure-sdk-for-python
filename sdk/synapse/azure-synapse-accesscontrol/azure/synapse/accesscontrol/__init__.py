@@ -10,10 +10,11 @@ from ._access_control_client import AccessControlClient
 from ._version import VERSION
 
 __version__ = VERSION
-__all__ = ['AccessControlClient']
+__all__ = ["AccessControlClient"]
 
 try:
     from ._patch import patch_sdk  # type: ignore
+
     patch_sdk()
 except ImportError:
     pass

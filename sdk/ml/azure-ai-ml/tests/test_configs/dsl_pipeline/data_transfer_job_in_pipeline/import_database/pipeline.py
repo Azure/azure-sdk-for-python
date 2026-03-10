@@ -5,7 +5,6 @@ from azure.ai.ml.data_transfer import import_data
 from azure.ai.ml.constants._common import AssetTypes, SERVERLESS_COMPUTE
 from azure.ai.ml.entities import PipelineJob
 
-
 parent_dir = str(Path(__file__).parent)
 
 

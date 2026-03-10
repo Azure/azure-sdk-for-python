@@ -16,7 +16,7 @@ USAGE:
        See the "Data plane - inference" row in the table here for latest AOAI api-version:
        https://aka.ms/azsdk/azure-ai-inference/azure-openai-api-versions
     3. Set one or two environment variables, depending on your authentication method:
-        * AZURE_OPENAI_EMBEDDINGS_ENDPOINT - Your AOAI endpoint URL, with partial path, in the form 
+        * AZURE_OPENAI_EMBEDDINGS_ENDPOINT - Your AOAI endpoint URL, with partial path, in the form
             https://<your-unique-resouce-name>.openai.azure.com/openai/deployments/<your-deployment-name>
             where `your-unique-resource-name` is your globally unique AOAI resource name,
             and `your-deployment-name` is your AI Model deployment name.

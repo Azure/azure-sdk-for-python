@@ -28,22 +28,22 @@ class ContactDetails(Model):
     """
 
     _validation = {
-        'contact_person': {'required': True},
-        'company_name': {'required': True},
-        'phone': {'required': True},
-        'email_list': {'required': True},
+        "contact_person": {"required": True},
+        "company_name": {"required": True},
+        "phone": {"required": True},
+        "email_list": {"required": True},
     }
 
     _attribute_map = {
-        'contact_person': {'key': 'contactPerson', 'type': 'str'},
-        'company_name': {'key': 'companyName', 'type': 'str'},
-        'phone': {'key': 'phone', 'type': 'str'},
-        'email_list': {'key': 'emailList', 'type': '[str]'},
+        "contact_person": {"key": "contactPerson", "type": "str"},
+        "company_name": {"key": "companyName", "type": "str"},
+        "phone": {"key": "phone", "type": "str"},
+        "email_list": {"key": "emailList", "type": "[str]"},
     }
 
     def __init__(self, **kwargs):
         super(ContactDetails, self).__init__(**kwargs)
-        self.contact_person = kwargs.get('contact_person', None)
-        self.company_name = kwargs.get('company_name', None)
-        self.phone = kwargs.get('phone', None)
-        self.email_list = kwargs.get('email_list', None)
+        self.contact_person = kwargs.get("contact_person", None)
+        self.company_name = kwargs.get("company_name", None)
+        self.phone = kwargs.get("phone", None)
+        self.email_list = kwargs.get("email_list", None)

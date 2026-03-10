@@ -22,7 +22,6 @@ from ._generated.operations._operations import (
 from ._generated._configuration import AzureTableConfiguration
 from ._generated.aio._configuration import AzureTableConfiguration as AsyncAzureTableConfiguration
 
-
 EntityType = Union[TableEntity, Mapping[str, Any]]
 OperationType = Union[TransactionOperation, str]
 TransactionOperationType = Union[

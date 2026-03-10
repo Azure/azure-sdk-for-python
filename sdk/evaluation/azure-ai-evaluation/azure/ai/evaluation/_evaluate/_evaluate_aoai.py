@@ -19,7 +19,6 @@ from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._aoai.aoai_grader import AzureOpenAIGrader
 from azure.ai.evaluation._common._experimental import experimental
 
-
 TClient = TypeVar("TClient", ProxyClient, CodeClient)
 LOGGER = logging.getLogger(__name__)
 

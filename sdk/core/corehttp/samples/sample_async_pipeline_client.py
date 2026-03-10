@@ -13,6 +13,7 @@ DESCRIPTION:
 USAGE:
     python sample_pipeline_client.py
 """
+
 import asyncio
 from typing import Iterable, Union
 

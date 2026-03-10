@@ -17,7 +17,6 @@ from asynctestcase import AsyncFormRecognizerTest
 from preparers import FormRecognizerPreparer, get_async_client
 from conftest import skip_flaky_test
 
-
 get_fr_client = functools.partial(get_async_client, FormRecognizerClient)
 
 
@@ -28,15 +27,15 @@ class TestInvoiceFromUrlAsync(AsyncFormRecognizerTest):
     @recorded_by_proxy_async
     async def test_polling_interval(self, **kwargs):
         client = get_fr_client(polling_interval=7)
-        assert client._client._config.polling_interval ==  7
+        assert client._client._config.polling_interval == 7
 
         async with client:
             poller = await client.begin_recognize_invoices_from_url(self.invoice_url_pdf, polling_interval=6)
             await poller.wait()
-            assert poller._polling_method._timeout ==  6
+            assert poller._polling_method._timeout == 6
             poller2 = await client.begin_recognize_invoices_from_url(self.invoice_url_pdf)
             await poller2.wait()
-            assert poller2._polling_method._timeout ==  7  # goes back to client default
+            assert poller2._polling_method._timeout == 7  # goes back to client default
 
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
@@ -61,9 +60,7 @@ class TestInvoiceFromUrlAsync(AsyncFormRecognizerTest):
 
         async with client:
             poller = await client.begin_recognize_invoices_from_url(
-                invoice_url=self.multipage_vendor_url_pdf,
-                include_field_elements=True,
-                cls=callback
+                invoice_url=self.multipage_vendor_url_pdf, include_field_elements=True, cls=callback
             )
 
             result = await poller.result()
@@ -73,16 +70,16 @@ class TestInvoiceFromUrlAsync(AsyncFormRecognizerTest):
         document_results = raw_response.analyze_result.document_results
         page_results = raw_response.analyze_result.page_results
 
-        assert 1 ==  len(returned_models)
+        assert 1 == len(returned_models)
         returned_model = returned_models[0]
-        assert 2 ==  len(returned_model.pages)
-        assert 1 ==  returned_model.page_range.first_page_number
-        assert 2 ==  returned_model.page_range.last_page_number
+        assert 2 == len(returned_model.pages)
+        assert 1 == returned_model.page_range.first_page_number
+        assert 2 == returned_model.page_range.last_page_number
 
-        assert 1 ==  len(document_results)
+        assert 1 == len(document_results)
         document_result = document_results[0]
-        assert 1 ==  document_result.page_range[0]  # checking first page number
-        assert 2 ==  document_result.page_range[1]  # checking last page number
+        assert 1 == document_result.page_range[0]  # checking first page number
+        assert 2 == document_result.page_range[1]  # checking last page number
 
         for invoice, document_result in zip(returned_models, document_results):
             self.assertFormFieldsTransformCorrect(invoice.fields, document_result.fields, read_results)
@@ -108,7 +105,9 @@ class TestInvoiceFromUrlAsync(AsyncFormRecognizerTest):
         with pytest.raises(ValueError) as e:
             async with client:
                 await client.begin_recognize_invoices_from_url(self.invoice_url_tiff)
-        assert "Method 'begin_recognize_invoices_from_url' is only available for API version V2_1 and up" in str(e.value)
+        assert "Method 'begin_recognize_invoices_from_url' is only available for API version V2_1 and up" in str(
+            e.value
+        )
 
     @skip_flaky_test
     @FormRecognizerPreparer()
@@ -117,7 +116,7 @@ class TestInvoiceFromUrlAsync(AsyncFormRecognizerTest):
         client = get_fr_client()
         async with client:
             poller = await client.begin_recognize_invoices_from_url(self.invoice_url_pdf, locale="en-US")
-            assert 'en-US' == poller._polling_method._initial_response.http_response.request.query['locale']
+            assert "en-US" == poller._polling_method._initial_response.http_response.request.query["locale"]
             result = await poller.result()
             assert result
 
@@ -137,6 +136,6 @@ class TestInvoiceFromUrlAsync(AsyncFormRecognizerTest):
         client = get_fr_client()
         async with client:
             poller = await client.begin_recognize_invoices_from_url(self.invoice_url_pdf, pages=["1"])
-            assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
+            assert "1" == poller._polling_method._initial_response.http_response.request.query["pages"]
             result = await poller.result()
             assert result

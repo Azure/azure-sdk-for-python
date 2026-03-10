@@ -21,19 +21,14 @@ class StsTokenResponseMessage(msrest.serialization.Model):
     """
 
     _validation = {
-        'access_token': {'required': True},
+        "access_token": {"required": True},
     }
 
     _attribute_map = {
-        'access_token': {'key': 'AccessToken', 'type': 'str'},
+        "access_token": {"key": "AccessToken", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        access_token: str,
-        **kwargs
-    ):
+    def __init__(self, *, access_token: str, **kwargs):
         super(StsTokenResponseMessage, self).__init__(**kwargs)
         self.access_token = access_token
 
@@ -47,14 +42,9 @@ class TokenRequestOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'client_request_id': {'key': 'clientRequestId', 'type': 'str'},
+        "client_request_id": {"key": "clientRequestId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        client_request_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, client_request_id: Optional[str] = None, **kwargs):
         super(TokenRequestOptions, self).__init__(**kwargs)
         self.client_request_id = client_request_id

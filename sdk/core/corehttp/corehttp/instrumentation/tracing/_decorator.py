@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """The decorator to apply if you want the given method traced."""
+
 from contextvars import ContextVar
 import functools
 from typing import Awaitable, Any, TypeVar, overload, Optional, Callable, TYPE_CHECKING

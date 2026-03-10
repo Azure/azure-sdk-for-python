@@ -35,16 +35,16 @@ class AnalyzeOperationResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'status': {'required': True},
-        'created_date_time': {'required': True},
-        'last_updated_date_time': {'required': True},
+        "status": {"required": True},
+        "created_date_time": {"required": True},
+        "last_updated_date_time": {"required": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'last_updated_date_time': {'key': 'lastUpdatedDateTime', 'type': 'iso-8601'},
-        'analyze_result': {'key': 'analyzeResult', 'type': 'AnalyzeResult'},
+        "status": {"key": "status", "type": "str"},
+        "created_date_time": {"key": "createdDateTime", "type": "iso-8601"},
+        "last_updated_date_time": {"key": "lastUpdatedDateTime", "type": "iso-8601"},
+        "analyze_result": {"key": "analyzeResult", "type": "AnalyzeResult"},
     }
 
     def __init__(
@@ -94,16 +94,16 @@ class AnalyzeResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'version': {'required': True},
-        'read_results': {'required': True},
+        "version": {"required": True},
+        "read_results": {"required": True},
     }
 
     _attribute_map = {
-        'version': {'key': 'version', 'type': 'str'},
-        'read_results': {'key': 'readResults', 'type': '[ReadResult]'},
-        'page_results': {'key': 'pageResults', 'type': '[PageResult]'},
-        'document_results': {'key': 'documentResults', 'type': '[DocumentResult]'},
-        'errors': {'key': 'errors', 'type': '[ErrorInformation]'},
+        "version": {"key": "version", "type": "str"},
+        "read_results": {"key": "readResults", "type": "[ReadResult]"},
+        "page_results": {"key": "pageResults", "type": "[PageResult]"},
+        "document_results": {"key": "documentResults", "type": "[DocumentResult]"},
+        "errors": {"key": "errors", "type": "[ErrorInformation]"},
     }
 
     def __init__(
@@ -146,19 +146,14 @@ class Appearance(msrest.serialization.Model):
     """
 
     _validation = {
-        'style': {'required': True},
+        "style": {"required": True},
     }
 
     _attribute_map = {
-        'style': {'key': 'style', 'type': 'Style'},
+        "style": {"key": "style", "type": "Style"},
     }
 
-    def __init__(
-        self,
-        *,
-        style: "_models.Style",
-        **kwargs
-    ):
+    def __init__(self, *, style: "_models.Style", **kwargs):
         """
         :keyword style: Required. An object representing the style of the text line.
         :paramtype style: ~azure.ai.formrecognizer.v2_1.models.Style
@@ -175,15 +170,10 @@ class Attributes(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'is_composed': {'key': 'isComposed', 'type': 'bool'},
+        "is_composed": {"key": "isComposed", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        is_composed: Optional[bool] = False,
-        **kwargs
-    ):
+    def __init__(self, *, is_composed: Optional[bool] = False, **kwargs):
         """
         :keyword is_composed: Is this model composed? (default: false).
         :paramtype is_composed: bool
@@ -204,21 +194,15 @@ class ComposeRequest(msrest.serialization.Model):
     """
 
     _validation = {
-        'model_ids': {'required': True},
+        "model_ids": {"required": True},
     }
 
     _attribute_map = {
-        'model_ids': {'key': 'modelIds', 'type': '[str]'},
-        'model_name': {'key': 'modelName', 'type': 'str'},
+        "model_ids": {"key": "modelIds", "type": "[str]"},
+        "model_name": {"key": "modelName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        model_ids: List[str],
-        model_name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, model_ids: List[str], model_name: Optional[str] = None, **kwargs):
         """
         :keyword model_ids: Required. List of model ids to compose.
         :paramtype model_ids: list[str]
@@ -245,25 +229,18 @@ class CopyAuthorizationResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'model_id': {'required': True},
-        'access_token': {'required': True},
-        'expiration_date_time_ticks': {'required': True},
+        "model_id": {"required": True},
+        "access_token": {"required": True},
+        "expiration_date_time_ticks": {"required": True},
     }
 
     _attribute_map = {
-        'model_id': {'key': 'modelId', 'type': 'str'},
-        'access_token': {'key': 'accessToken', 'type': 'str'},
-        'expiration_date_time_ticks': {'key': 'expirationDateTimeTicks', 'type': 'long'},
+        "model_id": {"key": "modelId", "type": "str"},
+        "access_token": {"key": "accessToken", "type": "str"},
+        "expiration_date_time_ticks": {"key": "expirationDateTimeTicks", "type": "long"},
     }
 
-    def __init__(
-        self,
-        *,
-        model_id: str,
-        access_token: str,
-        expiration_date_time_ticks: int,
-        **kwargs
-    ):
+    def __init__(self, *, model_id: str, access_token: str, expiration_date_time_ticks: int, **kwargs):
         """
         :keyword model_id: Required. Model identifier.
         :paramtype model_id: str
@@ -296,16 +273,16 @@ class CopyOperationResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'status': {'required': True},
-        'created_date_time': {'required': True},
-        'last_updated_date_time': {'required': True},
+        "status": {"required": True},
+        "created_date_time": {"required": True},
+        "last_updated_date_time": {"required": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'last_updated_date_time': {'key': 'lastUpdatedDateTime', 'type': 'iso-8601'},
-        'copy_result': {'key': 'copyResult', 'type': 'CopyResult'},
+        "status": {"key": "status", "type": "str"},
+        "created_date_time": {"key": "createdDateTime", "type": "iso-8601"},
+        "last_updated_date_time": {"key": "lastUpdatedDateTime", "type": "iso-8601"},
+        "copy_result": {"key": "copyResult", "type": "CopyResult"},
     }
 
     def __init__(
@@ -353,15 +330,20 @@ class CopyRequest(msrest.serialization.Model):
     """
 
     _validation = {
-        'target_resource_id': {'required': True, 'max_length': 1024, 'min_length': 0, 'pattern': r'^/subscriptions/[^/]*/resourceGroups/[^/]*/providers/Microsoft.CognitiveServices/accounts/[^/]*$'},
-        'target_resource_region': {'required': True, 'max_length': 24, 'min_length': 1, 'pattern': r'^[a-z0-9]+$'},
-        'copy_authorization': {'required': True},
+        "target_resource_id": {
+            "required": True,
+            "max_length": 1024,
+            "min_length": 0,
+            "pattern": r"^/subscriptions/[^/]*/resourceGroups/[^/]*/providers/Microsoft.CognitiveServices/accounts/[^/]*$",
+        },
+        "target_resource_region": {"required": True, "max_length": 24, "min_length": 1, "pattern": r"^[a-z0-9]+$"},
+        "copy_authorization": {"required": True},
     }
 
     _attribute_map = {
-        'target_resource_id': {'key': 'targetResourceId', 'type': 'str'},
-        'target_resource_region': {'key': 'targetResourceRegion', 'type': 'str'},
-        'copy_authorization': {'key': 'copyAuthorization', 'type': 'CopyAuthorizationResult'},
+        "target_resource_id": {"key": "targetResourceId", "type": "str"},
+        "target_resource_region": {"key": "targetResourceRegion", "type": "str"},
+        "copy_authorization": {"key": "copyAuthorization", "type": "CopyAuthorizationResult"},
     }
 
     def __init__(
@@ -401,21 +383,15 @@ class CopyResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'model_id': {'required': True},
+        "model_id": {"required": True},
     }
 
     _attribute_map = {
-        'model_id': {'key': 'modelId', 'type': 'str'},
-        'errors': {'key': 'errors', 'type': '[ErrorInformation]'},
+        "model_id": {"key": "modelId", "type": "str"},
+        "errors": {"key": "errors", "type": "[ErrorInformation]"},
     }
 
-    def __init__(
-        self,
-        *,
-        model_id: str,
-        errors: Optional[List["_models.ErrorInformation"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, model_id: str, errors: Optional[List["_models.ErrorInformation"]] = None, **kwargs):
         """
         :keyword model_id: Required. Identifier of the target model.
         :paramtype model_id: str
@@ -443,27 +419,21 @@ class DataTable(msrest.serialization.Model):
     """
 
     _validation = {
-        'rows': {'required': True, 'minimum': 1},
-        'columns': {'required': True, 'minimum': 1},
-        'cells': {'required': True},
-        'bounding_box': {'required': True, 'max_items': 8, 'min_items': 8},
+        "rows": {"required": True, "minimum": 1},
+        "columns": {"required": True, "minimum": 1},
+        "cells": {"required": True},
+        "bounding_box": {"required": True, "max_items": 8, "min_items": 8},
     }
 
     _attribute_map = {
-        'rows': {'key': 'rows', 'type': 'int'},
-        'columns': {'key': 'columns', 'type': 'int'},
-        'cells': {'key': 'cells', 'type': '[DataTableCell]'},
-        'bounding_box': {'key': 'boundingBox', 'type': '[float]'},
+        "rows": {"key": "rows", "type": "int"},
+        "columns": {"key": "columns", "type": "int"},
+        "cells": {"key": "cells", "type": "[DataTableCell]"},
+        "bounding_box": {"key": "boundingBox", "type": "[float]"},
     }
 
     def __init__(
-        self,
-        *,
-        rows: int,
-        columns: int,
-        cells: List["_models.DataTableCell"],
-        bounding_box: List[float],
-        **kwargs
+        self, *, rows: int, columns: int, cells: List["_models.DataTableCell"], bounding_box: List[float], **kwargs
     ):
         """
         :keyword rows: Required. Number of rows.
@@ -511,26 +481,26 @@ class DataTableCell(msrest.serialization.Model):
     """
 
     _validation = {
-        'row_index': {'required': True, 'minimum': 0},
-        'column_index': {'required': True, 'minimum': 0},
-        'row_span': {'minimum': 1},
-        'column_span': {'minimum': 1},
-        'text': {'required': True},
-        'bounding_box': {'required': True, 'max_items': 8, 'min_items': 8},
-        'confidence': {'required': True, 'maximum': 1, 'minimum': 0},
+        "row_index": {"required": True, "minimum": 0},
+        "column_index": {"required": True, "minimum": 0},
+        "row_span": {"minimum": 1},
+        "column_span": {"minimum": 1},
+        "text": {"required": True},
+        "bounding_box": {"required": True, "max_items": 8, "min_items": 8},
+        "confidence": {"required": True, "maximum": 1, "minimum": 0},
     }
 
     _attribute_map = {
-        'row_index': {'key': 'rowIndex', 'type': 'int'},
-        'column_index': {'key': 'columnIndex', 'type': 'int'},
-        'row_span': {'key': 'rowSpan', 'type': 'int'},
-        'column_span': {'key': 'columnSpan', 'type': 'int'},
-        'text': {'key': 'text', 'type': 'str'},
-        'bounding_box': {'key': 'boundingBox', 'type': '[float]'},
-        'confidence': {'key': 'confidence', 'type': 'float'},
-        'elements': {'key': 'elements', 'type': '[str]'},
-        'is_header': {'key': 'isHeader', 'type': 'bool'},
-        'is_footer': {'key': 'isFooter', 'type': 'bool'},
+        "row_index": {"key": "rowIndex", "type": "int"},
+        "column_index": {"key": "columnIndex", "type": "int"},
+        "row_span": {"key": "rowSpan", "type": "int"},
+        "column_span": {"key": "columnSpan", "type": "int"},
+        "text": {"key": "text", "type": "str"},
+        "bounding_box": {"key": "boundingBox", "type": "[float]"},
+        "confidence": {"key": "confidence", "type": "float"},
+        "elements": {"key": "elements", "type": "[str]"},
+        "is_header": {"key": "isHeader", "type": "bool"},
+        "is_footer": {"key": "isFooter", "type": "bool"},
     }
 
     def __init__(
@@ -602,18 +572,18 @@ class DocumentResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'doc_type': {'required': True},
-        'page_range': {'required': True, 'max_items': 2, 'min_items': 2},
-        'doc_type_confidence': {'maximum': 1, 'minimum': 0},
-        'fields': {'required': True},
+        "doc_type": {"required": True},
+        "page_range": {"required": True, "max_items": 2, "min_items": 2},
+        "doc_type_confidence": {"maximum": 1, "minimum": 0},
+        "fields": {"required": True},
     }
 
     _attribute_map = {
-        'doc_type': {'key': 'docType', 'type': 'str'},
-        'model_id': {'key': 'modelId', 'type': 'str'},
-        'page_range': {'key': 'pageRange', 'type': '[int]'},
-        'doc_type_confidence': {'key': 'docTypeConfidence', 'type': 'float'},
-        'fields': {'key': 'fields', 'type': '{FieldValue}'},
+        "doc_type": {"key": "docType", "type": "str"},
+        "model_id": {"key": "modelId", "type": "str"},
+        "page_range": {"key": "pageRange", "type": "[int]"},
+        "doc_type_confidence": {"key": "docTypeConfidence", "type": "float"},
+        "fields": {"key": "fields", "type": "{FieldValue}"},
     }
 
     def __init__(
@@ -658,22 +628,16 @@ class ErrorInformation(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
+        "code": {"required": True},
+        "message": {"required": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: str,
-        message: str,
-        **kwargs
-    ):
+    def __init__(self, *, code: str, message: str, **kwargs):
         """
         :keyword code: Required.
         :paramtype code: str
@@ -695,19 +659,14 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'error': {'required': True},
+        "error": {"required": True},
     }
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorInformation'},
+        "error": {"key": "error", "type": "ErrorInformation"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: "_models.ErrorInformation",
-        **kwargs
-    ):
+    def __init__(self, *, error: "_models.ErrorInformation", **kwargs):
         """
         :keyword error: Required.
         :paramtype error: ~azure.ai.formrecognizer.v2_1.models.ErrorInformation
@@ -759,29 +718,29 @@ class FieldValue(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
-        'bounding_box': {'max_items': 8, 'min_items': 8},
-        'confidence': {'maximum': 1, 'minimum': 0},
-        'page': {'minimum': 1},
+        "type": {"required": True},
+        "bounding_box": {"max_items": 8, "min_items": 8},
+        "confidence": {"maximum": 1, "minimum": 0},
+        "page": {"minimum": 1},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'value_string': {'key': 'valueString', 'type': 'str'},
-        'value_date': {'key': 'valueDate', 'type': 'date'},
-        'value_time': {'key': 'valueTime', 'type': 'time'},
-        'value_phone_number': {'key': 'valuePhoneNumber', 'type': 'str'},
-        'value_number': {'key': 'valueNumber', 'type': 'float'},
-        'value_integer': {'key': 'valueInteger', 'type': 'int'},
-        'value_array': {'key': 'valueArray', 'type': '[FieldValue]'},
-        'value_object': {'key': 'valueObject', 'type': '{FieldValue}'},
-        'value_selection_mark': {'key': 'valueSelectionMark', 'type': 'str'},
-        'value_country_region': {'key': 'valueCountryRegion', 'type': 'str'},
-        'text': {'key': 'text', 'type': 'str'},
-        'bounding_box': {'key': 'boundingBox', 'type': '[float]'},
-        'confidence': {'key': 'confidence', 'type': 'float'},
-        'elements': {'key': 'elements', 'type': '[str]'},
-        'page': {'key': 'page', 'type': 'int'},
+        "type": {"key": "type", "type": "str"},
+        "value_string": {"key": "valueString", "type": "str"},
+        "value_date": {"key": "valueDate", "type": "date"},
+        "value_time": {"key": "valueTime", "type": "time"},
+        "value_phone_number": {"key": "valuePhoneNumber", "type": "str"},
+        "value_number": {"key": "valueNumber", "type": "float"},
+        "value_integer": {"key": "valueInteger", "type": "int"},
+        "value_array": {"key": "valueArray", "type": "[FieldValue]"},
+        "value_object": {"key": "valueObject", "type": "{FieldValue}"},
+        "value_selection_mark": {"key": "valueSelectionMark", "type": "str"},
+        "value_country_region": {"key": "valueCountryRegion", "type": "str"},
+        "text": {"key": "text", "type": "str"},
+        "bounding_box": {"key": "boundingBox", "type": "[float]"},
+        "confidence": {"key": "confidence", "type": "float"},
+        "elements": {"key": "elements", "type": "[str]"},
+        "page": {"key": "page", "type": "int"},
     }
 
     def __init__(
@@ -874,22 +833,16 @@ class FormFieldsReport(msrest.serialization.Model):
     """
 
     _validation = {
-        'field_name': {'required': True},
-        'accuracy': {'required': True},
+        "field_name": {"required": True},
+        "accuracy": {"required": True},
     }
 
     _attribute_map = {
-        'field_name': {'key': 'fieldName', 'type': 'str'},
-        'accuracy': {'key': 'accuracy', 'type': 'float'},
+        "field_name": {"key": "fieldName", "type": "str"},
+        "accuracy": {"key": "accuracy", "type": "float"},
     }
 
-    def __init__(
-        self,
-        *,
-        field_name: str,
-        accuracy: float,
-        **kwargs
-    ):
+    def __init__(self, *, field_name: str, accuracy: float, **kwargs):
         """
         :keyword field_name: Required. Training field name.
         :paramtype field_name: str
@@ -911,19 +864,14 @@ class KeysResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'clusters': {'required': True},
+        "clusters": {"required": True},
     }
 
     _attribute_map = {
-        'clusters': {'key': 'clusters', 'type': '{[str]}'},
+        "clusters": {"key": "clusters", "type": "{[str]}"},
     }
 
-    def __init__(
-        self,
-        *,
-        clusters: Dict[str, List[str]],
-        **kwargs
-    ):
+    def __init__(self, *, clusters: Dict[str, List[str]], **kwargs):
         """
         :keyword clusters: Required. Object mapping clusterIds to a list of keys.
         :paramtype clusters: dict[str, list[str]]
@@ -950,15 +898,15 @@ class KeyValueElement(msrest.serialization.Model):
     """
 
     _validation = {
-        'text': {'required': True},
-        'bounding_box': {'max_items': 8, 'min_items': 8},
+        "text": {"required": True},
+        "bounding_box": {"max_items": 8, "min_items": 8},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'text': {'key': 'text', 'type': 'str'},
-        'bounding_box': {'key': 'boundingBox', 'type': '[float]'},
-        'elements': {'key': 'elements', 'type': '[str]'},
+        "type": {"key": "type", "type": "str"},
+        "text": {"key": "text", "type": "str"},
+        "bounding_box": {"key": "boundingBox", "type": "[float]"},
+        "elements": {"key": "elements", "type": "[str]"},
     }
 
     def __init__(
@@ -1005,16 +953,16 @@ class KeyValuePair(msrest.serialization.Model):
     """
 
     _validation = {
-        'key': {'required': True},
-        'value': {'required': True},
-        'confidence': {'required': True, 'maximum': 1, 'minimum': 0},
+        "key": {"required": True},
+        "value": {"required": True},
+        "confidence": {"required": True, "maximum": 1, "minimum": 0},
     }
 
     _attribute_map = {
-        'label': {'key': 'label', 'type': 'str'},
-        'key': {'key': 'key', 'type': 'KeyValueElement'},
-        'value': {'key': 'value', 'type': 'KeyValueElement'},
-        'confidence': {'key': 'confidence', 'type': 'float'},
+        "label": {"key": "label", "type": "str"},
+        "key": {"key": "key", "type": "KeyValueElement"},
+        "value": {"key": "value", "type": "KeyValueElement"},
+        "confidence": {"key": "confidence", "type": "float"},
     }
 
     def __init__(
@@ -1059,14 +1007,14 @@ class Model(msrest.serialization.Model):
     """
 
     _validation = {
-        'model_info': {'required': True},
+        "model_info": {"required": True},
     }
 
     _attribute_map = {
-        'model_info': {'key': 'modelInfo', 'type': 'ModelInfo'},
-        'keys': {'key': 'keys', 'type': 'KeysResult'},
-        'train_result': {'key': 'trainResult', 'type': 'TrainResult'},
-        'composed_train_results': {'key': 'composedTrainResults', 'type': '[TrainResult]'},
+        "model_info": {"key": "modelInfo", "type": "ModelInfo"},
+        "keys": {"key": "keys", "type": "KeysResult"},
+        "train_result": {"key": "trainResult", "type": "TrainResult"},
+        "composed_train_results": {"key": "composedTrainResults", "type": "[TrainResult]"},
     }
 
     def __init__(
@@ -1115,19 +1063,19 @@ class ModelInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        'model_id': {'required': True},
-        'status': {'required': True},
-        'created_date_time': {'required': True},
-        'last_updated_date_time': {'required': True},
+        "model_id": {"required": True},
+        "status": {"required": True},
+        "created_date_time": {"required": True},
+        "last_updated_date_time": {"required": True},
     }
 
     _attribute_map = {
-        'model_id': {'key': 'modelId', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'last_updated_date_time': {'key': 'lastUpdatedDateTime', 'type': 'iso-8601'},
-        'model_name': {'key': 'modelName', 'type': 'str'},
-        'attributes': {'key': 'attributes', 'type': 'Attributes'},
+        "model_id": {"key": "modelId", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "created_date_time": {"key": "createdDateTime", "type": "iso-8601"},
+        "last_updated_date_time": {"key": "lastUpdatedDateTime", "type": "iso-8601"},
+        "model_name": {"key": "modelName", "type": "str"},
+        "attributes": {"key": "attributes", "type": "Attributes"},
     }
 
     def __init__(
@@ -1178,9 +1126,9 @@ class Models(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'summary': {'key': 'summary', 'type': 'ModelsSummary'},
-        'model_list': {'key': 'modelList', 'type': '[ModelInfo]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "summary": {"key": "summary", "type": "ModelsSummary"},
+        "model_list": {"key": "modelList", "type": "[ModelInfo]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
@@ -1219,25 +1167,18 @@ class ModelsSummary(msrest.serialization.Model):
     """
 
     _validation = {
-        'count': {'required': True},
-        'limit': {'required': True},
-        'last_updated_date_time': {'required': True},
+        "count": {"required": True},
+        "limit": {"required": True},
+        "last_updated_date_time": {"required": True},
     }
 
     _attribute_map = {
-        'count': {'key': 'count', 'type': 'int'},
-        'limit': {'key': 'limit', 'type': 'int'},
-        'last_updated_date_time': {'key': 'lastUpdatedDateTime', 'type': 'iso-8601'},
+        "count": {"key": "count", "type": "int"},
+        "limit": {"key": "limit", "type": "int"},
+        "last_updated_date_time": {"key": "lastUpdatedDateTime", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        *,
-        count: int,
-        limit: int,
-        last_updated_date_time: datetime.datetime,
-        **kwargs
-    ):
+    def __init__(self, *, count: int, limit: int, last_updated_date_time: datetime.datetime, **kwargs):
         """
         :keyword count: Required. Current count of trained custom models.
         :paramtype count: int
@@ -1269,15 +1210,15 @@ class PageResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'page': {'required': True, 'minimum': 1},
-        'cluster_id': {'minimum': 0},
+        "page": {"required": True, "minimum": 1},
+        "cluster_id": {"minimum": 0},
     }
 
     _attribute_map = {
-        'page': {'key': 'page', 'type': 'int'},
-        'cluster_id': {'key': 'clusterId', 'type': 'int'},
-        'key_value_pairs': {'key': 'keyValuePairs', 'type': '[KeyValuePair]'},
-        'tables': {'key': 'tables', 'type': '[DataTable]'},
+        "page": {"key": "page", "type": "int"},
+        "cluster_id": {"key": "clusterId", "type": "int"},
+        "key_value_pairs": {"key": "keyValuePairs", "type": "[KeyValuePair]"},
+        "tables": {"key": "tables", "type": "[DataTable]"},
     }
 
     def __init__(
@@ -1334,21 +1275,21 @@ class ReadResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'page': {'required': True, 'minimum': 1},
-        'angle': {'required': True, 'maximum': 180, 'minimum_ex': -180},
-        'width': {'required': True, 'minimum': 0},
-        'height': {'required': True, 'minimum': 0},
-        'unit': {'required': True},
+        "page": {"required": True, "minimum": 1},
+        "angle": {"required": True, "maximum": 180, "minimum_ex": -180},
+        "width": {"required": True, "minimum": 0},
+        "height": {"required": True, "minimum": 0},
+        "unit": {"required": True},
     }
 
     _attribute_map = {
-        'page': {'key': 'page', 'type': 'int'},
-        'angle': {'key': 'angle', 'type': 'float'},
-        'width': {'key': 'width', 'type': 'float'},
-        'height': {'key': 'height', 'type': 'float'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'lines': {'key': 'lines', 'type': '[TextLine]'},
-        'selection_marks': {'key': 'selectionMarks', 'type': '[SelectionMark]'},
+        "page": {"key": "page", "type": "int"},
+        "angle": {"key": "angle", "type": "float"},
+        "width": {"key": "width", "type": "float"},
+        "height": {"key": "height", "type": "float"},
+        "unit": {"key": "unit", "type": "str"},
+        "lines": {"key": "lines", "type": "[TextLine]"},
+        "selection_marks": {"key": "selectionMarks", "type": "[SelectionMark]"},
     }
 
     def __init__(
@@ -1409,24 +1350,19 @@ class SelectionMark(msrest.serialization.Model):
     """
 
     _validation = {
-        'bounding_box': {'required': True, 'max_items': 8, 'min_items': 8},
-        'confidence': {'required': True, 'maximum': 1, 'minimum': 0},
-        'state': {'required': True},
+        "bounding_box": {"required": True, "max_items": 8, "min_items": 8},
+        "confidence": {"required": True, "maximum": 1, "minimum": 0},
+        "state": {"required": True},
     }
 
     _attribute_map = {
-        'bounding_box': {'key': 'boundingBox', 'type': '[float]'},
-        'confidence': {'key': 'confidence', 'type': 'float'},
-        'state': {'key': 'state', 'type': 'str'},
+        "bounding_box": {"key": "boundingBox", "type": "[float]"},
+        "confidence": {"key": "confidence", "type": "float"},
+        "state": {"key": "state", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        bounding_box: List[float],
-        confidence: float,
-        state: Union[str, "_models.SelectionMarkState"],
-        **kwargs
+        self, *, bounding_box: List[float], confidence: float, state: Union[str, "_models.SelectionMarkState"], **kwargs
     ):
         """
         :keyword bounding_box: Required. Bounding box of the selection mark.
@@ -1451,19 +1387,14 @@ class SourcePath(msrest.serialization.Model):
     """
 
     _validation = {
-        'source': {'max_length': 2048, 'min_length': 0},
+        "source": {"max_length": 2048, "min_length": 0},
     }
 
     _attribute_map = {
-        'source': {'key': 'source', 'type': 'str'},
+        "source": {"key": "source", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        source: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, source: Optional[str] = None, **kwargs):
         """
         :keyword source: File source path.
         :paramtype source: str
@@ -1485,22 +1416,16 @@ class Style(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'confidence': {'required': True},
+        "name": {"required": True},
+        "confidence": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'confidence': {'key': 'confidence', 'type': 'float'},
+        "name": {"key": "name", "type": "str"},
+        "confidence": {"key": "confidence", "type": "float"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Union[str, "_models.TextStyle"],
-        confidence: float,
-        **kwargs
-    ):
+    def __init__(self, *, name: Union[str, "_models.TextStyle"], confidence: float, **kwargs):
         """
         :keyword name: Required. The text line style name, including handwriting and other. Known
          values are: "other", "handwriting".
@@ -1529,16 +1454,16 @@ class TextLine(msrest.serialization.Model):
     """
 
     _validation = {
-        'text': {'required': True},
-        'bounding_box': {'required': True, 'max_items': 8, 'min_items': 8},
-        'words': {'required': True},
+        "text": {"required": True},
+        "bounding_box": {"required": True, "max_items": 8, "min_items": 8},
+        "words": {"required": True},
     }
 
     _attribute_map = {
-        'text': {'key': 'text', 'type': 'str'},
-        'bounding_box': {'key': 'boundingBox', 'type': '[float]'},
-        'words': {'key': 'words', 'type': '[TextWord]'},
-        'appearance': {'key': 'appearance', 'type': 'Appearance'},
+        "text": {"key": "text", "type": "str"},
+        "bounding_box": {"key": "boundingBox", "type": "[float]"},
+        "words": {"key": "words", "type": "[TextWord]"},
+        "appearance": {"key": "appearance", "type": "Appearance"},
     }
 
     def __init__(
@@ -1581,25 +1506,18 @@ class TextWord(msrest.serialization.Model):
     """
 
     _validation = {
-        'text': {'required': True},
-        'bounding_box': {'required': True, 'max_items': 8, 'min_items': 8},
-        'confidence': {'maximum': 1, 'minimum': 0},
+        "text": {"required": True},
+        "bounding_box": {"required": True, "max_items": 8, "min_items": 8},
+        "confidence": {"maximum": 1, "minimum": 0},
     }
 
     _attribute_map = {
-        'text': {'key': 'text', 'type': 'str'},
-        'bounding_box': {'key': 'boundingBox', 'type': '[float]'},
-        'confidence': {'key': 'confidence', 'type': 'float'},
+        "text": {"key": "text", "type": "str"},
+        "bounding_box": {"key": "boundingBox", "type": "[float]"},
+        "confidence": {"key": "confidence", "type": "float"},
     }
 
-    def __init__(
-        self,
-        *,
-        text: str,
-        bounding_box: List[float],
-        confidence: Optional[float] = None,
-        **kwargs
-    ):
+    def __init__(self, *, text: str, bounding_box: List[float], confidence: Optional[float] = None, **kwargs):
         """
         :keyword text: Required. The text content of the word.
         :paramtype text: str
@@ -1631,17 +1549,17 @@ class TrainingDocumentInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        'document_name': {'required': True},
-        'pages': {'required': True},
-        'errors': {'required': True},
-        'status': {'required': True},
+        "document_name": {"required": True},
+        "pages": {"required": True},
+        "errors": {"required": True},
+        "status": {"required": True},
     }
 
     _attribute_map = {
-        'document_name': {'key': 'documentName', 'type': 'str'},
-        'pages': {'key': 'pages', 'type': 'int'},
-        'errors': {'key': 'errors', 'type': '[ErrorInformation]'},
-        'status': {'key': 'status', 'type': 'str'},
+        "document_name": {"key": "documentName", "type": "str"},
+        "pages": {"key": "pages", "type": "int"},
+        "errors": {"key": "errors", "type": "[ErrorInformation]"},
+        "status": {"key": "status", "type": "str"},
     }
 
     def __init__(
@@ -1687,14 +1605,14 @@ class TrainRequest(msrest.serialization.Model):
     """
 
     _validation = {
-        'source': {'required': True, 'max_length': 2048, 'min_length': 0},
+        "source": {"required": True, "max_length": 2048, "min_length": 0},
     }
 
     _attribute_map = {
-        'source': {'key': 'source', 'type': 'str'},
-        'source_filter': {'key': 'sourceFilter', 'type': 'TrainSourceFilter'},
-        'use_label_file': {'key': 'useLabelFile', 'type': 'bool'},
-        'model_name': {'key': 'modelName', 'type': 'str'},
+        "source": {"key": "source", "type": "str"},
+        "source_filter": {"key": "sourceFilter", "type": "TrainSourceFilter"},
+        "use_label_file": {"key": "useLabelFile", "type": "bool"},
+        "model_name": {"key": "modelName", "type": "str"},
     }
 
     def __init__(
@@ -1743,15 +1661,15 @@ class TrainResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'training_documents': {'required': True},
+        "training_documents": {"required": True},
     }
 
     _attribute_map = {
-        'training_documents': {'key': 'trainingDocuments', 'type': '[TrainingDocumentInfo]'},
-        'fields': {'key': 'fields', 'type': '[FormFieldsReport]'},
-        'average_model_accuracy': {'key': 'averageModelAccuracy', 'type': 'float'},
-        'model_id': {'key': 'modelId', 'type': 'str'},
-        'errors': {'key': 'errors', 'type': '[ErrorInformation]'},
+        "training_documents": {"key": "trainingDocuments", "type": "[TrainingDocumentInfo]"},
+        "fields": {"key": "fields", "type": "[FormFieldsReport]"},
+        "average_model_accuracy": {"key": "averageModelAccuracy", "type": "float"},
+        "model_id": {"key": "modelId", "type": "str"},
+        "errors": {"key": "errors", "type": "[ErrorInformation]"},
     }
 
     def __init__(
@@ -1799,21 +1717,15 @@ class TrainSourceFilter(msrest.serialization.Model):
     """
 
     _validation = {
-        'prefix': {'max_length': 1024, 'min_length': 0},
+        "prefix": {"max_length": 1024, "min_length": 0},
     }
 
     _attribute_map = {
-        'prefix': {'key': 'prefix', 'type': 'str'},
-        'include_sub_folders': {'key': 'includeSubFolders', 'type': 'bool'},
+        "prefix": {"key": "prefix", "type": "str"},
+        "include_sub_folders": {"key": "includeSubFolders", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        prefix: Optional[str] = None,
-        include_sub_folders: Optional[bool] = False,
-        **kwargs
-    ):
+    def __init__(self, *, prefix: Optional[str] = None, include_sub_folders: Optional[bool] = False, **kwargs):
         """
         :keyword prefix: A case-sensitive prefix string to filter documents in the source path for
          training. For example, when using a Azure storage blob Uri, use the prefix to restrict sub

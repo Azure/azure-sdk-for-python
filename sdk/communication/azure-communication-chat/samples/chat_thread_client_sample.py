@@ -22,7 +22,6 @@ USAGE:
     3) USER_ID - the user id, from token_response.identity
 """
 
-
 import os
 
 

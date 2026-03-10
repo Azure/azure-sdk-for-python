@@ -27,7 +27,6 @@ from azure.monitor.opentelemetry._configure import (
 )
 from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import _DISTRO_DETECTS_ATTACH
 
-
 TEST_RESOURCE = Resource({"foo": "bar"})
 
 

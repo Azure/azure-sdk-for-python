@@ -21,6 +21,7 @@ USAGE:
     4)  RESOURCE_ID - resource id of resource that will be added as the app component
     5)  LOADTESTSERVICE_ENDPOINT - Data Plane endpoint for Loadtestservice
 """
+
 from azure.developer.loadtesting import LoadTestAdministrationClient
 
 # for details refer: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/loadtesting/azure-developer-loadtesting/README.md
@@ -28,7 +29,6 @@ from azure.identity import DefaultAzureCredential
 
 import os
 from dotenv import load_dotenv
-
 
 load_dotenv()
 LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]

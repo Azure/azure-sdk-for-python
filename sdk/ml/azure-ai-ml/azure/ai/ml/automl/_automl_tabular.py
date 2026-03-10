@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 
 """Entrypoints for creating AutoML tasks."""
+
 from typing import List, Optional, Union
 
 from azure.ai.ml.entities._builders.base_node import pipeline_node_decorator

@@ -5,7 +5,7 @@
 """
 DESCRIPTION:
     This sample demonstrates how to get a chat completions response from
-    the service using a synchronous client. The sample also shows how to 
+    the service using a synchronous client. The sample also shows how to
     set default chat completions configuration in the client constructor,
     which will be applied to all `complete` calls to the service.
 
@@ -18,7 +18,7 @@ USAGE:
     python sample_chat_completions_with_defaults.py
 
     Set these two environment variables before running the sample:
-    1) AZURE_AI_CHAT_ENDPOINT - Your endpoint URL, in the form 
+    1) AZURE_AI_CHAT_ENDPOINT - Your endpoint URL, in the form
         https://<your-deployment-name>.<your-azure-region>.models.ai.azure.com
         where `your-deployment-name` is your unique AI Model deployment name, and
         `your-azure-region` is the Azure region where your model is deployed.

@@ -52,100 +52,76 @@ try:
 except KeyError:
     LOG.error(
         "Missing environment variable 'WORKFLOW_ENDPOINT' or 'AZURE_CLIENT_ID' or 'AZURE_TENANT_ID' or 'USERNAME' or "
-        "'PASSWORD' - please set if before running the example")
+        "'PASSWORD' - please set if before running the example"
+    )
     exit()
-credential = UsernamePasswordCredential(client_id=client_id, username=username, password=password,
-                                        tenant_id=tenant_id)
+credential = UsernamePasswordCredential(client_id=client_id, username=username, password=password, tenant_id=tenant_id)
 # Build a client through AAD
 client = PurviewWorkflowClient(endpoint=endpoint, credential=credential)
 
 try:
     workflow_id = str(uuid.uuid4())
     workflow = {
-      "name": "Create glossary term workflow",
-      "description": "",
-      "triggers": [
-        {
-          "type": "when_term_creation_is_requested",
-          "underGlossaryHierarchy": "/glossaries/20031e20-b4df-4a66-a61d-1b0716f3fa48"
-        }
-      ],
-      "isEnabled": True,
-      "actionDag": {
-        "actions": {
-          "Start and wait for an approval": {
-            "type": "Approval",
-            "inputs": {
-              "parameters": {
-                "approvalType": "PendingOnAll",
-                "title": "Approval Request for Create Glossary Term",
-                "assignedTo": [
-                  "eece94d9-0619-4669-bb8a-d6ecec5220bc"
-                ]
-              }
-            },
-            "runAfter": {}
-          },
-          "Condition": {
-            "type": "If",
-            "expression": {
-              "and": [
-                {
-                  "equals": [
-                    "@outputs('Start and wait for an approval')['body/outcome']",
-                    "Approved"
-                  ]
-                }
-              ]
-            },
-            "actions": {
-              "Create glossary term": {
-                "type": "CreateTerm",
-                "runAfter": {}
-              },
-              "Send email notification": {
-                "type": "EmailNotification",
-                "inputs": {
-                  "parameters": {
-                    "emailSubject": "Glossary Term Create - APPROVED",
-                    "emailMessage": "Your request for Glossary Term @{triggerBody()['request']['term']['name']} is approved.",
-                    "emailRecipients": [
-                      "@{triggerBody()['request']['requestor']}"
-                    ]
-                  }
-                },
-                "runAfter": {
-                  "Create glossary term": [
-                    "Succeeded"
-                  ]
-                }
-              }
-            },
-            "else": {
-              "actions": {
-                "Send reject email notification": {
-                  "type": "EmailNotification",
-                  "inputs": {
-                    "parameters": {
-                      "emailSubject": "Glossary Term Create - REJECTED",
-                      "emailMessage": "Your request for Glossary Term @{triggerBody()['request']['term']['name']} is rejected.",
-                      "emailRecipients": [
-                        "@{triggerBody()['request']['requestor']}"
-                      ]
-                    }
-                  },
-                  "runAfter": {}
-                }
-              }
-            },
-            "runAfter": {
-              "Start and wait for an approval": [
-                "Succeeded"
-              ]
+        "name": "Create glossary term workflow",
+        "description": "",
+        "triggers": [
+            {
+                "type": "when_term_creation_is_requested",
+                "underGlossaryHierarchy": "/glossaries/20031e20-b4df-4a66-a61d-1b0716f3fa48",
             }
-          }
-        }
-      }
+        ],
+        "isEnabled": True,
+        "actionDag": {
+            "actions": {
+                "Start and wait for an approval": {
+                    "type": "Approval",
+                    "inputs": {
+                        "parameters": {
+                            "approvalType": "PendingOnAll",
+                            "title": "Approval Request for Create Glossary Term",
+                            "assignedTo": ["eece94d9-0619-4669-bb8a-d6ecec5220bc"],
+                        }
+                    },
+                    "runAfter": {},
+                },
+                "Condition": {
+                    "type": "If",
+                    "expression": {
+                        "and": [{"equals": ["@outputs('Start and wait for an approval')['body/outcome']", "Approved"]}]
+                    },
+                    "actions": {
+                        "Create glossary term": {"type": "CreateTerm", "runAfter": {}},
+                        "Send email notification": {
+                            "type": "EmailNotification",
+                            "inputs": {
+                                "parameters": {
+                                    "emailSubject": "Glossary Term Create - APPROVED",
+                                    "emailMessage": "Your request for Glossary Term @{triggerBody()['request']['term']['name']} is approved.",
+                                    "emailRecipients": ["@{triggerBody()['request']['requestor']}"],
+                                }
+                            },
+                            "runAfter": {"Create glossary term": ["Succeeded"]},
+                        },
+                    },
+                    "else": {
+                        "actions": {
+                            "Send reject email notification": {
+                                "type": "EmailNotification",
+                                "inputs": {
+                                    "parameters": {
+                                        "emailSubject": "Glossary Term Create - REJECTED",
+                                        "emailMessage": "Your request for Glossary Term @{triggerBody()['request']['term']['name']} is rejected.",
+                                        "emailRecipients": ["@{triggerBody()['request']['requestor']}"],
+                                    }
+                                },
+                                "runAfter": {},
+                            }
+                        }
+                    },
+                    "runAfter": {"Start and wait for an approval": ["Succeeded"]},
+                },
+            }
+        },
     }
     result = client.workflow.create_or_replace(workflow_id=workflow_id, workflow_create_or_update_command=workflow)
     print(result)

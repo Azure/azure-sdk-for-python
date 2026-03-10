@@ -7,7 +7,7 @@ import os
 import time
 import random
 from sample_utilities import get_client_modifications
-from azure.appconfiguration import (  # type:ignore
+from azure.appconfiguration import (  # type: ignore
     AzureAppConfigurationClient,
     ConfigurationSetting,
 )

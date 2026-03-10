@@ -16,7 +16,6 @@ DESCRIPTION:
 
 """
 
-
 # A Quick note about the relationship between an OpenEnclave "report" and
 # an SGX "quote". The "report" has a 16 byte header attached to the front
 # of an SGX "quote". That means a "report" can be transformed into a quote

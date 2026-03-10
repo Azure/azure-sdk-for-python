@@ -20,7 +20,6 @@ import azure.mgmt.storage
 
 from devtools_testutils import AzureMgmtTestCase, FakeStorageAccount, ResourceGroupPreparer, StorageAccountPreparer
 
-
 FAKE_STORAGE = FakeStorageAccount(name="pyacr", id="")
 
 DEFAULT_LOCATION = "westcentralus"

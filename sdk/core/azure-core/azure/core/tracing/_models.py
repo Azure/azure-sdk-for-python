@@ -7,7 +7,6 @@ from typing import Dict, Mapping, Optional, Union, Sequence, TypedDict
 
 from .._enum_meta import CaseInsensitiveEnumMeta
 
-
 AttributeValue = Union[
     str,
     bool,

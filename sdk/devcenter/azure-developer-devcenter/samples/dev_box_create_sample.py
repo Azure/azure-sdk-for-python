@@ -29,7 +29,7 @@ FILE: dev_box_create_sample.py
 
 DESCRIPTION:
     This sample demonstrates how to create, connect and delete a dev box using python DevCenterClient. For this sample,
-    you must have previously configured DevCenter, Project, Network Connection, Dev Box Definition, and Pool.More details 
+    you must have previously configured DevCenter, Project, Network Connection, Dev Box Definition, and Pool.More details
     on how to configure those requirements at https://learn.microsoft.com/azure/dev-box/quickstart-configure-dev-box-service
 
 
@@ -39,6 +39,7 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) DEVCENTER_ENDPOINT - the endpoint for your devcenter
 """
+
 
 def dev_box_create_connect_delete():
     # [START dev_box_create_connect_delete]
@@ -101,6 +102,7 @@ def dev_box_create_connect_delete():
     delete_result = delete_poller.result()
     print(f"Completed deletion for the dev box with status {delete_result.status}")
     # [END dev_box_create_connect_delete]
+
 
 if __name__ == "__main__":
     dev_box_create_connect_delete()

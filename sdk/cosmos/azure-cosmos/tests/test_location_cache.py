@@ -29,22 +29,28 @@ refresh_time_interval_in_ms = 1000
 
 def create_database_account(enable_multiple_writable_locations):
     db_acc = DatabaseAccount()
-    db_acc._WritableLocations = [{"name": location1_name, "databaseAccountEndpoint": location1_endpoint},
-                                 {"name": location2_name, "databaseAccountEndpoint": location2_endpoint},
-                                 {"name": location3_name, "databaseAccountEndpoint": location3_endpoint}]
-    db_acc._ReadableLocations = [{"name": location1_name, "databaseAccountEndpoint": location1_endpoint},
-                                 {"name": location2_name, "databaseAccountEndpoint": location2_endpoint},
-                                 {"name": location4_name, "databaseAccountEndpoint": location4_endpoint}]
+    db_acc._WritableLocations = [
+        {"name": location1_name, "databaseAccountEndpoint": location1_endpoint},
+        {"name": location2_name, "databaseAccountEndpoint": location2_endpoint},
+        {"name": location3_name, "databaseAccountEndpoint": location3_endpoint},
+    ]
+    db_acc._ReadableLocations = [
+        {"name": location1_name, "databaseAccountEndpoint": location1_endpoint},
+        {"name": location2_name, "databaseAccountEndpoint": location2_endpoint},
+        {"name": location4_name, "databaseAccountEndpoint": location4_endpoint},
+    ]
     db_acc._EnableMultipleWritableLocations = enable_multiple_writable_locations
     return db_acc
 
 
-def refresh_location_cache(preferred_locations, use_multiple_write_locations, connection_policy=documents.ConnectionPolicy()):
+def refresh_location_cache(
+    preferred_locations, use_multiple_write_locations, connection_policy=documents.ConnectionPolicy()
+):
     connection_policy.PreferredLocations = preferred_locations
     connection_policy.UseMultipleWriteLocations = use_multiple_write_locations
-    lc = LocationCache(default_endpoint=default_endpoint,
-                       connection_policy=connection_policy)
+    lc = LocationCache(default_endpoint=default_endpoint, connection_policy=connection_policy)
     return lc
+
 
 @pytest.mark.cosmosEmulator
 class TestLocationCache:
@@ -54,13 +60,13 @@ class TestLocationCache:
         # mark unavailable for read
         lc.mark_endpoint_unavailable_for_read(location1_endpoint, True)
         location1_info = lc.location_unavailability_info_by_endpoint[location1_endpoint]
-        assert location1_info['operationType'] == {'Read'}
+        assert location1_info["operationType"] == {"Read"}
 
         # mark unavailable for write
         time.sleep(1)
         lc.mark_endpoint_unavailable_for_write(location1_endpoint, False)
         location1_info = lc.location_unavailability_info_by_endpoint[location1_endpoint]
-        assert location1_info['operationType'] == {'Read', 'Write'}
+        assert location1_info["operationType"] == {"Read", "Write"}
 
     def test_is_endpoint_unavailable(self):
         lc = refresh_location_cache([], False)
@@ -106,7 +112,7 @@ class TestLocationCache:
         assert len(read_regions) == len(db_acc.ReadableLocations)
         for read_region in db_acc.ReadableLocations:
             found_endpoint = False
-            endpoint = read_region['databaseAccountEndpoint']
+            endpoint = read_region["databaseAccountEndpoint"]
             for region in read_regions:
                 if endpoint == region.get_primary():
                     found_endpoint = True
@@ -117,7 +123,7 @@ class TestLocationCache:
         assert len(write_regions) == len(db_acc.WritableLocations)
         for write_region in db_acc.WritableLocations:
             found_endpoint = False
-            endpoint = write_region['databaseAccountEndpoint']
+            endpoint = write_region["databaseAccountEndpoint"]
             for region in write_regions:
                 if endpoint == region.get_primary():
                     found_endpoint = True
@@ -153,7 +159,7 @@ class TestLocationCache:
         assert read_resolved == location1_endpoint
         assert write_resolved == location1_endpoint
 
-    @pytest.mark.parametrize("test_type",["OnClient", "OnRequest", "OnBoth"])
+    @pytest.mark.parametrize("test_type", ["OnClient", "OnRequest", "OnBoth"])
     def test_get_applicable_regional_endpoints_excluded_regions(self, test_type):
         # Init test data
         if test_type == "OnClient":
@@ -206,14 +212,25 @@ class TestLocationCache:
         ]
 
         # Loop over each test cases
-        for excluded_locations_on_client, excluded_locations_on_requests, expected_read_endpoints, expected_write_endpoints in zip(excluded_locations_on_client_list, excluded_locations_on_requests_list, expected_read_endpoints_list, expected_write_endpoints_list):
+        for (
+            excluded_locations_on_client,
+            excluded_locations_on_requests,
+            expected_read_endpoints,
+            expected_write_endpoints,
+        ) in zip(
+            excluded_locations_on_client_list,
+            excluded_locations_on_requests_list,
+            expected_read_endpoints_list,
+            expected_write_endpoints_list,
+        ):
             # Init excluded_locations in ConnectionPolicy
             connection_policy = documents.ConnectionPolicy()
             connection_policy.ExcludedLocations = excluded_locations_on_client
 
             # Init location_cache
-            location_cache = refresh_location_cache([location1_name, location2_name, location3_name], True,
-                                                    connection_policy)
+            location_cache = refresh_location_cache(
+                [location1_name, location2_name, location3_name], True, connection_policy
+            )
             database_account = create_database_account(True)
             location_cache.perform_on_database_account_read(database_account)
 
@@ -224,13 +241,21 @@ class TestLocationCache:
             read_doc_request.excluded_locations = excluded_locations_on_requests
 
             # Test if read endpoints were correctly filtered on client level
-            read_regional_routing_contexts = location_cache._get_applicable_read_regional_routing_contexts(read_doc_request)
-            read_doc_endpoint = [regional_routing_contexts.get_primary() for regional_routing_contexts in read_regional_routing_contexts]
+            read_regional_routing_contexts = location_cache._get_applicable_read_regional_routing_contexts(
+                read_doc_request
+            )
+            read_doc_endpoint = [
+                regional_routing_contexts.get_primary() for regional_routing_contexts in read_regional_routing_contexts
+            ]
             assert read_doc_endpoint == expected_read_endpoints
 
             # Test if write endpoints were correctly filtered on client level
-            write_regional_routing_contexts = location_cache._get_applicable_write_regional_routing_contexts(write_doc_request)
-            write_doc_endpoint = [regional_routing_contexts.get_primary() for regional_routing_contexts in write_regional_routing_contexts]
+            write_regional_routing_contexts = location_cache._get_applicable_write_regional_routing_contexts(
+                write_doc_request
+            )
+            write_doc_endpoint = [
+                regional_routing_contexts.get_primary() for regional_routing_contexts in write_regional_routing_contexts
+            ]
             assert write_doc_endpoint == expected_write_endpoints
 
     def test_set_excluded_locations_for_requests(self):
@@ -240,8 +265,9 @@ class TestLocationCache:
         connection_policy.ExcludedLocations = excluded_locations_on_client
 
         # Init location_cache
-        location_cache = refresh_location_cache([location1_name, location2_name, location3_name], True,
-                                                connection_policy)
+        location_cache = refresh_location_cache(
+            [location1_name, location2_name, location3_name], True, connection_policy
+        )
         database_account = create_database_account(True)
         location_cache.perform_on_database_account_read(database_account)
 
@@ -257,18 +283,21 @@ class TestLocationCache:
 
         expected_read_endpoints = [location2_endpoint]
         read_regional_routing_contexts = location_cache._get_applicable_read_regional_routing_contexts(read_doc_request)
-        read_doc_endpoint = [regional_routing_contexts.get_primary() for regional_routing_contexts in read_regional_routing_contexts]
+        read_doc_endpoint = [
+            regional_routing_contexts.get_primary() for regional_routing_contexts in read_regional_routing_contexts
+        ]
         assert read_doc_endpoint == expected_read_endpoints
 
         # Test setting excluded locations with None value
-        expected_error_message = ("Excluded locations cannot be None. "
-                                  "If you want to remove all excluded locations, try passing an empty list.")
+        expected_error_message = (
+            "Excluded locations cannot be None. "
+            "If you want to remove all excluded locations, try passing an empty list."
+        )
         with pytest.raises(ValueError) as e:
             options: Mapping[str, Any] = {"excludedLocations": None}
             doc_request = RequestObject(ResourceType.Document, _OperationType.Create, None)
             doc_request.set_excluded_location_from_options(options)
-        assert str(
-            e.value) == expected_error_message
+        assert str(e.value) == expected_error_message
 
     def test_resolve_endpoint_unavailable_and_excluded_preferred_regions(self):
         # Scenario: All preferred read locations are unavailable AND in the excluded list.
@@ -501,9 +530,10 @@ class TestLocationCache:
         # After marking unavailable, the routing list should still contain
         # both endpoints - healthy ones first, unavailable ones at the end
         write_contexts_after = lc.get_write_regional_routing_contexts()
-        assert len(write_contexts_after) == 2, \
-            f"Expected 2 endpoints in routing list, got {len(write_contexts_after)}. " \
+        assert len(write_contexts_after) == 2, (
+            f"Expected 2 endpoints in routing list, got {len(write_contexts_after)}. "
             "Unavailable endpoint was incorrectly dropped!"
+        )
         # location2 (healthy) should be first
         assert write_contexts_after[0].get_primary() == location2_endpoint
         # location1 (unavailable) should be at the end as fallback
@@ -519,9 +549,10 @@ class TestLocationCache:
 
         # Should fall back to location1 (unavailable regional endpoint)
         # NOT the global endpoint
-        assert resolved_endpoint == location1_endpoint, \
-            f"Expected {location1_endpoint} but got {resolved_endpoint}. " \
+        assert resolved_endpoint == location1_endpoint, (
+            f"Expected {location1_endpoint} but got {resolved_endpoint}. "
             f"Bug: Unavailable endpoint was dropped and SDK fell back to global endpoint!"
+        )
 
     def test_unavailable_endpoints_ordering_in_routing_list(self):
         """
@@ -554,6 +585,7 @@ class TestLocationCache:
         # Unavailable ones at end, in original preferred order
         assert write_contexts[1].get_primary() == location1_endpoint
         assert write_contexts[2].get_primary() == location2_endpoint
+
 
 if __name__ == "__main__":
     unittest.main()

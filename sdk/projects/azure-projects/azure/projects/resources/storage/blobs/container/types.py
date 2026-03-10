@@ -10,7 +10,6 @@ from typing_extensions import TypedDict
 
 from ....._bicep.expressions import Parameter
 
-
 VERSION = "2022-09-01"
 
 

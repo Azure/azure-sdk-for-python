@@ -36,9 +36,7 @@ class TestQuotaOperations(AzureMgmtRecordedTestCase):
     def test_get_quota(self):
 
         quotaBucket = "maxEngineInstancesPerTestRun"
-        loadtest_quota_bucket = self.loadtestservice_client.quotas.get(
-            AZURE_LOCATION, quotaBucket
-        )
+        loadtest_quota_bucket = self.loadtestservice_client.quotas.get(AZURE_LOCATION, quotaBucket)
         assert loadtest_quota_bucket
         assert loadtest_quota_bucket.name == quotaBucket
         assert loadtest_quota_bucket.id
@@ -50,9 +48,7 @@ class TestQuotaOperations(AzureMgmtRecordedTestCase):
     def test_check_quota_availability(self):
 
         quotaBucket = "maxEngineInstancesPerTestRun"
-        loadtest_quota_bucket = self.loadtestservice_client.quotas.get(
-            AZURE_LOCATION, quotaBucket
-        )
+        loadtest_quota_bucket = self.loadtestservice_client.quotas.get(AZURE_LOCATION, quotaBucket)
         assert loadtest_quota_bucket
         assert loadtest_quota_bucket.name == quotaBucket
         assert loadtest_quota_bucket.id
@@ -60,13 +56,9 @@ class TestQuotaOperations(AzureMgmtRecordedTestCase):
         assert loadtest_quota_bucket.limit != None
         assert loadtest_quota_bucket.usage != None
 
-        check_availability_payload = QuotaBucketRequest(
-            new_quota=loadtest_quota_bucket.limit
-        )
-        loadtest_quota_check_availability = (
-            self.loadtestservice_client.quotas.check_availability(
-                AZURE_LOCATION, quotaBucket, check_availability_payload
-            )
+        check_availability_payload = QuotaBucketRequest(new_quota=loadtest_quota_bucket.limit)
+        loadtest_quota_check_availability = self.loadtestservice_client.quotas.check_availability(
+            AZURE_LOCATION, quotaBucket, check_availability_payload
         )
         assert loadtest_quota_check_availability
         assert loadtest_quota_check_availability.name == quotaBucket

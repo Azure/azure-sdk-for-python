@@ -19,7 +19,6 @@ from testcase import FormRecognizerTest
 from preparers import FormRecognizerPreparer, get_sync_client
 from conftest import skip_flaky_test
 
-
 get_da_client = functools.partial(get_sync_client, DocumentAnalysisClient)
 
 
@@ -38,8 +37,8 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         assert len(result.documents) == 2
         business_card = result.documents[0]
         assert len(business_card.fields.get("ContactNames").value) == 1
-        assert business_card.fields.get("ContactNames").value[0].value['FirstName'].value == 'JOHN'
-        assert business_card.fields.get("ContactNames").value[0].value['LastName'].value == 'SINGER'
+        assert business_card.fields.get("ContactNames").value[0].value["FirstName"].value == "JOHN"
+        assert business_card.fields.get("ContactNames").value[0].value["LastName"].value == "SINGER"
 
         assert len(business_card.fields.get("JobTitles").value) == 1
         assert business_card.fields.get("JobTitles").value[0].value == "Software Engineer"
@@ -56,8 +55,8 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
 
         business_card = result.documents[1]
         assert len(business_card.fields.get("ContactNames").value) == 1
-        assert business_card.fields.get("ContactNames").value[0].value['FirstName'].value == 'Avery'
-        assert business_card.fields.get("ContactNames").value[0].value['LastName'].value == 'Smith'
+        assert business_card.fields.get("ContactNames").value[0].value["FirstName"].value == "Avery"
+        assert business_card.fields.get("ContactNames").value[0].value["LastName"].value == "Smith"
 
         assert len(business_card.fields.get("JobTitles").value) == 1
         assert business_card.fields.get("JobTitles").value[0].value == "Senior Researcher"
@@ -118,7 +117,9 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         # assert w2_document.fields.get("Employee").value.get("Address").value.postal_code == "98631-5293"
         assert w2_document.fields.get("Employee").value.get("Address").value.city == "KATHRYNMOUTH"
         assert w2_document.fields.get("Employee").value.get("Address").value.state == "NE"
-        assert w2_document.fields.get("Employee").value.get("Address").value.street_address == "96541 MOLLY HOLLOW STREET"
+        assert (
+            w2_document.fields.get("Employee").value.get("Address").value.street_address == "96541 MOLLY HOLLOW STREET"
+        )
         assert w2_document.fields.get("Employee").value.get("Address").value.country_region == None
         assert w2_document.fields.get("Employee").value.get("Address").value.po_box == None
 
@@ -135,7 +136,9 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         # assert w2_document.fields.get("Employee").value.get("Address").value.postal_code == "98631-5293"
         assert w2_document.fields.get("Employee").value.get("Address").value.city == "KATHRYNMOUTH"
         assert w2_document.fields.get("Employee").value.get("Address").value.state == "NE"
-        assert w2_document.fields.get("Employee").value.get("Address").value.street_address == "96541 MOLLY HOLLOW STREET"
+        assert (
+            w2_document.fields.get("Employee").value.get("Address").value.street_address == "96541 MOLLY HOLLOW STREET"
+        )
         assert w2_document.fields.get("Employee").value.get("Address").value.country_region == None
         assert w2_document.fields.get("Employee").value.get("Address").value.po_box == None
 
@@ -158,8 +161,8 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         assert passport["LastName"].value == "MARTIN"
         assert passport["FirstName"].value == "SARAH"
         assert passport["DocumentNumber"].value == "ZE000509"
-        assert passport["DateOfBirth"].value == date(1985,1,1)
-        assert passport["DateOfExpiration"].value == date(2023,1,14)
+        assert passport["DateOfBirth"].value == date(1985, 1, 1)
+        assert passport["DateOfExpiration"].value == date(2023, 1, 14)
         assert passport["Sex"].value == "F"
         assert passport["CountryRegion"].value == "CAN"
 
@@ -180,8 +183,8 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         assert id_document.fields.get("LastName").value == "TALBOT"
         assert id_document.fields.get("FirstName").value == "LIAM R."
         assert id_document.fields.get("DocumentNumber").value == "WDLABCD456DG"
-        assert id_document.fields.get("DateOfBirth").value == date(1958,1,6)
-        assert id_document.fields.get("DateOfExpiration").value == date(2020,8,12)
+        assert id_document.fields.get("DateOfBirth").value == date(1958, 1, 6)
+        assert id_document.fields.get("DateOfExpiration").value == date(2020, 8, 12)
         assert id_document.fields.get("Sex").value == "M"
         assert id_document.fields.get("Address").value.house_number == None
         assert id_document.fields.get("Address").value.po_box == None
@@ -211,11 +214,7 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         with open(self.invoice_tiff, "rb") as fd:
             my_file = fd.read()
 
-        poller = client.begin_analyze_document(
-            model_id="prebuilt-invoice",
-            document=my_file,
-            cls=callback
-        )
+        poller = client.begin_analyze_document(model_id="prebuilt-invoice", document=my_file, cls=callback)
 
         result = poller.result()
         raw_analyze_result = responses[0].analyze_result
@@ -225,11 +224,13 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         assert returned_model.model_id == raw_analyze_result.model_id
         assert returned_model.api_version == raw_analyze_result.api_version
         assert returned_model.content == raw_analyze_result.content
-        
+
         self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
         self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
         self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
-        self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
+        self.assertDocumentKeyValuePairsTransformCorrect(
+            returned_model.key_value_pairs, raw_analyze_result.key_value_pairs
+        )
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
         # check page range
@@ -255,43 +256,43 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         assert result.pages
 
         # check dict values
-        assert invoice.fields.get("AmountDue").value.amount ==  610.0
-        assert invoice.fields.get("AmountDue").value.symbol ==  "$"
+        assert invoice.fields.get("AmountDue").value.amount == 610.0
+        assert invoice.fields.get("AmountDue").value.symbol == "$"
         assert invoice.fields.get("BillingAddress").value, "123 Bill St, Redmond WA ==  98052"
-        assert invoice.fields.get("BillingAddressRecipient").value ==  "Microsoft Finance"
+        assert invoice.fields.get("BillingAddressRecipient").value == "Microsoft Finance"
         assert invoice.fields.get("CustomerAddress").value, "123 Other St, Redmond WA ==  98052"
-        assert invoice.fields.get("CustomerAddressRecipient").value ==  "Microsoft Corp"
-        assert invoice.fields.get("CustomerId").value ==  "CID-12345"
-        assert invoice.fields.get("CustomerName").value ==  "MICROSOFT CORPORATION"
-        assert invoice.fields.get("DueDate").value, date(2019, 12 ==  15)
-        assert invoice.fields.get("InvoiceDate").value, date(2019, 11 ==  15)
-        assert invoice.fields.get("InvoiceId").value ==  "INV-100"
-        assert invoice.fields.get("InvoiceTotal").value.amount ==  110.0
-        assert invoice.fields.get("PreviousUnpaidBalance").value.amount ==  500.0
-        assert invoice.fields.get("PurchaseOrder").value ==  "PO-3333"
+        assert invoice.fields.get("CustomerAddressRecipient").value == "Microsoft Corp"
+        assert invoice.fields.get("CustomerId").value == "CID-12345"
+        assert invoice.fields.get("CustomerName").value == "MICROSOFT CORPORATION"
+        assert invoice.fields.get("DueDate").value, date(2019, 12 == 15)
+        assert invoice.fields.get("InvoiceDate").value, date(2019, 11 == 15)
+        assert invoice.fields.get("InvoiceId").value == "INV-100"
+        assert invoice.fields.get("InvoiceTotal").value.amount == 110.0
+        assert invoice.fields.get("PreviousUnpaidBalance").value.amount == 500.0
+        assert invoice.fields.get("PurchaseOrder").value == "PO-3333"
         assert invoice.fields.get("RemittanceAddress").value, "123 Remit St New York, NY ==  10001"
-        assert invoice.fields.get("RemittanceAddressRecipient").value ==  "Contoso Billing"
+        assert invoice.fields.get("RemittanceAddressRecipient").value == "Contoso Billing"
         assert invoice.fields.get("ServiceAddress").value, "123 Service St, Redmond WA ==  98052"
-        assert invoice.fields.get("ServiceAddressRecipient").value ==  "Microsoft Services"
-        assert invoice.fields.get("ServiceEndDate").value, date(2019, 11 ==  14)
-        assert invoice.fields.get("ServiceStartDate").value, date(2019, 10 ==  14)
+        assert invoice.fields.get("ServiceAddressRecipient").value == "Microsoft Services"
+        assert invoice.fields.get("ServiceEndDate").value, date(2019, 11 == 14)
+        assert invoice.fields.get("ServiceStartDate").value, date(2019, 10 == 14)
         assert invoice.fields.get("ShippingAddress").value, "123 Ship St, Redmond WA ==  98052"
-        assert invoice.fields.get("ShippingAddressRecipient").value ==  "Microsoft Delivery"
-        assert invoice.fields.get("SubTotal").value.amount ==  100.0
-        assert invoice.fields.get("SubTotal").value.symbol ==  "$"
-        assert invoice.fields.get("SubTotal").value.code ==  "USD"
-        assert invoice.fields.get("TotalTax").value.amount ==  10.0
-        assert invoice.fields.get("TotalTax").value.symbol ==  "$"
-        assert invoice.fields.get("TotalTax").value.code ==  "USD"
-        assert invoice.fields.get("VendorName").value ==  "CONTOSO LTD."
+        assert invoice.fields.get("ShippingAddressRecipient").value == "Microsoft Delivery"
+        assert invoice.fields.get("SubTotal").value.amount == 100.0
+        assert invoice.fields.get("SubTotal").value.symbol == "$"
+        assert invoice.fields.get("SubTotal").value.code == "USD"
+        assert invoice.fields.get("TotalTax").value.amount == 10.0
+        assert invoice.fields.get("TotalTax").value.symbol == "$"
+        assert invoice.fields.get("TotalTax").value.code == "USD"
+        assert invoice.fields.get("VendorName").value == "CONTOSO LTD."
         assert invoice.fields.get("VendorAddress").value, "123 456th St New York, NY ==  10001"
-        assert invoice.fields.get("VendorAddressRecipient").value ==  "Contoso Headquarters"
-        assert invoice.fields.get("Items").value[0].value["Amount"].value.amount ==  100.0
-        assert invoice.fields.get("Items").value[0].value["Amount"].value.symbol ==  "$"
-        assert invoice.fields.get("Items").value[0].value["Description"].value ==  "Consulting service"
-        assert invoice.fields.get("Items").value[0].value["Quantity"].value ==  1.0
-        assert invoice.fields.get("Items").value[0].value["UnitPrice"].value.amount ==  1.0
-        assert invoice.fields.get("Items").value[0].value["UnitPrice"].value.symbol ==  None
+        assert invoice.fields.get("VendorAddressRecipient").value == "Contoso Headquarters"
+        assert invoice.fields.get("Items").value[0].value["Amount"].value.amount == 100.0
+        assert invoice.fields.get("Items").value[0].value["Amount"].value.symbol == "$"
+        assert invoice.fields.get("Items").value[0].value["Description"].value == "Consulting service"
+        assert invoice.fields.get("Items").value[0].value["Quantity"].value == 1.0
+        assert invoice.fields.get("Items").value[0].value["UnitPrice"].value.amount == 1.0
+        assert invoice.fields.get("Items").value[0].value["UnitPrice"].value.symbol == None
 
     @FormRecognizerPreparer()
     def test_fail_passing_content_type(self, **kwargs):
@@ -299,11 +300,7 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         with open(self.receipt_png, "rb") as fd:
             my_file = fd.read()
         with pytest.raises(TypeError):
-            poller = client.begin_analyze_document(
-                "prebuilt-receipt",
-                my_file,
-                content_type=FormContentType.IMAGE_PNG
-            )
+            poller = client.begin_analyze_document("prebuilt-receipt", my_file, content_type=FormContentType.IMAGE_PNG)
 
     @FormRecognizerPreparer()
     def test_receipt_bad_endpoint(self, **kwargs):
@@ -327,10 +324,7 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         client = get_da_client()
         damaged_pdf = b"\x25\x50\x44\x46\x55\x55\x55"  # still has correct bytes to be recognized as PDF
         with pytest.raises(HttpResponseError):
-            poller = client.begin_analyze_document(
-                "prebuilt-receipt",
-                damaged_pdf
-            )
+            poller = client.begin_analyze_document("prebuilt-receipt", damaged_pdf)
 
     @FormRecognizerPreparer()
     @recorded_by_proxy
@@ -338,10 +332,7 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         client = get_da_client()
         damaged_pdf = BytesIO(b"\x25\x50\x44\x46\x55\x55\x55")  # still has correct bytes to be recognized as PDF
         with pytest.raises(HttpResponseError):
-            poller = client.begin_analyze_document(
-                "prebuilt-receipt",
-                damaged_pdf
-            )
+            poller = client.begin_analyze_document("prebuilt-receipt", damaged_pdf)
 
     @skip_flaky_test
     @FormRecognizerPreparer()
@@ -350,10 +341,7 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         client = get_da_client()
         with open(self.blank_pdf, "rb") as fd:
             blank = fd.read()
-        poller = client.begin_analyze_document(
-            "prebuilt-receipt",
-            blank
-        )
+        poller = client.begin_analyze_document("prebuilt-receipt", blank)
         result = poller.result()
         assert result is not None
 
@@ -365,10 +353,7 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
             my_file = fd.read()
 
         with pytest.raises(HttpResponseError):
-            poller = client.begin_analyze_document(
-                "prebuilt-receipt",
-                my_file
-            )
+            poller = client.begin_analyze_document("prebuilt-receipt", my_file)
 
     @pytest.mark.live_test_only
     @skip_flaky_test
@@ -387,11 +372,7 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         with open(self.receipt_png, "rb") as fd:
             my_file = fd.read()
 
-        poller = client.begin_analyze_document(
-            "prebuilt-receipt",
-            document=my_file,
-            cls=callback
-        )
+        poller = client.begin_analyze_document("prebuilt-receipt", document=my_file, cls=callback)
 
         result = poller.result()
         raw_analyze_result = responses[0].analyze_result
@@ -401,11 +382,13 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         assert returned_model.model_id == raw_analyze_result.model_id
         assert returned_model.api_version == raw_analyze_result.api_version
         assert returned_model.content == raw_analyze_result.content
-        
+
         self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
         self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
         self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
-        self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
+        self.assertDocumentKeyValuePairsTransformCorrect(
+            returned_model.key_value_pairs, raw_analyze_result.key_value_pairs
+        )
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
         # check page range
@@ -427,11 +410,7 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         with open(self.receipt_jpg, "rb") as fd:
             my_file = fd.read()
 
-        poller = client.begin_analyze_document(
-            "prebuilt-receipt",
-            document=my_file,
-            cls=callback
-        )
+        poller = client.begin_analyze_document("prebuilt-receipt", document=my_file, cls=callback)
 
         result = poller.result()
         raw_analyze_result = responses[0].analyze_result
@@ -441,11 +420,13 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         assert returned_model.model_id == raw_analyze_result.model_id
         assert returned_model.api_version == raw_analyze_result.api_version
         assert returned_model.content == raw_analyze_result.content
-        
+
         self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
         self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
         self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
-        self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
+        self.assertDocumentKeyValuePairsTransformCorrect(
+            returned_model.key_value_pairs, raw_analyze_result.key_value_pairs
+        )
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
         # check page range
@@ -463,14 +444,14 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         result = poller.result()
         assert len(result.documents) == 1
         receipt = result.documents[0]
-        assert receipt.fields.get("MerchantAddress").value, '123 Main Street Redmond ==  WA 98052'
-        assert receipt.fields.get("MerchantName").value ==  'Contoso'
-        assert receipt.fields.get("Subtotal").value ==  1098.99
-        assert receipt.fields.get("TotalTax").value ==  104.4
-        assert receipt.fields.get("Total").value ==  1203.39
+        assert receipt.fields.get("MerchantAddress").value, "123 Main Street Redmond ==  WA 98052"
+        assert receipt.fields.get("MerchantName").value == "Contoso"
+        assert receipt.fields.get("Subtotal").value == 1098.99
+        assert receipt.fields.get("TotalTax").value == 104.4
+        assert receipt.fields.get("Total").value == 1203.39
         assert receipt.fields.get("TransactionDate").value == date(year=2019, month=6, day=10)
         assert receipt.fields.get("TransactionTime").value == time(hour=13, minute=59, second=0)
-        assert receipt.doc_type ==  'receipt.retailMeal'
+        assert receipt.doc_type == "receipt.retailMeal"
 
         assert len(result.pages) == 1
 
@@ -491,22 +472,22 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
 
         assert len(result.documents) == 2
         receipt = result.documents[0]
-        assert receipt.fields.get("MerchantAddress").value, '123 Main Street Redmond ==  WA 98052'
-        assert receipt.fields.get("MerchantName").value ==  'Contoso'
-        assert receipt.fields.get("MerchantPhoneNumber").value ==  '+19876543210'
-        assert receipt.fields.get("Subtotal").value ==  11.7
-        assert receipt.fields.get("TotalTax").value ==  1.17
-        assert receipt.fields.get("Tip").value ==  1.63
-        assert receipt.fields.get("Total").value ==  14.5
+        assert receipt.fields.get("MerchantAddress").value, "123 Main Street Redmond ==  WA 98052"
+        assert receipt.fields.get("MerchantName").value == "Contoso"
+        assert receipt.fields.get("MerchantPhoneNumber").value == "+19876543210"
+        assert receipt.fields.get("Subtotal").value == 11.7
+        assert receipt.fields.get("TotalTax").value == 1.17
+        assert receipt.fields.get("Tip").value == 1.63
+        assert receipt.fields.get("Total").value == 14.5
         assert receipt.fields.get("TransactionDate").value == date(year=2019, month=6, day=10)
         assert receipt.fields.get("TransactionTime").value == time(hour=13, minute=59, second=0)
         assert receipt.doc_type == "receipt.retailMeal"
         receipt = result.documents[1]
-        assert receipt.fields.get("MerchantAddress").value, '123 Main Street Redmond ==  WA 98052'
-        assert receipt.fields.get("MerchantName").value ==  'Contoso'
-        assert receipt.fields.get("Subtotal").value ==  1098.99
-        assert receipt.fields.get("TotalTax").value ==  104.4
-        assert receipt.fields.get("Total").value ==  1203.39
+        assert receipt.fields.get("MerchantAddress").value, "123 Main Street Redmond ==  WA 98052"
+        assert receipt.fields.get("MerchantName").value == "Contoso"
+        assert receipt.fields.get("Subtotal").value == 1098.99
+        assert receipt.fields.get("TotalTax").value == 104.4
+        assert receipt.fields.get("Total").value == 1203.39
         assert receipt.fields.get("TransactionDate").value == date(year=2019, month=6, day=10)
         assert receipt.fields.get("TransactionTime").value == time(hour=13, minute=59, second=0)
         assert receipt.doc_type == "receipt.retailMeal"
@@ -529,11 +510,7 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         with open(self.multipage_receipt_pdf, "rb") as fd:
             my_file = fd.read()
 
-        poller = client.begin_analyze_document(
-            "prebuilt-receipt",
-            document=my_file,
-            cls=callback
-        )
+        poller = client.begin_analyze_document("prebuilt-receipt", document=my_file, cls=callback)
 
         result = poller.result()
         raw_analyze_result = responses[0].analyze_result
@@ -548,7 +525,9 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
         self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
         self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
-        self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
+        self.assertDocumentKeyValuePairsTransformCorrect(
+            returned_model.key_value_pairs, raw_analyze_result.key_value_pairs
+        )
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
         # check page range
@@ -577,7 +556,7 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()
         poller = client.begin_analyze_document("prebuilt-receipt", receipt, locale="en-IN")
-        assert 'en-IN' == poller._polling_method._initial_response.http_response.request.query['locale']
+        assert "en-IN" == poller._polling_method._initial_response.http_response.request.query["locale"]
         result = poller.result()
         assert result
 
@@ -600,6 +579,6 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
             receipt = fd.read()
 
         poller = client.begin_analyze_document("prebuilt-receipt", receipt, pages="1")
-        assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
+        assert "1" == poller._polling_method._initial_response.http_response.request.query["pages"]
         result = poller.result()
         assert result

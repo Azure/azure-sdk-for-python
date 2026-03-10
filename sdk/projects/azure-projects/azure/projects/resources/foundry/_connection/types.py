@@ -10,7 +10,6 @@ from typing_extensions import Required, TypedDict
 
 from ...._bicep.expressions import Expression, ResourceSymbol, Parameter
 
-
 VERSION = "2025-01-01-preview"
 
 

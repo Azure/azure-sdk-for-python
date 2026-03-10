@@ -46,10 +46,7 @@ from collections import defaultdict
 def format_bounding_region(bounding_regions):
     if not bounding_regions:
         return "N/A"
-    return ", ".join(
-        f"Page #{region.page_number}: {format_polygon(region.polygon)}"
-        for region in bounding_regions
-    )
+    return ", ".join(f"Page #{region.page_number}: {format_polygon(region.polygon)}" for region in bounding_regions)
 
 
 def format_polygon(polygon):
@@ -62,7 +59,7 @@ def get_styled_text(styles, content):
     # Iterate over the styles and merge the spans from each style.
     spans = [span for style in styles for span in style.spans]
     spans.sort(key=lambda span: span.offset)
-    return ','.join([content[span.offset : span.offset + span.length] for span in spans])
+    return ",".join([content[span.offset : span.offset + span.length] for span in spans])
 
 
 def analyze_fonts():
@@ -81,9 +78,7 @@ def analyze_fonts():
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
-    document_analysis_client = DocumentAnalysisClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
+    document_analysis_client = DocumentAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     # Specify which add-on capabilities to enable.
     with open(path_to_sample_documents, "rb") as f:
         poller = document_analysis_client.begin_analyze_document(
@@ -93,9 +88,9 @@ def analyze_fonts():
 
     # DocumentStyle has the following font related attributes:
     similar_font_families = defaultdict(list)  # e.g., 'Arial, sans-serif
-    font_styles = defaultdict(list)             # e.g, 'italic'
-    font_weights = defaultdict(list)            # e.g., 'bold'
-    font_colors = defaultdict(list)             # in '#rrggbb' hexadecimal format
+    font_styles = defaultdict(list)  # e.g, 'italic'
+    font_weights = defaultdict(list)  # e.g., 'bold'
+    font_colors = defaultdict(list)  # in '#rrggbb' hexadecimal format
     font_background_colors = defaultdict(list)  # in '#rrggbb' hexadecimal format
 
     if any([style.is_handwritten for style in result.styles]):

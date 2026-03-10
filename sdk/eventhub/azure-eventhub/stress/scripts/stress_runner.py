@@ -14,7 +14,6 @@ import logging
 from azure.storage.blob import BlobServiceClient
 from azure.servicebus.control_client import ServiceBusService, EventHub
 
-
 SEND_SCRIPT_PATH = "./azure_eventhub_producer_stress.py"
 RECEIVE_SYNC_SCRIPT_PATH = "./azure_eventhub_consumer_stress_sync.py"
 RECEIVE_ASYNC_SCRIPT_PATH = "./azure_eventhub_consumer_stress_async.py"

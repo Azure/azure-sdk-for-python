@@ -39,105 +39,86 @@ import config
 # the provisioned throughput (RU/s) of that account.
 # ----------------------------------------------------------------------------------------------------------
 
-HOST = config.settings['host']
-MASTER_KEY = config.settings['master_key']
-DATABASE_ID = config.settings['database_id']
-CONTAINER_ID = config.settings['container_id']
+HOST = config.settings["host"]
+MASTER_KEY = config.settings["master_key"]
+DATABASE_ID = config.settings["database_id"]
+CONTAINER_ID = config.settings["container_id"]
+
 
 # Applies throughput bucket 1 to all requests from a client application
 def create_client_with_throughput_bucket(host=HOST, master_key=MASTER_KEY):
-    cosmos_client.CosmosClient(host, master_key,
-        throughput_bucket=1)
+    cosmos_client.CosmosClient(host, master_key, throughput_bucket=1)
+
 
 # Applies throughput bucket 2 for read item requests
 def container_read_item_throughput_bucket(client):
     database = client.get_database_client(DATABASE_ID)
-    created_container = database.create_container(
-        str(uuid.uuid4()),
-        PartitionKey(path="/pk"))
-    created_document = created_container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
+    created_container = database.create_container(str(uuid.uuid4()), PartitionKey(path="/pk"))
+    created_document = created_container.create_item(body={"id": "1" + str(uuid.uuid4()), "pk": "mypk"})
 
-    created_container.read_item(
-         item=created_document['id'],
-         partition_key="mypk",
-         throughput_bucket=2)
+    created_container.read_item(item=created_document["id"], partition_key="mypk", throughput_bucket=2)
 
     database.delete_container(created_container.id)
+
 
 # Applies throughput bucket 3 for create item requests
 def container_create_item_throughput_bucket(client):
     database = client.get_database_client(DATABASE_ID)
 
-    created_container = database.create_container(
-        str(uuid.uuid4()),
-        PartitionKey(path="/pk"))
+    created_container = database.create_container(str(uuid.uuid4()), PartitionKey(path="/pk"))
 
-    created_container.create_item(
-        body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
-        throughput_bucket=3)
+    created_container.create_item(body={"id": "1" + str(uuid.uuid4()), "pk": "mypk"}, throughput_bucket=3)
 
     database.delete_container(created_container.id)
+
 
 # Applies throughput bucket 3 for create item requests and bucket 4 for delete item requests
 def container_create_and_delete_item_throughput_bucket(client):
     database = client.get_database_client(DATABASE_ID)
 
-    created_container = database.create_container(
-        str(uuid.uuid4()),
-        PartitionKey(path="/pk"))
+    created_container = database.create_container(str(uuid.uuid4()), PartitionKey(path="/pk"))
 
     created_item = created_container.create_item(
-        body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
-        throughput_bucket=3)
+        body={"id": "1" + str(uuid.uuid4()), "pk": "mypk"}, throughput_bucket=3
+    )
 
-    created_container.delete_item(
-        created_item['id'],
-        partition_key='mypk',
-        throughput_bucket=4)
+    created_container.delete_item(created_item["id"], partition_key="mypk", throughput_bucket=4)
 
     database.delete_container(created_container.id)
+
 
 # Applies throughput bucket 1 to all requests from a client application, and bucket 2 to create item requests
 def create_client_and_item_with_throughput_bucket(host=HOST, master_key=MASTER_KEY):
-    client = cosmos_client.CosmosClient(host, master_key,
-        throughput_bucket=1)
+    client = cosmos_client.CosmosClient(host, master_key, throughput_bucket=1)
     database = client.get_database_client(DATABASE_ID)
 
-    created_container = database.create_container(
-        str(uuid.uuid4()),
-        PartitionKey(path="/pk"))
+    created_container = database.create_container(str(uuid.uuid4()), PartitionKey(path="/pk"))
 
-    created_container.create_item(
-        body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
-        throughput_bucket=2)
+    created_container.create_item(body={"id": "1" + str(uuid.uuid4()), "pk": "mypk"}, throughput_bucket=2)
 
     database.delete_container(created_container.id)
+
 
 # Applies throughput bucket 3 for create item requests, bucket 4 for upsert item requests, and bucket 5 for delete item
 def container_create_upsert_and_delete_item_throughput_bucket(client):
     database = client.get_database_client(DATABASE_ID)
 
-    created_container = database.create_container(
-        str(uuid.uuid4()),
-        PartitionKey(path="/pk"))
+    created_container = database.create_container(str(uuid.uuid4()), PartitionKey(path="/pk"))
 
     created_item = created_container.create_item(
-        body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
-        throughput_bucket=3)
+        body={"id": "1" + str(uuid.uuid4()), "pk": "mypk"}, throughput_bucket=3
+    )
 
     # add items for partition key 1
     for i in range(1, 3):
-        created_container.upsert_item(
-            dict(id="item{}".format(i), pk='mypk', throughput_bucket=4))
+        created_container.upsert_item(dict(id="item{}".format(i), pk="mypk", throughput_bucket=4))
 
-    created_container.delete_item(
-        created_item['id'],
-        partition_key='mypk',
-        throughput_bucket=5)
+    created_container.delete_item(created_item["id"], partition_key="mypk", throughput_bucket=5)
     database.delete_container(created_container.id)
 
+
 def run_sample():
-    client = cosmos_client.CosmosClient(HOST, {'masterKey': MASTER_KEY} )
+    client = cosmos_client.CosmosClient(HOST, {"masterKey": MASTER_KEY})
     client.create_database_if_not_exists(id=DATABASE_ID)
     try:
         # creates client
@@ -159,10 +140,11 @@ def run_sample():
         container_create_upsert_and_delete_item_throughput_bucket(client)
 
     except exceptions.CosmosHttpResponseError as e:
-        print('\nrun_sample has caught an error. {0}'.format(e.message))
+        print("\nrun_sample has caught an error. {0}".format(e.message))
 
     finally:
         print("\nrun_sample done")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     run_sample()

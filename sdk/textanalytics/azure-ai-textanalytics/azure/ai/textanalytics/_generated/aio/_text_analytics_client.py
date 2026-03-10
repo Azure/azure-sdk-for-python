@@ -23,12 +23,14 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
+
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
         """This is a fake class to support current implemetation of MultiApiClientMixin."
         Will be removed in final version of multiapi azure-core based client
         """
         pass
+
 
 class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixin, _SDKClient):
     """The Text Analytics API is a suite of natural language processing (NLP) services built with best-in-class Microsoft machine learning algorithms.  The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction and language detection. Functionality for analysis of text specific to the healthcare domain and personal information are also available in the API. Further documentation can be found in :code:`<a href="https://learn.microsoft.com/azure/cognitive-services/text-analytics/overview">https://learn.microsoft.com/azure/cognitive-services/text-analytics/overview</a>`.
@@ -52,17 +54,19 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    DEFAULT_API_VERSION = 'v3.1'
+    DEFAULT_API_VERSION = "v3.1"
     _PROFILE_TAG = "azure.ai.textanalytics.TextAnalyticsClient"
-    LATEST_PROFILE = ProfileDefinition({
-        _PROFILE_TAG: {
-            None: DEFAULT_API_VERSION,
-            'analyze_text': '2023-04-01',
-            'analyze_text_job_status': '2023-04-01',
-            'begin_analyze_text_cancel_job': '2023-04-01',
-            'begin_analyze_text_submit_job': '2023-04-01',
-        }},
-        _PROFILE_TAG + " latest"
+    LATEST_PROFILE = ProfileDefinition(
+        {
+            _PROFILE_TAG: {
+                None: DEFAULT_API_VERSION,
+                "analyze_text": "2023-04-01",
+                "analyze_text_job_status": "2023-04-01",
+                "begin_analyze_text_cancel_job": "2023-04-01",
+                "begin_analyze_text_submit_job": "2023-04-01",
+            }
+        },
+        _PROFILE_TAG + " latest",
     )
 
     def __init__(
@@ -73,20 +77,17 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
         profile: KnownProfiles = KnownProfiles.default,
         **kwargs  # type: Any
     ) -> None:
-        if api_version == '2022-05-01' or api_version == '2023-04-01':
-            base_url = '{Endpoint}/language'
-        elif api_version == 'v3.0':
-            base_url = '{Endpoint}/text/analytics/v3.0'
-        elif api_version == 'v3.1':
-            base_url = '{Endpoint}/text/analytics/v3.1'
+        if api_version == "2022-05-01" or api_version == "2023-04-01":
+            base_url = "{Endpoint}/language"
+        elif api_version == "v3.0":
+            base_url = "{Endpoint}/text/analytics/v3.0"
+        elif api_version == "v3.1":
+            base_url = "{Endpoint}/text/analytics/v3.1"
         else:
             raise ValueError("API version {} is not available".format(api_version))
         self._config = TextAnalyticsClientConfiguration(credential, endpoint, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
-        super(TextAnalyticsClient, self).__init__(
-            api_version=api_version,
-            profile=profile
-        )
+        super(TextAnalyticsClient, self).__init__(api_version=api_version, profile=profile)
 
     @classmethod
     def _models_dict(cls, api_version):
@@ -96,29 +97,35 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
     def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
-           * 2022-05-01: :mod:`v2022_05_01.models<azure.ai.textanalytics.v2022_05_01.models>`
-           * 2023-04-01: :mod:`v2023_04_01.models<azure.ai.textanalytics.v2023_04_01.models>`
-           * v3.0: :mod:`v3_0.models<azure.ai.textanalytics.v3_0.models>`
-           * v3.1: :mod:`v3_1.models<azure.ai.textanalytics.v3_1.models>`
+        * 2022-05-01: :mod:`v2022_05_01.models<azure.ai.textanalytics.v2022_05_01.models>`
+        * 2023-04-01: :mod:`v2023_04_01.models<azure.ai.textanalytics.v2023_04_01.models>`
+        * v3.0: :mod:`v3_0.models<azure.ai.textanalytics.v3_0.models>`
+        * v3.1: :mod:`v3_1.models<azure.ai.textanalytics.v3_1.models>`
         """
-        if api_version == '2022-05-01':
+        if api_version == "2022-05-01":
             from ..v2022_05_01 import models
+
             return models
-        elif api_version == '2023-04-01':
+        elif api_version == "2023-04-01":
             from ..v2023_04_01 import models
+
             return models
-        elif api_version == 'v3.0':
+        elif api_version == "v3.0":
             from ..v3_0 import models
+
             return models
-        elif api_version == 'v3.1':
+        elif api_version == "v3.1":
             from ..v3_1 import models
+
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
     async def close(self):
         await self._client.close()
+
     async def __aenter__(self):
         await self._client.__aenter__()
         return self
+
     async def __aexit__(self, *exc_details):
         await self._client.__aexit__(*exc_details)

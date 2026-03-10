@@ -16,7 +16,7 @@ class TestPurviewAccountSmokeAsync(PurviewAccountTestAsync):
     async def test_basic_smoke_test(self, purviewaccount_endpoint):
         client = self.create_async_client(endpoint=purviewaccount_endpoint)
         response = await client.accounts.get_access_keys()
-        assert set(response.keys()) == set(['atlasKafkaPrimaryEndpoint', 'atlasKafkaSecondaryEndpoint'])
+        assert set(response.keys()) == set(["atlasKafkaPrimaryEndpoint", "atlasKafkaSecondaryEndpoint"])
 
     @PurviewAccountPowerShellPreparer()
     @recorded_by_proxy_async
@@ -25,7 +25,9 @@ class TestPurviewAccountSmokeAsync(PurviewAccountTestAsync):
         response = client.collections.list_collections()
         result = [item async for item in response]
         for item in result:
-            assert set(item.keys()) == set(['name', 'friendlyName', 'description', 'systemData', 'collectionProvisioningState'])
+            assert set(item.keys()) == set(
+                ["name", "friendlyName", "description", "systemData", "collectionProvisioningState"]
+            )
 
 
 class TestPurviewMetaDataPolicySmokeAsync(PurviewMetaPolicyTestAsync):

@@ -34,10 +34,7 @@ try:
     # Publish telemetry message
     digita_twin_id = "<DIGITAL TWIN ID>"
     telemetry_payload = {"Telemetry1": 5}
-    service_client.publish_telemetry(
-        digita_twin_id,
-        telemetry_payload
-    )
+    service_client.publish_telemetry(digita_twin_id, telemetry_payload)
 
 except HttpResponseError as e:
     print("\nThis sample has caught an error. {0}".format(e.message))

@@ -67,7 +67,7 @@ class AvroEncoder(object):
         client: "SchemaRegistryClient",
         group_name: Optional[str] = None,
         auto_register: bool = False,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self._schema_registry_client = client
         self._avro_encoder = AvroObjectEncoder(codec=kwargs.get("codec"))
@@ -131,8 +131,7 @@ class AvroEncoder(object):
         message_type: Type[MessageType],
         request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
-    ) -> MessageType:
-        ...
+    ) -> MessageType: ...
 
     @overload
     async def encode(
@@ -143,8 +142,7 @@ class AvroEncoder(object):
         message_type: None = None,
         request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
-    ) -> MessageContent:
-        ...
+    ) -> MessageContent: ...
 
     async def encode(
         self,
@@ -155,7 +153,6 @@ class AvroEncoder(object):
         request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
     ) -> Union[MessageType, MessageContent]:
-
         """Encode content with the given schema. Create content type value, which consists of the Avro Mime Type string
          and the schema ID corresponding to given schema. If provided with a MessageType subtype, encoded content
          and content type will be passed to create message object. If not provided, the following dict will be returned:
@@ -193,16 +190,12 @@ class AvroEncoder(object):
             self._get_schema_id.cache_info().misses  # pylint: disable=no-value-for-parameter disable=no-member
         )
         request_options = request_options or {}
-        schema_id = await self._get_schema_id(
-            schema_fullname, raw_input_schema, **request_options
-        )
+        schema_id = await self._get_schema_id(schema_fullname, raw_input_schema, **request_options)
         new_cache_misses = (
             self._get_schema_id.cache_info().misses  # pylint: disable=no-value-for-parameter disable=no-member
         )
         if new_cache_misses > cache_misses:
-            cache_info = (
-                self._get_schema_id.cache_info()  # pylint: disable=no-value-for-parameter disable=no-member
-            )
+            cache_info = self._get_schema_id.cache_info()  # pylint: disable=no-value-for-parameter disable=no-member
             _LOGGER.info(
                 "New entry has been added to schema ID cache. Cache info: %s",
                 str(cache_info),
@@ -247,18 +240,14 @@ class AvroEncoder(object):
         """
         schema_id, content = validate_message(message)
 
-        cache_misses = (
-            self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter disable=no-member
-        )
+        cache_misses = self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter disable=no-member
         request_options = request_options or {}
         schema_definition = await self._get_schema(schema_id, **request_options)
         new_cache_misses = (
             self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter disable=no-member
         )
         if new_cache_misses > cache_misses:
-            cache_info = (
-                self._get_schema.cache_info()  # pylint: disable=no-value-for-parameter disable=no-member
-            )
+            cache_info = self._get_schema.cache_info()  # pylint: disable=no-value-for-parameter disable=no-member
             _LOGGER.info(
                 "New entry has been added to schema cache. Cache info: %s",
                 str(cache_info),

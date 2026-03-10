@@ -8,6 +8,7 @@
 """
 An example to show sending and receiving events behind a proxy.
 """
+
 import os
 from typing import Dict, Union
 from azure.eventhub import EventData, EventHubConsumerClient, EventHubProducerClient

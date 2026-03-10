@@ -6,6 +6,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 # pylint: disable=unused-import
 from typing import Union, Any, List
 

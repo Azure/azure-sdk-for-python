@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 # TODO: Check types of kwargs (issue exists for this)
-import asyncio # pylint:disable=do-not-import-asyncio
+import asyncio  # pylint:disable=do-not-import-asyncio
 import logging
 import time
 import queue
@@ -733,7 +733,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         :rtype: bool
         """
         try:
-            if self._link.current_link_credit<= 0:
+            if self._link.current_link_credit <= 0:
                 await self._link.flow(link_credit=self._link_credit)
             await self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:

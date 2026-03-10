@@ -19,13 +19,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""HTTP Constants in the Azure Cosmos database service.
-"""
+"""HTTP Constants in the Azure Cosmos database service."""
 
 
 class HttpMethods:
-    """Constants of http methods.
-    """
+    """Constants of http methods."""
 
     Get = "GET"
     Post = "POST"
@@ -34,9 +32,9 @@ class HttpMethods:
     Head = "HEAD"
     Options = "OPTIONS"
 
+
 class HttpHeaders:
-    """Constants of http headers.
-    """
+    """Constants of http headers."""
 
     Authorization = "authorization"
     ETag = "etag"
@@ -262,15 +260,16 @@ class HttpHeaders:
     # ClientId header for load balancing
     ClientId = "x-ms-client-id"
 
+
 class HttpHeaderPreferenceTokens:
-    """Constants of http header preference tokens.
-    """
+    """Constants of http header preference tokens."""
+
     PreferUnfilteredQueryResponse = "PreferUnfilteredQueryResponse"
 
 
 class HttpStatusDescriptions:
-    """Constants of http status descriptions.
-    """
+    """Constants of http status descriptions."""
+
     Accepted = "Accepted"
     Conflict = "Conflict"
     OK = "Ok"
@@ -298,8 +297,8 @@ class HttpStatusDescriptions:
 
 
 class QueryStrings:
-    """Constants of query strings.
-    """
+    """Constants of query strings."""
+
     Filter = "$filter"
     GenerateId = "$generateFor"
     GenerateIdBatchSize = "$batchSize"
@@ -315,45 +314,41 @@ class QueryStrings:
 
 
 class CookieHeaders:
-    """Constants of cookie headers.
-    """
+    """Constants of cookie headers."""
+
     SessionToken = "x-ms-session-token"
 
 
 class Versions:
-    """Constants of versions.
-    """
+    """Constants of versions."""
+
     CurrentVersion = "2020-07-15"
     SDKName = "azure-cosmos"
     QueryVersion = "1.0"
 
 
 class Delimiters:
-    """Constants of delimiters.
-    """
+    """Constants of delimiters."""
 
     ClientContinuationDelimiter = "!!"
     ClientContinuationFormat = "{0}!!{1}"
 
 
 class HttpListenerErrorCodes:
-    """Constants of http listener error codes.
-    """
+    """Constants of http listener error codes."""
 
     ERROR_OPERATION_ABORTED = 995
     ERROR_CONNECTION_INVALID = 1229
 
 
 class HttpContextProperties:
-    """Constants of http context properties.
-    """
+    """Constants of http context properties."""
 
     SubscriptionId = "SubscriptionId"
 
 
 class _ErrorCodes:
-    """Constants of error codes.
-    """
+    """Constants of error codes."""
 
     # Windows Socket Error Codes
     WindowsInterruptedFunctionCall = 10004
@@ -375,15 +370,17 @@ class _ErrorCodes:
     # Linux Error Codes
     LinuxConnectionReset = 131
 
+
 class SDKSupportedCapabilities:
-    """Constants of SDK supported capabilities.
-    """
-    NONE = '0'
-    PARTITION_MERGE = '1'
+    """Constants of SDK supported capabilities."""
+
+    NONE = "0"
+    PARTITION_MERGE = "1"
+
 
 class StatusCodes:
-    """HTTP status codes returned by the REST operations
-    """
+    """HTTP status codes returned by the REST operations"""
+
     # Success
     OK = 200
     CREATED = 201
@@ -416,8 +413,8 @@ class StatusCodes:
 
 
 class SubStatusCodes:
-    """Sub status codes returned by the REST operations specifying the details of the operation
-    """
+    """Sub status codes returned by the REST operations specifying the details of the operation"""
+
     UNKNOWN = 0
 
     # 400: Bad Request Substatus
@@ -456,8 +453,7 @@ class SubStatusCodes:
 
 
 class ResourceType:
-    """Types of resources in Azure Cosmos
-    """
+    """Types of resources in Azure Cosmos"""
 
     Database = "dbs"
     Collection = "colls"
@@ -489,10 +485,9 @@ class ResourceType:
             ResourceType.PartitionKey,
         )
 
+
 # The list of headers we do not want to log, it needs to be updated if any new headers should not be logged
 _cosmos_disallow_list = ["Authorization", "ProxyAuthorization", "TransferEncoding"]
 _cosmos_allow_list = set(
-    v.lower()
-    for k, v in HttpHeaders.__dict__.items()
-    if not k.startswith("_") and k not in _cosmos_disallow_list
+    v.lower() for k, v in HttpHeaders.__dict__.items() if not k.startswith("_") and k not in _cosmos_disallow_list
 )

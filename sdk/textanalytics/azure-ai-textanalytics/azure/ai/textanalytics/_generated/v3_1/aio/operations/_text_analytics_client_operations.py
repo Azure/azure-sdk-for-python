@@ -8,8 +8,19 @@
 # --------------------------------------------------------------------------
 from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
 
-from .....aio._lro_async import AsyncAnalyzeActionsLROPoller, AsyncAnalyzeActionsLROPollingMethod, AsyncAnalyzeHealthcareEntitiesLROPoller, AsyncAnalyzeHealthcareEntitiesLROPollingMethod
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from .....aio._lro_async import (
+    AsyncAnalyzeActionsLROPoller,
+    AsyncAnalyzeActionsLROPollingMethod,
+    AsyncAnalyzeHealthcareEntitiesLROPoller,
+    AsyncAnalyzeHealthcareEntitiesLROPollingMethod,
+)
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
@@ -20,28 +31,38 @@ from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._text_analytics_client_operations import build_analyze_request, build_analyze_status_request, build_cancel_health_job_request, build_entities_linking_request, build_entities_recognition_general_request, build_entities_recognition_pii_request, build_health_request, build_health_status_request, build_key_phrases_request, build_languages_request, build_sentiment_request
+from ...operations._text_analytics_client_operations import (
+    build_analyze_request,
+    build_analyze_status_request,
+    build_cancel_health_job_request,
+    build_entities_linking_request,
+    build_entities_recognition_general_request,
+    build_entities_recognition_pii_request,
+    build_health_request,
+    build_health_status_request,
+    build_key_phrases_request,
+    build_languages_request,
+    build_sentiment_request,
+)
 from .._vendor import MixinABC
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class TextAnalyticsClientOperationsMixin(MixinABC):
 
     async def _analyze_initial(
-        self,
-        body: Optional[Union[_models.AnalyzeBatchInput, IO]] = None,
-        **kwargs: Any
+        self, body: Optional[Union[_models.AnalyzeBatchInput, IO]] = None, **kwargs: Any
     ) -> Optional[_models.AnalyzeJobState]:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.AnalyzeJobState]]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.AnalyzeJobState]]
 
         content_type = content_type or "application/json"
         _json = None
@@ -50,7 +71,7 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
             _content = body
         else:
             if body is not None:
-                _json = self._serialize.body(body, 'AnalyzeBatchInput')
+                _json = self._serialize.body(body, "AnalyzeBatchInput")
             else:
                 _json = None
 
@@ -58,20 +79,18 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._analyze_initial.metadata['url'],
+            template_url=self._analyze_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -84,27 +103,23 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         deserialized = None
         response_headers = {}
         if response.status_code == 200:
-            deserialized = self._deserialize('AnalyzeJobState', pipeline_response)
+            deserialized = self._deserialize("AnalyzeJobState", pipeline_response)
 
         if response.status_code == 202:
-            response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-            
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    _analyze_initial.metadata = {'url': "/analyze"}  # type: ignore
-
+    _analyze_initial.metadata = {"url": "/analyze"}  # type: ignore
 
     @overload
     async def begin_analyze(
-        self,
-        body: Optional[_models.AnalyzeBatchInput] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: Optional[_models.AnalyzeBatchInput] = None, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncAnalyzeActionsLROPoller[_models.AnalyzeJobState]:
         """Submit analysis job.
 
@@ -133,11 +148,7 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
 
     @overload
     async def begin_analyze(
-        self,
-        body: Optional[IO] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: Optional[IO] = None, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncAnalyzeActionsLROPoller[_models.AnalyzeJobState]:
         """Submit analysis job.
 
@@ -164,12 +175,9 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace_async
     async def begin_analyze(
-        self,
-        body: Optional[Union[_models.AnalyzeBatchInput, IO]] = None,
-        **kwargs: Any
+        self, body: Optional[Union[_models.AnalyzeBatchInput, IO]] = None, **kwargs: Any
     ) -> AsyncAnalyzeActionsLROPoller[_models.AnalyzeJobState]:
         """Submit analysis job.
 
@@ -199,64 +207,50 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AnalyzeJobState]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AnalyzeJobState]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._analyze_initial(  # type: ignore
-                body=body,
-                content_type=content_type,
-                cls=lambda x,y,z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
+                body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('AnalyzeJobState', pipeline_response)
+            deserialized = self._deserialize("AnalyzeJobState", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncAnalyzeActionsLROPollingMethod(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: AsyncPollingMethod
-        elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                AsyncPollingMethod,
+                AsyncAnalyzeActionsLROPollingMethod(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            )  # type: AsyncPollingMethod
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return AsyncAnalyzeActionsLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return AsyncAnalyzeActionsLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_analyze.metadata = {'url': "/analyze"}  # type: ignore
+    begin_analyze.metadata = {"url": "/analyze"}  # type: ignore
 
     @distributed_trace_async
     async def analyze_status(
-        self,
-        job_id: str,
-        show_stats: Optional[bool] = None,
-        top: int = 20,
-        skip: int = 0,
-        **kwargs: Any
+        self, job_id: str, show_stats: Optional[bool] = None, top: int = 20, skip: int = 0, **kwargs: Any
     ) -> _models.AnalyzeJobState:
         """Get analysis status and results.
 
@@ -280,36 +274,31 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         :rtype: ~azure.ai.textanalytics.v3_1.models.AnalyzeJobState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AnalyzeJobState]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AnalyzeJobState]
 
-        
         request = build_analyze_status_request(
             job_id=job_id,
             show_stats=show_stats,
             top=top,
             skip=skip,
-            template_url=self.analyze_status.metadata['url'],
+            template_url=self.analyze_status.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -319,24 +308,18 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('AnalyzeJobState', pipeline_response)
+        deserialized = self._deserialize("AnalyzeJobState", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    analyze_status.metadata = {'url': "/analyze/jobs/{jobId}"}  # type: ignore
-
+    analyze_status.metadata = {"url": "/analyze/jobs/{jobId}"}  # type: ignore
 
     @distributed_trace_async
     async def health_status(
-        self,
-        job_id: str,
-        top: int = 20,
-        skip: int = 0,
-        show_stats: Optional[bool] = None,
-        **kwargs: Any
+        self, job_id: str, top: int = 20, skip: int = 0, show_stats: Optional[bool] = None, **kwargs: Any
     ) -> _models.HealthcareJobState:
         """Get healthcare analysis job status and results.
 
@@ -358,36 +341,31 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         :rtype: ~azure.ai.textanalytics.v3_1.models.HealthcareJobState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.HealthcareJobState]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.HealthcareJobState]
 
-        
         request = build_health_status_request(
             job_id=job_id,
             top=top,
             skip=skip,
             show_stats=show_stats,
-            template_url=self.health_status.metadata['url'],
+            template_url=self.health_status.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -397,48 +375,40 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('HealthcareJobState', pipeline_response)
+        deserialized = self._deserialize("HealthcareJobState", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    health_status.metadata = {'url': "/entities/health/jobs/{jobId}"}  # type: ignore
-
+    health_status.metadata = {"url": "/entities/health/jobs/{jobId}"}  # type: ignore
 
     async def _cancel_health_job_initial(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_id: str,
-        **kwargs: Any
+        self, job_id: str, **kwargs: Any
     ) -> None:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        
         request = build_cancel_health_job_request(
             job_id=job_id,
-            template_url=self._cancel_health_job_initial.metadata['url'],
+            template_url=self._cancel_health_job_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -449,21 +419,15 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    _cancel_health_job_initial.metadata = {'url': "/entities/health/jobs/{jobId}"}  # type: ignore
-
+    _cancel_health_job_initial.metadata = {"url": "/entities/health/jobs/{jobId}"}  # type: ignore
 
     @distributed_trace_async
-    async def begin_cancel_health_job(
-        self,
-        job_id: str,
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    async def begin_cancel_health_job(self, job_id: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Cancel healthcare prediction job.
 
         Cancel healthcare prediction job.
@@ -485,51 +449,43 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._cancel_health_job_initial(  # type: ignore
-                job_id=job_id,
-                cls=lambda x,y,z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
+                job_id=job_id, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
                 return cls(pipeline_response, None, {})
 
-
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncLROBasePolling(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: AsyncPollingMethod
-        elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            )  # type: AsyncPollingMethod
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_cancel_health_job.metadata = {'url': "/entities/health/jobs/{jobId}"}  # type: ignore
+    begin_cancel_health_job.metadata = {"url": "/entities/health/jobs/{jobId}"}  # type: ignore
 
     async def _health_initial(
         self,
@@ -539,19 +495,17 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         logging_opt_out: Optional[bool] = None,
         **kwargs: Any
     ) -> Optional[_models.HealthcareJobState]:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.HealthcareJobState]]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.HealthcareJobState]]
 
         _input = _models.MultiLanguageBatchInput(documents=documents)
-        _json = self._serialize.body(_input, 'MultiLanguageBatchInput')
+        _json = self._serialize.body(_input, "MultiLanguageBatchInput")
 
         request = build_health_request(
             model_version=model_version,
@@ -559,20 +513,18 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
             logging_opt_out=logging_opt_out,
             content_type=content_type,
             json=_json,
-            template_url=self._health_initial.metadata['url'],
+            template_url=self._health_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -585,19 +537,19 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         deserialized = None
         response_headers = {}
         if response.status_code == 200:
-            deserialized = self._deserialize('HealthcareJobState', pipeline_response)
+            deserialized = self._deserialize("HealthcareJobState", pipeline_response)
 
         if response.status_code == 202:
-            response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-            
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    _health_initial.metadata = {'url': "/entities/health/jobs"}  # type: ignore
-
+    _health_initial.metadata = {"url": "/entities/health/jobs"}  # type: ignore
 
     @distributed_trace_async
     async def begin_health(
@@ -649,14 +601,11 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.HealthcareJobState]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.HealthcareJobState]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._health_initial(  # type: ignore
                 documents=documents,
@@ -664,43 +613,46 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
                 string_index_type=string_index_type,
                 logging_opt_out=logging_opt_out,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('HealthcareJobState', pipeline_response)
+            deserialized = self._deserialize("HealthcareJobState", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: AsyncPollingMethod
-        elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                AsyncPollingMethod,
+                AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
+                    lro_delay, path_format_arguments=path_format_arguments, **kwargs
+                ),
+            )  # type: AsyncPollingMethod
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return AsyncAnalyzeHealthcareEntitiesLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
-        return AsyncAnalyzeHealthcareEntitiesLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncAnalyzeHealthcareEntitiesLROPoller(
+            self._client, raw_result, get_long_running_output, polling_method
+        )
 
-    begin_health.metadata = {'url': "/entities/health/jobs"}  # type: ignore
+    begin_health.metadata = {"url": "/entities/health/jobs"}  # type: ignore
 
     @distributed_trace_async
     async def entities_recognition_general(
@@ -746,19 +698,17 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         :rtype: ~azure.ai.textanalytics.v3_1.models.EntitiesResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.EntitiesResult]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.EntitiesResult]
 
         _input = _models.MultiLanguageBatchInput(documents=documents)
-        _json = self._serialize.body(_input, 'MultiLanguageBatchInput')
+        _json = self._serialize.body(_input, "MultiLanguageBatchInput")
 
         request = build_entities_recognition_general_request(
             model_version=model_version,
@@ -767,20 +717,18 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
             string_index_type=string_index_type,
             content_type=content_type,
             json=_json,
-            template_url=self.entities_recognition_general.metadata['url'],
+            template_url=self.entities_recognition_general.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -790,15 +738,14 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('EntitiesResult', pipeline_response)
+        deserialized = self._deserialize("EntitiesResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    entities_recognition_general.metadata = {'url': "/entities/recognition/general"}  # type: ignore
-
+    entities_recognition_general.metadata = {"url": "/entities/recognition/general"}  # type: ignore
 
     @distributed_trace_async
     async def entities_recognition_pii(
@@ -853,19 +800,17 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         :rtype: ~azure.ai.textanalytics.v3_1.models.PiiResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PiiResult]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PiiResult]
 
         _input = _models.MultiLanguageBatchInput(documents=documents)
-        _json = self._serialize.body(_input, 'MultiLanguageBatchInput')
+        _json = self._serialize.body(_input, "MultiLanguageBatchInput")
 
         request = build_entities_recognition_pii_request(
             model_version=model_version,
@@ -876,20 +821,18 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
             pii_categories=pii_categories,
             content_type=content_type,
             json=_json,
-            template_url=self.entities_recognition_pii.metadata['url'],
+            template_url=self.entities_recognition_pii.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -899,15 +842,14 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('PiiResult', pipeline_response)
+        deserialized = self._deserialize("PiiResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    entities_recognition_pii.metadata = {'url': "/entities/recognition/pii"}  # type: ignore
-
+    entities_recognition_pii.metadata = {"url": "/entities/recognition/pii"}  # type: ignore
 
     @distributed_trace_async
     async def entities_linking(
@@ -952,19 +894,17 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         :rtype: ~azure.ai.textanalytics.v3_1.models.EntityLinkingResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.EntityLinkingResult]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.EntityLinkingResult]
 
         _input = _models.MultiLanguageBatchInput(documents=documents)
-        _json = self._serialize.body(_input, 'MultiLanguageBatchInput')
+        _json = self._serialize.body(_input, "MultiLanguageBatchInput")
 
         request = build_entities_linking_request(
             model_version=model_version,
@@ -973,20 +913,18 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
             string_index_type=string_index_type,
             content_type=content_type,
             json=_json,
-            template_url=self.entities_linking.metadata['url'],
+            template_url=self.entities_linking.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -996,15 +934,14 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('EntityLinkingResult', pipeline_response)
+        deserialized = self._deserialize("EntityLinkingResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    entities_linking.metadata = {'url': "/entities/linking"}  # type: ignore
-
+    entities_linking.metadata = {"url": "/entities/linking"}  # type: ignore
 
     @distributed_trace_async
     async def key_phrases(
@@ -1043,19 +980,17 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         :rtype: ~azure.ai.textanalytics.v3_1.models.KeyPhraseResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.KeyPhraseResult]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.KeyPhraseResult]
 
         _input = _models.MultiLanguageBatchInput(documents=documents)
-        _json = self._serialize.body(_input, 'MultiLanguageBatchInput')
+        _json = self._serialize.body(_input, "MultiLanguageBatchInput")
 
         request = build_key_phrases_request(
             model_version=model_version,
@@ -1063,20 +998,18 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
             logging_opt_out=logging_opt_out,
             content_type=content_type,
             json=_json,
-            template_url=self.key_phrases.metadata['url'],
+            template_url=self.key_phrases.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1086,15 +1019,14 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('KeyPhraseResult', pipeline_response)
+        deserialized = self._deserialize("KeyPhraseResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    key_phrases.metadata = {'url': "/keyPhrases"}  # type: ignore
-
+    key_phrases.metadata = {"url": "/keyPhrases"}  # type: ignore
 
     @distributed_trace_async
     async def languages(
@@ -1134,19 +1066,17 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         :rtype: ~azure.ai.textanalytics.v3_1.models.LanguageResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.LanguageResult]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.LanguageResult]
 
         _input = _models.LanguageBatchInput(documents=documents)
-        _json = self._serialize.body(_input, 'LanguageBatchInput')
+        _json = self._serialize.body(_input, "LanguageBatchInput")
 
         request = build_languages_request(
             model_version=model_version,
@@ -1154,20 +1084,18 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
             logging_opt_out=logging_opt_out,
             content_type=content_type,
             json=_json,
-            template_url=self.languages.metadata['url'],
+            template_url=self.languages.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1177,15 +1105,14 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('LanguageResult', pipeline_response)
+        deserialized = self._deserialize("LanguageResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    languages.metadata = {'url': "/languages"}  # type: ignore
-
+    languages.metadata = {"url": "/languages"}  # type: ignore
 
     @distributed_trace_async
     async def sentiment(
@@ -1235,19 +1162,17 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         :rtype: ~azure.ai.textanalytics.v3_1.models.SentimentResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SentimentResponse]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SentimentResponse]
 
         _input = _models.MultiLanguageBatchInput(documents=documents)
-        _json = self._serialize.body(_input, 'MultiLanguageBatchInput')
+        _json = self._serialize.body(_input, "MultiLanguageBatchInput")
 
         request = build_sentiment_request(
             model_version=model_version,
@@ -1257,20 +1182,18 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
             string_index_type=string_index_type,
             content_type=content_type,
             json=_json,
-            template_url=self.sentiment.metadata['url'],
+            template_url=self.sentiment.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1280,12 +1203,11 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('SentimentResponse', pipeline_response)
+        deserialized = self._deserialize("SentimentResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    sentiment.metadata = {'url': "/sentiment"}  # type: ignore
-
+    sentiment.metadata = {"url": "/sentiment"}  # type: ignore

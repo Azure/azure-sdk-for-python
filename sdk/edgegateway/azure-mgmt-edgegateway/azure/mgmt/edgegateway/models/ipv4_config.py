@@ -27,15 +27,15 @@ class Ipv4Config(Model):
     """
 
     _validation = {
-        'ip_address': {'readonly': True},
-        'subnet': {'readonly': True},
-        'gateway': {'readonly': True},
+        "ip_address": {"readonly": True},
+        "subnet": {"readonly": True},
+        "gateway": {"readonly": True},
     }
 
     _attribute_map = {
-        'ip_address': {'key': 'ipAddress', 'type': 'str'},
-        'subnet': {'key': 'subnet', 'type': 'str'},
-        'gateway': {'key': 'gateway', 'type': 'str'},
+        "ip_address": {"key": "ipAddress", "type": "str"},
+        "subnet": {"key": "subnet", "type": "str"},
+        "gateway": {"key": "gateway", "type": "str"},
     }
 
     def __init__(self, **kwargs):

@@ -100,7 +100,9 @@ def test_send_with_long_interval_sync(live_eventhub, sleep, uamqp_transport, tim
 
 
 @pytest.mark.liveTest
-def test_send_connection_idle_timeout_and_reconnect_sync(auth_credential_receivers, uamqp_transport, timeout_factor, client_args):
+def test_send_connection_idle_timeout_and_reconnect_sync(
+    auth_credential_receivers, uamqp_transport, timeout_factor, client_args
+):
     fully_qualified_namespace, eventhub_name, credential, receivers = auth_credential_receivers
     if uamqp_transport:
         amqp_transport = UamqpTransport
@@ -162,6 +164,7 @@ def test_send_connection_idle_timeout_and_reconnect_sync(auth_credential_receive
             sender._unsent_events = [ed._message]
             with pytest.raises(error.AMQPConnectionError):
                 sender._send_event_data()
+
 
 @pytest.mark.liveTest
 def test_receive_connection_idle_timeout_and_reconnect_sync(auth_credential_senders, uamqp_transport, client_args):

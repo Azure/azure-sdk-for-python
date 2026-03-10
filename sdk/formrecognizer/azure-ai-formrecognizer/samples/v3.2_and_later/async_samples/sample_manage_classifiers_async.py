@@ -48,14 +48,10 @@ async def sample_manage_classifiers_async():
         poller = await document_model_admin_client.begin_build_document_classifier(
             doc_types={
                 "IRS-1040-A": ClassifierDocumentTypeDetails(
-                    source=BlobSource(
-                        container_url=container_sas_url, prefix="IRS-1040-A/train"
-                    )
+                    source=BlobSource(container_url=container_sas_url, prefix="IRS-1040-A/train")
                 ),
                 "IRS-1040-D": ClassifierDocumentTypeDetails(
-                    source=BlobSource(
-                        container_url=container_sas_url, prefix="IRS-1040-D/train"
-                    )
+                    source=BlobSource(container_url=container_sas_url, prefix="IRS-1040-D/train")
                 ),
             },
         )
@@ -82,18 +78,12 @@ async def sample_manage_classifiers_async():
 
         # Finally, we will delete this classifier by ID
         # [START delete_document_classifier_async]
-        await document_model_admin_client.delete_document_classifier(
-            classifier_id=my_classifier.classifier_id
-        )
+        await document_model_admin_client.delete_document_classifier(classifier_id=my_classifier.classifier_id)
 
         try:
-            await document_model_admin_client.get_document_classifier(
-                classifier_id=my_classifier.classifier_id
-            )
+            await document_model_admin_client.get_document_classifier(classifier_id=my_classifier.classifier_id)
         except ResourceNotFoundError:
-            print(
-                f"Successfully deleted classifier with ID {my_classifier.classifier_id}"
-            )
+            print(f"Successfully deleted classifier with ID {my_classifier.classifier_id}")
         # [END delete_document_classifier_async]
 
 

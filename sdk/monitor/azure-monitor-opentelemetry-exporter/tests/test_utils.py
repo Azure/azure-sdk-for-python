@@ -13,7 +13,6 @@ from azure.monitor.opentelemetry.exporter._generated.exporter.models import Tele
 from opentelemetry.sdk.resources import Resource
 from unittest.mock import patch
 
-
 TEST_AI_DEVICE_ID = "TEST_AI_DEVICE_ID"
 TEST_AI_DEVICE_LOCALE = "TEST_AI_DEVICE_LOCALE"
 TEST_SDK_VERSION_PREFIX = "TEST_AZURE_SDK_VERSION_PREFIX"

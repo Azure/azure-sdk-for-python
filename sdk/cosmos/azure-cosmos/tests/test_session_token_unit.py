@@ -80,8 +80,7 @@ class TestSessionTokenUnitTest(unittest.TestCase):
         self.assertIsNotNone(session_token1)
         self.assertIsNotNone(session_token2)
 
-        self.assertTrue(session_token1.merge(session_token2).equals(
-            VectorSessionToken.create("1#197#1=20#2=5")))
+        self.assertTrue(session_token1.merge(session_token2).equals(VectorSessionToken.create("1#197#1=20#2=5")))
 
         # same vector clock version with global lsn increase and local lsn increase
         session_token1 = VectorSessionToken.create("1#100#1=20#2=5")
@@ -89,8 +88,7 @@ class TestSessionTokenUnitTest(unittest.TestCase):
         self.assertIsNotNone(session_token1)
         self.assertIsNotNone(session_token2)
 
-        self.assertTrue(session_token1.merge(session_token2).equals(
-            VectorSessionToken.create("1#197#1=23#2=15")))
+        self.assertTrue(session_token1.merge(session_token2).equals(VectorSessionToken.create("1#197#1=23#2=15")))
 
         # different number of regions with same region should throw error
         session_token1 = VectorSessionToken.create("1#101#1=20#2=5#3=30")
@@ -101,9 +99,11 @@ class TestSessionTokenUnitTest(unittest.TestCase):
             session_token1.merge(session_token2)
             self.fail("Region progress can not be different when version is same")
         except CosmosHttpResponseError as e:
-            self.assertEqual(str(e),
-                             "Status code: 500\nCompared session tokens '1#101#1=20#2=5#3=30' "
-                             "and '1#100#1=20#2=5#3=30#4=40' have unexpected regions.")
+            self.assertEqual(
+                str(e),
+                "Status code: 500\nCompared session tokens '1#101#1=20#2=5#3=30' "
+                "and '1#100#1=20#2=5#3=30#4=40' have unexpected regions.",
+            )
 
         # same version with different region progress should throw error
         session_token1 = VectorSessionToken.create("1#101#1=20#2=5#3=30")
@@ -115,9 +115,11 @@ class TestSessionTokenUnitTest(unittest.TestCase):
             session_token1.merge(session_token2)
             self.fail("Region progress can not be different when version is same")
         except CosmosHttpResponseError as e:
-            self.assertEqual(str(e),
-                             "Status code: 500\nCompared session tokens '1#101#1=20#2=5#3=30' "
-                             "and '1#100#4=20#2=5#3=30' have unexpected regions.")
+            self.assertEqual(
+                str(e),
+                "Status code: 500\nCompared session tokens '1#101#1=20#2=5#3=30' "
+                "and '1#100#4=20#2=5#3=30' have unexpected regions.",
+            )
 
     def test_validate_session_token_comparison(self):
         self._different_merge_scenarios()
@@ -141,8 +143,7 @@ class TestSessionTokenUnitTest(unittest.TestCase):
             expected_session_token = "2#100#1=20#2=8#3=30"
         else:
             expected_session_token = "2#200#1=20#2=8#3=30"
-        self.assertTrue(session_token1.merge(session_token2).equals(
-            VectorSessionToken.create(expected_session_token)))
+        self.assertTrue(session_token1.merge(session_token2).equals(VectorSessionToken.create(expected_session_token)))
 
         # vector clock version increase with removed region progress should merge
         session_token1 = VectorSessionToken.create("1#200#1=20#2=5#3=30")
@@ -154,8 +155,7 @@ class TestSessionTokenUnitTest(unittest.TestCase):
             expected_session_token = "2#100#1=20#2=5"
         else:
             expected_session_token = "2#200#1=20#2=5"
-        self.assertTrue(session_token1.merge(session_token2).equals(
-            VectorSessionToken.create(expected_session_token)))
+        self.assertTrue(session_token1.merge(session_token2).equals(VectorSessionToken.create(expected_session_token)))
 
         # vector clock version increase with new region progress should merge
         session_token1 = VectorSessionToken.create("1#200#1=20#2=5")
@@ -166,8 +166,8 @@ class TestSessionTokenUnitTest(unittest.TestCase):
             expected_session_token = "2#100#1=20#2=5#3=30"
         else:
             expected_session_token = "2#200#1=20#2=5#3=30"
-        self.assertTrue(session_token1.merge(session_token2).equals(
-            VectorSessionToken.create(expected_session_token)))
+        self.assertTrue(session_token1.merge(session_token2).equals(VectorSessionToken.create(expected_session_token)))
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

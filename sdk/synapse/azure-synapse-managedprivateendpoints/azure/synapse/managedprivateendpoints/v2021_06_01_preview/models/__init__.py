@@ -18,8 +18,8 @@ except (SyntaxError, ImportError):
     from ._models import ManagedPrivateEndpointProperties  # type: ignore
 
 __all__ = [
-    'ManagedPrivateEndpoint',
-    'ManagedPrivateEndpointConnectionState',
-    'ManagedPrivateEndpointListResponse',
-    'ManagedPrivateEndpointProperties',
+    "ManagedPrivateEndpoint",
+    "ManagedPrivateEndpointConnectionState",
+    "ManagedPrivateEndpointListResponse",
+    "ManagedPrivateEndpointProperties",
 ]

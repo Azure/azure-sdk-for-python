@@ -15,7 +15,6 @@ from .. import CredentialUnavailableError
 from .._internal import validate_tenant_id
 from .._internal.pipeline import build_pipeline
 
-
 SYSTEM_OIDCREQUESTURI = "SYSTEM_OIDCREQUESTURI"
 OIDC_API_VERSION = "7.1"
 TROUBLESHOOTING_GUIDE = "https://aka.ms/azsdk/python/identity/azurepipelinescredential/troubleshoot"

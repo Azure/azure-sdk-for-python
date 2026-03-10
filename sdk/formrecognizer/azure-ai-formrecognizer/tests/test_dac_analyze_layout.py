@@ -14,7 +14,6 @@ from preparers import FormRecognizerPreparer, get_sync_client
 from testcase import FormRecognizerTest
 from conftest import skip_flaky_test
 
-
 get_da_client = functools.partial(get_sync_client, DocumentAnalysisClient)
 
 
@@ -29,11 +28,7 @@ class TestDACAnalyzeLayout(FormRecognizerTest):
             document = fd.read()
 
         with pytest.raises(HttpResponseError):
-            poller = client.begin_analyze_document(
-                "prebuilt-layout",
-                document,
-                features=AnalysisFeature.STYLE_FONT
-            )
+            poller = client.begin_analyze_document("prebuilt-layout", document, features=AnalysisFeature.STYLE_FONT)
 
     @skip_flaky_test
     @FormRecognizerPreparer()
@@ -52,10 +47,8 @@ class TestDACAnalyzeLayout(FormRecognizerTest):
             responses.append(extracted_layout)
 
         poller = client.begin_analyze_document(
-            "prebuilt-layout",
-            document,
-            features=[AnalysisFeature.STYLE_FONT],
-            cls=callback)
+            "prebuilt-layout", document, features=[AnalysisFeature.STYLE_FONT], cls=callback
+        )
         result = poller.result()
         raw_analyze_result = responses[0].analyze_result
         returned_model = responses[1]
@@ -64,11 +57,13 @@ class TestDACAnalyzeLayout(FormRecognizerTest):
         assert returned_model.model_id == raw_analyze_result.model_id
         assert returned_model.api_version == raw_analyze_result.api_version
         assert returned_model.content == raw_analyze_result.content
-        
+
         self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
         self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
         self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
-        self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
+        self.assertDocumentKeyValuePairsTransformCorrect(
+            returned_model.key_value_pairs, raw_analyze_result.key_value_pairs
+        )
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
         # check page range
@@ -99,11 +94,13 @@ class TestDACAnalyzeLayout(FormRecognizerTest):
         assert returned_model.model_id == raw_analyze_result.model_id
         assert returned_model.api_version == raw_analyze_result.api_version
         assert returned_model.content == raw_analyze_result.content
-        
+
         self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
         self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
         self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
-        self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
+        self.assertDocumentKeyValuePairsTransformCorrect(
+            returned_model.key_value_pairs, raw_analyze_result.key_value_pairs
+        )
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
         # check page range
@@ -134,11 +131,13 @@ class TestDACAnalyzeLayout(FormRecognizerTest):
         assert returned_model.model_id == raw_analyze_result.model_id
         assert returned_model.api_version == raw_analyze_result.api_version
         assert returned_model.content == raw_analyze_result.content
-        
+
         self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
         self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
         self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
-        self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
+        self.assertDocumentKeyValuePairsTransformCorrect(
+            returned_model.key_value_pairs, raw_analyze_result.key_value_pairs
+        )
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
         # check page range
@@ -168,7 +167,9 @@ class TestDACAnalyzeLayout(FormRecognizerTest):
     @recorded_by_proxy
     def test_layout_url_barcode(self):
         client = get_da_client()
-        poller = client.begin_analyze_document_from_url("prebuilt-layout", self.barcode_url_tif, features=[AnalysisFeature.BARCODES])
+        poller = client.begin_analyze_document_from_url(
+            "prebuilt-layout", self.barcode_url_tif, features=[AnalysisFeature.BARCODES]
+        )
         layout = poller.result()
         assert len(layout.pages) > 0
         assert len(layout.pages[0].barcodes) == 2

@@ -14,6 +14,6 @@ except (SyntaxError, ImportError):
     from ._models import TokenRequestOptions  # type: ignore
 
 __all__ = [
-    'StsTokenResponseMessage',
-    'TokenRequestOptions',
+    "StsTokenResponseMessage",
+    "TokenRequestOptions",
 ]

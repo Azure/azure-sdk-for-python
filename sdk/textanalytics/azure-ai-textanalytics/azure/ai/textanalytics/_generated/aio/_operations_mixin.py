@@ -12,7 +12,12 @@ from .._serialization import Serializer, Deserializer
 from typing import Any, IO, List, Optional, Union
 
 # FIXME: have to manually reconfigure import path for multiapi operation mixin
-from ...aio._lro_async import AsyncAnalyzeHealthcareEntitiesLROPoller, AsyncAnalyzeHealthcareEntitiesLROPollingMethod, AsyncAnalyzeActionsLROPoller, AsyncAnalyzeActionsLROPollingMethod
+from ...aio._lro_async import (
+    AsyncAnalyzeHealthcareEntitiesLROPoller,
+    AsyncAnalyzeHealthcareEntitiesLROPollingMethod,
+    AsyncAnalyzeActionsLROPoller,
+    AsyncAnalyzeActionsLROPollingMethod,
+)
 from azure.core.polling import AsyncLROPoller
 
 from .. import models as _models
@@ -21,12 +26,7 @@ from .. import models as _models
 class TextAnalyticsClientOperationsMixin(object):
 
     async def analyze_status(
-        self,
-        job_id: str,
-        show_stats: Optional[bool] = None,
-        top: int = 20,
-        skip: int = 0,
-        **kwargs: Any
+        self, job_id: str, show_stats: Optional[bool] = None, top: int = 20, skip: int = 0, **kwargs: Any
     ) -> _models.AnalyzeJobState:
         """Get analysis status and results.
 
@@ -50,8 +50,8 @@ class TextAnalyticsClientOperationsMixin(object):
         :rtype: ~azure.ai.textanalytics.v3_1.models.AnalyzeJobState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        api_version = self._get_api_version('analyze_status')
-        if api_version == 'v3.1':
+        api_version = self._get_api_version("analyze_status")
+        if api_version == "v3.1":
             from ..v3_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'analyze_status'".format(api_version))
@@ -64,10 +64,7 @@ class TextAnalyticsClientOperationsMixin(object):
         return await mixin_instance.analyze_status(job_id, show_stats, top, skip, **kwargs)
 
     async def analyze_text(
-        self,
-        body: Union[_models.AnalyzeTextTask, IO],
-        show_stats: Optional[bool] = None,
-        **kwargs: Any
+        self, body: Union[_models.AnalyzeTextTask, IO], show_stats: Optional[bool] = None, **kwargs: Any
     ) -> _models.AnalyzeTextTaskResult:
         """Request text analysis over a collection of documents.
 
@@ -88,10 +85,10 @@ class TextAnalyticsClientOperationsMixin(object):
         :rtype: ~azure.ai.textanalytics.v2022_05_01.models.AnalyzeTextTaskResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        api_version = self._get_api_version('analyze_text')
-        if api_version == '2022-05-01':
+        api_version = self._get_api_version("analyze_text")
+        if api_version == "2022-05-01":
             from ..v2022_05_01.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == '2023-04-01':
+        elif api_version == "2023-04-01":
             from ..v2023_04_01.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'analyze_text'".format(api_version))
@@ -133,10 +130,10 @@ class TextAnalyticsClientOperationsMixin(object):
         :rtype: ~azure.ai.textanalytics.v2022_05_01.models.AnalyzeTextJobState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        api_version = self._get_api_version('analyze_text_job_status')
-        if api_version == '2022-05-01':
+        api_version = self._get_api_version("analyze_text_job_status")
+        if api_version == "2022-05-01":
             from ..v2022_05_01.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == '2023-04-01':
+        elif api_version == "2023-04-01":
             from ..v2023_04_01.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'analyze_text_job_status'".format(api_version))
@@ -149,9 +146,7 @@ class TextAnalyticsClientOperationsMixin(object):
         return await mixin_instance.analyze_text_job_status(job_id, show_stats, top, skip, **kwargs)
 
     async def begin_analyze(
-        self,
-        body: Optional[Union[_models.AnalyzeBatchInput, IO]] = None,
-        **kwargs: Any
+        self, body: Optional[Union[_models.AnalyzeBatchInput, IO]] = None, **kwargs: Any
     ) -> AsyncAnalyzeActionsLROPoller[_models.AnalyzeJobState]:
         """Submit analysis job.
 
@@ -178,8 +173,8 @@ class TextAnalyticsClientOperationsMixin(object):
          ~.....aio._lro_async.AsyncAnalyzeActionsLROPoller[~azure.ai.textanalytics.v3_1.models.AnalyzeJobState]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        api_version = self._get_api_version('begin_analyze')
-        if api_version == 'v3.1':
+        api_version = self._get_api_version("begin_analyze")
+        if api_version == "v3.1":
             from ..v3_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_analyze'".format(api_version))
@@ -191,11 +186,7 @@ class TextAnalyticsClientOperationsMixin(object):
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.begin_analyze(body, **kwargs)
 
-    async def begin_analyze_text_cancel_job(
-        self,
-        job_id: str,
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    async def begin_analyze_text_cancel_job(self, job_id: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Cancel a long-running Text Analysis job.
 
         Cancel a long-running Text Analysis job.
@@ -214,13 +205,15 @@ class TextAnalyticsClientOperationsMixin(object):
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        api_version = self._get_api_version('begin_analyze_text_cancel_job')
-        if api_version == '2022-05-01':
+        api_version = self._get_api_version("begin_analyze_text_cancel_job")
+        if api_version == "2022-05-01":
             from ..v2022_05_01.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == '2023-04-01':
+        elif api_version == "2023-04-01":
             from ..v2023_04_01.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
-            raise ValueError("API version {} does not have operation 'begin_analyze_text_cancel_job'".format(api_version))
+            raise ValueError(
+                "API version {} does not have operation 'begin_analyze_text_cancel_job'".format(api_version)
+            )
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
@@ -230,9 +223,7 @@ class TextAnalyticsClientOperationsMixin(object):
         return await mixin_instance.begin_analyze_text_cancel_job(job_id, **kwargs)
 
     async def begin_analyze_text_submit_job(
-        self,
-        body: Union[_models.AnalyzeTextJobsInput, IO],
-        **kwargs: Any
+        self, body: Union[_models.AnalyzeTextJobsInput, IO], **kwargs: Any
     ) -> AsyncAnalyzeActionsLROPoller[_models.AnalyzeTextJobState]:
         """Submit text analysis job.
 
@@ -259,13 +250,15 @@ class TextAnalyticsClientOperationsMixin(object):
          ~.....aio._lro_async.AsyncAnalyzeActionsLROPoller[~azure.ai.textanalytics.v2022_05_01.models.AnalyzeTextJobState]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        api_version = self._get_api_version('begin_analyze_text_submit_job')
-        if api_version == '2022-05-01':
+        api_version = self._get_api_version("begin_analyze_text_submit_job")
+        if api_version == "2022-05-01":
             from ..v2022_05_01.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == '2023-04-01':
+        elif api_version == "2023-04-01":
             from ..v2023_04_01.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
-            raise ValueError("API version {} does not have operation 'begin_analyze_text_submit_job'".format(api_version))
+            raise ValueError(
+                "API version {} does not have operation 'begin_analyze_text_submit_job'".format(api_version)
+            )
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
@@ -274,11 +267,7 @@ class TextAnalyticsClientOperationsMixin(object):
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.begin_analyze_text_submit_job(body, **kwargs)
 
-    async def begin_cancel_health_job(
-        self,
-        job_id: str,
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    async def begin_cancel_health_job(self, job_id: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Cancel healthcare prediction job.
 
         Cancel healthcare prediction job.
@@ -297,8 +286,8 @@ class TextAnalyticsClientOperationsMixin(object):
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        api_version = self._get_api_version('begin_cancel_health_job')
-        if api_version == 'v3.1':
+        api_version = self._get_api_version("begin_cancel_health_job")
+        if api_version == "v3.1":
             from ..v3_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_cancel_health_job'".format(api_version))
@@ -356,8 +345,8 @@ class TextAnalyticsClientOperationsMixin(object):
          ~.....aio._lro_async.AsyncAnalyzeHealthcareEntitiesLROPoller[~azure.ai.textanalytics.v3_1.models.HealthcareJobState]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        api_version = self._get_api_version('begin_health')
-        if api_version == 'v3.1':
+        api_version = self._get_api_version("begin_health")
+        if api_version == "v3.1":
             from ..v3_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_health'".format(api_version))
@@ -411,10 +400,10 @@ class TextAnalyticsClientOperationsMixin(object):
         :rtype: ~azure.ai.textanalytics.v3_1.models.EntityLinkingResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        api_version = self._get_api_version('entities_linking')
-        if api_version == 'v3.0':
+        api_version = self._get_api_version("entities_linking")
+        if api_version == "v3.0":
             from ..v3_0.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.1':
+        elif api_version == "v3.1":
             from ..v3_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'entities_linking'".format(api_version))
@@ -425,10 +414,12 @@ class TextAnalyticsClientOperationsMixin(object):
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         # FIXME: this is handwritten
-        if api_version == 'v3.0':
+        if api_version == "v3.0":
             return await mixin_instance.entities_linking(documents, model_version, show_stats, **kwargs)
-        elif api_version == 'v3.1':
-            return await mixin_instance.entities_linking(documents, model_version, show_stats, logging_opt_out, string_index_type, **kwargs)
+        elif api_version == "v3.1":
+            return await mixin_instance.entities_linking(
+                documents, model_version, show_stats, logging_opt_out, string_index_type, **kwargs
+            )
 
     async def entities_recognition_general(
         self,
@@ -473,13 +464,15 @@ class TextAnalyticsClientOperationsMixin(object):
         :rtype: ~azure.ai.textanalytics.v3_1.models.EntitiesResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        api_version = self._get_api_version('entities_recognition_general')
-        if api_version == 'v3.0':
+        api_version = self._get_api_version("entities_recognition_general")
+        if api_version == "v3.0":
             from ..v3_0.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.1':
+        elif api_version == "v3.1":
             from ..v3_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
-            raise ValueError("API version {} does not have operation 'entities_recognition_general'".format(api_version))
+            raise ValueError(
+                "API version {} does not have operation 'entities_recognition_general'".format(api_version)
+            )
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
@@ -487,10 +480,12 @@ class TextAnalyticsClientOperationsMixin(object):
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         # FIXME: this is handwritten
-        if api_version == 'v3.0':
+        if api_version == "v3.0":
             return await mixin_instance.entities_recognition_general(documents, model_version, show_stats, **kwargs)
-        elif api_version == 'v3.1':
-            return await mixin_instance.entities_recognition_general(documents, model_version, show_stats, logging_opt_out, string_index_type, **kwargs)
+        elif api_version == "v3.1":
+            return await mixin_instance.entities_recognition_general(
+                documents, model_version, show_stats, logging_opt_out, string_index_type, **kwargs
+            )
 
     async def entities_recognition_pii(
         self,
@@ -544,8 +539,8 @@ class TextAnalyticsClientOperationsMixin(object):
         :rtype: ~azure.ai.textanalytics.v3_1.models.PiiResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        api_version = self._get_api_version('entities_recognition_pii')
-        if api_version == 'v3.1':
+        api_version = self._get_api_version("entities_recognition_pii")
+        if api_version == "v3.1":
             from ..v3_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'entities_recognition_pii'".format(api_version))
@@ -555,15 +550,12 @@ class TextAnalyticsClientOperationsMixin(object):
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return await mixin_instance.entities_recognition_pii(documents, model_version, show_stats, logging_opt_out, domain, string_index_type, pii_categories, **kwargs)
+        return await mixin_instance.entities_recognition_pii(
+            documents, model_version, show_stats, logging_opt_out, domain, string_index_type, pii_categories, **kwargs
+        )
 
     async def health_status(
-        self,
-        job_id: str,
-        top: int = 20,
-        skip: int = 0,
-        show_stats: Optional[bool] = None,
-        **kwargs: Any
+        self, job_id: str, top: int = 20, skip: int = 0, show_stats: Optional[bool] = None, **kwargs: Any
     ) -> _models.HealthcareJobState:
         """Get healthcare analysis job status and results.
 
@@ -585,8 +577,8 @@ class TextAnalyticsClientOperationsMixin(object):
         :rtype: ~azure.ai.textanalytics.v3_1.models.HealthcareJobState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        api_version = self._get_api_version('health_status')
-        if api_version == 'v3.1':
+        api_version = self._get_api_version("health_status")
+        if api_version == "v3.1":
             from ..v3_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'health_status'".format(api_version))
@@ -634,10 +626,10 @@ class TextAnalyticsClientOperationsMixin(object):
         :rtype: ~azure.ai.textanalytics.v3_1.models.KeyPhraseResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        api_version = self._get_api_version('key_phrases')
-        if api_version == 'v3.0':
+        api_version = self._get_api_version("key_phrases")
+        if api_version == "v3.0":
             from ..v3_0.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.1':
+        elif api_version == "v3.1":
             from ..v3_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'key_phrases'".format(api_version))
@@ -648,9 +640,9 @@ class TextAnalyticsClientOperationsMixin(object):
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         # FIXME: this is handwritten
-        if api_version == 'v3.0':
+        if api_version == "v3.0":
             return await mixin_instance.key_phrases(documents, model_version, show_stats, **kwargs)
-        elif api_version == 'v3.1':
+        elif api_version == "v3.1":
             return await mixin_instance.key_phrases(documents, model_version, show_stats, logging_opt_out, **kwargs)
 
     async def languages(
@@ -690,10 +682,10 @@ class TextAnalyticsClientOperationsMixin(object):
         :rtype: ~azure.ai.textanalytics.v3_1.models.LanguageResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        api_version = self._get_api_version('languages')
-        if api_version == 'v3.0':
+        api_version = self._get_api_version("languages")
+        if api_version == "v3.0":
             from ..v3_0.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.1':
+        elif api_version == "v3.1":
             from ..v3_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'languages'".format(api_version))
@@ -704,9 +696,9 @@ class TextAnalyticsClientOperationsMixin(object):
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         # FIXME: this is handwritten
-        if api_version == 'v3.0':
+        if api_version == "v3.0":
             return await mixin_instance.languages(documents, model_version, show_stats, **kwargs)
-        elif api_version == 'v3.1':
+        elif api_version == "v3.1":
             return await mixin_instance.languages(documents, model_version, show_stats, logging_opt_out, **kwargs)
 
     async def sentiment(
@@ -756,10 +748,10 @@ class TextAnalyticsClientOperationsMixin(object):
         :rtype: ~azure.ai.textanalytics.v3_1.models.SentimentResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        api_version = self._get_api_version('sentiment')
-        if api_version == 'v3.0':
+        api_version = self._get_api_version("sentiment")
+        if api_version == "v3.0":
             from ..v3_0.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.1':
+        elif api_version == "v3.1":
             from ..v3_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'sentiment'".format(api_version))
@@ -770,7 +762,9 @@ class TextAnalyticsClientOperationsMixin(object):
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         # FIXME: this is handwritten
-        if api_version == 'v3.0':
+        if api_version == "v3.0":
             return await mixin_instance.sentiment(documents, model_version, show_stats, **kwargs)
-        elif api_version == 'v3.1':
-            return await mixin_instance.sentiment(documents, model_version, show_stats, logging_opt_out, opinion_mining, string_index_type, **kwargs)
+        elif api_version == "v3.1":
+            return await mixin_instance.sentiment(
+                documents, model_version, show_stats, logging_opt_out, opinion_mining, string_index_type, **kwargs
+            )

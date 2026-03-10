@@ -18,10 +18,7 @@ from devtools_testutils import (
 def add_sanitizers(test_proxy):
     add_remove_header_sanitizer(headers="Ocp-Apim-Subscription-Key,Cookie")
 
-    add_general_regex_sanitizer(
-        value="fakeendpoint",
-        regex="(?<=\\/\\/)[a-z-]+(?=\\.cognitiveservices\\.azure\\.com)"
-    )
+    add_general_regex_sanitizer(value="fakeendpoint", regex="(?<=\\/\\/)[a-z-]+(?=\\.cognitiveservices\\.azure\\.com)")
     add_oauth_response_sanitizer()
 
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:

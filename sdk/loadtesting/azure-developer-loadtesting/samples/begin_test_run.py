@@ -19,6 +19,7 @@ USAGE:
     3)  AZURE_TENANT_ID - tenant id for your Azure
     4)  LOADTESTSERVICE_ENDPOINT - Data Plane endpoint for Loadtestservice
 """
+
 from azure.developer.loadtesting import LoadTestRunClient
 
 # for details refer: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/loadtestservice/azure-developer

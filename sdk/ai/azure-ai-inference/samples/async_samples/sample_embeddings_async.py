@@ -21,6 +21,7 @@ USAGE:
         `your-azure-region` is the Azure region where your model is deployed.
     2) AZURE_AI_EMBEDDINGS_KEY - Your model key. Keep it secret.
 """
+
 import asyncio
 
 

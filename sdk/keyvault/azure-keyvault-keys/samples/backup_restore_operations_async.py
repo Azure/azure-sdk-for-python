@@ -34,13 +34,14 @@ from azure.keyvault.keys.aio import KeyClient
 # 5. Restore a key (restore_key_backup)
 # ----------------------------------------------------------------------------------------------------------
 
+
 async def run_sample():
     # Instantiate a key client that will be used to call the service.
     # Here we use the DefaultAzureCredential, but any azure-identity credential can be used.
     VAULT_URL = os.environ["VAULT_URL"]
     credential = DefaultAzureCredential()
     client = KeyClient(vault_url=VAULT_URL, credential=credential)
-    
+
     # Let's create a Key of type RSA.
     # if the key already exists in the Key Vault, then a new version of the key is created.
     print("\n.. Create Key")

@@ -46,7 +46,6 @@ from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 
-
 CONNECTION_CATEGORY_TO_CREDENTIAL_MAP = {
     ConnectionCategory.AZURE_BLOB: [AccessKeyConfiguration, SasTokenConfiguration, AadCredentialConfiguration],
     ConnectionTypes.AZURE_DATA_LAKE_GEN_2: [

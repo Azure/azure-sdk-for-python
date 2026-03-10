@@ -43,7 +43,6 @@ from azure.ai.agents.models import (
 )
 from azure.identity import DefaultAzureCredential
 
-
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),

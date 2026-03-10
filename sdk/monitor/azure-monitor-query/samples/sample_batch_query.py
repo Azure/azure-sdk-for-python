@@ -26,7 +26,6 @@ from azure.identity import DefaultAzureCredential
 from azure.monitor.query import LogsQueryClient, LogsBatchQuery, LogsQueryStatus
 import pandas as pd
 
-
 credential = DefaultAzureCredential()
 client = LogsQueryClient(credential)
 

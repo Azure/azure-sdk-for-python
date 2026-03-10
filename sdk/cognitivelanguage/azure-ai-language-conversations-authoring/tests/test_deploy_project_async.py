@@ -36,12 +36,13 @@ class TestConversationsDeployProjectAsync(TestConversationsAsync):
             project_client = client.get_project_client(project_name)
 
             # Build request body for deployment
-            details = CreateDeploymentDetails(trained_model_label=trained_model_label,
-            azure_resource_ids=[
-                AssignedProjectResource(
-                    resource_id="/subscriptions/b72743ec-8bb3-453f-83ad-a53e8a50712e/resourceGroups/language-sdk-rg/providers/Microsoft.CognitiveServices/accounts/sdk-test-02",
-                    region="eastus2",
-                )
+            details = CreateDeploymentDetails(
+                trained_model_label=trained_model_label,
+                azure_resource_ids=[
+                    AssignedProjectResource(
+                        resource_id="/subscriptions/b72743ec-8bb3-453f-83ad-a53e8a50712e/resourceGroups/language-sdk-rg/providers/Microsoft.CognitiveServices/accounts/sdk-test-02",
+                        region="eastus2",
+                    )
                 ],
             )
 

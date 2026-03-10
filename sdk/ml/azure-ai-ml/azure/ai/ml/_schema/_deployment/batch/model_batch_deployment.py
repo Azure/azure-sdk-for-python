@@ -23,13 +23,11 @@ module_logger = logging.getLogger(__name__)
 class ModelBatchDeploymentSchema(DeploymentSchema):
     compute = ComputeField(required=True)
     error_threshold = fields.Int(
-        metadata={
-            "description": """Error threshold, if the error count for the entire input goes above this value,\r\n
+        metadata={"description": """Error threshold, if the error count for the entire input goes above this value,\r\n
             the batch inference will be aborted. Range is [-1, int.MaxValue].\r\n
             For FileDataset, this value is the count of file failures.\r\n
             For TabularDataset, this value is the count of record failures.\r\n
-            If set to -1 (the lower bound), all failures during batch inference will be ignored."""
-        }
+            If set to -1 (the lower bound), all failures during batch inference will be ignored."""}
     )
     resources = NestedField(JobResourceConfigurationSchema)
     type = StringTransformedEnum(

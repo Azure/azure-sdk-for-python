@@ -19,8 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Create, read, update and delete and execute scripts in the Azure Cosmos DB SQL API service.
-"""
+"""Create, read, update and delete and execute scripts in the Azure Cosmos DB SQL API service."""
 
 from typing import Any, Mapping, Union, Optional
 
@@ -35,6 +34,7 @@ from .partition_key import NonePartitionKeyValue, _return_undefined_or_empty_par
 # pylint: disable=protected-access
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 
+
 class ScriptType:
     StoredProcedure = "sprocs"
     Trigger = "triggers"
@@ -48,12 +48,7 @@ class ScriptsProxy:
     :func:`ContainerProxy.scripts` attribute.
     """
 
-    def __init__(
-        self,
-        client_connection: CosmosClientConnection,
-        container_link: str,
-        is_system_key: bool
-    ) -> None:
+    def __init__(self, client_connection: CosmosClientConnection, container_link: str, is_system_key: bool) -> None:
         self.client_connection = client_connection
         self.container_link = container_link
         self.is_system_key = is_system_key
@@ -64,11 +59,7 @@ class ScriptsProxy:
         return script_or_id["_self"]
 
     @distributed_trace
-    def list_stored_procedures(
-        self,
-        max_item_count: Optional[int] = None,
-        **kwargs: Any
-    ) -> ItemPaged[dict[str, Any]]:
+    def list_stored_procedures(self, max_item_count: Optional[int] = None, **kwargs: Any) -> ItemPaged[dict[str, Any]]:
         """List all stored procedures in the container.
 
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
@@ -111,11 +102,7 @@ class ScriptsProxy:
         )
 
     @distributed_trace
-    def get_stored_procedure(
-        self,
-        sproc: Union[str, Mapping[str, Any]],
-        **kwargs: Any
-    ) -> CosmosDict:
+    def get_stored_procedure(self, sproc: Union[str, Mapping[str, Any]], **kwargs: Any) -> CosmosDict:
         """Get the stored procedure identified by `id`.
 
         :param sproc: The ID (name) or dict representing stored procedure to retrieve.
@@ -131,11 +118,7 @@ class ScriptsProxy:
         )
 
     @distributed_trace
-    def create_stored_procedure(
-        self,
-        body: dict[str, Any],
-        **kwargs: Any
-    ) -> CosmosDict:
+    def create_stored_procedure(self, body: dict[str, Any], **kwargs: Any) -> CosmosDict:
         """Create a new stored procedure in the container.
 
         To replace an existing sproc, use the :func:`Container.scripts.replace_stored_procedure` method.
@@ -153,10 +136,7 @@ class ScriptsProxy:
 
     @distributed_trace
     def replace_stored_procedure(
-        self,
-        sproc: Union[str, Mapping[str, Any]],
-        body: dict[str, Any],
-        **kwargs: Any
+        self, sproc: Union[str, Mapping[str, Any]], body: dict[str, Any], **kwargs: Any
     ) -> CosmosDict:
         """Replace a specified stored procedure in the container.
 
@@ -179,11 +159,7 @@ class ScriptsProxy:
         )
 
     @distributed_trace
-    def delete_stored_procedure(
-        self,
-        sproc: Union[str, Mapping[str, Any]],
-        **kwargs: Any
-    ) -> None:
+    def delete_stored_procedure(self, sproc: Union[str, Mapping[str, Any]], **kwargs: Any) -> None:
         """Delete a specified stored procedure from the container.
 
         If the stored procedure does not already exist in the container, an exception is raised.
@@ -242,11 +218,7 @@ class ScriptsProxy:
         )
 
     @distributed_trace
-    def list_triggers(
-        self,
-        max_item_count: Optional[int] = None,
-        **kwargs: Any
-    ) -> ItemPaged[dict[str, Any]]:
+    def list_triggers(self, max_item_count: Optional[int] = None, **kwargs: Any) -> ItemPaged[dict[str, Any]]:
         """List all triggers in the container.
 
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
@@ -257,9 +229,7 @@ class ScriptsProxy:
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
-        return self.client_connection.ReadTriggers(
-            collection_link=self.container_link, options=feed_options, **kwargs
-        )
+        return self.client_connection.ReadTriggers(collection_link=self.container_link, options=feed_options, **kwargs)
 
     @distributed_trace
     def query_triggers(
@@ -290,11 +260,7 @@ class ScriptsProxy:
         )
 
     @distributed_trace
-    def get_trigger(
-        self,
-        trigger: Union[str, Mapping[str, Any]],
-        **kwargs: Any
-    ) -> CosmosDict:
+    def get_trigger(self, trigger: Union[str, Mapping[str, Any]], **kwargs: Any) -> CosmosDict:
         """Get a trigger identified by `id`.
 
         :param trigger: The ID (name) or dict representing trigger to retrieve.
@@ -310,11 +276,7 @@ class ScriptsProxy:
         )
 
     @distributed_trace
-    def create_trigger(
-        self,
-        body: dict[str, Any],
-        **kwargs: Any
-    ) -> CosmosDict:
+    def create_trigger(self, body: dict[str, Any], **kwargs: Any) -> CosmosDict:
         """Create a trigger in the container.
 
         To replace an existing trigger, use the :func:`ContainerProxy.scripts.replace_trigger` method.
@@ -331,10 +293,7 @@ class ScriptsProxy:
 
     @distributed_trace
     def replace_trigger(
-        self,
-        trigger: Union[str, Mapping[str, Any]],
-        body: dict[str, Any],
-        **kwargs: Any
+        self, trigger: Union[str, Mapping[str, Any]], body: dict[str, Any], **kwargs: Any
     ) -> CosmosDict:
         """Replace a specified trigger in the container.
 
@@ -358,11 +317,7 @@ class ScriptsProxy:
         )
 
     @distributed_trace
-    def delete_trigger(
-        self,
-        trigger: Union[str, Mapping[str, Any]],
-        **kwargs: Any
-    ) -> None:
+    def delete_trigger(self, trigger: Union[str, Mapping[str, Any]], **kwargs: Any) -> None:
         """Delete a specified trigger from the container.
 
         If the trigger does not already exist in the container, an exception is raised.
@@ -380,9 +335,7 @@ class ScriptsProxy:
 
     @distributed_trace
     def list_user_defined_functions(
-        self,
-        max_item_count: Optional[int] = None,
-        **kwargs: Any
+        self, max_item_count: Optional[int] = None, **kwargs: Any
     ) -> ItemPaged[dict[str, Any]]:
         """List all the user-defined functions in the container.
 
@@ -427,11 +380,7 @@ class ScriptsProxy:
         )
 
     @distributed_trace
-    def get_user_defined_function(
-        self,
-        udf: Union[str, Mapping[str, Any]],
-        **kwargs: Any
-    ) -> CosmosDict:
+    def get_user_defined_function(self, udf: Union[str, Mapping[str, Any]], **kwargs: Any) -> CosmosDict:
         """Get a user-defined functions identified by `id`.
 
         :param udf: The ID (name) or dict representing udf to retrieve.
@@ -446,11 +395,7 @@ class ScriptsProxy:
         )
 
     @distributed_trace
-    def create_user_defined_function(
-        self,
-        body: dict[str, Any],
-        **kwargs: Any
-    ) -> CosmosDict:
+    def create_user_defined_function(self, body: dict[str, Any], **kwargs: Any) -> CosmosDict:
         """Create a user-defined function in the container.
 
         To replace an existing UDF, use the :func:`ContainerProxy.scripts.replace_user_defined_function` method.
@@ -467,10 +412,7 @@ class ScriptsProxy:
 
     @distributed_trace
     def replace_user_defined_function(
-        self,
-        udf: Union[str, Mapping[str, Any]],
-        body: dict[str, Any],
-        **kwargs: Any
+        self, udf: Union[str, Mapping[str, Any]], body: dict[str, Any], **kwargs: Any
     ) -> CosmosDict:
         """Replace a specified user-defined function in the container.
 
@@ -493,11 +435,7 @@ class ScriptsProxy:
         )
 
     @distributed_trace
-    def delete_user_defined_function(
-        self,
-        udf: Union[str, Mapping[str, Any]],
-        **kwargs: Any
-    ) -> None:
+    def delete_user_defined_function(self, udf: Union[str, Mapping[str, Any]], **kwargs: Any) -> None:
         """Delete a specified user-defined function from the container.
 
         If the UDF does not already exist in the container, an exception is raised.

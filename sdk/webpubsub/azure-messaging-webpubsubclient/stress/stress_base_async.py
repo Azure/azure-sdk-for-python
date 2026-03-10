@@ -22,14 +22,14 @@ async def main(log_file_name: str = "", log_interval: int = 5, duration: int = 2
     service_client = WebPubSubServiceClient.from_connection_string(  # type: ignore
         connection_string=os.getenv("WEBPUBSUB_CONNECTION_STRING", ""), hub="hub"
     )
+
     async def client_access_url_provider():
-        return (await service_client.get_client_access_token(
-            roles=["webpubsub.joinLeaveGroup", "webpubsub.sendToGroup"]
-        ))["url"]
+        return (
+            await service_client.get_client_access_token(roles=["webpubsub.joinLeaveGroup", "webpubsub.sendToGroup"])
+        )["url"]
+
     client = WebPubSubClient(
-        credential=WebPubSubClientCredential(
-            client_access_url_provider=client_access_url_provider
-        ),
+        credential=WebPubSubClientCredential(client_access_url_provider=client_access_url_provider),
     )
     message = "0" * 1024
     start_time = time.time()

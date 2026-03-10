@@ -27,9 +27,16 @@ from urllib3.util.retry import Retry
 
 from azure.core import PipelineClient
 from azure.core.exceptions import DecodeError, ServiceRequestError, ServiceResponseError
-from azure.core.pipeline.policies import (ContentDecodePolicy, CustomHookPolicy, DistributedTracingPolicy,
-                                          HeadersPolicy, HTTPPolicy, NetworkTraceLoggingPolicy, ProxyPolicy,
-                                          UserAgentPolicy)
+from azure.core.pipeline.policies import (
+    ContentDecodePolicy,
+    CustomHookPolicy,
+    DistributedTracingPolicy,
+    HeadersPolicy,
+    HTTPPolicy,
+    NetworkTraceLoggingPolicy,
+    ProxyPolicy,
+    UserAgentPolicy,
+)
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.utils import CaseInsensitiveDict
 
@@ -40,7 +47,6 @@ from ._cosmos_responses import CosmosDict
 from ._inference_auth_policy import InferenceServiceBearerTokenPolicy
 from ._retry_utility import ConnectionRetryPolicy
 from .http_constants import HttpHeaders
-
 
 # cspell:ignore rerank reranker reranking
 # pylint: disable=protected-access,line-too-long
@@ -89,17 +95,21 @@ class _InferenceService:
         retry_policy = None
         if isinstance(connection_policy.ConnectionRetryConfiguration, HTTPPolicy):
             retry_policy = ConnectionRetryPolicy(
-                retry_total=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_total',
-                                    self.TOTAL_RETRIES),
-                retry_connect=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_connect', None),
-                retry_read=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_read', None),
-                retry_status=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_status', None),
-                retry_backoff_max=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_backoff_max',
-                                          self.RETRY_BACKOFF_MAX),
-                retry_on_status_codes=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_on_status_codes',
-                                              self.RETRY_AFTER_STATUS_CODES),
-                retry_backoff_factor=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_backoff_factor',
-                                             self.RETRY_BACKOFF_FACTOR)
+                retry_total=getattr(connection_policy.ConnectionRetryConfiguration, "retry_total", self.TOTAL_RETRIES),
+                retry_connect=getattr(connection_policy.ConnectionRetryConfiguration, "retry_connect", None),
+                retry_read=getattr(connection_policy.ConnectionRetryConfiguration, "retry_read", None),
+                retry_status=getattr(connection_policy.ConnectionRetryConfiguration, "retry_status", None),
+                retry_backoff_max=getattr(
+                    connection_policy.ConnectionRetryConfiguration, "retry_backoff_max", self.RETRY_BACKOFF_MAX
+                ),
+                retry_on_status_codes=getattr(
+                    connection_policy.ConnectionRetryConfiguration,
+                    "retry_on_status_codes",
+                    self.RETRY_AFTER_STATUS_CODES,
+                ),
+                retry_backoff_factor=getattr(
+                    connection_policy.ConnectionRetryConfiguration, "retry_backoff_factor", self.RETRY_BACKOFF_FACTOR
+                ),
             )
         elif isinstance(connection_policy.ConnectionRetryConfiguration, int):
             retry_policy = ConnectionRetryPolicy(total=connection_policy.ConnectionRetryConfiguration)
@@ -112,11 +122,12 @@ class _InferenceService:
                 retry_status=connection_policy.ConnectionRetryConfiguration.status,
                 retry_backoff_max=connection_policy.ConnectionRetryConfiguration.DEFAULT_BACKOFF_MAX,
                 retry_on_status_codes=list(connection_policy.ConnectionRetryConfiguration.status_forcelist),
-                retry_backoff_factor=connection_policy.ConnectionRetryConfiguration.backoff_factor
+                retry_backoff_factor=connection_policy.ConnectionRetryConfiguration.backoff_factor,
             )
         else:
             raise TypeError(
-                "Unsupported retry policy. Must be an azure.cosmos.ConnectionRetryPolicy, int, or urllib3.Retry")
+                "Unsupported retry policy. Must be an azure.cosmos.ConnectionRetryPolicy, int, or urllib3.Retry"
+            )
 
         proxies = {}
         if connection_policy.ProxyConfiguration and connection_policy.ProxyConfiguration.Host:
@@ -141,10 +152,7 @@ class _InferenceService:
             ),
         ]
 
-        return PipelineClient(
-            base_url=self._inference_endpoint,
-            policies=policies
-        )
+        return PipelineClient(base_url=self._inference_endpoint, policies=policies)
 
     def rerank(
         self,
@@ -181,15 +189,13 @@ class _InferenceService:
             if semantic_reranking_options:
                 body.update(semantic_reranking_options)
 
-            headers = {
-                HttpHeaders.ContentType: "application/json"
-            }
+            headers = {HttpHeaders.ContentType: "application/json"}
 
             request = HttpRequest(
                 method="POST",
                 url=self._inference_endpoint,
                 headers=headers,
-                data=json.dumps(body, separators=(",", ":"))
+                data=json.dumps(body, separators=(",", ":")),
             )
 
             pipeline_response = self._inference_pipeline_client._pipeline.run(
@@ -213,22 +219,18 @@ class _InferenceService:
                     result = json.loads(data)
                 except Exception as e:
                     raise DecodeError(
-                        message="Failed to decode JSON data: {}".format(e),
-                        response=response,
-                        error=e) from e
+                        message="Failed to decode JSON data: {}".format(e), response=response, error=e
+                    ) from e
 
             return CosmosDict(result, response_headers=response_headers)
 
         except (ServiceRequestError, ServiceResponseError) as e:
             raise exceptions.CosmosHttpResponseError(
-                status_code=408,
-                message="Inference Service Request Timeout",
-                response=None
+                status_code=408, message="Inference Service Request Timeout", response=None
             ) from e
         except Exception as e:
             if isinstance(e, (exceptions.CosmosHttpResponseError, exceptions.CosmosResourceNotFoundError)):
                 raise
             raise exceptions.CosmosHttpResponseError(
-                message=f"Semantic reranking failed: {str(e)}",
-                response=None
+                message=f"Semantic reranking failed: {str(e)}", response=None
             ) from e

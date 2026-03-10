@@ -22,6 +22,7 @@ if TYPE_CHECKING:
 
     from azure.core.credentials_async import AsyncTokenCredential
 
+
 class PurviewAccountClient:
     """Creates a Microsoft.Purview data plane account client.
 
@@ -39,13 +40,8 @@ class PurviewAccountClient:
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     """
 
-    def __init__(
-        self,
-        endpoint: str,
-        credential: "AsyncTokenCredential",
-        **kwargs: Any
-    ) -> None:
-        _endpoint = '{endpoint}'
+    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
+        _endpoint = "{endpoint}"
         self._config = PurviewAccountClientConfiguration(endpoint, credential, **kwargs)
         self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
@@ -54,14 +50,11 @@ class PurviewAccountClient:
         self._serialize.client_side_validation = False
         self.accounts = AccountsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.collections = CollectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.resource_set_rules = ResourceSetRulesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.resource_set_rules = ResourceSetRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
-
-    def send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -81,7 +74,7 @@ class PurviewAccountClient:
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

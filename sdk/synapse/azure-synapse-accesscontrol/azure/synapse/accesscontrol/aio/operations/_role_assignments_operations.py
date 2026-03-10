@@ -8,14 +8,21 @@
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar
 import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
 from ... import models as _models
 
-T = TypeVar('T')
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class RoleAssignmentsOperations:
     """RoleAssignmentsOperations async operations.
@@ -40,11 +47,7 @@ class RoleAssignmentsOperations:
         self._config = config
 
     async def check_principal_access(
-        self,
-        subject: "_models.SubjectInfo",
-        actions: List["_models.RequiredAction"],
-        scope: str,
-        **kwargs: Any
+        self, subject: "_models.SubjectInfo", actions: List["_models.RequiredAction"], scope: str, **kwargs: Any
     ) -> "_models.CheckPrincipalAccessResponse":
         """Check if the given principalId has access to perform list of actions at a given scope.
 
@@ -59,11 +62,9 @@ class RoleAssignmentsOperations:
         :rtype: ~azure.synapse.accesscontrol.models.CheckPrincipalAccessResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CheckPrincipalAccessResponse"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.CheckPrincipalAccessResponse"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
         _request = _models.CheckPrincipalAccessRequest(subject=subject, actions=actions, scope=scope)
         api_version = "2020-12-01"
@@ -71,24 +72,24 @@ class RoleAssignmentsOperations:
         accept = "application/json, text/json"
 
         # Construct URL
-        url = self.check_principal_access.metadata['url']  # type: ignore
+        url = self.check_principal_access.metadata["url"]  # type: ignore
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
+        header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_request, 'CheckPrincipalAccessRequest')
-        body_content_kwargs['content'] = body_content
+        body_content = self._serialize.body(_request, "CheckPrincipalAccessRequest")
+        body_content_kwargs["content"] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -98,13 +99,14 @@ class RoleAssignmentsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorContract, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('CheckPrincipalAccessResponse', pipeline_response)
+        deserialized = self._deserialize("CheckPrincipalAccessResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    check_principal_access.metadata = {'url': '/checkAccessSynapseRbac'}  # type: ignore
+
+    check_principal_access.metadata = {"url": "/checkAccessSynapseRbac"}  # type: ignore
 
     async def list_role_assignments(
         self,
@@ -129,36 +131,36 @@ class RoleAssignmentsOperations:
         :rtype: ~azure.synapse.accesscontrol.models.RoleAssignmentDetailsList
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleAssignmentDetailsList"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.RoleAssignmentDetailsList"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-12-01"
         accept = "application/json, text/json"
 
         # Construct URL
-        url = self.list_role_assignments.metadata['url']  # type: ignore
+        url = self.list_role_assignments.metadata["url"]  # type: ignore
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if role_id is not None:
-            query_parameters['roleId'] = self._serialize.query("role_id", role_id, 'str')
+            query_parameters["roleId"] = self._serialize.query("role_id", role_id, "str")
         if principal_id is not None:
-            query_parameters['principalId'] = self._serialize.query("principal_id", principal_id, 'str')
+            query_parameters["principalId"] = self._serialize.query("principal_id", principal_id, "str")
         if scope is not None:
-            query_parameters['scope'] = self._serialize.query("scope", scope, 'str')
+            query_parameters["scope"] = self._serialize.query("scope", scope, "str")
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         if continuation_token_parameter is not None:
-            header_parameters['x-ms-continuation'] = self._serialize.header("continuation_token_parameter", continuation_token_parameter, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+            header_parameters["x-ms-continuation"] = self._serialize.header(
+                "continuation_token_parameter", continuation_token_parameter, "str"
+            )
+        header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -170,14 +172,15 @@ class RoleAssignmentsOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-continuation']=self._deserialize('str', response.headers.get('x-ms-continuation'))
-        deserialized = self._deserialize('RoleAssignmentDetailsList', pipeline_response)
+        response_headers["x-ms-continuation"] = self._deserialize("str", response.headers.get("x-ms-continuation"))
+        deserialized = self._deserialize("RoleAssignmentDetailsList", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    list_role_assignments.metadata = {'url': '/roleAssignments'}  # type: ignore
+
+    list_role_assignments.metadata = {"url": "/roleAssignments"}  # type: ignore
 
     async def create_role_assignment(
         self,
@@ -205,37 +208,37 @@ class RoleAssignmentsOperations:
         :rtype: ~azure.synapse.accesscontrol.models.RoleAssignmentDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleAssignmentDetails"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.RoleAssignmentDetails"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        _request = _models.RoleAssignmentRequest(role_id=role_id, principal_id=principal_id, scope=scope, principal_type=principal_type)
+        _request = _models.RoleAssignmentRequest(
+            role_id=role_id, principal_id=principal_id, scope=scope, principal_type=principal_type
+        )
         api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json, text/json"
 
         # Construct URL
-        url = self.create_role_assignment.metadata['url']  # type: ignore
+        url = self.create_role_assignment.metadata["url"]  # type: ignore
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'roleAssignmentId': self._serialize.url("role_assignment_id", role_assignment_id, 'str', min_length=1),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "roleAssignmentId": self._serialize.url("role_assignment_id", role_assignment_id, "str", min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
+        header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_request, 'RoleAssignmentRequest')
-        body_content_kwargs['content'] = body_content
+        body_content = self._serialize.body(_request, "RoleAssignmentRequest")
+        body_content_kwargs["content"] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -245,18 +248,17 @@ class RoleAssignmentsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorContract, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('RoleAssignmentDetails', pipeline_response)
+        deserialized = self._deserialize("RoleAssignmentDetails", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_role_assignment.metadata = {'url': '/roleAssignments/{roleAssignmentId}'}  # type: ignore
+
+    create_role_assignment.metadata = {"url": "/roleAssignments/{roleAssignmentId}"}  # type: ignore
 
     async def get_role_assignment_by_id(
-        self,
-        role_assignment_id: str,
-        **kwargs: Any
+        self, role_assignment_id: str, **kwargs: Any
     ) -> "_models.RoleAssignmentDetails":
         """Get role assignment by role assignment Id.
 
@@ -267,29 +269,27 @@ class RoleAssignmentsOperations:
         :rtype: ~azure.synapse.accesscontrol.models.RoleAssignmentDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleAssignmentDetails"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.RoleAssignmentDetails"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-12-01"
         accept = "application/json, text/json"
 
         # Construct URL
-        url = self.get_role_assignment_by_id.metadata['url']  # type: ignore
+        url = self.get_role_assignment_by_id.metadata["url"]  # type: ignore
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'roleAssignmentId': self._serialize.url("role_assignment_id", role_assignment_id, 'str', min_length=1),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "roleAssignmentId": self._serialize.url("role_assignment_id", role_assignment_id, "str", min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -300,19 +300,17 @@ class RoleAssignmentsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorContract, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('RoleAssignmentDetails', pipeline_response)
+        deserialized = self._deserialize("RoleAssignmentDetails", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_role_assignment_by_id.metadata = {'url': '/roleAssignments/{roleAssignmentId}'}  # type: ignore
+
+    get_role_assignment_by_id.metadata = {"url": "/roleAssignments/{roleAssignmentId}"}  # type: ignore
 
     async def delete_role_assignment_by_id(
-        self,
-        role_assignment_id: str,
-        scope: Optional[str] = None,
-        **kwargs: Any
+        self, role_assignment_id: str, scope: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Delete role assignment by role assignment Id.
 
@@ -325,31 +323,29 @@ class RoleAssignmentsOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
         api_version = "2020-12-01"
         accept = "application/json, text/json"
 
         # Construct URL
-        url = self.delete_role_assignment_by_id.metadata['url']  # type: ignore
+        url = self.delete_role_assignment_by_id.metadata["url"]  # type: ignore
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'roleAssignmentId': self._serialize.url("role_assignment_id", role_assignment_id, 'str', min_length=1),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "roleAssignmentId": self._serialize.url("role_assignment_id", role_assignment_id, "str", min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if scope is not None:
-            query_parameters['scope'] = self._serialize.query("scope", scope, 'str')
+            query_parameters["scope"] = self._serialize.query("scope", scope, "str")
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -363,4 +359,4 @@ class RoleAssignmentsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete_role_assignment_by_id.metadata = {'url': '/roleAssignments/{roleAssignmentId}'}  # type: ignore
+    delete_role_assignment_by_id.metadata = {"url": "/roleAssignments/{roleAssignmentId}"}  # type: ignore

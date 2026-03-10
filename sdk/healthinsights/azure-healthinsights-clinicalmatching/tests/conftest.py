@@ -47,6 +47,4 @@ def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(
         regex=healthinsights_endpoint, value="https://fake_ad_resource.cognitiveservices.azure.com/"
     )
-    add_general_regex_sanitizer(
-        regex=healthinsights_key, value="00000000000000000000000000000000"
-    )
+    add_general_regex_sanitizer(regex=healthinsights_key, value="00000000000000000000000000000000")

@@ -1,4 +1,3 @@
-
 # coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -16,6 +15,7 @@ class AsyncFakeTokenCredential(object):
     """Protocol for classes able to provide OAuth tokens.
     :param str scopes: Lets you specify the type of access needed.
     """
+
     def __init__(self):
         self.token = AccessToken("YOU SHALL NOT PASS", 0)
 
@@ -28,6 +28,7 @@ class AsyncFormRecognizerTest(FormRecognizerTest):
     def generate_oauth_token(self):
         if self.is_live:
             from azure.identity.aio import ClientSecretCredential
+
             return ClientSecretCredential(
                 os.getenv("FORMRECOGNIZER_TENANT_ID"),
                 os.getenv("FORMRECOGNIZER_CLIENT_ID"),

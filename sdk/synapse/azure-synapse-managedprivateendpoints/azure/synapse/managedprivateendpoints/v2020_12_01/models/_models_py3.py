@@ -30,24 +30,19 @@ class ManagedPrivateEndpoint(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'ManagedPrivateEndpointProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "ManagedPrivateEndpointProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["ManagedPrivateEndpointProperties"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, properties: Optional["ManagedPrivateEndpointProperties"] = None, **kwargs):
         super(ManagedPrivateEndpoint, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -69,22 +64,16 @@ class ManagedPrivateEndpointConnectionState(msrest.serialization.Model):
     """
 
     _validation = {
-        'status': {'readonly': True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "actions_required": {"key": "actionsRequired", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        description: Optional[str] = None,
-        actions_required: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, description: Optional[str] = None, actions_required: Optional[str] = None, **kwargs):
         super(ManagedPrivateEndpointConnectionState, self).__init__(**kwargs)
         self.status = None
         self.description = description
@@ -104,20 +93,15 @@ class ManagedPrivateEndpointListResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ManagedPrivateEndpoint]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ManagedPrivateEndpoint]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["ManagedPrivateEndpoint"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["ManagedPrivateEndpoint"]] = None, **kwargs):
         super(ManagedPrivateEndpointListResponse, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -149,19 +133,19 @@ class ManagedPrivateEndpointProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'is_reserved': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "is_reserved": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'private_link_resource_id': {'key': 'privateLinkResourceId', 'type': 'str'},
-        'group_id': {'key': 'groupId', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'connection_state': {'key': 'connectionState', 'type': 'ManagedPrivateEndpointConnectionState'},
-        'is_reserved': {'key': 'isReserved', 'type': 'bool'},
-        'fqdns': {'key': 'fqdns', 'type': '[str]'},
-        'is_compliant': {'key': 'isCompliant', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "private_link_resource_id": {"key": "privateLinkResourceId", "type": "str"},
+        "group_id": {"key": "groupId", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "connection_state": {"key": "connectionState", "type": "ManagedPrivateEndpointConnectionState"},
+        "is_reserved": {"key": "isReserved", "type": "bool"},
+        "fqdns": {"key": "fqdns", "type": "[str]"},
+        "is_compliant": {"key": "isCompliant", "type": "bool"},
     }
 
     def __init__(

@@ -19,8 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Runtime Constants in the Azure Cosmos database service.
-"""
+"""Runtime Constants in the Azure Cosmos database service."""
 
 
 class MediaTypes(object):

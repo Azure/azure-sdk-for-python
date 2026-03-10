@@ -10,10 +10,11 @@ from ._azure_change_analysis_management_client import AzureChangeAnalysisManagem
 from ._version import VERSION
 
 __version__ = VERSION
-__all__ = ['AzureChangeAnalysisManagementClient']
+__all__ = ["AzureChangeAnalysisManagementClient"]
 
 try:
     from ._patch import patch_sdk  # type: ignore
+
     patch_sdk()
 except ImportError:
     pass

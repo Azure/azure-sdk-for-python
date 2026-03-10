@@ -25,7 +25,6 @@ USAGE:
     4) STORAGE_ACCOUNT_KEY - the storage account access key
 """
 
-
 from datetime import datetime, timedelta
 import os
 import sys

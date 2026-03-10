@@ -19,8 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Classes and enums for documents in the Azure Cosmos database service.
-"""
+"""Classes and enums for documents in the Azure Cosmos database service."""
 
 from typing import Optional, TYPE_CHECKING, Union, Any
 
@@ -108,6 +107,7 @@ class ConsistencyLevel:
     Consistency levels by order of strength are Strong, BoundedStaleness,
     Session, ConsistentPrefix and Eventual.
     """
+
     Strong: Literal["Strong"] = "Strong"
     """Strong Consistency guarantees that read operations always return the
     value that was last written.
@@ -136,6 +136,7 @@ class ConsistencyLevel:
 
 class IndexingMode:
     """Specifies the supported indexing modes."""
+
     Consistent: Literal["consistent"] = "consistent"
     """Index is updated synchronously with a create or update operation. With
     consistent indexing, query behavior is the same as the default
@@ -159,6 +160,7 @@ class IndexingMode:
 
 class IndexKind:
     """Specifies the index kind of index specs."""
+
     Hash: Literal["Hash"] = "Hash"
     """The index entries are hashed to serve point look up queries.
     Can be used to serve queries like: SELECT * FROM docs d WHERE d.prop = 5
@@ -175,6 +177,7 @@ class IndexKind:
 
 class PartitionKind:
     """Specifies the kind of partitioning to be applied."""
+
     Hash: Literal["Hash"] = "Hash"
     """The partition key definition path is hashed."""
     MultiHash: Literal["MultiHash"] = "MultiHash"
@@ -183,6 +186,7 @@ class PartitionKind:
 
 class DataType:
     """Specifies the data type of index specs."""
+
     Number: Literal["Number"] = "Number"
     """Represents a numeric data type."""
     String: Literal["String"] = "String"
@@ -199,6 +203,7 @@ class DataType:
 
 class IndexingDirective:
     """Specifies whether the resource is to be indexed."""
+
     Default: int = 0
     """Use any pre-defined/pre-configured defaults."""
     Exclude: int = 1
@@ -209,6 +214,7 @@ class IndexingDirective:
 
 class ConnectionMode:
     """Represents the connection mode to be used by the client."""
+
     Gateway: int = 0
     """Use the Azure Cosmos gateway to route all requests. The gateway proxies
     requests to the right data partition.
@@ -217,6 +223,7 @@ class ConnectionMode:
 
 class PermissionMode:
     """Applicability of a permission."""
+
     NoneMode: Literal["none"] = "none"  # None is python's key word.
     """None"""
     Read: Literal["read"] = "read"
@@ -227,6 +234,7 @@ class PermissionMode:
 
 class TriggerType:
     """Specifies the type of trigger."""
+
     Pre: Literal["pre"] = "pre"
     """Trigger should be executed before the associated operation(s)."""
     Post: Literal["post"] = "post"
@@ -235,6 +243,7 @@ class TriggerType:
 
 class TriggerOperation:
     """Specifies the operations on which a trigger should be executed."""
+
     All: Literal["all"] = "all"
     """All operations."""
     Create: Literal["create"] = "create"
@@ -261,6 +270,7 @@ class SSLConfiguration:
         The path of the CA_BUNDLE file with certificates of trusted CAs.
     :vartype SSLCaCerts: str or bool
     """
+
     def __init__(self) -> None:
         self.SSLKeyFile: Optional[str] = None
         self.SSLCertFile: Optional[str] = None
@@ -275,6 +285,7 @@ class ProxyConfiguration:
     :ivar int Port:
         The port number of the proxy.
     """
+
     def __init__(self) -> None:
         self.Host: Optional[str] = None
         self.Port: Optional[int] = None
@@ -344,8 +355,8 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
     __defaultDBAConnectionTimeout: int = 3  # seconds
     __defaultReadTimeout: int = 65  # seconds
     __defaultRecoveryReadTimeout: int = 6  # seconds
-    __defaultDBAReadTimeout: int = 3 # seconds
-    __defaultMaxBackoff: int = 1 # seconds
+    __defaultDBAReadTimeout: int = 3  # seconds
+    __defaultMaxBackoff: int = 1  # seconds
     __defaultInferenceRequestTimeout: int = 5  # seconds
 
     def __init__(self) -> None:
@@ -372,8 +383,10 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         self.ResponsePayloadOnWriteDisabled: bool = False
         self.RetryNonIdempotentWrites: int = 0
 
+
 class _OperationType:
     """Represents the type of the operation"""
+
     Create: Literal["Create"] = "Create"
     Delete: Literal["Delete"] = "Delete"
     ExecuteJavaScript: Literal["ExecuteJavaScript"] = "ExecuteJavaScript"
@@ -402,7 +415,7 @@ class _OperationType:
             _OperationType.Upsert,
             _OperationType.Update,
             _OperationType.Batch,
-            _OperationType.Patch
+            _OperationType.Patch,
         )
 
     @staticmethod
@@ -414,8 +427,9 @@ class _OperationType:
             _OperationType.HeadFeed,
             _OperationType.Query,
             _OperationType.SqlQuery,
-            _OperationType.QueryPlan
+            _OperationType.QueryPlan,
         )
+
 
 class _QueryFeature:
     NoneQuery: Literal["NoneQuery"] = "NoneQuery"
@@ -432,6 +446,7 @@ class _QueryFeature:
     HybridSearch: Literal["HybridSearch"] = "HybridSearch"
     CountIf: Literal["CountIf"] = "CountIf"
     WeightedRankFusion: Literal["WeightedRankFusion"] = "WeightedRankFusion"
+
 
 class _DistinctType:
     NoneType: Literal["None"] = "None"

@@ -24,6 +24,7 @@
 from typing import Tuple, Any, TYPE_CHECKING, Sequence
 
 from azure.cosmos.partition_key import _Undefined, _Empty, NonePartitionKeyValue
+
 if TYPE_CHECKING:
     from azure.cosmos._cosmos_client_connection import PartitionKeyType
 
@@ -49,8 +50,7 @@ class _QueryBuilder:
 
     @staticmethod
     def is_id_partition_key_query(
-            items: Sequence[Tuple[str, "PartitionKeyType"]],
-            partition_key_definition: dict[str, Any]
+        items: Sequence[Tuple[str, "PartitionKeyType"]], partition_key_definition: dict[str, Any]
     ) -> bool:
         """Check if we can use the optimized ID IN query.
 
@@ -70,9 +70,7 @@ class _QueryBuilder:
         return True
 
     @staticmethod
-    def is_single_logical_partition_query(
-            items: Sequence[Tuple[str, "PartitionKeyType"]]
-    ) -> bool:
+    def is_single_logical_partition_query(items: Sequence[Tuple[str, "PartitionKeyType"]]) -> bool:
         """Check if all items in a chunk belong to the same logical partition.
 
         This is used to determine if an optimized query with an IN clause can be used.
@@ -88,8 +86,7 @@ class _QueryBuilder:
 
     @staticmethod
     def build_pk_and_id_in_query(
-            items: Sequence[Tuple[str, "PartitionKeyType"]],
-            partition_key_definition: dict[str, Any]
+        items: Sequence[Tuple[str, "PartitionKeyType"]], partition_key_definition: dict[str, Any]
     ) -> dict[str, Any]:
         """Build a query for items in a single logical partition using an IN clause for IDs.
 
@@ -100,7 +97,7 @@ class _QueryBuilder:
         :return: A dictionary containing the query text and parameters.
         :rtype: dict[str, any]
         """
-        partition_key_path = partition_key_definition['paths'][0].lstrip('/')
+        partition_key_path = partition_key_definition["paths"][0].lstrip("/")
         partition_key_value = items[0][1]
 
         id_params = {f"@id{i}": item[0] for i, item in enumerate(items)}
@@ -131,8 +128,8 @@ class _QueryBuilder:
 
     @staticmethod
     def build_parameterized_query_for_items(
-            items_by_partition: dict[str, Sequence[Tuple[str, "PartitionKeyType"]]],
-            partition_key_definition: dict[str, Any]
+        items_by_partition: dict[str, Sequence[Tuple[str, "PartitionKeyType"]]],
+        partition_key_definition: dict[str, Any],
     ) -> dict[str, Any]:
         """Builds a parameterized SQL query for reading multiple items.
 

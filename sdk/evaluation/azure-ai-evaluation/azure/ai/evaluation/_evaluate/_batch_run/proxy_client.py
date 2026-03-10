@@ -21,7 +21,6 @@ import pandas as pd
 
 from azure.ai.evaluation._evaluate._batch_run.batch_clients import BatchClientRun, HasAsyncCallable
 
-
 try:
     Configuration.get_instance().set_config("trace.destination", "none")
 except Exception:

@@ -19,14 +19,16 @@ class TestAuth(TextAnalyticsTest):
     async def test_active_directory_auth(self, **kwargs):
         textanalytics_test_endpoint = kwargs.pop("textanalytics_test_endpoint")
         token = self.get_credential(TextAnalyticsClient, is_async=True)
-        text_analytics_endpoint_suffix = os.environ.get("TEXTANALYTICS_ENDPOINT_SUFFIX",".cognitiveservices.azure.com")
+        text_analytics_endpoint_suffix = os.environ.get("TEXTANALYTICS_ENDPOINT_SUFFIX", ".cognitiveservices.azure.com")
         credential_scopes = ["https://{}/.default".format(text_analytics_endpoint_suffix[1:])]
         text_analytics = TextAnalyticsClient(textanalytics_test_endpoint, token, credential_scopes=credential_scopes)
 
-        docs = [{"id": "1", "text": "I should take my cat to the veterinarian."},
-                {"id": "2", "text": "Este es un document escrito en Español."},
-                {"id": "3", "text": "猫は幸せ"},
-                {"id": "4", "text": "Fahrt nach Stuttgart und dann zum Hotel zu Fu."}]
+        docs = [
+            {"id": "1", "text": "I should take my cat to the veterinarian."},
+            {"id": "2", "text": "Este es un document escrito en Español."},
+            {"id": "3", "text": "猫は幸せ"},
+            {"id": "4", "text": "Fahrt nach Stuttgart und dann zum Hotel zu Fu."},
+        ]
 
         response = await text_analytics.detect_language(docs)
 
@@ -35,7 +37,7 @@ class TestAuth(TextAnalyticsTest):
     async def test_analyze_active_directory_auth(self, **kwargs):
         textanalytics_test_endpoint = kwargs.pop("textanalytics_test_endpoint")
         token = self.get_credential(TextAnalyticsClient, is_async=True)
-        text_analytics_endpoint_suffix = os.environ.get("TEXTANALYTICS_ENDPOINT_SUFFIX",".cognitiveservices.azure.com")
+        text_analytics_endpoint_suffix = os.environ.get("TEXTANALYTICS_ENDPOINT_SUFFIX", ".cognitiveservices.azure.com")
         credential_scopes = ["https://{}/.default".format(text_analytics_endpoint_suffix[1:])]
         text_analytics = TextAnalyticsClient(textanalytics_test_endpoint, token, credential_scopes=credential_scopes)
 

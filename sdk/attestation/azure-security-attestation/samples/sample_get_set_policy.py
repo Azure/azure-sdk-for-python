@@ -22,7 +22,7 @@ DESCRIPTION:
     4) ATTESTATION_CLIENT_ID - Client identity for authentication.
     5) ATTESTATION_CLIENT_SECRET - Secret used to identify the client.
     6) ATTESTATION_ISOLATED_SIGNING_CERTIFICATE - Base64 encoded X.509 Certificate
-        specified when the isolated mode instance is created. 
+        specified when the isolated mode instance is created.
     7) ATTESTATION_ISOLATED_SIGNING_KEY - Base64 encoded DER encoded RSA Private key
         associated with the ATTESTATION_ISOLATED_SIGNING_CERTIFICATE
 

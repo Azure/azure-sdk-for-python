@@ -47,21 +47,20 @@ try:
     username = str(os.getenv("USERNAME"))
     password = str(os.getenv("PASSWORD"))
 except KeyError:
-    LOG.error("Missing environment variable 'WORKFLOW_ENDPOINT' or 'AZURE_CLIENT_ID' or 'AZURE_TENANT_ID' or "
-              "'USERNAME' or 'PASSWORD' - please set if before running the example")
+    LOG.error(
+        "Missing environment variable 'WORKFLOW_ENDPOINT' or 'AZURE_CLIENT_ID' or 'AZURE_TENANT_ID' or "
+        "'USERNAME' or 'PASSWORD' - please set if before running the example"
+    )
     exit()
-credential = UsernamePasswordCredential(client_id=client_id, username=username, password=password,
-                                        tenant_id=tenant_id)
+credential = UsernamePasswordCredential(client_id=client_id, username=username, password=password, tenant_id=tenant_id)
 # Build a client through AAD
-client = PurviewWorkflowClient(endpoint= endpoint, credential=credential)
+client = PurviewWorkflowClient(endpoint=endpoint, credential=credential)
 
 try:
-    approve_response = {
-      "comment": "Thanks for raising this!"
-    }
+    approve_response = {"comment": "Thanks for raising this!"}
     task_id = "6785028c-1348-4415-b6b7-f723be6c8c31"
     client.approval.approve(task_id, approve_response)
-    print('Successfully approve a workflow task.')
+    print("Successfully approve a workflow task.")
 
 except HttpResponseError as e:
     print(f"Failed to send JSON message: {e}")

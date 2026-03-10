@@ -42,32 +42,22 @@ def analyze_identity_documents():
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
-    document_analysis_client = DocumentAnalysisClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
+    document_analysis_client = DocumentAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     with open(path_to_sample_documents, "rb") as f:
-        poller = document_analysis_client.begin_analyze_document(
-            "prebuilt-idDocument", document=f
-        )
+        poller = document_analysis_client.begin_analyze_document("prebuilt-idDocument", document=f)
     id_documents = poller.result()
 
     for idx, id_document in enumerate(id_documents.documents):
         print(f"--------Analyzing ID document #{idx + 1}--------")
         first_name = id_document.fields.get("FirstName")
         if first_name:
-            print(
-                f"First Name: {first_name.value} has confidence: {first_name.confidence}"
-            )
+            print(f"First Name: {first_name.value} has confidence: {first_name.confidence}")
         last_name = id_document.fields.get("LastName")
         if last_name:
-            print(
-                f"Last Name: {last_name.value} has confidence: {last_name.confidence}"
-            )
+            print(f"Last Name: {last_name.value} has confidence: {last_name.confidence}")
         document_number = id_document.fields.get("DocumentNumber")
         if document_number:
-            print(
-                f"Document Number: {document_number.value} has confidence: {document_number.confidence}"
-            )
+            print(f"Document Number: {document_number.value} has confidence: {document_number.confidence}")
         dob = id_document.fields.get("DateOfBirth")
         if dob:
             print(f"Date of Birth: {dob.value} has confidence: {dob.confidence}")
@@ -82,9 +72,7 @@ def analyze_identity_documents():
             print(f"Address: {address.value} has confidence: {address.confidence}")
         country_region = id_document.fields.get("CountryRegion")
         if country_region:
-            print(
-                f"Country/Region: {country_region.value} has confidence: {country_region.confidence}"
-            )
+            print(f"Country/Region: {country_region.value} has confidence: {country_region.confidence}")
         region = id_document.fields.get("Region")
         if region:
             print(f"Region: {region.value} has confidence: {region.confidence}")

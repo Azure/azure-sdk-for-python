@@ -9,7 +9,7 @@
 """
 FILE: send_sms_to_single_recipient_sample_async.py
 DESCRIPTION:
-    This sample demonstrates sending an SMS message to a single recipient. The SMS client is 
+    This sample demonstrates sending an SMS message to a single recipient. The SMS client is
     authenticated using a connection string.
 USAGE:
     python send_sms_to_single_recipient_sample_async.py
@@ -34,8 +34,9 @@ class SmsSingleRecipientSampleAsync(object):
     async def send_sms_to_single_recipient_async(self):
         if not self.connection_string or not self.phone_number:
             raise ValueError(
-                '''Environment variables COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING and SMS_PHONE_NUMBER must be 
-                set''')
+                """Environment variables COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING and SMS_PHONE_NUMBER must be 
+                set"""
+            )
         # [START auth_from_connection_string_async]
         sms_client = SmsClient.from_connection_string(self.connection_string)
         # [END auth_from_connection_string_async]

@@ -15,6 +15,7 @@ USAGE:
     "https://<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net/api/events".
     3) EVENTGRID_SAS - The shared access signature that is to be used to authenticate the client.
 """
+
 # [START client_auth_with_key_cred]
 import os
 from azure.eventgrid import EventGridPublisherClient

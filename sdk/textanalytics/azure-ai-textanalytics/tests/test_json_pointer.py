@@ -25,6 +25,7 @@ def generated_target_assessment_confidence_scores():
         negative=0.0,
     )
 
+
 @pytest.fixture
 def generated_sentiment_confidence_score():
     return _generated_models.SentimentConfidenceScorePerLabel(
@@ -33,12 +34,11 @@ def generated_sentiment_confidence_score():
         negative=0.0,
     )
 
+
 @pytest.fixture
 def generated_target_relation():
-    return _generated_models.TargetRelation(
-        relation_type="assessment",
-        ref="#/documents/0/sentences/1/assessments/0"
-    )
+    return _generated_models.TargetRelation(relation_type="assessment", ref="#/documents/0/sentences/1/assessments/0")
+
 
 @pytest.fixture
 def generated_target(generated_target_assessment_confidence_scores, generated_target_relation):
@@ -51,6 +51,7 @@ def generated_target(generated_target_assessment_confidence_scores, generated_ta
         relations=[generated_target_relation],
     )
 
+
 @pytest.fixture
 def generated_assessment(generated_target_assessment_confidence_scores):
     return _generated_models.SentenceAssessment(
@@ -61,6 +62,7 @@ def generated_assessment(generated_target_assessment_confidence_scores):
         length=4,
         is_negated=False,
     )
+
 
 def generated_sentence_sentiment(generated_sentiment_confidence_score, index, targets=[], assessments=[]):
     return _generated_models.SentenceSentiment(
@@ -73,10 +75,15 @@ def generated_sentence_sentiment(generated_sentiment_confidence_score, index, ta
         assessments=assessments,
     )
 
+
 @pytest.fixture
 def generated_document_sentiment(generated_target, generated_assessment, generated_sentiment_confidence_score):
-    target_sentence = generated_sentence_sentiment(generated_sentiment_confidence_score, index=0, targets=[generated_target])
-    assessment_sentence = generated_sentence_sentiment(generated_sentiment_confidence_score, index=1, assessments=[generated_assessment])
+    target_sentence = generated_sentence_sentiment(
+        generated_sentiment_confidence_score, index=0, targets=[generated_target]
+    )
+    assessment_sentence = generated_sentence_sentiment(
+        generated_sentiment_confidence_score, index=1, assessments=[generated_assessment]
+    )
 
     return _generated_models.DocumentSentiment(
         id=1,
@@ -85,6 +92,7 @@ def generated_document_sentiment(generated_target, generated_assessment, generat
         sentences=[target_sentence, assessment_sentence],
         warnings=[],
     )
+
 
 @pytest.fixture
 def generated_sentiment_response(generated_document_sentiment):
@@ -95,7 +103,7 @@ def generated_sentiment_response(generated_document_sentiment):
     )
 
 
-class TestJsonPointer():
+class TestJsonPointer:
 
     def test_json_pointer_parsing(self):
         assert [1, 0, 15] == _get_indices("#/documents/1/sentences/0/assessments/15")

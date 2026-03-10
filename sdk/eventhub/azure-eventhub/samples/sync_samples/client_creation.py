@@ -8,9 +8,9 @@
 """
 Examples to show how to create EventHubProducerClient/EventHubConsumerClient.
 """
+
 import os
 from azure.eventhub import EventHubProducerClient, EventHubConsumerClient, TransportType, EventHubSharedKeyCredential
-
 
 CONNECTION_STRING = os.environ["EVENT_HUB_CONN_STR"]
 FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_HOSTNAME"]

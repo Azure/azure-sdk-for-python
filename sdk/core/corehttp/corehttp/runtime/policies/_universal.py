@@ -26,6 +26,7 @@
 """
 This module is the requests implementation of Pipeline ABC
 """
+
 from __future__ import annotations
 import json
 import inspect

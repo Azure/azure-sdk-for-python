@@ -34,7 +34,7 @@ try:
     # Get event route
     event_route_id = "<EVENT_ROUTE_ID>"
     event_route = service_client.get_event_route(event_route_id)
-    print('EventRoute:')
+    print("EventRoute:")
     print(event_route)
 
 except HttpResponseError as e:

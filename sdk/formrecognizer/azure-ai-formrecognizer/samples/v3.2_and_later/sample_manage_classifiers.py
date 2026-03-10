@@ -46,14 +46,10 @@ def sample_manage_classifiers():
     poller = document_model_admin_client.begin_build_document_classifier(
         doc_types={
             "IRS-1040-A": ClassifierDocumentTypeDetails(
-                source=BlobSource(
-                    container_url=container_sas_url, prefix="IRS-1040-A/train"
-                )
+                source=BlobSource(container_url=container_sas_url, prefix="IRS-1040-A/train")
             ),
             "IRS-1040-D": ClassifierDocumentTypeDetails(
-                source=BlobSource(
-                    container_url=container_sas_url, prefix="IRS-1040-D/train"
-                )
+                source=BlobSource(container_url=container_sas_url, prefix="IRS-1040-D/train")
             ),
         },
     )
@@ -70,9 +66,7 @@ def sample_manage_classifiers():
     # [END list_document_classifiers]
 
     # [START get_document_classifier]
-    my_classifier = document_model_admin_client.get_document_classifier(
-        classifier_id=classifier_model.classifier_id
-    )
+    my_classifier = document_model_admin_client.get_document_classifier(classifier_id=classifier_model.classifier_id)
     print(f"\nClassifier ID: {my_classifier.classifier_id}")
     print(f"Description: {my_classifier.description}")
     print(f"Classifier created on: {my_classifier.created_on}")
@@ -80,14 +74,10 @@ def sample_manage_classifiers():
 
     # Finally, we will delete this classifier by ID
     # [START delete_document_classifier]
-    document_model_admin_client.delete_document_classifier(
-        classifier_id=my_classifier.classifier_id
-    )
+    document_model_admin_client.delete_document_classifier(classifier_id=my_classifier.classifier_id)
 
     try:
-        document_model_admin_client.get_document_classifier(
-            classifier_id=my_classifier.classifier_id
-        )
+        document_model_admin_client.get_document_classifier(classifier_id=my_classifier.classifier_id)
     except ResourceNotFoundError:
         print(f"Successfully deleted classifier with ID {my_classifier.classifier_id}")
     # [END delete_document_classifier]

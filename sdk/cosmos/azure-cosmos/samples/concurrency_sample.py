@@ -16,12 +16,13 @@ import time
 
 # Specify information to connect to the client.
 CLEAR_DATABASE = True
-CONN_STR = os.environ['CONN_STR']
+CONN_STR = os.environ["CONN_STR"]
 # Specify information for Database and container.
 DB_ID = "Cosmos_Concurrency_DB"
 CONT_ID = "Cosmos_Concurrency_Cont"
 # specify partition key for the container
 pk = PartitionKey(path="/id")
+
 
 # Batch the creation of items for better optimization on performance.
 # Note: Error handling should be in the method being batched. As you will get
@@ -29,10 +30,9 @@ pk = PartitionKey(path="/id")
 # Note: While the Word `Batch` here is used to describe the subsets of data being created, it is not referring
 # to batch operations such as `Transactional Batching` which is a feature of Cosmos DB.
 async def create_all_the_items(prefix, c, i):
-    await asyncio.wait(
-        [asyncio.create_task(c.create_item({"id": prefix + str(j)})) for j in range(100)]
-    )
+    await asyncio.wait([asyncio.create_task(c.create_item({"id": prefix + str(j)})) for j in range(100)])
     print(f"Batch {i} done!")
+
 
 # The following demonstrates the performance difference between using sequential item creation,
 # sequential item creation in batches, and concurrent item creation in batches. This is to show best practice
@@ -58,7 +58,6 @@ async def main():
                 print(f"{(i + 1) * 100} items created!")
             sequential_item_time = time.time() - timer
             print("Time taken: " + str(sequential_item_time))
-
 
             # B: Sequential batches
             # Batching operations can improve performance by dealing with multiple operations at a time.
@@ -105,4 +104,3 @@ async def clear_database():
 
 if __name__ == "__main__":
     asyncio.run(main())
-

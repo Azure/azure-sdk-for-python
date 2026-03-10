@@ -50,7 +50,7 @@ class SparkClient(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        base_url = '{endpoint}'
+        base_url = "{endpoint}"
         self._config = SparkClientConfiguration(credential, endpoint, spark_pool_name, livy_api_version, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
@@ -59,10 +59,8 @@ class SparkClient(object):
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
-        self.spark_batch = SparkBatchOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.spark_session = SparkSessionOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+        self.spark_batch = SparkBatchOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.spark_session = SparkSessionOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, http_request, **kwargs):
         # type: (HttpRequest, Any) -> HttpResponse
@@ -75,9 +73,13 @@ class SparkClient(object):
         :rtype: ~azure.core.pipeline.transport.HttpResponse
         """
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'livyApiVersion': self._serialize.url("self._config.livy_api_version", self._config.livy_api_version, 'str', skip_quote=True),
-            'sparkPoolName': self._serialize.url("self._config.spark_pool_name", self._config.spark_pool_name, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "livyApiVersion": self._serialize.url(
+                "self._config.livy_api_version", self._config.livy_api_version, "str", skip_quote=True
+            ),
+            "sparkPoolName": self._serialize.url(
+                "self._config.spark_pool_name", self._config.spark_pool_name, "str", skip_quote=True
+            ),
         }
         http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
         stream = kwargs.pop("stream", True)

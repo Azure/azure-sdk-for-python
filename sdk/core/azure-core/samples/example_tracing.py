@@ -15,6 +15,7 @@ DESCRIPTION:
 USAGE:
     python example_tracing.py
 """
+
 from typing import Iterable, Union, Any
 
 from azure.core.tracing.decorator import distributed_trace

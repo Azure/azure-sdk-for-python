@@ -144,7 +144,9 @@ class ApplicationTypeDefinitionKind(str, Enum):
 class ApplicationTypeStatus(str, Enum):
 
     invalid = "Invalid"  #: Indicates the application type status is invalid. All Service Fabric enumerations have the invalid type. The value is zero.
-    provisioning = "Provisioning"  #: Indicates that the application type is being provisioned in the cluster. The value is 1.
+    provisioning = (
+        "Provisioning"  #: Indicates that the application type is being provisioned in the cluster. The value is 1.
+    )
     available = "Available"  #: Indicates that the application type is fully provisioned and is available for use. An application of this type and version can be created. The value is 2.
     unprovisioning = "Unprovisioning"  #: Indicates that the application type is in process of being unprovisioned from the cluster. The value is 3.
     failed = "Failed"  #: Indicates that the application type provisioning failed and it is unavailable for use. The failure details can be obtained from the application type information query. The failed application type information remains in the cluster until it is unprovisioned or reprovisioned successfully. The value is 4.
@@ -213,7 +215,9 @@ class UpgradeState(str, Enum):
 class NodeUpgradePhase(str, Enum):
 
     invalid = "Invalid"  #: Indicates the upgrade state is invalid. All Service Fabric enumerations have the invalid type. The value is zero.
-    pre_upgrade_safety_check = "PreUpgradeSafetyCheck"  #: The upgrade has not started yet due to pending safety checks. The value is 1
+    pre_upgrade_safety_check = (
+        "PreUpgradeSafetyCheck"  #: The upgrade has not started yet due to pending safety checks. The value is 1
+    )
     upgrading = "Upgrading"  #: The upgrade is in progress. The value is 2
     post_upgrade_safety_check = "PostUpgradeSafetyCheck"  #: The upgrade has completed and post upgrade safety checks are being performed. The value is 3
 
@@ -294,8 +298,12 @@ class EntityKind(str, Enum):
     service = "Service"  #: Indicates the entity is a Service Fabric service. The value is 3.
     application = "Application"  #: Indicates the entity is a Service Fabric application. The value is 4.
     replica = "Replica"  #: Indicates the entity is a Service Fabric replica. The value is 5.
-    deployed_application = "DeployedApplication"  #: Indicates the entity is a Service Fabric deployed application. The value is 6.
-    deployed_service_package = "DeployedServicePackage"  #: Indicates the entity is a Service Fabric deployed service package. The value is 7.
+    deployed_application = (
+        "DeployedApplication"  #: Indicates the entity is a Service Fabric deployed application. The value is 6.
+    )
+    deployed_service_package = (
+        "DeployedServicePackage"  #: Indicates the entity is a Service Fabric deployed service package. The value is 7.
+    )
     cluster = "Cluster"  #: Indicates the entity is a Service Fabric cluster. The value is 8.
 
 
@@ -370,26 +378,36 @@ class HealthEvaluationKind(str, Enum):
     invalid = "Invalid"  #: Indicates that the health evaluation is invalid. The value is zero.
     event = "Event"  #: Indicates that the health evaluation is for a health event. The value is 1.
     replicas = "Replicas"  #: Indicates that the health evaluation is for the replicas of a partition. The value is 2.
-    partitions = "Partitions"  #: Indicates that the health evaluation is for the partitions of a service. The value is 3.
+    partitions = (
+        "Partitions"  #: Indicates that the health evaluation is for the partitions of a service. The value is 3.
+    )
     deployed_service_packages = "DeployedServicePackages"  #: Indicates that the health evaluation is for the deployed service packages of a deployed application. The value is 4.
     deployed_applications = "DeployedApplications"  #: Indicates that the health evaluation is for the deployed applications of an application. The value is 5.
     services = "Services"  #: Indicates that the health evaluation is for services of an application. The value is 6.
     nodes = "Nodes"  #: Indicates that the health evaluation is for the cluster nodes. The value is 7.
-    applications = "Applications"  #: Indicates that the health evaluation is for the cluster applications. The value is 8.
-    system_application = "SystemApplication"  #: Indicates that the health evaluation is for the system application. The value is 9.
+    applications = (
+        "Applications"  #: Indicates that the health evaluation is for the cluster applications. The value is 8.
+    )
+    system_application = (
+        "SystemApplication"  #: Indicates that the health evaluation is for the system application. The value is 9.
+    )
     upgrade_domain_deployed_applications = "UpgradeDomainDeployedApplications"  #: Indicates that the health evaluation is for the deployed applications of an application in an upgrade domain. The value is 10.
     upgrade_domain_nodes = "UpgradeDomainNodes"  #: Indicates that the health evaluation is for the cluster nodes in an upgrade domain. The value is 11.
     replica = "Replica"  #: Indicates that the health evaluation is for a replica. The value is 13.
     partition = "Partition"  #: Indicates that the health evaluation is for a partition. The value is 14.
     deployed_service_package = "DeployedServicePackage"  #: Indicates that the health evaluation is for a deployed service package. The value is 16.
-    deployed_application = "DeployedApplication"  #: Indicates that the health evaluation is for a deployed application. The value is 17.
+    deployed_application = (
+        "DeployedApplication"  #: Indicates that the health evaluation is for a deployed application. The value is 17.
+    )
     service = "Service"  #: Indicates that the health evaluation is for a service. The value is 15.
     node = "Node"  #: Indicates that the health evaluation is for a node. The value is 12.
     application = "Application"  #: Indicates that the health evaluation is for an application. The value is 18.
     delta_nodes_check = "DeltaNodesCheck"  #: Indicates that the health evaluation is for the delta of unhealthy cluster nodes. The value is 19.
     upgrade_domain_delta_nodes_check = "UpgradeDomainDeltaNodesCheck"  #: Indicates that the health evaluation is for the delta of unhealthy upgrade domain cluster nodes. The value is 20.
     application_type_applications = "ApplicationTypeApplications"  #: – Indicates that the health evaluation is for applications of an application type. The value is 21.
-    node_type_nodes = "NodeTypeNodes"  #: – Indicates that the health evaluation is for nodes of a node type. The value is 22.
+    node_type_nodes = (
+        "NodeTypeNodes"  #: – Indicates that the health evaluation is for nodes of a node type. The value is 22.
+    )
 
 
 class Ordering(str, Enum):
@@ -418,7 +436,9 @@ class NodeDeactivationStatus(str, Enum):
 class NodeDeactivationTaskType(str, Enum):
 
     invalid = "Invalid"  #: Indicates the node deactivation task type is invalid. All Service Fabric enumerations have the invalid type. The value is zero. This value is not used.
-    infrastructure = "Infrastructure"  #: Specifies the task created by Infrastructure hosting the nodes. The value is 1.
+    infrastructure = (
+        "Infrastructure"  #: Specifies the task created by Infrastructure hosting the nodes. The value is 1.
+    )
     repair = "Repair"  #: Specifies the task that was created by the Repair Manager service. The value is 2.
     client = "Client"  #: Specifies that the task was created by using the public API. The value is 3.
 
@@ -496,7 +516,9 @@ class ServicePackageActivationMode(str, Enum):
 class ServiceKind(str, Enum):
 
     invalid = "Invalid"  #: Indicates the service kind is invalid. All Service Fabric enumerations have the invalid type. The value is zero.
-    stateless = "Stateless"  #: Does not use Service Fabric to make its state highly available or reliable. The value is 1.
+    stateless = (
+        "Stateless"  #: Does not use Service Fabric to make its state highly available or reliable. The value is 1.
+    )
     stateful = "Stateful"  #: Uses Service Fabric to make its state or part of its state highly available and reliable. The value is 2.
 
 
@@ -543,7 +565,9 @@ class HostIsolationMode(str, Enum):
 
 class DeploymentStatus(str, Enum):
 
-    invalid = "Invalid"  #: Indicates status of the application or service package is not known or invalid. The value is 0.
+    invalid = (
+        "Invalid"  #: Indicates status of the application or service package is not known or invalid. The value is 0.
+    )
     downloading = "Downloading"  #: Indicates the application or service package is being downloaded to the node from the ImageStore. The value is 1.
     activating = "Activating"  #: Indicates the application or service package is being activated. The value is 2.
     active = "Active"  #: Indicates the application or service package is active the node. The value is 3.
@@ -581,7 +605,9 @@ class ChaosScheduleStatus(str, Enum):
 
 class ChaosEventKind(str, Enum):
 
-    invalid = "Invalid"  #: Indicates an invalid Chaos event kind. All Service Fabric enumerations have the invalid type.
+    invalid = (
+        "Invalid"  #: Indicates an invalid Chaos event kind. All Service Fabric enumerations have the invalid type.
+    )
     started = "Started"  #: Indicates a Chaos event that gets generated when Chaos is started.
     executing_faults = "ExecutingFaults"  #: Indicates a Chaos event that gets generated when Chaos has decided on the faults for an iteration. This Chaos event contains the details of the faults as a list of strings.
     waiting = "Waiting"  #: Indicates a Chaos event that gets generated when Chaos is waiting for the cluster to become ready for faulting, for example, Chaos may be waiting for the on-going upgrade to finish.
@@ -593,13 +619,21 @@ class ChaosEventKind(str, Enum):
 class ComposeDeploymentStatus(str, Enum):
 
     invalid = "Invalid"  #: Indicates that the compose deployment status is invalid. The value is zero.
-    provisioning = "Provisioning"  #: Indicates that the compose deployment is being provisioned in background. The value is 1.
+    provisioning = (
+        "Provisioning"  #: Indicates that the compose deployment is being provisioned in background. The value is 1.
+    )
     creating = "Creating"  #: Indicates that the compose deployment is being created in background. The value is 2.
     ready = "Ready"  #: Indicates that the compose deployment has been successfully created or upgraded. The value is 3.
-    unprovisioning = "Unprovisioning"  #: Indicates that the compose deployment is being unprovisioned in background. The value is 4.
+    unprovisioning = (
+        "Unprovisioning"  #: Indicates that the compose deployment is being unprovisioned in background. The value is 4.
+    )
     deleting = "Deleting"  #: Indicates that the compose deployment is being deleted in background. The value is 5.
-    failed = "Failed"  #: Indicates that the compose deployment was terminated due to persistent failures. The value is 6.
-    upgrading = "Upgrading"  #: Indicates that the compose deployment is being upgraded in the background. The value is 7.
+    failed = (
+        "Failed"  #: Indicates that the compose deployment was terminated due to persistent failures. The value is 6.
+    )
+    upgrading = (
+        "Upgrading"  #: Indicates that the compose deployment is being upgraded in the background. The value is 7.
+    )
 
 
 class ComposeDeploymentUpgradeState(str, Enum):
@@ -661,7 +695,9 @@ class ReplicatorOperationName(str, Enum):
     close = "Close"  #: Replicator is closing.
     abort = "Abort"  #: Replicator is being aborted.
     on_data_loss = "OnDataLoss"  #: Replicator is handling the data loss condition, where the user service may potentially be recovering state from an external source.
-    wait_for_catchup = "WaitForCatchup"  #: Replicator is waiting for a quorum of replicas to be caught up to the latest state.
+    wait_for_catchup = (
+        "WaitForCatchup"  #: Replicator is waiting for a quorum of replicas to be caught up to the latest state.
+    )
     build = "Build"  #: Replicator is in the process of building one or more replicas.
 
 
@@ -670,7 +706,9 @@ class PartitionAccessStatus(str, Enum):
     invalid = "Invalid"  #: Indicates that the read or write operation access status is not valid. This value is not returned to the caller.
     granted = "Granted"  #: Indicates that the read or write operation access is granted and the operation is allowed.
     reconfiguration_pending = "ReconfigurationPending"  #: Indicates that the client should try again later, because a reconfiguration is in progress.
-    not_primary = "NotPrimary"  #: Indicates that this client request was received by a replica that is not a Primary replica.
+    not_primary = (
+        "NotPrimary"  #: Indicates that this client request was received by a replica that is not a Primary replica.
+    )
     no_write_quorum = "NoWriteQuorum"  #: Indicates that no write quorum is available and, therefore, no write operation can be accepted.
 
 
@@ -768,7 +806,9 @@ class RetentionPolicyType(str, Enum):
 
 class BackupStorageKind(str, Enum):
 
-    invalid = "Invalid"  #: Indicates an invalid backup storage kind. All Service Fabric enumerations have the invalid type.
+    invalid = (
+        "Invalid"  #: Indicates an invalid backup storage kind. All Service Fabric enumerations have the invalid type.
+    )
     file_share = "FileShare"  #: Indicates file/ SMB share to be used as backup storage.
     azure_blob_store = "AzureBlobStore"  #: Indicates Azure blob store to be used as backup storage.
     dsms_azure_blob_store = "DsmsAzureBlobStore"  #: Indicates Dsms Azure blob store to be used as backup storage.
@@ -777,7 +817,9 @@ class BackupStorageKind(str, Enum):
 
 class BackupScheduleKind(str, Enum):
 
-    invalid = "Invalid"  #: Indicates an invalid backup schedule kind. All Service Fabric enumerations have the invalid type.
+    invalid = (
+        "Invalid"  #: Indicates an invalid backup schedule kind. All Service Fabric enumerations have the invalid type.
+    )
     time_based = "TimeBased"  #: Indicates a time-based backup schedule.
     frequency_based = "FrequencyBased"  #: Indicates a frequency-based backup schedule.
 
@@ -817,7 +859,9 @@ class BackupType(str, Enum):
 
 class ManagedIdentityType(str, Enum):
 
-    invalid = "Invalid"  #: Indicates an invalid managed identity type. All Service Fabric enumerations have the invalid type.
+    invalid = (
+        "Invalid"  #: Indicates an invalid managed identity type. All Service Fabric enumerations have the invalid type.
+    )
     vmss = "VMSS"  #: Indicates VMSS managed identity should be used to connect to Azure blob store.
     cluster = "Cluster"  #: Indicates cluster managed identity should be used to connect to Azure blob store.
 
@@ -885,7 +929,9 @@ class State(str, Enum):
     created = "Created"  #: Indicates that the repair task has been created.
     claimed = "Claimed"  #: Indicates that the repair task has been claimed by a repair executor.
     preparing = "Preparing"  #: Indicates that the Repair Manager is preparing the system to handle the impact of the repair task, usually by taking resources offline gracefully.
-    approved = "Approved"  #: Indicates that the repair task has been approved by the Repair Manager and is safe to execute.
+    approved = (
+        "Approved"  #: Indicates that the repair task has been approved by the Repair Manager and is safe to execute.
+    )
     executing = "Executing"  #: Indicates that execution of the repair task is in progress.
     restoring = "Restoring"  #: Indicates that the Repair Manager is restoring the system to its pre-repair state, usually by bringing resources back online.
     completed = "Completed"  #: Indicates that the repair task has completed, and no further state changes will occur.
@@ -928,7 +974,9 @@ class ServiceHostUpgradeImpact(str, Enum):
 
     invalid = "Invalid"  #: Indicates the upgrade impact is invalid. All Service Fabric enumerations have the invalid type. The value is zero.
     none = "None"  #: The upgrade is not expected to cause service host restarts. The value is 1.
-    service_host_restart = "ServiceHostRestart"  #: The upgrade is expected to cause a service host restart. The value is 2.
+    service_host_restart = (
+        "ServiceHostRestart"  #: The upgrade is expected to cause a service host restart. The value is 2.
+    )
     unexpected_service_host_restart = "UnexpectedServiceHostRestart"  #: The upgrade will cause an unexpected service host restart. This indicates a bug in the Service Fabric runtime and proceeding with an upgrade with this impact may lead to skipped safety checks. Running the upgrade with the ForceRestart flag will force proper safety checks. The value is 3.
 
 
@@ -983,23 +1031,33 @@ class OperatingSystemType(str, Enum):
 
 class ImageRegistryPasswordType(str, Enum):
 
-    clear_text = "ClearText"  #: The image registry password in clear text, will not be processed in any way and used directly
+    clear_text = (
+        "ClearText"  #: The image registry password in clear text, will not be processed in any way and used directly
+    )
     key_vault_reference = "KeyVaultReference"  #: The URI to a KeyVault secret version, will be resolved using the application's managed identity (this type is only valid if the app was assigned a managed identity) before getting used
-    secret_value_reference = "SecretValueReference"  #: The reference to a SecretValue resource, will be resolved before getting used
+    secret_value_reference = (
+        "SecretValueReference"  #: The reference to a SecretValue resource, will be resolved before getting used
+    )
 
 
 class EnvironmentVariableType(str, Enum):
 
-    clear_text = "ClearText"  #: The environment variable in clear text, will not be processed in any way and passed in as is
+    clear_text = (
+        "ClearText"  #: The environment variable in clear text, will not be processed in any way and passed in as is
+    )
     key_vault_reference = "KeyVaultReference"  #: The URI to a KeyVault secret version, will be resolved using the application's managed identity (this type is only valid if the app was assigned a managed identity) before getting passed in
-    secret_value_reference = "SecretValueReference"  #: The reference to a SecretValue resource, will be resolved before getting passed in
+    secret_value_reference = (
+        "SecretValueReference"  #: The reference to a SecretValue resource, will be resolved before getting passed in
+    )
 
 
 class SettingType(str, Enum):
 
     clear_text = "ClearText"  #: The setting in clear text, will not be processed in any way and passed in as is
     key_vault_reference = "KeyVaultReference"  #: The URI to a KeyVault secret version, will be resolved using the application's managed identity (this type is only valid if the app was assigned a managed identity) before getting passed in
-    secret_value_reference = "SecretValueReference"  #: The reference to a SecretValue resource, will be resolved before getting passed in
+    secret_value_reference = (
+        "SecretValueReference"  #: The reference to a SecretValue resource, will be resolved before getting passed in
+    )
 
 
 class Scheme(str, Enum):
@@ -1015,7 +1073,9 @@ class ApplicationResourceUpgradeState(str, Enum):
     rolling_forward = "RollingForward"  #: The upgrade is rolling forward to the target version but is not complete yet. The value is 2.
     unprovisioning_current = "UnprovisioningCurrent"  #: The upgrade is in the progress of unprovisioning current application type version and rolling forward to the target version is completed. The value is 3.
     completed_rollforward = "CompletedRollforward"  #: The upgrade has finished rolling forward. The value is 4.
-    rolling_back = "RollingBack"  #: The upgrade is rolling back to the previous version but is not complete yet. The value is 5.
+    rolling_back = (
+        "RollingBack"  #: The upgrade is rolling back to the previous version but is not complete yet. The value is 5.
+    )
     unprovisioning_target = "UnprovisioningTarget"  #: The upgrade is in the progress of unprovisioning target application type version and rolling back to the current version is completed. The value is 6.
     completed_rollback = "CompletedRollback"  #: The upgrade has finished rolling back. The value is 7.
     failed = "Failed"  #: The upgrade has failed and is unable to execute FailureAction. The value is 8.
@@ -1037,7 +1097,9 @@ class DiagnosticsSinkKind(str, Enum):
 
 class AutoScalingMechanismKind(str, Enum):
 
-    add_remove_replica = "AddRemoveReplica"  #: Indicates that scaling should be performed by adding or removing replicas.
+    add_remove_replica = (
+        "AddRemoveReplica"  #: Indicates that scaling should be performed by adding or removing replicas.
+    )
 
 
 class AutoScalingMetricKind(str, Enum):
@@ -1065,12 +1127,16 @@ class ExecutionPolicyType(str, Enum):
 class RestartPolicy(str, Enum):
 
     on_failure = "OnFailure"  #: Service will be restarted when it encounters a failure.
-    never = "Never"  #: Service will never be restarted. If the service encounters a failure, it will move to Failed state.
+    never = (
+        "Never"  #: Service will never be restarted. If the service encounters a failure, it will move to Failed state.
+    )
 
 
 class NodeStatusFilter(str, Enum):
 
-    default = "default"  #: This filter value will match all of the nodes excepts the ones with status as Unknown or Removed.
+    default = (
+        "default"  #: This filter value will match all of the nodes excepts the ones with status as Unknown or Removed.
+    )
     all = "all"  #: This filter value will match all of the nodes.
     up = "up"  #: This filter value will match nodes that are Up.
     down = "down"  #: This filter value will match nodes that are Down.
@@ -1083,7 +1149,9 @@ class NodeStatusFilter(str, Enum):
 
 class ReplicaHealthReportServiceKind(str, Enum):
 
-    stateless = "Stateless"  #: Does not use Service Fabric to make its state highly available or reliable. The value is 1
+    stateless = (
+        "Stateless"  #: Does not use Service Fabric to make its state highly available or reliable. The value is 1
+    )
     stateful = "Stateful"  #: Uses Service Fabric to make its state or part of its state highly available and reliable. The value is 2.
 
 
@@ -1091,7 +1159,9 @@ class DataLossMode(str, Enum):
 
     invalid = "Invalid"  #: Reserved.  Do not pass into API.
     partial_data_loss = "PartialDataLoss"  #: PartialDataLoss option will cause a quorum of replicas to go down, triggering an OnDataLoss event in the system for the given partition.
-    full_data_loss = "FullDataLoss"  #: FullDataLoss option will drop all the replicas which means that all the data will be lost.
+    full_data_loss = (
+        "FullDataLoss"  #: FullDataLoss option will drop all the replicas which means that all the data will be lost.
+    )
 
 
 class NodeTransitionType(str, Enum):
@@ -1111,5 +1181,7 @@ class QuorumLossMode(str, Enum):
 class RestartPartitionMode(str, Enum):
 
     invalid = "Invalid"  #: Reserved.  Do not pass into API.
-    all_replicas_or_instances = "AllReplicasOrInstances"  #: All replicas or instances in the partition are restarted at once.
+    all_replicas_or_instances = (
+        "AllReplicasOrInstances"  #: All replicas or instances in the partition are restarted at once.
+    )
     only_active_secondaries = "OnlyActiveSecondaries"  #: Only the secondary replicas are restarted.

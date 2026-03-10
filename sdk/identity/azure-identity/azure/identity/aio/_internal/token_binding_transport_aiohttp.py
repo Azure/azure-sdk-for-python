@@ -5,6 +5,7 @@
 """
 Aiohttp transport class for the asynchronous WorkloadIdentityCredential with token proxy support.
 """
+
 import ssl
 from typing import Any
 

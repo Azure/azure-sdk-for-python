@@ -7,4 +7,5 @@
 # --------------------------------------------------------------------------
 
 from ._purview_scanning_client import PurviewScanningClient
-__all__ = ['PurviewScanningClient']
+
+__all__ = ["PurviewScanningClient"]

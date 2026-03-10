@@ -1122,7 +1122,7 @@ def _validate_workspace_managed_datastore(path: Optional[Union[str, PathLike]]) 
 
 
 def _validate_auto_delete_setting_in_data_output(
-    auto_delete_setting: Optional[Union[Dict, "AutoDeleteSetting"]]
+    auto_delete_setting: Optional[Union[Dict, "AutoDeleteSetting"]],
 ) -> None:
     # avoid specifying auto_delete_setting in job output now
     if auto_delete_setting:

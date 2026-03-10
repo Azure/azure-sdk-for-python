@@ -8,6 +8,7 @@ from devtools_testutils import AzureRecordedTestCase
 from azure.purview.catalog import PurviewCatalogClient
 from azure.purview.catalog.aio import PurviewCatalogClient as AsyncPurviewCatalogClient
 
+
 class PurviewCatalogTestAsync(AzureRecordedTestCase):
 
     def create_async_client(self, endpoint):

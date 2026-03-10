@@ -42,15 +42,13 @@ async def sample_recognize_linked_entities_async() -> None:
     key = os.environ["AZURE_LANGUAGE_KEY"]
 
     text_analytics_client = TextAnalyticsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-    documents = [
-        """
+    documents = ["""
         Microsoft was founded by Bill Gates with some friends he met at Harvard. One of his friends,
         Steve Ballmer, eventually became CEO after Bill Gates as well. Steve Ballmer eventually stepped
         down as CEO of Microsoft, and was succeeded by Satya Nadella.
         Microsoft originally moved its headquarters to Bellevue, Washington in January 1979, but is now
         headquartered in Redmond.
-        """
-    ]
+        """]
 
     async with text_analytics_client:
         result = await text_analytics_client.recognize_linked_entities(documents)
@@ -64,22 +62,19 @@ async def sample_recognize_linked_entities_async() -> None:
     entity_to_url = {}
     for doc in docs:
         for entity in doc.entities:
-            print("Entity '{}' has been mentioned '{}' time(s)".format(
-                entity.name, len(entity.matches)
-            ))
+            print("Entity '{}' has been mentioned '{}' time(s)".format(entity.name, len(entity.matches)))
             if entity.data_source == "Wikipedia":
                 entity_to_url[entity.name] = entity.url
     # [END recognize_linked_entities_async]
 
     print("\nNow let's see all of the Wikipedia articles we've extracted from our research documents")
     for entity_name, url in entity_to_url.items():
-        print("Link to Wikipedia article for '{}': {}".format(
-                entity_name, url
-        ))
+        print("Link to Wikipedia article for '{}': {}".format(entity_name, url))
 
 
 async def main():
     await sample_recognize_linked_entities_async()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())

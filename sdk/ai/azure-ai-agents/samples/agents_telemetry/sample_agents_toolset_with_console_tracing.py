@@ -29,6 +29,7 @@ USAGE:
     3) OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT - Optional. Set to `true` to trace the content of chat
        messages, which may contain personal data. False by default.
 """
+
 from typing import Any, Callable, Set
 
 import os, sys, time, json

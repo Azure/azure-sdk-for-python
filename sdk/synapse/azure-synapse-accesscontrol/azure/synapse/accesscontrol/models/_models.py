@@ -22,19 +22,16 @@ class CheckAccessDecision(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'access_decision': {'key': 'accessDecision', 'type': 'str'},
-        'action_id': {'key': 'actionId', 'type': 'str'},
-        'role_assignment': {'key': 'roleAssignment', 'type': 'RoleAssignmentDetails'},
+        "access_decision": {"key": "accessDecision", "type": "str"},
+        "action_id": {"key": "actionId", "type": "str"},
+        "role_assignment": {"key": "roleAssignment", "type": "RoleAssignmentDetails"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CheckAccessDecision, self).__init__(**kwargs)
-        self.access_decision = kwargs.get('access_decision', None)
-        self.action_id = kwargs.get('action_id', None)
-        self.role_assignment = kwargs.get('role_assignment', None)
+        self.access_decision = kwargs.get("access_decision", None)
+        self.action_id = kwargs.get("action_id", None)
+        self.role_assignment = kwargs.get("role_assignment", None)
 
 
 class CheckPrincipalAccessRequest(msrest.serialization.Model):
@@ -51,25 +48,22 @@ class CheckPrincipalAccessRequest(msrest.serialization.Model):
     """
 
     _validation = {
-        'subject': {'required': True},
-        'actions': {'required': True},
-        'scope': {'required': True},
+        "subject": {"required": True},
+        "actions": {"required": True},
+        "scope": {"required": True},
     }
 
     _attribute_map = {
-        'subject': {'key': 'subject', 'type': 'SubjectInfo'},
-        'actions': {'key': 'actions', 'type': '[RequiredAction]'},
-        'scope': {'key': 'scope', 'type': 'str'},
+        "subject": {"key": "subject", "type": "SubjectInfo"},
+        "actions": {"key": "actions", "type": "[RequiredAction]"},
+        "scope": {"key": "scope", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CheckPrincipalAccessRequest, self).__init__(**kwargs)
-        self.subject = kwargs['subject']
-        self.actions = kwargs['actions']
-        self.scope = kwargs['scope']
+        self.subject = kwargs["subject"]
+        self.actions = kwargs["actions"]
+        self.scope = kwargs["scope"]
 
 
 class CheckPrincipalAccessResponse(msrest.serialization.Model):
@@ -81,15 +75,12 @@ class CheckPrincipalAccessResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'access_decisions': {'key': 'accessDecisions', 'type': '[CheckAccessDecision]'},
+        "access_decisions": {"key": "accessDecisions", "type": "[CheckAccessDecision]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(CheckPrincipalAccessResponse, self).__init__(**kwargs)
-        self.access_decisions = kwargs.get('access_decisions', None)
+        self.access_decisions = kwargs.get("access_decisions", None)
 
 
 class ErrorAdditionalInfo(msrest.serialization.Model):
@@ -104,19 +95,16 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -130,15 +118,12 @@ class ErrorContract(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponse'},
+        "error": {"key": "error", "type": "ErrorResponse"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ErrorContract, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
+        self.error = kwargs.get("error", None)
 
 
 class ErrorResponse(msrest.serialization.Model):
@@ -159,25 +144,22 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorResponse]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorResponse]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ErrorResponse, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -198,22 +180,19 @@ class RequiredAction(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
-        'is_data_action': {'required': True},
+        "id": {"required": True},
+        "is_data_action": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(RequiredAction, self).__init__(**kwargs)
-        self.id = kwargs['id']
-        self.is_data_action = kwargs['is_data_action']
+        self.id = kwargs["id"]
+        self.is_data_action = kwargs["is_data_action"]
 
 
 class RoleAssignmentDetails(msrest.serialization.Model):
@@ -232,23 +211,20 @@ class RoleAssignmentDetails(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'role_definition_id': {'key': 'roleDefinitionId', 'type': 'str'},
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'scope': {'key': 'scope', 'type': 'str'},
-        'principal_type': {'key': 'principalType', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "role_definition_id": {"key": "roleDefinitionId", "type": "str"},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "scope": {"key": "scope", "type": "str"},
+        "principal_type": {"key": "principalType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(RoleAssignmentDetails, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.role_definition_id = kwargs.get('role_definition_id', None)
-        self.principal_id = kwargs.get('principal_id', None)
-        self.scope = kwargs.get('scope', None)
-        self.principal_type = kwargs.get('principal_type', None)
+        self.id = kwargs.get("id", None)
+        self.role_definition_id = kwargs.get("role_definition_id", None)
+        self.principal_id = kwargs.get("principal_id", None)
+        self.scope = kwargs.get("scope", None)
+        self.principal_type = kwargs.get("principal_type", None)
 
 
 class RoleAssignmentDetailsList(msrest.serialization.Model):
@@ -261,17 +237,14 @@ class RoleAssignmentDetailsList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'count': {'key': 'count', 'type': 'int'},
-        'value': {'key': 'value', 'type': '[RoleAssignmentDetails]'},
+        "count": {"key": "count", "type": "int"},
+        "value": {"key": "value", "type": "[RoleAssignmentDetails]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(RoleAssignmentDetailsList, self).__init__(**kwargs)
-        self.count = kwargs.get('count', None)
-        self.value = kwargs.get('value', None)
+        self.count = kwargs.get("count", None)
+        self.value = kwargs.get("value", None)
 
 
 class RoleAssignmentRequest(msrest.serialization.Model):
@@ -290,27 +263,24 @@ class RoleAssignmentRequest(msrest.serialization.Model):
     """
 
     _validation = {
-        'role_id': {'required': True},
-        'principal_id': {'required': True},
-        'scope': {'required': True},
+        "role_id": {"required": True},
+        "principal_id": {"required": True},
+        "scope": {"required": True},
     }
 
     _attribute_map = {
-        'role_id': {'key': 'roleId', 'type': 'str'},
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'scope': {'key': 'scope', 'type': 'str'},
-        'principal_type': {'key': 'principalType', 'type': 'str'},
+        "role_id": {"key": "roleId", "type": "str"},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "scope": {"key": "scope", "type": "str"},
+        "principal_type": {"key": "principalType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(RoleAssignmentRequest, self).__init__(**kwargs)
-        self.role_id = kwargs['role_id']
-        self.principal_id = kwargs['principal_id']
-        self.scope = kwargs['scope']
-        self.principal_type = kwargs.get('principal_type', None)
+        self.role_id = kwargs["role_id"]
+        self.principal_id = kwargs["principal_id"]
+        self.scope = kwargs["scope"]
+        self.principal_type = kwargs.get("principal_type", None)
 
 
 class SubjectInfo(msrest.serialization.Model):
@@ -325,21 +295,18 @@ class SubjectInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'required': True},
+        "principal_id": {"required": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'group_ids': {'key': 'groupIds', 'type': '[str]'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "group_ids": {"key": "groupIds", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SubjectInfo, self).__init__(**kwargs)
-        self.principal_id = kwargs['principal_id']
-        self.group_ids = kwargs.get('group_ids', None)
+        self.principal_id = kwargs["principal_id"]
+        self.group_ids = kwargs.get("group_ids", None)
 
 
 class SynapseRbacPermission(msrest.serialization.Model):
@@ -356,21 +323,18 @@ class SynapseRbacPermission(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'actions': {'key': 'actions', 'type': '[str]'},
-        'not_actions': {'key': 'notActions', 'type': '[str]'},
-        'data_actions': {'key': 'dataActions', 'type': '[str]'},
-        'not_data_actions': {'key': 'notDataActions', 'type': '[str]'},
+        "actions": {"key": "actions", "type": "[str]"},
+        "not_actions": {"key": "notActions", "type": "[str]"},
+        "data_actions": {"key": "dataActions", "type": "[str]"},
+        "not_data_actions": {"key": "notDataActions", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SynapseRbacPermission, self).__init__(**kwargs)
-        self.actions = kwargs.get('actions', None)
-        self.not_actions = kwargs.get('not_actions', None)
-        self.data_actions = kwargs.get('data_actions', None)
-        self.not_data_actions = kwargs.get('not_data_actions', None)
+        self.actions = kwargs.get("actions", None)
+        self.not_actions = kwargs.get("not_actions", None)
+        self.data_actions = kwargs.get("data_actions", None)
+        self.not_data_actions = kwargs.get("not_data_actions", None)
 
 
 class SynapseRoleDefinition(msrest.serialization.Model):
@@ -393,24 +357,21 @@ class SynapseRoleDefinition(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'is_built_in': {'key': 'isBuiltIn', 'type': 'bool'},
-        'description': {'key': 'description', 'type': 'str'},
-        'permissions': {'key': 'permissions', 'type': '[SynapseRbacPermission]'},
-        'scopes': {'key': 'scopes', 'type': '[str]'},
-        'availability_status': {'key': 'availabilityStatus', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "is_built_in": {"key": "isBuiltIn", "type": "bool"},
+        "description": {"key": "description", "type": "str"},
+        "permissions": {"key": "permissions", "type": "[SynapseRbacPermission]"},
+        "scopes": {"key": "scopes", "type": "[str]"},
+        "availability_status": {"key": "availabilityStatus", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SynapseRoleDefinition, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.name = kwargs.get('name', None)
-        self.is_built_in = kwargs.get('is_built_in', None)
-        self.description = kwargs.get('description', None)
-        self.permissions = kwargs.get('permissions', None)
-        self.scopes = kwargs.get('scopes', None)
-        self.availability_status = kwargs.get('availability_status', None)
+        self.id = kwargs.get("id", None)
+        self.name = kwargs.get("name", None)
+        self.is_built_in = kwargs.get("is_built_in", None)
+        self.description = kwargs.get("description", None)
+        self.permissions = kwargs.get("permissions", None)
+        self.scopes = kwargs.get("scopes", None)
+        self.availability_status = kwargs.get("availability_status", None)

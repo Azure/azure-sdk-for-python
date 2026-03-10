@@ -702,9 +702,7 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         return error
 
     @staticmethod
-    def _handle_exception(
-        exception, closable, *, is_consumer=False
-    ):
+    def _handle_exception(exception, closable, *, is_consumer=False):
         try:  # closable is a producer/consumer object
             name = closable._name  # pylint: disable=protected-access
         except AttributeError:  # closable is an client object

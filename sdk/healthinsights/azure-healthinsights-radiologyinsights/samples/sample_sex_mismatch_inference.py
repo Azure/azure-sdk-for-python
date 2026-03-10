@@ -8,7 +8,7 @@ FILE: sample_sex_mismatch_inference.py
 DESCRIPTION:
 The sample_sex_mismatch_inference.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize a RadiologyInsightsClient, build a Radiology Insights request with the sample document,
-submit it to the client, RadiologyInsightsClient, and display the Sex Mismatch indication.     
+submit it to the client, RadiologyInsightsClient, and display the Sex Mismatch indication.
 
 
 USAGE:
@@ -18,8 +18,9 @@ USAGE:
     - For more details how to use DefaultAzureCredential, please take a look at https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential
 
 2. python sample_sex_mismatch_inference.py
-   
+
 """
+
 import datetime
 import os
 import uuid

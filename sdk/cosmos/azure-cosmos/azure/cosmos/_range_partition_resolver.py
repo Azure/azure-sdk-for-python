@@ -19,8 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Range partition resolver implementation in the Azure Cosmos database service.
-"""
+"""Range partition resolver implementation in the Azure Cosmos database service."""
 
 from . import _range as prange
 

@@ -35,7 +35,6 @@ from azure.storage.blob import BlobServiceClient
 from azure.storage.blob.aio import BlobServiceClient as AsyncBlobServiceClient
 from azure.core.pipeline.transport import RequestsTransport, AioHttpTransport
 
-
 # =============================================================================
 # Helper: Custom HTTPAdapter for requests
 # =============================================================================

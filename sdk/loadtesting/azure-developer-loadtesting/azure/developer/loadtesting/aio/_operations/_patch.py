@@ -7,6 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 import asyncio
 import logging
 import time
@@ -47,13 +48,13 @@ class AsyncLoadTestingPollingMethod(AsyncPollingMethod):
         self._resource = initial_response
 
     def status(self) -> str:
-        return self._status # type: ignore[return-value]
+        return self._status  # type: ignore[return-value]
 
     def finished(self) -> bool:
         return self._status in self._termination_statuses
 
     def resource(self) -> JSON:
-        return self._resource   # type: ignore[return-value]
+        return self._resource  # type: ignore[return-value]
 
     async def run(self) -> None:
         try:

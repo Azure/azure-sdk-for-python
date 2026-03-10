@@ -77,12 +77,10 @@ class TestModelOperations:
         p = tmp_path / "model_full.yml"
         model_path = tmp_path / "model.pkl"
         model_path.write_text("hello world")
-        p.write_text(
-            f"""
+        p.write_text(f"""
 name: {model_name}
 path: ./model.pkl
-version: 3"""
-        )
+version: 3""")
 
         with patch(
             "azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore",
@@ -127,11 +125,9 @@ version: 3"""
         p = tmp_path / "model_full.yml"
         model_path = tmp_path / "model.pkl"
         model_path.write_text("hello world")
-        p.write_text(
-            f"""
+        p.write_text(f"""
 name: {model_name}
-path: ./model.pkl"""
-        )
+path: ./model.pkl""")
         model = load_model(source=p)
         assert model._auto_increment_version
         model.version = None
@@ -409,12 +405,10 @@ path: ./model.pkl"""
         p = tmp_path / "model_full.yml"
         model_path = tmp_path / "model.pkl"
         model_path.write_text("hello world")
-        p.write_text(
-            f"""
+        p.write_text(f"""
 name: {model_name}
 path: ./model.pkl
-version: 3"""
-        )
+version: 3""")
 
         with patch(
             "azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore",
@@ -480,11 +474,9 @@ version: 3"""
         p = tmp_path / "model_full.yml"
         model_path = tmp_path / "model.pkl"
         model_path.write_text("hello world")
-        p.write_text(
-            f"""
+        p.write_text(f"""
 name: {model_name}
-path: ./model.pkl"""
-        )
+path: ./model.pkl""")
         new_model = load_model(source=p)
         new_model.properties = new_properties
         with patch(
@@ -522,11 +514,9 @@ path: ./model.pkl"""
         p = tmp_path / "model_full.yml"
         model_path = tmp_path / "model.pkl"
         model_path.write_text("hello world")
-        p.write_text(
-            f"""
+        p.write_text(f"""
 name: {model_name}
-path: ./model.pkl"""
-        )
+path: ./model.pkl""")
         get_model = load_model(source=p)
         get_model.properties = {"model": "from_get"}
         latest_model = load_model(source=p)
@@ -546,11 +536,9 @@ path: ./model.pkl"""
         p = tmp_path / "model_full.yml"
         model_path = tmp_path / "model.pkl"
         model_path.write_text("hello world")
-        p.write_text(
-            f"""
+        p.write_text(f"""
 name: {model_name}
-path: ./model.pkl"""
-        )
+path: ./model.pkl""")
         model = load_model(source=p)
         model.properties = {"is-promptflow": "true", "is-evaluator": "true"}
         with pytest.raises(ValidationException) as cm:

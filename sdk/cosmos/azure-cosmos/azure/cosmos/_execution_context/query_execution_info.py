@@ -19,8 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Internal class for partitioned query execution info implementation in the Azure Cosmos database service.
-"""
+"""Internal class for partitioned query execution info implementation in the Azure Cosmos database service."""
 
 from azure.cosmos.documents import _DistinctType
 

@@ -7,6 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 from typing import List, Any, TYPE_CHECKING, Optional, Union, Awaitable
 from datetime import datetime, timedelta, timezone
 import jwt
@@ -16,7 +17,6 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy, ProxyPolicy
 from azure.core.credentials import AzureKeyCredential
 
 from ._client import WebPubSubServiceClient as WebPubSubServiceClientGenerated
-
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports

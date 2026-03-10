@@ -19,7 +19,6 @@
 
 import re
 
-
 # Pre-compile regexes that are use often
 NON_ALPHANUM_PATTERN = r"[^a-z0-9]+"
 NON_ALPHANUM_RE = re.compile(NON_ALPHANUM_PATTERN)

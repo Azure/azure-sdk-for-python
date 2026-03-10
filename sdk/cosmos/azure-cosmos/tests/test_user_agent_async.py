@@ -15,8 +15,7 @@ from test_cosmos_http_logging_policy import create_logger
 
 @pytest.mark.cosmosEmulator
 class TestUserAgentAsync(unittest.IsolatedAsyncioTestCase):
-    """Python User Agent Prefix Tests (async).
-    """
+    """Python User Agent Prefix Tests (async)."""
 
     configs = test_config.TestConfig
     host = configs.host
@@ -25,25 +24,30 @@ class TestUserAgentAsync(unittest.IsolatedAsyncioTestCase):
 
     @classmethod
     def setUpClass(cls):
-        if (cls.masterKey == '[YOUR_KEY_HERE]' or
-                cls.host == '[YOUR_ENDPOINT_HERE]'):
+        if cls.masterKey == "[YOUR_KEY_HERE]" or cls.host == "[YOUR_ENDPOINT_HERE]":
             raise Exception(
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
-                "tests.")
+                "tests."
+            )
 
     async def _check(self, user_agent_kw):
         self.client = CosmosClient(self.host, self.masterKey, **user_agent_kw)
         self.created_database = self.client.get_database_client(self.TEST_DATABASE_ID)
         read_result = await self.created_database.read()
-        assert read_result['id'] == self.created_database.id
+        assert read_result["id"] == self.created_database.id
         await self.client.close()
 
     async def test_user_agent_special_characters_async(self):
-        user_agents = ["TestUserAgent", "TéstUserAgent's", "UnicodeChar鱀InUserAgent", "UserAgent with space$%_^()*&"] # cspell:disable-line
+        user_agents = [
+            "TestUserAgent",
+            "TéstUserAgent's",
+            "UnicodeChar鱀InUserAgent",
+            "UserAgent with space$%_^()*&",
+        ]  # cspell:disable-line
         for user_agent in user_agents:
-            await self._check({'user_agent': user_agent})
-            await self._check({'user_agent_suffix': user_agent})
+            await self._check({"user_agent": user_agent})
+            await self._check({"user_agent_suffix": user_agent})
 
     async def test_user_agent_with_features_async(self):
         async def _run_case(use_suffix: bool):
@@ -59,7 +63,9 @@ class TestUserAgentAsync(unittest.IsolatedAsyncioTestCase):
                     kwargs["user_agent"] = user_agent
                 self.client = CosmosClient(self.host, self.masterKey, **kwargs)
                 self.created_database = self.client.get_database_client(self.TEST_DATABASE_ID)
-                container = self.created_database.get_container_client(test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID)
+                container = self.created_database.get_container_client(
+                    test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID
+                )
                 await container.create_item(body={"id": "testItem" + str(uuid.uuid4()), "content": "testContent"})
                 await container.create_item(body={"id": "testItem" + str(uuid.uuid4()), "content": "testContent"})
             finally:
@@ -87,4 +93,3 @@ class TestUserAgentAsync(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

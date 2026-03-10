@@ -8,7 +8,6 @@ import os
 import functools
 from devtools_testutils import PowerShellPreparer, AzureMgmtPreparer, get_credential
 
-
 DocumentTranslationPreparer = functools.partial(
     PowerShellPreparer,
     "translation",

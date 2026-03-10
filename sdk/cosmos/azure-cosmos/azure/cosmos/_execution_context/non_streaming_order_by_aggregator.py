@@ -1,8 +1,8 @@
 # The MIT License (MIT)
 # Copyright (c) 2024 Microsoft Corporation
 
-"""Internal class for multi execution context aggregator implementation in the Azure Cosmos database service.
-"""
+"""Internal class for multi execution context aggregator implementation in the Azure Cosmos database service."""
+
 from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.multi_execution_aggregator import _MultiExecutionContextAggregator
 from azure.cosmos._execution_context import document_producer
@@ -10,6 +10,7 @@ from azure.cosmos._routing import routing_range
 from azure.cosmos import exceptions
 
 # pylint: disable=protected-access
+
 
 class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
     """This class is a subclass of the query execution context base and serves for
@@ -21,8 +22,9 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
     by the user.
     """
 
-    def __init__(self, client, resource_link, query, options, partitioned_query_ex_info,
-                 response_hook, raw_response_hook):
+    def __init__(
+        self, client, resource_link, query, options, partitioned_query_ex_info, response_hook, raw_response_hook
+    ):
         super(_NonStreamingOrderByContextAggregator, self).__init__(client, options)
 
         # use the routing provider in the client
@@ -63,8 +65,10 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
             except StopIteration:
                 continue
 
-        pq_size = self._partitioned_query_ex_info.get_top() or \
-                  self._partitioned_query_ex_info.get_limit() + self._partitioned_query_ex_info.get_offset()
+        pq_size = (
+            self._partitioned_query_ex_info.get_top()
+            or self._partitioned_query_ex_info.get_limit() + self._partitioned_query_ex_info.get_offset()
+        )
         for doc_producer in self._doc_producers:
             while True:
                 try:
@@ -145,7 +149,7 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
             self._document_producer_comparator,
             self._options,
             self._response_hook,
-            self._raw_response_hook
+            self._raw_response_hook,
         )
 
     def _get_target_partition_key_range(self):
@@ -153,5 +157,5 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
         return self._routing_provider.get_overlapping_ranges(
             self._resource_link,
             [routing_range.Range.ParseFromDict(range_as_dict) for range_as_dict in query_ranges],
-            self._options
+            self._options,
         )

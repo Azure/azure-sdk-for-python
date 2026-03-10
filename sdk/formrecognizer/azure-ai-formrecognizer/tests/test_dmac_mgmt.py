@@ -10,15 +10,10 @@ from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.pipeline.transport import RequestsTransport
-from azure.ai.formrecognizer import (
-    DocumentModelAdministrationClient,
-    DocumentAnalysisApiVersion,
-    OperationDetails
-)
+from azure.ai.formrecognizer import DocumentModelAdministrationClient, DocumentAnalysisApiVersion, OperationDetails
 from testcase import FormRecognizerTest
 from preparers import FormRecognizerPreparer, get_sync_client
 from conftest import skip_flaky_test
-
 
 get_dma_client = functools.partial(get_sync_client, DocumentModelAdministrationClient)
 
@@ -106,7 +101,9 @@ class TestManagement(FormRecognizerTest):
     def test_mgmt_model(self, formrecognizer_storage_container_sas_url, **kwargs):
         client = get_dma_client()
         set_bodiless_matcher()
-        poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url, description="mgmt model")
+        poller = client.begin_build_document_model(
+            "template", blob_container_url=formrecognizer_storage_container_sas_url, description="mgmt model"
+        )
         model = poller.result()
 
         model_from_get = client.get_document_model(model.model_id)

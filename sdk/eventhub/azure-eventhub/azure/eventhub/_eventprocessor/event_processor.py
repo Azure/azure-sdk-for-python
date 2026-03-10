@@ -237,9 +237,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                 if isinstance(event, list):
                     is_batch = True
 
-            with receive_context_manager(
-                self._eventhub_client, links=links, start_time=self._last_received_time
-            ):
+            with receive_context_manager(self._eventhub_client, links=links, start_time=self._last_received_time):
                 self._last_received_time = time.time_ns()
 
             with process_context_manager(self._eventhub_client, links=links, is_batch=is_batch):

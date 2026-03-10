@@ -58,7 +58,6 @@ from ._utils_deprecated import (
 )
 from ._openai_injector import CaptureOpenAITokenUsage
 
-
 MAX_WORKER_COUNT: Final[int] = 10
 KEYWORD_PATTERN: Final = re.compile(r"^\${([^{}]+)}$")
 

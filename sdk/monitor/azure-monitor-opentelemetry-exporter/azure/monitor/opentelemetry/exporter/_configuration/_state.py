@@ -4,6 +4,7 @@
 
 This module provides global access functions for the Configuration Manager singleton.
 """
+
 import os
 from typing import Optional, TYPE_CHECKING
 

@@ -32,7 +32,7 @@ def sample_update_knowledge_sources():
     client = QuestionAnsweringAuthoringClient(endpoint, AzureKeyCredential(key))
     with client:
         project_name = "MicrosoftFAQProject"
-        client.create_project( # pylint: disable=no-value-for-parameter
+        client.create_project(  # pylint: disable=no-value-for-parameter
             project_name=project_name,
             options={
                 "description": "Test project for some Microsoft QnAs",
@@ -42,7 +42,7 @@ def sample_update_knowledge_sources():
             },
         )
 
-        sources_poller = client.begin_update_sources( # pylint: disable=no-value-for-parameter
+        sources_poller = client.begin_update_sources(  # pylint: disable=no-value-for-parameter
             project_name=project_name,
             sources=[
                 _models.UpdateSourceRecord(
@@ -61,7 +61,7 @@ def sample_update_knowledge_sources():
         sources_poller.result()
         print("Knowledge source added (MicrosoftFAQ)")
 
-        qna_poller = client.begin_update_qnas( # pylint: disable=no-value-for-parameter
+        qna_poller = client.begin_update_qnas(  # pylint: disable=no-value-for-parameter
             project_name=project_name,
             qnas=[
                 _models.UpdateQnaRecord(
@@ -78,7 +78,7 @@ def sample_update_knowledge_sources():
         qna_poller.result()
         print("QnA added (1 record)")
 
-        client.update_synonyms( # pylint: disable=no-value-for-parameter
+        client.update_synonyms(  # pylint: disable=no-value-for-parameter
             project_name=project_name,
             synonyms=_models.SynonymAssets(
                 value=[

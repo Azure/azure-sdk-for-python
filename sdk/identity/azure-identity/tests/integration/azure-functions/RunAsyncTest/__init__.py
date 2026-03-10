@@ -8,7 +8,6 @@ import azure.functions as func
 from azure.identity.aio import ManagedIdentityCredential
 from azure.storage.blob.aio import BlobServiceClient
 
-
 EXPECTED_VARIABLES = (
     "IDENTITY_USER_DEFINED_IDENTITY_CLIENT_ID",
     "IDENTITY_STORAGE_NAME_1",

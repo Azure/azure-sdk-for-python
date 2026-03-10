@@ -36,17 +36,17 @@ class SecuritySettings(ARMBaseModel):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'device_admin_password': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "device_admin_password": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'device_admin_password': {'key': 'properties.deviceAdminPassword', 'type': 'AsymmetricEncryptedSecret'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "device_admin_password": {"key": "properties.deviceAdminPassword", "type": "AsymmetricEncryptedSecret"},
     }
 
     def __init__(self, *, device_admin_password, **kwargs) -> None:

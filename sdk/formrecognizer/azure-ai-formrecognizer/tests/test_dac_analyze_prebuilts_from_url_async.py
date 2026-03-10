@@ -17,7 +17,6 @@ from preparers import FormRecognizerPreparer, get_async_client
 from asynctestcase import AsyncFormRecognizerTest
 from conftest import skip_flaky_test
 
-
 get_da_client = functools.partial(get_async_client, DocumentAnalysisClient)
 
 
@@ -29,14 +28,16 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
     async def test_business_card_multipage_pdf(self):
         client = get_da_client()
         async with client:
-            poller = await client.begin_analyze_document_from_url("prebuilt-businessCard", self.business_card_multipage_url_pdf)
+            poller = await client.begin_analyze_document_from_url(
+                "prebuilt-businessCard", self.business_card_multipage_url_pdf
+            )
             result = await poller.result()
 
         assert len(result.documents) == 2
         business_card = result.documents[0]
         assert len(business_card.fields.get("ContactNames").value) == 1
-        assert business_card.fields.get("ContactNames").value[0].value['FirstName'].value == 'JOHN'
-        assert business_card.fields.get("ContactNames").value[0].value['LastName'].value == 'SINGER'
+        assert business_card.fields.get("ContactNames").value[0].value["FirstName"].value == "JOHN"
+        assert business_card.fields.get("ContactNames").value[0].value["LastName"].value == "SINGER"
 
         assert len(business_card.fields.get("JobTitles").value) == 1
         assert business_card.fields.get("JobTitles").value[0].value == "Software Engineer"
@@ -53,8 +54,8 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
 
         business_card = result.documents[1]
         assert len(business_card.fields.get("ContactNames").value) == 1
-        assert business_card.fields.get("ContactNames").value[0].value['FirstName'].value == 'Avery'
-        assert business_card.fields.get("ContactNames").value[0].value['LastName'].value == 'Smith'
+        assert business_card.fields.get("ContactNames").value[0].value["FirstName"].value == "Avery"
+        assert business_card.fields.get("ContactNames").value[0].value["LastName"].value == "Smith"
 
         assert len(business_card.fields.get("JobTitles").value) == 1
         assert business_card.fields.get("JobTitles").value[0].value == "Senior Researcher"
@@ -97,11 +98,13 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
     async def test_identity_document_jpg_passport(self):
         client = get_da_client()
         async with client:
-            poller = await client.begin_analyze_document_from_url("prebuilt-idDocument", self.identity_document_url_jpg_passport)
+            poller = await client.begin_analyze_document_from_url(
+                "prebuilt-idDocument", self.identity_document_url_jpg_passport
+            )
 
             result = await poller.result()
             assert len(result.documents) == 1
-        
+
             id_document = result.documents[0]
             # check dict values
 
@@ -109,8 +112,8 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
             assert passport["LastName"].value == "MARTIN"
             assert passport["FirstName"].value == "SARAH"
             assert passport["DocumentNumber"].value == "ZE000509"
-            assert passport["DateOfBirth"].value == date(1985,1,1)
-            assert passport["DateOfExpiration"].value == date(2023,1,14)
+            assert passport["DateOfBirth"].value == date(1985, 1, 1)
+            assert passport["DateOfExpiration"].value == date(2023, 1, 14)
             assert passport["Sex"].value == "F"
             assert passport["CountryRegion"].value == "CAN"
 
@@ -130,8 +133,8 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
         assert id_document.fields.get("LastName").value == "TALBOT"
         assert id_document.fields.get("FirstName").value == "LIAM R."
         assert id_document.fields.get("DocumentNumber").value == "WDLABCD456DG"
-        assert id_document.fields.get("DateOfBirth").value == date(1958,1,6)
-        assert id_document.fields.get("DateOfExpiration").value == date(2020,8,12)
+        assert id_document.fields.get("DateOfBirth").value == date(1958, 1, 6)
+        assert id_document.fields.get("DateOfExpiration").value == date(2020, 8, 12)
         assert id_document.fields.get("Sex").value == "M"
         assert id_document.fields.get("Address").value.house_number == None
         assert id_document.fields.get("Address").value.po_box == None
@@ -150,39 +153,43 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
     async def test_invoice_tiff(self, **kwargs):
         client = get_da_client()
         async with client:
-            poller = await client.begin_analyze_document_from_url(model_id="prebuilt-invoice", document_url=self.invoice_url_tiff)
+            poller = await client.begin_analyze_document_from_url(
+                model_id="prebuilt-invoice", document_url=self.invoice_url_tiff
+            )
 
             result = await poller.result()
         assert len(result.documents) == 1
         invoice = result.documents[0]
 
         # check dict values
-        assert invoice.fields.get("VendorName").value ==  "Contoso"
-        assert invoice.fields.get("VendorAddress").value, '1 Redmond way Suite 6000 Redmond ==  WA 99243'
-        assert invoice.fields.get("CustomerAddressRecipient").value ==  "Microsoft"
-        assert invoice.fields.get("CustomerAddress").value, '1020 Enterprise Way Sunnayvale ==  CA 87659'
-        assert invoice.fields.get("CustomerName").value ==  "Microsoft"
-        assert invoice.fields.get("InvoiceId").value ==  '34278587'
-        assert invoice.fields.get("InvoiceDate").value, date(2017, 6 ==  18)
+        assert invoice.fields.get("VendorName").value == "Contoso"
+        assert invoice.fields.get("VendorAddress").value, "1 Redmond way Suite 6000 Redmond ==  WA 99243"
+        assert invoice.fields.get("CustomerAddressRecipient").value == "Microsoft"
+        assert invoice.fields.get("CustomerAddress").value, "1020 Enterprise Way Sunnayvale ==  CA 87659"
+        assert invoice.fields.get("CustomerName").value == "Microsoft"
+        assert invoice.fields.get("InvoiceId").value == "34278587"
+        assert invoice.fields.get("InvoiceDate").value, date(2017, 6 == 18)
         # FIXME: regression in recognition algorithm
         # assert invoice.fields.get("Items").value[0].value["Amount"].value.amount ==  56651.49
-        assert invoice.fields.get("Items").value[0].value["Amount"].value.symbol ==  "$"
-        assert invoice.fields.get("DueDate").value, date(2017, 6 ==  24)
+        assert invoice.fields.get("Items").value[0].value["Amount"].value.symbol == "$"
+        assert invoice.fields.get("DueDate").value, date(2017, 6 == 24)
 
     @skip_flaky_test
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
     async def test_polling_interval(self, **kwargs):
         client = get_da_client(polling_interval=7)
-        assert client._client._config.polling_interval ==  7
+        assert client._client._config.polling_interval == 7
 
         async with client:
-            poller = await client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg, polling_interval=6)
+            poller = await client.begin_analyze_document_from_url(
+                "prebuilt-receipt", self.receipt_url_jpg, polling_interval=6
+            )
             await poller.wait()
-            assert poller._polling_method._timeout ==  6
+            assert poller._polling_method._timeout == 6
             poller2 = await client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)
             await poller2.wait()
-            assert poller2._polling_method._timeout ==  7  # goes back to client default
+            assert poller2._polling_method._timeout == 7  # goes back to client default
 
     @pytest.mark.live_test_only
     @skip_flaky_test
@@ -190,10 +197,7 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
     async def test_active_directory_auth_async(self):
         client = get_da_client()
         async with client:
-            poller = await client.begin_analyze_document_from_url(
-                "prebuilt-receipt",
-                self.receipt_url_jpg
-            )
+            poller = await client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)
             result = await poller.result()
         assert result is not None
 
@@ -203,8 +207,10 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
         client = get_da_client()
         with pytest.raises(HttpResponseError) as e:
             async with client:
-                poller = await client.begin_analyze_document_from_url("prebuilt-receipt", "https://fakeuri.com/blank%20space")
-        assert "https://fakeuri.com/blank%20space" in  e.value.response.request.body
+                poller = await client.begin_analyze_document_from_url(
+                    "prebuilt-receipt", "https://fakeuri.com/blank%20space"
+                )
+        assert "https://fakeuri.com/blank%20space" in e.value.response.request.body
 
     @FormRecognizerPreparer()
     async def test_receipt_url_bad_endpoint(self, **kwargs):
@@ -212,10 +218,7 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
         with pytest.raises(ServiceRequestError):
             client = DocumentAnalysisClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
             async with client:
-                poller = await client.begin_analyze_document_from_url(
-                    "prebuilt-receipt",
-                    self.receipt_url_jpg
-                )
+                poller = await client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)
                 result = await poller.result()
 
     @FormRecognizerPreparer()
@@ -224,10 +227,7 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
         client = get_da_client(api_key="xxxx")
         with pytest.raises(ClientAuthenticationError):
             async with client:
-                poller = await client.begin_analyze_document_from_url(
-                    "prebuilt-receipt",
-                    self.receipt_url_jpg
-                )
+                poller = await client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)
                 result = await poller.result()
 
     @FormRecognizerPreparer()
@@ -241,20 +241,23 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     async def test_receipt_url_pass_stream(self, **kwargs):
-        client = get_da_client()        
+        client = get_da_client()
         with open(self.receipt_png, "rb") as fd:
             receipt = fd.read(4)  # makes the recording smaller
 
         with pytest.raises(ValueError) as e:
             async with client:
                 poller = await client.begin_analyze_document_from_url("prebuilt-receipt", receipt)
-        assert str(e.value) == "'document_url' needs to be of type 'str'. Please see `begin_analyze_document()` to pass a byte stream."
+        assert (
+            str(e.value)
+            == "'document_url' needs to be of type 'str'. Please see `begin_analyze_document()` to pass a byte stream."
+        )
 
     @skip_flaky_test
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
     async def test_receipt_url_transform_jpg(self):
-        client = get_da_client()        
+        client = get_da_client()
         responses = []
 
         def callback(raw_response, _, headers):
@@ -265,9 +268,7 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
 
         async with client:
             poller = await client.begin_analyze_document_from_url(
-                "prebuilt-receipt",
-                self.receipt_url_jpg,
-                cls=callback
+                "prebuilt-receipt", self.receipt_url_jpg, cls=callback
             )
             result = await poller.result()
 
@@ -282,7 +283,9 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
         self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
         self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
         self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
-        self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
+        self.assertDocumentKeyValuePairsTransformCorrect(
+            returned_model.key_value_pairs, raw_analyze_result.key_value_pairs
+        )
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
         # check page range
@@ -292,18 +295,18 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
     async def test_receipt_url_png(self):
-        client = get_da_client()        
+        client = get_da_client()
         async with client:
             poller = await client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_png)
             result = await poller.result()
 
         assert len(result.documents) == 1
         receipt = result.documents[0]
-        assert receipt.fields.get("MerchantAddress").value, '123 Main Street Redmond ==  WA 98052'
-        assert receipt.fields.get("MerchantName").value ==  'Contoso'
-        assert receipt.fields.get("Subtotal").value ==  1098.99
-        assert receipt.fields.get("TotalTax").value ==  104.4
-        assert receipt.fields.get("Total").value ==  1203.39
+        assert receipt.fields.get("MerchantAddress").value, "123 Main Street Redmond ==  WA 98052"
+        assert receipt.fields.get("MerchantName").value == "Contoso"
+        assert receipt.fields.get("Subtotal").value == 1098.99
+        assert receipt.fields.get("TotalTax").value == 104.4
+        assert receipt.fields.get("Total").value == 1203.39
         assert receipt.fields.get("TransactionDate").value == date(year=2019, month=6, day=10)
         assert receipt.fields.get("TransactionTime").value == time(hour=13, minute=59, second=0)
         assert receipt.doc_type == "receipt.retailMeal"
@@ -314,29 +317,29 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
     async def test_receipt_multipage_url(self):
-        client = get_da_client()        
+        client = get_da_client()
         async with client:
             poller = await client.begin_analyze_document_from_url("prebuilt-receipt", self.multipage_receipt_url_pdf)
             result = await poller.result()
 
         assert len(result.documents) == 2
         receipt = result.documents[0]
-        assert receipt.fields.get("MerchantAddress").value, '123 Main Street Redmond ==  WA 98052'
-        assert receipt.fields.get("MerchantName").value ==  'Contoso'
-        assert receipt.fields.get("MerchantPhoneNumber").value ==  '+19876543210'
-        assert receipt.fields.get("Subtotal").value ==  11.7
-        assert receipt.fields.get("TotalTax").value ==  1.17
-        assert receipt.fields.get("Tip").value ==  1.63
-        assert receipt.fields.get("Total").value ==  14.5
+        assert receipt.fields.get("MerchantAddress").value, "123 Main Street Redmond ==  WA 98052"
+        assert receipt.fields.get("MerchantName").value == "Contoso"
+        assert receipt.fields.get("MerchantPhoneNumber").value == "+19876543210"
+        assert receipt.fields.get("Subtotal").value == 11.7
+        assert receipt.fields.get("TotalTax").value == 1.17
+        assert receipt.fields.get("Tip").value == 1.63
+        assert receipt.fields.get("Total").value == 14.5
         assert receipt.fields.get("TransactionDate").value == date(year=2019, month=6, day=10)
         assert receipt.fields.get("TransactionTime").value == time(hour=13, minute=59, second=0)
         assert receipt.doc_type == "receipt.retailMeal"
         receipt = result.documents[1]
-        assert receipt.fields.get("MerchantAddress").value, '123 Main Street Redmond ==  WA 98052'
-        assert receipt.fields.get("MerchantName").value ==  'Contoso'
-        assert receipt.fields.get("Subtotal").value ==  1098.99
-        assert receipt.fields.get("TotalTax").value ==  104.4
-        assert receipt.fields.get("Total").value ==  1203.39
+        assert receipt.fields.get("MerchantAddress").value, "123 Main Street Redmond ==  WA 98052"
+        assert receipt.fields.get("MerchantName").value == "Contoso"
+        assert receipt.fields.get("Subtotal").value == 1098.99
+        assert receipt.fields.get("TotalTax").value == 104.4
+        assert receipt.fields.get("Total").value == 1203.39
         assert receipt.fields.get("TransactionDate").value == date(year=2019, month=6, day=10)
         assert receipt.fields.get("TransactionTime").value == time(hour=13, minute=59, second=0)
         assert receipt.doc_type == "receipt.retailMeal"
@@ -347,7 +350,7 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
     async def test_receipt_multipage_transform_url(self):
-        client = get_da_client()        
+        client = get_da_client()
         responses = []
 
         def callback(raw_response, _, headers):
@@ -358,9 +361,7 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
 
         async with client:
             poller = await client.begin_analyze_document_from_url(
-                "prebuilt-receipt",
-                self.multipage_receipt_url_pdf,
-                cls=callback
+                "prebuilt-receipt", self.multipage_receipt_url_pdf, cls=callback
             )
 
             result = await poller.result()
@@ -371,11 +372,13 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
         assert returned_model.model_id == raw_analyze_result.model_id
         assert returned_model.api_version == raw_analyze_result.api_version
         assert returned_model.content == raw_analyze_result.content
-        
+
         self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
         self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
         self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
-        self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
+        self.assertDocumentKeyValuePairsTransformCorrect(
+            returned_model.key_value_pairs, raw_analyze_result.key_value_pairs
+        )
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
         # check page range
@@ -389,7 +392,9 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
         async with client:
             initial_poller = await client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)
             cont_token = initial_poller.continuation_token()
-            poller = await client.begin_analyze_document_from_url("prebuilt-receipt", None, continuation_token=cont_token)
+            poller = await client.begin_analyze_document_from_url(
+                "prebuilt-receipt", None, continuation_token=cont_token
+            )
             result = await poller.result()
             assert result is not None
             await initial_poller.wait()  # necessary so devtools_testutils doesn't throw assertion error
@@ -400,8 +405,10 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
     async def test_receipt_locale_specified(self):
         client = get_da_client()
         async with client:
-            poller = await client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg, locale="en-IN")
-            assert 'en-IN' == poller._polling_method._initial_response.http_response.request.query['locale']
+            poller = await client.begin_analyze_document_from_url(
+                "prebuilt-receipt", self.receipt_url_jpg, locale="en-IN"
+            )
+            assert "en-IN" == poller._polling_method._initial_response.http_response.request.query["locale"]
             result = await poller.result()
             assert result
 
@@ -412,7 +419,9 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
         client = get_da_client()
         with pytest.raises(HttpResponseError) as e:
             async with client:
-                await client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg, locale="not a locale")
+                await client.begin_analyze_document_from_url(
+                    "prebuilt-receipt", self.receipt_url_jpg, locale="not a locale"
+                )
         assert "InvalidArgument" == e.value.error.code
 
     @skip_flaky_test
@@ -422,6 +431,6 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
         client = get_da_client()
         async with client:
             poller = await client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg, pages="1")
-            assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
+            assert "1" == poller._polling_method._initial_response.http_response.request.query["pages"]
             result = await poller.result()
             assert result

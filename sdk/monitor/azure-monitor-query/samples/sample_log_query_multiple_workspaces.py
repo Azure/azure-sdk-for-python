@@ -18,6 +18,7 @@ For more information on DefaultAzureCredential, see https://learn.microsoft.com/
 **Note** - Although this example uses pandas to print the response, it's optional and
 isn't a required package for querying. Alternatively, native Python can be used as well.
 """
+
 from datetime import timedelta
 import os
 
@@ -25,7 +26,6 @@ from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
 from azure.monitor.query import LogsQueryClient
 import pandas as pd
-
 
 credential = DefaultAzureCredential()
 client = LogsQueryClient(credential)

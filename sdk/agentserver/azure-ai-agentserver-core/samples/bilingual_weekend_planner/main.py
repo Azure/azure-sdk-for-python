@@ -100,9 +100,7 @@ def _set_capture_env(provider: str, base_url: str) -> None:
             "OTEL_GENAI_AGENT_DESCRIPTION",
             "Assistant that plans weekend activities using weather and events data in multiple languages",
         ),
-        "OTEL_GENAI_AGENT_ID": os.getenv(
-            "OTEL_GENAI_AGENT_ID", "bilingual-weekend-planner"
-        ),
+        "OTEL_GENAI_AGENT_ID": os.getenv("OTEL_GENAI_AGENT_ID", "bilingual-weekend-planner"),
     }
     for env_key, value in capture_defaults.items():
         os.environ.setdefault(env_key, value)
@@ -148,9 +146,7 @@ def _resolve_api_config() -> _ApiConfig:
         if "AZURE_OPENAI_VERSION" not in os.environ:
             raise ValueError("AZURE_OPENAI_VERSION is required when API_HOST=azure")
         if "AZURE_OPENAI_CHAT_DEPLOYMENT" not in os.environ:
-            raise ValueError(
-                "AZURE_OPENAI_CHAT_DEPLOYMENT is required when API_HOST=azure"
-            )
+            raise ValueError("AZURE_OPENAI_CHAT_DEPLOYMENT is required when API_HOST=azure")
         endpoint = os.environ["AZURE_OPENAI_ENDPOINT"].rstrip("/")
         api_version = os.environ["AZURE_OPENAI_VERSION"]
         deployment = os.environ["AZURE_OPENAI_CHAT_DEPLOYMENT"]
@@ -175,9 +171,7 @@ def _resolve_api_config() -> _ApiConfig:
             provider="azure.ai.openai",
         )
 
-    raise ValueError(
-        f"Unsupported API_HOST '{host}'. Supported values are 'github' or 'azure'."
-    )
+    raise ValueError(f"Unsupported API_HOST '{host}'. Supported values are 'github' or 'azure'.")
 
 
 def _configure_otel() -> None:
@@ -202,9 +196,7 @@ def _configure_otel() -> None:
     tracer_provider = TracerProvider(resource=resource)
 
     if grpc_endpoint:
-        tracer_provider.add_span_processor(
-            BatchSpanProcessor(OTLPSpanExporter(endpoint=grpc_endpoint))
-        )
+        tracer_provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter(endpoint=grpc_endpoint)))
         print(f"[otel] OTLP gRPC exporter configured ({grpc_endpoint})")
     elif conn:
         if AzureMonitorTraceExporter is None:
@@ -212,14 +204,10 @@ def _configure_otel() -> None:
                 "Warning: Azure Monitor exporter not installed. "
                 "Install with: pip install azure-monitor-opentelemetry-exporter",
             )
-            tracer_provider.add_span_processor(
-                BatchSpanProcessor(ConsoleSpanExporter())
-            )
+            tracer_provider.add_span_processor(BatchSpanProcessor(ConsoleSpanExporter()))
         else:
             tracer_provider.add_span_processor(
-                BatchSpanProcessor(
-                    AzureMonitorTraceExporter.from_connection_string(conn)
-                )
+                BatchSpanProcessor(AzureMonitorTraceExporter.from_connection_string(conn))
             )
             print("[otel] Azure Monitor trace exporter configured")
     else:
@@ -514,9 +502,7 @@ class WeekendPlannerContainer(FoundryCBAgent):
             try:
                 result = await Runner.run(TRIAGE_AGENT, input=user_text)
                 final_text = str(result.final_output or "")
-                span.set_attribute(
-                    "agent.response", final_text[:500] if final_text else ""
-                )
+                span.set_attribute("agent.response", final_text[:500] if final_text else "")
                 final_agent = getattr(result, "last_agent", None)
                 if final_agent and getattr(final_agent, "name", None):
                     span.set_attribute("agent.final", final_agent.name)

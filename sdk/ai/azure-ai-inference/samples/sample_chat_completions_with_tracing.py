@@ -27,7 +27,6 @@ USAGE:
         for detailed traces, including chat request and response messages.
 """
 
-
 import os
 from opentelemetry import trace
 

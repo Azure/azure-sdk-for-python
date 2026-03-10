@@ -22,9 +22,7 @@ class PurviewAccountTest(AzureRecordedTestCase):
 
 
 PurviewAccountPowerShellPreparer = functools.partial(
-    PowerShellPreparer,
-    "purviewaccount",
-    purviewaccount_endpoint="https://fake_account.account.purview.azure.com"
+    PowerShellPreparer, "purviewaccount", purviewaccount_endpoint="https://fake_account.account.purview.azure.com"
 )
 
 
@@ -40,7 +38,5 @@ class PurviewMetaPolicyTest(AzureRecordedTestCase):
 
 
 PurviewMetaPolicyPowerShellPreparer = functools.partial(
-    PowerShellPreparer,
-    "purviewmetapolicy",
-    purviewmetapolicy_endpoint="https://fake_account.account.purview.azure.com"
+    PowerShellPreparer, "purviewmetapolicy", purviewmetapolicy_endpoint="https://fake_account.account.purview.azure.com"
 )

@@ -8,7 +8,6 @@ from azure.ai.language.questionanswering.authoring.aio import QuestionAnsweringA
 from azure.ai.language.questionanswering.authoring import models as _models
 
 
-
 class TestSourcesQnasSynonymsAsync(QuestionAnsweringAuthoringTestCase):
     @pytest.mark.asyncio
     async def test_add_source(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined] # pylint: disable=unused-argument
@@ -18,7 +17,9 @@ class TestSourcesQnasSynonymsAsync(QuestionAnsweringAuthoringTestCase):
         project_name = "IsaacNewton"
         async with client:
             await AuthoringAsyncTestHelper.create_test_project(
-                client, project_name=project_name, polling_interval=0 if self.is_playback else None # pylint: disable=using-constant-test
+                client,
+                project_name=project_name,
+                polling_interval=0 if self.is_playback else None,  # pylint: disable=using-constant-test
             )
             update_source_ops = [
                 _models.UpdateSourceRecord(
@@ -35,7 +36,7 @@ class TestSourcesQnasSynonymsAsync(QuestionAnsweringAuthoringTestCase):
                     }
                 )
             ]
-            poller = await client.begin_update_sources( # pylint: disable=no-value-for-parameter
+            poller = await client.begin_update_sources(  # pylint: disable=no-value-for-parameter
                 project_name=project_name,
                 sources=cast(list[_models.UpdateSourceRecord], update_source_ops),
                 content_type="application/json",
@@ -56,7 +57,9 @@ class TestSourcesQnasSynonymsAsync(QuestionAnsweringAuthoringTestCase):
         project_name = "IsaacNewton"
         async with client:
             await AuthoringAsyncTestHelper.create_test_project(
-                client, project_name=project_name, polling_interval=0 if self.is_playback else None # pylint: disable=using-constant-test
+                client,
+                project_name=project_name,
+                polling_interval=0 if self.is_playback else None,  # pylint: disable=using-constant-test
             )
             question = "What is the easiest way to use azure services in my .NET project?"
             answer = "Using Microsoft's Azure SDKs"
@@ -72,7 +75,7 @@ class TestSourcesQnasSynonymsAsync(QuestionAnsweringAuthoringTestCase):
                     }
                 )
             ]
-            poller = await client.begin_update_qnas( # pylint: disable=no-value-for-parameter
+            poller = await client.begin_update_qnas(  # pylint: disable=no-value-for-parameter
                 project_name=project_name,
                 qnas=cast(list[_models.UpdateQnaRecord], update_qna_ops),
                 content_type="application/json",
@@ -93,14 +96,16 @@ class TestSourcesQnasSynonymsAsync(QuestionAnsweringAuthoringTestCase):
         project_name = "IsaacNewton"
         async with client:
             await AuthoringAsyncTestHelper.create_test_project(
-                client, project_name=project_name, polling_interval=0 if self.is_playback else None # pylint: disable=using-constant-test
+                client,
+                project_name=project_name,
+                polling_interval=0 if self.is_playback else None,  # pylint: disable=using-constant-test
             )
             synonyms_model = _models.SynonymAssets(
                 value=[
                     _models.WordAlterations(alterations=["qnamaker", "qna maker"]),
                 ]
             )
-            await client.update_synonyms( # pylint: disable=no-value-for-parameter
+            await client.update_synonyms(  # pylint: disable=no-value-for-parameter
                 project_name=project_name,
                 synonyms=synonyms_model,
                 content_type="application/json",

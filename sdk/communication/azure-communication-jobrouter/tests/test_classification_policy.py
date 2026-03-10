@@ -43,7 +43,6 @@ from azure.communication.jobrouter.models import (
     RouterQueue,
 )
 
-
 queue_labels = {"key1": "QueueKey", "key2": 10, "key3": True, "key4": False, "key5": 10.1}
 
 queue_selectors = [

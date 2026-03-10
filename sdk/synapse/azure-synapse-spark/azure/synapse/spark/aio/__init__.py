@@ -7,4 +7,5 @@
 # --------------------------------------------------------------------------
 
 from ._spark_client import SparkClient
-__all__ = ['SparkClient']
+
+__all__ = ["SparkClient"]

@@ -8,6 +8,7 @@ from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsTest, TextAnalyticsPreparer
 from azure.ai.textanalytics import TextAnalyticsClient
 
+
 class TestContextManager(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
@@ -16,9 +17,7 @@ class TestContextManager(TextAnalyticsTest):
         textanalytics_test_api_key = kwargs.pop("textanalytics_test_api_key")
         transport = mock.MagicMock()
         client = TextAnalyticsClient(
-            textanalytics_test_endpoint,
-            AzureKeyCredential(textanalytics_test_api_key),
-            transport=transport
+            textanalytics_test_endpoint, AzureKeyCredential(textanalytics_test_api_key), transport=transport
         )
         client.close()
         assert transport.__enter__.call_count == 0
@@ -30,9 +29,7 @@ class TestContextManager(TextAnalyticsTest):
         textanalytics_test_api_key = kwargs.pop("textanalytics_test_api_key")
         transport = mock.MagicMock()
         client = TextAnalyticsClient(
-            textanalytics_test_endpoint,
-            AzureKeyCredential(textanalytics_test_api_key),
-            transport=transport
+            textanalytics_test_endpoint, AzureKeyCredential(textanalytics_test_api_key), transport=transport
         )
 
         with client:

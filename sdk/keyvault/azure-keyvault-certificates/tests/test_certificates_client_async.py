@@ -39,7 +39,6 @@ from _async_test_case import AsyncCertificatesClientPreparer
 from _test_case import get_decorator
 from certs import CERT_CONTENT_PASSWORD_ENCODED, CERT_CONTENT_NOT_PASSWORD_ENCODED
 
-
 all_api_versions = get_decorator()
 only_latest = get_decorator(api_versions=[DEFAULT_VERSION])
 logging_enabled = get_decorator(logging_enable=True)

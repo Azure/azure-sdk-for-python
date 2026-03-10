@@ -34,14 +34,11 @@ import random
 
 async def sample_farm_hierarchy_complete_async():
 
-    farmbeats_endpoint = os.environ['FARMBEATS_ENDPOINT']
+    farmbeats_endpoint = os.environ["FARMBEATS_ENDPOINT"]
 
     credential = DefaultAzureCredential()
 
-    client = FarmBeatsClient(
-        endpoint=farmbeats_endpoint,
-        credential=credential
-    )
+    client = FarmBeatsClient(endpoint=farmbeats_endpoint, credential=credential)
 
     party_id = f"contoso-party-{random.randint(0,1000)}"
     party_name = "contoso-party-name"
@@ -91,7 +88,7 @@ async def sample_farm_hierarchy_complete_async():
                     [-94.05746988, 44.75751702],
                     [-94.05795157, 44.75824385],
                     [-94.05805349, 44.75863619],
-                    [-94.05807495, 44.75916947]
+                    [-94.05807495, 44.75916947],
                 ]
             ],
             [
@@ -103,21 +100,16 @@ async def sample_farm_hierarchy_complete_async():
                     [-94.05727246, 44.75988264],
                     [-94.05752903, 44.75946416],
                     [-94.05760288, 44.75923042],
-                    [-94.05802667, 44.75929136]
+                    [-94.05802667, 44.75929136],
                 ]
-            ]
-        ]
+            ],
+        ],
     }
 
     # Step 1: Create a party.
-    print(
-        f"Creating or updating party with Id {party_id}...", end=" ", flush=True)
+    print(f"Creating or updating party with Id {party_id}...", end=" ", flush=True)
     party = await client.parties.create_or_update(
-        party_id=party_id,
-        party={
-            "name": party_name,
-            "description": party_description
-        }
+        party_id=party_id, party={"name": party_name, "description": party_description}
     )
     print("Done")
 
@@ -127,15 +119,9 @@ async def sample_farm_hierarchy_complete_async():
     print("\tDescription:", party["description"])
 
     # Step 2: Create a farm.
-    print(
-        f"Creating or updating farm with Id {farm_id}...", end=" ", flush=True)
+    print(f"Creating or updating farm with Id {farm_id}...", end=" ", flush=True)
     farm = await client.farms.create_or_update(
-        party_id=party_id,
-        farm_id=farm_id,
-        farm={
-            "name": farm_name,
-            "description": farm_description
-        }
+        party_id=party_id, farm_id=farm_id, farm={"name": farm_name, "description": farm_description}
     )
     print("Done")
 
@@ -146,16 +132,11 @@ async def sample_farm_hierarchy_complete_async():
     print("\tDescription:", farm["description"])
 
     # Step 3: Create a field.
-    print(
-        f"Creating or updating field with Id {field_id}...", end=" ", flush=True)
+    print(f"Creating or updating field with Id {field_id}...", end=" ", flush=True)
     field = await client.fields.create_or_update(
         party_id=party_id,
         field_id=field_id,
-        field={
-            "name": field_name,
-            "farmId": farm_id,
-            "description": field_description
-        }
+        field={"name": field_name, "farmId": farm_id, "description": field_description},
     )
     print("Done")
 
@@ -168,14 +149,9 @@ async def sample_farm_hierarchy_complete_async():
     print("\tDescription:", field["description"])
 
     # Step 4: Create a crop.
-    print(
-        f"Creating or updating crop with Id {crop_id}...", end=" ", flush=True)
+    print(f"Creating or updating crop with Id {crop_id}...", end=" ", flush=True)
     crop = await client.crops.create_or_update(
-        crop_id=crop_id,
-        crop={
-            "name": crop_name,
-            "description": crop_description
-        }
+        crop_id=crop_id, crop={"name": crop_name, "description": crop_description}
     )
     print("Done")
 
@@ -185,14 +161,10 @@ async def sample_farm_hierarchy_complete_async():
     print("\tDescription:", crop["description"])
 
     # Step 5: Create a crop product.
-    print(
-        f"Creating or updating crop product with Id {crop_product_id}...", end=" ", flush=True)
+    print(f"Creating or updating crop product with Id {crop_product_id}...", end=" ", flush=True)
     crop_product = await client.crop_products.create_or_update(
         crop_product_id=crop_product_id,
-        crop_product={
-            "name": crop_product_name,
-            "description": crop_product_description
-        }
+        crop_product={"name": crop_product_name, "description": crop_product_description},
     )
     print("Done")
 
@@ -202,8 +174,7 @@ async def sample_farm_hierarchy_complete_async():
     print("\tDescription:", crop_product["description"])
 
     # Step 6: Create a season.
-    print(
-        f"Creating or updating season with Id {season_id}...", end=" ", flush=True)
+    print(f"Creating or updating season with Id {season_id}...", end=" ", flush=True)
     season = await client.seasons.create_or_update(
         season_id=season_id,
         season={
@@ -211,8 +182,8 @@ async def sample_farm_hierarchy_complete_async():
             "year": year,
             "startDateTime": start_date_time,
             "endDateTime": end_date_time,
-            "description": season_description
-        }
+            "description": season_description,
+        },
     )
     print("Done")
 
@@ -225,8 +196,7 @@ async def sample_farm_hierarchy_complete_async():
     print("\tEnd Date Time:", season["endDateTime"])
 
     # Step 7: Create a seasonal field.
-    print(
-        f"Creating or updating seasonal field with Id {seasonal_field_id}...", end=" ", flush=True)
+    print(f"Creating or updating seasonal field with Id {seasonal_field_id}...", end=" ", flush=True)
     seasonal_field = await client.seasonal_fields.create_or_update(
         party_id=party_id,
         seasonal_field_id=seasonal_field_id,
@@ -237,8 +207,8 @@ async def sample_farm_hierarchy_complete_async():
             "seasonId": season_id,
             "cropId": crop_id,
             "cropProductIds": [crop_product_id],
-            "description": seasonal_field_description
-        }
+            "description": seasonal_field_description,
+        },
     )
     print("Done")
 
@@ -256,16 +226,11 @@ async def sample_farm_hierarchy_complete_async():
 
     # Step 8: Create a boundary.
     try:
-        print(
-            f"Trying to fetch boundary with id {boundary_id}...", end=" ", flush=True)
-        boundary = await client.boundaries.get(
-            party_id=party_id,
-            boundary_id=boundary_id
-        )
+        print(f"Trying to fetch boundary with id {boundary_id}...", end=" ", flush=True)
+        boundary = await client.boundaries.get(party_id=party_id, boundary_id=boundary_id)
         print("Boundary already exists.")
     except ResourceNotFoundError:
-        print(
-            f"Doesn't exist. Creating boundary...", end=" ", flush=True)
+        print(f"Doesn't exist. Creating boundary...", end=" ", flush=True)
         boundary = await client.boundaries.create_or_update(
             party_id=party_id,
             boundary_id=boundary_id,
@@ -274,8 +239,8 @@ async def sample_farm_hierarchy_complete_async():
                 "geometry": multi_polygon,
                 "parentId": seasonal_field_id,
                 "parentType": "SeasonalField",
-                "description": boundary_description
-            }
+                "description": boundary_description,
+            },
         )
         print("Done")
 

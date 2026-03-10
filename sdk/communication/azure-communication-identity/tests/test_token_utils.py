@@ -28,8 +28,7 @@ class DummyResponse:
         self.http_response = MagicMock()
         self.http_response.status_code = status_code
         self.http_response.text.return_value = (
-            '{"accessToken": {"expiresOn": "%s"}}' % expires_on
-            if expires_on else '{}'
+            '{"accessToken": {"expiresOn": "%s"}}' % expires_on if expires_on else "{}"
         )
 
 
@@ -71,21 +70,20 @@ class TestTokenUtils(unittest.TestCase):
         assert uri.startswith("https://endpoint")
         assert TEAMS_EXTENSION_ENDPOINT in uri
 
-        req = utils.create_request_message("https://endpoint",
-                                                         [TEAMS_EXTENSION_SCOPE_PREFIX + ".default"])
+        req = utils.create_request_message("https://endpoint", [TEAMS_EXTENSION_SCOPE_PREFIX + ".default"])
         assert req.method == "POST"
         assert req.headers["Accept"] == "application/json"
         assert req.headers["Content-Type"] == "application/json"
 
     def test_determine_endpoint_and_api_version_teams_extension(self):
-        endpoint, api_version = utils.determine_endpoint_and_api_version(
-            [TEAMS_EXTENSION_SCOPE_PREFIX + ".default"])
+        endpoint, api_version = utils.determine_endpoint_and_api_version([TEAMS_EXTENSION_SCOPE_PREFIX + ".default"])
         assert endpoint == TEAMS_EXTENSION_ENDPOINT
         assert api_version == TEAMS_EXTENSION_API_VERSION
 
     def test_determine_endpoint_and_api_version_communication_clients(self):
         endpoint, api_version = utils.determine_endpoint_and_api_version(
-            [COMMUNICATION_CLIENTS_SCOPE_PREFIX + ".default"])
+            [COMMUNICATION_CLIENTS_SCOPE_PREFIX + ".default"]
+        )
         assert endpoint == COMMUNICATION_CLIENTS_ENDPOINT
         assert api_version == COMMUNICATION_CLIENTS_API_VERSION
 

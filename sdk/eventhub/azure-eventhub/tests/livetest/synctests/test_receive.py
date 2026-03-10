@@ -202,7 +202,7 @@ def test_receive_owner_level(auth_credential_senders, uamqp_transport, client_ar
 
 
 @pytest.mark.liveTest
-@pytest.mark.no_amqpproxy # Proxy requires TransportType.Amqp
+@pytest.mark.no_amqpproxy  # Proxy requires TransportType.Amqp
 def test_receive_over_websocket_sync(auth_credential_senders, uamqp_transport, client_args):
     app_prop = {"raw_prop": "raw_value"}
     content_type = "text/plain"

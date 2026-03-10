@@ -12,7 +12,6 @@ from ._errors import MissingRequiredPackage
 from ._configuration import Configuration
 from .entities import Run
 
-
 try:
     from promptflow.client import PFClient as _PFClient
 except ImportError:

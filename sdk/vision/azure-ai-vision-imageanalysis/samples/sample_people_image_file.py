@@ -10,7 +10,7 @@ DESCRIPTION:
     Its `people` property (a `PeopleResult` object) contains a list of `DetectedPerson` objects.
     Each one contains:
     - A confidence score in the range [0, 1], with higher values indicating greater confidences in
-      the detection of a person. 
+      the detection of a person.
     - A `BoundingBox` coordinates in pixels, for a rectangle surrounding the person in the image.
 
 USAGE:
@@ -40,20 +40,14 @@ def sample_people_image_file():
         exit()
 
     # Create an Image Analysis client
-    client = ImageAnalysisClient(
-        endpoint=endpoint,
-        credential=AzureKeyCredential(key)
-    )
+    client = ImageAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Load image to analyze into a 'bytes' object
     with open("sample.jpg", "rb") as f:
         image_data = f.read()
 
     # Find people in an image stream. This will be a synchronously (blocking) call.
-    result = client.analyze(
-        image_data=image_data,
-        visual_features=[VisualFeatures.PEOPLE]
-    )
+    result = client.analyze(image_data=image_data, visual_features=[VisualFeatures.PEOPLE])
 
     # Print People analysis results to the console
     print("Image analysis results:")

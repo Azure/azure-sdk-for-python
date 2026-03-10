@@ -21,7 +21,6 @@ USAGE:
     3) TABLES_PRIMARY_STORAGE_ACCOUNT_KEY - the storage account access key
 """
 
-
 import os
 import asyncio
 from dotenv import find_dotenv, load_dotenv

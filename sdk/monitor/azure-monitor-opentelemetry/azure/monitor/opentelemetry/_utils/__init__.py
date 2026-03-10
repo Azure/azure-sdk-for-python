@@ -23,7 +23,6 @@ from azure.monitor.opentelemetry._constants import (
     _LOG_PATH_WINDOWS,
 )
 
-
 logger = logging.getLogger(__name__)
 
 

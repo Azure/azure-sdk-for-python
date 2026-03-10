@@ -75,7 +75,6 @@ from azure.monitor.opentelemetry._constants import (
 from azure.monitor.opentelemetry._types import ConfigurationValue
 from azure.monitor.opentelemetry._version import VERSION
 
-
 _INVALID_FLOAT_MESSAGE = "Value of %s must be a float. Defaulting to %s: %s"
 _INVALID_TRACES_PER_SECOND_MESSAGE = "Value of %s must be a positive number for traces per second. Defaulting to %s: %s"
 _SUPPORTED_RESOURCE_DETECTORS = (

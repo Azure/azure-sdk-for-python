@@ -28,9 +28,7 @@ class TestClientConfiguration:
 
             # Create the generated client directly - this will trigger policy creation
             # The generated client only requires ledger_endpoint
-            client = GeneratedClient(
-                ledger_endpoint="https://test-ledger.confidentialledger.azure.com"
-            )
+            client = GeneratedClient(ledger_endpoint="https://test-ledger.confidentialledger.azure.com")
 
             # Get the policies argument passed to PipelineClient
             call_args = mock_pipeline_client.call_args
@@ -44,9 +42,9 @@ class TestClientConfiguration:
                     break
 
             # Assert the policy exists and has disable_redirect_cleanup=True
-            assert sensitive_header_policy is not None, (
-                "SensitiveHeaderCleanupPolicy should be present in the client's policies"
-            )
+            assert (
+                sensitive_header_policy is not None
+            ), "SensitiveHeaderCleanupPolicy should be present in the client's policies"
             assert sensitive_header_policy._disable_redirect_cleanup is True, (
                 "SensitiveHeaderCleanupPolicy should have disable_redirect_cleanup=True "
                 "to preserve authentication headers on Confidential Ledger redirects"
@@ -63,9 +61,7 @@ class TestClientConfiguration:
         with patch("azure.confidentialledger._client.PipelineClient") as mock_pipeline_client:
             mock_pipeline_client.return_value = MagicMock()
 
-            client = GeneratedClient(
-                ledger_endpoint="https://test-ledger.confidentialledger.azure.com"
-            )
+            client = GeneratedClient(ledger_endpoint="https://test-ledger.confidentialledger.azure.com")
 
             # Get the policies argument passed to PipelineClient
             call_args = mock_pipeline_client.call_args
@@ -85,14 +81,10 @@ class TestClientConfiguration:
                     distributed_tracing_idx = idx
 
             # SensitiveHeaderCleanupPolicy should come after DistributedTracingPolicy
-            assert sensitive_header_idx is not None, (
-                "SensitiveHeaderCleanupPolicy should be present in the policies"
-            )
-            assert distributed_tracing_idx is not None, (
-                "DistributedTracingPolicy should be present in the policies"
-            )
-            assert sensitive_header_idx > distributed_tracing_idx, (
-                "SensitiveHeaderCleanupPolicy should be positioned after DistributedTracingPolicy"
-            )
+            assert sensitive_header_idx is not None, "SensitiveHeaderCleanupPolicy should be present in the policies"
+            assert distributed_tracing_idx is not None, "DistributedTracingPolicy should be present in the policies"
+            assert (
+                sensitive_header_idx > distributed_tracing_idx
+            ), "SensitiveHeaderCleanupPolicy should be positioned after DistributedTracingPolicy"
 
             client.close()

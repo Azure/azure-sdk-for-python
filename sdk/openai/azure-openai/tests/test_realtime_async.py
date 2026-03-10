@@ -59,9 +59,7 @@ class TestRealtimeAsync(AzureRecordedTestCase):
             api_key=os.environ[ENV_AZURE_OPENAI_SWEDENCENTRAL_KEY],
             api_version=api_version,
         )
-        async with client_async.beta.realtime.connect(
-            **kwargs
-        ) as connection:
+        async with client_async.beta.realtime.connect(**kwargs) as connection:
             await connection.session.update(session={"modalities": ["text"]})
             await connection.conversation.item.create(
                 item={
@@ -93,9 +91,7 @@ class TestRealtimeAsync(AzureRecordedTestCase):
             azure_ad_token=access_token.token,
             api_version=api_version,
         )
-        async with client_async.beta.realtime.connect(
-            **kwargs
-        ) as connection:
+        async with client_async.beta.realtime.connect(**kwargs) as connection:
             await connection.session.update(session={"modalities": ["text"]})
             await connection.conversation.item.create(
                 item={
@@ -126,9 +122,7 @@ class TestRealtimeAsync(AzureRecordedTestCase):
             api_version=api_version,
             azure_deployment="gpt-4o-realtime-preview-1001",
         )
-        async with client_async.beta.realtime.connect(
-            model="invalid"
-        ) as connection:
+        async with client_async.beta.realtime.connect(model="invalid") as connection:
             await connection.session.update(session={"modalities": ["text"]})
             await connection.conversation.item.create(
                 item={
@@ -155,14 +149,14 @@ class TestRealtimeAsync(AzureRecordedTestCase):
     async def test_realtime_text_websocket_base_url(self, client_async, api_type, api_version, **kwargs):
         client_async = openai.AsyncAzureOpenAI(
             base_url="fakebaseurl",
-            websocket_base_url=httpx.URL(os.getenv(ENV_AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT) + "/openai/").copy_with(scheme="wss"),
+            websocket_base_url=httpx.URL(os.getenv(ENV_AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT) + "/openai/").copy_with(
+                scheme="wss"
+            ),
             api_key=os.getenv(ENV_AZURE_OPENAI_SWEDENCENTRAL_KEY),
             api_version=api_version,
         )
-        
-        async with client_async.beta.realtime.connect(
-            **kwargs
-        ) as connection:
+
+        async with client_async.beta.realtime.connect(**kwargs) as connection:
             await connection.session.update(session={"modalities": ["text"]})
             await connection.conversation.item.create(
                 item={

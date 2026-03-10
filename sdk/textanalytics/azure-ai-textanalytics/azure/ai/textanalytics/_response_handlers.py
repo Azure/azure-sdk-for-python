@@ -45,9 +45,7 @@ class CSODataV4Format(ODataV4Format):
     def __init__(self, odata_error):
         try:
             if odata_error["error"]["innererror"]:
-                super().__init__(
-                    odata_error["error"]["innererror"]
-                )
+                super().__init__(odata_error["error"]["innererror"])
             self.details = odata_error["error"].get("details", [])
         except KeyError:
             super().__init__(odata_error)
@@ -95,17 +93,13 @@ def order_lro_results(doc_id_order, combined):
     """
 
     mapping = [(item.id, item) for item in combined]
-    ordered_response = [
-        i[1] for i in sorted(mapping, key=lambda m: doc_id_order.index(m[0]))
-    ]
+    ordered_response = [i[1] for i in sorted(mapping, key=lambda m: doc_id_order.index(m[0]))]
     return ordered_response
 
 
 def prepare_result(func):
     def choose_wrapper(*args, **kwargs):
-        def wrapper(
-            response, obj, _, ordering_function
-        ):
+        def wrapper(response, obj, _, ordering_function):
             if hasattr(obj, "results"):
                 obj = obj.results  # language API compat
 
@@ -120,9 +114,7 @@ def prepare_result(func):
                 if hasattr(item, "error"):
                     results[idx] = DocumentError(
                         id=item.id,
-                        error=TextAnalyticsError._from_generated(  # pylint: disable=protected-access
-                            item.error
-                        ),
+                        error=TextAnalyticsError._from_generated(item.error),  # pylint: disable=protected-access
                     )
                 else:
                     results[idx] = func(item, results)
@@ -138,12 +130,8 @@ def prepare_result(func):
 
 
 @prepare_result
-def abstract_summary_result(
-    summary, results, *args, **kwargs
-):  # pylint: disable=unused-argument
-    return AbstractiveSummaryResult._from_generated(  # pylint: disable=protected-access
-        summary
-    )
+def abstract_summary_result(summary, results, *args, **kwargs):  # pylint: disable=unused-argument
+    return AbstractiveSummaryResult._from_generated(summary)  # pylint: disable=protected-access
 
 
 @prepare_result
@@ -154,169 +142,106 @@ def language_result(language, results):  # pylint: disable=unused-argument
             language.detected_language
         ),
         warnings=[
-            TextAnalyticsWarning._from_generated(w)  # pylint: disable=protected-access
-            for w in language.warnings
+            TextAnalyticsWarning._from_generated(w) for w in language.warnings  # pylint: disable=protected-access
         ],
-        statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
-            language.statistics
-        ),
+        statistics=TextDocumentStatistics._from_generated(language.statistics),  # pylint: disable=protected-access
     )
 
 
 @prepare_result
-def entities_result(
-    entity, results, *args, **kwargs
-):  # pylint: disable=unused-argument
+def entities_result(entity, results, *args, **kwargs):  # pylint: disable=unused-argument
     return RecognizeEntitiesResult(
         id=entity.id,
-        entities=[
-            CategorizedEntity._from_generated(e)  # pylint: disable=protected-access
-            for e in entity.entities
-        ],
-        warnings=[
-            TextAnalyticsWarning._from_generated(w)  # pylint: disable=protected-access
-            for w in entity.warnings
-        ],
-        statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
-            entity.statistics
-        ),
+        entities=[CategorizedEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
+        warnings=[TextAnalyticsWarning._from_generated(w) for w in entity.warnings],  # pylint: disable=protected-access
+        statistics=TextDocumentStatistics._from_generated(entity.statistics),  # pylint: disable=protected-access
     )
 
 
 @prepare_result
-def linked_entities_result(
-    entity, results, *args, **kwargs
-):  # pylint: disable=unused-argument
+def linked_entities_result(entity, results, *args, **kwargs):  # pylint: disable=unused-argument
     return RecognizeLinkedEntitiesResult(
         id=entity.id,
-        entities=[
-            LinkedEntity._from_generated(e)  # pylint: disable=protected-access
-            for e in entity.entities
-        ],
-        warnings=[
-            TextAnalyticsWarning._from_generated(w)  # pylint: disable=protected-access
-            for w in entity.warnings
-        ],
-        statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
-            entity.statistics
-        ),
+        entities=[LinkedEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
+        warnings=[TextAnalyticsWarning._from_generated(w) for w in entity.warnings],  # pylint: disable=protected-access
+        statistics=TextDocumentStatistics._from_generated(entity.statistics),  # pylint: disable=protected-access
     )
 
 
 @prepare_result
-def key_phrases_result(
-    phrases, results, *args, **kwargs
-):  # pylint: disable=unused-argument
+def key_phrases_result(phrases, results, *args, **kwargs):  # pylint: disable=unused-argument
     return ExtractKeyPhrasesResult(
         id=phrases.id,
         key_phrases=phrases.key_phrases,
         warnings=[
-            TextAnalyticsWarning._from_generated(w)  # pylint: disable=protected-access
-            for w in phrases.warnings
+            TextAnalyticsWarning._from_generated(w) for w in phrases.warnings  # pylint: disable=protected-access
         ],
-        statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
-            phrases.statistics
-        ),
+        statistics=TextDocumentStatistics._from_generated(phrases.statistics),  # pylint: disable=protected-access
     )
 
 
 @prepare_result
-def sentiment_result(
-    sentiment, results, *args, **kwargs
-):  # pylint: disable=unused-argument
+def sentiment_result(sentiment, results, *args, **kwargs):  # pylint: disable=unused-argument
     return AnalyzeSentimentResult(
         id=sentiment.id,
         sentiment=sentiment.sentiment,
         warnings=[
-            TextAnalyticsWarning._from_generated(w)  # pylint: disable=protected-access
-            for w in sentiment.warnings
+            TextAnalyticsWarning._from_generated(w) for w in sentiment.warnings  # pylint: disable=protected-access
         ],
-        statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
-            sentiment.statistics
-        ),
+        statistics=TextDocumentStatistics._from_generated(sentiment.statistics),  # pylint: disable=protected-access
         confidence_scores=SentimentConfidenceScores._from_generated(  # pylint: disable=protected-access
             sentiment.confidence_scores
         ),
         sentences=[
-            SentenceSentiment._from_generated(  # pylint: disable=protected-access
-                s, results, sentiment
-            )
+            SentenceSentiment._from_generated(s, results, sentiment)  # pylint: disable=protected-access
             for s in sentiment.sentences
         ],
     )
 
 
 @prepare_result
-def pii_entities_result(
-    entity, results, *args, **kwargs
-):  # pylint: disable=unused-argument
+def pii_entities_result(entity, results, *args, **kwargs):  # pylint: disable=unused-argument
     return RecognizePiiEntitiesResult(
         id=entity.id,
-        entities=[
-            PiiEntity._from_generated(e)  # pylint: disable=protected-access
-            for e in entity.entities
-        ],
-        redacted_text=entity.redacted_text
-        if hasattr(entity, "redacted_text")
-        else None,
-        warnings=[
-            TextAnalyticsWarning._from_generated(w)  # pylint: disable=protected-access
-            for w in entity.warnings
-        ],
-        statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
-            entity.statistics
-        ),
+        entities=[PiiEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
+        redacted_text=entity.redacted_text if hasattr(entity, "redacted_text") else None,
+        warnings=[TextAnalyticsWarning._from_generated(w) for w in entity.warnings],  # pylint: disable=protected-access
+        statistics=TextDocumentStatistics._from_generated(entity.statistics),  # pylint: disable=protected-access
     )
 
 
 @prepare_result
-def healthcare_result(
-    health_result, results, *args, **kwargs
-):  # pylint: disable=unused-argument
-    return AnalyzeHealthcareEntitiesResult._from_generated(  # pylint: disable=protected-access
-        health_result
-    )
+def healthcare_result(health_result, results, *args, **kwargs):  # pylint: disable=unused-argument
+    return AnalyzeHealthcareEntitiesResult._from_generated(health_result)  # pylint: disable=protected-access
 
 
 @prepare_result
-def summary_result(
-    summary, results, *args, **kwargs
-):  # pylint: disable=unused-argument
-    return ExtractiveSummaryResult._from_generated(  # pylint: disable=protected-access
-        summary
-    )
+def summary_result(summary, results, *args, **kwargs):  # pylint: disable=unused-argument
+    return ExtractiveSummaryResult._from_generated(summary)  # pylint: disable=protected-access
 
 
 @prepare_result
-def custom_entities_result(
-    custom_entities, results, *args, **kwargs
-):  # pylint: disable=unused-argument
-    return RecognizeCustomEntitiesResult._from_generated(  # pylint: disable=protected-access
-        custom_entities
-    )
+def custom_entities_result(custom_entities, results, *args, **kwargs):  # pylint: disable=unused-argument
+    return RecognizeCustomEntitiesResult._from_generated(custom_entities)  # pylint: disable=protected-access
 
 
 @prepare_result
-def classify_document_result(
-    custom_categories, results, *args, **kwargs
-):  # pylint: disable=unused-argument
-    return ClassifyDocumentResult._from_generated(  # pylint: disable=protected-access
-        custom_categories
-    )
+def classify_document_result(custom_categories, results, *args, **kwargs):  # pylint: disable=unused-argument
+    return ClassifyDocumentResult._from_generated(custom_categories)  # pylint: disable=protected-access
 
 
-def healthcare_extract_page_data(
-    doc_id_order, obj, health_job_state
-):  # pylint: disable=unused-argument
+def healthcare_extract_page_data(doc_id_order, obj, health_job_state):  # pylint: disable=unused-argument
     return (
         health_job_state.next_link,
         healthcare_result(
             doc_id_order,
-            health_job_state.results
-            if hasattr(health_job_state, "results")
-            else health_job_state.tasks.items[0].results,
+            (
+                health_job_state.results
+                if hasattr(health_job_state, "results")
+                else health_job_state.tasks.items[0].results
+            ),
             {},
-            lro=True
+            lro=True,
         ),
     )
 
@@ -383,16 +308,15 @@ def get_task_from_pointer(task_type):  # pylint: disable=too-many-return-stateme
 
 def resolve_action_pointer(pointer):
     import re
+
     pointer_union = "|".join(value for value in ActionPointerKind)
-    found = re.search(fr"#/tasks/({pointer_union})/\d+", pointer)
+    found = re.search(rf"#/tasks/({pointer_union})/\d+", pointer)
     if found:
         index = int(pointer[-1])
         task = pointer.split("#/tasks/")[1].split("/")[0]
         property_name = get_task_from_pointer(task)
         return property_name, index
-    raise ValueError(
-        f"Unexpected response from service - action pointer '{pointer}' is not a valid action pointer."
-    )
+    raise ValueError(f"Unexpected response from service - action pointer '{pointer}' is not a valid action pointer.")
 
 
 def pad_result(tasks_obj, doc_id_order):
@@ -401,9 +325,10 @@ def pad_result(tasks_obj, doc_id_order):
             id=doc_id,
             error=TextAnalyticsError(
                 code=None,  # type: ignore
-                message=f"No result for document. Action returned status '{tasks_obj.status}'."
-            )
-        ) for doc_id in doc_id_order
+                message=f"No result for document. Action returned status '{tasks_obj.status}'.",
+            ),
+        )
+        for doc_id in doc_id_order
     ]
 
 
@@ -425,10 +350,8 @@ def get_ordered_errors(tasks_obj, task_name, doc_id_order):
             action = actions[index]
         if action.task_name == task_name:
             errors = [
-                DocumentError(
-                    id=doc_id,
-                    error=TextAnalyticsError(code=err.code, message=err.message)
-                ) for doc_id in doc_id_order
+                DocumentError(id=doc_id, error=TextAnalyticsError(code=err.code, message=err.message))
+                for doc_id in doc_id_order
             ]
             return errors
     raise ValueError("Unexpected response from service - no errors for missing action results.")
@@ -437,15 +360,15 @@ def get_ordered_errors(tasks_obj, task_name, doc_id_order):
 def _get_doc_results(task, doc_id_order, returned_tasks_object):
     returned_tasks = returned_tasks_object.tasks
     current_task_type, task_name = task
-    deserialization_callback = _get_deserialization_callback_from_task_type(
-        current_task_type
-    )
+    deserialization_callback = _get_deserialization_callback_from_task_type(current_task_type)
     # language api compat
-    property_name = \
+    property_name = (
         "items" if hasattr(returned_tasks, "items") else _get_property_name_from_task_type(current_task_type)
+    )
     try:
-        response_task_to_deserialize = \
-            next(task for task in getattr(returned_tasks, property_name) if task.task_name == task_name)
+        response_task_to_deserialize = next(
+            task for task in getattr(returned_tasks, property_name) if task.task_name == task_name
+        )
     except StopIteration as exc:
         raise ValueError("Unexpected response from service - unable to deserialize result.") from exc
 
@@ -455,9 +378,7 @@ def _get_doc_results(task, doc_id_order, returned_tasks_object):
     # if results obj present, but no document results or errors (likely a canceled scenario)
     if not response_task_to_deserialize.results.documents and not response_task_to_deserialize.results.errors:
         return pad_result(returned_tasks_object, doc_id_order)
-    return deserialization_callback(
-        doc_id_order, response_task_to_deserialize.results, {}, lro=True
-    )
+    return deserialization_callback(doc_id_order, response_task_to_deserialize.results, {}, lro=True)
 
 
 def get_iter_items(doc_id_order, task_order, bespoke, analyze_job_state):
@@ -483,19 +404,13 @@ def get_iter_items(doc_id_order, task_order, bespoke, analyze_job_state):
     return [iter_items[doc_id] for doc_id in doc_id_order if doc_id in iter_items]
 
 
-def analyze_extract_page_data(
-    doc_id_order, task_order, bespoke, analyze_job_state
-):
+def analyze_extract_page_data(doc_id_order, task_order, bespoke, analyze_job_state):
     # return next link, list of
-    iter_items = get_iter_items(
-        doc_id_order, task_order, bespoke, analyze_job_state
-    )
+    iter_items = get_iter_items(doc_id_order, task_order, bespoke, analyze_job_state)
     return analyze_job_state.next_link, iter_items
 
 
-def lro_get_next_page(
-    lro_status_callback, first_page, continuation_token, show_stats=False
-):
+def lro_get_next_page(lro_status_callback, first_page, continuation_token, show_stats=False):
     if continuation_token is None:
         return first_page
 
@@ -517,35 +432,17 @@ def lro_get_next_page(
     return lro_status_callback(job_id, **query_params)
 
 
-def healthcare_paged_result(
-    doc_id_order, health_status_callback, _, obj, show_stats=False
-):
+def healthcare_paged_result(doc_id_order, health_status_callback, _, obj, show_stats=False):
     return ItemPaged(
-        functools.partial(
-            lro_get_next_page, health_status_callback, obj, show_stats=show_stats
-        ),
-        functools.partial(
-            healthcare_extract_page_data, doc_id_order, obj
-        ),
+        functools.partial(lro_get_next_page, health_status_callback, obj, show_stats=show_stats),
+        functools.partial(healthcare_extract_page_data, doc_id_order, obj),
     )
 
 
-def analyze_paged_result(
-    doc_id_order,
-    task_order,
-    analyze_status_callback,
-    _,
-    obj,
-    show_stats=False,
-    bespoke=False
-):
+def analyze_paged_result(doc_id_order, task_order, analyze_status_callback, _, obj, show_stats=False, bespoke=False):
     return ItemPaged(
-        functools.partial(
-            lro_get_next_page, analyze_status_callback, obj, show_stats=show_stats
-        ),
-        functools.partial(
-            analyze_extract_page_data, doc_id_order, task_order, bespoke
-        ),
+        functools.partial(lro_get_next_page, analyze_status_callback, obj, show_stats=show_stats),
+        functools.partial(analyze_extract_page_data, doc_id_order, task_order, bespoke),
     )
 
 
@@ -558,21 +455,18 @@ def _get_result_from_continuation_token(
         options = getattr(context, "options", {})
 
         doc_id_order = deserialized_data.get("doc_id_order") or options.get("doc_id_order")
-        show_stats = deserialized_data.get("show_stats") if "show_stats" in deserialized_data else options.get("show_stats")
+        show_stats = (
+            deserialized_data.get("show_stats") if "show_stats" in deserialized_data else options.get("show_stats")
+        )
         task_id_order = deserialized_data.get("task_id_order") or options.get("task_id_order")
 
         return callback(
-            pipeline_response,
-            None,
-            doc_id_order,
-            task_id_order=task_id_order,
-            show_stats=show_stats,
-            bespoke=bespoke
+            pipeline_response, None, doc_id_order, task_id_order=task_id_order, show_stats=show_stats, bespoke=bespoke
         )
 
     return poller_type.from_continuation_token(
-            polling_method=polling_method,
-            client=client,
-            deserialization_callback=result_callback,
-            continuation_token=continuation_token
-        )
+        polling_method=polling_method,
+        client=client,
+        deserialization_callback=result_callback,
+        continuation_token=continuation_token,
+    )

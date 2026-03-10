@@ -1304,7 +1304,7 @@ def _from_rest_features(
 
 
 def _to_rest_features(
-    features: Union[List[str], MonitorFeatureFilter, Literal["all_features"]]
+    features: Union[List[str], MonitorFeatureFilter, Literal["all_features"]],
 ) -> RestMonitoringFeatureFilterBase:
     rest_features = None
     if isinstance(features, list):

@@ -132,8 +132,8 @@ class TestLoadTestRunOperations(LoadTestingTest):
         run_client = self.create_run_client(loadtesting_endpoint)
 
         result = run_client.get_test_run(loadtesting_test_run_id)
-        
-        # wait for test run to complete before closing the client 
+
+        # wait for test run to complete before closing the client
         while result.status not in ["DONE", "FAILED", "CANCELLED"]:
             result = run_client.get_test_run(loadtesting_test_run_id)
 
@@ -280,7 +280,7 @@ class TestLoadTestRunOperations(LoadTestingTest):
 
         # Clean-up
         run_client.delete_test_run(test_run_id)
-    
+
     @LoadTestingPreparer()
     @recorded_by_proxy
     def test_begin_generate_test_run_insights(self, loadtesting_endpoint, loadtesting_completed_test_run_id):

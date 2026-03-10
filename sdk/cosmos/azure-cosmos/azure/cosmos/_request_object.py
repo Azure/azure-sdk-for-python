@@ -19,8 +19,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Represents a request object.
-"""
+"""Represents a request object."""
+
 import asyncio  # pylint: disable=do-not-import-asyncio
 import threading
 from concurrent.futures.thread import ThreadPoolExecutor
@@ -32,14 +32,14 @@ from .documents import _OperationType
 from .http_constants import ResourceType
 
 
-class RequestObject(object): # pylint: disable=too-many-instance-attributes
+class RequestObject(object):  # pylint: disable=too-many-instance-attributes
     def __init__(
-            self,
-            resource_type: str,
-            operation_type: str,
-            headers: dict[str, Any],
-            pk_val: Optional[Any] = None,
-            endpoint_override: Optional[str] = None,
+        self,
+        resource_type: str,
+        operation_type: str,
+        headers: dict[str, Any],
+        pk_val: Optional[Any] = None,
+        endpoint_override: Optional[str] = None,
     ) -> None:
         self.resource_type = resource_type
         self.operation_type = operation_type
@@ -58,13 +58,11 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         self.read_timeout_override: Optional[int] = None
         self.pk_val = pk_val
         self.retry_write: int = 0
-        self.is_hedging_request: bool = False # Flag to track if this is a hedged request
+        self.is_hedging_request: bool = False  # Flag to track if this is a hedged request
         self.completion_status: Optional[Union[threading.Event, asyncio.Event]] = None
 
     def route_to_location_with_preferred_location_flag(  # pylint: disable=name-too-long
-        self,
-        location_index: int,
-        use_preferred_locations: bool
+        self, location_index: int, use_preferred_locations: bool
     ) -> None:
         self.location_index_to_route = location_index
         self.use_preferred_locations = use_preferred_locations
@@ -82,20 +80,21 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
 
     def _can_set_excluded_location(self, options: Mapping[str, Any]) -> bool:
         # If 'excludedLocations' wasn't in the options, excluded locations cannot be set
-        if (options is None
-            or 'excludedLocations' not in options):
+        if options is None or "excludedLocations" not in options:
             return False
 
         # The 'excludedLocations' cannot be None
-        if options['excludedLocations'] is None:
-            raise ValueError("Excluded locations cannot be None. "
-                             "If you want to remove all excluded locations, try passing an empty list.")
+        if options["excludedLocations"] is None:
+            raise ValueError(
+                "Excluded locations cannot be None. "
+                "If you want to remove all excluded locations, try passing an empty list."
+            )
 
         return True
 
     def set_excluded_location_from_options(self, options: Mapping[str, Any]) -> None:
         if self._can_set_excluded_location(options):
-            self.excluded_locations = options['excludedLocations']
+            self.excluded_locations = options["excludedLocations"]
 
     def set_retry_write(self, request_options: Mapping[str, Any], client_retry_write: int) -> None:
         if self.resource_type == ResourceType.Document:
@@ -108,13 +107,14 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
             else:
                 self.retry_write = 0
 
-    def set_excluded_locations_from_circuit_breaker(self, excluded_locations: list[str]) -> None: # pylint: disable=name-too-long
+    def set_excluded_locations_from_circuit_breaker(
+        self, excluded_locations: list[str]
+    ) -> None:  # pylint: disable=name-too-long
         self.excluded_locations_circuit_breaker = excluded_locations
 
     def set_availability_strategy(
-            self,
-            options: Mapping[str, Any],
-            client_strategy_config: Union[CrossRegionHedgingStrategy, None] = None) -> None:
+        self, options: Mapping[str, Any], client_strategy_config: Union[CrossRegionHedgingStrategy, None] = None
+    ) -> None:
         """Sets the availability strategy config for this request from options.
         If not in options, uses the client's default strategy.
         If False is in options, client defaults are NOT used (explicitly disabled).
@@ -127,8 +127,10 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         """
         # setup availabilityStrategy
         # First try to get from options (method-level takes precedence)
-        if (Constants.Kwargs.AVAILABILITY_STRATEGY in options and
-                options[Constants.Kwargs.AVAILABILITY_STRATEGY] is not None):
+        if (
+            Constants.Kwargs.AVAILABILITY_STRATEGY in options
+            and options[Constants.Kwargs.AVAILABILITY_STRATEGY] is not None
+        ):
             strategy = options[Constants.Kwargs.AVAILABILITY_STRATEGY]
             if isinstance(strategy, bool):
                 if strategy:
@@ -149,7 +151,7 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
 
     def should_cancel_request(self) -> bool:
         """Check if this request should be cancelled due to parallel request completion.
-        
+
         :return: True if request should be cancelled, False otherwise
         :rtype: bool
         """

@@ -7,4 +7,5 @@
 # --------------------------------------------------------------------------
 
 from ._purview_account_client import PurviewAccountClient
-__all__ = ['PurviewAccountClient']
+
+__all__ = ["PurviewAccountClient"]

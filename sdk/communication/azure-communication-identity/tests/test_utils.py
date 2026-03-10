@@ -27,21 +27,15 @@ class UtilsTest(unittest.TestCase):
         assert utc_naive_time_in_sec == 0
         # PST is UTC-8 (Vancouver/Pacific Time)
         pst_tz = timezone(timedelta(hours=-8))  # PST is UTC-8
-        pst_time_in_sec = _convert_datetime_to_utc_int(
-            datetime(1970, 1, 1, 0, 0, 0, 0, tzinfo=pst_tz)
-        )
+        pst_time_in_sec = _convert_datetime_to_utc_int(datetime(1970, 1, 1, 0, 0, 0, 0, tzinfo=pst_tz))
         assert pst_time_in_sec == 8 * 3600
         # EST is UTC-5 (Eastern Time)
         est_tz = timezone(timedelta(hours=-5))  # EST is UTC-5
-        est_time_in_sec = _convert_datetime_to_utc_int(
-            datetime(1970, 1, 1, 0, 0, 0, 0, tzinfo=est_tz)
-        )
+        est_time_in_sec = _convert_datetime_to_utc_int(datetime(1970, 1, 1, 0, 0, 0, 0, tzinfo=est_tz))
         assert est_time_in_sec == 5 * 3600
         # CST is UTC+8 (China Standard Time)
         cst_tz = timezone(timedelta(hours=8))  # CST is UTC+8
-        cst_time_in_sec = _convert_datetime_to_utc_int(
-            datetime(1970, 1, 1, 0, 0, 0, 0, tzinfo=cst_tz)
-        )
+        cst_time_in_sec = _convert_datetime_to_utc_int(datetime(1970, 1, 1, 0, 0, 0, 0, tzinfo=cst_tz))
         assert cst_time_in_sec == -8 * 3600
 
     def test_access_token_expiry_deserialized_correctly_from_payload(self):

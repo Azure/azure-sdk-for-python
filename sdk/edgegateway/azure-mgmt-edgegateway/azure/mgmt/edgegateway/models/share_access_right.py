@@ -26,16 +26,16 @@ class ShareAccessRight(Model):
     """
 
     _validation = {
-        'share_id': {'required': True},
-        'access_type': {'required': True},
+        "share_id": {"required": True},
+        "access_type": {"required": True},
     }
 
     _attribute_map = {
-        'share_id': {'key': 'shareId', 'type': 'str'},
-        'access_type': {'key': 'accessType', 'type': 'str'},
+        "share_id": {"key": "shareId", "type": "str"},
+        "access_type": {"key": "accessType", "type": "str"},
     }
 
     def __init__(self, **kwargs):
         super(ShareAccessRight, self).__init__(**kwargs)
-        self.share_id = kwargs.get('share_id', None)
-        self.access_type = kwargs.get('access_type', None)
+        self.share_id = kwargs.get("share_id", None)
+        self.access_type = kwargs.get("access_type", None)

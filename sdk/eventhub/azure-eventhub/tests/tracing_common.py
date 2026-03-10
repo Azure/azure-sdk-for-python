@@ -4,12 +4,12 @@
 # ------------------------------------
 
 """Fake implementation of AbstractSpan for tests. Copied from `azure-core/tests`."""
+
 from contextlib import contextmanager
 from typing import Union, Sequence, Optional, Dict
 import uuid
 
 from azure.core.tracing import HttpSpanMixin, SpanKind
-
 
 AttributeValue = Union[
     str,

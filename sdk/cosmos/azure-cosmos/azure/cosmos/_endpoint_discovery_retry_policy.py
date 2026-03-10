@@ -27,10 +27,11 @@ Azure Cosmos database service.
 
 from azure.cosmos.documents import _OperationType
 
+
 class EndpointDiscoveryRetryPolicy(object):
     """The endpoint discovery retry policy class used for geo-replicated database accounts
-       to handle the write forbidden exceptions due to writable/readable location changes
-       (say, after a failover).
+    to handle the write forbidden exceptions due to writable/readable location changes
+    (say, after a failover).
     """
 
     Max_retry_attempt_count = 120
@@ -44,7 +45,6 @@ class EndpointDiscoveryRetryPolicy(object):
         self.retry_after_in_milliseconds = EndpointDiscoveryRetryPolicy.Retry_after_in_milliseconds
         self.connection_policy = connection_policy
         self.request = args[0] if args else None
-
 
     def ShouldRetry(self, exception):  # pylint: disable=unused-argument
         """Returns true if the request should retry based on the passed-in exception.
@@ -73,9 +73,13 @@ class EndpointDiscoveryRetryPolicy(object):
         if self.global_endpoint_manager.is_per_partition_automatic_failover_applicable(self.request):
             partition_level_info = self.global_endpoint_manager.partition_range_to_failover_info[self.pk_range_wrapper]
             location = self.global_endpoint_manager.location_cache.get_location_from_endpoint(
-                str(self.request.location_endpoint_to_route))
-            regional_endpoint = (self.global_endpoint_manager.location_cache.
-                                account_read_regional_routing_contexts_by_location.get(location))
+                str(self.request.location_endpoint_to_route)
+            )
+            regional_endpoint = (
+                self.global_endpoint_manager.location_cache.account_read_regional_routing_contexts_by_location.get(
+                    location
+                )
+            )
             partition_level_info.unavailable_regional_endpoints[location] = regional_endpoint
             self.global_endpoint_manager.resolve_service_endpoint_for_partition(self.request, self.pk_range_wrapper)
             return True
@@ -85,12 +89,12 @@ class EndpointDiscoveryRetryPolicy(object):
             if _OperationType.IsReadOnlyOperation(self.request.operation_type):
                 # Mark current read endpoint as unavailable
                 self.global_endpoint_manager.mark_endpoint_unavailable_for_read(
-                    self.request.location_endpoint_to_route,
-                    True, context)
+                    self.request.location_endpoint_to_route, True, context
+                )
             else:
                 self.global_endpoint_manager.mark_endpoint_unavailable_for_write(
-                    self.request.location_endpoint_to_route,
-                    True, context)
+                    self.request.location_endpoint_to_route, True, context
+                )
 
         # clear previous location-based routing directive
         self.request.clear_route_to_location()

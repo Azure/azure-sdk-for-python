@@ -61,7 +61,6 @@ import trio
 import pytest
 from utils import HTTP_REQUESTS
 
-
 try:
     from unittest.mock import AsyncMock, PropertyMock
 except ImportError:

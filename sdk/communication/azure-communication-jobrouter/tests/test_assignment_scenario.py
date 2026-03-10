@@ -38,7 +38,6 @@ from azure.communication.jobrouter.models import (
     CloseJobOptions,
 )
 
-
 channel_id = "fakeChannel1"
 
 

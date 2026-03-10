@@ -602,12 +602,10 @@ class QueueClient(  # type: ignore [misc]
                 encryption_version=self.encryption_version,
             )
         except TypeError:
-            warnings.warn(
-                "TypeError when calling message_encode_policy.configure. \
+            warnings.warn("TypeError when calling message_encode_policy.configure. \
                 It is likely missing the encryption_version parameter. \
                 Consider updating your encryption information/implementation. \
-                Retrying without encryption_version."
-            )
+                Retrying without encryption_version.")
             self._message_encode_policy.configure(
                 require_encryption=self.require_encryption,
                 key_encryption_key=self.key_encryption_key,
@@ -882,12 +880,10 @@ class QueueClient(  # type: ignore [misc]
                     encryption_version=self.encryption_version,
                 )
             except TypeError:
-                warnings.warn(
-                    "TypeError when calling message_encode_policy.configure. \
+                warnings.warn("TypeError when calling message_encode_policy.configure. \
                     It is likely missing the encryption_version parameter. \
                     Consider updating your encryption information/implementation. \
-                    Retrying without encryption_version."
-                )
+                    Retrying without encryption_version.")
                 self._message_encode_policy.configure(
                     self.require_encryption, self.key_encryption_key, self.key_resolver_function
                 )

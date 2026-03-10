@@ -157,9 +157,7 @@ class TableAnalyticsLogging(GeneratedLogging):
 
     def __repr__(self) -> str:
         return f"TableAnalyticsLogging(version={self.version}, delete={self.delete}, read={self.read}, \
-            write={self.write}, retention_policy={self.retention_policy})"[
-            1024:
-        ]
+            write={self.write}, retention_policy={self.retention_policy})"[1024:]
 
 
 class TableMetrics(GeneratedMetrics):
@@ -199,9 +197,7 @@ class TableMetrics(GeneratedMetrics):
 
     def __repr__(self) -> str:
         return f"TableMetrics(version={self.version}, enabled={self.enabled}, include_apis={self.include_apis}, \
-            retention_policy={self.retention_policy})"[
-            1024:
-        ]
+            retention_policy={self.retention_policy})"[1024:]
 
 
 class TableCorsRule:
@@ -270,9 +266,7 @@ class TableCorsRule:
     def __repr__(self) -> str:
         return f"TableCorsRules(allowed_origins={self.allowed_origins}, allowed_methods={self.allowed_methods}, \
             allowed_headers={self.allowed_headers}, exposed_headers={self.exposed_headers}, \
-            max_age_in_seconds={self.max_age_in_seconds})"[
-            1024:
-        ]
+            max_age_in_seconds={self.max_age_in_seconds})"[1024:]
 
 
 class TablePropertiesPaged(PageIterator):
@@ -437,9 +431,7 @@ class TableSasPermissions:
 
     def __repr__(self) -> str:
         return f"TableSasPermissions(read={self.read}, add={self.add}, update={self.update}, \
-            delete={self.delete})"[
-            1024:
-        ]
+            delete={self.delete})"[1024:]
 
     @classmethod
     def from_string(cls, permission: str, **kwargs: Any) -> "TableSasPermissions":

@@ -39,6 +39,7 @@ This example uses the async DefaultAzureCredential, which requests a token from 
 For more information on the async DefaultAzureCredential, see
  https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
 """
+
 import os
 import asyncio
 import json

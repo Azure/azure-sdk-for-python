@@ -8,7 +8,13 @@
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
@@ -18,8 +24,9 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 
-    T = TypeVar('T')
+    T = TypeVar("T")
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+
 
 class MonitoringOperations(object):
     """MonitoringOperations operations.
@@ -59,30 +66,30 @@ class MonitoringOperations(object):
         :rtype: ~azure.synapse.monitoring.models.SparkJobListViewResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SparkJobListViewResponse"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.SparkJobListViewResponse"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
         api_version = "2019-11-01-preview"
         accept = "application/json"
 
         # Construct URL
-        url = self.get_spark_job_list.metadata['url']  # type: ignore
+        url = self.get_spark_job_list.metadata["url"]  # type: ignore
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         if x_ms_client_request_id is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", x_ms_client_request_id, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+            header_parameters["x-ms-client-request-id"] = self._serialize.header(
+                "x_ms_client_request_id", x_ms_client_request_id, "str"
+            )
+        header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -92,13 +99,14 @@ class MonitoringOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('SparkJobListViewResponse', pipeline_response)
+        deserialized = self._deserialize("SparkJobListViewResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_spark_job_list.metadata = {'url': '/monitoring/workloadTypes/spark/Applications'}  # type: ignore
+
+    get_spark_job_list.metadata = {"url": "/monitoring/workloadTypes/spark/Applications"}  # type: ignore
 
     def get_sql_job_query_string(
         self,
@@ -125,36 +133,36 @@ class MonitoringOperations(object):
         :rtype: ~azure.synapse.monitoring.models.SqlQueryStringDataModel
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SqlQueryStringDataModel"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.SqlQueryStringDataModel"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
         api_version = "2019-11-01-preview"
         accept = "application/json"
 
         # Construct URL
-        url = self.get_sql_job_query_string.metadata['url']  # type: ignore
+        url = self.get_sql_job_query_string.metadata["url"]  # type: ignore
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if filter is not None:
-            query_parameters['filter'] = self._serialize.query("filter", filter, 'str')
+            query_parameters["filter"] = self._serialize.query("filter", filter, "str")
         if orderby is not None:
-            query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
+            query_parameters["$orderby"] = self._serialize.query("orderby", orderby, "str")
         if skip is not None:
-            query_parameters['skip'] = self._serialize.query("skip", skip, 'str')
+            query_parameters["skip"] = self._serialize.query("skip", skip, "str")
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         if x_ms_client_request_id is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", x_ms_client_request_id, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+            header_parameters["x-ms-client-request-id"] = self._serialize.header(
+                "x_ms_client_request_id", x_ms_client_request_id, "str"
+            )
+        header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -164,10 +172,11 @@ class MonitoringOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('SqlQueryStringDataModel', pipeline_response)
+        deserialized = self._deserialize("SqlQueryStringDataModel", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_sql_job_query_string.metadata = {'url': '/monitoring/workloadTypes/sql/querystring'}  # type: ignore
+
+    get_sql_job_query_string.metadata = {"url": "/monitoring/workloadTypes/sql/querystring"}  # type: ignore

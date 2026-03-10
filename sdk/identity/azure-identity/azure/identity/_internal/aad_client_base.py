@@ -21,7 +21,6 @@ from .utils import get_default_authority, normalize_authority, resolve_tenant
 from .aadclient_certificate import AadClientCertificate
 from .._persistent_cache import _load_persistent_cache
 
-
 if TYPE_CHECKING:
     from azure.core.pipeline import AsyncPipeline, Pipeline
     from azure.core.pipeline.policies import AsyncHTTPPolicy, HTTPPolicy, SansIOHTTPPolicy

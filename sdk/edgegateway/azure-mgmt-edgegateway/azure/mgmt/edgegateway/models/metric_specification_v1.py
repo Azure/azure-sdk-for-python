@@ -48,29 +48,29 @@ class MetricSpecificationV1(Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'display_description': {'key': 'displayDescription', 'type': 'str'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
-        'dimensions': {'key': 'dimensions', 'type': '[MetricDimensionV1]'},
-        'fill_gap_with_zero': {'key': 'fillGapWithZero', 'type': 'bool'},
-        'category': {'key': 'category', 'type': 'str'},
-        'resource_id_dimension_name_override': {'key': 'resourceIdDimensionNameOverride', 'type': 'str'},
-        'supported_time_grain_types': {'key': 'supportedTimeGrainTypes', 'type': '[str]'},
-        'supported_aggregation_types': {'key': 'supportedAggregationTypes', 'type': '[str]'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "display_description": {"key": "displayDescription", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+        "aggregation_type": {"key": "aggregationType", "type": "str"},
+        "dimensions": {"key": "dimensions", "type": "[MetricDimensionV1]"},
+        "fill_gap_with_zero": {"key": "fillGapWithZero", "type": "bool"},
+        "category": {"key": "category", "type": "str"},
+        "resource_id_dimension_name_override": {"key": "resourceIdDimensionNameOverride", "type": "str"},
+        "supported_time_grain_types": {"key": "supportedTimeGrainTypes", "type": "[str]"},
+        "supported_aggregation_types": {"key": "supportedAggregationTypes", "type": "[str]"},
     }
 
     def __init__(self, **kwargs):
         super(MetricSpecificationV1, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.display_name = kwargs.get('display_name', None)
-        self.display_description = kwargs.get('display_description', None)
-        self.unit = kwargs.get('unit', None)
-        self.aggregation_type = kwargs.get('aggregation_type', None)
-        self.dimensions = kwargs.get('dimensions', None)
-        self.fill_gap_with_zero = kwargs.get('fill_gap_with_zero', None)
-        self.category = kwargs.get('category', None)
-        self.resource_id_dimension_name_override = kwargs.get('resource_id_dimension_name_override', None)
-        self.supported_time_grain_types = kwargs.get('supported_time_grain_types', None)
-        self.supported_aggregation_types = kwargs.get('supported_aggregation_types', None)
+        self.name = kwargs.get("name", None)
+        self.display_name = kwargs.get("display_name", None)
+        self.display_description = kwargs.get("display_description", None)
+        self.unit = kwargs.get("unit", None)
+        self.aggregation_type = kwargs.get("aggregation_type", None)
+        self.dimensions = kwargs.get("dimensions", None)
+        self.fill_gap_with_zero = kwargs.get("fill_gap_with_zero", None)
+        self.category = kwargs.get("category", None)
+        self.resource_id_dimension_name_override = kwargs.get("resource_id_dimension_name_override", None)
+        self.supported_time_grain_types = kwargs.get("supported_time_grain_types", None)
+        self.supported_aggregation_types = kwargs.get("supported_aggregation_types", None)

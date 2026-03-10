@@ -8,14 +8,21 @@ import pytest
 import uuid
 import functools
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
-from azure.ai.formrecognizer import DocumentModelAdministrationClient, DocumentModelDetails, DocumentModelAdministrationLROPoller
-from azure.ai.formrecognizer._generated.v2023_07_31.models import DocumentModelComposeOperationDetails, DocumentModelDetails as ModelDetails
+from azure.ai.formrecognizer import (
+    DocumentModelAdministrationClient,
+    DocumentModelDetails,
+    DocumentModelAdministrationLROPoller,
+)
+from azure.ai.formrecognizer._generated.v2023_07_31.models import (
+    DocumentModelComposeOperationDetails,
+    DocumentModelDetails as ModelDetails,
+)
 from testcase import FormRecognizerTest
 from preparers import FormRecognizerPreparer, get_sync_client
 from conftest import skip_flaky_test
 
-
 get_dma_client = functools.partial(get_sync_client, DocumentModelAdministrationClient)
+
 
 class TestTraining(FormRecognizerTest):
 
@@ -28,13 +35,28 @@ class TestTraining(FormRecognizerTest):
         model_id_1 = str(uuid.uuid4())
         model_id_2 = str(uuid.uuid4())
         composed_id = str(uuid.uuid4())
-        poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url, model_id=model_id_1, description="model1")
+        poller = client.begin_build_document_model(
+            "template",
+            blob_container_url=formrecognizer_storage_container_sas_url,
+            model_id=model_id_1,
+            description="model1",
+        )
         model_1 = poller.result()
 
-        poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url, model_id=model_id_2, description="model2")
+        poller = client.begin_build_document_model(
+            "template",
+            blob_container_url=formrecognizer_storage_container_sas_url,
+            model_id=model_id_2,
+            description="model2",
+        )
         model_2 = poller.result()
 
-        poller = client.begin_compose_document_model([model_1.model_id, model_2.model_id], model_id=composed_id, description="my composed model", tags={"testkey": "testvalue"})
+        poller = client.begin_compose_document_model(
+            [model_1.model_id, model_2.model_id],
+            model_id=composed_id,
+            description="my composed model",
+            tags={"testkey": "testvalue"},
+        )
 
         composed_model = poller.result()
         if self.is_live:
@@ -57,10 +79,14 @@ class TestTraining(FormRecognizerTest):
     def test_compose_model_transform(self, formrecognizer_storage_container_sas_url, **kwargs):
         client = get_dma_client()
         set_bodiless_matcher()
-        poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url, description="model1")
+        poller = client.begin_build_document_model(
+            "template", blob_container_url=formrecognizer_storage_container_sas_url, description="model1"
+        )
         model_1 = poller.result()
 
-        poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url, description="model2")
+        poller = client.begin_build_document_model(
+            "template", blob_container_url=formrecognizer_storage_container_sas_url, description="model2"
+        )
         model_2 = poller.result()
 
         raw_response = []
@@ -72,7 +98,9 @@ class TestTraining(FormRecognizerTest):
             raw_response.append(model_info)
             raw_response.append(document_model)
 
-        poller = client.begin_compose_document_model([model_1.model_id, model_2.model_id], description="my composed model", cls=callback)
+        poller = client.begin_compose_document_model(
+            [model_1.model_id, model_2.model_id], description="my composed model", cls=callback
+        )
         model = poller.result()
 
         generated = raw_response[0]
@@ -89,10 +117,14 @@ class TestTraining(FormRecognizerTest):
     def test_compose_continuation_token(self, **kwargs):
         client = get_dma_client()
         formrecognizer_storage_container_sas_url = kwargs.pop("formrecognizer_storage_container_sas_url")
-        poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+        poller = client.begin_build_document_model(
+            "template", blob_container_url=formrecognizer_storage_container_sas_url
+        )
         model_1 = poller.result()
 
-        poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+        poller = client.begin_build_document_model(
+            "template", blob_container_url=formrecognizer_storage_container_sas_url
+        )
         model_2 = poller.result()
 
         initial_poller = client.begin_compose_document_model([model_1.model_id, model_2.model_id])
@@ -110,10 +142,14 @@ class TestTraining(FormRecognizerTest):
     def test_poller_metadata(self, formrecognizer_storage_container_sas_url, **kwargs):
         client = get_dma_client()
         set_bodiless_matcher()
-        poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+        poller = client.begin_build_document_model(
+            "template", blob_container_url=formrecognizer_storage_container_sas_url
+        )
         model_1 = poller.result()
 
-        poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+        poller = client.begin_build_document_model(
+            "template", blob_container_url=formrecognizer_storage_container_sas_url
+        )
         model_2 = poller.result()
 
         poller = client.begin_compose_document_model([model_1.model_id, model_2.model_id])

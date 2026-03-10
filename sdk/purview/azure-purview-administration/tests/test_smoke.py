@@ -16,7 +16,7 @@ class TestPurviewAccountSmoke(PurviewAccountTest):
     def test_basic_smoke_test(self, purviewaccount_endpoint):
         client = self.create_client(endpoint=purviewaccount_endpoint)
         response = client.accounts.get_access_keys()
-        assert set(response.keys()) == set(['atlasKafkaPrimaryEndpoint', 'atlasKafkaSecondaryEndpoint'])
+        assert set(response.keys()) == set(["atlasKafkaPrimaryEndpoint", "atlasKafkaSecondaryEndpoint"])
 
     @PurviewAccountPowerShellPreparer()
     @recorded_by_proxy
@@ -25,7 +25,9 @@ class TestPurviewAccountSmoke(PurviewAccountTest):
         response = client.collections.list_collections()
         result = [item for item in response]
         for item in result:
-            assert set(item.keys()) == set(['name', 'friendlyName', 'description', 'systemData', 'collectionProvisioningState'])
+            assert set(item.keys()) == set(
+                ["name", "friendlyName", "description", "systemData", "collectionProvisioningState"]
+            )
 
 
 class TestPurviewMetaPolicySmoke(PurviewMetaPolicyTest):

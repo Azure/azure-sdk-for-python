@@ -3,11 +3,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Common tracing functionality for SDK libraries."""
+
 from typing import Any, Callable
 
 from ._tracer import get_tracer
 from ...settings import settings
-
 
 __all__ = [
     "with_current_context",

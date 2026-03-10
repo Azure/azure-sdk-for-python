@@ -20,6 +20,7 @@ class TestConversations(AzureRecordedTestCase):
     def create_client(self, endpoint, key):
         return TextAuthoringClient(endpoint, AzureKeyCredential(key))
 
+
 class TestConversationsDeleteDeploymentSync(TestConversations):
 
     @ConversationsPreparer()

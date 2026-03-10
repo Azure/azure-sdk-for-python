@@ -13,7 +13,7 @@ from azure.communication.phonenumbers import (
     PhoneNumberCapabilityType,
     PhoneNumberType,
     ReservationStatus,
-    PhoneNumberAvailabilityStatus
+    PhoneNumberAvailabilityStatus,
 )
 from azure.communication.phonenumbers._generated.models import PhoneNumberOperationStatus
 from azure.communication.phonenumbers._shared.utils import parse_connection_str
@@ -25,14 +25,12 @@ STATIC_RESERVATION_ID = "6227aeb8-8086-4824-9586-05cafe96f37b"
 SKIP_PURCHASE_PHONE_NUMBER_TESTS = True
 PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON = "Phone numbers shouldn't be purchased in live tests"
 
-SKIP_INT_PHONE_NUMBER_TESTS = os.getenv(
-    "COMMUNICATION_SKIP_INT_PHONENUMBERS_TEST", "false") == "true"
+SKIP_INT_PHONE_NUMBER_TESTS = os.getenv("COMMUNICATION_SKIP_INT_PHONENUMBERS_TEST", "false") == "true"
 INT_PHONE_NUMBER_TEST_SKIP_REASON = (
     "Phone numbers setting SMS capability does not support in INT. Skip these tests in INT."
 )
 
-SKIP_UPDATE_CAPABILITIES_TESTS = os.getenv(
-    "COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST", "false") == "true"
+SKIP_UPDATE_CAPABILITIES_TESTS = os.getenv("COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST", "false") == "true"
 SKIP_UPDATE_CAPABILITIES_TESTS_REASON = "Phone number capabilities are skipped."
 
 
@@ -53,8 +51,7 @@ def is_client_error_status_code(
 @pytest.mark.asyncio
 class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
     def setup_method(self):
-        super(TestPhoneNumbersClientAsync, self).setUp(
-            use_dynamic_resource=False)
+        super(TestPhoneNumbersClientAsync, self).setUp(use_dynamic_resource=False)
         if self.is_playback():
             self.phone_number = "sanitized"
             self.country_code = "US"
@@ -64,8 +61,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
             self.purchased_reservation_id = STATIC_RESERVATION_ID
         else:
             self.phone_number = _get_test_phone_number()
-            self.country_code = os.getenv(
-                "AZURE_COMMUNICATION_SERVICE_COUNTRY_CODE", "US")
+            self.country_code = os.getenv("AZURE_COMMUNICATION_SERVICE_COUNTRY_CODE", "US")
 
             # In live mode, generate unique reservation IDs for each test run
             # Tests that create and delete reservations will use the same ID
@@ -370,8 +366,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
             async for item in area_codes:
                 items.append(item.area_code)
 
-        expected_area_codes = {"888", "877", "866",
-                               "855", "844", "800", "833", "88"}
+        expected_area_codes = {"888", "877", "866", "855", "844", "800", "833", "88"}
         for area_code in items:
             assert area_code in expected_area_codes
 
@@ -387,8 +382,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
             async for item in area_codes:
                 items.append(item.area_code)
 
-        expected_area_codes = {"888", "877", "866",
-                               "855", "844", "800", "833", "88"}
+        expected_area_codes = {"888", "877", "866", "855", "844", "800", "833", "88"}
         for area_code in items:
             assert area_code in expected_area_codes
 
@@ -416,8 +410,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
     @recorded_by_proxy_async
     async def test_list_geographic_area_codes(self):
         async with self.phone_number_client:
-            localities = self.phone_number_client.list_available_localities(
-                "US")
+            localities = self.phone_number_client.list_available_localities("US")
             async for first_locality in localities:
                 area_codes = self.phone_number_client.list_available_area_codes(
                     "US",
@@ -431,7 +424,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
                     items.append(item)
                 break
         assert len(items) > 0
-    
+
     @recorded_by_proxy_async
     async def test_list_mobile_area_codes_with_managed_identity(self):
         phone_number_client = self._get_managed_identity_phone_number_client()
@@ -453,7 +446,9 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
     @recorded_by_proxy_async
     async def test_list_mobile_area_codes(self):
         async with self.phone_number_client:
-            localities = self.phone_number_client.list_available_localities("IE", phone_number_type=PhoneNumberType.MOBILE)
+            localities = self.phone_number_client.list_available_localities(
+                "IE", phone_number_type=PhoneNumberType.MOBILE
+            )
             async for first_locality in localities:
                 area_codes = self.phone_number_client.list_available_area_codes(
                     "IE",
@@ -499,8 +494,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
     @recorded_by_proxy_async
     async def test_list_localities(self):
         async with self.phone_number_client:
-            localities = self.phone_number_client.list_available_localities(
-                "US")
+            localities = self.phone_number_client.list_available_localities("US")
             items = []
             async for item in localities:
                 items.append(item)
@@ -524,8 +518,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
     @recorded_by_proxy_async
     async def test_list_localities_with_ad(self):
         async with self.phone_number_client:
-            localities = self.phone_number_client.list_available_localities(
-                "US")
+            localities = self.phone_number_client.list_available_localities("US")
             async for first_locality in localities:
                 localities = self.phone_number_client.list_available_localities(
                     "US", administrative_division=first_locality.administrative_division.abbreviated_name
@@ -535,12 +528,13 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
                     items.append(item)
                 break
         assert len(items) > 0
-    
+
     @recorded_by_proxy_async
     async def test_list_localities_with_number_type(self):
         async with self.phone_number_client:
             localities = self.phone_number_client.list_available_localities(
-                "IE", phone_number_type=PhoneNumberType.MOBILE)
+                "IE", phone_number_type=PhoneNumberType.MOBILE
+            )
             items = []
             async for item in localities:
                 items.append(item)
@@ -617,8 +611,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
     @recorded_by_proxy_async
     async def test_browse_available_numbers(self):
         result = await self.phone_number_client.browse_available_phone_numbers(
-            country_code=self.country_code, 
-            phone_number_type=PhoneNumberType.TOLL_FREE
+            country_code=self.country_code, phone_number_type=PhoneNumberType.TOLL_FREE
         )
 
         available_numbers = result.phone_numbers
@@ -645,8 +638,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
 
         # Test that we can add phone numbers to the reservation
         browse_result = await self.phone_number_client.browse_available_phone_numbers(
-            country_code=self.country_code, 
-            phone_number_type=PhoneNumberType.TOLL_FREE
+            country_code=self.country_code, phone_number_type=PhoneNumberType.TOLL_FREE
         )
 
         phone_number_to_reserve = browse_result.phone_numbers[0]
@@ -658,7 +650,10 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
         assert updated_reservation.status == ReservationStatus.ACTIVE
         assert updated_reservation.expires_at > created_reservation.expires_at
         assert phone_number_to_reserve.id in updated_reservation.phone_numbers
-        assert updated_reservation.phone_numbers[phone_number_to_reserve.id].status == PhoneNumberAvailabilityStatus.RESERVED
+        assert (
+            updated_reservation.phone_numbers[phone_number_to_reserve.id].status
+            == PhoneNumberAvailabilityStatus.RESERVED
+        )
 
         # Test that we can get the reservation by ID
         retrieved_reservation = await self.phone_number_client.get_reservation(reservation_id)
@@ -670,8 +665,8 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
 
         # Test that we can remove numbers from the reservation
         reservation_after_remove = await self.phone_number_client.create_or_update_reservation(
-            reservation_id=reservation_id,
-            numbers_to_remove=[phone_number_to_reserve.id])
+            reservation_id=reservation_id, numbers_to_remove=[phone_number_to_reserve.id]
+        )
 
         assert reservation_after_remove.id == updated_reservation.id
         assert reservation_after_remove.status == updated_reservation.status
@@ -695,15 +690,15 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
 
         # France doesn't allow reselling of phone numbers, so purchases without agreement to not resell should fail
         browse_result = await self.phone_number_client.browse_available_phone_numbers(
-            country_code="FR", 
-            phone_number_type=PhoneNumberType.TOLL_FREE
+            country_code="FR", phone_number_type=PhoneNumberType.TOLL_FREE
         )
 
         # The phone number can be reserved, but not purchased without agreement to not resell
         phone_number = browse_result.phone_numbers[0]
         created_reservation = await self.phone_number_client.create_or_update_reservation(
-            reservation_id=reservation_id, numbers_to_add=[phone_number])
-        
+            reservation_id=reservation_id, numbers_to_add=[phone_number]
+        )
+
         assert created_reservation.phone_numbers[phone_number.id].status == PhoneNumberAvailabilityStatus.RESERVED
         assert created_reservation.status == ReservationStatus.ACTIVE
 
@@ -730,14 +725,14 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
 
         # Test that we can purchase a reservation
         browse_result = await self.phone_number_client.browse_available_phone_numbers(
-            country_code=self.country_code, 
-            phone_number_type=PhoneNumberType.TOLL_FREE
+            country_code=self.country_code, phone_number_type=PhoneNumberType.TOLL_FREE
         )
 
         phone_number = browse_result.phone_numbers[0]
         created_reservation = await self.phone_number_client.create_or_update_reservation(
-            reservation_id=reservation_id, numbers_to_add=[phone_number])
-        
+            reservation_id=reservation_id, numbers_to_add=[phone_number]
+        )
+
         assert created_reservation.phone_numbers[phone_number.id].status == PhoneNumberAvailabilityStatus.RESERVED
         assert created_reservation.status == ReservationStatus.ACTIVE
 

@@ -11,6 +11,7 @@ DESCRIPTION:
 USAGE:
     python sample_consume_custom_payload.py
 """
+
 from typing import List
 from azure.core.messaging import CloudEvent
 import json

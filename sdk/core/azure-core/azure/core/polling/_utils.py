@@ -30,7 +30,6 @@ import binascii
 import json
 from typing import Any, Dict, Mapping
 
-
 # Current continuation token version
 _CONTINUATION_TOKEN_VERSION = 1
 

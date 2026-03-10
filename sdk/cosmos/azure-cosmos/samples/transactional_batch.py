@@ -23,14 +23,14 @@ import config
 # Sample - demonstrates Transactional Batch for Azure Cosmos DB Python SDK
 # ----------------------------------------------------------------------------------------------------------
 
-HOST = config.settings['host']
-MASTER_KEY = config.settings['master_key']
-DATABASE_ID = config.settings['database_id']
+HOST = config.settings["host"]
+MASTER_KEY = config.settings["master_key"]
+DATABASE_ID = config.settings["database_id"]
 CONTAINER_ID = "batch_container"
 
 
 def execute_item_batch(database, container):
-    print('\n1.11 Executing Batch Item operations\n')
+    print("\n1.11 Executing Batch Item operations\n")
 
     # We create three items to use for the sample. These are not part of the batch operations
     container.create_item(get_sales_order("read_item"))
@@ -42,17 +42,20 @@ def execute_item_batch(database, container):
     upsert_item_operation = ("upsert", (get_sales_order("upsert_item"),))
     read_item_operation = ("read", ("read_item",))
     delete_item_operation = ("delete", ("delete_item",))
-    replace_item_operation = ("replace", ("replace_item", {"id": "replace_item", 'account_number': 'Account1',
-                                                           "message": "item was replaced"}))
-    replace_item_if_match_operation = ("replace",
-                                       ("replace_item", {"id": "replace_item", 'account_number': 'Account1',
-                                                         "message": "item was replaced"}),
-                                       {"if_match_etag": container.client_connection.last_response_headers.get("etag")})
-    replace_item_if_none_match_operation = ("replace",
-                                            ("replace_item", {"id": "replace_item", 'account_number': 'Account1',
-                                                              "message": "item was replaced"}),
-                                            {"if_none_match_etag":
-                                                 container.client_connection.last_response_headers.get("etag")})
+    replace_item_operation = (
+        "replace",
+        ("replace_item", {"id": "replace_item", "account_number": "Account1", "message": "item was replaced"}),
+    )
+    replace_item_if_match_operation = (
+        "replace",
+        ("replace_item", {"id": "replace_item", "account_number": "Account1", "message": "item was replaced"}),
+        {"if_match_etag": container.client_connection.last_response_headers.get("etag")},
+    )
+    replace_item_if_none_match_operation = (
+        "replace",
+        ("replace_item", {"id": "replace_item", "account_number": "Account1", "message": "item was replaced"}),
+        {"if_none_match_etag": container.client_connection.last_response_headers.get("etag")},
+    )
 
     # Put our operations into a list
     batch_operations = [
@@ -62,8 +65,9 @@ def execute_item_batch(database, container):
         delete_item_operation,
         replace_item_operation,
         # This below operation fails with status code 412, causing batch to fail and all operations to roll back
-        replace_item_if_match_operation, # -> Comment this line out to see batch operations succeeding.
-        replace_item_if_none_match_operation]
+        replace_item_if_match_operation,  # -> Comment this line out to see batch operations succeeding.
+        replace_item_if_none_match_operation,
+    ]
 
     # Run that list of operations
     try:
@@ -81,42 +85,37 @@ def execute_item_batch(database, container):
         print("\nError operation: {}, error operation response: {}\n".format(error_operation, error_operation_response))
         print("\nAn error occurred in the batch operation. All operations have been rolled back.\n")
 
-    
     # You can also use this logic to read directly from a file into the batch you'd like to create:
     # with open("file_name.txt", "r") as data_file:
     #    container.execute_item_batch([("upsert", (t,)) for t in data_file.readlines()])
 
 
 def get_sales_order(item_id):
-    order1 = {'id': item_id,
-              'account_number': 'Account1',
-              'purchase_order_number': 'PO18009186470',
-              'order_date': datetime.date(2005, 1, 10).strftime('%c'),
-              'subtotal': 419.4589,
-              'tax_amount': 12.5838,
-              'freight': 472.3108,
-              'total_due': 985.018,
-              'items': [
-                  {'order_qty': 1,
-                   'product_id': 100,
-                   'unit_price': 418.4589,
-                   'line_price': 418.4589
-                   }
-              ],
-              'ttl': 60 * 60 * 24 * 30
-              }
+    order1 = {
+        "id": item_id,
+        "account_number": "Account1",
+        "purchase_order_number": "PO18009186470",
+        "order_date": datetime.date(2005, 1, 10).strftime("%c"),
+        "subtotal": 419.4589,
+        "tax_amount": 12.5838,
+        "freight": 472.3108,
+        "total_due": 985.018,
+        "items": [{"order_qty": 1, "product_id": 100, "unit_price": 418.4589, "line_price": 418.4589}],
+        "ttl": 60 * 60 * 24 * 30,
+    }
 
     return order1
 
 
 def run_sample():
-    client = cosmos_client.CosmosClient(HOST, {'masterKey': MASTER_KEY})
+    client = cosmos_client.CosmosClient(HOST, {"masterKey": MASTER_KEY})
     try:
         # setup database for this sample
         db = client.create_database_if_not_exists(id=DATABASE_ID)
         # setup container for this sample
-        container = db.create_container_if_not_exists(id=CONTAINER_ID,
-                                                        partition_key=PartitionKey(path='/account_number'))
+        container = db.create_container_if_not_exists(
+            id=CONTAINER_ID, partition_key=PartitionKey(path="/account_number")
+        )
         execute_item_batch(db, container)
 
         # cleanup database after sample
@@ -127,11 +126,11 @@ def run_sample():
             pass
 
     except exceptions.CosmosHttpResponseError as e:
-        print('\nrun_sample has caught an error. {0}'.format(e.message))
+        print("\nrun_sample has caught an error. {0}".format(e.message))
 
     finally:
         print("\nrun_sample done")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run_sample()

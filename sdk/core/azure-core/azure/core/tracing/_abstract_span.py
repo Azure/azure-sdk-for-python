@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Protocol that defines what functions wrappers of tracing libraries should implement."""
+
 from __future__ import annotations
 from urllib.parse import urlparse
 
@@ -25,7 +26,6 @@ from azure.core.rest import (
     HttpRequest as RestHttpRequest,
 )
 from ._models import AttributeValue, SpanKind
-
 
 HttpResponseType = Union[HttpResponse, AsyncHttpResponse, RestHttpResponse, AsyncRestHttpResponse]
 HttpRequestType = Union[HttpRequest, RestHttpRequest]

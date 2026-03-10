@@ -6,6 +6,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 from typing import Any, Iterable, List
 from azure.core.tracing.decorator import distributed_trace
 from azure.health.deidentification.models import DeidentificationDocumentDetails, DeidentificationJob

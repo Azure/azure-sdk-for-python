@@ -29,6 +29,7 @@ def convert_to_access_token(token_response_message):
 
     return AccessToken(token_response_message.access_token, expiration_timestamp)
 
+
 def retrieve_jwt_expiration_timestamp(jwt_value):
     # type: (str) -> int
     """
@@ -51,20 +52,22 @@ def retrieve_jwt_expiration_timestamp(jwt_value):
         # We pad the value with the max padding of === to keep our logic simple and allow the base64 decoder to handle
         # the value properly. b64decode will properly trim the padding appropriately, but apparently doesn't want to
         # handle the addition of padding.
-        padded_base64_payload = base64.b64decode(parts[1] + "===").decode('utf-8')
+        padded_base64_payload = base64.b64decode(parts[1] + "===").decode("utf-8")
         payload = json.loads(padded_base64_payload)
     except ValueError as e:
         raise ValueError("Unable to decode the JWT.") from e
 
     try:
-        exp = payload['exp']
+        exp = payload["exp"]
     except KeyError as e:
         raise ValueError("Invalid JWT payload structure. No expiration.") from e
 
     return int(exp)
 
+
 BASE_64_CHAR_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 CV_BASE_LENGTH = 22
+
 
 def generate_cv_base():
     # type: () -> str
@@ -75,9 +78,9 @@ def generate_cv_base():
     :returns: str
     :rtype: str
     """
-    result = ''
+    result = ""
 
-    #pylint: disable=unused-variable
+    # pylint: disable=unused-variable
     for i in range(CV_BASE_LENGTH):
         random_index = random.randint(0, len(BASE_64_CHAR_SET) - 1)
         result += BASE_64_CHAR_SET[random_index]

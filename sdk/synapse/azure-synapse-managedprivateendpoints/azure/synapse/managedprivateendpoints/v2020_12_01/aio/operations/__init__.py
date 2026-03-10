@@ -9,5 +9,5 @@
 from ._managed_private_endpoints_operations import ManagedPrivateEndpointsOperations
 
 __all__ = [
-    'ManagedPrivateEndpointsOperations',
+    "ManagedPrivateEndpointsOperations",
 ]

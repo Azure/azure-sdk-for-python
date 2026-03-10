@@ -10,9 +10,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from unittest.mock import MagicMock, AsyncMock
 
-from azure.communication.identity._shared.token_exchange_async import (
-    TokenExchangeClient
-)
+from azure.communication.identity._shared.token_exchange_async import TokenExchangeClient
 
 
 class DummyPipelineResponse:
@@ -24,7 +22,8 @@ class DummyPipelineResponse:
         else:
             self.http_response.text.return_value = (
                 f'{{"accessToken": {{"token": "{token}", "expiresOn": "{expires_on}"}}}}'
-                if status_code == 200 else '{}'
+                if status_code == 200
+                else "{}"
             )
 
 

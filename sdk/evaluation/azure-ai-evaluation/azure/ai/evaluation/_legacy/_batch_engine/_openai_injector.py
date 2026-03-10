@@ -14,7 +14,6 @@ from typing import Any, Callable, Final, Generator, Optional, Protocol, Sequence
 from azure.ai.evaluation._legacy._adapters._errors import MissingRequiredPackage
 from azure.ai.evaluation._legacy._batch_engine._result import TokenMetrics
 
-
 _token_metrics: ContextVar[TokenMetrics] = ContextVar("token_metrics", default=TokenMetrics(0, 0, 0))
 KEY_ATTR_ORIGINAL: Final[str] = "_original"
 

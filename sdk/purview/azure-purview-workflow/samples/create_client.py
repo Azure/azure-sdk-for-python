@@ -48,9 +48,9 @@ try:
 except KeyError:
     LOG.error(
         "Missing environment variable 'WORKFLOW_ENDPOINT' or 'AZURE_CLIENT_ID' or 'AZURE_TENANT_ID' or 'USERNAME' or "
-        "'PASSWORD' - please set if before running the example")
+        "'PASSWORD' - please set if before running the example"
+    )
     exit()
-credential = UsernamePasswordCredential(client_id=client_id, username=username, password=password,
-                                        tenant_id=tenant_id)
+credential = UsernamePasswordCredential(client_id=client_id, username=username, password=password, tenant_id=tenant_id)
 # Build a client through AAD
 client = PurviewWorkflowClient(endpoint=endpoint, credential=credential)

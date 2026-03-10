@@ -5,6 +5,7 @@
 """
 Asyncio Requests transport class for the asynchronous WorkloadIdentityCredential with token proxy support.
 """
+
 from typing import Any, Optional
 
 from requests import Session

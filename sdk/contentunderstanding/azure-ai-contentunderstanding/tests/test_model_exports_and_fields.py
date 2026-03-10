@@ -36,7 +36,6 @@ from azure.ai.contentunderstanding.models import (
 )
 from azure.ai.contentunderstanding.models._patch import __all__ as patch_all
 
-
 # Expected .value return types for TYPE_CHECKING redeclarations
 FIELD_VALUE_TYPES = {
     "ContentField": (ContentField, Any),
@@ -60,17 +59,14 @@ class TestModelExports:
         """Every name in models.__all__ must be an importable, non-None attribute."""
         attr = getattr(models_module, name, None)
         assert attr is not None, (
-            f"'{name}' is in models.__all__ but is not importable from "
-            f"azure.ai.contentunderstanding.models"
+            f"'{name}' is in models.__all__ but is not importable from " f"azure.ai.contentunderstanding.models"
         )
 
     @pytest.mark.parametrize("name", models_all)
     def test_model_is_class_or_type(self, name):
         """Every exported model should be a class, enum, or type alias."""
         attr = getattr(models_module, name)
-        assert isinstance(attr, type) or callable(attr), (
-            f"'{name}' should be a class or callable, got {type(attr)}"
-        )
+        assert isinstance(attr, type) or callable(attr), f"'{name}' should be a class or callable, got {type(attr)}"
 
     def test_key_models_importable(self):
         """Explicitly test commonly used models are importable."""
@@ -102,9 +98,7 @@ class TestFieldValueProperty:
     def test_value_property_exists(self, field_name, field_info):
         """Verify .value is a property on each field class."""
         field_class, _ = field_info
-        assert hasattr(field_class, "value"), (
-            f"{field_name} should have a .value property"
-        )
+        assert hasattr(field_class, "value"), f"{field_name} should have a .value property"
         assert isinstance(
             getattr(field_class, "value"), property
         ), f"{field_name}.value should be a property, got {type(getattr(field_class, 'value'))}"

@@ -24,7 +24,6 @@ from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
 from azure.monitor.querymetrics import MetricsClient, MetricAggregationType
 
-
 endpoint = os.environ["AZURE_METRICS_ENDPOINT"]
 
 credential = DefaultAzureCredential()

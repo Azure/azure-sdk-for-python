@@ -30,8 +30,9 @@ import asyncio
 class RecognizeIdDocumentsSampleAsync(object):
 
     async def recognize_identity_documents(self):
-        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
-                                                            "..", "..", "..", "./sample_forms/id_documents/license.jpg"))
+        path_to_sample_forms = os.path.abspath(
+            os.path.join(os.path.abspath(__file__), "..", "..", "..", "./sample_forms/id_documents/license.jpg")
+        )
 
         # [START recognize_identity_documents_async]
         from azure.core.credentials import AzureKeyCredential
@@ -43,14 +44,14 @@ class RecognizeIdDocumentsSampleAsync(object):
         async with FormRecognizerClient(
             endpoint=endpoint, credential=AzureKeyCredential(key)
         ) as form_recognizer_client:
-            
+
             with open(path_to_sample_forms, "rb") as f:
                 poller = await form_recognizer_client.begin_recognize_identity_documents(identity_document=f)
-            
+
             id_documents = await poller.result()
 
             for idx, id_document in enumerate(id_documents):
-                print("--------Recognizing ID document #{}--------".format(idx+1))
+                print("--------Recognizing ID document #{}--------".format(idx + 1))
                 first_name = id_document.fields.get("FirstName")
                 if first_name:
                     print("First Name: {} has confidence: {}".format(first_name.value, first_name.confidence))
@@ -59,7 +60,11 @@ class RecognizeIdDocumentsSampleAsync(object):
                     print("Last Name: {} has confidence: {}".format(last_name.value, last_name.confidence))
                 document_number = id_document.fields.get("DocumentNumber")
                 if document_number:
-                    print("Document Number: {} has confidence: {}".format(document_number.value, document_number.confidence))
+                    print(
+                        "Document Number: {} has confidence: {}".format(
+                            document_number.value, document_number.confidence
+                        )
+                    )
                 dob = id_document.fields.get("DateOfBirth")
                 if dob:
                     print("Date of Birth: {} has confidence: {}".format(dob.value, dob.confidence))
@@ -74,15 +79,19 @@ class RecognizeIdDocumentsSampleAsync(object):
                     print("Address: {} has confidence: {}".format(address.value, address.confidence))
                 country_region = id_document.fields.get("CountryRegion")
                 if country_region:
-                    print("Country/Region: {} has confidence: {}".format(country_region.value, country_region.confidence))
+                    print(
+                        "Country/Region: {} has confidence: {}".format(country_region.value, country_region.confidence)
+                    )
                 region = id_document.fields.get("Region")
                 if region:
                     print("Region: {} has confidence: {}".format(region.value, region.confidence))
         # [END recognize_identity_documents_async]
 
+
 async def main():
     sample = RecognizeIdDocumentsSampleAsync()
     await sample.recognize_identity_documents()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())

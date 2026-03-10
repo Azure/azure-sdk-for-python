@@ -20,9 +20,9 @@ class DataBoxEdgeDevicePatch(Model):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(self, **kwargs):
         super(DataBoxEdgeDevicePatch, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
+        self.tags = kwargs.get("tags", None)

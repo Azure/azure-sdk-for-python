@@ -14,10 +14,7 @@ class TestDallEAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(DALLE_AZURE, GA), (DALLE_AZURE, PREVIEW), (OPENAI, "v1")]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(DALLE_AZURE, GA), (DALLE_AZURE, PREVIEW), (OPENAI, "v1")])
     async def test_image_create(self, client_async, api_type, api_version, **kwargs):
         image = await client_async.images.generate(
             prompt="a cute baby seal",

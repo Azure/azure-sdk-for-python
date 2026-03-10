@@ -28,19 +28,14 @@ class AnalysisInput(_serialization.Model):
     """
 
     _validation = {
-        'analysis_input': {'required': True},
+        "analysis_input": {"required": True},
     }
 
     _attribute_map = {
         "analysis_input": {"key": "analysisInput", "type": "MultiLanguageBatchInput"},
     }
 
-    def __init__(
-        self,
-        *,
-        analysis_input: "_models.MultiLanguageBatchInput",
-        **kwargs
-    ):
+    def __init__(self, *, analysis_input: "_models.MultiLanguageBatchInput", **kwargs):
         """
         :keyword analysis_input: Contains a set of input documents to be analyzed by the service.
          Required.
@@ -61,19 +56,14 @@ class JobManifest(_serialization.Model):
     """
 
     _validation = {
-        'tasks': {'required': True},
+        "tasks": {"required": True},
     }
 
     _attribute_map = {
         "tasks": {"key": "tasks", "type": "JobManifestTasks"},
     }
 
-    def __init__(
-        self,
-        *,
-        tasks: "_models.JobManifestTasks",
-        **kwargs
-    ):
+    def __init__(self, *, tasks: "_models.JobManifestTasks", **kwargs):
         """
         :keyword tasks: The set of tasks to execute on the input documents. Cannot specify the same
          task more than once. Required.
@@ -94,12 +84,7 @@ class JobDescriptor(_serialization.Model):
         "display_name": {"key": "displayName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        display_name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, display_name: Optional[str] = None, **kwargs):
         """
         :keyword display_name: Optional display name for the analysis job.
         :paramtype display_name: str
@@ -124,8 +109,8 @@ class AnalyzeBatchInput(JobDescriptor, AnalysisInput, JobManifest):
     """
 
     _validation = {
-        'tasks': {'required': True},
-        'analysis_input': {'required': True},
+        "tasks": {"required": True},
+        "analysis_input": {"required": True},
     }
 
     _attribute_map = {
@@ -169,12 +154,7 @@ class AnalyzeJobDisplayName(_serialization.Model):
         "display_name": {"key": "displayName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        display_name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, display_name: Optional[str] = None, **kwargs):
         """
         :keyword display_name:
         :paramtype display_name: str
@@ -236,10 +216,10 @@ class JobMetadata(_serialization.Model):
     """
 
     _validation = {
-        'created_date_time': {'required': True},
-        'job_id': {'required': True},
-        'last_update_date_time': {'required': True},
-        'status': {'required': True},
+        "created_date_time": {"required": True},
+        "job_id": {"required": True},
+        "last_update_date_time": {"required": True},
+        "status": {"required": True},
     }
 
     _attribute_map = {
@@ -302,10 +282,10 @@ class AnalyzeJobMetadata(JobMetadata, AnalyzeJobDisplayName):
     """
 
     _validation = {
-        'created_date_time': {'required': True},
-        'job_id': {'required': True},
-        'last_update_date_time': {'required': True},
-        'status': {'required': True},
+        "created_date_time": {"required": True},
+        "job_id": {"required": True},
+        "last_update_date_time": {"required": True},
+        "status": {"required": True},
     }
 
     _attribute_map = {
@@ -343,7 +323,15 @@ class AnalyzeJobMetadata(JobMetadata, AnalyzeJobDisplayName):
          "rejected", "cancelled", and "cancelling".
         :paramtype status: str or ~azure.ai.textanalytics.v3_1.models.State
         """
-        super().__init__(created_date_time=created_date_time, expiration_date_time=expiration_date_time, job_id=job_id, last_update_date_time=last_update_date_time, status=status, display_name=display_name, **kwargs)
+        super().__init__(
+            created_date_time=created_date_time,
+            expiration_date_time=expiration_date_time,
+            job_id=job_id,
+            last_update_date_time=last_update_date_time,
+            status=status,
+            display_name=display_name,
+            **kwargs
+        )
         self.display_name = display_name
         self.created_date_time = created_date_time
         self.expiration_date_time = expiration_date_time
@@ -363,12 +351,7 @@ class Pagination(_serialization.Model):
         "next_link": {"key": "@nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
         """
         :keyword next_link:
         :paramtype next_link: str
@@ -387,19 +370,14 @@ class TasksState(_serialization.Model):
     """
 
     _validation = {
-        'tasks': {'required': True},
+        "tasks": {"required": True},
     }
 
     _attribute_map = {
         "tasks": {"key": "tasks", "type": "TasksStateTasks"},
     }
 
-    def __init__(
-        self,
-        *,
-        tasks: "_models.TasksStateTasks",
-        **kwargs
-    ):
+    def __init__(self, *, tasks: "_models.TasksStateTasks", **kwargs):
         """
         :keyword tasks: Required.
         :paramtype tasks: ~azure.ai.textanalytics.v3_1.models.TasksStateTasks
@@ -438,11 +416,11 @@ class AnalyzeJobState(AnalyzeJobMetadata, TasksState, AnalyzeJobErrorsAndStatist
     """
 
     _validation = {
-        'tasks': {'required': True},
-        'created_date_time': {'required': True},
-        'job_id': {'required': True},
-        'last_update_date_time': {'required': True},
-        'status': {'required': True},
+        "tasks": {"required": True},
+        "created_date_time": {"required": True},
+        "job_id": {"required": True},
+        "last_update_date_time": {"required": True},
+        "status": {"required": True},
     }
 
     _attribute_map = {
@@ -497,7 +475,19 @@ class AnalyzeJobState(AnalyzeJobMetadata, TasksState, AnalyzeJobErrorsAndStatist
          "rejected", "cancelled", and "cancelling".
         :paramtype status: str or ~azure.ai.textanalytics.v3_1.models.State
         """
-        super().__init__(display_name=display_name, created_date_time=created_date_time, expiration_date_time=expiration_date_time, job_id=job_id, last_update_date_time=last_update_date_time, status=status, tasks=tasks, errors=errors, statistics=statistics, next_link=next_link, **kwargs)
+        super().__init__(
+            display_name=display_name,
+            created_date_time=created_date_time,
+            expiration_date_time=expiration_date_time,
+            job_id=job_id,
+            last_update_date_time=last_update_date_time,
+            status=status,
+            tasks=tasks,
+            errors=errors,
+            statistics=statistics,
+            next_link=next_link,
+            **kwargs
+        )
         self.next_link = next_link
         self.errors = errors
         self.statistics = statistics
@@ -526,9 +516,9 @@ class DetectedLanguage(_serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'iso6391_name': {'required': True},
-        'confidence_score': {'required': True},
+        "name": {"required": True},
+        "iso6391_name": {"required": True},
+        "confidence_score": {"required": True},
     }
 
     _attribute_map = {
@@ -537,14 +527,7 @@ class DetectedLanguage(_serialization.Model):
         "confidence_score": {"key": "confidenceScore", "type": "float"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        iso6391_name: str,
-        confidence_score: float,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, iso6391_name: str, confidence_score: float, **kwargs):
         """
         :keyword name: Long name of a detected language (e.g. English, French). Required.
         :paramtype name: str
@@ -578,9 +561,9 @@ class DocumentEntities(_serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
-        'entities': {'required': True},
-        'warnings': {'required': True},
+        "id": {"required": True},
+        "entities": {"required": True},
+        "warnings": {"required": True},
     }
 
     _attribute_map = {
@@ -629,8 +612,8 @@ class DocumentError(_serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
-        'error': {'required': True},
+        "id": {"required": True},
+        "error": {"required": True},
     }
 
     _attribute_map = {
@@ -638,13 +621,7 @@ class DocumentError(_serialization.Model):
         "error": {"key": "error", "type": "TextAnalyticsError"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        error: "_models.TextAnalyticsError",
-        **kwargs
-    ):
+    def __init__(self, *, id: str, error: "_models.TextAnalyticsError", **kwargs):  # pylint: disable=redefined-builtin
         """
         :keyword id: Document Id. Required.
         :paramtype id: str
@@ -675,10 +652,10 @@ class DocumentHealthcareEntities(_serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
-        'entities': {'required': True},
-        'relations': {'required': True},
-        'warnings': {'required': True},
+        "id": {"required": True},
+        "entities": {"required": True},
+        "relations": {"required": True},
+        "warnings": {"required": True},
     }
 
     _attribute_map = {
@@ -738,9 +715,9 @@ class DocumentKeyPhrases(_serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
-        'key_phrases': {'required': True},
-        'warnings': {'required': True},
+        "id": {"required": True},
+        "key_phrases": {"required": True},
+        "warnings": {"required": True},
     }
 
     _attribute_map = {
@@ -795,9 +772,9 @@ class DocumentLanguage(_serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
-        'detected_language': {'required': True},
-        'warnings': {'required': True},
+        "id": {"required": True},
+        "detected_language": {"required": True},
+        "warnings": {"required": True},
     }
 
     _attribute_map = {
@@ -851,9 +828,9 @@ class DocumentLinkedEntities(_serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
-        'entities': {'required': True},
-        'warnings': {'required': True},
+        "id": {"required": True},
+        "entities": {"required": True},
+        "warnings": {"required": True},
     }
 
     _attribute_map = {
@@ -914,11 +891,11 @@ class DocumentSentiment(_serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
-        'sentiment': {'required': True},
-        'confidence_scores': {'required': True},
-        'sentences': {'required': True},
-        'warnings': {'required': True},
+        "id": {"required": True},
+        "sentiment": {"required": True},
+        "confidence_scores": {"required": True},
+        "sentences": {"required": True},
+        "warnings": {"required": True},
     }
 
     _attribute_map = {
@@ -980,8 +957,8 @@ class DocumentStatistics(_serialization.Model):
     """
 
     _validation = {
-        'characters_count': {'required': True},
-        'transactions_count': {'required': True},
+        "characters_count": {"required": True},
+        "transactions_count": {"required": True},
     }
 
     _attribute_map = {
@@ -989,13 +966,7 @@ class DocumentStatistics(_serialization.Model):
         "transactions_count": {"key": "transactionsCount", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        characters_count: int,
-        transactions_count: int,
-        **kwargs
-    ):
+    def __init__(self, *, characters_count: int, transactions_count: int, **kwargs):
         """
         :keyword characters_count: Number of text elements recognized in the document. Required.
         :paramtype characters_count: int
@@ -1024,9 +995,9 @@ class EntitiesResult(_serialization.Model):
     """
 
     _validation = {
-        'documents': {'required': True},
-        'errors': {'required': True},
-        'model_version': {'required': True},
+        "documents": {"required": True},
+        "errors": {"required": True},
+        "model_version": {"required": True},
     }
 
     _attribute_map = {
@@ -1147,12 +1118,7 @@ class EntitiesTaskResult(_serialization.Model):
         "results": {"key": "results", "type": "EntitiesResult"},
     }
 
-    def __init__(
-        self,
-        *,
-        results: Optional["_models.EntitiesResult"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, results: Optional["_models.EntitiesResult"] = None, **kwargs):
         """
         :keyword results:
         :paramtype results: ~azure.ai.textanalytics.v3_1.models.EntitiesResult
@@ -1183,11 +1149,11 @@ class Entity(_serialization.Model):
     """
 
     _validation = {
-        'text': {'required': True},
-        'category': {'required': True},
-        'offset': {'required': True},
-        'length': {'required': True},
-        'confidence_score': {'required': True},
+        "text": {"required": True},
+        "category": {"required": True},
+        "offset": {"required": True},
+        "length": {"required": True},
+        "confidence_score": {"required": True},
     }
 
     _attribute_map = {
@@ -1252,9 +1218,9 @@ class EntityLinkingResult(_serialization.Model):
     """
 
     _validation = {
-        'documents': {'required': True},
-        'errors': {'required': True},
-        'model_version': {'required': True},
+        "documents": {"required": True},
+        "errors": {"required": True},
+        "model_version": {"required": True},
     }
 
     _attribute_map = {
@@ -1375,12 +1341,7 @@ class EntityLinkingTaskResult(_serialization.Model):
         "results": {"key": "results", "type": "EntityLinkingResult"},
     }
 
-    def __init__(
-        self,
-        *,
-        results: Optional["_models.EntityLinkingResult"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, results: Optional["_models.EntityLinkingResult"] = None, **kwargs):
         """
         :keyword results:
         :paramtype results: ~azure.ai.textanalytics.v3_1.models.EntityLinkingResult
@@ -1399,19 +1360,14 @@ class ErrorResponse(_serialization.Model):
     """
 
     _validation = {
-        'error': {'required': True},
+        "error": {"required": True},
     }
 
     _attribute_map = {
         "error": {"key": "error", "type": "TextAnalyticsError"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: "_models.TextAnalyticsError",
-        **kwargs
-    ):
+    def __init__(self, *, error: "_models.TextAnalyticsError", **kwargs):
         """
         :keyword error: Document Error. Required.
         :paramtype error: ~azure.ai.textanalytics.v3_1.models.TextAnalyticsError
@@ -1533,11 +1489,11 @@ class HealthcareEntityProperties(_serialization.Model):
     """
 
     _validation = {
-        'text': {'required': True},
-        'category': {'required': True},
-        'offset': {'required': True},
-        'length': {'required': True},
-        'confidence_score': {'required': True},
+        "text": {"required": True},
+        "category": {"required": True},
+        "offset": {"required": True},
+        "length": {"required": True},
+        "confidence_score": {"required": True},
     }
 
     _attribute_map = {
@@ -1624,11 +1580,11 @@ class HealthcareEntity(HealthcareEntityProperties, HealthcareLinkingProperties):
     """
 
     _validation = {
-        'text': {'required': True},
-        'category': {'required': True},
-        'offset': {'required': True},
-        'length': {'required': True},
-        'confidence_score': {'required': True},
+        "text": {"required": True},
+        "category": {"required": True},
+        "offset": {"required": True},
+        "length": {"required": True},
+        "confidence_score": {"required": True},
     }
 
     _attribute_map = {
@@ -1685,7 +1641,18 @@ class HealthcareEntity(HealthcareEntityProperties, HealthcareLinkingProperties):
         :keyword confidence_score: Confidence score between 0 and 1 of the extracted entity. Required.
         :paramtype confidence_score: float
         """
-        super().__init__(text=text, category=category, subcategory=subcategory, offset=offset, length=length, confidence_score=confidence_score, assertion=assertion, name=name, links=links, **kwargs)
+        super().__init__(
+            text=text,
+            category=category,
+            subcategory=subcategory,
+            offset=offset,
+            length=length,
+            confidence_score=confidence_score,
+            assertion=assertion,
+            name=name,
+            links=links,
+            **kwargs
+        )
         self.assertion = assertion
         self.name = name
         self.links = links
@@ -1709,8 +1676,8 @@ class HealthcareEntityLink(_serialization.Model):
     """
 
     _validation = {
-        'data_source': {'required': True},
-        'id': {'required': True},
+        "data_source": {"required": True},
+        "id": {"required": True},
     }
 
     _attribute_map = {
@@ -1718,13 +1685,7 @@ class HealthcareEntityLink(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        data_source: str,
-        id: str,  # pylint: disable=redefined-builtin
-        **kwargs
-    ):
+    def __init__(self, *, data_source: str, id: str, **kwargs):  # pylint: disable=redefined-builtin
         """
         :keyword data_source: Entity Catalog. Examples include: UMLS, CHV, MSH, etc. Required.
         :paramtype data_source: str
@@ -1793,10 +1754,10 @@ class HealthcareJobState(JobMetadata, HealthcareTaskResult, Pagination):
     """
 
     _validation = {
-        'created_date_time': {'required': True},
-        'job_id': {'required': True},
-        'last_update_date_time': {'required': True},
-        'status': {'required': True},
+        "created_date_time": {"required": True},
+        "job_id": {"required": True},
+        "last_update_date_time": {"required": True},
+        "status": {"required": True},
     }
 
     _attribute_map = {
@@ -1842,7 +1803,17 @@ class HealthcareJobState(JobMetadata, HealthcareTaskResult, Pagination):
          "rejected", "cancelled", and "cancelling".
         :paramtype status: str or ~azure.ai.textanalytics.v3_1.models.State
         """
-        super().__init__(created_date_time=created_date_time, expiration_date_time=expiration_date_time, job_id=job_id, last_update_date_time=last_update_date_time, status=status, results=results, errors=errors, next_link=next_link, **kwargs)
+        super().__init__(
+            created_date_time=created_date_time,
+            expiration_date_time=expiration_date_time,
+            job_id=job_id,
+            last_update_date_time=last_update_date_time,
+            status=status,
+            results=results,
+            errors=errors,
+            next_link=next_link,
+            **kwargs
+        )
         self.next_link = next_link
         self.results = results
         self.errors = errors
@@ -1871,8 +1842,8 @@ class HealthcareRelation(_serialization.Model):
     """
 
     _validation = {
-        'relation_type': {'required': True},
-        'entities': {'required': True},
+        "relation_type": {"required": True},
+        "entities": {"required": True},
     }
 
     _attribute_map = {
@@ -1919,8 +1890,8 @@ class HealthcareRelationEntity(_serialization.Model):
     """
 
     _validation = {
-        'ref': {'required': True},
-        'role': {'required': True},
+        "ref": {"required": True},
+        "role": {"required": True},
     }
 
     _attribute_map = {
@@ -1928,13 +1899,7 @@ class HealthcareRelationEntity(_serialization.Model):
         "role": {"key": "role", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        ref: str,
-        role: str,
-        **kwargs
-    ):
+    def __init__(self, *, ref: str, role: str, **kwargs):
         """
         :keyword ref: Reference link object, using a JSON pointer RFC 6901 (URI Fragment Identifier
          Representation), pointing to the entity . Required.
@@ -1966,9 +1931,9 @@ class HealthcareResult(_serialization.Model):
     """
 
     _validation = {
-        'documents': {'required': True},
-        'errors': {'required': True},
-        'model_version': {'required': True},
+        "documents": {"required": True},
+        "errors": {"required": True},
+        "model_version": {"required": True},
     }
 
     _attribute_map = {
@@ -2026,8 +1991,8 @@ class InnerError(_serialization.Model):
     """
 
     _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
+        "code": {"required": True},
+        "message": {"required": True},
     }
 
     _attribute_map = {
@@ -2144,9 +2109,9 @@ class KeyPhraseResult(_serialization.Model):
     """
 
     _validation = {
-        'documents': {'required': True},
-        'errors': {'required': True},
-        'model_version': {'required': True},
+        "documents": {"required": True},
+        "errors": {"required": True},
+        "model_version": {"required": True},
     }
 
     _attribute_map = {
@@ -2229,13 +2194,7 @@ class KeyPhrasesTaskParameters(_serialization.Model):
         "logging_opt_out": {"key": "loggingOptOut", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        model_version: str = "latest",
-        logging_opt_out: bool = False,
-        **kwargs
-    ):
+    def __init__(self, *, model_version: str = "latest", logging_opt_out: bool = False, **kwargs):
         """
         :keyword model_version:
         :paramtype model_version: str
@@ -2258,12 +2217,7 @@ class KeyPhraseTaskResult(_serialization.Model):
         "results": {"key": "results", "type": "KeyPhraseResult"},
     }
 
-    def __init__(
-        self,
-        *,
-        results: Optional["_models.KeyPhraseResult"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, results: Optional["_models.KeyPhraseResult"] = None, **kwargs):
         """
         :keyword results:
         :paramtype results: ~azure.ai.textanalytics.v3_1.models.KeyPhraseResult
@@ -2282,19 +2236,14 @@ class LanguageBatchInput(_serialization.Model):
     """
 
     _validation = {
-        'documents': {'required': True},
+        "documents": {"required": True},
     }
 
     _attribute_map = {
         "documents": {"key": "documents", "type": "[LanguageInput]"},
     }
 
-    def __init__(
-        self,
-        *,
-        documents: List["_models.LanguageInput"],
-        **kwargs
-    ):
+    def __init__(self, *, documents: List["_models.LanguageInput"], **kwargs):
         """
         :keyword documents: Required.
         :paramtype documents: list[~azure.ai.textanalytics.v3_1.models.LanguageInput]
@@ -2317,8 +2266,8 @@ class LanguageInput(_serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
-        'text': {'required': True},
+        "id": {"required": True},
+        "text": {"required": True},
     }
 
     _attribute_map = {
@@ -2328,12 +2277,7 @@ class LanguageInput(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        text: str,
-        country_hint: Optional[str] = None,
-        **kwargs
+        self, *, id: str, text: str, country_hint: Optional[str] = None, **kwargs  # pylint: disable=redefined-builtin
     ):
         """
         :keyword id: Unique, non-empty document identifier. Required.
@@ -2366,9 +2310,9 @@ class LanguageResult(_serialization.Model):
     """
 
     _validation = {
-        'documents': {'required': True},
-        'errors': {'required': True},
-        'model_version': {'required': True},
+        "documents": {"required": True},
+        "errors": {"required": True},
+        "model_version": {"required": True},
     }
 
     _attribute_map = {
@@ -2427,11 +2371,11 @@ class LinkedEntity(_serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'matches': {'required': True},
-        'language': {'required': True},
-        'url': {'required': True},
-        'data_source': {'required': True},
+        "name": {"required": True},
+        "matches": {"required": True},
+        "language": {"required": True},
+        "url": {"required": True},
+        "data_source": {"required": True},
     }
 
     _attribute_map = {
@@ -2500,10 +2444,10 @@ class Match(_serialization.Model):
     """
 
     _validation = {
-        'confidence_score': {'required': True},
-        'text': {'required': True},
-        'offset': {'required': True},
-        'length': {'required': True},
+        "confidence_score": {"required": True},
+        "text": {"required": True},
+        "offset": {"required": True},
+        "length": {"required": True},
     }
 
     _attribute_map = {
@@ -2513,15 +2457,7 @@ class Match(_serialization.Model):
         "length": {"key": "length", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        confidence_score: float,
-        text: str,
-        offset: int,
-        length: int,
-        **kwargs
-    ):
+    def __init__(self, *, confidence_score: float, text: str, offset: int, length: int, **kwargs):
         """
         :keyword confidence_score: If a well known item is recognized, a decimal number denoting the
          confidence level between 0 and 1 will be returned. Required.
@@ -2550,19 +2486,14 @@ class MultiLanguageBatchInput(_serialization.Model):
     """
 
     _validation = {
-        'documents': {'required': True},
+        "documents": {"required": True},
     }
 
     _attribute_map = {
         "documents": {"key": "documents", "type": "[MultiLanguageInput]"},
     }
 
-    def __init__(
-        self,
-        *,
-        documents: List["_models.MultiLanguageInput"],
-        **kwargs
-    ):
+    def __init__(self, *, documents: List["_models.MultiLanguageInput"], **kwargs):
         """
         :keyword documents: The set of documents to process as part of this batch. Required.
         :paramtype documents: list[~azure.ai.textanalytics.v3_1.models.MultiLanguageInput]
@@ -2587,8 +2518,8 @@ class MultiLanguageInput(_serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
-        'text': {'required': True},
+        "id": {"required": True},
+        "text": {"required": True},
     }
 
     _attribute_map = {
@@ -2598,12 +2529,7 @@ class MultiLanguageInput(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        text: str,
-        language: Optional[str] = None,
-        **kwargs
+        self, *, id: str, text: str, language: Optional[str] = None, **kwargs  # pylint: disable=redefined-builtin
     ):
         """
         :keyword id: A unique, non-empty document identifier. Required.
@@ -2640,10 +2566,10 @@ class PiiDocumentEntities(_serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
-        'redacted_text': {'required': True},
-        'entities': {'required': True},
-        'warnings': {'required': True},
+        "id": {"required": True},
+        "redacted_text": {"required": True},
+        "entities": {"required": True},
+        "warnings": {"required": True},
     }
 
     _attribute_map = {
@@ -2702,9 +2628,9 @@ class PiiResult(_serialization.Model):
     """
 
     _validation = {
-        'documents': {'required': True},
-        'errors': {'required': True},
-        'model_version': {'required': True},
+        "documents": {"required": True},
+        "errors": {"required": True},
+        "model_version": {"required": True},
     }
 
     _attribute_map = {
@@ -2756,11 +2682,7 @@ class PiiTask(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        parameters: Optional["_models.PiiTaskParameters"] = None,
-        task_name: Optional[str] = None,
-        **kwargs
+        self, *, parameters: Optional["_models.PiiTaskParameters"] = None, task_name: Optional[str] = None, **kwargs
     ):
         """
         :keyword parameters:
@@ -2790,7 +2712,7 @@ class PiiTaskParameters(_serialization.Model):
     """
 
     _validation = {
-        'pii_categories': {'unique': True},
+        "pii_categories": {"unique": True},
     }
 
     _attribute_map = {
@@ -2843,12 +2765,7 @@ class PiiTaskResult(_serialization.Model):
         "results": {"key": "results", "type": "PiiResult"},
     }
 
-    def __init__(
-        self,
-        *,
-        results: Optional["_models.PiiResult"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, results: Optional["_models.PiiResult"] = None, **kwargs):
         """
         :keyword results:
         :paramtype results: ~azure.ai.textanalytics.v3_1.models.PiiResult
@@ -2875,10 +2792,10 @@ class RequestStatistics(_serialization.Model):
     """
 
     _validation = {
-        'documents_count': {'required': True},
-        'valid_documents_count': {'required': True},
-        'erroneous_documents_count': {'required': True},
-        'transactions_count': {'required': True},
+        "documents_count": {"required": True},
+        "valid_documents_count": {"required": True},
+        "erroneous_documents_count": {"required": True},
+        "transactions_count": {"required": True},
     }
 
     _attribute_map = {
@@ -2937,12 +2854,12 @@ class SentenceAssessment(_serialization.Model):
     """
 
     _validation = {
-        'sentiment': {'required': True},
-        'confidence_scores': {'required': True},
-        'offset': {'required': True},
-        'length': {'required': True},
-        'text': {'required': True},
-        'is_negated': {'required': True},
+        "sentiment": {"required": True},
+        "confidence_scores": {"required": True},
+        "offset": {"required": True},
+        "length": {"required": True},
+        "text": {"required": True},
+        "is_negated": {"required": True},
     }
 
     _attribute_map = {
@@ -3014,11 +2931,11 @@ class SentenceSentiment(_serialization.Model):
     """
 
     _validation = {
-        'text': {'required': True},
-        'sentiment': {'required': True},
-        'confidence_scores': {'required': True},
-        'offset': {'required': True},
-        'length': {'required': True},
+        "text": {"required": True},
+        "sentiment": {"required": True},
+        "confidence_scores": {"required": True},
+        "offset": {"required": True},
+        "length": {"required": True},
     }
 
     _attribute_map = {
@@ -3095,12 +3012,12 @@ class SentenceTarget(_serialization.Model):
     """
 
     _validation = {
-        'sentiment': {'required': True},
-        'confidence_scores': {'required': True},
-        'offset': {'required': True},
-        'length': {'required': True},
-        'text': {'required': True},
-        'relations': {'required': True},
+        "sentiment": {"required": True},
+        "confidence_scores": {"required": True},
+        "offset": {"required": True},
+        "length": {"required": True},
+        "text": {"required": True},
+        "relations": {"required": True},
     }
 
     _attribute_map = {
@@ -3243,9 +3160,9 @@ class SentimentConfidenceScorePerLabel(_serialization.Model):
     """
 
     _validation = {
-        'positive': {'required': True},
-        'neutral': {'required': True},
-        'negative': {'required': True},
+        "positive": {"required": True},
+        "neutral": {"required": True},
+        "negative": {"required": True},
     }
 
     _attribute_map = {
@@ -3254,14 +3171,7 @@ class SentimentConfidenceScorePerLabel(_serialization.Model):
         "negative": {"key": "negative", "type": "float"},
     }
 
-    def __init__(
-        self,
-        *,
-        positive: float,
-        neutral: float,
-        negative: float,
-        **kwargs
-    ):
+    def __init__(self, *, positive: float, neutral: float, negative: float, **kwargs):
         """
         :keyword positive: Required.
         :paramtype positive: float
@@ -3293,9 +3203,9 @@ class SentimentResponse(_serialization.Model):
     """
 
     _validation = {
-        'documents': {'required': True},
-        'errors': {'required': True},
-        'model_version': {'required': True},
+        "documents": {"required": True},
+        "errors": {"required": True},
+        "model_version": {"required": True},
     }
 
     _attribute_map = {
@@ -3343,12 +3253,7 @@ class SentimentTaskResult(_serialization.Model):
         "results": {"key": "results", "type": "SentimentResponse"},
     }
 
-    def __init__(
-        self,
-        *,
-        results: Optional["_models.SentimentResponse"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, results: Optional["_models.SentimentResponse"] = None, **kwargs):
         """
         :keyword results:
         :paramtype results: ~azure.ai.textanalytics.v3_1.models.SentimentResponse
@@ -3369,8 +3274,8 @@ class TargetConfidenceScoreLabel(_serialization.Model):
     """
 
     _validation = {
-        'positive': {'required': True},
-        'negative': {'required': True},
+        "positive": {"required": True},
+        "negative": {"required": True},
     }
 
     _attribute_map = {
@@ -3378,13 +3283,7 @@ class TargetConfidenceScoreLabel(_serialization.Model):
         "negative": {"key": "negative", "type": "float"},
     }
 
-    def __init__(
-        self,
-        *,
-        positive: float,
-        negative: float,
-        **kwargs
-    ):
+    def __init__(self, *, positive: float, negative: float, **kwargs):
         """
         :keyword positive: Required.
         :paramtype positive: float
@@ -3409,8 +3308,8 @@ class TargetRelation(_serialization.Model):
     """
 
     _validation = {
-        'relation_type': {'required': True},
-        'ref': {'required': True},
+        "relation_type": {"required": True},
+        "ref": {"required": True},
     }
 
     _attribute_map = {
@@ -3418,13 +3317,7 @@ class TargetRelation(_serialization.Model):
         "ref": {"key": "ref", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        relation_type: Union[str, "_models.TargetRelationType"],
-        ref: str,
-        **kwargs
-    ):
+    def __init__(self, *, relation_type: Union[str, "_models.TargetRelationType"], ref: str, **kwargs):
         """
         :keyword relation_type: The type related to the target. Required. Known values are:
          "assessment" and "target".
@@ -3468,10 +3361,10 @@ class TasksStateTasks(_serialization.Model):
     """
 
     _validation = {
-        'completed': {'required': True},
-        'failed': {'required': True},
-        'in_progress': {'required': True},
-        'total': {'required': True},
+        "completed": {"required": True},
+        "failed": {"required": True},
+        "in_progress": {"required": True},
+        "total": {"required": True},
     }
 
     _attribute_map = {
@@ -3479,11 +3372,23 @@ class TasksStateTasks(_serialization.Model):
         "failed": {"key": "failed", "type": "int"},
         "in_progress": {"key": "inProgress", "type": "int"},
         "total": {"key": "total", "type": "int"},
-        "entity_recognition_tasks": {"key": "entityRecognitionTasks", "type": "[TasksStateTasksEntityRecognitionTasksItem]"},
-        "entity_recognition_pii_tasks": {"key": "entityRecognitionPiiTasks", "type": "[TasksStateTasksEntityRecognitionPiiTasksItem]"},
-        "key_phrase_extraction_tasks": {"key": "keyPhraseExtractionTasks", "type": "[TasksStateTasksKeyPhraseExtractionTasksItem]"},
+        "entity_recognition_tasks": {
+            "key": "entityRecognitionTasks",
+            "type": "[TasksStateTasksEntityRecognitionTasksItem]",
+        },
+        "entity_recognition_pii_tasks": {
+            "key": "entityRecognitionPiiTasks",
+            "type": "[TasksStateTasksEntityRecognitionPiiTasksItem]",
+        },
+        "key_phrase_extraction_tasks": {
+            "key": "keyPhraseExtractionTasks",
+            "type": "[TasksStateTasksKeyPhraseExtractionTasksItem]",
+        },
         "entity_linking_tasks": {"key": "entityLinkingTasks", "type": "[TasksStateTasksEntityLinkingTasksItem]"},
-        "sentiment_analysis_tasks": {"key": "sentimentAnalysisTasks", "type": "[TasksStateTasksSentimentAnalysisTasksItem]"},
+        "sentiment_analysis_tasks": {
+            "key": "sentimentAnalysisTasks",
+            "type": "[TasksStateTasksSentimentAnalysisTasksItem]",
+        },
     }
 
     def __init__(
@@ -3552,9 +3457,9 @@ class TaskState(_serialization.Model):
     """
 
     _validation = {
-        'last_update_date_time': {'required': True},
-        'task_name': {'required': True},
-        'status': {'required': True},
+        "last_update_date_time": {"required": True},
+        "task_name": {"required": True},
+        "status": {"required": True},
     }
 
     _attribute_map = {
@@ -3564,12 +3469,7 @@ class TaskState(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        last_update_date_time: datetime.datetime,
-        task_name: str,
-        status: Union[str, "_models.State"],
-        **kwargs
+        self, *, last_update_date_time: datetime.datetime, task_name: str, status: Union[str, "_models.State"], **kwargs
     ):
         """
         :keyword last_update_date_time: Required.
@@ -3603,9 +3503,9 @@ class TasksStateTasksEntityLinkingTasksItem(TaskState, EntityLinkingTaskResult):
     """
 
     _validation = {
-        'last_update_date_time': {'required': True},
-        'task_name': {'required': True},
-        'status': {'required': True},
+        "last_update_date_time": {"required": True},
+        "task_name": {"required": True},
+        "status": {"required": True},
     }
 
     _attribute_map = {
@@ -3635,7 +3535,9 @@ class TasksStateTasksEntityLinkingTasksItem(TaskState, EntityLinkingTaskResult):
          "rejected", "cancelled", and "cancelling".
         :paramtype status: str or ~azure.ai.textanalytics.v3_1.models.State
         """
-        super().__init__(last_update_date_time=last_update_date_time, task_name=task_name, status=status, results=results, **kwargs)
+        super().__init__(
+            last_update_date_time=last_update_date_time, task_name=task_name, status=status, results=results, **kwargs
+        )
         self.results = results
         self.last_update_date_time = last_update_date_time
         self.task_name = task_name
@@ -3659,9 +3561,9 @@ class TasksStateTasksEntityRecognitionPiiTasksItem(TaskState, PiiTaskResult):
     """
 
     _validation = {
-        'last_update_date_time': {'required': True},
-        'task_name': {'required': True},
-        'status': {'required': True},
+        "last_update_date_time": {"required": True},
+        "task_name": {"required": True},
+        "status": {"required": True},
     }
 
     _attribute_map = {
@@ -3691,7 +3593,9 @@ class TasksStateTasksEntityRecognitionPiiTasksItem(TaskState, PiiTaskResult):
          "rejected", "cancelled", and "cancelling".
         :paramtype status: str or ~azure.ai.textanalytics.v3_1.models.State
         """
-        super().__init__(last_update_date_time=last_update_date_time, task_name=task_name, status=status, results=results, **kwargs)
+        super().__init__(
+            last_update_date_time=last_update_date_time, task_name=task_name, status=status, results=results, **kwargs
+        )
         self.results = results
         self.last_update_date_time = last_update_date_time
         self.task_name = task_name
@@ -3715,9 +3619,9 @@ class TasksStateTasksEntityRecognitionTasksItem(TaskState, EntitiesTaskResult):
     """
 
     _validation = {
-        'last_update_date_time': {'required': True},
-        'task_name': {'required': True},
-        'status': {'required': True},
+        "last_update_date_time": {"required": True},
+        "task_name": {"required": True},
+        "status": {"required": True},
     }
 
     _attribute_map = {
@@ -3747,7 +3651,9 @@ class TasksStateTasksEntityRecognitionTasksItem(TaskState, EntitiesTaskResult):
          "rejected", "cancelled", and "cancelling".
         :paramtype status: str or ~azure.ai.textanalytics.v3_1.models.State
         """
-        super().__init__(last_update_date_time=last_update_date_time, task_name=task_name, status=status, results=results, **kwargs)
+        super().__init__(
+            last_update_date_time=last_update_date_time, task_name=task_name, status=status, results=results, **kwargs
+        )
         self.results = results
         self.last_update_date_time = last_update_date_time
         self.task_name = task_name
@@ -3771,9 +3677,9 @@ class TasksStateTasksKeyPhraseExtractionTasksItem(TaskState, KeyPhraseTaskResult
     """
 
     _validation = {
-        'last_update_date_time': {'required': True},
-        'task_name': {'required': True},
-        'status': {'required': True},
+        "last_update_date_time": {"required": True},
+        "task_name": {"required": True},
+        "status": {"required": True},
     }
 
     _attribute_map = {
@@ -3803,7 +3709,9 @@ class TasksStateTasksKeyPhraseExtractionTasksItem(TaskState, KeyPhraseTaskResult
          "rejected", "cancelled", and "cancelling".
         :paramtype status: str or ~azure.ai.textanalytics.v3_1.models.State
         """
-        super().__init__(last_update_date_time=last_update_date_time, task_name=task_name, status=status, results=results, **kwargs)
+        super().__init__(
+            last_update_date_time=last_update_date_time, task_name=task_name, status=status, results=results, **kwargs
+        )
         self.results = results
         self.last_update_date_time = last_update_date_time
         self.task_name = task_name
@@ -3827,9 +3735,9 @@ class TasksStateTasksSentimentAnalysisTasksItem(TaskState, SentimentTaskResult):
     """
 
     _validation = {
-        'last_update_date_time': {'required': True},
-        'task_name': {'required': True},
-        'status': {'required': True},
+        "last_update_date_time": {"required": True},
+        "task_name": {"required": True},
+        "status": {"required": True},
     }
 
     _attribute_map = {
@@ -3859,7 +3767,9 @@ class TasksStateTasksSentimentAnalysisTasksItem(TaskState, SentimentTaskResult):
          "rejected", "cancelled", and "cancelling".
         :paramtype status: str or ~azure.ai.textanalytics.v3_1.models.State
         """
-        super().__init__(last_update_date_time=last_update_date_time, task_name=task_name, status=status, results=results, **kwargs)
+        super().__init__(
+            last_update_date_time=last_update_date_time, task_name=task_name, status=status, results=results, **kwargs
+        )
         self.results = results
         self.last_update_date_time = last_update_date_time
         self.task_name = task_name
@@ -3885,8 +3795,8 @@ class TextAnalyticsError(_serialization.Model):
     """
 
     _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
+        "code": {"required": True},
+        "message": {"required": True},
     }
 
     _attribute_map = {
@@ -3943,8 +3853,8 @@ class TextAnalyticsWarning(_serialization.Model):
     """
 
     _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
+        "code": {"required": True},
+        "message": {"required": True},
     }
 
     _attribute_map = {
@@ -3954,12 +3864,7 @@ class TextAnalyticsWarning(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        code: Union[str, "_models.WarningCodeValue"],
-        message: str,
-        target_ref: Optional[str] = None,
-        **kwargs
+        self, *, code: Union[str, "_models.WarningCodeValue"], message: str, target_ref: Optional[str] = None, **kwargs
     ):
         """
         :keyword code: Error code. Required. Known values are: "LongWordsInDocument" and

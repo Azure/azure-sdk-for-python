@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 """Tests for the OpenTelemetry tracer and span classes."""
+
 from concurrent.futures import ThreadPoolExecutor, wait
 import sys
 import threading

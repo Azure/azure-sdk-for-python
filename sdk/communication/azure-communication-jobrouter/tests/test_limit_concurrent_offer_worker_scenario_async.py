@@ -40,7 +40,6 @@ from azure.communication.jobrouter.models import (
     DeclineJobOfferOptions,
 )
 
-
 channel_id = "fakeChannel2_async"
 
 

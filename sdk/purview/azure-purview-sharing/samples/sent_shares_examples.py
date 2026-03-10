@@ -34,29 +34,23 @@ artifact = {
             {
                 "containerName": "container-name",
                 "receiverPath": "shared-file-name.txt",
-                "senderPath": "original/file-name.txt"
+                "senderPath": "original/file-name.txt",
             }
         ]
     },
     "storeKind": "AdlsGen2Account",
     "storeReference": {
         "referenceName": "/subscriptions/{subscription-id}/resourceGroups/provider-storage-rg/providers/Microsoft.Storage/storageAccounts/providerstorage",
-        "type": "ArmResourceReference"
-    }
+        "type": "ArmResourceReference",
+    },
 }
 
 sent_share = {
-    "properties": {
-        "artifact": artifact,
-        "displayName": "sampleShare",
-        "description": "A sample share"
-    },
-    "shareKind": "InPlace"
+    "properties": {"artifact": artifact, "displayName": "sampleShare", "description": "A sample share"},
+    "shareKind": "InPlace",
 }
 
-request = client.sent_shares.begin_create_or_replace(
-    str(sent_share_id),
-    sent_share=sent_share)
+request = client.sent_shares.begin_create_or_replace(str(sent_share_id), sent_share=sent_share)
 
 response = request.result()
 # [END create_a_sent_share]
@@ -73,14 +67,15 @@ invitation = {
     "properties": {
         "targetEmail": consumerEmail,
         "notify": "true",
-        "expirationDate": date(today.year+1,today.month,today.day).strftime("%Y-%m-%d") + " 00:00:00"
-    }
+        "expirationDate": date(today.year + 1, today.month, today.day).strftime("%Y-%m-%d") + " 00:00:00",
+    },
 }
 
 invitation_response = client.sent_shares.create_invitation(
     sent_share_id=str(sent_share_id),
     sent_share_invitation_id=str(sent_share_invitation_id),
-    sent_share_invitation=invitation)
+    sent_share_invitation=invitation,
+)
 # [END send_a_user_invitation]
 
 # Send a service invitation
@@ -90,16 +85,14 @@ targetObjectId = "fc010728-94f6-4e9c-be3c-c08687414bd4"
 
 sent_share_invitation = {
     "invitationKind": "Service",
-    "properties": {
-        "targetActiveDirectoryId": targetActiverDirectoryId,
-        "targetObjectId": targetObjectId
-    }
+    "properties": {"targetActiveDirectoryId": targetActiverDirectoryId, "targetObjectId": targetObjectId},
 }
 
 invitation_response = client.sent_shares.create_invitation(
     sent_share_id=str(sent_share_id),
     sent_share_invitation_id=str(sent_share_invitation_id),
-    sent_share_invitation=sent_share_invitation)
+    sent_share_invitation=sent_share_invitation,
+)
 # [END send_a_service_invitation]
 
 # Get a sent share
@@ -111,7 +104,8 @@ get_response = client.sent_shares.get(sent_share_id=str(sent_share_id))
 # [START get_all_sent_shares]
 list_request = client.sent_shares.list(
     reference_name=str(sent_share["properties.artifact.storeReference.referenceName"]),
-    order_by="properties/createdAt desc")
+    order_by="properties/createdAt desc",
+)
 # [END get_all_sent_shares]
 
 # Delete a sent share
@@ -123,9 +117,9 @@ delete_response = delete_request.result()
 # Get a sent share invitation (new)
 # [START get_a_sent_share_invitation]
 get_invitation_request = client.sent_shares.get_invitation(
-    sent_share_id=str(sent_share_id), 
-    sent_share_invitation_id=str(sent_share_invitation_id))
-#[END get_a_sent_share_invitation]
+    sent_share_id=str(sent_share_id), sent_share_invitation_id=str(sent_share_invitation_id)
+)
+# [END get_a_sent_share_invitation]
 
 # View sent invitations
 # [START view_sent_invitations]
@@ -135,7 +129,7 @@ list_request = client.sent_shares.list_invitations(sent_share_id=str(sent_share_
 # Delete a sent share invitation (new)
 # [START delete_a_sent_share_invitation]
 delete_invitation_request = client.sent_shares.begin_delete_invitation(
-    sent_share_id=str(sent_share_id),
-    sent_share_invitation_id=str(sent_share_invitation_id))
+    sent_share_id=str(sent_share_id), sent_share_invitation_id=str(sent_share_invitation_id)
+)
 delete_invitation_response = delete_invitation_request.result()
 # [END delete_a_sent_share_invitation]

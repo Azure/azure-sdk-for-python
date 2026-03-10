@@ -20,6 +20,7 @@
 # SOFTWARE.
 
 """Module for handling asynchronous request hedging strategies in Azure Cosmos DB."""
+
 import asyncio  # pylint: disable=do-not-import-asyncio
 import copy
 import os
@@ -29,16 +30,17 @@ from typing import Any, Dict, List, Optional, Tuple, Callable, Awaitable
 
 from azure.core.pipeline.transport import HttpRequest  # pylint: disable=no-legacy-azure-core-http-response-import
 
-from ._global_partition_endpoint_manager_circuit_breaker_async import \
-    _GlobalPartitionEndpointManagerForCircuitBreakerAsync
+from ._global_partition_endpoint_manager_circuit_breaker_async import (
+    _GlobalPartitionEndpointManagerForCircuitBreakerAsync,
+)
 from .._availability_strategy_handler_base import AvailabilityStrategyHandlerMixin
 from .._request_object import RequestObject
 
 ResponseType = Tuple[Dict[str, Any], Dict[str, Any]]
 
+
 class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
     """Handler for CrossRegionHedgingStrategy that implements cross-region request hedging."""
-
 
     async def execute_single_request_with_delay(
         self,
@@ -48,7 +50,7 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
         location_index: int,
         available_locations: List[str],
         complete_status: Event,
-        first_request_params_holder: SimpleNamespace
+        first_request_params_holder: SimpleNamespace,
     ) -> ResponseType:
         """Execute a single request with appropriate delay based on location index.
 
@@ -95,8 +97,7 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
         else:
             # Subsequent requests after threshold steps
             steps = location_index - 1
-            delay = (availability_strategy.threshold_ms+
-                    (steps * availability_strategy.threshold_steps_ms))
+            delay = availability_strategy.threshold_ms + (steps * availability_strategy.threshold_steps_ms)
 
         if delay > 0:
             await asyncio.sleep(delay / 1000)
@@ -108,9 +109,7 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
 
         # Setup excluded regions for hedging requests
         params.excluded_locations = self._create_excluded_regions_for_hedging(
-            location_index,
-            available_locations,
-            request_params.excluded_locations
+            location_index, available_locations, request_params.excluded_locations
         )
 
         req = copy.deepcopy(request)
@@ -128,7 +127,7 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
         request_params: RequestObject,
         global_endpoint_manager: _GlobalPartitionEndpointManagerForCircuitBreakerAsync,
         request: HttpRequest,
-        execute_request_fn: Callable[..., Awaitable[ResponseType]]
+        execute_request_fn: Callable[..., Awaitable[ResponseType]],
     ) -> ResponseType:
         """Execute request with cross-region hedging strategy.
 
@@ -174,8 +173,9 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
                         i,
                         available_locations,
                         completion_status,
-                        first_request_params_holder
-                    ))
+                        first_request_params_holder,
+                    )
+                )
                 active_tasks.append(task)
                 if i == 0:
                     first_task = task
@@ -196,8 +196,8 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
 
                         # successful response does not come from the initial request, record failure for it
                         await self._record_cancel_for_first_request(
-                            first_request_params_holder,
-                            global_endpoint_manager)
+                            first_request_params_holder, global_endpoint_manager
+                        )
                         return result
                     except Exception as e:  # pylint: disable=broad-exception-caught
                         if completed_task is first_task:
@@ -206,8 +206,8 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
                         if self._is_non_transient_error(e):
                             completion_status.set()
                             await self._record_cancel_for_first_request(
-                                first_request_params_holder,
-                                global_endpoint_manager)
+                                first_request_params_holder, global_endpoint_manager
+                            )
                             raise e
 
                 # If no success yet, create new tasks to replace completed ones
@@ -223,8 +223,9 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
                                 next_index,
                                 available_locations,
                                 completion_status,
-                                first_request_params_holder
-                            ))
+                                first_request_params_holder,
+                            )
+                        )
                         active_tasks.append(task)
 
             # if we have reached here, it means all tasks completed_task but all failed with transient exceptions
@@ -244,9 +245,8 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
             await asyncio.gather(*active_tasks, return_exceptions=True)
 
     async def _record_cancel_for_first_request(
-            self,
-            request_params_holder: SimpleNamespace,
-            global_endpoint_manager: Any) -> None:
+        self, request_params_holder: SimpleNamespace, global_endpoint_manager: Any
+    ) -> None:
         if request_params_holder.request_params is not None:
             await global_endpoint_manager.record_failure(request_params_holder.request_params)
 
@@ -254,11 +254,12 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
 # Global handler instance
 _cross_region_hedging_handler = CrossRegionAsyncHedgingHandler()
 
+
 async def execute_with_availability_strategy(
     request_params: RequestObject,
     global_endpoint_manager: _GlobalPartitionEndpointManagerForCircuitBreakerAsync,
     request: HttpRequest,
-    execute_request_fn: Callable[..., Awaitable[ResponseType]]
+    execute_request_fn: Callable[..., Awaitable[ResponseType]],
 ) -> ResponseType:
     """Execute a request with hedging based on the availability strategy.
 
@@ -284,8 +285,5 @@ async def execute_with_availability_strategy(
     """
 
     return await _cross_region_hedging_handler.execute_request(
-        request_params,
-        global_endpoint_manager,
-        request,
-        execute_request_fn
+        request_params, global_endpoint_manager, request, execute_request_fn
     )

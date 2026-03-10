@@ -58,9 +58,7 @@ async def sample_classify_document_single_label_async() -> None:
 
     async with text_analytics_client:
         poller = await text_analytics_client.begin_single_label_classify(
-            document,
-            project_name=project_name,
-            deployment_name=deployment_name
+            document, project_name=project_name, deployment_name=deployment_name
         )
 
         pages = await poller.result()
@@ -72,13 +70,17 @@ async def sample_classify_document_single_label_async() -> None:
     for doc, classification_result in zip(document, document_results):
         if classification_result.kind == "CustomDocumentClassification":
             classification = classification_result.classifications[0]
-            print("The document text '{}' was classified as '{}' with confidence score {}.".format(
-                doc, classification.category, classification.confidence_score)
+            print(
+                "The document text '{}' was classified as '{}' with confidence score {}.".format(
+                    doc, classification.category, classification.confidence_score
+                )
             )
         elif classification_result.is_error is True:
-            print("Document text '{}' has an error with code '{}' and message '{}'".format(
-                doc, classification_result.error.code, classification_result.error.message
-            ))
+            print(
+                "Document text '{}' has an error with code '{}' and message '{}'".format(
+                    doc, classification_result.error.code, classification_result.error.message
+                )
+            )
     # [END single_label_classify_async]
 
 
@@ -86,5 +88,5 @@ async def main():
     await sample_classify_document_single_label_async()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

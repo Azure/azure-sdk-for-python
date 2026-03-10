@@ -33,7 +33,6 @@ from azure.core.exceptions import (
 
 from utils import HTTP_REQUESTS, request_and_responses_product
 
-
 # transport = mock.MagicMock(spec=AsyncHttpTransport)
 # MagicMock support async cxt manager only after 3.8
 # https://github.com/python/cpython/pull/9296

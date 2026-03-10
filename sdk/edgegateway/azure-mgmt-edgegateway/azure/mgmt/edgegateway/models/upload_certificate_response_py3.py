@@ -39,25 +39,36 @@ class UploadCertificateResponse(Model):
     """
 
     _validation = {
-        'resource_id': {'required': True},
-        'aad_authority': {'required': True},
-        'aad_tenant_id': {'required': True},
-        'service_principal_client_id': {'required': True},
-        'service_principal_object_id': {'required': True},
-        'azure_management_endpoint_audience': {'required': True},
+        "resource_id": {"required": True},
+        "aad_authority": {"required": True},
+        "aad_tenant_id": {"required": True},
+        "service_principal_client_id": {"required": True},
+        "service_principal_object_id": {"required": True},
+        "azure_management_endpoint_audience": {"required": True},
     }
 
     _attribute_map = {
-        'auth_type': {'key': 'authType', 'type': 'str'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'aad_authority': {'key': 'aadAuthority', 'type': 'str'},
-        'aad_tenant_id': {'key': 'aadTenantId', 'type': 'str'},
-        'service_principal_client_id': {'key': 'servicePrincipalClientId', 'type': 'str'},
-        'service_principal_object_id': {'key': 'servicePrincipalObjectId', 'type': 'str'},
-        'azure_management_endpoint_audience': {'key': 'azureManagementEndpointAudience', 'type': 'str'},
+        "auth_type": {"key": "authType", "type": "str"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "aad_authority": {"key": "aadAuthority", "type": "str"},
+        "aad_tenant_id": {"key": "aadTenantId", "type": "str"},
+        "service_principal_client_id": {"key": "servicePrincipalClientId", "type": "str"},
+        "service_principal_object_id": {"key": "servicePrincipalObjectId", "type": "str"},
+        "azure_management_endpoint_audience": {"key": "azureManagementEndpointAudience", "type": "str"},
     }
 
-    def __init__(self, *, resource_id: str, aad_authority: str, aad_tenant_id: str, service_principal_client_id: str, service_principal_object_id: str, azure_management_endpoint_audience: str, auth_type=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        resource_id: str,
+        aad_authority: str,
+        aad_tenant_id: str,
+        service_principal_client_id: str,
+        service_principal_object_id: str,
+        azure_management_endpoint_audience: str,
+        auth_type=None,
+        **kwargs
+    ) -> None:
         super(UploadCertificateResponse, self).__init__(**kwargs)
         self.auth_type = auth_type
         self.resource_id = resource_id

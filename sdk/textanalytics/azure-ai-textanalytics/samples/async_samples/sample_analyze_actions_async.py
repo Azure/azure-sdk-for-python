@@ -46,15 +46,13 @@ async def sample_analyze_async() -> None:
     )
 
     documents = [
-        'We went to Contoso Steakhouse located at midtown NYC last week for a dinner party, and we adore the spot! '
-        'They provide marvelous food and they have a great menu. The chief cook happens to be the owner (I think his name is John Doe) '
-        'and he is super nice, coming out of the kitchen and greeted us all.'
-        ,
-
-        'We enjoyed very much dining in the place! '
-        'The Sirloin steak I ordered was tender and juicy, and the place was impeccably clean. You can even pre-order from their '
-        'online menu at www.contososteakhouse.com, call 312-555-0176 or send email to order@contososteakhouse.com! '
-        'The only complaint I have is the food didn\'t come fast enough. Overall I highly recommend it!'
+        "We went to Contoso Steakhouse located at midtown NYC last week for a dinner party, and we adore the spot! "
+        "They provide marvelous food and they have a great menu. The chief cook happens to be the owner (I think his name is John Doe) "
+        "and he is super nice, coming out of the kitchen and greeted us all.",
+        "We enjoyed very much dining in the place! "
+        "The Sirloin steak I ordered was tender and juicy, and the place was impeccably clean. You can even pre-order from their "
+        "online menu at www.contososteakhouse.com, call 312-555-0176 or send email to order@contososteakhouse.com! "
+        "The only complaint I have is the food didn't come fast enough. Overall I highly recommend it!",
     ]
 
     async with text_analytics_client:
@@ -67,7 +65,7 @@ async def sample_analyze_async() -> None:
                 ExtractKeyPhrasesAction(),
                 RecognizeLinkedEntitiesAction(),
                 AnalyzeSentimentAction(),
-            ]
+            ],
         )
 
         pages = await poller.result()
@@ -108,9 +106,7 @@ async def sample_analyze_async() -> None:
                     print(f"......Entity name: {linked_entity.name}")
                     print(f".........Data source: {linked_entity.data_source}")
                     print(f".........Data source language: {linked_entity.language}")
-                    print(
-                        f".........Data source entity ID: {linked_entity.data_source_entity_id}"
-                    )
+                    print(f".........Data source entity ID: {linked_entity.data_source_entity_id}")
                     print(f".........Data source URL: {linked_entity.url}")
                     print(".........Document matches:")
                     for match in linked_entity.matches:
@@ -122,16 +118,12 @@ async def sample_analyze_async() -> None:
             elif result.kind == "SentimentAnalysis":
                 print("...Results of Analyze Sentiment action:")
                 print(f"......Overall sentiment: {result.sentiment}")
-                print(
-                    f"......Scores: positive={result.confidence_scores.positive}; \
+                print(f"......Scores: positive={result.confidence_scores.positive}; \
                     neutral={result.confidence_scores.neutral}; \
-                    negative={result.confidence_scores.negative} \n"
-                )
+                    negative={result.confidence_scores.negative} \n")
 
             elif result.is_error is True:
-                print(
-                    f"...Is an error with code '{result.error.code}' and message '{result.error.message}'"
-                )
+                print(f"...Is an error with code '{result.error.code}' and message '{result.error.message}'")
 
         print("------------------------------------------")
 
@@ -142,5 +134,5 @@ async def main():
     await sample_analyze_async()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

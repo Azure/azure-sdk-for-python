@@ -17,6 +17,7 @@ plain_no_header - text file with {Content-Type: text/plain}
 compressed_no_header - tar.gz file with {Content-Type: application/gzip}
 compressed_header - tar.gz file with {Content-Type: application/gzip} and {Content-Encoding: gzip}
 """
+
 import zlib
 
 import pytest

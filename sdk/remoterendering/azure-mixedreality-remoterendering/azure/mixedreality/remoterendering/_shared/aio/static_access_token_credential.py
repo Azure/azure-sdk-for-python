@@ -7,8 +7,9 @@
 from typing import Any
 from azure.core.credentials import AccessToken
 
+
 class StaticAccessTokenCredential(object):
-    """ Represents a static access token credential.
+    """Represents a static access token credential.
     This implements the AsyncTokenCredential protocol.
 
     :param AccessToken access_token: An access token.
@@ -19,9 +20,10 @@ class StaticAccessTokenCredential(object):
 
     async def get_token(
         self,
-        #pylint: disable=unused-argument
+        # pylint: disable=unused-argument
         *scopes: str,
-        **kwargs: Any) -> AccessToken:
+        **kwargs: Any
+    ) -> AccessToken:
         return self._access_token
 
     async def close(self) -> None:

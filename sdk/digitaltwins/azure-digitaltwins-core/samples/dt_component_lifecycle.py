@@ -25,22 +25,16 @@ from azure.digitaltwins.core import DigitalTwinsClient
 # For the purpose of this example we will create temporary digital twin using random Ids.
 # We have to make sure these model Ids are unique within the DT instance so we use generated UUIDs.
 try:
-    model_id = 'dtmi:samples:componentlifecyclemodel;1'
-    component_id = 'dtmi:samples:componentlifecycle;1'
-    digital_twin_id = 'digitalTwin-' + str(uuid.uuid4())
+    model_id = "dtmi:samples:componentlifecyclemodel;1"
+    component_id = "dtmi:samples:componentlifecycle;1"
+    digital_twin_id = "digitalTwin-" + str(uuid.uuid4())
 
     temporary_component = {
         "@id": component_id,
         "@type": "Interface",
         "@context": "dtmi:dtdl:context;2",
         "displayName": "Component1",
-        "contents": [
-        {
-            "@type": "Property",
-            "name": "ComponentProp1",
-            "schema": "string"
-        }
-        ]
+        "contents": [{"@type": "Property", "name": "ComponentProp1", "schema": "string"}],
     }
 
     temporary_model = {
@@ -49,29 +43,16 @@ try:
         "@context": "dtmi:dtdl:context;2",
         "displayName": "TempModel",
         "contents": [
-        {
-            "@type": "Property",
-            "name": "Prop1",
-            "schema": "double"
-        },
-        {
-            "@type": "Component",
-            "name": "Component1",
-            "schema": component_id
-        }
-        ]
+            {"@type": "Property", "name": "Prop1", "schema": "double"},
+            {"@type": "Component", "name": "Component1", "schema": component_id},
+        ],
     }
 
     temporary_twin = {
-        "$metadata": {
-            "$model": model_id
-        },
+        "$metadata": {"$model": model_id},
         "$dtId": digital_twin_id,
         "Prop1": 42,
-        "Component1": {
-            "$metadata": {},
-        "ComponentProp1": "value1"
-        }
+        "Component1": {"$metadata": {}, "ComponentProp1": "value1"},
     }
 
     # DefaultAzureCredential supports different authentication mechanisms and determines
@@ -88,32 +69,26 @@ try:
     # - AZURE_CLIENT_ID: The application (client) ID registered in the AAD tenant
     # - AZURE_CLIENT_SECRET: The client secret for the registered application
     credential = DefaultAzureCredential()
-    service_client = DigitalTwinsClient(url, credential) # type: ignore
+    service_client = DigitalTwinsClient(url, credential)  # type: ignore
 
     # Create models
     models = service_client.create_models(cast(List[MutableMapping[str, Any]], [temporary_component, temporary_model]))
-    print('Created Models:')
+    print("Created Models:")
     print(models)
 
     # Create digital twin
     created_twin = service_client.upsert_digital_twin(digital_twin_id, temporary_twin)
-    print('Created Digital Twin:')
+    print("Created Digital Twin:")
     print(created_twin)
 
     # Update component
     component_name = "Component1"
-    patch = [
-        {
-            "op": "replace",
-            "path": "/ComponentProp1",
-            "value": "value2"
-        }
-    ]
+    patch = [{"op": "replace", "path": "/ComponentProp1", "value": "value2"}]
     service_client.update_component(digital_twin_id, component_name, patch)
 
     # Get component
     get_component = service_client.get_component(digital_twin_id, component_name)
-    print('Get Component:')
+    print("Get Component:")
     print(get_component)
 
     # Delete digital twin

@@ -18,8 +18,8 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Create partition keys in the Azure Cosmos DB SQL API service.
-"""
+"""Create partition keys in the Azure Cosmos DB SQL API service."""
+
 from io import BytesIO
 import binascii
 import struct
@@ -30,18 +30,13 @@ from ._cosmos_integers import _UInt32, _UInt64, _UInt128
 from ._cosmos_murmurhash3 import murmurhash3_128 as _murmurhash3_128, murmurhash3_32 as _murmurhash3_32
 from ._routing.routing_range import Range as _Range
 
-
 _MaximumExclusiveEffectivePartitionKey = 0xFF
 _MinimumInclusiveEffectivePartitionKey = 0x00
 _MaxStringChars = 100
 _MaxStringBytesToAppend = 100
-_MaxPartitionKeyBinarySize = \
-    (1  # type marker
-     + 9  # hash value
-     + 1  # type marker
-     + _MaxStringBytesToAppend
-     + 1  # trailing zero
-     ) * 3
+_MaxPartitionKeyBinarySize = (
+    1 + 9 + 1 + _MaxStringBytesToAppend + 1  # type marker  # hash value  # type marker  # trailing zero
+) * 3
 
 
 class _PartitionKeyComponentType:
@@ -68,21 +63,24 @@ class _PartitionKeyComponentType:
     Float = 0x14
     Infinity = 0xFF
 
+
 class _PartitionKeyKind:
     HASH: str = "Hash"
     MULTI_HASH: str = "MultiHash"
+
 
 class _PartitionKeyVersion:
     V1: int = 1
     V2: int = 2
 
+
 class NonePartitionKeyValue:
-    """Represents partition key missing from the document.
-    """
+    """Represents partition key missing from the document."""
+
 
 class NullPartitionKeyValue:
-    """Represents null value for a partition key.
-    """
+    """Represents null value for a partition key."""
+
 
 class _Empty:
     """Represents empty value for partitionKey when it's missing in an item belonging
@@ -99,9 +97,13 @@ class _Undefined:
 class _Infinity:
     """Represents infinity value for partitionKey."""
 
-_SingularPartitionKeyType = Union[None, bool, float, int, str, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue], _Empty, _Undefined] # pylint: disable=line-too-long
+
+_SingularPartitionKeyType = Union[
+    None, bool, float, int, str, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue], _Empty, _Undefined
+]  # pylint: disable=line-too-long
 _SequentialPartitionKeyType = Sequence[_SingularPartitionKeyType]
 PartitionKeyType = Union[_SingularPartitionKeyType, _SequentialPartitionKeyType]
+
 
 class PartitionKey(dict):
     """Key used to partition a container into logical partitions.
@@ -137,22 +139,23 @@ class PartitionKey(dict):
     """
 
     @overload
-    def __init__(self, path: list[str], *, kind: Literal["MultiHash"] = "MultiHash",
-                 version: int = _PartitionKeyVersion.V2
-    ) -> None:
-        ...
+    def __init__(
+        self, path: list[str], *, kind: Literal["MultiHash"] = "MultiHash", version: int = _PartitionKeyVersion.V2
+    ) -> None: ...
 
     @overload
-    def __init__(self, path: str, *, kind: Literal["Hash"] = "Hash",
-                 version:int = _PartitionKeyVersion.V2
-    ) -> None:
-        ...
+    def __init__(
+        self, path: str, *, kind: Literal["Hash"] = "Hash", version: int = _PartitionKeyVersion.V2
+    ) -> None: ...
 
     def __init__(self, *args, **kwargs):
-        path = args[0] if args else kwargs['path']
-        kind = args[1] if len(args) > 1 else kwargs.get('kind', _PartitionKeyKind.HASH if isinstance(path, str)
-        else _PartitionKeyKind.MULTI_HASH)
-        version = args[2] if len(args) > 2 else kwargs.get('version', _PartitionKeyVersion.V2)
+        path = args[0] if args else kwargs["path"]
+        kind = (
+            args[1]
+            if len(args) > 1
+            else kwargs.get("kind", _PartitionKeyKind.HASH if isinstance(path, str) else _PartitionKeyKind.MULTI_HASH)
+        )
+        version = args[2] if len(args) > 2 else kwargs.get("version", _PartitionKeyVersion.V2)
         super().__init__(paths=[path] if isinstance(path, str) else path, kind=kind, version=version)
 
     def __repr__(self) -> str:
@@ -169,7 +172,7 @@ class PartitionKey(dict):
     @property
     def path(self) -> str:
         if self.kind == _PartitionKeyKind.MULTI_HASH:
-            return ''.join(self["paths"])
+            return "".join(self["paths"])
         return self["paths"][0]
 
     @path.setter
@@ -187,19 +190,17 @@ class PartitionKey(dict):
     def version(self, value: int) -> None:
         self["version"] = value
 
-    def _get_epk_range_for_prefix_partition_key(
-        self,
-        pk_value: _SequentialPartitionKeyType
-    ) -> _Range:
+    def _get_epk_range_for_prefix_partition_key(self, pk_value: _SequentialPartitionKeyType) -> _Range:
         if self.kind != _PartitionKeyKind.MULTI_HASH:
             raise ValueError(
-                "Effective Partition Key Range for Prefix Partition Keys is only supported for Hierarchical Partition Keys.")  # pylint: disable=line-too-long
+                "Effective Partition Key Range for Prefix Partition Keys is only supported for Hierarchical Partition Keys."
+            )  # pylint: disable=line-too-long
         len_pk_value = len(pk_value)
         len_paths = len(self["paths"])
         if len_pk_value >= len_paths:
             raise ValueError(
-                f"{len_pk_value} partition key components provided. Expected less than {len_paths} " +
-                "components (number of container partition key definition components)."
+                f"{len_pk_value} partition key components provided. Expected less than {len_paths} "
+                + "components (number of container partition key definition components)."
             )
         # Prefix Partitions always have exclusive max
         min_epk = self._get_effective_partition_key_string(pk_value)
@@ -213,34 +214,25 @@ class PartitionKey(dict):
         max_epk = str(min_epk) + "FF"
         return _Range(min_epk, max_epk, True, False)
 
-    def _get_epk_range_for_partition_key(
-            self,
-            pk_value: PartitionKeyType
-    ) -> _Range:
+    def _get_epk_range_for_partition_key(self, pk_value: PartitionKeyType) -> _Range:
         if self._is_prefix_partition_key(pk_value):
-            return self._get_epk_range_for_prefix_partition_key(
-                cast(_SequentialPartitionKeyType, pk_value))
+            return self._get_epk_range_for_prefix_partition_key(cast(_SequentialPartitionKeyType, pk_value))
 
         # else return point range
         if isinstance(pk_value, (list, tuple)) or (isinstance(pk_value, Sequence) and not isinstance(pk_value, str)):
             effective_partition_key_string = self._get_effective_partition_key_string(pk_value)
         else:
-            effective_partition_key_string =\
-                self._get_effective_partition_key_string([pk_value])
+            effective_partition_key_string = self._get_effective_partition_key_string([pk_value])
         return _Range(effective_partition_key_string, effective_partition_key_string, True, True)
 
     @staticmethod
-    def _truncate_for_v1_hashing(
-            value: _SingularPartitionKeyType
-    ) -> _SingularPartitionKeyType:
+    def _truncate_for_v1_hashing(value: _SingularPartitionKeyType) -> _SingularPartitionKeyType:
         if isinstance(value, str):
             return value[:100]
         return value
 
     @staticmethod
-    def _get_effective_partition_key_for_hash_partitioning(
-            pk_value: Union[str, _SequentialPartitionKeyType]
-    ) -> str:
+    def _get_effective_partition_key_for_hash_partitioning(pk_value: Union[str, _SequentialPartitionKeyType]) -> str:
         truncated_components = []
         # In Python, Strings are sequences, so we make sure we instead hash the entire string instead of each character
         if isinstance(pk_value, str):
@@ -264,9 +256,9 @@ class PartitionKey(dict):
 
     @staticmethod
     def _get_hashed_partition_key_string(
-            pk_value: _SequentialPartitionKeyType,
-            kind: str,
-            version: int = _PartitionKeyVersion.V2,
+        pk_value: _SequentialPartitionKeyType,
+        kind: str,
+        version: int = _PartitionKeyVersion.V2,
     ) -> Union[int, str]:
         if not pk_value:
             return _MinimumInclusiveEffectivePartitionKey
@@ -280,35 +272,22 @@ class PartitionKey(dict):
             return PartitionKey._get_effective_partition_key_for_multi_hash_partitioning_v2(pk_value)
         return _to_hex_encoded_binary_string(pk_value)
 
-    def _get_effective_partition_key_string(
-        self,
-        pk_value: _SequentialPartitionKeyType
-    ) -> Union[int, str]:
+    def _get_effective_partition_key_string(self, pk_value: _SequentialPartitionKeyType) -> Union[int, str]:
         if isinstance(self, _Infinity):
             return _MaximumExclusiveEffectivePartitionKey
 
         return PartitionKey._get_hashed_partition_key_string(pk_value=pk_value, kind=self.kind, version=self.version)
 
     @staticmethod
-    def _write_for_hashing(
-            value: _SingularPartitionKeyType,
-            writer: IO[bytes]
-    ) -> None:
+    def _write_for_hashing(value: _SingularPartitionKeyType, writer: IO[bytes]) -> None:
         PartitionKey._write_for_hashing_core(value, bytes([0]), writer)
 
     @staticmethod
-    def _write_for_hashing_v2(
-        value: _SingularPartitionKeyType,
-        writer: IO[bytes]
-    ) -> None:
+    def _write_for_hashing_v2(value: _SingularPartitionKeyType, writer: IO[bytes]) -> None:
         PartitionKey._write_for_hashing_core(value, bytes([0xFF]), writer)
 
     @staticmethod
-    def _write_for_hashing_core(
-        value: _SingularPartitionKeyType,
-        string_suffix: bytes,
-        writer: IO[bytes]
-    ) -> None:
+    def _write_for_hashing_core(value: _SingularPartitionKeyType, string_suffix: bytes, writer: IO[bytes]) -> None:
         if value is True:
             writer.write(bytes([_PartitionKeyComponentType.PTrue]))
         elif value is False:
@@ -318,21 +297,19 @@ class PartitionKey(dict):
         elif isinstance(value, int):
             writer.write(bytes([_PartitionKeyComponentType.Number]))
             # Cast to Float to ensure correct packing
-            writer.write(struct.pack('<d', float(value)))
+            writer.write(struct.pack("<d", float(value)))
         elif isinstance(value, float):
             writer.write(bytes([_PartitionKeyComponentType.Number]))
-            writer.write(struct.pack('<d', value))
+            writer.write(struct.pack("<d", value))
         elif isinstance(value, str):
             writer.write(bytes([_PartitionKeyComponentType.String]))
-            writer.write(value.encode('utf-8'))
+            writer.write(value.encode("utf-8"))
             writer.write(string_suffix)
         elif isinstance(value, _Undefined):
             writer.write(bytes([_PartitionKeyComponentType.Undefined]))
 
     @staticmethod
-    def _get_effective_partition_key_for_hash_partitioning_v2(
-        pk_value: _SequentialPartitionKeyType
-    ) -> str:
+    def _get_effective_partition_key_for_hash_partitioning_v2(pk_value: _SequentialPartitionKeyType) -> str:
         with BytesIO() as ms:
             for component in pk_value:
                 PartitionKey._write_for_hashing_v2(component, ms)
@@ -346,12 +323,10 @@ class PartitionKey(dict):
             # Plus one more just in case.
             hash_bytes[0] &= 0x3F
 
-        return ''.join('{:02X}'.format(x) for x in hash_bytes)
+        return "".join("{:02X}".format(x) for x in hash_bytes)
 
     @staticmethod
-    def _get_effective_partition_key_for_multi_hash_partitioning_v2(
-        pk_value: _SequentialPartitionKeyType
-    ) -> str:
+    def _get_effective_partition_key_for_multi_hash_partitioning_v2(pk_value: _SequentialPartitionKeyType) -> str:
         sb = []
         for value in pk_value:
             ms = BytesIO()
@@ -370,15 +345,14 @@ class PartitionKey(dict):
             hash_v[0] &= 0x3F
             sb.append(_to_hex(bytearray(hash_v), 0, len(hash_v)))
 
-        return ''.join(sb).upper()
+        return "".join(sb).upper()
 
-    def _is_prefix_partition_key(
-            self,
-            partition_key: PartitionKeyType) -> bool:  # pylint: disable=line-too-long
+    def _is_prefix_partition_key(self, partition_key: PartitionKeyType) -> bool:  # pylint: disable=line-too-long
         if self.kind != _PartitionKeyKind.MULTI_HASH:
             return False
-        ret = ((isinstance(partition_key, Sequence) and
-                not isinstance(partition_key, str)) and len(self['paths']) != len(partition_key))
+        ret = (isinstance(partition_key, Sequence) and not isinstance(partition_key, str)) and len(
+            self["paths"]
+        ) != len(partition_key)
         return ret
 
 
@@ -389,7 +363,7 @@ def _return_undefined_or_empty_partition_key(is_system_key: bool) -> Union[_Empt
 
 
 def _to_hex(bytes_object: bytearray, start: int, length: int) -> str:
-    return binascii.hexlify(bytes_object[start:start + length]).decode()
+    return binascii.hexlify(bytes_object[start : start + length]).decode()
 
 
 def _to_hex_encoded_binary_string(components: Sequence[object]) -> str:
@@ -403,13 +377,13 @@ def _to_hex_encoded_binary_string(components: Sequence[object]) -> str:
         else:
             raise TypeError(f"Unexpected type for PK component: {type(component)}")
 
-    return _to_hex(buffer_bytes[:ms.tell()], 0, ms.tell())
+    return _to_hex(buffer_bytes[: ms.tell()], 0, ms.tell())
+
 
 def _to_hex_encoded_binary_string_v1(components: Sequence[object]) -> str:
     ms = BytesIO()
     for component in components:
-        if (isinstance(component, (bool, int, float, str, _Infinity, _Undefined, type))
-                or component is None):
+        if isinstance(component, (bool, int, float, str, _Infinity, _Undefined, type)) or component is None:
             component = cast(_SingularPartitionKeyType, component)
             _write_for_binary_encoding_v1(component, ms)
         else:
@@ -417,12 +391,10 @@ def _to_hex_encoded_binary_string_v1(components: Sequence[object]) -> str:
 
     return _to_hex(bytearray(ms.getvalue()), 0, ms.tell())
 
-def _write_for_binary_encoding_v1(
-    value: _SingularPartitionKeyType,
-    binary_writer: IO[bytes]
-) -> None:
+
+def _write_for_binary_encoding_v1(value: _SingularPartitionKeyType, binary_writer: IO[bytes]) -> None:
     if isinstance(value, bool):
-        binary_writer.write(bytes([(_PartitionKeyComponentType.PTrue if value else _PartitionKeyComponentType.PFalse)]))
+        binary_writer.write(bytes([_PartitionKeyComponentType.PTrue if value else _PartitionKeyComponentType.PFalse]))
 
     elif isinstance(value, _Infinity):
         binary_writer.write(bytes([_PartitionKeyComponentType.Infinity]))
@@ -452,11 +424,11 @@ def _write_for_binary_encoding_v1(
             payload <<= 7
 
         # Except for last chunk that ends with "0" bit.
-        binary_writer.write(bytes([(byte_to_write & 0xFE)]))
+        binary_writer.write(bytes([byte_to_write & 0xFE]))
 
     elif isinstance(value, str):
         binary_writer.write(bytes([_PartitionKeyComponentType.String]))
-        utf8_value = value.encode('utf-8')
+        utf8_value = value.encode("utf-8")
         short_string = len(utf8_value) <= _MaxStringBytesToAppend
 
         for index in range(short_string and len(utf8_value) or _MaxStringBytesToAppend + 1):
@@ -470,12 +442,10 @@ def _write_for_binary_encoding_v1(
     elif isinstance(value, _Undefined):
         binary_writer.write(bytes([_PartitionKeyComponentType.Undefined]))
 
-def _write_for_binary_encoding(
-    value: _SingularPartitionKeyType,
-    binary_writer: IO[bytes]
-) -> None:
+
+def _write_for_binary_encoding(value: _SingularPartitionKeyType, binary_writer: IO[bytes]) -> None:
     if isinstance(value, bool):
-        binary_writer.write(bytes([(_PartitionKeyComponentType.PTrue if value else _PartitionKeyComponentType.PFalse)]))
+        binary_writer.write(bytes([_PartitionKeyComponentType.PTrue if value else _PartitionKeyComponentType.PFalse]))
 
     elif isinstance(value, _Infinity):
         binary_writer.write(bytes([_PartitionKeyComponentType.Infinity]))
@@ -485,7 +455,7 @@ def _write_for_binary_encoding(
         payload = _UInt64.encode_double_as_uint64(value)  # Function to be defined elsewhere
 
         # Encode first chunk with 8-bits of payload
-        binary_writer.write(bytes([(payload >> (64 - 8))]))
+        binary_writer.write(bytes([payload >> (64 - 8)]))
         payload <<= 8
 
         # Encode remaining chunks with 7 bits of payload followed by single "1" bit each.
@@ -501,11 +471,11 @@ def _write_for_binary_encoding(
             payload <<= 7
 
         # Except for last chunk that ends with "0" bit.
-        binary_writer.write(bytes([(byte_to_write & 0xFE)]))
+        binary_writer.write(bytes([byte_to_write & 0xFE]))
 
     elif isinstance(value, str):
         binary_writer.write(bytes([_PartitionKeyComponentType.String]))
-        utf8_value = value.encode('utf-8')
+        utf8_value = value.encode("utf-8")
         short_string = len(utf8_value) <= _MaxStringBytesToAppend
 
         for index in range(short_string and len(utf8_value) or _MaxStringBytesToAppend + 1):
@@ -520,8 +490,9 @@ def _write_for_binary_encoding(
     elif isinstance(value, _Undefined):
         binary_writer.write(bytes([_PartitionKeyComponentType.Undefined]))
 
+
 def _get_partition_key_from_partition_key_definition(
-    partition_key_definition: Union[dict[str, Any], "PartitionKey"]
+    partition_key_definition: Union[dict[str, Any], "PartitionKey"],
 ) -> "PartitionKey":
     """Internal method to create a PartitionKey instance from a dictionary or PartitionKey object.
 
@@ -534,6 +505,7 @@ def _get_partition_key_from_partition_key_definition(
     kind = partition_key_definition.get("kind", "Hash")
     version: int = partition_key_definition.get("version", 1)  # Default to version 1 if not provided
     return PartitionKey(path=path, kind=kind, version=version)
+
 
 def _build_partition_key_from_properties(container_properties: dict[str, Any]) -> PartitionKey:
     partition_key_definition = container_properties["partitionKey"]

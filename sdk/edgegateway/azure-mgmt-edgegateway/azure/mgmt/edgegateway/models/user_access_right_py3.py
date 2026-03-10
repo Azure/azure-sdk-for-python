@@ -25,13 +25,13 @@ class UserAccessRight(Model):
     """
 
     _validation = {
-        'user_id': {'required': True},
-        'access_type': {'required': True},
+        "user_id": {"required": True},
+        "access_type": {"required": True},
     }
 
     _attribute_map = {
-        'user_id': {'key': 'userId', 'type': 'str'},
-        'access_type': {'key': 'accessType', 'type': 'str'},
+        "user_id": {"key": "userId", "type": "str"},
+        "access_type": {"key": "accessType", "type": "str"},
     }
 
     def __init__(self, *, user_id: str, access_type, **kwargs) -> None:

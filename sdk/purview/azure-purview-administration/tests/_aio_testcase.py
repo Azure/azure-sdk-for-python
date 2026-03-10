@@ -14,13 +14,11 @@ class AzureRecordedAsyncTestCase(AzureRecordedTestCase):
     def create_aio_client(self, client, **kwargs):
         if self.is_live:
             from azure.identity.aio import DefaultAzureCredential
+
             credential = DefaultAzureCredential()
         else:
             credential = Mock(get_token=asyncio.coroutine(lambda _: AccessToken("fake-token", 0)))
-        return client(
-            credential=credential,
-            subscription_id=self.get_settings_value("SUBSCRIPTION_ID")
-        )
+        return client(credential=credential, subscription_id=self.get_settings_value("SUBSCRIPTION_ID"))
 
     def to_list(self, ait):
         async def lst():

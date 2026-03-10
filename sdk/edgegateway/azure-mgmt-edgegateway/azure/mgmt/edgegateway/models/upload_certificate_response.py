@@ -39,30 +39,30 @@ class UploadCertificateResponse(Model):
     """
 
     _validation = {
-        'resource_id': {'required': True},
-        'aad_authority': {'required': True},
-        'aad_tenant_id': {'required': True},
-        'service_principal_client_id': {'required': True},
-        'service_principal_object_id': {'required': True},
-        'azure_management_endpoint_audience': {'required': True},
+        "resource_id": {"required": True},
+        "aad_authority": {"required": True},
+        "aad_tenant_id": {"required": True},
+        "service_principal_client_id": {"required": True},
+        "service_principal_object_id": {"required": True},
+        "azure_management_endpoint_audience": {"required": True},
     }
 
     _attribute_map = {
-        'auth_type': {'key': 'authType', 'type': 'str'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'aad_authority': {'key': 'aadAuthority', 'type': 'str'},
-        'aad_tenant_id': {'key': 'aadTenantId', 'type': 'str'},
-        'service_principal_client_id': {'key': 'servicePrincipalClientId', 'type': 'str'},
-        'service_principal_object_id': {'key': 'servicePrincipalObjectId', 'type': 'str'},
-        'azure_management_endpoint_audience': {'key': 'azureManagementEndpointAudience', 'type': 'str'},
+        "auth_type": {"key": "authType", "type": "str"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "aad_authority": {"key": "aadAuthority", "type": "str"},
+        "aad_tenant_id": {"key": "aadTenantId", "type": "str"},
+        "service_principal_client_id": {"key": "servicePrincipalClientId", "type": "str"},
+        "service_principal_object_id": {"key": "servicePrincipalObjectId", "type": "str"},
+        "azure_management_endpoint_audience": {"key": "azureManagementEndpointAudience", "type": "str"},
     }
 
     def __init__(self, **kwargs):
         super(UploadCertificateResponse, self).__init__(**kwargs)
-        self.auth_type = kwargs.get('auth_type', None)
-        self.resource_id = kwargs.get('resource_id', None)
-        self.aad_authority = kwargs.get('aad_authority', None)
-        self.aad_tenant_id = kwargs.get('aad_tenant_id', None)
-        self.service_principal_client_id = kwargs.get('service_principal_client_id', None)
-        self.service_principal_object_id = kwargs.get('service_principal_object_id', None)
-        self.azure_management_endpoint_audience = kwargs.get('azure_management_endpoint_audience', None)
+        self.auth_type = kwargs.get("auth_type", None)
+        self.resource_id = kwargs.get("resource_id", None)
+        self.aad_authority = kwargs.get("aad_authority", None)
+        self.aad_tenant_id = kwargs.get("aad_tenant_id", None)
+        self.service_principal_client_id = kwargs.get("service_principal_client_id", None)
+        self.service_principal_object_id = kwargs.get("service_principal_object_id", None)
+        self.azure_management_endpoint_audience = kwargs.get("azure_management_endpoint_audience", None)

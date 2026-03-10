@@ -10,7 +10,6 @@ from unittest import mock
 
 from azure.core.credentials import AccessToken, AccessTokenInfo
 
-
 FAKE_CLIENT_ID = "fake-client-id"
 INVALID_CHARACTERS = "|\\`;{&' "
 INVALID_SUBSCRIPTION_CHARACTERS = "|\\`;{&'"

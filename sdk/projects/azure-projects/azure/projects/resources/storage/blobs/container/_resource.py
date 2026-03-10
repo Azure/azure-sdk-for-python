@@ -31,7 +31,6 @@ from ....._bicep.utils import clean_name
 from ....._resource import _ClientResource, ExtensionResources, ResourceReference
 from .. import BlobStorage
 
-
 if TYPE_CHECKING:
     from ...._extension import RoleAssignment
     from ....resourcegroup import ResourceGroup

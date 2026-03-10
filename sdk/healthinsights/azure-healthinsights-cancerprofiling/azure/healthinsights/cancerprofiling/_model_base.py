@@ -329,8 +329,7 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):  # pylint: disable=uns
         ...
 
     @typing.overload
-    def pop(self, key: str, default: typing.Any) -> typing.Any:
-        ...
+    def pop(self, key: str, default: typing.Any) -> typing.Any: ...
 
     def pop(self, key: str, default: typing.Any = _UNSET) -> typing.Any:
         if default is _UNSET:
@@ -347,12 +346,10 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):  # pylint: disable=uns
         self._data.update(*args, **kwargs)
 
     @typing.overload  # type: ignore
-    def setdefault(self, key: str) -> typing.Any:
-        ...
+    def setdefault(self, key: str) -> typing.Any: ...
 
     @typing.overload
-    def setdefault(self, key: str, default: typing.Any) -> typing.Any:
-        ...
+    def setdefault(self, key: str, default: typing.Any) -> typing.Any: ...
 
     def setdefault(self, key: str, default: typing.Any = _UNSET) -> typing.Any:
         if default is _UNSET:
@@ -709,6 +706,8 @@ def rest_field(
 
 
 def rest_discriminator(
-    *, name: typing.Optional[str] = None, type: typing.Optional[typing.Callable] = None  # pylint: disable=redefined-builtin
+    *,
+    name: typing.Optional[str] = None,
+    type: typing.Optional[typing.Callable] = None,  # pylint: disable=redefined-builtin
 ) -> typing.Any:
     return _RestField(name=name, type=type, is_discriminator=True)

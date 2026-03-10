@@ -3,14 +3,12 @@ import os
 import time
 from typing import Optional, Dict, Any
 
-
 # Azure imports
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 from azure.ai.evaluation.red_team import RedTeam, RiskCategory, AttackStrategy
 
 # OpenAI imports
 from openai import AzureOpenAI
-
 
 azure_ai_project = os.environ.get("AZURE_PROJECT_ENDPOINT")
 

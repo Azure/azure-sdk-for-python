@@ -32,5 +32,4 @@ from ._schema_registry_json_encoder import (
 )
 from ._exceptions import InvalidContentError
 
-
 __all__ = ["JsonSchemaEncoder", "InvalidContentError"]

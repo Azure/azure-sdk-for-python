@@ -6,6 +6,7 @@
 import asyncio  # pylint:disable=do-not-import-asyncio
 import sys
 
+
 def get_dict_with_loop_if_needed(loop):
     if sys.version_info >= (3, 10):
         if loop:

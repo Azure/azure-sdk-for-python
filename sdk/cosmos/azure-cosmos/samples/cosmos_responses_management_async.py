@@ -46,10 +46,10 @@ import config
 # the provisioned throughput (RU/s) of that account.
 # ----------------------------------------------------------------------------------------------------------
 
-HOST = config.settings['host']
-MASTER_KEY = config.settings['master_key']
-DATABASE_ID = config.settings['database_id'] + str(uuid.uuid4())
-CONTAINER_ID = config.settings['container_id'] + str(uuid.uuid4())
+HOST = config.settings["host"]
+MASTER_KEY = config.settings["master_key"]
+DATABASE_ID = config.settings["database_id"] + str(uuid.uuid4())
+CONTAINER_ID = config.settings["container_id"] + str(uuid.uuid4())
 
 
 async def create_db(client, id):
@@ -58,10 +58,10 @@ async def create_db(client, id):
 
     try:
         response_properties = await client.create_database(id=id, return_properties=True)
-        print('Database with id \'{0}\' created'.format(id))
+        print("Database with id '{0}' created".format(id))
         print(response_properties[1].get_response_headers())
     except exceptions.CosmosResourceExistsError:
-        print('A database with id \'{0}\' already exists'.format(id))
+        print("A database with id '{0}' already exists".format(id))
 
 
 async def create_db_if_not_exists(client, id):
@@ -69,10 +69,10 @@ async def create_db_if_not_exists(client, id):
 
     try:
         response_properties = await client.create_database_if_not_exists(id=id, return_properties=True)
-        print('Database with id \'{0}\' created or retrieved'.format(id))
+        print("Database with id '{0}' created or retrieved".format(id))
         print(response_properties[1].get_response_headers())
     except exceptions.CosmosHttpResponseError as e:
-        print('Error creating database: {0}'.format(e.message))
+        print("Error creating database: {0}".format(e.message))
 
 
 async def create_db_if_exists(client, id):
@@ -80,10 +80,10 @@ async def create_db_if_exists(client, id):
 
     try:
         response_properties = await client.create_database_if_not_exists(id=id, return_properties=True)
-        print('Database with id \'{0}\' found'.format(id))
+        print("Database with id '{0}' found".format(id))
         print(response_properties[1].get_response_headers())
     except exceptions.CosmosResourceNotFoundError:
-        print('Database with id \'{0}\' does not exist'.format(id))
+        print("Database with id '{0}' does not exist".format(id))
 
 
 async def read_db(client, id):
@@ -92,51 +92,53 @@ async def read_db(client, id):
     try:
         database = client.get_database_client(id)
         properties = await database.read()
-        print('Database with id \'{0}\' was found'.format(id))
+        print("Database with id '{0}' was found".format(id))
     except exceptions.CosmosResourceNotFoundError:
-        print('A database with id \'{0}\' does not exist'.format(id))
+        print("A database with id '{0}' does not exist".format(id))
 
 
 async def replace_throughput_db(client, id):
     print("\n1.5 Replace Database Throughput")
 
     try:
-        database = await client.create_database(id=id+"1", offer_throughput=400)
+        database = await client.create_database(id=id + "1", offer_throughput=400)
         replace_throughput_value = 500
         properties = await database.replace_throughput(replace_throughput_value)
-        print('Database throughput changed to 800 RU/s')
+        print("Database throughput changed to 800 RU/s")
         print(properties.get_response_headers())
     except exceptions.CosmosResourceNotFoundError:
-        print('Database with id \'{0}\' does not exist'.format(id))
+        print("Database with id '{0}' does not exist".format(id))
     except exceptions.CosmosHttpResponseError as e:
-        print('Error changing database throughput: {0}'.format(e.message))
+        print("Error changing database throughput: {0}".format(e.message))
 
 
 async def create_container(db, id):
-    """ Execute basic container creation.
-    This will create containers with 400 RUs with different indexing, partitioning, and storage options """
+    """Execute basic container creation.
+    This will create containers with 400 RUs with different indexing, partitioning, and storage options"""
 
-    partition_key = PartitionKey(path='/id', kind='Hash')
+    partition_key = PartitionKey(path="/id", kind="Hash")
     print("\n2.1 Create Container - Basic")
 
     try:
         response_properties = await db.create_container(id=id, partition_key=partition_key, return_properties=True)
-        print('Container with id \'{0}\' created'.format(id))
+        print("Container with id '{0}' created".format(id))
         print(response_properties[1].get_response_headers())
     except exceptions.CosmosResourceExistsError:
-        print('A container with id \'{0}\' already exists'.format(id))
+        print("A container with id '{0}' already exists".format(id))
 
 
 async def create_container_if_not_exists(db, id):
     print("\n2.2 Create Container if not exists")
 
-    partition_key = PartitionKey(path='/id', kind='Hash')
+    partition_key = PartitionKey(path="/id", kind="Hash")
     try:
-        response_properties = await db.create_container_if_not_exists(id=id, partition_key=partition_key, return_properties=True)
-        print('Container with id \'{0}\' created or retrieved'.format(id))
+        response_properties = await db.create_container_if_not_exists(
+            id=id, partition_key=partition_key, return_properties=True
+        )
+        print("Container with id '{0}' created or retrieved".format(id))
         print(response_properties[1].get_response_headers())
     except exceptions.CosmosHttpResponseError as e:
-        print('Error creating container: {0}'.format(e.message))
+        print("Error creating container: {0}".format(e.message))
 
 
 async def create_container_if_exists(db, id):
@@ -144,10 +146,10 @@ async def create_container_if_exists(db, id):
 
     try:
         response_properties = await db.create_container_if_not_exists(id=id, return_properties=True)
-        print('Container with id \'{0}\' found'.format(id))
+        print("Container with id '{0}' found".format(id))
         print(response_properties[1].get_response_headers())
     except exceptions.CosmosResourceNotFoundError:
-        print('Container with id \'{0}\' does not exist'.format(id))
+        print("Container with id '{0}' does not exist".format(id))
 
 
 async def read_container(db, id):
@@ -156,30 +158,30 @@ async def read_container(db, id):
     try:
         container = db.get_container_client(id)
         properties = await container.read()
-        print('Container with id \'{0}\' was found, it\'s link is {1}'.format(container.id, container.container_link))
+        print("Container with id '{0}' was found, it's link is {1}".format(container.id, container.container_link))
     except exceptions.CosmosResourceNotFoundError:
-        print('A container with id \'{0}\' does not exist'.format(id))
+        print("A container with id '{0}' does not exist".format(id))
 
 
 async def replace_throughput_container(db, id):
     print("\n2.5 Replace Container Throughput")
 
     try:
-        container = await db.create_container(id=id,  partition_key=PartitionKey(path="/company"), offer_throughput=400)
+        container = await db.create_container(id=id, partition_key=PartitionKey(path="/company"), offer_throughput=400)
         replace_throughput_value = 500
         properties = await container.replace_throughput(replace_throughput_value)
         # Set new throughput to 600 RU/s
         new_throughput = ThroughputProperties(offer_throughput=600)
-        print('Container throughput changed to 600 RU/s')
+        print("Container throughput changed to 600 RU/s")
         print(properties.get_response_headers())
     except exceptions.CosmosResourceNotFoundError:
-        print('Container with id \'{0}\' does not exist'.format(id))
+        print("Container with id '{0}' does not exist".format(id))
     except exceptions.CosmosHttpResponseError as e:
-        print('Error changing container throughput: {0}'.format(e.message))
+        print("Error changing container throughput: {0}".format(e.message))
 
 
 async def run_sample():
-    async with CosmosClient(HOST, {'masterKey': MASTER_KEY}) as client:
+    async with CosmosClient(HOST, {"masterKey": MASTER_KEY}) as client:
         try:
             # setup database for this sample
             try:
@@ -230,11 +232,11 @@ async def run_sample():
                 pass
 
         except exceptions.CosmosHttpResponseError as e:
-            print('\nrun_sample has caught an error. {0}'.format(e.message))
+            print("\nrun_sample has caught an error. {0}".format(e.message))
 
         finally:
             print("\nrun_sample done")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(run_sample())

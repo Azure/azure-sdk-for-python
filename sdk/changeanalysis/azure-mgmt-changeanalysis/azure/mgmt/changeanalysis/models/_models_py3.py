@@ -31,21 +31,18 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -70,24 +67,19 @@ class Change(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'ChangeProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "ChangeProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["ChangeProperties"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, properties: Optional["ChangeProperties"] = None, **kwargs):
         super(Change, self).__init__(**kwargs)
         self.properties = properties
 
@@ -102,17 +94,11 @@ class ChangeList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Change]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Change]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Change"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["Change"]] = None, next_link: Optional[str] = None, **kwargs):
         super(ChangeList, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -135,11 +121,11 @@ class ChangeProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'time_stamp': {'key': 'timeStamp', 'type': 'iso-8601'},
-        'initiated_by_list': {'key': 'initiatedByList', 'type': '[str]'},
-        'change_type': {'key': 'changeType', 'type': 'str'},
-        'property_changes': {'key': 'propertyChanges', 'type': '[PropertyChange]'},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "time_stamp": {"key": "timeStamp", "type": "iso-8601"},
+        "initiated_by_list": {"key": "initiatedByList", "type": "[str]"},
+        "change_type": {"key": "changeType", "type": "str"},
+        "property_changes": {"key": "propertyChanges", "type": "[PropertyChange]"},
     }
 
     def __init__(
@@ -172,19 +158,16 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -208,25 +191,22 @@ class ErrorDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -243,15 +223,10 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorDetail"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["ErrorDetail"] = None, **kwargs):
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
 
@@ -283,15 +258,15 @@ class PropertyChange(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'change_type': {'key': 'changeType', 'type': 'str'},
-        'change_category': {'key': 'changeCategory', 'type': 'str'},
-        'json_path': {'key': 'jsonPath', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'level': {'key': 'level', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'old_value': {'key': 'oldValue', 'type': 'str'},
-        'new_value': {'key': 'newValue', 'type': 'str'},
-        'is_data_masked': {'key': 'isDataMasked', 'type': 'bool'},
+        "change_type": {"key": "changeType", "type": "str"},
+        "change_category": {"key": "changeCategory", "type": "str"},
+        "json_path": {"key": "jsonPath", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "level": {"key": "level", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "old_value": {"key": "oldValue", "type": "str"},
+        "new_value": {"key": "newValue", "type": "str"},
+        "is_data_masked": {"key": "isDataMasked", "type": "bool"},
     }
 
     def __init__(
@@ -336,21 +311,18 @@ class ProxyResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ProxyResource, self).__init__(**kwargs)
 
 
@@ -364,16 +336,12 @@ class ResourceProviderOperationDefinition(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'ResourceProviderOperationDisplay'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "ResourceProviderOperationDisplay"},
     }
 
     def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        display: Optional["ResourceProviderOperationDisplay"] = None,
-        **kwargs
+        self, *, name: Optional[str] = None, display: Optional["ResourceProviderOperationDisplay"] = None, **kwargs
     ):
         super(ResourceProviderOperationDefinition, self).__init__(**kwargs)
         self.name = name
@@ -394,10 +362,10 @@ class ResourceProviderOperationDisplay(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -427,8 +395,8 @@ class ResourceProviderOperationList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ResourceProviderOperationDefinition]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ResourceProviderOperationDefinition]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(

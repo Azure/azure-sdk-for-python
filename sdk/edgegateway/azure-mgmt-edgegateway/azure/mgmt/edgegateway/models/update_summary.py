@@ -80,53 +80,71 @@ class UpdateSummary(ARMBaseModel):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'last_completed_download_job_date_time': {'readonly': True},
-        'last_completed_install_job_date_time': {'readonly': True},
-        'total_number_of_updates_available': {'readonly': True},
-        'total_number_of_updates_pending_download': {'readonly': True},
-        'total_number_of_updates_pending_install': {'readonly': True},
-        'reboot_behavior': {'readonly': True},
-        'ongoing_update_operation': {'readonly': True},
-        'in_progress_download_job_id': {'readonly': True},
-        'in_progress_install_job_id': {'readonly': True},
-        'in_progress_download_job_started_date_time': {'readonly': True},
-        'in_progress_install_job_started_date_time': {'readonly': True},
-        'update_titles': {'readonly': True},
-        'total_update_size_in_bytes': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "last_completed_download_job_date_time": {"readonly": True},
+        "last_completed_install_job_date_time": {"readonly": True},
+        "total_number_of_updates_available": {"readonly": True},
+        "total_number_of_updates_pending_download": {"readonly": True},
+        "total_number_of_updates_pending_install": {"readonly": True},
+        "reboot_behavior": {"readonly": True},
+        "ongoing_update_operation": {"readonly": True},
+        "in_progress_download_job_id": {"readonly": True},
+        "in_progress_install_job_id": {"readonly": True},
+        "in_progress_download_job_started_date_time": {"readonly": True},
+        "in_progress_install_job_started_date_time": {"readonly": True},
+        "update_titles": {"readonly": True},
+        "total_update_size_in_bytes": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'device_version_number': {'key': 'properties.deviceVersionNumber', 'type': 'str'},
-        'friendly_device_version_name': {'key': 'properties.friendlyDeviceVersionName', 'type': 'str'},
-        'device_last_scanned_date_time': {'key': 'properties.deviceLastScannedDateTime', 'type': 'iso-8601'},
-        'last_completed_scan_job_date_time': {'key': 'properties.lastCompletedScanJobDateTime', 'type': 'iso-8601'},
-        'last_completed_download_job_date_time': {'key': 'properties.lastCompletedDownloadJobDateTime', 'type': 'iso-8601'},
-        'last_completed_install_job_date_time': {'key': 'properties.lastCompletedInstallJobDateTime', 'type': 'iso-8601'},
-        'total_number_of_updates_available': {'key': 'properties.totalNumberOfUpdatesAvailable', 'type': 'int'},
-        'total_number_of_updates_pending_download': {'key': 'properties.totalNumberOfUpdatesPendingDownload', 'type': 'int'},
-        'total_number_of_updates_pending_install': {'key': 'properties.totalNumberOfUpdatesPendingInstall', 'type': 'int'},
-        'reboot_behavior': {'key': 'properties.rebootBehavior', 'type': 'str'},
-        'ongoing_update_operation': {'key': 'properties.ongoingUpdateOperation', 'type': 'str'},
-        'in_progress_download_job_id': {'key': 'properties.inProgressDownloadJobId', 'type': 'str'},
-        'in_progress_install_job_id': {'key': 'properties.inProgressInstallJobId', 'type': 'str'},
-        'in_progress_download_job_started_date_time': {'key': 'properties.inProgressDownloadJobStartedDateTime', 'type': 'iso-8601'},
-        'in_progress_install_job_started_date_time': {'key': 'properties.inProgressInstallJobStartedDateTime', 'type': 'iso-8601'},
-        'update_titles': {'key': 'properties.updateTitles', 'type': '[str]'},
-        'total_update_size_in_bytes': {'key': 'properties.totalUpdateSizeInBytes', 'type': 'float'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "device_version_number": {"key": "properties.deviceVersionNumber", "type": "str"},
+        "friendly_device_version_name": {"key": "properties.friendlyDeviceVersionName", "type": "str"},
+        "device_last_scanned_date_time": {"key": "properties.deviceLastScannedDateTime", "type": "iso-8601"},
+        "last_completed_scan_job_date_time": {"key": "properties.lastCompletedScanJobDateTime", "type": "iso-8601"},
+        "last_completed_download_job_date_time": {
+            "key": "properties.lastCompletedDownloadJobDateTime",
+            "type": "iso-8601",
+        },
+        "last_completed_install_job_date_time": {
+            "key": "properties.lastCompletedInstallJobDateTime",
+            "type": "iso-8601",
+        },
+        "total_number_of_updates_available": {"key": "properties.totalNumberOfUpdatesAvailable", "type": "int"},
+        "total_number_of_updates_pending_download": {
+            "key": "properties.totalNumberOfUpdatesPendingDownload",
+            "type": "int",
+        },
+        "total_number_of_updates_pending_install": {
+            "key": "properties.totalNumberOfUpdatesPendingInstall",
+            "type": "int",
+        },
+        "reboot_behavior": {"key": "properties.rebootBehavior", "type": "str"},
+        "ongoing_update_operation": {"key": "properties.ongoingUpdateOperation", "type": "str"},
+        "in_progress_download_job_id": {"key": "properties.inProgressDownloadJobId", "type": "str"},
+        "in_progress_install_job_id": {"key": "properties.inProgressInstallJobId", "type": "str"},
+        "in_progress_download_job_started_date_time": {
+            "key": "properties.inProgressDownloadJobStartedDateTime",
+            "type": "iso-8601",
+        },
+        "in_progress_install_job_started_date_time": {
+            "key": "properties.inProgressInstallJobStartedDateTime",
+            "type": "iso-8601",
+        },
+        "update_titles": {"key": "properties.updateTitles", "type": "[str]"},
+        "total_update_size_in_bytes": {"key": "properties.totalUpdateSizeInBytes", "type": "float"},
     }
 
     def __init__(self, **kwargs):
         super(UpdateSummary, self).__init__(**kwargs)
-        self.device_version_number = kwargs.get('device_version_number', None)
-        self.friendly_device_version_name = kwargs.get('friendly_device_version_name', None)
-        self.device_last_scanned_date_time = kwargs.get('device_last_scanned_date_time', None)
-        self.last_completed_scan_job_date_time = kwargs.get('last_completed_scan_job_date_time', None)
+        self.device_version_number = kwargs.get("device_version_number", None)
+        self.friendly_device_version_name = kwargs.get("friendly_device_version_name", None)
+        self.device_last_scanned_date_time = kwargs.get("device_last_scanned_date_time", None)
+        self.last_completed_scan_job_date_time = kwargs.get("last_completed_scan_job_date_time", None)
         self.last_completed_download_job_date_time = None
         self.last_completed_install_job_date_time = None
         self.total_number_of_updates_available = None

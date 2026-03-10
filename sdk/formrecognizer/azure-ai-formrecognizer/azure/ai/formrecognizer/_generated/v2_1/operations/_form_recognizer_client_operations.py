@@ -10,7 +10,13 @@ from typing import Any, Callable, Dict, IO, Iterable, List, Optional, TypeVar, U
 
 from msrest import Serializer
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
@@ -22,101 +28,76 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._vendor import MixinABC, _convert_request, _format_url_section
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
+
 def build_train_custom_model_async_request_initial(
-    *,
-    json: Optional[_models.TrainRequest] = None,
-    content: Any = None,
-    **kwargs: Any
+    *, json: Optional[_models.TrainRequest] = None, content: Any = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/json")
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/custom/models")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        headers=_headers,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, headers=_headers, json=json, content=content, **kwargs)
 
 
 def build_get_custom_model_request(
-    model_id: str,
-    *,
-    include_keys: Optional[bool] = False,
-    **kwargs: Any
+    model_id: str, *, include_keys: Optional[bool] = False, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = _headers.pop('Accept', "application/json")
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/custom/models/{modelId}")
     path_format_arguments = {
-        "modelId": _SERIALIZER.url("model_id", model_id, 'str'),
+        "modelId": _SERIALIZER.url("model_id", model_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if include_keys is not None:
-        _params['includeKeys'] = _SERIALIZER.query("include_keys", include_keys, 'bool')
+        _params["includeKeys"] = _SERIALIZER.query("include_keys", include_keys, "bool")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_delete_custom_model_request(
-    model_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_delete_custom_model_request(model_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    accept = _headers.pop('Accept', "application/json")
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/custom/models/{modelId}")
     path_format_arguments = {
-        "modelId": _SERIALIZER.url("model_id", model_id, 'str'),
+        "modelId": _SERIALIZER.url("model_id", model_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="DELETE",
-        url=_url,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="DELETE", url=_url, headers=_headers, **kwargs)
 
 
 def build_analyze_with_custom_model_request_initial(
@@ -131,180 +112,128 @@ def build_analyze_with_custom_model_request_initial(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[Union[str, "_models.ContentType"]]
-    accept = _headers.pop('Accept', "application/json")
+    content_type = kwargs.pop(
+        "content_type", _headers.pop("Content-Type", None)
+    )  # type: Optional[Union[str, "_models.ContentType"]]
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/custom/models/{modelId}/analyze")
     path_format_arguments = {
-        "modelId": _SERIALIZER.url("model_id", model_id, 'str'),
+        "modelId": _SERIALIZER.url("model_id", model_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if include_text_details is not None:
-        _params['includeTextDetails'] = _SERIALIZER.query("include_text_details", include_text_details, 'bool')
+        _params["includeTextDetails"] = _SERIALIZER.query("include_text_details", include_text_details, "bool")
     if pages is not None:
-        _params['pages'] = _SERIALIZER.query("pages", pages, '[str]', div=',')
+        _params["pages"] = _SERIALIZER.query("pages", pages, "[str]", div=",")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, content=content, **kwargs)
 
 
-def build_get_analyze_form_result_request(
-    model_id: str,
-    result_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_get_analyze_form_result_request(model_id: str, result_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    accept = _headers.pop('Accept', "application/json")
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/custom/models/{modelId}/analyzeResults/{resultId}")
     path_format_arguments = {
-        "modelId": _SERIALIZER.url("model_id", model_id, 'str'),
-        "resultId": _SERIALIZER.url("result_id", result_id, 'str'),
+        "modelId": _SERIALIZER.url("model_id", model_id, "str"),
+        "resultId": _SERIALIZER.url("result_id", result_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
 def build_copy_custom_model_request_initial(
-    model_id: str,
-    *,
-    json: Optional[_models.CopyRequest] = None,
-    content: Any = None,
-    **kwargs: Any
+    model_id: str, *, json: Optional[_models.CopyRequest] = None, content: Any = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/json")
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/custom/models/{modelId}/copy")
     path_format_arguments = {
-        "modelId": _SERIALIZER.url("model_id", model_id, 'str'),
+        "modelId": _SERIALIZER.url("model_id", model_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        headers=_headers,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, headers=_headers, json=json, content=content, **kwargs)
 
 
-def build_get_custom_model_copy_result_request(
-    model_id: str,
-    result_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_get_custom_model_copy_result_request(model_id: str, result_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    accept = _headers.pop('Accept', "application/json")
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/custom/models/{modelId}/copyResults/{resultId}")
     path_format_arguments = {
-        "modelId": _SERIALIZER.url("model_id", model_id, 'str'),
-        "resultId": _SERIALIZER.url("result_id", result_id, 'str'),
+        "modelId": _SERIALIZER.url("model_id", model_id, "str"),
+        "resultId": _SERIALIZER.url("result_id", result_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
-def build_generate_model_copy_authorization_request(
-    **kwargs: Any
-) -> HttpRequest:
+def build_generate_model_copy_authorization_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    accept = _headers.pop('Accept', "application/json")
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/custom/models/copyAuthorization")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
 
 
 def build_compose_custom_models_async_request_initial(
-    *,
-    json: Optional[_models.ComposeRequest] = None,
-    content: Any = None,
-    **kwargs: Any
+    *, json: Optional[_models.ComposeRequest] = None, content: Any = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/json, text/json")
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json, text/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/custom/models/compose")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        headers=_headers,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, headers=_headers, json=json, content=content, **kwargs)
 
 
 def build_analyze_business_card_async_request_initial(
@@ -319,61 +248,47 @@ def build_analyze_business_card_async_request_initial(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[Union[str, "_models.ContentType"]]
-    accept = _headers.pop('Accept', "application/json")
+    content_type = kwargs.pop(
+        "content_type", _headers.pop("Content-Type", None)
+    )  # type: Optional[Union[str, "_models.ContentType"]]
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/prebuilt/businessCard/analyze")
 
     # Construct parameters
     if include_text_details is not None:
-        _params['includeTextDetails'] = _SERIALIZER.query("include_text_details", include_text_details, 'bool')
+        _params["includeTextDetails"] = _SERIALIZER.query("include_text_details", include_text_details, "bool")
     if locale is not None:
-        _params['locale'] = _SERIALIZER.query("locale", locale, 'str')
+        _params["locale"] = _SERIALIZER.query("locale", locale, "str")
     if pages is not None:
-        _params['pages'] = _SERIALIZER.query("pages", pages, '[str]', div=',')
+        _params["pages"] = _SERIALIZER.query("pages", pages, "[str]", div=",")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, content=content, **kwargs)
 
 
-def build_get_analyze_business_card_result_request(
-    result_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_get_analyze_business_card_result_request(result_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    accept = _headers.pop('Accept', "application/json")
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/prebuilt/businessCard/analyzeResults/{resultId}")
     path_format_arguments = {
-        "resultId": _SERIALIZER.url("result_id", result_id, 'str'),
+        "resultId": _SERIALIZER.url("result_id", result_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
 def build_analyze_invoice_async_request_initial(
@@ -388,61 +303,47 @@ def build_analyze_invoice_async_request_initial(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[Union[str, "_models.ContentType"]]
-    accept = _headers.pop('Accept', "application/json")
+    content_type = kwargs.pop(
+        "content_type", _headers.pop("Content-Type", None)
+    )  # type: Optional[Union[str, "_models.ContentType"]]
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/prebuilt/invoice/analyze")
 
     # Construct parameters
     if include_text_details is not None:
-        _params['includeTextDetails'] = _SERIALIZER.query("include_text_details", include_text_details, 'bool')
+        _params["includeTextDetails"] = _SERIALIZER.query("include_text_details", include_text_details, "bool")
     if locale is not None:
-        _params['locale'] = _SERIALIZER.query("locale", locale, 'str')
+        _params["locale"] = _SERIALIZER.query("locale", locale, "str")
     if pages is not None:
-        _params['pages'] = _SERIALIZER.query("pages", pages, '[str]', div=',')
+        _params["pages"] = _SERIALIZER.query("pages", pages, "[str]", div=",")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, content=content, **kwargs)
 
 
-def build_get_analyze_invoice_result_request(
-    result_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_get_analyze_invoice_result_request(result_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    accept = _headers.pop('Accept', "application/json")
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/prebuilt/invoice/analyzeResults/{resultId}")
     path_format_arguments = {
-        "resultId": _SERIALIZER.url("result_id", result_id, 'str'),
+        "resultId": _SERIALIZER.url("result_id", result_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
 def build_analyze_id_document_async_request_initial(
@@ -456,59 +357,45 @@ def build_analyze_id_document_async_request_initial(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[Union[str, "_models.ContentType"]]
-    accept = _headers.pop('Accept', "application/json")
+    content_type = kwargs.pop(
+        "content_type", _headers.pop("Content-Type", None)
+    )  # type: Optional[Union[str, "_models.ContentType"]]
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/prebuilt/idDocument/analyze")
 
     # Construct parameters
     if include_text_details is not None:
-        _params['includeTextDetails'] = _SERIALIZER.query("include_text_details", include_text_details, 'bool')
+        _params["includeTextDetails"] = _SERIALIZER.query("include_text_details", include_text_details, "bool")
     if pages is not None:
-        _params['pages'] = _SERIALIZER.query("pages", pages, '[str]', div=',')
+        _params["pages"] = _SERIALIZER.query("pages", pages, "[str]", div=",")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, content=content, **kwargs)
 
 
-def build_get_analyze_id_document_result_request(
-    result_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_get_analyze_id_document_result_request(result_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    accept = _headers.pop('Accept', "application/json")
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/prebuilt/idDocument/analyzeResults/{resultId}")
     path_format_arguments = {
-        "resultId": _SERIALIZER.url("result_id", result_id, 'str'),
+        "resultId": _SERIALIZER.url("result_id", result_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
 def build_analyze_receipt_async_request_initial(
@@ -523,61 +410,47 @@ def build_analyze_receipt_async_request_initial(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[Union[str, "_models.ContentType"]]
-    accept = _headers.pop('Accept', "application/json")
+    content_type = kwargs.pop(
+        "content_type", _headers.pop("Content-Type", None)
+    )  # type: Optional[Union[str, "_models.ContentType"]]
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/prebuilt/receipt/analyze")
 
     # Construct parameters
     if include_text_details is not None:
-        _params['includeTextDetails'] = _SERIALIZER.query("include_text_details", include_text_details, 'bool')
+        _params["includeTextDetails"] = _SERIALIZER.query("include_text_details", include_text_details, "bool")
     if locale is not None:
-        _params['locale'] = _SERIALIZER.query("locale", locale, 'str')
+        _params["locale"] = _SERIALIZER.query("locale", locale, "str")
     if pages is not None:
-        _params['pages'] = _SERIALIZER.query("pages", pages, '[str]', div=',')
+        _params["pages"] = _SERIALIZER.query("pages", pages, "[str]", div=",")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, content=content, **kwargs)
 
 
-def build_get_analyze_receipt_result_request(
-    result_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_get_analyze_receipt_result_request(result_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    accept = _headers.pop('Accept', "application/json")
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/prebuilt/receipt/analyzeResults/{resultId}")
     path_format_arguments = {
-        "resultId": _SERIALIZER.url("result_id", result_id, 'str'),
+        "resultId": _SERIALIZER.url("result_id", result_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
 def build_analyze_layout_async_request_initial(
@@ -592,153 +465,120 @@ def build_analyze_layout_async_request_initial(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[Union[str, "_models.ContentType"]]
-    accept = _headers.pop('Accept', "application/json")
+    content_type = kwargs.pop(
+        "content_type", _headers.pop("Content-Type", None)
+    )  # type: Optional[Union[str, "_models.ContentType"]]
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/layout/analyze")
 
     # Construct parameters
     if pages is not None:
-        _params['pages'] = _SERIALIZER.query("pages", pages, '[str]', div=',')
+        _params["pages"] = _SERIALIZER.query("pages", pages, "[str]", div=",")
     if language is not None:
-        _params['language'] = _SERIALIZER.query("language", language, 'str')
+        _params["language"] = _SERIALIZER.query("language", language, "str")
     if reading_order is not None:
-        _params['readingOrder'] = _SERIALIZER.query("reading_order", reading_order, 'str')
+        _params["readingOrder"] = _SERIALIZER.query("reading_order", reading_order, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, content=content, **kwargs)
 
 
-def build_get_analyze_layout_result_request(
-    result_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_get_analyze_layout_result_request(result_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    accept = _headers.pop('Accept', "application/json")
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/layout/analyzeResults/{resultId}")
     path_format_arguments = {
-        "resultId": _SERIALIZER.url("result_id", result_id, 'str'),
+        "resultId": _SERIALIZER.url("result_id", result_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
-def build_list_custom_models_request(
-    **kwargs: Any
-) -> HttpRequest:
+def build_list_custom_models_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    op = kwargs.pop('op', _params.pop('op', "full"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    op = kwargs.pop("op", _params.pop("op", "full"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/custom/models")
 
     # Construct parameters
-    _params['op'] = _SERIALIZER.query("op", op, 'str')
+    _params["op"] = _SERIALIZER.query("op", op, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_custom_models_request(
-    **kwargs: Any
-) -> HttpRequest:
+def build_get_custom_models_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    op = kwargs.pop('op', _params.pop('op', "summary"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    op = kwargs.pop("op", _params.pop("op", "summary"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/custom/models")
 
     # Construct parameters
-    _params['op'] = _SERIALIZER.query("op", op, 'str')
+    _params["op"] = _SERIALIZER.query("op", op, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
 
 class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many-public-methods
 
     def _train_custom_model_async_initial(  # pylint: disable=inconsistent-return-statements
-        self,
-        train_request: _models.TrainRequest,
-        **kwargs: Any
+        self, train_request: _models.TrainRequest, **kwargs: Any
     ) -> None:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        _json = self._serialize.body(train_request, 'TrainRequest')
+        _json = self._serialize.body(train_request, "TrainRequest")
 
         request = build_train_custom_model_async_request_initial(
             content_type=content_type,
             json=_json,
-            template_url=self._train_custom_model_async_initial.metadata['url'],
+            template_url=self._train_custom_model_async_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -747,20 +587,16 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
-
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    _train_custom_model_async_initial.metadata = {'url': "/custom/models"}  # type: ignore
-
+    _train_custom_model_async_initial.metadata = {"url": "/custom/models"}  # type: ignore
 
     @distributed_trace
     def begin_train_custom_model_async(  # pylint: disable=inconsistent-return-statements
-        self,
-        train_request: _models.TrainRequest,
-        **kwargs: Any
+        self, train_request: _models.TrainRequest, **kwargs: Any
     ) -> LROPoller[None]:
         """Train Custom Model.
 
@@ -791,61 +627,53 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._train_custom_model_async_initial(  # type: ignore
                 train_request=train_request,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             if cls:
                 return cls(pipeline_response, None, {})
 
-
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, LROBasePolling(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_train_custom_model_async.metadata = {'url': "/custom/models"}  # type: ignore
+    begin_train_custom_model_async.metadata = {"url": "/custom/models"}  # type: ignore
 
     @distributed_trace
-    def get_custom_model(
-        self,
-        model_id: str,
-        include_keys: Optional[bool] = False,
-        **kwargs: Any
-    ) -> _models.Model:
+    def get_custom_model(self, model_id: str, include_keys: Optional[bool] = False, **kwargs: Any) -> _models.Model:
         """Get Custom Model.
 
         Get detailed information about a custom model.
@@ -860,34 +688,29 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.ai.formrecognizer.v2_1.models.Model
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.Model]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Model]
 
-        
         request = build_get_custom_model_request(
             model_id=model_id,
             include_keys=include_keys,
-            template_url=self.get_custom_model.metadata['url'],
+            template_url=self.get_custom_model.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -896,21 +719,18 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('Model', pipeline_response)
+        deserialized = self._deserialize("Model", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_custom_model.metadata = {'url': "/custom/models/{modelId}"}  # type: ignore
-
+    get_custom_model.metadata = {"url": "/custom/models/{modelId}"}  # type: ignore
 
     @distributed_trace
     def delete_custom_model(  # pylint: disable=inconsistent-return-statements
-        self,
-        model_id: str,
-        **kwargs: Any
+        self, model_id: str, **kwargs: Any
     ) -> None:
         """Delete Custom Model.
 
@@ -924,33 +744,28 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        
         request = build_delete_custom_model_request(
             model_id=model_id,
-            template_url=self.delete_custom_model.metadata['url'],
+            template_url=self.delete_custom_model.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -962,8 +777,7 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete_custom_model.metadata = {'url': "/custom/models/{modelId}"}  # type: ignore
-
+    delete_custom_model.metadata = {"url": "/custom/models/{modelId}"}  # type: ignore
 
     def _analyze_with_custom_model_initial(  # pylint: disable=inconsistent-return-statements
         self,
@@ -975,28 +789,28 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         content_type: Optional[Union[str, "_models.ContentType"]] = "application/json",
         **kwargs: Any
     ) -> None:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = None
         _content = None
         content_type = content_type or ""
-        if content_type.split(";")[0] in ['application/json']:
+        if content_type.split(";")[0] in ["application/json"]:
             if file_stream is not None:
-                _json = self._serialize.body(file_stream, 'SourcePath')
-        elif content_type.split(";")[0] in ['application/pdf', 'image/bmp', 'image/jpeg', 'image/png', 'image/tiff']:
+                _json = self._serialize.body(file_stream, "SourcePath")
+        elif content_type.split(";")[0] in ["application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff"]:
             _content = file_stream
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
-                "['application/pdf', 'image/bmp', 'image/jpeg', 'image/png', 'image/tiff', 'application/json']".format(content_type)
+                "['application/pdf', 'image/bmp', 'image/jpeg', 'image/png', 'image/tiff', 'application/json']".format(
+                    content_type
+                )
             )
 
         request = build_analyze_with_custom_model_request_initial(
@@ -1006,20 +820,18 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             content=_content,
             include_text_details=include_text_details,
             pages=pages,
-            template_url=self._analyze_with_custom_model_initial.metadata['url'],
+            template_url=self._analyze_with_custom_model_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -1028,14 +840,12 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    _analyze_with_custom_model_initial.metadata = {'url': "/custom/models/{modelId}/analyze"}  # type: ignore
-
+    _analyze_with_custom_model_initial.metadata = {"url": "/custom/models/{modelId}/analyze"}  # type: ignore
 
     @distributed_trace
     def begin_analyze_with_custom_model(  # pylint: disable=inconsistent-return-statements
@@ -1086,13 +896,10 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._analyze_with_custom_model_initial(  # type: ignore
                 model_id=model_id,
@@ -1100,49 +907,42 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 pages=pages,
                 file_stream=file_stream,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             if cls:
                 return cls(pipeline_response, None, {})
 
-
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, LROBasePolling(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_analyze_with_custom_model.metadata = {'url': "/custom/models/{modelId}/analyze"}  # type: ignore
+    begin_analyze_with_custom_model.metadata = {"url": "/custom/models/{modelId}/analyze"}  # type: ignore
 
     @distributed_trace
-    def get_analyze_form_result(
-        self,
-        model_id: str,
-        result_id: str,
-        **kwargs: Any
-    ) -> _models.AnalyzeOperationResult:
+    def get_analyze_form_result(self, model_id: str, result_id: str, **kwargs: Any) -> _models.AnalyzeOperationResult:
         """Get Analyze Form Result.
 
         Obtain current status and the result of the analyze form operation.
@@ -1156,34 +956,29 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.ai.formrecognizer.v2_1.models.AnalyzeOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AnalyzeOperationResult]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AnalyzeOperationResult]
 
-        
         request = build_get_analyze_form_result_request(
             model_id=model_id,
             result_id=result_id,
-            template_url=self.get_analyze_form_result.metadata['url'],
+            template_url=self.get_analyze_form_result.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -1192,53 +987,47 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('AnalyzeOperationResult', pipeline_response)
+        deserialized = self._deserialize("AnalyzeOperationResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_analyze_form_result.metadata = {'url': "/custom/models/{modelId}/analyzeResults/{resultId}"}  # type: ignore
-
+    get_analyze_form_result.metadata = {"url": "/custom/models/{modelId}/analyzeResults/{resultId}"}  # type: ignore
 
     def _copy_custom_model_initial(  # pylint: disable=inconsistent-return-statements
-        self,
-        model_id: str,
-        copy_request: _models.CopyRequest,
-        **kwargs: Any
+        self, model_id: str, copy_request: _models.CopyRequest, **kwargs: Any
     ) -> None:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        _json = self._serialize.body(copy_request, 'CopyRequest')
+        _json = self._serialize.body(copy_request, "CopyRequest")
 
         request = build_copy_custom_model_request_initial(
             model_id=model_id,
             content_type=content_type,
             json=_json,
-            template_url=self._copy_custom_model_initial.metadata['url'],
+            template_url=self._copy_custom_model_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -1247,21 +1036,16 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    _copy_custom_model_initial.metadata = {'url': "/custom/models/{modelId}/copy"}  # type: ignore
-
+    _copy_custom_model_initial.metadata = {"url": "/custom/models/{modelId}/copy"}  # type: ignore
 
     @distributed_trace
     def begin_copy_custom_model(  # pylint: disable=inconsistent-return-statements
-        self,
-        model_id: str,
-        copy_request: _models.CopyRequest,
-        **kwargs: Any
+        self, model_id: str, copy_request: _models.CopyRequest, **kwargs: Any
     ) -> LROPoller[None]:
         """Copy Custom Model.
 
@@ -1287,62 +1071,54 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._copy_custom_model_initial(  # type: ignore
                 model_id=model_id,
                 copy_request=copy_request,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             if cls:
                 return cls(pipeline_response, None, {})
 
-
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, LROBasePolling(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_copy_custom_model.metadata = {'url': "/custom/models/{modelId}/copy"}  # type: ignore
+    begin_copy_custom_model.metadata = {"url": "/custom/models/{modelId}/copy"}  # type: ignore
 
     @distributed_trace
-    def get_custom_model_copy_result(
-        self,
-        model_id: str,
-        result_id: str,
-        **kwargs: Any
-    ) -> _models.CopyOperationResult:
+    def get_custom_model_copy_result(self, model_id: str, result_id: str, **kwargs: Any) -> _models.CopyOperationResult:
         """Get Custom Model Copy Result.
 
         Obtain current status and the result of a custom model copy operation.
@@ -1356,34 +1132,29 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.ai.formrecognizer.v2_1.models.CopyOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.CopyOperationResult]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CopyOperationResult]
 
-        
         request = build_get_custom_model_copy_result_request(
             model_id=model_id,
             result_id=result_id,
-            template_url=self.get_custom_model_copy_result.metadata['url'],
+            template_url=self.get_custom_model_copy_result.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -1392,21 +1163,17 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('CopyOperationResult', pipeline_response)
+        deserialized = self._deserialize("CopyOperationResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_custom_model_copy_result.metadata = {'url': "/custom/models/{modelId}/copyResults/{resultId}"}  # type: ignore
-
+    get_custom_model_copy_result.metadata = {"url": "/custom/models/{modelId}/copyResults/{resultId}"}  # type: ignore
 
     @distributed_trace
-    def generate_model_copy_authorization(
-        self,
-        **kwargs: Any
-    ) -> _models.CopyAuthorizationResult:
+    def generate_model_copy_authorization(self, **kwargs: Any) -> _models.CopyAuthorizationResult:
         """Generate Copy Authorization.
 
         Generate authorization to copy a model into the target Form Recognizer resource.
@@ -1416,32 +1183,27 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.ai.formrecognizer.v2_1.models.CopyAuthorizationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.CopyAuthorizationResult]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CopyAuthorizationResult]
 
-        
         request = build_generate_model_copy_authorization_request(
-            template_url=self.generate_model_copy_authorization.metadata['url'],
+            template_url=self.generate_model_copy_authorization.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -1451,53 +1213,48 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = self._deserialize('CopyAuthorizationResult', pipeline_response)
+        deserialized = self._deserialize("CopyAuthorizationResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    generate_model_copy_authorization.metadata = {'url': "/custom/models/copyAuthorization"}  # type: ignore
-
+    generate_model_copy_authorization.metadata = {"url": "/custom/models/copyAuthorization"}  # type: ignore
 
     def _compose_custom_models_async_initial(  # pylint: disable=inconsistent-return-statements
-        self,
-        compose_request: _models.ComposeRequest,
-        **kwargs: Any
+        self, compose_request: _models.ComposeRequest, **kwargs: Any
     ) -> None:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        _json = self._serialize.body(compose_request, 'ComposeRequest')
+        _json = self._serialize.body(compose_request, "ComposeRequest")
 
         request = build_compose_custom_models_async_request_initial(
             content_type=content_type,
             json=_json,
-            template_url=self._compose_custom_models_async_initial.metadata['url'],
+            template_url=self._compose_custom_models_async_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -1506,20 +1263,16 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
-
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    _compose_custom_models_async_initial.metadata = {'url': "/custom/models/compose"}  # type: ignore
-
+    _compose_custom_models_async_initial.metadata = {"url": "/custom/models/compose"}  # type: ignore
 
     @distributed_trace
     def begin_compose_custom_models_async(  # pylint: disable=inconsistent-return-statements
-        self,
-        compose_request: _models.ComposeRequest,
-        **kwargs: Any
+        self, compose_request: _models.ComposeRequest, **kwargs: Any
     ) -> LROPoller[None]:
         """Compose trained with labels models into one composed model.
 
@@ -1544,53 +1297,50 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._compose_custom_models_async_initial(  # type: ignore
                 compose_request=compose_request,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             if cls:
                 return cls(pipeline_response, None, {})
 
-
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, LROBasePolling(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_compose_custom_models_async.metadata = {'url': "/custom/models/compose"}  # type: ignore
+    begin_compose_custom_models_async.metadata = {"url": "/custom/models/compose"}  # type: ignore
 
     def _analyze_business_card_async_initial(  # pylint: disable=inconsistent-return-statements
         self,
@@ -1602,28 +1352,28 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         content_type: Optional[Union[str, "_models.ContentType"]] = "application/json",
         **kwargs: Any
     ) -> None:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = None
         _content = None
         content_type = content_type or ""
-        if content_type.split(";")[0] in ['application/json']:
+        if content_type.split(";")[0] in ["application/json"]:
             if file_stream is not None:
-                _json = self._serialize.body(file_stream, 'SourcePath')
-        elif content_type.split(";")[0] in ['application/pdf', 'image/bmp', 'image/jpeg', 'image/png', 'image/tiff']:
+                _json = self._serialize.body(file_stream, "SourcePath")
+        elif content_type.split(";")[0] in ["application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff"]:
             _content = file_stream
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
-                "['application/pdf', 'image/bmp', 'image/jpeg', 'image/png', 'image/tiff', 'application/json']".format(content_type)
+                "['application/pdf', 'image/bmp', 'image/jpeg', 'image/png', 'image/tiff', 'application/json']".format(
+                    content_type
+                )
             )
 
         request = build_analyze_business_card_async_request_initial(
@@ -1633,20 +1383,18 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             include_text_details=include_text_details,
             locale=locale,
             pages=pages,
-            template_url=self._analyze_business_card_async_initial.metadata['url'],
+            template_url=self._analyze_business_card_async_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -1655,14 +1403,12 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    _analyze_business_card_async_initial.metadata = {'url': "/prebuilt/businessCard/analyze"}  # type: ignore
-
+    _analyze_business_card_async_initial.metadata = {"url": "/prebuilt/businessCard/analyze"}  # type: ignore
 
     @distributed_trace
     def begin_analyze_business_card_async(  # pylint: disable=inconsistent-return-statements
@@ -1714,13 +1460,10 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._analyze_business_card_async_initial(  # type: ignore
                 include_text_details=include_text_details,
@@ -1728,48 +1471,42 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 pages=pages,
                 file_stream=file_stream,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             if cls:
                 return cls(pipeline_response, None, {})
 
-
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, LROBasePolling(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_analyze_business_card_async.metadata = {'url': "/prebuilt/businessCard/analyze"}  # type: ignore
+    begin_analyze_business_card_async.metadata = {"url": "/prebuilt/businessCard/analyze"}  # type: ignore
 
     @distributed_trace
-    def get_analyze_business_card_result(
-        self,
-        result_id: str,
-        **kwargs: Any
-    ) -> _models.AnalyzeOperationResult:
+    def get_analyze_business_card_result(self, result_id: str, **kwargs: Any) -> _models.AnalyzeOperationResult:
         """Get Analyze Business Card Result.
 
         Track the progress and obtain the result of the analyze business card operation.
@@ -1781,33 +1518,28 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.ai.formrecognizer.v2_1.models.AnalyzeOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AnalyzeOperationResult]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AnalyzeOperationResult]
 
-        
         request = build_get_analyze_business_card_result_request(
             result_id=result_id,
-            template_url=self.get_analyze_business_card_result.metadata['url'],
+            template_url=self.get_analyze_business_card_result.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -1816,15 +1548,14 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('AnalyzeOperationResult', pipeline_response)
+        deserialized = self._deserialize("AnalyzeOperationResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_analyze_business_card_result.metadata = {'url': "/prebuilt/businessCard/analyzeResults/{resultId}"}  # type: ignore
-
+    get_analyze_business_card_result.metadata = {"url": "/prebuilt/businessCard/analyzeResults/{resultId}"}  # type: ignore
 
     def _analyze_invoice_async_initial(  # pylint: disable=inconsistent-return-statements
         self,
@@ -1836,28 +1567,28 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         content_type: Optional[Union[str, "_models.ContentType"]] = "application/json",
         **kwargs: Any
     ) -> None:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = None
         _content = None
         content_type = content_type or ""
-        if content_type.split(";")[0] in ['application/json']:
+        if content_type.split(";")[0] in ["application/json"]:
             if file_stream is not None:
-                _json = self._serialize.body(file_stream, 'SourcePath')
-        elif content_type.split(";")[0] in ['application/pdf', 'image/bmp', 'image/jpeg', 'image/png', 'image/tiff']:
+                _json = self._serialize.body(file_stream, "SourcePath")
+        elif content_type.split(";")[0] in ["application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff"]:
             _content = file_stream
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
-                "['application/pdf', 'image/bmp', 'image/jpeg', 'image/png', 'image/tiff', 'application/json']".format(content_type)
+                "['application/pdf', 'image/bmp', 'image/jpeg', 'image/png', 'image/tiff', 'application/json']".format(
+                    content_type
+                )
             )
 
         request = build_analyze_invoice_async_request_initial(
@@ -1867,20 +1598,18 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             include_text_details=include_text_details,
             locale=locale,
             pages=pages,
-            template_url=self._analyze_invoice_async_initial.metadata['url'],
+            template_url=self._analyze_invoice_async_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -1889,14 +1618,12 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    _analyze_invoice_async_initial.metadata = {'url': "/prebuilt/invoice/analyze"}  # type: ignore
-
+    _analyze_invoice_async_initial.metadata = {"url": "/prebuilt/invoice/analyze"}  # type: ignore
 
     @distributed_trace
     def begin_analyze_invoice_async(  # pylint: disable=inconsistent-return-statements
@@ -1948,13 +1675,10 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._analyze_invoice_async_initial(  # type: ignore
                 include_text_details=include_text_details,
@@ -1962,48 +1686,42 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 pages=pages,
                 file_stream=file_stream,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             if cls:
                 return cls(pipeline_response, None, {})
 
-
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, LROBasePolling(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_analyze_invoice_async.metadata = {'url': "/prebuilt/invoice/analyze"}  # type: ignore
+    begin_analyze_invoice_async.metadata = {"url": "/prebuilt/invoice/analyze"}  # type: ignore
 
     @distributed_trace
-    def get_analyze_invoice_result(
-        self,
-        result_id: str,
-        **kwargs: Any
-    ) -> _models.AnalyzeOperationResult:
+    def get_analyze_invoice_result(self, result_id: str, **kwargs: Any) -> _models.AnalyzeOperationResult:
         """Get Analyze Invoice Result.
 
         Track the progress and obtain the result of the analyze invoice operation.
@@ -2015,33 +1733,28 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.ai.formrecognizer.v2_1.models.AnalyzeOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AnalyzeOperationResult]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AnalyzeOperationResult]
 
-        
         request = build_get_analyze_invoice_result_request(
             result_id=result_id,
-            template_url=self.get_analyze_invoice_result.metadata['url'],
+            template_url=self.get_analyze_invoice_result.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -2050,15 +1763,14 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('AnalyzeOperationResult', pipeline_response)
+        deserialized = self._deserialize("AnalyzeOperationResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_analyze_invoice_result.metadata = {'url': "/prebuilt/invoice/analyzeResults/{resultId}"}  # type: ignore
-
+    get_analyze_invoice_result.metadata = {"url": "/prebuilt/invoice/analyzeResults/{resultId}"}  # type: ignore
 
     def _analyze_id_document_async_initial(  # pylint: disable=inconsistent-return-statements
         self,
@@ -2069,28 +1781,28 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         content_type: Optional[Union[str, "_models.ContentType"]] = "application/json",
         **kwargs: Any
     ) -> None:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = None
         _content = None
         content_type = content_type or ""
-        if content_type.split(";")[0] in ['application/json']:
+        if content_type.split(";")[0] in ["application/json"]:
             if file_stream is not None:
-                _json = self._serialize.body(file_stream, 'SourcePath')
-        elif content_type.split(";")[0] in ['application/pdf', 'image/bmp', 'image/jpeg', 'image/png', 'image/tiff']:
+                _json = self._serialize.body(file_stream, "SourcePath")
+        elif content_type.split(";")[0] in ["application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff"]:
             _content = file_stream
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
-                "['application/pdf', 'image/bmp', 'image/jpeg', 'image/png', 'image/tiff', 'application/json']".format(content_type)
+                "['application/pdf', 'image/bmp', 'image/jpeg', 'image/png', 'image/tiff', 'application/json']".format(
+                    content_type
+                )
             )
 
         request = build_analyze_id_document_async_request_initial(
@@ -2099,20 +1811,18 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             content=_content,
             include_text_details=include_text_details,
             pages=pages,
-            template_url=self._analyze_id_document_async_initial.metadata['url'],
+            template_url=self._analyze_id_document_async_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -2121,14 +1831,12 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    _analyze_id_document_async_initial.metadata = {'url': "/prebuilt/idDocument/analyze"}  # type: ignore
-
+    _analyze_id_document_async_initial.metadata = {"url": "/prebuilt/idDocument/analyze"}  # type: ignore
 
     @distributed_trace
     def begin_analyze_id_document_async(  # pylint: disable=inconsistent-return-statements
@@ -2176,61 +1884,52 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._analyze_id_document_async_initial(  # type: ignore
                 include_text_details=include_text_details,
                 pages=pages,
                 file_stream=file_stream,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             if cls:
                 return cls(pipeline_response, None, {})
 
-
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, LROBasePolling(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_analyze_id_document_async.metadata = {'url': "/prebuilt/idDocument/analyze"}  # type: ignore
+    begin_analyze_id_document_async.metadata = {"url": "/prebuilt/idDocument/analyze"}  # type: ignore
 
     @distributed_trace
-    def get_analyze_id_document_result(
-        self,
-        result_id: str,
-        **kwargs: Any
-    ) -> _models.AnalyzeOperationResult:
+    def get_analyze_id_document_result(self, result_id: str, **kwargs: Any) -> _models.AnalyzeOperationResult:
         """Get Analyze ID Document Result.
 
         Track the progress and obtain the result of the analyze ID operation.
@@ -2242,33 +1941,28 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.ai.formrecognizer.v2_1.models.AnalyzeOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AnalyzeOperationResult]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AnalyzeOperationResult]
 
-        
         request = build_get_analyze_id_document_result_request(
             result_id=result_id,
-            template_url=self.get_analyze_id_document_result.metadata['url'],
+            template_url=self.get_analyze_id_document_result.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -2277,15 +1971,14 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('AnalyzeOperationResult', pipeline_response)
+        deserialized = self._deserialize("AnalyzeOperationResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_analyze_id_document_result.metadata = {'url': "/prebuilt/idDocument/analyzeResults/{resultId}"}  # type: ignore
-
+    get_analyze_id_document_result.metadata = {"url": "/prebuilt/idDocument/analyzeResults/{resultId}"}  # type: ignore
 
     def _analyze_receipt_async_initial(  # pylint: disable=inconsistent-return-statements
         self,
@@ -2297,28 +1990,28 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         content_type: Optional[Union[str, "_models.ContentType"]] = "application/json",
         **kwargs: Any
     ) -> None:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = None
         _content = None
         content_type = content_type or ""
-        if content_type.split(";")[0] in ['application/json']:
+        if content_type.split(";")[0] in ["application/json"]:
             if file_stream is not None:
-                _json = self._serialize.body(file_stream, 'SourcePath')
-        elif content_type.split(";")[0] in ['application/pdf', 'image/bmp', 'image/jpeg', 'image/png', 'image/tiff']:
+                _json = self._serialize.body(file_stream, "SourcePath")
+        elif content_type.split(";")[0] in ["application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff"]:
             _content = file_stream
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
-                "['application/pdf', 'image/bmp', 'image/jpeg', 'image/png', 'image/tiff', 'application/json']".format(content_type)
+                "['application/pdf', 'image/bmp', 'image/jpeg', 'image/png', 'image/tiff', 'application/json']".format(
+                    content_type
+                )
             )
 
         request = build_analyze_receipt_async_request_initial(
@@ -2328,20 +2021,18 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             include_text_details=include_text_details,
             locale=locale,
             pages=pages,
-            template_url=self._analyze_receipt_async_initial.metadata['url'],
+            template_url=self._analyze_receipt_async_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -2350,14 +2041,12 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    _analyze_receipt_async_initial.metadata = {'url': "/prebuilt/receipt/analyze"}  # type: ignore
-
+    _analyze_receipt_async_initial.metadata = {"url": "/prebuilt/receipt/analyze"}  # type: ignore
 
     @distributed_trace
     def begin_analyze_receipt_async(  # pylint: disable=inconsistent-return-statements
@@ -2409,13 +2098,10 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._analyze_receipt_async_initial(  # type: ignore
                 include_text_details=include_text_details,
@@ -2423,48 +2109,42 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 pages=pages,
                 file_stream=file_stream,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             if cls:
                 return cls(pipeline_response, None, {})
 
-
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, LROBasePolling(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_analyze_receipt_async.metadata = {'url': "/prebuilt/receipt/analyze"}  # type: ignore
+    begin_analyze_receipt_async.metadata = {"url": "/prebuilt/receipt/analyze"}  # type: ignore
 
     @distributed_trace
-    def get_analyze_receipt_result(
-        self,
-        result_id: str,
-        **kwargs: Any
-    ) -> _models.AnalyzeOperationResult:
+    def get_analyze_receipt_result(self, result_id: str, **kwargs: Any) -> _models.AnalyzeOperationResult:
         """Get Analyze Receipt Result.
 
         Track the progress and obtain the result of the analyze receipt operation.
@@ -2476,33 +2156,28 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.ai.formrecognizer.v2_1.models.AnalyzeOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AnalyzeOperationResult]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AnalyzeOperationResult]
 
-        
         request = build_get_analyze_receipt_result_request(
             result_id=result_id,
-            template_url=self.get_analyze_receipt_result.metadata['url'],
+            template_url=self.get_analyze_receipt_result.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -2511,15 +2186,14 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('AnalyzeOperationResult', pipeline_response)
+        deserialized = self._deserialize("AnalyzeOperationResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_analyze_receipt_result.metadata = {'url': "/prebuilt/receipt/analyzeResults/{resultId}"}  # type: ignore
-
+    get_analyze_receipt_result.metadata = {"url": "/prebuilt/receipt/analyzeResults/{resultId}"}  # type: ignore
 
     def _analyze_layout_async_initial(  # pylint: disable=inconsistent-return-statements
         self,
@@ -2531,28 +2205,28 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         content_type: Optional[Union[str, "_models.ContentType"]] = "application/json",
         **kwargs: Any
     ) -> None:
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = None
         _content = None
         content_type = content_type or ""
-        if content_type.split(";")[0] in ['application/json']:
+        if content_type.split(";")[0] in ["application/json"]:
             if file_stream is not None:
-                _json = self._serialize.body(file_stream, 'SourcePath')
-        elif content_type.split(";")[0] in ['application/pdf', 'image/bmp', 'image/jpeg', 'image/png', 'image/tiff']:
+                _json = self._serialize.body(file_stream, "SourcePath")
+        elif content_type.split(";")[0] in ["application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff"]:
             _content = file_stream
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
-                "['application/pdf', 'image/bmp', 'image/jpeg', 'image/png', 'image/tiff', 'application/json']".format(content_type)
+                "['application/pdf', 'image/bmp', 'image/jpeg', 'image/png', 'image/tiff', 'application/json']".format(
+                    content_type
+                )
             )
 
         request = build_analyze_layout_async_request_initial(
@@ -2562,20 +2236,18 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             pages=pages,
             language=language,
             reading_order=reading_order,
-            template_url=self._analyze_layout_async_initial.metadata['url'],
+            template_url=self._analyze_layout_async_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -2584,14 +2256,12 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    _analyze_layout_async_initial.metadata = {'url': "/layout/analyze"}  # type: ignore
-
+    _analyze_layout_async_initial.metadata = {"url": "/layout/analyze"}  # type: ignore
 
     @distributed_trace
     def begin_analyze_layout_async(  # pylint: disable=inconsistent-return-statements
@@ -2659,13 +2329,10 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._analyze_layout_async_initial(  # type: ignore
                 pages=pages,
@@ -2673,48 +2340,42 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 reading_order=reading_order,
                 file_stream=file_stream,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             if cls:
                 return cls(pipeline_response, None, {})
 
-
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, LROBasePolling(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_analyze_layout_async.metadata = {'url': "/layout/analyze"}  # type: ignore
+    begin_analyze_layout_async.metadata = {"url": "/layout/analyze"}  # type: ignore
 
     @distributed_trace
-    def get_analyze_layout_result(
-        self,
-        result_id: str,
-        **kwargs: Any
-    ) -> _models.AnalyzeOperationResult:
+    def get_analyze_layout_result(self, result_id: str, **kwargs: Any) -> _models.AnalyzeOperationResult:
         """Get Analyze Layout Result.
 
         Track the progress and obtain the result of the analyze layout operation.
@@ -2726,33 +2387,28 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.ai.formrecognizer.v2_1.models.AnalyzeOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AnalyzeOperationResult]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AnalyzeOperationResult]
 
-        
         request = build_get_analyze_layout_result_request(
             result_id=result_id,
-            template_url=self.get_analyze_layout_result.metadata['url'],
+            template_url=self.get_analyze_layout_result.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -2761,21 +2417,17 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('AnalyzeOperationResult', pipeline_response)
+        deserialized = self._deserialize("AnalyzeOperationResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_analyze_layout_result.metadata = {'url': "/layout/analyzeResults/{resultId}"}  # type: ignore
-
+    get_analyze_layout_result.metadata = {"url": "/layout/analyzeResults/{resultId}"}  # type: ignore
 
     @distributed_trace
-    def list_custom_models(
-        self,
-        **kwargs: Any
-    ) -> Iterable[_models.Models]:
+    def list_custom_models(self, **kwargs: Any) -> Iterable[_models.Models]:
         """List Custom Models.
 
         Get information about all custom models.
@@ -2791,30 +2443,31 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        op = kwargs.pop('op', _params.pop('op', "full"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.Models]
+        op = kwargs.pop("op", _params.pop("op", "full"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Models]
 
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_custom_models_request(
                     op=op,
-                    template_url=self.list_custom_models.metadata['url'],
+                    template_url=self.list_custom_models.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                
+
                 request = build_list_custom_models_request(
                     op=op,
                     template_url=next_link,
@@ -2823,12 +2476,16 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.method = "GET"
             return request
@@ -2844,9 +2501,7 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             request = prepare_request(next_link)
 
             pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2857,17 +2512,12 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list_custom_models.metadata = {'url': "/custom/models"}  # type: ignore
+    list_custom_models.metadata = {"url": "/custom/models"}  # type: ignore
 
     @distributed_trace
-    def get_custom_models(
-        self,
-        **kwargs: Any
-    ) -> _models.Models:
+    def get_custom_models(self, **kwargs: Any) -> _models.Models:
         """Get Custom Models.
 
         Get information about all custom models.
@@ -2880,34 +2530,29 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         :rtype: ~azure.ai.formrecognizer.v2_1.models.Models
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        op = kwargs.pop('op', _params.pop('op', "summary"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.Models]
+        op = kwargs.pop("op", _params.pop("op", "summary"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Models]
 
-        
         request = build_get_custom_models_request(
             op=op,
-            template_url=self.get_custom_models.metadata['url'],
+            template_url=self.get_custom_models.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -2916,12 +2561,11 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('Models', pipeline_response)
+        deserialized = self._deserialize("Models", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_custom_models.metadata = {'url': "/custom/models"}  # type: ignore
-
+    get_custom_models.metadata = {"url": "/custom/models"}  # type: ignore

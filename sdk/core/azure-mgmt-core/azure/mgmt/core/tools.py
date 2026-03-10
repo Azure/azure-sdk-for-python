@@ -28,7 +28,6 @@ import re
 import logging
 from azure.core import AzureClouds
 
-
 _LOGGER = logging.getLogger(__name__)
 _ARMID_RE = re.compile(
     "(?i)/subscriptions/(?P<subscription>[^/]+)(/resourceGroups/(?P<resource_group>[^/]+))?"
@@ -95,7 +94,7 @@ def parse_resource_id(rid: str) -> Mapping[str, Union[str, int]]:
 
 
 def _populate_alternate_kwargs(
-    kwargs: MutableMapping[str, Union[None, str, int]]
+    kwargs: MutableMapping[str, Union[None, str, int]],
 ) -> Mapping[str, Union[None, str, int]]:
     """Translates the parsed arguments into a format used by generic ARM commands
     such as the resource and lock commands.

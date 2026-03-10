@@ -22,12 +22,13 @@
 """Internal class for session read/write unavailable retry policy implementation
 in the Azure Cosmos database service.
 """
+
 # cspell:disable
 from azure.cosmos.documents import _OperationType
 
+
 class _SessionRetryPolicy(object):
-    """The session retry policy used to handle read/write session unavailability.
-    """
+    """The session retry policy used to handle read/write session unavailability."""
 
     Max_retry_attempt_count = 1
     Retry_after_in_milliseconds = 0
@@ -49,8 +50,9 @@ class _SessionRetryPolicy(object):
 
             # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
             # This enables marking the endpoint unavailability on endpoint failover/unreachability
-            self.location_endpoint = (self.global_endpoint_manager
-                                      .resolve_service_endpoint_for_partition(self.request, self.pk_range_wrapper))
+            self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint_for_partition(
+                self.request, self.pk_range_wrapper
+            )
             self.request.route_to_location(self.location_endpoint)
 
     def ShouldRetry(self, _exception):
@@ -87,8 +89,9 @@ class _SessionRetryPolicy(object):
 
             # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
             # This enables marking the endpoint unavailability on endpoint failover/unreachability
-            self.location_endpoint = (self.global_endpoint_manager
-                                      .resolve_service_endpoint_for_partition(self.request, self.pk_range_wrapper))
+            self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint_for_partition(
+                self.request, self.pk_range_wrapper
+            )
             self.request.route_to_location(self.location_endpoint)
             return True
 
@@ -106,20 +109,22 @@ class _SessionRetryPolicy(object):
             pk_failover_info = self.global_endpoint_manager.partition_range_to_failover_info.get(self.pk_range_wrapper)
             if pk_failover_info is not None:
                 location = self.global_endpoint_manager.location_cache.get_location_from_endpoint(
-                    str(self.request.location_endpoint_to_route))
+                    str(self.request.location_endpoint_to_route)
+                )
                 if location in pk_failover_info.unavailable_regional_endpoints:
                     # If the request endpoint is unavailable, we need to resolve the endpoint for the request using the
                     # partition-level failover info
                     if pk_failover_info.current_region is not None:
-                        location_endpoint = (self.global_endpoint_manager.location_cache.
-                                             account_read_regional_routing_contexts_by_location.
-                                             get(pk_failover_info.current_region).primary_endpoint)
+                        location_endpoint = self.global_endpoint_manager.location_cache.account_read_regional_routing_contexts_by_location.get(
+                            pk_failover_info.current_region
+                        ).primary_endpoint
                         self.request.route_to_location(location_endpoint)
                         return True
 
         # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
         # This enables marking the endpoint unavailability on endpoint failover/unreachability
-        self.location_endpoint = (self.global_endpoint_manager
-                                  .resolve_service_endpoint_for_partition(self.request, self.pk_range_wrapper))
+        self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint_for_partition(
+            self.request, self.pk_range_wrapper
+        )
         self.request.route_to_location(self.location_endpoint)
         return True

@@ -76,7 +76,6 @@ from ._models import (
 )
 from ._api_versions import FormRecognizerApiVersion, DocumentAnalysisApiVersion
 
-
 __all__ = [
     "FormRecognizerApiVersion",
     "DocumentAnalysisClient",

@@ -5,6 +5,7 @@ An example to show an application using Opentelemetry tracing api and sdk with a
 Credential. Credentials are used for Azure Active Directory Authentication. Custom dependencies are
 tracked via spans and telemetry is exported to application insights with the AzureMonitorTraceExporter.
 """
+
 # mypy: disable-error-code="attr-defined"
 import os
 
@@ -16,7 +17,6 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from azure.identity import ManagedIdentityCredential
 
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
-
 
 credential = ManagedIdentityCredential(client_id="<client_id>")
 exporter = AzureMonitorTraceExporter.from_connection_string(

@@ -18,8 +18,8 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Create, read, update and delete items in the Azure Cosmos DB SQL API service.
-"""
+"""Create, read, update and delete items in the Azure Cosmos DB SQL API service."""
+
 import threading
 import warnings
 from concurrent.futures.thread import ThreadPoolExecutor
@@ -34,8 +34,14 @@ from azure.cosmos._change_feed.change_feed_utils import add_args_to_kwargs, vali
 
 from . import _utils as utils
 from ._availability_strategy_config import _validate_request_hedging_strategy
-from ._base import (_build_properties_cache, _deserialize_throughput, _replace_throughput, build_options,
-                    GenerateGuidId, validate_cache_staleness_value)
+from ._base import (
+    _build_properties_cache,
+    _deserialize_throughput,
+    _replace_throughput,
+    build_options,
+    GenerateGuidId,
+    validate_cache_staleness_value,
+)
 from ._change_feed.feed_range_internal import FeedRangeInternalEpk
 from ._constants import _Constants as Constants, TimeoutScope
 from ._cosmos_client_connection import CosmosClientConnection
@@ -44,9 +50,15 @@ from ._routing.routing_range import Range
 from ._session_token_helpers import get_latest_session_token
 from .exceptions import CosmosHttpResponseError
 from .offer import Offer, ThroughputProperties
-from .partition_key import (_build_partition_key_from_properties, PartitionKeyType,
-                            _return_undefined_or_empty_partition_key, _SequentialPartitionKeyType,
-                            NonePartitionKeyValue, NullPartitionKeyValue, PartitionKey)
+from .partition_key import (
+    _build_partition_key_from_properties,
+    PartitionKeyType,
+    _return_undefined_or_empty_partition_key,
+    _SequentialPartitionKeyType,
+    NonePartitionKeyValue,
+    NullPartitionKeyValue,
+    PartitionKey,
+)
 from .scripts import ScriptsProxy
 
 __all__ = ("ContainerProxy",)
@@ -56,11 +68,13 @@ __all__ = ("ContainerProxy",)
 # pylint: disable=docstring-keyword-should-match-keyword-only
 # cspell:ignore rerank reranker reranking
 
+
 def _get_epk_range_for_partition_key(
-        container_properties: dict[str, Any],
-        partition_key_value: PartitionKeyType) -> Range:
+    container_properties: dict[str, Any], partition_key_value: PartitionKeyType
+) -> Range:
     partition_key_obj: PartitionKey = _build_partition_key_from_properties(container_properties)
     return partition_key_obj._get_epk_range_for_partition_key(partition_key_value)
+
 
 class ContainerProxy:  # pylint: disable=too-many-public-methods
     """An interface to interact with a specific DB Container.
@@ -82,7 +96,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         client_connection: CosmosClientConnection,
         database_link: str,
         id: str,
-        properties: Optional[dict[str, Any]] = None
+        properties: Optional[dict[str, Any]] = None,
     ) -> None:
         self.id = id
         self.container_link = "{}/colls/{}".format(database_link, self.id)
@@ -91,9 +105,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self._is_system_key: Optional[bool] = None
         self._scripts: Optional[ScriptsProxy] = None
         if properties:
-            self.client_connection._set_container_properties_cache(self.container_link,
-                                                                   _build_properties_cache(properties,
-                                                                                           self.container_link))
+            self.client_connection._set_container_properties_cache(
+                self.container_link, _build_properties_cache(properties, self.container_link)
+            )
 
     def __repr__(self) -> str:
         return "<ContainerProxy [{}]>".format(self.container_link)[:1024]
@@ -102,11 +116,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         kwargs = {}
         if options:
             if "excludedLocations" in options:
-                kwargs['excluded_locations'] = options['excludedLocations']
+                kwargs["excluded_locations"] = options["excludedLocations"]
             if Constants.OperationStartTime in options:
                 kwargs[Constants.OperationStartTime] = options[Constants.OperationStartTime]
             if "timeout" in options:
-                kwargs['timeout'] = options['timeout']
+                kwargs["timeout"] = options["timeout"]
         return self._get_properties(**kwargs)
 
     def _get_properties(self, **kwargs: Any) -> dict[str, Any]:
@@ -141,10 +155,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             return "{}/conflicts/{}".format(self.container_link, conflict_or_link)
         return conflict_or_link["_self"]
 
-    def _set_partition_key(
-        self,
-        partition_key: PartitionKeyType
-    ) -> PartitionKeyType:
+    def _set_partition_key(self, partition_key: PartitionKeyType) -> PartitionKeyType:
         if partition_key == NonePartitionKeyValue:
             return _return_undefined_or_empty_partition_key(self.is_system_key)
         if partition_key == NullPartitionKeyValue:
@@ -183,18 +194,19 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: Dict representing the retrieved container.
         :rtype: dict[str, Any]
         """
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get("session_token")
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                DeprecationWarning)
+                DeprecationWarning,
+            )
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs["priority"] = priority
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs["initial_headers"] = initial_headers
         if response_hook is not None:
-            kwargs['response_hook'] = response_hook
+            kwargs["response_hook"] = response_hook
         request_options = build_options(kwargs)
         if populate_query_metrics:
             warnings.warn(
@@ -207,8 +219,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request_options["populateQuotaInfo"] = populate_quota_info
         container = self.client_connection.ReadContainer(self.container_link, options=request_options, **kwargs)
         # Only cache Container Properties that will not change in the lifetime of the container
-        self.client_connection._set_container_properties_cache(self.container_link,  # pylint: disable=protected-access
-                                                               _build_properties_cache(container, self.container_link))
+        self.client_connection._set_container_properties_cache(
+            self.container_link,  # pylint: disable=protected-access
+            _build_properties_cache(container, self.container_link),
+        )
         return container
 
     @distributed_trace
@@ -272,17 +286,17 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
         doc_link = self._get_document_link(item)
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs["session_token"] = session_token
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs["initial_headers"] = initial_headers
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs["priority"] = priority
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if availability_strategy is not None:
             kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
         if response_hook is not None:
-            kwargs['response_hook'] = response_hook
+            kwargs["response_hook"] = response_hook
         request_options = build_options(kwargs)
         request_options["partitionKey"] = self._set_partition_key(partition_key)
         if populate_query_metrics is not None:
@@ -302,19 +316,19 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def read_items(
-            self,
-            items: Sequence[Tuple[str, PartitionKeyType]],
-            *,
-            executor: Optional[ThreadPoolExecutor] = None,
-            max_concurrency: Optional[int] = None,
-            consistency_level: Optional[str] = None,
-            session_token: Optional[str] = None,
-            initial_headers: Optional[dict[str, str]] = None,
-            excluded_locations: Optional[list[str]] = None,
-            priority: Optional[Literal["High", "Low"]] = None,
-            throughput_bucket: Optional[int] = None,
-            availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
-            **kwargs: Any
+        self,
+        items: Sequence[Tuple[str, PartitionKeyType]],
+        *,
+        executor: Optional[ThreadPoolExecutor] = None,
+        max_concurrency: Optional[int] = None,
+        consistency_level: Optional[str] = None,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[dict[str, str]] = None,
+        excluded_locations: Optional[list[str]] = None,
+        priority: Optional[Literal["High", "Low"]] = None,
+        throughput_bucket: Optional[int] = None,
+        availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
+        **kwargs: Any
     ) -> CosmosList:
         """Reads multiple items from the container.
 
@@ -349,21 +363,21 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
 
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs["session_token"] = session_token
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs["initial_headers"] = initial_headers
         if consistency_level is not None:
-            kwargs['consistencyLevel'] = consistency_level
+            kwargs["consistencyLevel"] = consistency_level
         if excluded_locations is not None:
-            kwargs['excludedLocations'] = excluded_locations
+            kwargs["excludedLocations"] = excluded_locations
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs["priority"] = priority
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if availability_strategy is not None:
             kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
 
-        kwargs['max_concurrency'] = max_concurrency
+        kwargs["max_concurrency"] = max_concurrency
         query_options = build_options(kwargs)
         self._get_properties_with_options(query_options)
         query_options["enableCrossPartitionQuery"] = True
@@ -372,13 +386,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         item_tuples = [(item_id, self._set_partition_key(pk)) for item_id, pk in items]
 
         return self.client_connection.read_items(
-            collection_link=self.container_link,
-            items=item_tuples,
-            options=query_options,
-            executor=executor,
-            **kwargs)
-
-
+            collection_link=self.container_link, items=item_tuples, options=query_options, executor=executor, **kwargs
+        )
 
     @distributed_trace
     def read_all_items(  # pylint:disable=docstring-missing-param
@@ -423,17 +432,17 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: Iterable[dict[str, Any]]
         """
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs["session_token"] = session_token
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs["initial_headers"] = initial_headers
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs["priority"] = priority
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if availability_strategy is not None:
             kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
         if response_hook is not None:
-            kwargs['response_hook'] = response_hook
+            kwargs["response_hook"] = response_hook
         feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
@@ -453,77 +462,77 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         items = self.client_connection.ReadItems(
-            collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook, **kwargs)
+            collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook, **kwargs
+        )
         return items
 
     @overload
     def query_items_change_feed(
-            self,
-            *,
-            max_item_count: Optional[int] = None,
-            start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
-            partition_key: PartitionKeyType,
-            priority: Optional[Literal["High", "Low"]] = None,
-            mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
-            availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
-            response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
-            **kwargs: Any
+        self,
+        *,
+        max_item_count: Optional[int] = None,
+        start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
+        partition_key: PartitionKeyType,
+        priority: Optional[Literal["High", "Low"]] = None,
+        mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
+        availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
+        **kwargs: Any
     ) -> ItemPaged[dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
-        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
-        :keyword start_time:The start time to start processing chang feed items.
-            Beginning: Processing the change feed items from the beginning of the change feed.
-            Now: Processing change feed from the current time, so only events for all future changes will be retrieved.
-            ~datetime.datetime: processing change feed from a point of time. Provided value will be converted to UTC.
-            By default, it is start from current ("Now")
-        :paramtype start_time: Union[~datetime.datetime, Literal["Now", "Beginning"]]
-       :keyword partition_key: The partition key that is used to define the scope
-            (logical partition or a subset of a container). If the partition key is set to None, it will try to
-            fetch the changes for an item with a partition key value of null. To learn more about using partition keys,
-            see `here
-            <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
-        :paramtype partition_key: ~azure.cosmos.partition_key.PartitionKeyType
-        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
-            request. Once the user has reached their provisioned throughput, low priority requests are throttled
-            before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :paramtype priority: Literal["High", "Low"]
-        :keyword mode: The modes to query change feed. If `continuation` was passed, 'mode' argument will be ignored.
-            LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
-            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
-            or 'continuation' token.
-        :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
-        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
-            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
-            If all preferred locations were excluded, primary/hub location will be used.
-            This excluded_location will override existing excluded_locations in client level.
-        :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
-            False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
-            If not provided, uses the client's configured strategy.
-        :paramtype availability_strategy: Union[bool, dict[str, Any]]
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
-        :returns: An Iterable of items (dicts).
-        :rtype: Iterable[dict[str, Any]]
+         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
+         :keyword start_time:The start time to start processing chang feed items.
+             Beginning: Processing the change feed items from the beginning of the change feed.
+             Now: Processing change feed from the current time, so only events for all future changes will be retrieved.
+             ~datetime.datetime: processing change feed from a point of time. Provided value will be converted to UTC.
+             By default, it is start from current ("Now")
+         :paramtype start_time: Union[~datetime.datetime, Literal["Now", "Beginning"]]
+        :keyword partition_key: The partition key that is used to define the scope
+             (logical partition or a subset of a container). If the partition key is set to None, it will try to
+             fetch the changes for an item with a partition key value of null. To learn more about using partition keys,
+             see `here
+             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
+         :paramtype partition_key: ~azure.cosmos.partition_key.PartitionKeyType
+         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
+             request. Once the user has reached their provisioned throughput, low priority requests are throttled
+             before high priority requests start getting throttled. Feature must first be enabled at the account level.
+         :paramtype priority: Literal["High", "Low"]
+         :keyword mode: The modes to query change feed. If `continuation` was passed, 'mode' argument will be ignored.
+             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
+             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
+             or 'continuation' token.
+         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
+         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
+             If all preferred locations were excluded, primary/hub location will be used.
+             This excluded_location will override existing excluded_locations in client level.
+         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
+             Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+             False (disable hedging even if client has it enabled),
+             or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+             If not provided, uses the client's configured strategy.
+         :paramtype availability_strategy: Union[bool, dict[str, Any]]
+         :keyword response_hook: A callable invoked with the response metadata.
+         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
+         :returns: An Iterable of items (dicts).
+         :rtype: Iterable[dict[str, Any]]
         """
         ...
 
     @overload
     def query_items_change_feed(
-            self,
-            *,
-            feed_range: dict[str, Any],
-            max_item_count: Optional[int] = None,
-            start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
-            priority: Optional[Literal["High", "Low"]] = None,
-            mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
-            availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
-            response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
-            **kwargs: Any
+        self,
+        *,
+        feed_range: dict[str, Any],
+        max_item_count: Optional[int] = None,
+        start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
+        priority: Optional[Literal["High", "Low"]] = None,
+        mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
+        availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
+        **kwargs: Any
     ) -> ItemPaged[dict[str, Any]]:
-
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
         :keyword dict[str, Any] feed_range: The feed range that is used to define the scope.
@@ -562,14 +571,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     @overload
     def query_items_change_feed(
-            self,
-            *,
-            continuation: str,
-            max_item_count: Optional[int] = None,
-            priority: Optional[Literal["High", "Low"]] = None,
-            availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
-            response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
-            **kwargs: Any
+        self,
+        *,
+        continuation: str,
+        max_item_count: Optional[int] = None,
+        priority: Optional[Literal["High", "Low"]] = None,
+        availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
+        **kwargs: Any
     ) -> ItemPaged[dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
@@ -599,15 +608,15 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     @overload
     def query_items_change_feed(
-            self,
-            *,
-            max_item_count: Optional[int] = None,
-            start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
-            priority: Optional[Literal["High", "Low"]] = None,
-            mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
-            availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
-            response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
-            **kwargs: Any
+        self,
+        *,
+        max_item_count: Optional[int] = None,
+        start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
+        priority: Optional[Literal["High", "Low"]] = None,
+        mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
+        availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
+        **kwargs: Any
     ) -> ItemPaged[dict[str, Any]]:
         """Get a sorted list of items that were changed in the entire container,
          in the order in which they were modified,
@@ -646,11 +655,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         ...
 
     @distributed_trace
-    def query_items_change_feed(
-            self,
-            *args: Any,
-            **kwargs: Any
-    ) -> ItemPaged[dict[str, Any]]:
+    def query_items_change_feed(self, *args: Any, **kwargs: Any) -> ItemPaged[dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
         :keyword str continuation: The continuation token retrieved from previous response. It contains chang feed mode.
@@ -703,7 +708,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             change_feed_state_context["mode"] = kwargs.pop("mode")
         if "partition_key_range_id" in kwargs:
             change_feed_state_context["partitionKeyRangeId"] = kwargs.pop("partition_key_range_id")
-        if "is_start_from_beginning" in kwargs and kwargs.pop('is_start_from_beginning') is True:
+        if "is_start_from_beginning" in kwargs and kwargs.pop("is_start_from_beginning") is True:
             change_feed_state_context["startTime"] = "Beginning"
         elif "start_time" in kwargs:
             change_feed_state_context["startTime"] = kwargs.pop("start_time")
@@ -712,10 +717,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if "partition_key" in kwargs:
             partition_key = kwargs.pop("partition_key")
             change_feed_state_context["partitionKey"] = self._set_partition_key(cast(PartitionKeyType, partition_key))
-            change_feed_state_context["partitionKeyFeedRange"] = \
-                _get_epk_range_for_partition_key(container_properties, partition_key)
+            change_feed_state_context["partitionKeyFeedRange"] = _get_epk_range_for_partition_key(
+                container_properties, partition_key
+            )
         if "feed_range" in kwargs:
-            change_feed_state_context["feedRange"] = kwargs.pop('feed_range')
+            change_feed_state_context["feedRange"] = kwargs.pop("feed_range")
         if "continuation" in feed_options:
             change_feed_state_context["continuation"] = feed_options.pop("continuation")
 
@@ -723,10 +729,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         feed_options["containerRID"] = container_properties["_rid"]
 
         # populate availability_strategy
-        if (Constants.Kwargs.AVAILABILITY_STRATEGY in feed_options
-                and feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY] is not None):
-            feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY] =\
-                _validate_request_hedging_strategy(feed_options.pop(Constants.Kwargs.AVAILABILITY_STRATEGY))
+        if (
+            Constants.Kwargs.AVAILABILITY_STRATEGY in feed_options
+            and feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY] is not None
+        ):
+            feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY] = _validate_request_hedging_strategy(
+                feed_options.pop(Constants.Kwargs.AVAILABILITY_STRATEGY)
+            )
 
         response_hook = kwargs.pop("response_hook", None)
         if hasattr(response_hook, "clear"):
@@ -739,26 +748,26 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     @overload
     def query_items(
-            self,
-            query: str,
-            parameters: Optional[list[dict[str, object]]] = None,
-            partition_key: Optional[PartitionKeyType] = None,
-            enable_cross_partition_query: Optional[bool] = None,
-            max_item_count: Optional[int] = None,
-            enable_scan_in_query: Optional[bool] = None,
-            populate_query_metrics: Optional[bool] = None,
-            *,
-            continuation_token_limit: Optional[int] = None,
-            initial_headers: Optional[dict[str, str]] = None,
-            max_integrated_cache_staleness_in_ms: Optional[int] = None,
-            populate_index_metrics: Optional[bool] = None,
-            populate_query_advice: Optional[bool] = None,
-            priority: Optional[Literal["High", "Low"]] = None,
-            response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
-            session_token: Optional[str] = None,
-            throughput_bucket: Optional[int] = None,
-            availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
-            **kwargs: Any
+        self,
+        query: str,
+        parameters: Optional[list[dict[str, object]]] = None,
+        partition_key: Optional[PartitionKeyType] = None,
+        enable_cross_partition_query: Optional[bool] = None,
+        max_item_count: Optional[int] = None,
+        enable_scan_in_query: Optional[bool] = None,
+        populate_query_metrics: Optional[bool] = None,
+        *,
+        continuation_token_limit: Optional[int] = None,
+        initial_headers: Optional[dict[str, str]] = None,
+        max_integrated_cache_staleness_in_ms: Optional[int] = None,
+        populate_index_metrics: Optional[bool] = None,
+        populate_query_advice: Optional[bool] = None,
+        priority: Optional[Literal["High", "Low"]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
+        session_token: Optional[str] = None,
+        throughput_bucket: Optional[int] = None,
+        availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
+        **kwargs: Any
     ) -> CosmosItemPaged:
         """Return all results matching the given `query`.
 
@@ -836,26 +845,26 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     @overload
     def query_items(
-            self,
-            query: str,
-            *,
-            continuation_token_limit: Optional[int] = None,
-            enable_cross_partition_query: Optional[bool] = None,
-            enable_scan_in_query: Optional[bool] = None,
-            feed_range: dict[str, Any],
-            initial_headers: Optional[dict[str, str]] = None,
-            max_integrated_cache_staleness_in_ms: Optional[int] = None,
-            max_item_count: Optional[int] = None,
-            parameters: Optional[list[dict[str, object]]] = None,
-            populate_index_metrics: Optional[bool] = None,
-            populate_query_metrics: Optional[bool] = None,
-            populate_query_advice: Optional[bool] = None,
-            priority: Optional[Literal["High", "Low"]] = None,
-            response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
-            session_token: Optional[str] = None,
-            throughput_bucket: Optional[int] = None,
-            availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
-            **kwargs: Any
+        self,
+        query: str,
+        *,
+        continuation_token_limit: Optional[int] = None,
+        enable_cross_partition_query: Optional[bool] = None,
+        enable_scan_in_query: Optional[bool] = None,
+        feed_range: dict[str, Any],
+        initial_headers: Optional[dict[str, str]] = None,
+        max_integrated_cache_staleness_in_ms: Optional[int] = None,
+        max_item_count: Optional[int] = None,
+        parameters: Optional[list[dict[str, object]]] = None,
+        populate_index_metrics: Optional[bool] = None,
+        populate_query_metrics: Optional[bool] = None,
+        populate_query_advice: Optional[bool] = None,
+        priority: Optional[Literal["High", "Low"]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
+        session_token: Optional[str] = None,
+        throughput_bucket: Optional[int] = None,
+        availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
+        **kwargs: Any
     ) -> CosmosItemPaged:
         """Return all results matching the given `query`.
 
@@ -929,11 +938,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         ...
 
     @distributed_trace
-    def query_items(  # pylint:disable=docstring-missing-param
-        self,
-        *args: Any,
-        **kwargs: Any
-    ) -> CosmosItemPaged:
+    def query_items(self, *args: Any, **kwargs: Any) -> CosmosItemPaged:  # pylint:disable=docstring-missing-param
         """Return all results matching the given `query`.
 
         You can use any value for the container name in the FROM clause, but
@@ -1008,8 +1013,15 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 :caption: Parameterized query to get all products that have been discontinued:
         """
         # Add positional arguments to keyword argument to support backward compatibility.
-        original_positional_arg_names = ["query", "parameters", "partition_key", "enable_cross_partition_query",
-                                         "max_item_count", "enable_scan_in_query", "populate_query_metrics"]
+        original_positional_arg_names = [
+            "query",
+            "parameters",
+            "partition_key",
+            "enable_cross_partition_query",
+            "max_item_count",
+            "enable_scan_in_query",
+            "populate_query_metrics",
+        ]
         utils.add_args_to_kwargs(original_positional_arg_names, args, kwargs)
         feed_options = build_options(kwargs)
 
@@ -1037,10 +1049,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             feed_options["responseContinuationTokenLimitInKb"] = kwargs.pop("continuation_token_limit")
 
         # populate availability_strategy
-        if (Constants.Kwargs.AVAILABILITY_STRATEGY in feed_options
-                and feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY] is not None):
-            feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY] =\
-                _validate_request_hedging_strategy(feed_options.pop(Constants.Kwargs.AVAILABILITY_STRATEGY))
+        if (
+            Constants.Kwargs.AVAILABILITY_STRATEGY in feed_options
+            and feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY] is not None
+        ):
+            feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY] = _validate_request_hedging_strategy(
+                feed_options.pop(Constants.Kwargs.AVAILABILITY_STRATEGY)
+            )
 
         feed_options["correlatedActivityId"] = GenerateGuidId()
         feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
@@ -1086,13 +1101,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def semantic_rerank(
-        self,
-        *,
-        context: str,
-        documents: list[str],
-        options: Optional[dict[str, Any]] = None
+        self, *, context: str, documents: list[str], options: Optional[dict[str, Any]] = None
     ) -> CosmosDict:
-        """ **provisional** Rerank a list of documents using semantic reranking.
+        """**provisional** Rerank a list of documents using semantic reranking.
 
         This method uses a semantic reranker to score and reorder the provided documents
         based on their relevance to the given reranking context.
@@ -1118,13 +1129,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if inference_service is None:
             raise CosmosHttpResponseError(
                 message="Semantic reranking requires AAD credentials (inference service not initialized).",
-                response=None
+                response=None,
             )
 
         result = inference_service.rerank(
-            reranking_context=context,
-            documents=documents,
-            semantic_reranking_options=options
+            reranking_context=context, documents=documents, semantic_reranking_options=options
         )
 
         return result
@@ -1194,21 +1203,21 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
         item_link = self._get_document_link(item)
         if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
+            kwargs["pre_trigger_include"] = pre_trigger_include
         if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
+            kwargs["post_trigger_include"] = post_trigger_include
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs["session_token"] = session_token
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs["initial_headers"] = initial_headers
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs["priority"] = priority
         if etag is not None:
-            kwargs['etag'] = etag
+            kwargs["etag"] = etag
         if match_condition is not None:
-            kwargs['match_condition'] = match_condition
+            kwargs["match_condition"] = match_condition
         if no_response is not None:
-            kwargs['no_response'] = no_response
+            kwargs["no_response"] = no_response
         if retry_write is not None:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
@@ -1216,7 +1225,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if availability_strategy is not None:
             kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
         if response_hook is not None:
-            kwargs['response_hook'] = response_hook
+            kwargs["response_hook"] = response_hook
         request_options = build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
         if populate_query_metrics is not None:
@@ -1229,17 +1238,15 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self._get_properties_with_options(request_options)
         request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
         result = self.client_connection.ReplaceItem(
-            document_link=item_link,
-            new_document=body,
-            options=request_options,
-            **kwargs)
+            document_link=item_link, new_document=body, options=request_options, **kwargs
+        )
         return result
 
     @distributed_trace
     def upsert_item(  # pylint:disable=docstring-missing-param
         self,
         body: dict[str, Any],
-        populate_query_metrics: Optional[bool]=None,
+        populate_query_metrics: Optional[bool] = None,
         pre_trigger_include: Optional[str] = None,
         post_trigger_include: Optional[str] = None,
         *,
@@ -1295,27 +1302,27 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
+            kwargs["pre_trigger_include"] = pre_trigger_include
         if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
+            kwargs["post_trigger_include"] = post_trigger_include
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs["session_token"] = session_token
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs["initial_headers"] = initial_headers
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs["priority"] = priority
         if etag is not None:
-            kwargs['etag'] = etag
+            kwargs["etag"] = etag
         if match_condition is not None:
-            kwargs['match_condition'] = match_condition
+            kwargs["match_condition"] = match_condition
         if no_response is not None:
-            kwargs['no_response'] = no_response
+            kwargs["no_response"] = no_response
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if availability_strategy is not None:
             kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
         if response_hook is not None:
-            kwargs['response_hook'] = response_hook
+            kwargs["response_hook"] = response_hook
         if retry_write is not None:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         request_options = build_options(kwargs)
@@ -1330,11 +1337,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.UpsertItem(
-                database_or_container_link=self.container_link,
-                document=body,
-                options=request_options,
-                **kwargs
-            )
+            database_or_container_link=self.container_link, document=body, options=request_options, **kwargs
+        )
         return result
 
     @distributed_trace
@@ -1397,31 +1401,33 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: A CosmosDict representing the new item. The dict will be empty if `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
-        etag = kwargs.get('etag')
+        etag = kwargs.get("etag")
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
+                DeprecationWarning,
+            )
+        match_condition = kwargs.get("match_condition")
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                DeprecationWarning)
+                DeprecationWarning,
+            )
 
         if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
+            kwargs["pre_trigger_include"] = pre_trigger_include
         if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
+            kwargs["post_trigger_include"] = post_trigger_include
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs["session_token"] = session_token
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs["initial_headers"] = initial_headers
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs["priority"] = priority
         if no_response is not None:
-            kwargs['no_response'] = no_response
+            kwargs["no_response"] = no_response
         if retry_write is not None:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
@@ -1429,7 +1435,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if availability_strategy is not None:
             kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
         if response_hook is not None:
-            kwargs['response_hook'] = response_hook
+            kwargs["response_hook"] = response_hook
         request_options = build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = not enable_automatic_id_generation
         if populate_query_metrics:
@@ -1443,7 +1449,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self._get_properties_with_options(request_options)
         request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
         result = self.client_connection.CreateItem(
-                database_or_container_link=self.container_link, document=body, options=request_options, **kwargs)
+            database_or_container_link=self.container_link, document=body, options=request_options, **kwargs
+        )
         return result
 
     @distributed_trace
@@ -1467,7 +1474,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> CosmosDict:
-        """ Patches the specified item with the provided operations if it
+        """Patches the specified item with the provided operations if it
          exists in the container.
 
         If the item does not already exist in the container, an exception is raised.
@@ -1516,19 +1523,19 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
+            kwargs["pre_trigger_include"] = pre_trigger_include
         if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
+            kwargs["post_trigger_include"] = post_trigger_include
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs["session_token"] = session_token
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs["priority"] = priority
         if etag is not None:
-            kwargs['etag'] = etag
+            kwargs["etag"] = etag
         if match_condition is not None:
-            kwargs['match_condition'] = match_condition
+            kwargs["match_condition"] = match_condition
         if no_response is not None:
-            kwargs['no_response'] = no_response
+            kwargs["no_response"] = no_response
         if retry_write is not None:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
@@ -1536,7 +1543,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if availability_strategy is not None:
             kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
         if response_hook is not None:
-            kwargs['response_hook'] = response_hook
+            kwargs["response_hook"] = response_hook
         request_options = build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
         request_options["partitionKey"] = self._set_partition_key(partition_key)
@@ -1547,9 +1554,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
         item_link = self._get_document_link(item)
         result = self.client_connection.PatchItem(
-            document_link=item_link,
-            operations=patch_operations,
-            options=request_options, **kwargs)
+            document_link=item_link, operations=patch_operations, options=request_options, **kwargs
+        )
         return result
 
     @distributed_trace
@@ -1568,7 +1574,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         response_hook: Optional[Callable[[Mapping[str, str], list[dict[str, Any]]], None]] = None,
         **kwargs: Any
     ) -> CosmosList:
-        """ Executes the transactional batch for the specified partition key.
+        """Executes the transactional batch for the specified partition key.
 
         :param batch_operations: The batch of operations to be executed.
         :type batch_operations: list[Tuple[Any]]
@@ -1603,27 +1609,29 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :raises ~azure.cosmos.exceptions.CosmosBatchOperationError: A transactional batch operation failed in the batch.
         :rtype: ~azure.cosmos.CosmosList[dict[str, Any]]
         """
-        etag = kwargs.get('etag')
+        etag = kwargs.get("etag")
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
+                DeprecationWarning,
+            )
+        match_condition = kwargs.get("match_condition")
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                DeprecationWarning)
+                DeprecationWarning,
+            )
 
         if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
+            kwargs["pre_trigger_include"] = pre_trigger_include
         if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
+            kwargs["post_trigger_include"] = post_trigger_include
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs["session_token"] = session_token
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs["priority"] = priority
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if retry_write is not None:
@@ -1631,14 +1639,15 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if availability_strategy is not None:
             kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
         if response_hook is not None:
-            kwargs['response_hook'] = response_hook
+            kwargs["response_hook"] = response_hook
         request_options = build_options(kwargs)
         request_options["partitionKey"] = self._set_partition_key(partition_key)
         request_options["disableAutomaticIdGeneration"] = True
         container_properties = self._get_properties_with_options(request_options)
         request_options["containerRID"] = container_properties["_rid"]
         return self.client_connection.Batch(
-            collection_link=self.container_link, batch_operations=batch_operations, options=request_options, **kwargs)
+            collection_link=self.container_link, batch_operations=batch_operations, options=request_options, **kwargs
+        )
 
     @distributed_trace
     def delete_item(  # pylint:disable=docstring-missing-param
@@ -1701,15 +1710,15 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: None
         """
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs["session_token"] = session_token
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs["initial_headers"] = initial_headers
         if etag is not None:
-            kwargs['etag'] = etag
+            kwargs["etag"] = etag
         if match_condition is not None:
-            kwargs['match_condition'] = match_condition
+            kwargs["match_condition"] = match_condition
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs["priority"] = priority
         if retry_write is not None:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
@@ -1717,7 +1726,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if availability_strategy is not None:
             kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
         if response_hook is not None:
-            kwargs['response_hook'] = response_hook
+            kwargs["response_hook"] = response_hook
         request_options = build_options(kwargs)
         request_options["partitionKey"] = self._set_partition_key(partition_key)
         if populate_query_metrics is not None:
@@ -1746,18 +1755,16 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             the throughput properties could not be retrieved.
         :rtype: ~azure.cosmos.ThroughputProperties
         """
-        warnings.warn(
-            "read_offer is a deprecated method name, use get_throughput instead",
-            DeprecationWarning
-        )
+        warnings.warn("read_offer is a deprecated method name, use get_throughput instead", DeprecationWarning)
         return self.get_throughput(**kwargs)
 
     @distributed_trace
     def get_throughput(
-            self,
-            *,
-            response_hook: Optional[Callable[[Mapping[str, Any], list[dict[str, Any]]], None]] = None,
-            **kwargs: Any) -> ThroughputProperties:
+        self,
+        *,
+        response_hook: Optional[Callable[[Mapping[str, Any], list[dict[str, Any]]], None]] = None,
+        **kwargs: Any
+    ) -> ThroughputProperties:
         """Get the ThroughputProperties object for this container.
 
         If no ThroughputProperties already exist for the container, an exception is raised.
@@ -1817,7 +1824,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         new_throughput_properties = throughput_properties[0].copy()
         _replace_throughput(throughput=throughput, new_throughput_properties=new_throughput_properties)
         data = self.client_connection.ReplaceOffer(
-            offer_link=throughput_properties[0]["_self"], offer=throughput_properties[0], response_hook=response_hook, **kwargs)
+            offer_link=throughput_properties[0]["_self"],
+            offer=throughput_properties[0],
+            response_hook=response_hook,
+            **kwargs
+        )
 
         return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
 
@@ -1902,10 +1913,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def get_conflict(
-        self,
-        conflict: Union[str, Mapping[str, Any]],
-        partition_key: PartitionKeyType,
-        **kwargs: Any
+        self, conflict: Union[str, Mapping[str, Any]], partition_key: PartitionKeyType, **kwargs: Any
     ) -> CosmosDict:
         """Get the conflict identified by `conflict`.
 
@@ -1932,10 +1940,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def delete_conflict(
-        self,
-        conflict: Union[str, Mapping[str, Any]],
-        partition_key: PartitionKeyType,
-        **kwargs: Any
+        self, conflict: Union[str, Mapping[str, Any]], partition_key: PartitionKeyType, **kwargs: Any
     ) -> None:
         """Delete a specified conflict from the container.
 
@@ -1996,29 +2001,31 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :paramtype response_hook: Callable[[Mapping[str, str], None], None] = None,
         :rtype: None
         """
-        etag = kwargs.get('etag')
+        etag = kwargs.get("etag")
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
+                DeprecationWarning,
+            )
+        match_condition = kwargs.get("match_condition")
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                DeprecationWarning)
+                DeprecationWarning,
+            )
 
         if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
+            kwargs["pre_trigger_include"] = pre_trigger_include
         if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
+            kwargs["post_trigger_include"] = post_trigger_include
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs["session_token"] = session_token
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if response_hook is not None:
-            kwargs['response_hook'] = response_hook
+            kwargs["response_hook"] = response_hook
         request_options = build_options(kwargs)
         # regardless if partition key is valid we set it as invalid partition keys are set to a default empty value
         request_options["partitionKey"] = self._set_partition_key(partition_key)
@@ -2026,16 +2033,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         self.client_connection.DeleteAllItemsByPartitionKey(
-            collection_link=self.container_link, options=request_options, **kwargs)
+            collection_link=self.container_link, options=request_options, **kwargs
+        )
 
     @distributed_trace
-    def read_feed_ranges(
-            self,
-            *,
-            force_refresh: bool = False,
-            **kwargs: Any) -> Iterable[dict[str, Any]]:
-
-        """ Obtains a list of feed ranges that can be used to parallelize feed operations.
+    def read_feed_ranges(self, *, force_refresh: bool = False, **kwargs: Any) -> Iterable[dict[str, Any]]:
+        """Obtains a list of feed ranges that can be used to parallelize feed operations.
 
         :keyword bool force_refresh:
             Flag to indicate whether obtain the list of feed ranges directly from cache or refresh the cache.
@@ -2050,15 +2053,17 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if force_refresh is True:
             self.client_connection.refresh_routing_map_provider()
 
-        def get_next(continuation_token:str) -> list[dict[str, Any]]: # pylint: disable=unused-argument
-            partition_key_ranges = \
-                self.client_connection._routing_map_provider.get_overlapping_ranges( # pylint: disable=protected-access
-                    self.container_link,
-                    [Range("", "FF", True, False)],  # default to full range
-                    **kwargs)
+        def get_next(continuation_token: str) -> list[dict[str, Any]]:  # pylint: disable=unused-argument
+            partition_key_ranges = (
+                self.client_connection._routing_map_provider.get_overlapping_ranges(  # pylint: disable=protected-access
+                    self.container_link, [Range("", "FF", True, False)], **kwargs  # default to full range
+                )
+            )
 
-            feed_ranges = [FeedRangeInternalEpk(Range.PartitionKeyRangeToRange(partitionKeyRange)).to_dict()
-                    for partitionKeyRange in partition_key_ranges]
+            feed_ranges = [
+                FeedRangeInternalEpk(Range.PartitionKeyRangeToRange(partitionKeyRange)).to_dict()
+                for partitionKeyRange in partition_key_ranges
+            ]
 
             return feed_ranges
 
@@ -2068,11 +2073,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         return ItemPaged(get_next, extract_data)
 
     def get_latest_session_token(
-            self,
-            feed_ranges_to_session_tokens: list[Tuple[dict[str, Any], str]],
-            target_feed_range: dict[str, Any]
+        self, feed_ranges_to_session_tokens: list[Tuple[dict[str, Any], str]], target_feed_range: dict[str, Any]
     ) -> str:
-        """ **provisional** This method is still in preview and may be subject to breaking changes.
+        """**provisional** This method is still in preview and may be subject to breaking changes.
 
         Gets the the most up to date session token from the list of session token and feed
         range tuples for a specific target feed range. The feed range can be obtained from a partition key
@@ -2110,7 +2113,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         return FeedRangeInternalEpk(epk_range_for_partition_key).to_dict()
 
     def is_feed_range_subset(self, parent_feed_range: dict[str, Any], child_feed_range: dict[str, Any]) -> bool:
-        """ Checks if child feed range is a subset of parent feed range.
+        """Checks if child feed range is a subset of parent feed range.
         :param parent_feed_range: left feed range
         :type parent_feed_range: dict[str, Any]
         :param child_feed_range: right feed range
@@ -2125,5 +2128,4 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
         parent_feed_range_epk = FeedRangeInternalEpk.from_json(parent_feed_range)
         child_feed_range_epk = FeedRangeInternalEpk.from_json(child_feed_range)
-        return child_feed_range_epk.get_normalized_range().is_subset(
-            parent_feed_range_epk.get_normalized_range())
+        return child_feed_range_epk.get_normalized_range().is_subset(parent_feed_range_epk.get_normalized_range())

@@ -47,7 +47,7 @@ def _build_data_binding(data: Union[str, "PipelineInput", "Output"]) -> Union[st
 
 
 def _resolve_builders_2_data_bindings(
-    data: Union[list, dict, str, "PipelineInput", "Output"]
+    data: Union[list, dict, str, "PipelineInput", "Output"],
 ) -> Union[dict, list, str, Output]:
     """Traverse data and build input builders inside it to data bindings.
 

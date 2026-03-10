@@ -38,16 +38,13 @@ DATABASE_ID = config.settings["database_id"]
 CONTAINER_ID = config.settings["container_id"]
 PARTITION_KEY = PartitionKey(path="/pk")
 
-L1, L2, L3 = 'West US 3', 'West US', 'East US 2'
+L1, L2, L3 = "West US 3", "West US", "East US 2"
+
 
 def get_test_item(num):
-    test_item = {
-        'id': 'Item_' + str(num),
-        'pk': 'PartitionKey_' + str(num),
-        'test_object': True,
-        'lastName': 'Smith'
-    }
+    test_item = {"id": "Item_" + str(num), "pk": "PartitionKey_" + str(num), "test_object": True, "lastName": "Smith"}
     return test_item
+
 
 def clean_up_db(client):
     try:
@@ -55,14 +52,12 @@ def clean_up_db(client):
     except Exception as e:
         pass
 
+
 def excluded_locations_client_level_sample():
     preferred_locations = [L1, L2, L3]
     excluded_locations = [L1, L2]
     client = CosmosClient(
-                HOST,
-                MASTER_KEY,
-                preferred_locations=preferred_locations,
-                excluded_locations=excluded_locations
+        HOST, MASTER_KEY, preferred_locations=preferred_locations, excluded_locations=excluded_locations
     )
     clean_up_db(client)
 
@@ -76,19 +71,17 @@ def excluded_locations_client_level_sample():
     # For read operations, read endpoints will be 'preferred_locations' - 'excluded_locations'.
     # In our sample, ['West US 3', 'West US', 'East US 2'] - ['West US 3', 'West US'] => ['East US 2'],
     # therefore 'East US 2' will be the read endpoint, and items will be read from 'East US 2' location
-    item = container.read_item(item=created_item['id'], partition_key=created_item['pk'])
+    item = container.read_item(item=created_item["id"], partition_key=created_item["pk"])
 
     clean_up_db(client)
+
 
 def excluded_locations_request_level_sample():
     preferred_locations = [L1, L2, L3]
     excluded_locations_on_client = [L1, L2]
     excluded_locations_on_request = [L1]
     client = CosmosClient(
-                HOST,
-                MASTER_KEY,
-                preferred_locations=preferred_locations,
-                excluded_locations=excluded_locations_on_client
+        HOST, MASTER_KEY, preferred_locations=preferred_locations, excluded_locations=excluded_locations_on_client
     )
     clean_up_db(client)
 
@@ -106,9 +99,12 @@ def excluded_locations_request_level_sample():
     # With the excluded_locations on request, the read endpoints will be ['West US', 'East US 2']
     #   ['West US 3', 'West US', 'East US 2'] - ['West US 3'] => ['West US', 'East US 2']
     # Therefore, items will be read from 'West US' or 'East US 2' location
-    item = container.read_item(item=created_item['id'], partition_key=created_item['pk'], excluded_locations=excluded_locations_on_request)
+    item = container.read_item(
+        item=created_item["id"], partition_key=created_item["pk"], excluded_locations=excluded_locations_on_request
+    )
 
     clean_up_db(client)
+
 
 if __name__ == "__main__":
     # excluded_locations_client_level_sample()

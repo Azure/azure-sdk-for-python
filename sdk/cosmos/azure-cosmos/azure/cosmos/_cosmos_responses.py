@@ -16,7 +16,7 @@ class CosmosItemPaged(ItemPaged[dict[str, Any]]):
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        self._response_headers_list: Optional[List[CaseInsensitiveDict]] = kwargs.pop('response_headers_list', None)
+        self._response_headers_list: Optional[List[CaseInsensitiveDict]] = kwargs.pop("response_headers_list", None)
         super().__init__(*args, **kwargs)
         self._query_iterable: Optional[Any] = None
 
@@ -63,7 +63,7 @@ class CosmosAsyncItemPaged(AsyncItemPaged[dict[str, Any]]):
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        self._response_headers_list: Optional[List[CaseInsensitiveDict]] = kwargs.pop('response_headers_list', None)
+        self._response_headers_list: Optional[List[CaseInsensitiveDict]] = kwargs.pop("response_headers_list", None)
         super().__init__(*args, **kwargs)
         self._query_iterable: Optional[Any] = None
 
@@ -119,8 +119,9 @@ class CosmosDict(dict[str, Any]):
 
 
 class CosmosList(list[dict[str, Any]]):
-    def __init__(self, original_list: Optional[Iterable[dict[str, Any]]], /, *,
-                 response_headers: CaseInsensitiveDict) -> None:
+    def __init__(
+        self, original_list: Optional[Iterable[dict[str, Any]]], /, *, response_headers: CaseInsensitiveDict
+    ) -> None:
         if original_list is None:
             original_list = []
         super().__init__(original_list)

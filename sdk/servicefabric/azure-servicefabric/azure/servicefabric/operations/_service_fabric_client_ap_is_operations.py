@@ -15,8 +15,7 @@ from .. import models
 
 class ServiceFabricClientAPIsOperationsMixin(object):
 
-    def get_cluster_manifest(
-            self, timeout=60, custom_headers=None, raw=False, **operation_config):
+    def get_cluster_manifest(self, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Get the Service Fabric cluster manifest.
 
         Get the Service Fabric cluster manifest. The cluster manifest contains
@@ -51,17 +50,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_cluster_manifest.metadata['url']
+        url = self.get_cluster_manifest.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -74,17 +75,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ClusterManifest', response)
+            deserialized = self._deserialize("ClusterManifest", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_cluster_manifest.metadata = {'url': '/$/GetClusterManifest'}
+
+    get_cluster_manifest.metadata = {"url": "/$/GetClusterManifest"}
 
     def get_cluster_health(
-            self, nodes_health_state_filter=0, applications_health_state_filter=0, events_health_state_filter=0, exclude_health_statistics=False, include_system_application_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        nodes_health_state_filter=0,
+        applications_health_state_filter=0,
+        events_health_state_filter=0,
+        exclude_health_statistics=False,
+        include_system_application_health_statistics=False,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the health of a Service Fabric cluster.
 
         Use EventsHealthStateFilter to filter the collection of health events
@@ -205,27 +217,39 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_cluster_health.metadata['url']
+        url = self.get_cluster_health.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if nodes_health_state_filter is not None:
-            query_parameters['NodesHealthStateFilter'] = self._serialize.query("nodes_health_state_filter", nodes_health_state_filter, 'int')
+            query_parameters["NodesHealthStateFilter"] = self._serialize.query(
+                "nodes_health_state_filter", nodes_health_state_filter, "int"
+            )
         if applications_health_state_filter is not None:
-            query_parameters['ApplicationsHealthStateFilter'] = self._serialize.query("applications_health_state_filter", applications_health_state_filter, 'int')
+            query_parameters["ApplicationsHealthStateFilter"] = self._serialize.query(
+                "applications_health_state_filter", applications_health_state_filter, "int"
+            )
         if events_health_state_filter is not None:
-            query_parameters['EventsHealthStateFilter'] = self._serialize.query("events_health_state_filter", events_health_state_filter, 'int')
+            query_parameters["EventsHealthStateFilter"] = self._serialize.query(
+                "events_health_state_filter", events_health_state_filter, "int"
+            )
         if exclude_health_statistics is not None:
-            query_parameters['ExcludeHealthStatistics'] = self._serialize.query("exclude_health_statistics", exclude_health_statistics, 'bool')
+            query_parameters["ExcludeHealthStatistics"] = self._serialize.query(
+                "exclude_health_statistics", exclude_health_statistics, "bool"
+            )
         if include_system_application_health_statistics is not None:
-            query_parameters['IncludeSystemApplicationHealthStatistics'] = self._serialize.query("include_system_application_health_statistics", include_system_application_health_statistics, 'bool')
+            query_parameters["IncludeSystemApplicationHealthStatistics"] = self._serialize.query(
+                "include_system_application_health_statistics", include_system_application_health_statistics, "bool"
+            )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -238,17 +262,30 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ClusterHealth', response)
+            deserialized = self._deserialize("ClusterHealth", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_cluster_health.metadata = {'url': '/$/GetClusterHealth'}
+
+    get_cluster_health.metadata = {"url": "/$/GetClusterHealth"}
 
     def get_cluster_health_using_policy(
-            self, nodes_health_state_filter=0, applications_health_state_filter=0, events_health_state_filter=0, exclude_health_statistics=False, include_system_application_health_statistics=False, timeout=60, application_health_policy_map=None, cluster_health_policy=None, custom_headers=None, raw=False, **operation_config):
+        self,
+        nodes_health_state_filter=0,
+        applications_health_state_filter=0,
+        events_health_state_filter=0,
+        exclude_health_statistics=False,
+        include_system_application_health_statistics=False,
+        timeout=60,
+        application_health_policy_map=None,
+        cluster_health_policy=None,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the health of a Service Fabric cluster using the specified policy.
 
         Use EventsHealthStateFilter to filter the collection of health events
@@ -385,39 +422,53 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         """
         cluster_health_policies = None
         if application_health_policy_map is not None or cluster_health_policy is not None:
-            cluster_health_policies = models.ClusterHealthPolicies(application_health_policy_map=application_health_policy_map, cluster_health_policy=cluster_health_policy)
+            cluster_health_policies = models.ClusterHealthPolicies(
+                application_health_policy_map=application_health_policy_map, cluster_health_policy=cluster_health_policy
+            )
 
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_cluster_health_using_policy.metadata['url']
+        url = self.get_cluster_health_using_policy.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if nodes_health_state_filter is not None:
-            query_parameters['NodesHealthStateFilter'] = self._serialize.query("nodes_health_state_filter", nodes_health_state_filter, 'int')
+            query_parameters["NodesHealthStateFilter"] = self._serialize.query(
+                "nodes_health_state_filter", nodes_health_state_filter, "int"
+            )
         if applications_health_state_filter is not None:
-            query_parameters['ApplicationsHealthStateFilter'] = self._serialize.query("applications_health_state_filter", applications_health_state_filter, 'int')
+            query_parameters["ApplicationsHealthStateFilter"] = self._serialize.query(
+                "applications_health_state_filter", applications_health_state_filter, "int"
+            )
         if events_health_state_filter is not None:
-            query_parameters['EventsHealthStateFilter'] = self._serialize.query("events_health_state_filter", events_health_state_filter, 'int')
+            query_parameters["EventsHealthStateFilter"] = self._serialize.query(
+                "events_health_state_filter", events_health_state_filter, "int"
+            )
         if exclude_health_statistics is not None:
-            query_parameters['ExcludeHealthStatistics'] = self._serialize.query("exclude_health_statistics", exclude_health_statistics, 'bool')
+            query_parameters["ExcludeHealthStatistics"] = self._serialize.query(
+                "exclude_health_statistics", exclude_health_statistics, "bool"
+            )
         if include_system_application_health_statistics is not None:
-            query_parameters['IncludeSystemApplicationHealthStatistics'] = self._serialize.query("include_system_application_health_statistics", include_system_application_health_statistics, 'bool')
+            query_parameters["IncludeSystemApplicationHealthStatistics"] = self._serialize.query(
+                "include_system_application_health_statistics", include_system_application_health_statistics, "bool"
+            )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Accept"] = "application/json"
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
         if cluster_health_policies is not None:
-            body_content = self._serialize.body(cluster_health_policies, 'ClusterHealthPolicies')
+            body_content = self._serialize.body(cluster_health_policies, "ClusterHealthPolicies")
         else:
             body_content = None
 
@@ -430,17 +481,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ClusterHealth', response)
+            deserialized = self._deserialize("ClusterHealth", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_cluster_health_using_policy.metadata = {'url': '/$/GetClusterHealth'}
 
-    def get_cluster_health_chunk(
-            self, timeout=60, custom_headers=None, raw=False, **operation_config):
+    get_cluster_health_using_policy.metadata = {"url": "/$/GetClusterHealth"}
+
+    def get_cluster_health_chunk(self, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the health of a Service Fabric cluster using health chunks.
 
         Gets the health of a Service Fabric cluster using health chunks.
@@ -469,17 +520,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_cluster_health_chunk.metadata['url']
+        url = self.get_cluster_health_chunk.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -492,17 +545,24 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ClusterHealthChunk', response)
+            deserialized = self._deserialize("ClusterHealthChunk", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_cluster_health_chunk.metadata = {'url': '/$/GetClusterHealthChunk'}
+
+    get_cluster_health_chunk.metadata = {"url": "/$/GetClusterHealthChunk"}
 
     def get_cluster_health_chunk_using_policy_and_advanced_filters(
-            self, cluster_health_chunk_query_description=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        cluster_health_chunk_query_description=None,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the health of a Service Fabric cluster using health chunks.
 
         Gets the health of a Service Fabric cluster using health chunks. The
@@ -561,24 +621,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_cluster_health_chunk_using_policy_and_advanced_filters.metadata['url']
+        url = self.get_cluster_health_chunk_using_policy_and_advanced_filters.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Accept"] = "application/json"
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
         if cluster_health_chunk_query_description is not None:
-            body_content = self._serialize.body(cluster_health_chunk_query_description, 'ClusterHealthChunkQueryDescription')
+            body_content = self._serialize.body(
+                cluster_health_chunk_query_description, "ClusterHealthChunkQueryDescription"
+            )
         else:
             body_content = None
 
@@ -591,17 +655,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ClusterHealthChunk', response)
+            deserialized = self._deserialize("ClusterHealthChunk", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_cluster_health_chunk_using_policy_and_advanced_filters.metadata = {'url': '/$/GetClusterHealthChunk'}
+
+    get_cluster_health_chunk_using_policy_and_advanced_filters.metadata = {"url": "/$/GetClusterHealthChunk"}
 
     def report_cluster_health(
-            self, health_information, immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, health_information, immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Sends a health report on the Service Fabric cluster.
 
         Sends a health report on a Service Fabric cluster. The report must
@@ -660,24 +726,26 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.report_cluster_health.metadata['url']
+        url = self.report_cluster_health.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if immediate is not None:
-            query_parameters['Immediate'] = self._serialize.query("immediate", immediate, 'bool')
+            query_parameters["Immediate"] = self._serialize.query("immediate", immediate, "bool")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(health_information, 'HealthInformation')
+        body_content = self._serialize.body(health_information, "HealthInformation")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -689,10 +757,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    report_cluster_health.metadata = {'url': '/$/ReportClusterHealth'}
+
+    report_cluster_health.metadata = {"url": "/$/ReportClusterHealth"}
 
     def get_provisioned_fabric_code_version_info_list(
-            self, code_version=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, code_version=None, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Gets a list of fabric code versions that are provisioned in a Service
         Fabric cluster.
 
@@ -721,19 +791,21 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_provisioned_fabric_code_version_info_list.metadata['url']
+        url = self.get_provisioned_fabric_code_version_info_list.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if code_version is not None:
-            query_parameters['CodeVersion'] = self._serialize.query("code_version", code_version, 'str')
+            query_parameters["CodeVersion"] = self._serialize.query("code_version", code_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -746,17 +818,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[FabricCodeVersionInfo]', response)
+            deserialized = self._deserialize("[FabricCodeVersionInfo]", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_provisioned_fabric_code_version_info_list.metadata = {'url': '/$/GetProvisionedCodeVersions'}
+
+    get_provisioned_fabric_code_version_info_list.metadata = {"url": "/$/GetProvisionedCodeVersions"}
 
     def get_provisioned_fabric_config_version_info_list(
-            self, config_version=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, config_version=None, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Gets a list of fabric config versions that are provisioned in a Service
         Fabric cluster.
 
@@ -785,19 +859,21 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_provisioned_fabric_config_version_info_list.metadata['url']
+        url = self.get_provisioned_fabric_config_version_info_list.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if config_version is not None:
-            query_parameters['ConfigVersion'] = self._serialize.query("config_version", config_version, 'str')
+            query_parameters["ConfigVersion"] = self._serialize.query("config_version", config_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -810,17 +886,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[FabricConfigVersionInfo]', response)
+            deserialized = self._deserialize("[FabricConfigVersionInfo]", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_provisioned_fabric_config_version_info_list.metadata = {'url': '/$/GetProvisionedConfigVersions'}
 
-    def get_cluster_upgrade_progress(
-            self, timeout=60, custom_headers=None, raw=False, **operation_config):
+    get_provisioned_fabric_config_version_info_list.metadata = {"url": "/$/GetProvisionedConfigVersions"}
+
+    def get_cluster_upgrade_progress(self, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the progress of the current cluster upgrade.
 
         Gets the current progress of the ongoing cluster upgrade. If no upgrade
@@ -846,17 +922,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_cluster_upgrade_progress.metadata['url']
+        url = self.get_cluster_upgrade_progress.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -869,17 +947,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ClusterUpgradeProgressObject', response)
+            deserialized = self._deserialize("ClusterUpgradeProgressObject", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_cluster_upgrade_progress.metadata = {'url': '/$/GetUpgradeProgress'}
+
+    get_cluster_upgrade_progress.metadata = {"url": "/$/GetUpgradeProgress"}
 
     def get_cluster_configuration(
-            self, configuration_api_version, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, configuration_api_version, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Get the Service Fabric standalone cluster configuration.
 
         The cluster configuration contains properties of the cluster that
@@ -908,18 +988,22 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_cluster_configuration.metadata['url']
+        url = self.get_cluster_configuration.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['ConfigurationApiVersion'] = self._serialize.query("configuration_api_version", configuration_api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["ConfigurationApiVersion"] = self._serialize.query(
+            "configuration_api_version", configuration_api_version, "str"
+        )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -932,17 +1016,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ClusterConfiguration', response)
+            deserialized = self._deserialize("ClusterConfiguration", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_cluster_configuration.metadata = {'url': '/$/GetClusterConfiguration'}
 
-    def get_cluster_configuration_upgrade_status(
-            self, timeout=60, custom_headers=None, raw=False, **operation_config):
+    get_cluster_configuration.metadata = {"url": "/$/GetClusterConfiguration"}
+
+    def get_cluster_configuration_upgrade_status(self, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Get the cluster configuration upgrade status of a Service Fabric
         standalone cluster.
 
@@ -970,17 +1054,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_cluster_configuration_upgrade_status.metadata['url']
+        url = self.get_cluster_configuration_upgrade_status.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -993,17 +1079,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ClusterConfigurationUpgradeStatusInfo', response)
+            deserialized = self._deserialize("ClusterConfigurationUpgradeStatusInfo", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_cluster_configuration_upgrade_status.metadata = {'url': '/$/GetClusterConfigurationUpgradeStatus'}
 
-    def get_upgrade_orchestration_service_state(
-            self, timeout=60, custom_headers=None, raw=False, **operation_config):
+    get_cluster_configuration_upgrade_status.metadata = {"url": "/$/GetClusterConfigurationUpgradeStatus"}
+
+    def get_upgrade_orchestration_service_state(self, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Get the service state of Service Fabric Upgrade Orchestration Service.
 
         Get the service state of Service Fabric Upgrade Orchestration Service.
@@ -1029,17 +1115,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_upgrade_orchestration_service_state.metadata['url']
+        url = self.get_upgrade_orchestration_service_state.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -1052,17 +1140,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('UpgradeOrchestrationServiceState', response)
+            deserialized = self._deserialize("UpgradeOrchestrationServiceState", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_upgrade_orchestration_service_state.metadata = {'url': '/$/GetUpgradeOrchestrationServiceState'}
+
+    get_upgrade_orchestration_service_state.metadata = {"url": "/$/GetUpgradeOrchestrationServiceState"}
 
     def set_upgrade_orchestration_service_state(
-            self, timeout=60, service_state=None, custom_headers=None, raw=False, **operation_config):
+        self, timeout=60, service_state=None, custom_headers=None, raw=False, **operation_config
+    ):
         """Update the service state of Service Fabric Upgrade Orchestration
         Service.
 
@@ -1095,23 +1185,25 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.set_upgrade_orchestration_service_state.metadata['url']
+        url = self.set_upgrade_orchestration_service_state.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Accept"] = "application/json"
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(upgrade_orchestration_service_state, 'UpgradeOrchestrationServiceState')
+        body_content = self._serialize.body(upgrade_orchestration_service_state, "UpgradeOrchestrationServiceState")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -1122,17 +1214,25 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('UpgradeOrchestrationServiceStateSummary', response)
+            deserialized = self._deserialize("UpgradeOrchestrationServiceStateSummary", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    set_upgrade_orchestration_service_state.metadata = {'url': '/$/SetUpgradeOrchestrationServiceState'}
+
+    set_upgrade_orchestration_service_state.metadata = {"url": "/$/SetUpgradeOrchestrationServiceState"}
 
     def provision_cluster(
-            self, timeout=60, code_file_path=None, cluster_manifest_file_path=None, custom_headers=None, raw=False, **operation_config):
+        self,
+        timeout=60,
+        code_file_path=None,
+        cluster_manifest_file_path=None,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Provision the code or configuration packages of a Service Fabric
         cluster.
 
@@ -1158,27 +1258,31 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        provision_fabric_description = models.ProvisionFabricDescription(code_file_path=code_file_path, cluster_manifest_file_path=cluster_manifest_file_path)
+        provision_fabric_description = models.ProvisionFabricDescription(
+            code_file_path=code_file_path, cluster_manifest_file_path=cluster_manifest_file_path
+        )
 
         api_version = "6.0"
 
         # Construct URL
-        url = self.provision_cluster.metadata['url']
+        url = self.provision_cluster.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(provision_fabric_description, 'ProvisionFabricDescription')
+        body_content = self._serialize.body(provision_fabric_description, "ProvisionFabricDescription")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -1190,10 +1294,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    provision_cluster.metadata = {'url': '/$/Provision'}
+
+    provision_cluster.metadata = {"url": "/$/Provision"}
 
     def unprovision_cluster(
-            self, timeout=60, code_version=None, config_version=None, custom_headers=None, raw=False, **operation_config):
+        self, timeout=60, code_version=None, config_version=None, custom_headers=None, raw=False, **operation_config
+    ):
         """Unprovision the code or configuration packages of a Service Fabric
         cluster.
 
@@ -1218,27 +1324,31 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        unprovision_fabric_description = models.UnprovisionFabricDescription(code_version=code_version, config_version=config_version)
+        unprovision_fabric_description = models.UnprovisionFabricDescription(
+            code_version=code_version, config_version=config_version
+        )
 
         api_version = "6.0"
 
         # Construct URL
-        url = self.unprovision_cluster.metadata['url']
+        url = self.unprovision_cluster.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(unprovision_fabric_description, 'UnprovisionFabricDescription')
+        body_content = self._serialize.body(unprovision_fabric_description, "UnprovisionFabricDescription")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -1250,10 +1360,10 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    unprovision_cluster.metadata = {'url': '/$/Unprovision'}
 
-    def rollback_cluster_upgrade(
-            self, timeout=60, custom_headers=None, raw=False, **operation_config):
+    unprovision_cluster.metadata = {"url": "/$/Unprovision"}
+
+    def rollback_cluster_upgrade(self, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Roll back the upgrade of a Service Fabric cluster.
 
         Roll back the code or configuration upgrade of a Service Fabric
@@ -1277,13 +1387,15 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.rollback_cluster_upgrade.metadata['url']
+        url = self.rollback_cluster_upgrade.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -1300,10 +1412,10 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    rollback_cluster_upgrade.metadata = {'url': '/$/RollbackUpgrade'}
 
-    def resume_cluster_upgrade(
-            self, upgrade_domain, timeout=60, custom_headers=None, raw=False, **operation_config):
+    rollback_cluster_upgrade.metadata = {"url": "/$/RollbackUpgrade"}
+
+    def resume_cluster_upgrade(self, upgrade_domain, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Make the cluster upgrade move on to the next upgrade domain.
 
         Make the cluster code or configuration upgrade move on to the next
@@ -1332,22 +1444,24 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.resume_cluster_upgrade.metadata['url']
+        url = self.resume_cluster_upgrade.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(resume_cluster_upgrade_description, 'ResumeClusterUpgradeDescription')
+        body_content = self._serialize.body(resume_cluster_upgrade_description, "ResumeClusterUpgradeDescription")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -1359,10 +1473,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    resume_cluster_upgrade.metadata = {'url': '/$/MoveToNextUpgradeDomain'}
+
+    resume_cluster_upgrade.metadata = {"url": "/$/MoveToNextUpgradeDomain"}
 
     def start_cluster_upgrade(
-            self, start_cluster_upgrade_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, start_cluster_upgrade_description, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Start upgrading the code or configuration version of a Service Fabric
         cluster.
 
@@ -1392,22 +1508,24 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.start_cluster_upgrade.metadata['url']
+        url = self.start_cluster_upgrade.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(start_cluster_upgrade_description, 'StartClusterUpgradeDescription')
+        body_content = self._serialize.body(start_cluster_upgrade_description, "StartClusterUpgradeDescription")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -1419,10 +1537,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    start_cluster_upgrade.metadata = {'url': '/$/Upgrade'}
+
+    start_cluster_upgrade.metadata = {"url": "/$/Upgrade"}
 
     def start_cluster_configuration_upgrade(
-            self, cluster_configuration_upgrade_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, cluster_configuration_upgrade_description, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Start upgrading the configuration of a Service Fabric standalone
         cluster.
 
@@ -1451,22 +1571,26 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.start_cluster_configuration_upgrade.metadata['url']
+        url = self.start_cluster_configuration_upgrade.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(cluster_configuration_upgrade_description, 'ClusterConfigurationUpgradeDescription')
+        body_content = self._serialize.body(
+            cluster_configuration_upgrade_description, "ClusterConfigurationUpgradeDescription"
+        )
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -1478,10 +1602,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    start_cluster_configuration_upgrade.metadata = {'url': '/$/StartClusterConfigurationUpgrade'}
+
+    start_cluster_configuration_upgrade.metadata = {"url": "/$/StartClusterConfigurationUpgrade"}
 
     def update_cluster_upgrade(
-            self, update_cluster_upgrade_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, update_cluster_upgrade_description, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Update the upgrade parameters of a Service Fabric cluster upgrade.
 
         Update the upgrade parameters used during a Service Fabric cluster
@@ -1509,22 +1635,24 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.update_cluster_upgrade.metadata['url']
+        url = self.update_cluster_upgrade.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(update_cluster_upgrade_description, 'UpdateClusterUpgradeDescription')
+        body_content = self._serialize.body(update_cluster_upgrade_description, "UpdateClusterUpgradeDescription")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -1536,10 +1664,10 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    update_cluster_upgrade.metadata = {'url': '/$/UpdateUpgrade'}
 
-    def get_aad_metadata(
-            self, timeout=60, custom_headers=None, raw=False, **operation_config):
+    update_cluster_upgrade.metadata = {"url": "/$/UpdateUpgrade"}
+
+    def get_aad_metadata(self, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the Azure Active Directory metadata used for secured connection to
         cluster.
 
@@ -1568,17 +1696,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_aad_metadata.metadata['url']
+        url = self.get_aad_metadata.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -1591,17 +1721,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('AadMetadataObject', response)
+            deserialized = self._deserialize("AadMetadataObject", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_aad_metadata.metadata = {'url': '/$/GetAadMetadata'}
 
-    def get_cluster_version(
-            self, timeout=60, custom_headers=None, raw=False, **operation_config):
+    get_aad_metadata.metadata = {"url": "/$/GetAadMetadata"}
+
+    def get_cluster_version(self, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Get the current Service Fabric cluster version.
 
         If a cluster upgrade is happening, then this API will return the lowest
@@ -1626,17 +1756,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.get_cluster_version.metadata['url']
+        url = self.get_cluster_version.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -1649,17 +1781,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ClusterVersion', response)
+            deserialized = self._deserialize("ClusterVersion", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_cluster_version.metadata = {'url': '/$/GetClusterVersion'}
 
-    def get_cluster_load(
-            self, timeout=60, custom_headers=None, raw=False, **operation_config):
+    get_cluster_version.metadata = {"url": "/$/GetClusterVersion"}
+
+    def get_cluster_load(self, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the load of a Service Fabric cluster.
 
         Retrieves the load information of a Service Fabric cluster for all the
@@ -1684,17 +1816,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_cluster_load.metadata['url']
+        url = self.get_cluster_load.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -1707,17 +1841,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ClusterLoadInfo', response)
+            deserialized = self._deserialize("ClusterLoadInfo", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_cluster_load.metadata = {'url': '/$/GetLoadInformation'}
+
+    get_cluster_load.metadata = {"url": "/$/GetLoadInformation"}
 
     def toggle_verbose_service_placement_health_reporting(
-            self, enabled, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, enabled, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Changes the verbosity of service placement health reporting.
 
         If verbosity is set to true, then detailed health reports will be
@@ -1745,14 +1881,16 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.toggle_verbose_service_placement_health_reporting.metadata['url']
+        url = self.toggle_verbose_service_placement_health_reporting.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['Enabled'] = self._serialize.query("enabled", enabled, 'bool')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["Enabled"] = self._serialize.query("enabled", enabled, "bool")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -1769,10 +1907,14 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    toggle_verbose_service_placement_health_reporting.metadata = {'url': '/$/ToggleVerboseServicePlacementHealthReporting'}
+
+    toggle_verbose_service_placement_health_reporting.metadata = {
+        "url": "/$/ToggleVerboseServicePlacementHealthReporting"
+    }
 
     def validate_cluster_upgrade(
-            self, start_cluster_upgrade_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, start_cluster_upgrade_description, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Validate and assess the impact of a code or configuration version
         update of a Service Fabric cluster.
 
@@ -1803,23 +1945,25 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "8.2"
 
         # Construct URL
-        url = self.validate_cluster_upgrade.metadata['url']
+        url = self.validate_cluster_upgrade.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Accept"] = "application/json"
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(start_cluster_upgrade_description, 'StartClusterUpgradeDescription')
+        body_content = self._serialize.body(start_cluster_upgrade_description, "StartClusterUpgradeDescription")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -1830,17 +1974,26 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ValidateClusterUpgradeResult', response)
+            deserialized = self._deserialize("ValidateClusterUpgradeResult", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    validate_cluster_upgrade.metadata = {'url': '/$/ValidateUpgrade'}
+
+    validate_cluster_upgrade.metadata = {"url": "/$/ValidateUpgrade"}
 
     def get_node_info_list(
-            self, continuation_token=None, node_status_filter="default", max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        continuation_token=None,
+        node_status_filter="default",
+        max_results=0,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the list of nodes in the Service Fabric cluster.
 
         The response includes the name, status, ID, health, uptime, and other
@@ -1888,23 +2041,29 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.3"
 
         # Construct URL
-        url = self.get_node_info_list.metadata['url']
+        url = self.get_node_info_list.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if continuation_token is not None:
-            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+            query_parameters["ContinuationToken"] = self._serialize.query(
+                "continuation_token", continuation_token, "str", skip_quote=True
+            )
         if node_status_filter is not None:
-            query_parameters['NodeStatusFilter'] = self._serialize.query("node_status_filter", node_status_filter, 'str')
+            query_parameters["NodeStatusFilter"] = self._serialize.query(
+                "node_status_filter", node_status_filter, "str"
+            )
         if max_results is not None:
-            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
+            query_parameters["MaxResults"] = self._serialize.query("max_results", max_results, "long", minimum=0)
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -1917,17 +2076,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PagedNodeInfoList', response)
+            deserialized = self._deserialize("PagedNodeInfoList", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_node_info_list.metadata = {'url': '/Nodes'}
 
-    def get_node_info(
-            self, node_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+    get_node_info_list.metadata = {"url": "/Nodes"}
+
+    def get_node_info(self, node_name, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the information about a specific node in the Service Fabric
         cluster.
 
@@ -1955,21 +2114,21 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_node_info.metadata['url']
-        path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str')
-        }
+        url = self.get_node_info.metadata["url"]
+        path_format_arguments = {"nodeName": self._serialize.url("node_name", node_name, "str")}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -1982,17 +2141,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('NodeInfo', response)
+            deserialized = self._deserialize("NodeInfo", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_node_info.metadata = {'url': '/Nodes/{nodeName}'}
+
+    get_node_info.metadata = {"url": "/Nodes/{nodeName}"}
 
     def get_node_health(
-            self, node_name, events_health_state_filter=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, node_name, events_health_state_filter=0, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Gets the health of a Service Fabric node.
 
         Gets the health of a Service Fabric node. Use EventsHealthStateFilter
@@ -2045,23 +2206,25 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_node_health.metadata['url']
-        path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str')
-        }
+        url = self.get_node_health.metadata["url"]
+        path_format_arguments = {"nodeName": self._serialize.url("node_name", node_name, "str")}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if events_health_state_filter is not None:
-            query_parameters['EventsHealthStateFilter'] = self._serialize.query("events_health_state_filter", events_health_state_filter, 'int')
+            query_parameters["EventsHealthStateFilter"] = self._serialize.query(
+                "events_health_state_filter", events_health_state_filter, "int"
+            )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -2074,17 +2237,26 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('NodeHealth', response)
+            deserialized = self._deserialize("NodeHealth", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_node_health.metadata = {'url': '/Nodes/{nodeName}/$/GetHealth'}
+
+    get_node_health.metadata = {"url": "/Nodes/{nodeName}/$/GetHealth"}
 
     def get_node_health_using_policy(
-            self, node_name, events_health_state_filter=0, cluster_health_policy=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        node_name,
+        events_health_state_filter=0,
+        cluster_health_policy=None,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the health of a Service Fabric node, by using the specified health
         policy.
 
@@ -2146,30 +2318,32 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_node_health_using_policy.metadata['url']
-        path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str')
-        }
+        url = self.get_node_health_using_policy.metadata["url"]
+        path_format_arguments = {"nodeName": self._serialize.url("node_name", node_name, "str")}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if events_health_state_filter is not None:
-            query_parameters['EventsHealthStateFilter'] = self._serialize.query("events_health_state_filter", events_health_state_filter, 'int')
+            query_parameters["EventsHealthStateFilter"] = self._serialize.query(
+                "events_health_state_filter", events_health_state_filter, "int"
+            )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Accept"] = "application/json"
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
         if cluster_health_policy is not None:
-            body_content = self._serialize.body(cluster_health_policy, 'ClusterHealthPolicy')
+            body_content = self._serialize.body(cluster_health_policy, "ClusterHealthPolicy")
         else:
             body_content = None
 
@@ -2182,17 +2356,26 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('NodeHealth', response)
+            deserialized = self._deserialize("NodeHealth", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_node_health_using_policy.metadata = {'url': '/Nodes/{nodeName}/$/GetHealth'}
+
+    get_node_health_using_policy.metadata = {"url": "/Nodes/{nodeName}/$/GetHealth"}
 
     def report_node_health(
-            self, node_name, health_information, immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        node_name,
+        health_information,
+        immediate=False,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Sends a health report on the Service Fabric node.
 
         Reports health state of the specified Service Fabric node. The report
@@ -2253,28 +2436,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.report_node_health.metadata['url']
-        path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str')
-        }
+        url = self.report_node_health.metadata["url"]
+        path_format_arguments = {"nodeName": self._serialize.url("node_name", node_name, "str")}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if immediate is not None:
-            query_parameters['Immediate'] = self._serialize.query("immediate", immediate, 'bool')
+            query_parameters["Immediate"] = self._serialize.query("immediate", immediate, "bool")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(health_information, 'HealthInformation')
+        body_content = self._serialize.body(health_information, "HealthInformation")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -2286,10 +2469,10 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    report_node_health.metadata = {'url': '/Nodes/{nodeName}/$/ReportHealth'}
 
-    def get_node_load_info(
-            self, node_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+    report_node_health.metadata = {"url": "/Nodes/{nodeName}/$/ReportHealth"}
+
+    def get_node_load_info(self, node_name, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the load information of a Service Fabric node.
 
         Retrieves the load information of a Service Fabric node for all the
@@ -2316,21 +2499,21 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_node_load_info.metadata['url']
-        path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str')
-        }
+        url = self.get_node_load_info.metadata["url"]
+        path_format_arguments = {"nodeName": self._serialize.url("node_name", node_name, "str")}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -2343,17 +2526,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('NodeLoadInfo', response)
+            deserialized = self._deserialize("NodeLoadInfo", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_node_load_info.metadata = {'url': '/Nodes/{nodeName}/$/GetLoadInformation'}
+
+    get_node_load_info.metadata = {"url": "/Nodes/{nodeName}/$/GetLoadInformation"}
 
     def disable_node(
-            self, node_name, timeout=60, deactivation_intent=None, custom_headers=None, raw=False, **operation_config):
+        self, node_name, timeout=60, deactivation_intent=None, custom_headers=None, raw=False, **operation_config
+    ):
         """Deactivate a Service Fabric cluster node with the specified
         deactivation intent.
 
@@ -2395,26 +2580,26 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.disable_node.metadata['url']
-        path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str')
-        }
+        url = self.disable_node.metadata["url"]
+        path_format_arguments = {"nodeName": self._serialize.url("node_name", node_name, "str")}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(deactivation_intent_description, 'DeactivationIntentDescription')
+        body_content = self._serialize.body(deactivation_intent_description, "DeactivationIntentDescription")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -2426,10 +2611,10 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    disable_node.metadata = {'url': '/Nodes/{nodeName}/$/Deactivate'}
 
-    def enable_node(
-            self, node_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+    disable_node.metadata = {"url": "/Nodes/{nodeName}/$/Deactivate"}
+
+    def enable_node(self, node_name, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Activate a Service Fabric cluster node that is currently deactivated.
 
         Activates a Service Fabric cluster node that is currently deactivated.
@@ -2457,17 +2642,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.enable_node.metadata['url']
-        path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str')
-        }
+        url = self.enable_node.metadata["url"]
+        path_format_arguments = {"nodeName": self._serialize.url("node_name", node_name, "str")}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -2484,10 +2669,10 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    enable_node.metadata = {'url': '/Nodes/{nodeName}/$/Activate'}
 
-    def remove_node_state(
-            self, node_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+    enable_node.metadata = {"url": "/Nodes/{nodeName}/$/Activate"}
+
+    def remove_node_state(self, node_name, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Notifies Service Fabric that the persisted state on a node has been
         permanently removed or lost.
 
@@ -2531,17 +2716,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.remove_node_state.metadata['url']
-        path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str')
-        }
+        url = self.remove_node_state.metadata["url"]
+        path_format_arguments = {"nodeName": self._serialize.url("node_name", node_name, "str")}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -2558,10 +2743,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    remove_node_state.metadata = {'url': '/Nodes/{nodeName}/$/RemoveNodeState'}
+
+    remove_node_state.metadata = {"url": "/Nodes/{nodeName}/$/RemoveNodeState"}
 
     def restart_node(
-            self, node_name, node_instance_id="0", timeout=60, create_fabric_dump="False", custom_headers=None, raw=False, **operation_config):
+        self,
+        node_name,
+        node_instance_id="0",
+        timeout=60,
+        create_fabric_dump="False",
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Restarts a Service Fabric cluster node.
 
         Restarts a Service Fabric cluster node that is already started.
@@ -2593,31 +2787,33 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        restart_node_description = models.RestartNodeDescription(node_instance_id=node_instance_id, create_fabric_dump=create_fabric_dump)
+        restart_node_description = models.RestartNodeDescription(
+            node_instance_id=node_instance_id, create_fabric_dump=create_fabric_dump
+        )
 
         api_version = "6.0"
 
         # Construct URL
-        url = self.restart_node.metadata['url']
-        path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str')
-        }
+        url = self.restart_node.metadata["url"]
+        path_format_arguments = {"nodeName": self._serialize.url("node_name", node_name, "str")}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(restart_node_description, 'RestartNodeDescription')
+        body_content = self._serialize.body(restart_node_description, "RestartNodeDescription")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -2629,10 +2825,10 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    restart_node.metadata = {'url': '/Nodes/{nodeName}/$/Restart'}
 
-    def remove_configuration_overrides(
-            self, node_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+    restart_node.metadata = {"url": "/Nodes/{nodeName}/$/Restart"}
+
+    def remove_configuration_overrides(self, node_name, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Removes configuration overrides on the specified node.
 
         This api allows removing all existing configuration overrides on
@@ -2658,17 +2854,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "7.0"
 
         # Construct URL
-        url = self.remove_configuration_overrides.metadata['url']
-        path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str')
-        }
+        url = self.remove_configuration_overrides.metadata["url"]
+        path_format_arguments = {"nodeName": self._serialize.url("node_name", node_name, "str")}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -2685,10 +2881,10 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    remove_configuration_overrides.metadata = {'url': '/Nodes/{nodeName}/$/RemoveConfigurationOverrides'}
 
-    def get_configuration_overrides(
-            self, node_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+    remove_configuration_overrides.metadata = {"url": "/Nodes/{nodeName}/$/RemoveConfigurationOverrides"}
+
+    def get_configuration_overrides(self, node_name, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the list of configuration overrides on the specified node.
 
         This api allows getting all existing configuration overrides on the
@@ -2715,21 +2911,21 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "7.0"
 
         # Construct URL
-        url = self.get_configuration_overrides.metadata['url']
-        path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str')
-        }
+        url = self.get_configuration_overrides.metadata["url"]
+        path_format_arguments = {"nodeName": self._serialize.url("node_name", node_name, "str")}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -2742,17 +2938,26 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[ConfigParameterOverride]', response)
+            deserialized = self._deserialize("[ConfigParameterOverride]", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_configuration_overrides.metadata = {'url': '/Nodes/{nodeName}/$/GetConfigurationOverrides'}
+
+    get_configuration_overrides.metadata = {"url": "/Nodes/{nodeName}/$/GetConfigurationOverrides"}
 
     def add_configuration_parameter_overrides(
-            self, node_name, config_parameter_override_list, force=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        node_name,
+        config_parameter_override_list,
+        force=None,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Adds the list of configuration overrides on the specified node.
 
         This api allows adding all existing configuration overrides on the
@@ -2784,28 +2989,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "7.0"
 
         # Construct URL
-        url = self.add_configuration_parameter_overrides.metadata['url']
-        path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str')
-        }
+        url = self.add_configuration_parameter_overrides.metadata["url"]
+        path_format_arguments = {"nodeName": self._serialize.url("node_name", node_name, "str")}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if force is not None:
-            query_parameters['Force'] = self._serialize.query("force", force, 'bool')
+            query_parameters["Force"] = self._serialize.query("force", force, "bool")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(config_parameter_override_list, '[ConfigParameterOverride]')
+        body_content = self._serialize.body(config_parameter_override_list, "[ConfigParameterOverride]")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -2817,10 +3022,10 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    add_configuration_parameter_overrides.metadata = {'url': '/Nodes/{nodeName}/$/AddConfigurationParameterOverrides'}
 
-    def remove_node_tags(
-            self, node_name, node_tags, custom_headers=None, raw=False, **operation_config):
+    add_configuration_parameter_overrides.metadata = {"url": "/Nodes/{nodeName}/$/AddConfigurationParameterOverrides"}
+
+    def remove_node_tags(self, node_name, node_tags, custom_headers=None, raw=False, **operation_config):
         """Removes the list of tags from the specified node.
 
         This api allows removing set of tags from the specified node.
@@ -2842,24 +3047,22 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "7.0"
 
         # Construct URL
-        url = self.remove_node_tags.metadata['url']
-        path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str')
-        }
+        url = self.remove_node_tags.metadata["url"]
+        path_format_arguments = {"nodeName": self._serialize.url("node_name", node_name, "str")}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(node_tags, '[str]')
+        body_content = self._serialize.body(node_tags, "[str]")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -2871,10 +3074,10 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    remove_node_tags.metadata = {'url': '/Nodes/{nodeName}/$/RemoveNodeTags'}
 
-    def add_node_tags(
-            self, node_name, node_tags, custom_headers=None, raw=False, **operation_config):
+    remove_node_tags.metadata = {"url": "/Nodes/{nodeName}/$/RemoveNodeTags"}
+
+    def add_node_tags(self, node_name, node_tags, custom_headers=None, raw=False, **operation_config):
         """Adds the list of tags on the specified node.
 
         This api allows adding tags to the specified node.
@@ -2896,24 +3099,22 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "7.2"
 
         # Construct URL
-        url = self.add_node_tags.metadata['url']
-        path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str')
-        }
+        url = self.add_node_tags.metadata["url"]
+        path_format_arguments = {"nodeName": self._serialize.url("node_name", node_name, "str")}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(node_tags, '[str]')
+        body_content = self._serialize.body(node_tags, "[str]")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -2925,10 +3126,20 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    add_node_tags.metadata = {'url': '/Nodes/{nodeName}/$/AddNodeTags'}
+
+    add_node_tags.metadata = {"url": "/Nodes/{nodeName}/$/AddNodeTags"}
 
     def get_application_type_info_list(
-            self, application_type_definition_kind_filter=0, exclude_application_parameters=False, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        application_type_definition_kind_filter=0,
+        exclude_application_parameters=False,
+        continuation_token=None,
+        max_results=0,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the list of application types in the Service Fabric cluster.
 
         Returns the information about the application types that are
@@ -2996,25 +3207,33 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_application_type_info_list.metadata['url']
+        url = self.get_application_type_info_list.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if application_type_definition_kind_filter is not None:
-            query_parameters['ApplicationTypeDefinitionKindFilter'] = self._serialize.query("application_type_definition_kind_filter", application_type_definition_kind_filter, 'int')
+            query_parameters["ApplicationTypeDefinitionKindFilter"] = self._serialize.query(
+                "application_type_definition_kind_filter", application_type_definition_kind_filter, "int"
+            )
         if exclude_application_parameters is not None:
-            query_parameters['ExcludeApplicationParameters'] = self._serialize.query("exclude_application_parameters", exclude_application_parameters, 'bool')
+            query_parameters["ExcludeApplicationParameters"] = self._serialize.query(
+                "exclude_application_parameters", exclude_application_parameters, "bool"
+            )
         if continuation_token is not None:
-            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+            query_parameters["ContinuationToken"] = self._serialize.query(
+                "continuation_token", continuation_token, "str", skip_quote=True
+            )
         if max_results is not None:
-            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
+            query_parameters["MaxResults"] = self._serialize.query("max_results", max_results, "long", minimum=0)
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -3027,17 +3246,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PagedApplicationTypeInfoList', response)
+            deserialized = self._deserialize("PagedApplicationTypeInfoList", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_application_type_info_list.metadata = {'url': '/ApplicationTypes'}
+
+    get_application_type_info_list.metadata = {"url": "/ApplicationTypes"}
 
     def get_application_type_info_list_by_name(
-            self, application_type_name, application_type_version=None, exclude_application_parameters=False, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        application_type_name,
+        application_type_version=None,
+        exclude_application_parameters=False,
+        continuation_token=None,
+        max_results=0,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the list of application types in the Service Fabric cluster
         matching exactly the specified name.
 
@@ -3100,29 +3330,37 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_application_type_info_list_by_name.metadata['url']
+        url = self.get_application_type_info_list_by_name.metadata["url"]
         path_format_arguments = {
-            'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str')
+            "applicationTypeName": self._serialize.url("application_type_name", application_type_name, "str")
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if application_type_version is not None:
-            query_parameters['ApplicationTypeVersion'] = self._serialize.query("application_type_version", application_type_version, 'str')
+            query_parameters["ApplicationTypeVersion"] = self._serialize.query(
+                "application_type_version", application_type_version, "str"
+            )
         if exclude_application_parameters is not None:
-            query_parameters['ExcludeApplicationParameters'] = self._serialize.query("exclude_application_parameters", exclude_application_parameters, 'bool')
+            query_parameters["ExcludeApplicationParameters"] = self._serialize.query(
+                "exclude_application_parameters", exclude_application_parameters, "bool"
+            )
         if continuation_token is not None:
-            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+            query_parameters["ContinuationToken"] = self._serialize.query(
+                "continuation_token", continuation_token, "str", skip_quote=True
+            )
         if max_results is not None:
-            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
+            query_parameters["MaxResults"] = self._serialize.query("max_results", max_results, "long", minimum=0)
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -3135,17 +3373,24 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PagedApplicationTypeInfoList', response)
+            deserialized = self._deserialize("PagedApplicationTypeInfoList", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_application_type_info_list_by_name.metadata = {'url': '/ApplicationTypes/{applicationTypeName}'}
+
+    get_application_type_info_list_by_name.metadata = {"url": "/ApplicationTypes/{applicationTypeName}"}
 
     def provision_application_type(
-            self, provision_application_type_description_base_required_body_param, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        provision_application_type_description_base_required_body_param,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Provisions or registers a Service Fabric application type with the
         cluster using the '.sfpkg' package in the external store or using the
         application package in the image store.
@@ -3180,22 +3425,26 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.2"
 
         # Construct URL
-        url = self.provision_application_type.metadata['url']
+        url = self.provision_application_type.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(provision_application_type_description_base_required_body_param, 'ProvisionApplicationTypeDescriptionBase')
+        body_content = self._serialize.body(
+            provision_application_type_description_base_required_body_param, "ProvisionApplicationTypeDescriptionBase"
+        )
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -3207,10 +3456,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    provision_application_type.metadata = {'url': '/ApplicationTypes/$/Provision'}
+
+    provision_application_type.metadata = {"url": "/ApplicationTypes/$/Provision"}
 
     def unprovision_application_type(
-            self, application_type_name, application_type_version, timeout=60, async_parameter=None, custom_headers=None, raw=False, **operation_config):
+        self,
+        application_type_name,
+        application_type_version,
+        timeout=60,
+        async_parameter=None,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Removes or unregisters a Service Fabric application type from the
         cluster.
 
@@ -3246,31 +3504,37 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        unprovision_application_type_description_info = models.UnprovisionApplicationTypeDescriptionInfo(application_type_version=application_type_version, async_property=async_parameter)
+        unprovision_application_type_description_info = models.UnprovisionApplicationTypeDescriptionInfo(
+            application_type_version=application_type_version, async_property=async_parameter
+        )
 
         api_version = "6.0"
 
         # Construct URL
-        url = self.unprovision_application_type.metadata['url']
+        url = self.unprovision_application_type.metadata["url"]
         path_format_arguments = {
-            'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str')
+            "applicationTypeName": self._serialize.url("application_type_name", application_type_name, "str")
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(unprovision_application_type_description_info, 'UnprovisionApplicationTypeDescriptionInfo')
+        body_content = self._serialize.body(
+            unprovision_application_type_description_info, "UnprovisionApplicationTypeDescriptionInfo"
+        )
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -3282,10 +3546,18 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    unprovision_application_type.metadata = {'url': '/ApplicationTypes/{applicationTypeName}/$/Unprovision'}
+
+    unprovision_application_type.metadata = {"url": "/ApplicationTypes/{applicationTypeName}/$/Unprovision"}
 
     def get_service_type_info_list(
-            self, application_type_name, application_type_version, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        application_type_name,
+        application_type_version,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the list containing the information about service types that are
         supported by a provisioned application type in a Service Fabric
         cluster.
@@ -3318,22 +3590,26 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_service_type_info_list.metadata['url']
+        url = self.get_service_type_info_list.metadata["url"]
         path_format_arguments = {
-            'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str')
+            "applicationTypeName": self._serialize.url("application_type_name", application_type_name, "str")
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['ApplicationTypeVersion'] = self._serialize.query("application_type_version", application_type_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["ApplicationTypeVersion"] = self._serialize.query(
+            "application_type_version", application_type_version, "str"
+        )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -3346,17 +3622,26 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[ServiceTypeInfo]', response)
+            deserialized = self._deserialize("[ServiceTypeInfo]", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_service_type_info_list.metadata = {'url': '/ApplicationTypes/{applicationTypeName}/$/GetServiceTypes'}
+
+    get_service_type_info_list.metadata = {"url": "/ApplicationTypes/{applicationTypeName}/$/GetServiceTypes"}
 
     def get_service_type_info_by_name(
-            self, application_type_name, application_type_version, service_type_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        application_type_name,
+        application_type_version,
+        service_type_name,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the information about a specific service type that is supported by
         a provisioned application type in a Service Fabric cluster.
 
@@ -3392,23 +3677,27 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_service_type_info_by_name.metadata['url']
+        url = self.get_service_type_info_by_name.metadata["url"]
         path_format_arguments = {
-            'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str'),
-            'serviceTypeName': self._serialize.url("service_type_name", service_type_name, 'str', skip_quote=True)
+            "applicationTypeName": self._serialize.url("application_type_name", application_type_name, "str"),
+            "serviceTypeName": self._serialize.url("service_type_name", service_type_name, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['ApplicationTypeVersion'] = self._serialize.query("application_type_version", application_type_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["ApplicationTypeVersion"] = self._serialize.query(
+            "application_type_version", application_type_version, "str"
+        )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -3421,17 +3710,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ServiceTypeInfo', response)
+            deserialized = self._deserialize("ServiceTypeInfo", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_service_type_info_by_name.metadata = {'url': '/ApplicationTypes/{applicationTypeName}/$/GetServiceTypes/{serviceTypeName}'}
+
+    get_service_type_info_by_name.metadata = {
+        "url": "/ApplicationTypes/{applicationTypeName}/$/GetServiceTypes/{serviceTypeName}"
+    }
 
     def get_service_manifest(
-            self, application_type_name, application_type_version, service_manifest_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        application_type_name,
+        application_type_version,
+        service_manifest_name,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the manifest describing a service type.
 
         Gets the manifest describing a service type. The response contains the
@@ -3463,23 +3763,29 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_service_manifest.metadata['url']
+        url = self.get_service_manifest.metadata["url"]
         path_format_arguments = {
-            'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str')
+            "applicationTypeName": self._serialize.url("application_type_name", application_type_name, "str")
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['ApplicationTypeVersion'] = self._serialize.query("application_type_version", application_type_version, 'str')
-        query_parameters['ServiceManifestName'] = self._serialize.query("service_manifest_name", service_manifest_name, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["ApplicationTypeVersion"] = self._serialize.query(
+            "application_type_version", application_type_version, "str"
+        )
+        query_parameters["ServiceManifestName"] = self._serialize.query(
+            "service_manifest_name", service_manifest_name, "str"
+        )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -3492,17 +3798,26 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ServiceTypeManifest', response)
+            deserialized = self._deserialize("ServiceTypeManifest", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_service_manifest.metadata = {'url': '/ApplicationTypes/{applicationTypeName}/$/GetServiceManifest'}
+
+    get_service_manifest.metadata = {"url": "/ApplicationTypes/{applicationTypeName}/$/GetServiceManifest"}
 
     def get_deployed_service_type_info_list(
-            self, node_name, application_id, service_manifest_name=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        node_name,
+        application_id,
+        service_manifest_name=None,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the list containing the information about service types from the
         applications deployed on a node in a Service Fabric cluster.
 
@@ -3547,24 +3862,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_deployed_service_type_info_list.metadata['url']
+        url = self.get_deployed_service_type_info_list.metadata["url"]
         path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str'),
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            "nodeName": self._serialize.url("node_name", node_name, "str"),
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if service_manifest_name is not None:
-            query_parameters['ServiceManifestName'] = self._serialize.query("service_manifest_name", service_manifest_name, 'str')
+            query_parameters["ServiceManifestName"] = self._serialize.query(
+                "service_manifest_name", service_manifest_name, "str"
+            )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -3577,17 +3896,29 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[DeployedServiceTypeInfo]', response)
+            deserialized = self._deserialize("[DeployedServiceTypeInfo]", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_deployed_service_type_info_list.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServiceTypes'}
+
+    get_deployed_service_type_info_list.metadata = {
+        "url": "/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServiceTypes"
+    }
 
     def get_deployed_service_type_info_by_name(
-            self, node_name, application_id, service_type_name, service_manifest_name=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        node_name,
+        application_id,
+        service_type_name,
+        service_manifest_name=None,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the information about a specified service type of the application
         deployed on a node in a Service Fabric cluster.
 
@@ -3636,25 +3967,29 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_deployed_service_type_info_by_name.metadata['url']
+        url = self.get_deployed_service_type_info_by_name.metadata["url"]
         path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str'),
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True),
-            'serviceTypeName': self._serialize.url("service_type_name", service_type_name, 'str', skip_quote=True)
+            "nodeName": self._serialize.url("node_name", node_name, "str"),
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True),
+            "serviceTypeName": self._serialize.url("service_type_name", service_type_name, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if service_manifest_name is not None:
-            query_parameters['ServiceManifestName'] = self._serialize.query("service_manifest_name", service_manifest_name, 'str')
+            query_parameters["ServiceManifestName"] = self._serialize.query(
+                "service_manifest_name", service_manifest_name, "str"
+            )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -3667,17 +4002,21 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[DeployedServiceTypeInfo]', response)
+            deserialized = self._deserialize("[DeployedServiceTypeInfo]", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_deployed_service_type_info_by_name.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServiceTypes/{serviceTypeName}'}
+
+    get_deployed_service_type_info_by_name.metadata = {
+        "url": "/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServiceTypes/{serviceTypeName}"
+    }
 
     def create_application(
-            self, application_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, application_description, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Creates a Service Fabric application.
 
         Creates a Service Fabric application using the specified description.
@@ -3704,22 +4043,24 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.create_application.metadata['url']
+        url = self.create_application.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(application_description, 'ApplicationDescription')
+        body_content = self._serialize.body(application_description, "ApplicationDescription")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -3731,10 +4072,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    create_application.metadata = {'url': '/Applications/$/Create'}
+
+    create_application.metadata = {"url": "/Applications/$/Create"}
 
     def delete_application(
-            self, application_id, force_remove=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, application_id, force_remove=None, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Deletes an existing Service Fabric application.
 
         An application must be created before it can be deleted. Deleting an
@@ -3779,19 +4122,21 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.delete_application.metadata['url']
+        url = self.delete_application.metadata["url"]
         path_format_arguments = {
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if force_remove is not None:
-            query_parameters['ForceRemove'] = self._serialize.query("force_remove", force_remove, 'bool')
+            query_parameters["ForceRemove"] = self._serialize.query("force_remove", force_remove, "bool")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -3808,10 +4153,10 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete_application.metadata = {'url': '/Applications/{applicationId}/$/Delete'}
 
-    def get_application_load_info(
-            self, application_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+    delete_application.metadata = {"url": "/Applications/{applicationId}/$/Delete"}
+
+    def get_application_load_info(self, application_id, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets load information about a Service Fabric application.
 
         Returns the load information about the application that was created or
@@ -3849,21 +4194,23 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_application_load_info.metadata['url']
+        url = self.get_application_load_info.metadata["url"]
         path_format_arguments = {
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -3876,17 +4223,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ApplicationLoadInfo', response)
+            deserialized = self._deserialize("ApplicationLoadInfo", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_application_load_info.metadata = {'url': '/Applications/{applicationId}/$/GetLoadInformation'}
+
+    get_application_load_info.metadata = {"url": "/Applications/{applicationId}/$/GetLoadInformation"}
 
     def get_application_info_list(
-            self, application_definition_kind_filter=0, application_type_name=None, exclude_application_parameters=False, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        application_definition_kind_filter=0,
+        application_type_name=None,
+        exclude_application_parameters=False,
+        continuation_token=None,
+        max_results=0,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the list of applications created in the Service Fabric cluster
         that match the specified filters.
 
@@ -3954,27 +4312,37 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.1"
 
         # Construct URL
-        url = self.get_application_info_list.metadata['url']
+        url = self.get_application_info_list.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if application_definition_kind_filter is not None:
-            query_parameters['ApplicationDefinitionKindFilter'] = self._serialize.query("application_definition_kind_filter", application_definition_kind_filter, 'int')
+            query_parameters["ApplicationDefinitionKindFilter"] = self._serialize.query(
+                "application_definition_kind_filter", application_definition_kind_filter, "int"
+            )
         if application_type_name is not None:
-            query_parameters['ApplicationTypeName'] = self._serialize.query("application_type_name", application_type_name, 'str')
+            query_parameters["ApplicationTypeName"] = self._serialize.query(
+                "application_type_name", application_type_name, "str"
+            )
         if exclude_application_parameters is not None:
-            query_parameters['ExcludeApplicationParameters'] = self._serialize.query("exclude_application_parameters", exclude_application_parameters, 'bool')
+            query_parameters["ExcludeApplicationParameters"] = self._serialize.query(
+                "exclude_application_parameters", exclude_application_parameters, "bool"
+            )
         if continuation_token is not None:
-            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+            query_parameters["ContinuationToken"] = self._serialize.query(
+                "continuation_token", continuation_token, "str", skip_quote=True
+            )
         if max_results is not None:
-            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
+            query_parameters["MaxResults"] = self._serialize.query("max_results", max_results, "long", minimum=0)
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -3987,17 +4355,25 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PagedApplicationInfoList', response)
+            deserialized = self._deserialize("PagedApplicationInfoList", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_application_info_list.metadata = {'url': '/Applications'}
+
+    get_application_info_list.metadata = {"url": "/Applications"}
 
     def get_application_info(
-            self, application_id, exclude_application_parameters=False, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        application_id,
+        exclude_application_parameters=False,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets information about a Service Fabric application.
 
         Returns the information about the application that was created or in
@@ -4037,23 +4413,27 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_application_info.metadata['url']
+        url = self.get_application_info.metadata["url"]
         path_format_arguments = {
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if exclude_application_parameters is not None:
-            query_parameters['ExcludeApplicationParameters'] = self._serialize.query("exclude_application_parameters", exclude_application_parameters, 'bool')
+            query_parameters["ExcludeApplicationParameters"] = self._serialize.query(
+                "exclude_application_parameters", exclude_application_parameters, "bool"
+            )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -4066,17 +4446,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ApplicationInfo', response)
+            deserialized = self._deserialize("ApplicationInfo", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_application_info.metadata = {'url': '/Applications/{applicationId}'}
+
+    get_application_info.metadata = {"url": "/Applications/{applicationId}"}
 
     def get_application_health(
-            self, application_id, events_health_state_filter=0, deployed_applications_health_state_filter=0, services_health_state_filter=0, exclude_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        application_id,
+        events_health_state_filter=0,
+        deployed_applications_health_state_filter=0,
+        services_health_state_filter=0,
+        exclude_health_statistics=False,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the health of the service fabric application.
 
         Returns the heath state of the service fabric application. The response
@@ -4193,29 +4584,39 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_application_health.metadata['url']
+        url = self.get_application_health.metadata["url"]
         path_format_arguments = {
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if events_health_state_filter is not None:
-            query_parameters['EventsHealthStateFilter'] = self._serialize.query("events_health_state_filter", events_health_state_filter, 'int')
+            query_parameters["EventsHealthStateFilter"] = self._serialize.query(
+                "events_health_state_filter", events_health_state_filter, "int"
+            )
         if deployed_applications_health_state_filter is not None:
-            query_parameters['DeployedApplicationsHealthStateFilter'] = self._serialize.query("deployed_applications_health_state_filter", deployed_applications_health_state_filter, 'int')
+            query_parameters["DeployedApplicationsHealthStateFilter"] = self._serialize.query(
+                "deployed_applications_health_state_filter", deployed_applications_health_state_filter, "int"
+            )
         if services_health_state_filter is not None:
-            query_parameters['ServicesHealthStateFilter'] = self._serialize.query("services_health_state_filter", services_health_state_filter, 'int')
+            query_parameters["ServicesHealthStateFilter"] = self._serialize.query(
+                "services_health_state_filter", services_health_state_filter, "int"
+            )
         if exclude_health_statistics is not None:
-            query_parameters['ExcludeHealthStatistics'] = self._serialize.query("exclude_health_statistics", exclude_health_statistics, 'bool')
+            query_parameters["ExcludeHealthStatistics"] = self._serialize.query(
+                "exclude_health_statistics", exclude_health_statistics, "bool"
+            )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -4228,17 +4629,29 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ApplicationHealth', response)
+            deserialized = self._deserialize("ApplicationHealth", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_application_health.metadata = {'url': '/Applications/{applicationId}/$/GetHealth'}
+
+    get_application_health.metadata = {"url": "/Applications/{applicationId}/$/GetHealth"}
 
     def get_application_health_using_policy(
-            self, application_id, events_health_state_filter=0, deployed_applications_health_state_filter=0, services_health_state_filter=0, exclude_health_statistics=False, application_health_policy=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        application_id,
+        events_health_state_filter=0,
+        deployed_applications_health_state_filter=0,
+        services_health_state_filter=0,
+        exclude_health_statistics=False,
+        application_health_policy=None,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the health of a Service Fabric application using the specified
         policy.
 
@@ -4364,36 +4777,46 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_application_health_using_policy.metadata['url']
+        url = self.get_application_health_using_policy.metadata["url"]
         path_format_arguments = {
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if events_health_state_filter is not None:
-            query_parameters['EventsHealthStateFilter'] = self._serialize.query("events_health_state_filter", events_health_state_filter, 'int')
+            query_parameters["EventsHealthStateFilter"] = self._serialize.query(
+                "events_health_state_filter", events_health_state_filter, "int"
+            )
         if deployed_applications_health_state_filter is not None:
-            query_parameters['DeployedApplicationsHealthStateFilter'] = self._serialize.query("deployed_applications_health_state_filter", deployed_applications_health_state_filter, 'int')
+            query_parameters["DeployedApplicationsHealthStateFilter"] = self._serialize.query(
+                "deployed_applications_health_state_filter", deployed_applications_health_state_filter, "int"
+            )
         if services_health_state_filter is not None:
-            query_parameters['ServicesHealthStateFilter'] = self._serialize.query("services_health_state_filter", services_health_state_filter, 'int')
+            query_parameters["ServicesHealthStateFilter"] = self._serialize.query(
+                "services_health_state_filter", services_health_state_filter, "int"
+            )
         if exclude_health_statistics is not None:
-            query_parameters['ExcludeHealthStatistics'] = self._serialize.query("exclude_health_statistics", exclude_health_statistics, 'bool')
+            query_parameters["ExcludeHealthStatistics"] = self._serialize.query(
+                "exclude_health_statistics", exclude_health_statistics, "bool"
+            )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Accept"] = "application/json"
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
         if application_health_policy is not None:
-            body_content = self._serialize.body(application_health_policy, 'ApplicationHealthPolicy')
+            body_content = self._serialize.body(application_health_policy, "ApplicationHealthPolicy")
         else:
             body_content = None
 
@@ -4406,17 +4829,26 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ApplicationHealth', response)
+            deserialized = self._deserialize("ApplicationHealth", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_application_health_using_policy.metadata = {'url': '/Applications/{applicationId}/$/GetHealth'}
+
+    get_application_health_using_policy.metadata = {"url": "/Applications/{applicationId}/$/GetHealth"}
 
     def report_application_health(
-            self, application_id, health_information, immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        application_id,
+        health_information,
+        immediate=False,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Sends a health report on the Service Fabric application.
 
         Reports health state of the specified Service Fabric application. The
@@ -4484,28 +4916,30 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.report_application_health.metadata['url']
+        url = self.report_application_health.metadata["url"]
         path_format_arguments = {
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if immediate is not None:
-            query_parameters['Immediate'] = self._serialize.query("immediate", immediate, 'bool')
+            query_parameters["Immediate"] = self._serialize.query("immediate", immediate, "bool")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(health_information, 'HealthInformation')
+        body_content = self._serialize.body(health_information, "HealthInformation")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -4517,10 +4951,18 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    report_application_health.metadata = {'url': '/Applications/{applicationId}/$/ReportHealth'}
+
+    report_application_health.metadata = {"url": "/Applications/{applicationId}/$/ReportHealth"}
 
     def start_application_upgrade(
-            self, application_id, application_upgrade_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        application_id,
+        application_upgrade_description,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Starts upgrading an application in the Service Fabric cluster.
 
         Validates the supplied application upgrade parameters and starts
@@ -4564,26 +5006,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.start_application_upgrade.metadata['url']
+        url = self.start_application_upgrade.metadata["url"]
         path_format_arguments = {
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(application_upgrade_description, 'ApplicationUpgradeDescription')
+        body_content = self._serialize.body(application_upgrade_description, "ApplicationUpgradeDescription")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -4595,10 +5039,10 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    start_application_upgrade.metadata = {'url': '/Applications/{applicationId}/$/Upgrade'}
 
-    def get_application_upgrade(
-            self, application_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+    start_application_upgrade.metadata = {"url": "/Applications/{applicationId}/$/Upgrade"}
+
+    def get_application_upgrade(self, application_id, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets details for the latest upgrade performed on this application.
 
         Returns information about the state of the latest application upgrade
@@ -4633,21 +5077,23 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_application_upgrade.metadata['url']
+        url = self.get_application_upgrade.metadata["url"]
         path_format_arguments = {
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -4660,17 +5106,25 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ApplicationUpgradeProgressInfo', response)
+            deserialized = self._deserialize("ApplicationUpgradeProgressInfo", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_application_upgrade.metadata = {'url': '/Applications/{applicationId}/$/GetUpgradeProgress'}
+
+    get_application_upgrade.metadata = {"url": "/Applications/{applicationId}/$/GetUpgradeProgress"}
 
     def update_application_upgrade(
-            self, application_id, application_upgrade_update_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        application_id,
+        application_upgrade_update_description,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Updates an ongoing application upgrade in the Service Fabric cluster.
 
         Updates the parameters of an ongoing application upgrade from the ones
@@ -4709,26 +5163,30 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.update_application_upgrade.metadata['url']
+        url = self.update_application_upgrade.metadata["url"]
         path_format_arguments = {
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(application_upgrade_update_description, 'ApplicationUpgradeUpdateDescription')
+        body_content = self._serialize.body(
+            application_upgrade_update_description, "ApplicationUpgradeUpdateDescription"
+        )
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -4740,10 +5198,18 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    update_application_upgrade.metadata = {'url': '/Applications/{applicationId}/$/UpdateUpgrade'}
+
+    update_application_upgrade.metadata = {"url": "/Applications/{applicationId}/$/UpdateUpgrade"}
 
     def update_application(
-            self, application_id, application_update_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        application_id,
+        application_update_description,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Updates a Service Fabric application.
 
         Updates a Service Fabric application instance. The set of properties
@@ -4781,26 +5247,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "8.1"
 
         # Construct URL
-        url = self.update_application.metadata['url']
+        url = self.update_application.metadata["url"]
         path_format_arguments = {
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(application_update_description, 'ApplicationUpdateDescription')
+        body_content = self._serialize.body(application_update_description, "ApplicationUpdateDescription")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -4812,10 +5280,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    update_application.metadata = {'url': '/Applications/{applicationId}/$/Update'}
+
+    update_application.metadata = {"url": "/Applications/{applicationId}/$/Update"}
 
     def resume_application_upgrade(
-            self, application_id, upgrade_domain_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, application_id, upgrade_domain_name, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Resumes upgrading an application in the Service Fabric cluster.
 
         Resumes an unmonitored manual Service Fabric application upgrade.
@@ -4851,31 +5321,37 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        resume_application_upgrade_description = models.ResumeApplicationUpgradeDescription(upgrade_domain_name=upgrade_domain_name)
+        resume_application_upgrade_description = models.ResumeApplicationUpgradeDescription(
+            upgrade_domain_name=upgrade_domain_name
+        )
 
         api_version = "6.0"
 
         # Construct URL
-        url = self.resume_application_upgrade.metadata['url']
+        url = self.resume_application_upgrade.metadata["url"]
         path_format_arguments = {
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(resume_application_upgrade_description, 'ResumeApplicationUpgradeDescription')
+        body_content = self._serialize.body(
+            resume_application_upgrade_description, "ResumeApplicationUpgradeDescription"
+        )
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -4887,10 +5363,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    resume_application_upgrade.metadata = {'url': '/Applications/{applicationId}/$/MoveToNextUpgradeDomain'}
+
+    resume_application_upgrade.metadata = {"url": "/Applications/{applicationId}/$/MoveToNextUpgradeDomain"}
 
     def rollback_application_upgrade(
-            self, application_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, application_id, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Starts rolling back the currently on-going upgrade of an application in
         the Service Fabric cluster.
 
@@ -4927,17 +5405,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.rollback_application_upgrade.metadata['url']
+        url = self.rollback_application_upgrade.metadata["url"]
         path_format_arguments = {
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -4954,10 +5434,20 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    rollback_application_upgrade.metadata = {'url': '/Applications/{applicationId}/$/RollbackUpgrade'}
+
+    rollback_application_upgrade.metadata = {"url": "/Applications/{applicationId}/$/RollbackUpgrade"}
 
     def get_deployed_application_info_list(
-            self, node_name, timeout=60, include_health_state=False, continuation_token=None, max_results=0, custom_headers=None, raw=False, **operation_config):
+        self,
+        node_name,
+        timeout=60,
+        include_health_state=False,
+        continuation_token=None,
+        max_results=0,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the list of applications deployed on a Service Fabric node.
 
         Gets the list of applications deployed on a Service Fabric node. The
@@ -5013,27 +5503,31 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.1"
 
         # Construct URL
-        url = self.get_deployed_application_info_list.metadata['url']
-        path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str')
-        }
+        url = self.get_deployed_application_info_list.metadata["url"]
+        path_format_arguments = {"nodeName": self._serialize.url("node_name", node_name, "str")}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
         if include_health_state is not None:
-            query_parameters['IncludeHealthState'] = self._serialize.query("include_health_state", include_health_state, 'bool')
+            query_parameters["IncludeHealthState"] = self._serialize.query(
+                "include_health_state", include_health_state, "bool"
+            )
         if continuation_token is not None:
-            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+            query_parameters["ContinuationToken"] = self._serialize.query(
+                "continuation_token", continuation_token, "str", skip_quote=True
+            )
         if max_results is not None:
-            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
+            query_parameters["MaxResults"] = self._serialize.query("max_results", max_results, "long", minimum=0)
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -5046,17 +5540,26 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PagedDeployedApplicationInfoList', response)
+            deserialized = self._deserialize("PagedDeployedApplicationInfoList", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_deployed_application_info_list.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications'}
+
+    get_deployed_application_info_list.metadata = {"url": "/Nodes/{nodeName}/$/GetApplications"}
 
     def get_deployed_application_info(
-            self, node_name, application_id, timeout=60, include_health_state=False, custom_headers=None, raw=False, **operation_config):
+        self,
+        node_name,
+        application_id,
+        timeout=60,
+        include_health_state=False,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the information about an application deployed on a Service Fabric
         node.
 
@@ -5104,24 +5607,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.1"
 
         # Construct URL
-        url = self.get_deployed_application_info.metadata['url']
+        url = self.get_deployed_application_info.metadata["url"]
         path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str'),
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            "nodeName": self._serialize.url("node_name", node_name, "str"),
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
         if include_health_state is not None:
-            query_parameters['IncludeHealthState'] = self._serialize.query("include_health_state", include_health_state, 'bool')
+            query_parameters["IncludeHealthState"] = self._serialize.query(
+                "include_health_state", include_health_state, "bool"
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -5134,17 +5641,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('DeployedApplicationInfo', response)
+            deserialized = self._deserialize("DeployedApplicationInfo", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_deployed_application_info.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}'}
+
+    get_deployed_application_info.metadata = {"url": "/Nodes/{nodeName}/$/GetApplications/{applicationId}"}
 
     def get_deployed_application_health(
-            self, node_name, application_id, events_health_state_filter=0, deployed_service_packages_health_state_filter=0, exclude_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        node_name,
+        application_id,
+        events_health_state_filter=0,
+        deployed_service_packages_health_state_filter=0,
+        exclude_health_statistics=False,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the information about health of an application deployed on a
         Service Fabric node.
 
@@ -5243,28 +5761,36 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_deployed_application_health.metadata['url']
+        url = self.get_deployed_application_health.metadata["url"]
         path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str'),
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            "nodeName": self._serialize.url("node_name", node_name, "str"),
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if events_health_state_filter is not None:
-            query_parameters['EventsHealthStateFilter'] = self._serialize.query("events_health_state_filter", events_health_state_filter, 'int')
+            query_parameters["EventsHealthStateFilter"] = self._serialize.query(
+                "events_health_state_filter", events_health_state_filter, "int"
+            )
         if deployed_service_packages_health_state_filter is not None:
-            query_parameters['DeployedServicePackagesHealthStateFilter'] = self._serialize.query("deployed_service_packages_health_state_filter", deployed_service_packages_health_state_filter, 'int')
+            query_parameters["DeployedServicePackagesHealthStateFilter"] = self._serialize.query(
+                "deployed_service_packages_health_state_filter", deployed_service_packages_health_state_filter, "int"
+            )
         if exclude_health_statistics is not None:
-            query_parameters['ExcludeHealthStatistics'] = self._serialize.query("exclude_health_statistics", exclude_health_statistics, 'bool')
+            query_parameters["ExcludeHealthStatistics"] = self._serialize.query(
+                "exclude_health_statistics", exclude_health_statistics, "bool"
+            )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -5277,17 +5803,31 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('DeployedApplicationHealth', response)
+            deserialized = self._deserialize("DeployedApplicationHealth", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_deployed_application_health.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetHealth'}
+
+    get_deployed_application_health.metadata = {
+        "url": "/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetHealth"
+    }
 
     def get_deployed_application_health_using_policy(
-            self, node_name, application_id, events_health_state_filter=0, deployed_service_packages_health_state_filter=0, application_health_policy=None, exclude_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        node_name,
+        application_id,
+        events_health_state_filter=0,
+        deployed_service_packages_health_state_filter=0,
+        application_health_policy=None,
+        exclude_health_statistics=False,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the information about health of an application deployed on a
         Service Fabric node. using the specified policy.
 
@@ -5397,35 +5937,43 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_deployed_application_health_using_policy.metadata['url']
+        url = self.get_deployed_application_health_using_policy.metadata["url"]
         path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str'),
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            "nodeName": self._serialize.url("node_name", node_name, "str"),
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if events_health_state_filter is not None:
-            query_parameters['EventsHealthStateFilter'] = self._serialize.query("events_health_state_filter", events_health_state_filter, 'int')
+            query_parameters["EventsHealthStateFilter"] = self._serialize.query(
+                "events_health_state_filter", events_health_state_filter, "int"
+            )
         if deployed_service_packages_health_state_filter is not None:
-            query_parameters['DeployedServicePackagesHealthStateFilter'] = self._serialize.query("deployed_service_packages_health_state_filter", deployed_service_packages_health_state_filter, 'int')
+            query_parameters["DeployedServicePackagesHealthStateFilter"] = self._serialize.query(
+                "deployed_service_packages_health_state_filter", deployed_service_packages_health_state_filter, "int"
+            )
         if exclude_health_statistics is not None:
-            query_parameters['ExcludeHealthStatistics'] = self._serialize.query("exclude_health_statistics", exclude_health_statistics, 'bool')
+            query_parameters["ExcludeHealthStatistics"] = self._serialize.query(
+                "exclude_health_statistics", exclude_health_statistics, "bool"
+            )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Accept"] = "application/json"
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
         if application_health_policy is not None:
-            body_content = self._serialize.body(application_health_policy, 'ApplicationHealthPolicy')
+            body_content = self._serialize.body(application_health_policy, "ApplicationHealthPolicy")
         else:
             body_content = None
 
@@ -5438,17 +5986,29 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('DeployedApplicationHealth', response)
+            deserialized = self._deserialize("DeployedApplicationHealth", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_deployed_application_health_using_policy.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetHealth'}
+
+    get_deployed_application_health_using_policy.metadata = {
+        "url": "/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetHealth"
+    }
 
     def report_deployed_application_health(
-            self, node_name, application_id, health_information, immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        node_name,
+        application_id,
+        health_information,
+        immediate=False,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Sends a health report on the Service Fabric application deployed on a
         Service Fabric node.
 
@@ -5519,29 +6079,31 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.report_deployed_application_health.metadata['url']
+        url = self.report_deployed_application_health.metadata["url"]
         path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str'),
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            "nodeName": self._serialize.url("node_name", node_name, "str"),
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if immediate is not None:
-            query_parameters['Immediate'] = self._serialize.query("immediate", immediate, 'bool')
+            query_parameters["Immediate"] = self._serialize.query("immediate", immediate, "bool")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(health_information, 'HealthInformation')
+        body_content = self._serialize.body(health_information, "HealthInformation")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -5553,10 +6115,20 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    report_deployed_application_health.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/ReportHealth'}
+
+    report_deployed_application_health.metadata = {
+        "url": "/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/ReportHealth"
+    }
 
     def get_application_manifest(
-            self, application_type_name, application_type_version, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        application_type_name,
+        application_type_version,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the manifest describing an application type.
 
         The response contains the application manifest XML as a string.
@@ -5584,22 +6156,26 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_application_manifest.metadata['url']
+        url = self.get_application_manifest.metadata["url"]
         path_format_arguments = {
-            'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str')
+            "applicationTypeName": self._serialize.url("application_type_name", application_type_name, "str")
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['ApplicationTypeVersion'] = self._serialize.query("application_type_version", application_type_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["ApplicationTypeVersion"] = self._serialize.query(
+            "application_type_version", application_type_version, "str"
+        )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -5612,17 +6188,26 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ApplicationTypeManifest', response)
+            deserialized = self._deserialize("ApplicationTypeManifest", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_application_manifest.metadata = {'url': '/ApplicationTypes/{applicationTypeName}/$/GetApplicationManifest'}
+
+    get_application_manifest.metadata = {"url": "/ApplicationTypes/{applicationTypeName}/$/GetApplicationManifest"}
 
     def get_service_info_list(
-            self, application_id, service_type_name=None, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        application_id,
+        service_type_name=None,
+        continuation_token=None,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the information about all services belonging to the application
         specified by the application ID.
 
@@ -5668,25 +6253,29 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_service_info_list.metadata['url']
+        url = self.get_service_info_list.metadata["url"]
         path_format_arguments = {
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
         if service_type_name is not None:
-            query_parameters['ServiceTypeName'] = self._serialize.query("service_type_name", service_type_name, 'str')
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+            query_parameters["ServiceTypeName"] = self._serialize.query("service_type_name", service_type_name, "str")
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if continuation_token is not None:
-            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+            query_parameters["ContinuationToken"] = self._serialize.query(
+                "continuation_token", continuation_token, "str", skip_quote=True
+            )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -5699,17 +6288,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PagedServiceInfoList', response)
+            deserialized = self._deserialize("PagedServiceInfoList", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_service_info_list.metadata = {'url': '/Applications/{applicationId}/$/GetServices'}
+
+    get_service_info_list.metadata = {"url": "/Applications/{applicationId}/$/GetServices"}
 
     def get_service_info(
-            self, application_id, service_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, application_id, service_id, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Gets the information about the specific service belonging to the
         Service Fabric application.
 
@@ -5752,22 +6343,24 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_service_info.metadata['url']
+        url = self.get_service_info.metadata["url"]
         path_format_arguments = {
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True),
-            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True),
+            "serviceId": self._serialize.url("service_id", service_id, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -5780,17 +6373,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ServiceInfo', response)
+            deserialized = self._deserialize("ServiceInfo", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_service_info.metadata = {'url': '/Applications/{applicationId}/$/GetServices/{serviceId}'}
 
-    def get_application_name_info(
-            self, service_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+    get_service_info.metadata = {"url": "/Applications/{applicationId}/$/GetServices/{serviceId}"}
+
+    def get_application_name_info(self, service_id, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the name of the Service Fabric application for a service.
 
         Gets the name of the application for the specified service. A 404
@@ -5824,21 +6417,21 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_application_name_info.metadata['url']
-        path_format_arguments = {
-            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
-        }
+        url = self.get_application_name_info.metadata["url"]
+        path_format_arguments = {"serviceId": self._serialize.url("service_id", service_id, "str", skip_quote=True)}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -5851,17 +6444,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ApplicationNameInfo', response)
+            deserialized = self._deserialize("ApplicationNameInfo", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_application_name_info.metadata = {'url': '/Services/{serviceId}/$/GetApplicationName'}
+
+    get_application_name_info.metadata = {"url": "/Services/{serviceId}/$/GetApplicationName"}
 
     def create_service(
-            self, application_id, service_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, application_id, service_description, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Creates the specified Service Fabric service.
 
         This api allows creating a new Service Fabric stateless or stateful
@@ -5901,26 +6496,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.create_service.metadata['url']
+        url = self.create_service.metadata["url"]
         path_format_arguments = {
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(service_description, 'ServiceDescription')
+        body_content = self._serialize.body(service_description, "ServiceDescription")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -5932,10 +6529,18 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    create_service.metadata = {'url': '/Applications/{applicationId}/$/GetServices/$/Create'}
+
+    create_service.metadata = {"url": "/Applications/{applicationId}/$/GetServices/$/Create"}
 
     def create_service_from_template(
-            self, application_id, service_from_template_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        application_id,
+        service_from_template_description,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Creates a Service Fabric service from the service template.
 
         Creates a Service Fabric service from the service template defined in
@@ -5976,26 +6581,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.create_service_from_template.metadata['url']
+        url = self.create_service_from_template.metadata["url"]
         path_format_arguments = {
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(service_from_template_description, 'ServiceFromTemplateDescription')
+        body_content = self._serialize.body(service_from_template_description, "ServiceFromTemplateDescription")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -6007,10 +6614,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    create_service_from_template.metadata = {'url': '/Applications/{applicationId}/$/GetServices/$/CreateFromTemplate'}
+
+    create_service_from_template.metadata = {"url": "/Applications/{applicationId}/$/GetServices/$/CreateFromTemplate"}
 
     def delete_service(
-            self, service_id, force_remove=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, service_id, force_remove=None, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Deletes an existing Service Fabric service.
 
         A service must be created before it can be deleted. By default, Service
@@ -6052,19 +6661,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.delete_service.metadata['url']
-        path_format_arguments = {
-            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
-        }
+        url = self.delete_service.metadata["url"]
+        path_format_arguments = {"serviceId": self._serialize.url("service_id", service_id, "str", skip_quote=True)}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if force_remove is not None:
-            query_parameters['ForceRemove'] = self._serialize.query("force_remove", force_remove, 'bool')
+            query_parameters["ForceRemove"] = self._serialize.query("force_remove", force_remove, "bool")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -6081,10 +6690,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete_service.metadata = {'url': '/Services/{serviceId}/$/Delete'}
+
+    delete_service.metadata = {"url": "/Services/{serviceId}/$/Delete"}
 
     def update_service(
-            self, service_id, service_update_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, service_id, service_update_description, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Updates a Service Fabric service using the specified update
         description.
 
@@ -6129,26 +6740,26 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.update_service.metadata['url']
-        path_format_arguments = {
-            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
-        }
+        url = self.update_service.metadata["url"]
+        path_format_arguments = {"serviceId": self._serialize.url("service_id", service_id, "str", skip_quote=True)}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(service_update_description, 'ServiceUpdateDescription')
+        body_content = self._serialize.body(service_update_description, "ServiceUpdateDescription")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -6160,10 +6771,10 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    update_service.metadata = {'url': '/Services/{serviceId}/$/Update'}
 
-    def get_service_description(
-            self, service_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+    update_service.metadata = {"url": "/Services/{serviceId}/$/Update"}
+
+    def get_service_description(self, service_id, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the description of an existing Service Fabric service.
 
         Gets the description of an existing Service Fabric service. A service
@@ -6196,21 +6807,21 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_service_description.metadata['url']
-        path_format_arguments = {
-            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
-        }
+        url = self.get_service_description.metadata["url"]
+        path_format_arguments = {"serviceId": self._serialize.url("service_id", service_id, "str", skip_quote=True)}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -6223,17 +6834,27 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ServiceDescription', response)
+            deserialized = self._deserialize("ServiceDescription", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_service_description.metadata = {'url': '/Services/{serviceId}/$/GetDescription'}
+
+    get_service_description.metadata = {"url": "/Services/{serviceId}/$/GetDescription"}
 
     def get_service_health(
-            self, service_id, events_health_state_filter=0, partitions_health_state_filter=0, exclude_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        service_id,
+        events_health_state_filter=0,
+        partitions_health_state_filter=0,
+        exclude_health_statistics=False,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the health of the specified Service Fabric service.
 
         Gets the health information of the specified service.
@@ -6327,27 +6948,33 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_service_health.metadata['url']
-        path_format_arguments = {
-            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
-        }
+        url = self.get_service_health.metadata["url"]
+        path_format_arguments = {"serviceId": self._serialize.url("service_id", service_id, "str", skip_quote=True)}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if events_health_state_filter is not None:
-            query_parameters['EventsHealthStateFilter'] = self._serialize.query("events_health_state_filter", events_health_state_filter, 'int')
+            query_parameters["EventsHealthStateFilter"] = self._serialize.query(
+                "events_health_state_filter", events_health_state_filter, "int"
+            )
         if partitions_health_state_filter is not None:
-            query_parameters['PartitionsHealthStateFilter'] = self._serialize.query("partitions_health_state_filter", partitions_health_state_filter, 'int')
+            query_parameters["PartitionsHealthStateFilter"] = self._serialize.query(
+                "partitions_health_state_filter", partitions_health_state_filter, "int"
+            )
         if exclude_health_statistics is not None:
-            query_parameters['ExcludeHealthStatistics'] = self._serialize.query("exclude_health_statistics", exclude_health_statistics, 'bool')
+            query_parameters["ExcludeHealthStatistics"] = self._serialize.query(
+                "exclude_health_statistics", exclude_health_statistics, "bool"
+            )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -6360,17 +6987,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ServiceHealth', response)
+            deserialized = self._deserialize("ServiceHealth", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_service_health.metadata = {'url': '/Services/{serviceId}/$/GetHealth'}
+
+    get_service_health.metadata = {"url": "/Services/{serviceId}/$/GetHealth"}
 
     def get_service_health_using_policy(
-            self, service_id, events_health_state_filter=0, partitions_health_state_filter=0, application_health_policy=None, exclude_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        service_id,
+        events_health_state_filter=0,
+        partitions_health_state_filter=0,
+        application_health_policy=None,
+        exclude_health_statistics=False,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the health of the specified Service Fabric service, by using the
         specified health policy.
 
@@ -6476,34 +7114,40 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_service_health_using_policy.metadata['url']
-        path_format_arguments = {
-            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
-        }
+        url = self.get_service_health_using_policy.metadata["url"]
+        path_format_arguments = {"serviceId": self._serialize.url("service_id", service_id, "str", skip_quote=True)}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if events_health_state_filter is not None:
-            query_parameters['EventsHealthStateFilter'] = self._serialize.query("events_health_state_filter", events_health_state_filter, 'int')
+            query_parameters["EventsHealthStateFilter"] = self._serialize.query(
+                "events_health_state_filter", events_health_state_filter, "int"
+            )
         if partitions_health_state_filter is not None:
-            query_parameters['PartitionsHealthStateFilter'] = self._serialize.query("partitions_health_state_filter", partitions_health_state_filter, 'int')
+            query_parameters["PartitionsHealthStateFilter"] = self._serialize.query(
+                "partitions_health_state_filter", partitions_health_state_filter, "int"
+            )
         if exclude_health_statistics is not None:
-            query_parameters['ExcludeHealthStatistics'] = self._serialize.query("exclude_health_statistics", exclude_health_statistics, 'bool')
+            query_parameters["ExcludeHealthStatistics"] = self._serialize.query(
+                "exclude_health_statistics", exclude_health_statistics, "bool"
+            )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Accept"] = "application/json"
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
         if application_health_policy is not None:
-            body_content = self._serialize.body(application_health_policy, 'ApplicationHealthPolicy')
+            body_content = self._serialize.body(application_health_policy, "ApplicationHealthPolicy")
         else:
             body_content = None
 
@@ -6516,17 +7160,26 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ServiceHealth', response)
+            deserialized = self._deserialize("ServiceHealth", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_service_health_using_policy.metadata = {'url': '/Services/{serviceId}/$/GetHealth'}
+
+    get_service_health_using_policy.metadata = {"url": "/Services/{serviceId}/$/GetHealth"}
 
     def report_service_health(
-            self, service_id, health_information, immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        service_id,
+        health_information,
+        immediate=False,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Sends a health report on the Service Fabric service.
 
         Reports health state of the specified Service Fabric service. The
@@ -6593,28 +7246,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.report_service_health.metadata['url']
-        path_format_arguments = {
-            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
-        }
+        url = self.report_service_health.metadata["url"]
+        path_format_arguments = {"serviceId": self._serialize.url("service_id", service_id, "str", skip_quote=True)}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if immediate is not None:
-            query_parameters['Immediate'] = self._serialize.query("immediate", immediate, 'bool')
+            query_parameters["Immediate"] = self._serialize.query("immediate", immediate, "bool")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(health_information, 'HealthInformation')
+        body_content = self._serialize.body(health_information, "HealthInformation")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -6626,10 +7279,20 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    report_service_health.metadata = {'url': '/Services/{serviceId}/$/ReportHealth'}
+
+    report_service_health.metadata = {"url": "/Services/{serviceId}/$/ReportHealth"}
 
     def resolve_service(
-            self, service_id, partition_key_type=None, partition_key_value=None, previous_rsp_version=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        service_id,
+        partition_key_type=None,
+        partition_key_value=None,
+        previous_rsp_version=None,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Resolve a Service Fabric partition.
 
         Resolve a Service Fabric service partition to get the endpoints of the
@@ -6688,27 +7351,33 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.resolve_service.metadata['url']
-        path_format_arguments = {
-            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
-        }
+        url = self.resolve_service.metadata["url"]
+        path_format_arguments = {"serviceId": self._serialize.url("service_id", service_id, "str", skip_quote=True)}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if partition_key_type is not None:
-            query_parameters['PartitionKeyType'] = self._serialize.query("partition_key_type", partition_key_type, 'int')
+            query_parameters["PartitionKeyType"] = self._serialize.query(
+                "partition_key_type", partition_key_type, "int"
+            )
         if partition_key_value is not None:
-            query_parameters['PartitionKeyValue'] = self._serialize.query("partition_key_value", partition_key_value, 'str', skip_quote=True)
+            query_parameters["PartitionKeyValue"] = self._serialize.query(
+                "partition_key_value", partition_key_value, "str", skip_quote=True
+            )
         if previous_rsp_version is not None:
-            query_parameters['PreviousRspVersion'] = self._serialize.query("previous_rsp_version", previous_rsp_version, 'str', skip_quote=True)
+            query_parameters["PreviousRspVersion"] = self._serialize.query(
+                "previous_rsp_version", previous_rsp_version, "str", skip_quote=True
+            )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -6721,17 +7390,26 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ResolvedServicePartition', response)
+            deserialized = self._deserialize("ResolvedServicePartition", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    resolve_service.metadata = {'url': '/Services/{serviceId}/$/ResolvePartition'}
+
+    resolve_service.metadata = {"url": "/Services/{serviceId}/$/ResolvePartition"}
 
     def get_unplaced_replica_information(
-            self, service_id, partition_id=None, only_query_primaries=False, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        service_id,
+        partition_id=None,
+        only_query_primaries=False,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the information about unplaced replica of the service.
 
         Returns the information about the unplaced replicas of the service.
@@ -6775,25 +7453,27 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.get_unplaced_replica_information.metadata['url']
-        path_format_arguments = {
-            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
-        }
+        url = self.get_unplaced_replica_information.metadata["url"]
+        path_format_arguments = {"serviceId": self._serialize.url("service_id", service_id, "str", skip_quote=True)}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if partition_id is not None:
-            query_parameters['PartitionId'] = self._serialize.query("partition_id", partition_id, 'str')
+            query_parameters["PartitionId"] = self._serialize.query("partition_id", partition_id, "str")
         if only_query_primaries is not None:
-            query_parameters['OnlyQueryPrimaries'] = self._serialize.query("only_query_primaries", only_query_primaries, 'bool')
+            query_parameters["OnlyQueryPrimaries"] = self._serialize.query(
+                "only_query_primaries", only_query_primaries, "bool"
+            )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -6806,17 +7486,27 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('UnplacedReplicaInformation', response)
+            deserialized = self._deserialize("UnplacedReplicaInformation", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_unplaced_replica_information.metadata = {'url': '/Services/{serviceId}/$/GetUnplacedReplicaInformation'}
+
+    get_unplaced_replica_information.metadata = {"url": "/Services/{serviceId}/$/GetUnplacedReplicaInformation"}
 
     def get_loaded_partition_info_list(
-            self, metric_name, service_name=None, ordering="Desc", max_results=0, continuation_token=None, custom_headers=None, raw=False, **operation_config):
+        self,
+        metric_name,
+        service_name=None,
+        ordering="Desc",
+        max_results=0,
+        continuation_token=None,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets ordered list of partitions.
 
         Retrieves partitions which are most/least loaded according to specified
@@ -6862,24 +7552,26 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "8.0"
 
         # Construct URL
-        url = self.get_loaded_partition_info_list.metadata['url']
+        url = self.get_loaded_partition_info_list.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['MetricName'] = self._serialize.query("metric_name", metric_name, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["MetricName"] = self._serialize.query("metric_name", metric_name, "str")
         if service_name is not None:
-            query_parameters['ServiceName'] = self._serialize.query("service_name", service_name, 'str')
+            query_parameters["ServiceName"] = self._serialize.query("service_name", service_name, "str")
         if ordering is not None:
-            query_parameters['Ordering'] = self._serialize.query("ordering", ordering, 'str')
+            query_parameters["Ordering"] = self._serialize.query("ordering", ordering, "str")
         if max_results is not None:
-            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
+            query_parameters["MaxResults"] = self._serialize.query("max_results", max_results, "long", minimum=0)
         if continuation_token is not None:
-            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+            query_parameters["ContinuationToken"] = self._serialize.query(
+                "continuation_token", continuation_token, "str", skip_quote=True
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -6892,17 +7584,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('LoadedPartitionInformationResultList', response)
+            deserialized = self._deserialize("LoadedPartitionInformationResultList", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_loaded_partition_info_list.metadata = {'url': '/$/GetLoadedPartitionInfoList'}
+
+    get_loaded_partition_info_list.metadata = {"url": "/$/GetLoadedPartitionInfoList"}
 
     def get_partition_info_list(
-            self, service_id, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, service_id, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Gets the list of partitions of a Service Fabric service.
 
         The response includes the partition ID, partitioning scheme
@@ -6945,23 +7639,25 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.get_partition_info_list.metadata['url']
-        path_format_arguments = {
-            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
-        }
+        url = self.get_partition_info_list.metadata["url"]
+        path_format_arguments = {"serviceId": self._serialize.url("service_id", service_id, "str", skip_quote=True)}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if continuation_token is not None:
-            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+            query_parameters["ContinuationToken"] = self._serialize.query(
+                "continuation_token", continuation_token, "str", skip_quote=True
+            )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -6974,17 +7670,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PagedServicePartitionInfoList', response)
+            deserialized = self._deserialize("PagedServicePartitionInfoList", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_partition_info_list.metadata = {'url': '/Services/{serviceId}/$/GetPartitions'}
 
-    def get_partition_info(
-            self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+    get_partition_info_list.metadata = {"url": "/Services/{serviceId}/$/GetPartitions"}
+
+    def get_partition_info(self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the information about a Service Fabric partition.
 
         Gets the information about the specified partition. The response
@@ -7013,21 +7709,23 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_partition_info.metadata['url']
+        url = self.get_partition_info.metadata["url"]
         path_format_arguments = {
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -7040,17 +7738,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ServicePartitionInfo', response)
+            deserialized = self._deserialize("ServicePartitionInfo", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_partition_info.metadata = {'url': '/Partitions/{partitionId}'}
 
-    def get_service_name_info(
-            self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+    get_partition_info.metadata = {"url": "/Partitions/{partitionId}"}
+
+    def get_service_name_info(self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the name of the Service Fabric service for a partition.
 
         Gets name of the service for the specified partition. A 404 error is
@@ -7077,21 +7775,23 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_service_name_info.metadata['url']
+        url = self.get_service_name_info.metadata["url"]
         path_format_arguments = {
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -7104,17 +7804,27 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ServiceNameInfo', response)
+            deserialized = self._deserialize("ServiceNameInfo", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_service_name_info.metadata = {'url': '/Partitions/{partitionId}/$/GetServiceName'}
+
+    get_service_name_info.metadata = {"url": "/Partitions/{partitionId}/$/GetServiceName"}
 
     def get_partition_health(
-            self, partition_id, events_health_state_filter=0, replicas_health_state_filter=0, exclude_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        partition_id,
+        events_health_state_filter=0,
+        replicas_health_state_filter=0,
+        exclude_health_statistics=False,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the health of the specified Service Fabric partition.
 
         Use EventsHealthStateFilter to filter the collection of health events
@@ -7199,27 +7909,35 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_partition_health.metadata['url']
+        url = self.get_partition_health.metadata["url"]
         path_format_arguments = {
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if events_health_state_filter is not None:
-            query_parameters['EventsHealthStateFilter'] = self._serialize.query("events_health_state_filter", events_health_state_filter, 'int')
+            query_parameters["EventsHealthStateFilter"] = self._serialize.query(
+                "events_health_state_filter", events_health_state_filter, "int"
+            )
         if replicas_health_state_filter is not None:
-            query_parameters['ReplicasHealthStateFilter'] = self._serialize.query("replicas_health_state_filter", replicas_health_state_filter, 'int')
+            query_parameters["ReplicasHealthStateFilter"] = self._serialize.query(
+                "replicas_health_state_filter", replicas_health_state_filter, "int"
+            )
         if exclude_health_statistics is not None:
-            query_parameters['ExcludeHealthStatistics'] = self._serialize.query("exclude_health_statistics", exclude_health_statistics, 'bool')
+            query_parameters["ExcludeHealthStatistics"] = self._serialize.query(
+                "exclude_health_statistics", exclude_health_statistics, "bool"
+            )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -7232,17 +7950,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PartitionHealth', response)
+            deserialized = self._deserialize("PartitionHealth", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_partition_health.metadata = {'url': '/Partitions/{partitionId}/$/GetHealth'}
+
+    get_partition_health.metadata = {"url": "/Partitions/{partitionId}/$/GetHealth"}
 
     def get_partition_health_using_policy(
-            self, partition_id, events_health_state_filter=0, replicas_health_state_filter=0, application_health_policy=None, exclude_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        partition_id,
+        events_health_state_filter=0,
+        replicas_health_state_filter=0,
+        application_health_policy=None,
+        exclude_health_statistics=False,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the health of the specified Service Fabric partition, by using the
         specified health policy.
 
@@ -7342,34 +8071,42 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_partition_health_using_policy.metadata['url']
+        url = self.get_partition_health_using_policy.metadata["url"]
         path_format_arguments = {
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if events_health_state_filter is not None:
-            query_parameters['EventsHealthStateFilter'] = self._serialize.query("events_health_state_filter", events_health_state_filter, 'int')
+            query_parameters["EventsHealthStateFilter"] = self._serialize.query(
+                "events_health_state_filter", events_health_state_filter, "int"
+            )
         if replicas_health_state_filter is not None:
-            query_parameters['ReplicasHealthStateFilter'] = self._serialize.query("replicas_health_state_filter", replicas_health_state_filter, 'int')
+            query_parameters["ReplicasHealthStateFilter"] = self._serialize.query(
+                "replicas_health_state_filter", replicas_health_state_filter, "int"
+            )
         if exclude_health_statistics is not None:
-            query_parameters['ExcludeHealthStatistics'] = self._serialize.query("exclude_health_statistics", exclude_health_statistics, 'bool')
+            query_parameters["ExcludeHealthStatistics"] = self._serialize.query(
+                "exclude_health_statistics", exclude_health_statistics, "bool"
+            )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Accept"] = "application/json"
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
         if application_health_policy is not None:
-            body_content = self._serialize.body(application_health_policy, 'ApplicationHealthPolicy')
+            body_content = self._serialize.body(application_health_policy, "ApplicationHealthPolicy")
         else:
             body_content = None
 
@@ -7382,17 +8119,26 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PartitionHealth', response)
+            deserialized = self._deserialize("PartitionHealth", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_partition_health_using_policy.metadata = {'url': '/Partitions/{partitionId}/$/GetHealth'}
+
+    get_partition_health_using_policy.metadata = {"url": "/Partitions/{partitionId}/$/GetHealth"}
 
     def report_partition_health(
-            self, partition_id, health_information, immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        partition_id,
+        health_information,
+        immediate=False,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Sends a health report on the Service Fabric partition.
 
         Reports health state of the specified Service Fabric partition. The
@@ -7453,28 +8199,30 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.report_partition_health.metadata['url']
+        url = self.report_partition_health.metadata["url"]
         path_format_arguments = {
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if immediate is not None:
-            query_parameters['Immediate'] = self._serialize.query("immediate", immediate, 'bool')
+            query_parameters["Immediate"] = self._serialize.query("immediate", immediate, "bool")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(health_information, 'HealthInformation')
+        body_content = self._serialize.body(health_information, "HealthInformation")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -7486,10 +8234,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    report_partition_health.metadata = {'url': '/Partitions/{partitionId}/$/ReportHealth'}
+
+    report_partition_health.metadata = {"url": "/Partitions/{partitionId}/$/ReportHealth"}
 
     def get_partition_load_information(
-            self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Gets the load information of the specified Service Fabric partition.
 
         Returns information about the load of a specified partition.
@@ -7519,21 +8269,23 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_partition_load_information.metadata['url']
+        url = self.get_partition_load_information.metadata["url"]
         path_format_arguments = {
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -7546,17 +8298,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PartitionLoadInformation', response)
+            deserialized = self._deserialize("PartitionLoadInformation", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_partition_load_information.metadata = {'url': '/Partitions/{partitionId}/$/GetLoadInformation'}
 
-    def reset_partition_load(
-            self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+    get_partition_load_information.metadata = {"url": "/Partitions/{partitionId}/$/GetLoadInformation"}
+
+    def reset_partition_load(self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Resets the current load of a Service Fabric partition.
 
         Resets the current load of a Service Fabric partition to the default
@@ -7582,17 +8334,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.reset_partition_load.metadata['url']
+        url = self.reset_partition_load.metadata["url"]
         path_format_arguments = {
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -7609,10 +8363,10 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    reset_partition_load.metadata = {'url': '/Partitions/{partitionId}/$/ResetLoad'}
 
-    def recover_partition(
-            self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+    reset_partition_load.metadata = {"url": "/Partitions/{partitionId}/$/ResetLoad"}
+
+    def recover_partition(self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Indicates to the Service Fabric cluster that it should attempt to
         recover a specific partition that is currently stuck in quorum loss.
 
@@ -7640,17 +8394,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.recover_partition.metadata['url']
+        url = self.recover_partition.metadata["url"]
         path_format_arguments = {
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -7667,10 +8423,10 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    recover_partition.metadata = {'url': '/Partitions/{partitionId}/$/Recover'}
 
-    def recover_service_partitions(
-            self, service_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+    recover_partition.metadata = {"url": "/Partitions/{partitionId}/$/Recover"}
+
+    def recover_service_partitions(self, service_id, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Indicates to the Service Fabric cluster that it should attempt to
         recover the specified service that is currently stuck in quorum loss.
 
@@ -7706,17 +8462,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.recover_service_partitions.metadata['url']
-        path_format_arguments = {
-            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
-        }
+        url = self.recover_service_partitions.metadata["url"]
+        path_format_arguments = {"serviceId": self._serialize.url("service_id", service_id, "str", skip_quote=True)}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -7733,10 +8489,10 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    recover_service_partitions.metadata = {'url': '/Services/$/{serviceId}/$/GetPartitions/$/Recover'}
 
-    def recover_system_partitions(
-            self, timeout=60, custom_headers=None, raw=False, **operation_config):
+    recover_service_partitions.metadata = {"url": "/Services/$/{serviceId}/$/GetPartitions/$/Recover"}
+
+    def recover_system_partitions(self, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Indicates to the Service Fabric cluster that it should attempt to
         recover the system services that are currently stuck in quorum loss.
 
@@ -7764,13 +8520,15 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.recover_system_partitions.metadata['url']
+        url = self.recover_system_partitions.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -7787,10 +8545,10 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    recover_system_partitions.metadata = {'url': '/$/RecoverSystemPartitions'}
 
-    def recover_all_partitions(
-            self, timeout=60, custom_headers=None, raw=False, **operation_config):
+    recover_system_partitions.metadata = {"url": "/$/RecoverSystemPartitions"}
+
+    def recover_all_partitions(self, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Indicates to the Service Fabric cluster that it should attempt to
         recover any services (including system services) which are currently
         stuck in quorum loss.
@@ -7817,13 +8575,15 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.recover_all_partitions.metadata['url']
+        url = self.recover_all_partitions.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -7840,10 +8600,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    recover_all_partitions.metadata = {'url': '/$/RecoverAllPartitions'}
+
+    recover_all_partitions.metadata = {"url": "/$/RecoverAllPartitions"}
 
     def move_primary_replica(
-            self, partition_id, node_name=None, ignore_constraints=False, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        partition_id,
+        node_name=None,
+        ignore_constraints=False,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Moves the primary replica of a partition of a stateful service.
 
         This command moves the primary replica of a partition of a stateful
@@ -7881,21 +8650,25 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.5"
 
         # Construct URL
-        url = self.move_primary_replica.metadata['url']
+        url = self.move_primary_replica.metadata["url"]
         path_format_arguments = {
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if node_name is not None:
-            query_parameters['NodeName'] = self._serialize.query("node_name", node_name, 'str')
+            query_parameters["NodeName"] = self._serialize.query("node_name", node_name, "str")
         if ignore_constraints is not None:
-            query_parameters['IgnoreConstraints'] = self._serialize.query("ignore_constraints", ignore_constraints, 'bool')
+            query_parameters["IgnoreConstraints"] = self._serialize.query(
+                "ignore_constraints", ignore_constraints, "bool"
+            )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -7912,10 +8685,20 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    move_primary_replica.metadata = {'url': '/Partitions/{partitionId}/$/MovePrimaryReplica'}
+
+    move_primary_replica.metadata = {"url": "/Partitions/{partitionId}/$/MovePrimaryReplica"}
 
     def move_secondary_replica(
-            self, partition_id, current_node_name, new_node_name=None, ignore_constraints=False, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        partition_id,
+        current_node_name,
+        new_node_name=None,
+        ignore_constraints=False,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Moves the secondary replica of a partition of a stateful service.
 
         This command moves the secondary replica of a partition of a stateful
@@ -7958,22 +8741,26 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.5"
 
         # Construct URL
-        url = self.move_secondary_replica.metadata['url']
+        url = self.move_secondary_replica.metadata["url"]
         path_format_arguments = {
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['CurrentNodeName'] = self._serialize.query("current_node_name", current_node_name, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["CurrentNodeName"] = self._serialize.query("current_node_name", current_node_name, "str")
         if new_node_name is not None:
-            query_parameters['NewNodeName'] = self._serialize.query("new_node_name", new_node_name, 'str')
+            query_parameters["NewNodeName"] = self._serialize.query("new_node_name", new_node_name, "str")
         if ignore_constraints is not None:
-            query_parameters['IgnoreConstraints'] = self._serialize.query("ignore_constraints", ignore_constraints, 'bool')
+            query_parameters["IgnoreConstraints"] = self._serialize.query(
+                "ignore_constraints", ignore_constraints, "bool"
+            )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -7990,10 +8777,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    move_secondary_replica.metadata = {'url': '/Partitions/{partitionId}/$/MoveSecondaryReplica'}
+
+    move_secondary_replica.metadata = {"url": "/Partitions/{partitionId}/$/MoveSecondaryReplica"}
 
     def update_partition_load(
-            self, partition_metric_load_description_list, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        partition_metric_load_description_list,
+        continuation_token=None,
+        max_results=0,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Update the loads of provided partitions for specific metrics.
 
         Updates the load value and predicted load value for all the partitions
@@ -8039,27 +8835,31 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "7.2"
 
         # Construct URL
-        url = self.update_partition_load.metadata['url']
+        url = self.update_partition_load.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if continuation_token is not None:
-            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+            query_parameters["ContinuationToken"] = self._serialize.query(
+                "continuation_token", continuation_token, "str", skip_quote=True
+            )
         if max_results is not None:
-            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
+            query_parameters["MaxResults"] = self._serialize.query("max_results", max_results, "long", minimum=0)
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Accept"] = "application/json"
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(partition_metric_load_description_list, '[PartitionMetricLoadDescription]')
+        body_content = self._serialize.body(partition_metric_load_description_list, "[PartitionMetricLoadDescription]")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -8070,17 +8870,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PagedUpdatePartitionLoadResultList', response)
+            deserialized = self._deserialize("PagedUpdatePartitionLoadResultList", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    update_partition_load.metadata = {'url': '/$/UpdatePartitionLoad'}
+
+    update_partition_load.metadata = {"url": "/$/UpdatePartitionLoad"}
 
     def move_instance(
-            self, service_id, partition_id, current_node_name=None, new_node_name=None, ignore_constraints=False, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        service_id,
+        partition_id,
+        current_node_name=None,
+        new_node_name=None,
+        ignore_constraints=False,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Moves the instance of a partition of a stateless service.
 
         This command moves the instance of a partition of a stateless service,
@@ -8133,24 +8944,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "8.0"
 
         # Construct URL
-        url = self.move_instance.metadata['url']
+        url = self.move_instance.metadata["url"]
         path_format_arguments = {
-            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True),
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+            "serviceId": self._serialize.url("service_id", service_id, "str", skip_quote=True),
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if current_node_name is not None:
-            query_parameters['CurrentNodeName'] = self._serialize.query("current_node_name", current_node_name, 'str')
+            query_parameters["CurrentNodeName"] = self._serialize.query("current_node_name", current_node_name, "str")
         if new_node_name is not None:
-            query_parameters['NewNodeName'] = self._serialize.query("new_node_name", new_node_name, 'str')
+            query_parameters["NewNodeName"] = self._serialize.query("new_node_name", new_node_name, "str")
         if ignore_constraints is not None:
-            query_parameters['IgnoreConstraints'] = self._serialize.query("ignore_constraints", ignore_constraints, 'bool')
+            query_parameters["IgnoreConstraints"] = self._serialize.query(
+                "ignore_constraints", ignore_constraints, "bool"
+            )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -8167,10 +8982,21 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    move_instance.metadata = {'url': '/Services/{serviceId}/$/GetPartitions/{partitionId}/$/MoveInstance'}
+
+    move_instance.metadata = {"url": "/Services/{serviceId}/$/GetPartitions/{partitionId}/$/MoveInstance"}
 
     def move_auxiliary_replica(
-            self, service_id, partition_id, current_node_name=None, new_node_name=None, ignore_constraints=False, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        service_id,
+        partition_id,
+        current_node_name=None,
+        new_node_name=None,
+        ignore_constraints=False,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Moves the auxiliary replica of a partition of a stateful service.
 
         This command moves the auxiliary replica of a partition of a stateful
@@ -8221,24 +9047,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "8.1"
 
         # Construct URL
-        url = self.move_auxiliary_replica.metadata['url']
+        url = self.move_auxiliary_replica.metadata["url"]
         path_format_arguments = {
-            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True),
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+            "serviceId": self._serialize.url("service_id", service_id, "str", skip_quote=True),
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if current_node_name is not None:
-            query_parameters['CurrentNodeName'] = self._serialize.query("current_node_name", current_node_name, 'str')
+            query_parameters["CurrentNodeName"] = self._serialize.query("current_node_name", current_node_name, "str")
         if new_node_name is not None:
-            query_parameters['NewNodeName'] = self._serialize.query("new_node_name", new_node_name, 'str')
+            query_parameters["NewNodeName"] = self._serialize.query("new_node_name", new_node_name, "str")
         if ignore_constraints is not None:
-            query_parameters['IgnoreConstraints'] = self._serialize.query("ignore_constraints", ignore_constraints, 'bool')
+            query_parameters["IgnoreConstraints"] = self._serialize.query(
+                "ignore_constraints", ignore_constraints, "bool"
+            )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -8255,10 +9085,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    move_auxiliary_replica.metadata = {'url': '/Services/{serviceId}/$/GetPartitions/{partitionId}/$/MoveAuxiliaryReplica'}
 
-    def create_repair_task(
-            self, repair_task, custom_headers=None, raw=False, **operation_config):
+    move_auxiliary_replica.metadata = {
+        "url": "/Services/{serviceId}/$/GetPartitions/{partitionId}/$/MoveAuxiliaryReplica"
+    }
+
+    def create_repair_task(self, repair_task, custom_headers=None, raw=False, **operation_config):
         """Creates a new repair task.
 
         For clusters that have the Repair Manager Service configured,
@@ -8293,21 +9125,21 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.create_repair_task.metadata['url']
+        url = self.create_repair_task.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Accept"] = "application/json"
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(repair_task, 'RepairTask')
+        body_content = self._serialize.body(repair_task, "RepairTask")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -8318,17 +9150,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('RepairTaskUpdateInfo', response)
+            deserialized = self._deserialize("RepairTaskUpdateInfo", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    create_repair_task.metadata = {'url': '/$/CreateRepairTask'}
 
-    def cancel_repair_task(
-            self, repair_task_cancel_description, custom_headers=None, raw=False, **operation_config):
+    create_repair_task.metadata = {"url": "/$/CreateRepairTask"}
+
+    def cancel_repair_task(self, repair_task_cancel_description, custom_headers=None, raw=False, **operation_config):
         """Requests the cancellation of the given repair task.
 
         This API supports the Service Fabric platform; it is not meant to be
@@ -8352,21 +9184,21 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.cancel_repair_task.metadata['url']
+        url = self.cancel_repair_task.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Accept"] = "application/json"
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(repair_task_cancel_description, 'RepairTaskCancelDescription')
+        body_content = self._serialize.body(repair_task_cancel_description, "RepairTaskCancelDescription")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -8377,17 +9209,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('RepairTaskUpdateInfo', response)
+            deserialized = self._deserialize("RepairTaskUpdateInfo", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    cancel_repair_task.metadata = {'url': '/$/CancelRepairTask'}
 
-    def delete_repair_task(
-            self, task_id, version=None, custom_headers=None, raw=False, **operation_config):
+    cancel_repair_task.metadata = {"url": "/$/CancelRepairTask"}
+
+    def delete_repair_task(self, task_id, version=None, custom_headers=None, raw=False, **operation_config):
         """Deletes a completed repair task.
 
         This API supports the Service Fabric platform; it is not meant to be
@@ -8415,20 +9247,20 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.delete_repair_task.metadata['url']
+        url = self.delete_repair_task.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(repair_task_delete_description, 'RepairTaskDeleteDescription')
+        body_content = self._serialize.body(repair_task_delete_description, "RepairTaskDeleteDescription")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -8440,10 +9272,18 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete_repair_task.metadata = {'url': '/$/DeleteRepairTask'}
+
+    delete_repair_task.metadata = {"url": "/$/DeleteRepairTask"}
 
     def get_repair_task_list(
-            self, task_id_filter=None, state_filter=None, executor_filter=None, custom_headers=None, raw=False, **operation_config):
+        self,
+        task_id_filter=None,
+        state_filter=None,
+        executor_filter=None,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets a list of repair tasks matching the given filters.
 
         This API supports the Service Fabric platform; it is not meant to be
@@ -8478,21 +9318,21 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_repair_task_list.metadata['url']
+        url = self.get_repair_task_list.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if task_id_filter is not None:
-            query_parameters['TaskIdFilter'] = self._serialize.query("task_id_filter", task_id_filter, 'str')
+            query_parameters["TaskIdFilter"] = self._serialize.query("task_id_filter", task_id_filter, "str")
         if state_filter is not None:
-            query_parameters['StateFilter'] = self._serialize.query("state_filter", state_filter, 'int')
+            query_parameters["StateFilter"] = self._serialize.query("state_filter", state_filter, "int")
         if executor_filter is not None:
-            query_parameters['ExecutorFilter'] = self._serialize.query("executor_filter", executor_filter, 'str')
+            query_parameters["ExecutorFilter"] = self._serialize.query("executor_filter", executor_filter, "str")
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -8505,17 +9345,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[RepairTask]', response)
+            deserialized = self._deserialize("[RepairTask]", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_repair_task_list.metadata = {'url': '/$/GetRepairTaskList'}
 
-    def force_approve_repair_task(
-            self, task_id, version=None, custom_headers=None, raw=False, **operation_config):
+    get_repair_task_list.metadata = {"url": "/$/GetRepairTaskList"}
+
+    def force_approve_repair_task(self, task_id, version=None, custom_headers=None, raw=False, **operation_config):
         """Forces the approval of the given repair task.
 
         This API supports the Service Fabric platform; it is not meant to be
@@ -8544,21 +9384,21 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.force_approve_repair_task.metadata['url']
+        url = self.force_approve_repair_task.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Accept"] = "application/json"
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(repair_task_approve_description, 'RepairTaskApproveDescription')
+        body_content = self._serialize.body(repair_task_approve_description, "RepairTaskApproveDescription")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -8569,17 +9409,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('RepairTaskUpdateInfo', response)
+            deserialized = self._deserialize("RepairTaskUpdateInfo", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    force_approve_repair_task.metadata = {'url': '/$/ForceApproveRepairTask'}
+
+    force_approve_repair_task.metadata = {"url": "/$/ForceApproveRepairTask"}
 
     def update_repair_task_health_policy(
-            self, repair_task_update_health_policy_description, custom_headers=None, raw=False, **operation_config):
+        self, repair_task_update_health_policy_description, custom_headers=None, raw=False, **operation_config
+    ):
         """Updates the health policy of the given repair task.
 
         This API supports the Service Fabric platform; it is not meant to be
@@ -8603,21 +9445,23 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.update_repair_task_health_policy.metadata['url']
+        url = self.update_repair_task_health_policy.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Accept"] = "application/json"
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(repair_task_update_health_policy_description, 'RepairTaskUpdateHealthPolicyDescription')
+        body_content = self._serialize.body(
+            repair_task_update_health_policy_description, "RepairTaskUpdateHealthPolicyDescription"
+        )
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -8628,17 +9472,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('RepairTaskUpdateInfo', response)
+            deserialized = self._deserialize("RepairTaskUpdateInfo", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    update_repair_task_health_policy.metadata = {'url': '/$/UpdateRepairTaskHealthPolicy'}
 
-    def update_repair_execution_state(
-            self, repair_task, custom_headers=None, raw=False, **operation_config):
+    update_repair_task_health_policy.metadata = {"url": "/$/UpdateRepairTaskHealthPolicy"}
+
+    def update_repair_execution_state(self, repair_task, custom_headers=None, raw=False, **operation_config):
         """Updates the execution state of a repair task.
 
         This API supports the Service Fabric platform; it is not meant to be
@@ -8661,21 +9505,21 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.update_repair_execution_state.metadata['url']
+        url = self.update_repair_execution_state.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Accept"] = "application/json"
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(repair_task, 'RepairTask')
+        body_content = self._serialize.body(repair_task, "RepairTask")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -8686,17 +9530,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('RepairTaskUpdateInfo', response)
+            deserialized = self._deserialize("RepairTaskUpdateInfo", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    update_repair_execution_state.metadata = {'url': '/$/UpdateRepairExecutionState'}
+
+    update_repair_execution_state.metadata = {"url": "/$/UpdateRepairExecutionState"}
 
     def get_replica_info_list(
-            self, partition_id, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, partition_id, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Gets the information about replicas of a Service Fabric service
         partition.
 
@@ -8733,23 +9579,27 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_replica_info_list.metadata['url']
+        url = self.get_replica_info_list.metadata["url"]
         path_format_arguments = {
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if continuation_token is not None:
-            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+            query_parameters["ContinuationToken"] = self._serialize.query(
+                "continuation_token", continuation_token, "str", skip_quote=True
+            )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -8762,17 +9612,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PagedReplicaInfoList', response)
+            deserialized = self._deserialize("PagedReplicaInfoList", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_replica_info_list.metadata = {'url': '/Partitions/{partitionId}/$/GetReplicas'}
+
+    get_replica_info_list.metadata = {"url": "/Partitions/{partitionId}/$/GetReplicas"}
 
     def get_replica_info(
-            self, partition_id, replica_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, partition_id, replica_id, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Gets the information about a replica of a Service Fabric partition.
 
         The response includes the ID, role, status, health, node name, uptime,
@@ -8801,22 +9653,24 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_replica_info.metadata['url']
+        url = self.get_replica_info.metadata["url"]
         path_format_arguments = {
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True),
-            'replicaId': self._serialize.url("replica_id", replica_id, 'str', skip_quote=True)
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True),
+            "replicaId": self._serialize.url("replica_id", replica_id, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -8829,17 +9683,26 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ReplicaInfo', response)
+            deserialized = self._deserialize("ReplicaInfo", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_replica_info.metadata = {'url': '/Partitions/{partitionId}/$/GetReplicas/{replicaId}'}
+
+    get_replica_info.metadata = {"url": "/Partitions/{partitionId}/$/GetReplicas/{replicaId}"}
 
     def get_replica_health(
-            self, partition_id, replica_id, events_health_state_filter=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        partition_id,
+        replica_id,
+        events_health_state_filter=0,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the health of a Service Fabric stateful service replica or
         stateless service instance.
 
@@ -8894,24 +9757,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_replica_health.metadata['url']
+        url = self.get_replica_health.metadata["url"]
         path_format_arguments = {
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True),
-            'replicaId': self._serialize.url("replica_id", replica_id, 'str', skip_quote=True)
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True),
+            "replicaId": self._serialize.url("replica_id", replica_id, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if events_health_state_filter is not None:
-            query_parameters['EventsHealthStateFilter'] = self._serialize.query("events_health_state_filter", events_health_state_filter, 'int')
+            query_parameters["EventsHealthStateFilter"] = self._serialize.query(
+                "events_health_state_filter", events_health_state_filter, "int"
+            )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -8924,17 +9791,27 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ReplicaHealth', response)
+            deserialized = self._deserialize("ReplicaHealth", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_replica_health.metadata = {'url': '/Partitions/{partitionId}/$/GetReplicas/{replicaId}/$/GetHealth'}
+
+    get_replica_health.metadata = {"url": "/Partitions/{partitionId}/$/GetReplicas/{replicaId}/$/GetHealth"}
 
     def get_replica_health_using_policy(
-            self, partition_id, replica_id, events_health_state_filter=0, application_health_policy=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        partition_id,
+        replica_id,
+        events_health_state_filter=0,
+        application_health_policy=None,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the health of a Service Fabric stateful service replica or
         stateless service instance using the specified policy.
 
@@ -9000,31 +9877,35 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_replica_health_using_policy.metadata['url']
+        url = self.get_replica_health_using_policy.metadata["url"]
         path_format_arguments = {
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True),
-            'replicaId': self._serialize.url("replica_id", replica_id, 'str', skip_quote=True)
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True),
+            "replicaId": self._serialize.url("replica_id", replica_id, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if events_health_state_filter is not None:
-            query_parameters['EventsHealthStateFilter'] = self._serialize.query("events_health_state_filter", events_health_state_filter, 'int')
+            query_parameters["EventsHealthStateFilter"] = self._serialize.query(
+                "events_health_state_filter", events_health_state_filter, "int"
+            )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Accept"] = "application/json"
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
         if application_health_policy is not None:
-            body_content = self._serialize.body(application_health_policy, 'ApplicationHealthPolicy')
+            body_content = self._serialize.body(application_health_policy, "ApplicationHealthPolicy")
         else:
             body_content = None
 
@@ -9037,17 +9918,30 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ReplicaHealth', response)
+            deserialized = self._deserialize("ReplicaHealth", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_replica_health_using_policy.metadata = {'url': '/Partitions/{partitionId}/$/GetReplicas/{replicaId}/$/GetHealth'}
+
+    get_replica_health_using_policy.metadata = {
+        "url": "/Partitions/{partitionId}/$/GetReplicas/{replicaId}/$/GetHealth"
+    }
 
     def report_replica_health(
-            self, partition_id, replica_id, health_information, service_kind="Stateful", immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        partition_id,
+        replica_id,
+        health_information,
+        service_kind="Stateful",
+        immediate=False,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Sends a health report on the Service Fabric replica.
 
         Reports health state of the specified Service Fabric replica. The
@@ -9115,30 +10009,32 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.report_replica_health.metadata['url']
+        url = self.report_replica_health.metadata["url"]
         path_format_arguments = {
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True),
-            'replicaId': self._serialize.url("replica_id", replica_id, 'str', skip_quote=True)
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True),
+            "replicaId": self._serialize.url("replica_id", replica_id, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['ServiceKind'] = self._serialize.query("service_kind", service_kind, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["ServiceKind"] = self._serialize.query("service_kind", service_kind, "str")
         if immediate is not None:
-            query_parameters['Immediate'] = self._serialize.query("immediate", immediate, 'bool')
+            query_parameters["Immediate"] = self._serialize.query("immediate", immediate, "bool")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(health_information, 'HealthInformation')
+        body_content = self._serialize.body(health_information, "HealthInformation")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -9150,10 +10046,20 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    report_replica_health.metadata = {'url': '/Partitions/{partitionId}/$/GetReplicas/{replicaId}/$/ReportHealth'}
+
+    report_replica_health.metadata = {"url": "/Partitions/{partitionId}/$/GetReplicas/{replicaId}/$/ReportHealth"}
 
     def get_deployed_service_replica_info_list(
-            self, node_name, application_id, partition_id=None, service_manifest_name=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        node_name,
+        application_id,
+        partition_id=None,
+        service_manifest_name=None,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the list of replicas deployed on a Service Fabric node.
 
         Gets the list containing the information about replicas deployed on a
@@ -9198,26 +10104,30 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_deployed_service_replica_info_list.metadata['url']
+        url = self.get_deployed_service_replica_info_list.metadata["url"]
         path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str'),
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            "nodeName": self._serialize.url("node_name", node_name, "str"),
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if partition_id is not None:
-            query_parameters['PartitionId'] = self._serialize.query("partition_id", partition_id, 'str')
+            query_parameters["PartitionId"] = self._serialize.query("partition_id", partition_id, "str")
         if service_manifest_name is not None:
-            query_parameters['ServiceManifestName'] = self._serialize.query("service_manifest_name", service_manifest_name, 'str')
+            query_parameters["ServiceManifestName"] = self._serialize.query(
+                "service_manifest_name", service_manifest_name, "str"
+            )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -9230,17 +10140,21 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[DeployedServiceReplicaInfo]', response)
+            deserialized = self._deserialize("[DeployedServiceReplicaInfo]", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_deployed_service_replica_info_list.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetReplicas'}
+
+    get_deployed_service_replica_info_list.metadata = {
+        "url": "/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetReplicas"
+    }
 
     def get_deployed_service_replica_detail_info(
-            self, node_name, partition_id, replica_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, node_name, partition_id, replica_id, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Gets the details of replica deployed on a Service Fabric node.
 
         Gets the details of the replica deployed on a Service Fabric node. The
@@ -9274,23 +10188,25 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_deployed_service_replica_detail_info.metadata['url']
+        url = self.get_deployed_service_replica_detail_info.metadata["url"]
         path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str'),
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True),
-            'replicaId': self._serialize.url("replica_id", replica_id, 'str', skip_quote=True)
+            "nodeName": self._serialize.url("node_name", node_name, "str"),
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True),
+            "replicaId": self._serialize.url("replica_id", replica_id, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -9303,17 +10219,21 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('DeployedServiceReplicaDetailInfo', response)
+            deserialized = self._deserialize("DeployedServiceReplicaDetailInfo", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_deployed_service_replica_detail_info.metadata = {'url': '/Nodes/{nodeName}/$/GetPartitions/{partitionId}/$/GetReplicas/{replicaId}/$/GetDetail'}
+
+    get_deployed_service_replica_detail_info.metadata = {
+        "url": "/Nodes/{nodeName}/$/GetPartitions/{partitionId}/$/GetReplicas/{replicaId}/$/GetDetail"
+    }
 
     def get_deployed_service_replica_detail_info_by_partition_id(
-            self, node_name, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, node_name, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Gets the details of replica deployed on a Service Fabric node.
 
         Gets the details of the replica deployed on a Service Fabric node. The
@@ -9345,22 +10265,24 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_deployed_service_replica_detail_info_by_partition_id.metadata['url']
+        url = self.get_deployed_service_replica_detail_info_by_partition_id.metadata["url"]
         path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str'),
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+            "nodeName": self._serialize.url("node_name", node_name, "str"),
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -9373,17 +10295,21 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('DeployedServiceReplicaDetailInfo', response)
+            deserialized = self._deserialize("DeployedServiceReplicaDetailInfo", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_deployed_service_replica_detail_info_by_partition_id.metadata = {'url': '/Nodes/{nodeName}/$/GetPartitions/{partitionId}/$/GetReplicas'}
+
+    get_deployed_service_replica_detail_info_by_partition_id.metadata = {
+        "url": "/Nodes/{nodeName}/$/GetPartitions/{partitionId}/$/GetReplicas"
+    }
 
     def restart_replica(
-            self, node_name, partition_id, replica_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, node_name, partition_id, replica_id, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Restarts a service replica of a persisted service running on a node.
 
         Restarts a service replica of a persisted service running on a node.
@@ -9415,19 +10341,21 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.restart_replica.metadata['url']
+        url = self.restart_replica.metadata["url"]
         path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str'),
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True),
-            'replicaId': self._serialize.url("replica_id", replica_id, 'str', skip_quote=True)
+            "nodeName": self._serialize.url("node_name", node_name, "str"),
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True),
+            "replicaId": self._serialize.url("replica_id", replica_id, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -9444,10 +10372,22 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    restart_replica.metadata = {'url': '/Nodes/{nodeName}/$/GetPartitions/{partitionId}/$/GetReplicas/{replicaId}/$/Restart'}
+
+    restart_replica.metadata = {
+        "url": "/Nodes/{nodeName}/$/GetPartitions/{partitionId}/$/GetReplicas/{replicaId}/$/Restart"
+    }
 
     def remove_replica(
-            self, node_name, partition_id, replica_id, force_remove=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        node_name,
+        partition_id,
+        replica_id,
+        force_remove=None,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Removes a service replica running on a node.
 
         This API simulates a Service Fabric replica failure by removing a
@@ -9490,21 +10430,23 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.remove_replica.metadata['url']
+        url = self.remove_replica.metadata["url"]
         path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str'),
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True),
-            'replicaId': self._serialize.url("replica_id", replica_id, 'str', skip_quote=True)
+            "nodeName": self._serialize.url("node_name", node_name, "str"),
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True),
+            "replicaId": self._serialize.url("replica_id", replica_id, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if force_remove is not None:
-            query_parameters['ForceRemove'] = self._serialize.query("force_remove", force_remove, 'bool')
+            query_parameters["ForceRemove"] = self._serialize.query("force_remove", force_remove, "bool")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -9521,10 +10463,14 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    remove_replica.metadata = {'url': '/Nodes/{nodeName}/$/GetPartitions/{partitionId}/$/GetReplicas/{replicaId}/$/Delete'}
+
+    remove_replica.metadata = {
+        "url": "/Nodes/{nodeName}/$/GetPartitions/{partitionId}/$/GetReplicas/{replicaId}/$/Delete"
+    }
 
     def get_deployed_service_package_info_list(
-            self, node_name, application_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, node_name, application_id, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Gets the list of service packages deployed on a Service Fabric node.
 
         Returns the information about the service packages deployed on a
@@ -9560,22 +10506,24 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_deployed_service_package_info_list.metadata['url']
+        url = self.get_deployed_service_package_info_list.metadata["url"]
         path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str'),
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            "nodeName": self._serialize.url("node_name", node_name, "str"),
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -9588,17 +10536,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[DeployedServicePackageInfo]', response)
+            deserialized = self._deserialize("[DeployedServicePackageInfo]", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_deployed_service_package_info_list.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages'}
+
+    get_deployed_service_package_info_list.metadata = {
+        "url": "/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages"
+    }
 
     def get_deployed_service_package_info_list_by_name(
-            self, node_name, application_id, service_package_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        node_name,
+        application_id,
+        service_package_name,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the list of service packages deployed on a Service Fabric node
         matching exactly the specified name.
 
@@ -9639,23 +10598,27 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_deployed_service_package_info_list_by_name.metadata['url']
+        url = self.get_deployed_service_package_info_list_by_name.metadata["url"]
         path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str'),
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True),
-            'servicePackageName': self._serialize.url("service_package_name", service_package_name, 'str', skip_quote=True)
+            "nodeName": self._serialize.url("node_name", node_name, "str"),
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True),
+            "servicePackageName": self._serialize.url(
+                "service_package_name", service_package_name, "str", skip_quote=True
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -9668,17 +10631,29 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[DeployedServicePackageInfo]', response)
+            deserialized = self._deserialize("[DeployedServicePackageInfo]", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_deployed_service_package_info_list_by_name.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages/{servicePackageName}'}
+
+    get_deployed_service_package_info_list_by_name.metadata = {
+        "url": "/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages/{servicePackageName}"
+    }
 
     def get_deployed_service_package_health(
-            self, node_name, application_id, service_package_name, events_health_state_filter=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        node_name,
+        application_id,
+        service_package_name,
+        events_health_state_filter=0,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the information about health of a service package for a specific
         application deployed for a Service Fabric node and application.
 
@@ -9744,25 +10719,31 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_deployed_service_package_health.metadata['url']
+        url = self.get_deployed_service_package_health.metadata["url"]
         path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str'),
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True),
-            'servicePackageName': self._serialize.url("service_package_name", service_package_name, 'str', skip_quote=True)
+            "nodeName": self._serialize.url("node_name", node_name, "str"),
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True),
+            "servicePackageName": self._serialize.url(
+                "service_package_name", service_package_name, "str", skip_quote=True
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if events_health_state_filter is not None:
-            query_parameters['EventsHealthStateFilter'] = self._serialize.query("events_health_state_filter", events_health_state_filter, 'int')
+            query_parameters["EventsHealthStateFilter"] = self._serialize.query(
+                "events_health_state_filter", events_health_state_filter, "int"
+            )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -9775,17 +10756,30 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('DeployedServicePackageHealth', response)
+            deserialized = self._deserialize("DeployedServicePackageHealth", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_deployed_service_package_health.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages/{servicePackageName}/$/GetHealth'}
+
+    get_deployed_service_package_health.metadata = {
+        "url": "/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages/{servicePackageName}/$/GetHealth"
+    }
 
     def get_deployed_service_package_health_using_policy(
-            self, node_name, application_id, service_package_name, events_health_state_filter=0, application_health_policy=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        node_name,
+        application_id,
+        service_package_name,
+        events_health_state_filter=0,
+        application_health_policy=None,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the information about health of service package for a specific
         application deployed on a Service Fabric node using the specified
         policy.
@@ -9862,32 +10856,38 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_deployed_service_package_health_using_policy.metadata['url']
+        url = self.get_deployed_service_package_health_using_policy.metadata["url"]
         path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str'),
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True),
-            'servicePackageName': self._serialize.url("service_package_name", service_package_name, 'str', skip_quote=True)
+            "nodeName": self._serialize.url("node_name", node_name, "str"),
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True),
+            "servicePackageName": self._serialize.url(
+                "service_package_name", service_package_name, "str", skip_quote=True
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if events_health_state_filter is not None:
-            query_parameters['EventsHealthStateFilter'] = self._serialize.query("events_health_state_filter", events_health_state_filter, 'int')
+            query_parameters["EventsHealthStateFilter"] = self._serialize.query(
+                "events_health_state_filter", events_health_state_filter, "int"
+            )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Accept"] = "application/json"
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
         if application_health_policy is not None:
-            body_content = self._serialize.body(application_health_policy, 'ApplicationHealthPolicy')
+            body_content = self._serialize.body(application_health_policy, "ApplicationHealthPolicy")
         else:
             body_content = None
 
@@ -9900,17 +10900,30 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('DeployedServicePackageHealth', response)
+            deserialized = self._deserialize("DeployedServicePackageHealth", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_deployed_service_package_health_using_policy.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages/{servicePackageName}/$/GetHealth'}
+
+    get_deployed_service_package_health_using_policy.metadata = {
+        "url": "/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages/{servicePackageName}/$/GetHealth"
+    }
 
     def report_deployed_service_package_health(
-            self, node_name, application_id, service_package_name, health_information, immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        node_name,
+        application_id,
+        service_package_name,
+        health_information,
+        immediate=False,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Sends a health report on the Service Fabric deployed service package.
 
         Reports health state of the service package of the application deployed
@@ -9982,30 +10995,34 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.report_deployed_service_package_health.metadata['url']
+        url = self.report_deployed_service_package_health.metadata["url"]
         path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str'),
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True),
-            'servicePackageName': self._serialize.url("service_package_name", service_package_name, 'str', skip_quote=True)
+            "nodeName": self._serialize.url("node_name", node_name, "str"),
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True),
+            "servicePackageName": self._serialize.url(
+                "service_package_name", service_package_name, "str", skip_quote=True
+            ),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if immediate is not None:
-            query_parameters['Immediate'] = self._serialize.query("immediate", immediate, 'bool')
+            query_parameters["Immediate"] = self._serialize.query("immediate", immediate, "bool")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(health_information, 'HealthInformation')
+        body_content = self._serialize.body(health_information, "HealthInformation")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -10017,10 +11034,20 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    report_deployed_service_package_health.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages/{servicePackageName}/$/ReportHealth'}
+
+    report_deployed_service_package_health.metadata = {
+        "url": "/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages/{servicePackageName}/$/ReportHealth"
+    }
 
     def deploy_service_package_to_node(
-            self, node_name, deploy_service_package_to_node_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        node_name,
+        deploy_service_package_to_node_description,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Downloads all of the code packages associated with specified service
         manifest on the specified node.
 
@@ -10055,26 +11082,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.deploy_service_package_to_node.metadata['url']
-        path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str')
-        }
+        url = self.deploy_service_package_to_node.metadata["url"]
+        path_format_arguments = {"nodeName": self._serialize.url("node_name", node_name, "str")}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(deploy_service_package_to_node_description, 'DeployServicePackageToNodeDescription')
+        body_content = self._serialize.body(
+            deploy_service_package_to_node_description, "DeployServicePackageToNodeDescription"
+        )
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -10086,10 +11115,20 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    deploy_service_package_to_node.metadata = {'url': '/Nodes/{nodeName}/$/DeployServicePackage'}
+
+    deploy_service_package_to_node.metadata = {"url": "/Nodes/{nodeName}/$/DeployServicePackage"}
 
     def get_deployed_code_package_info_list(
-            self, node_name, application_id, service_manifest_name=None, code_package_name=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        node_name,
+        application_id,
+        service_manifest_name=None,
+        code_package_name=None,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the list of code packages deployed on a Service Fabric node.
 
         Gets the list of code packages deployed on a Service Fabric node for
@@ -10132,26 +11171,30 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_deployed_code_package_info_list.metadata['url']
+        url = self.get_deployed_code_package_info_list.metadata["url"]
         path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str'),
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            "nodeName": self._serialize.url("node_name", node_name, "str"),
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if service_manifest_name is not None:
-            query_parameters['ServiceManifestName'] = self._serialize.query("service_manifest_name", service_manifest_name, 'str')
+            query_parameters["ServiceManifestName"] = self._serialize.query(
+                "service_manifest_name", service_manifest_name, "str"
+            )
         if code_package_name is not None:
-            query_parameters['CodePackageName'] = self._serialize.query("code_package_name", code_package_name, 'str')
+            query_parameters["CodePackageName"] = self._serialize.query("code_package_name", code_package_name, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -10164,17 +11207,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[DeployedCodePackageInfo]', response)
+            deserialized = self._deserialize("[DeployedCodePackageInfo]", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_deployed_code_package_info_list.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetCodePackages'}
+
+    get_deployed_code_package_info_list.metadata = {
+        "url": "/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetCodePackages"
+    }
 
     def restart_deployed_code_package(
-            self, node_name, application_id, restart_deployed_code_package_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        node_name,
+        application_id,
+        restart_deployed_code_package_description,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Restarts a code package deployed on a Service Fabric node in a cluster.
 
         Restarts a code package deployed on a Service Fabric node in a cluster.
@@ -10214,27 +11268,31 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.restart_deployed_code_package.metadata['url']
+        url = self.restart_deployed_code_package.metadata["url"]
         path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str'),
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            "nodeName": self._serialize.url("node_name", node_name, "str"),
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(restart_deployed_code_package_description, 'RestartDeployedCodePackageDescription')
+        body_content = self._serialize.body(
+            restart_deployed_code_package_description, "RestartDeployedCodePackageDescription"
+        )
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -10246,10 +11304,24 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    restart_deployed_code_package.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetCodePackages/$/Restart'}
+
+    restart_deployed_code_package.metadata = {
+        "url": "/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetCodePackages/$/Restart"
+    }
 
     def get_container_logs_deployed_on_node(
-            self, node_name, application_id, service_manifest_name, code_package_name, tail=None, previous=False, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        node_name,
+        application_id,
+        service_manifest_name,
+        code_package_name,
+        tail=None,
+        previous=False,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the container logs for container deployed on a Service Fabric
         node.
 
@@ -10299,28 +11371,32 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.2"
 
         # Construct URL
-        url = self.get_container_logs_deployed_on_node.metadata['url']
+        url = self.get_container_logs_deployed_on_node.metadata["url"]
         path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str'),
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            "nodeName": self._serialize.url("node_name", node_name, "str"),
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['ServiceManifestName'] = self._serialize.query("service_manifest_name", service_manifest_name, 'str')
-        query_parameters['CodePackageName'] = self._serialize.query("code_package_name", code_package_name, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["ServiceManifestName"] = self._serialize.query(
+            "service_manifest_name", service_manifest_name, "str"
+        )
+        query_parameters["CodePackageName"] = self._serialize.query("code_package_name", code_package_name, "str")
         if tail is not None:
-            query_parameters['Tail'] = self._serialize.query("tail", tail, 'str')
+            query_parameters["Tail"] = self._serialize.query("tail", tail, "str")
         if previous is not None:
-            query_parameters['Previous'] = self._serialize.query("previous", previous, 'bool')
+            query_parameters["Previous"] = self._serialize.query("previous", previous, "bool")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -10333,17 +11409,31 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ContainerLogs', response)
+            deserialized = self._deserialize("ContainerLogs", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_container_logs_deployed_on_node.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetCodePackages/$/ContainerLogs'}
+
+    get_container_logs_deployed_on_node.metadata = {
+        "url": "/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetCodePackages/$/ContainerLogs"
+    }
 
     def invoke_container_api(
-            self, node_name, application_id, service_manifest_name, code_package_name, code_package_instance_id, container_api_request_body, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        node_name,
+        application_id,
+        service_manifest_name,
+        code_package_name,
+        code_package_instance_id,
+        container_api_request_body,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Invoke container API on a container deployed on a Service Fabric node.
 
         Invoke container API on a container deployed on a Service Fabric node
@@ -10393,31 +11483,37 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.2"
 
         # Construct URL
-        url = self.invoke_container_api.metadata['url']
+        url = self.invoke_container_api.metadata["url"]
         path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str'),
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            "nodeName": self._serialize.url("node_name", node_name, "str"),
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['ServiceManifestName'] = self._serialize.query("service_manifest_name", service_manifest_name, 'str')
-        query_parameters['CodePackageName'] = self._serialize.query("code_package_name", code_package_name, 'str')
-        query_parameters['CodePackageInstanceId'] = self._serialize.query("code_package_instance_id", code_package_instance_id, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["ServiceManifestName"] = self._serialize.query(
+            "service_manifest_name", service_manifest_name, "str"
+        )
+        query_parameters["CodePackageName"] = self._serialize.query("code_package_name", code_package_name, "str")
+        query_parameters["CodePackageInstanceId"] = self._serialize.query(
+            "code_package_instance_id", code_package_instance_id, "str"
+        )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Accept"] = "application/json"
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(container_api_request_body, 'ContainerApiRequestBody')
+        body_content = self._serialize.body(container_api_request_body, "ContainerApiRequestBody")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -10428,17 +11524,21 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ContainerApiResponse', response)
+            deserialized = self._deserialize("ContainerApiResponse", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    invoke_container_api.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetCodePackages/$/ContainerApi'}
+
+    invoke_container_api.metadata = {
+        "url": "/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetCodePackages/$/ContainerApi"
+    }
 
     def create_compose_deployment(
-            self, create_compose_deployment_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, create_compose_deployment_description, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Creates a Service Fabric compose deployment.
 
         Compose is a file format that describes multi-container applications.
@@ -10469,22 +11569,24 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0-preview"
 
         # Construct URL
-        url = self.create_compose_deployment.metadata['url']
+        url = self.create_compose_deployment.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(create_compose_deployment_description, 'CreateComposeDeploymentDescription')
+        body_content = self._serialize.body(create_compose_deployment_description, "CreateComposeDeploymentDescription")
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -10496,10 +11598,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    create_compose_deployment.metadata = {'url': '/ComposeDeployments/$/Create'}
+
+    create_compose_deployment.metadata = {"url": "/ComposeDeployments/$/Create"}
 
     def get_compose_deployment_status(
-            self, deployment_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, deployment_name, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Gets information about a Service Fabric compose deployment.
 
         Returns the status of the compose deployment that was created or in the
@@ -10528,21 +11632,23 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0-preview"
 
         # Construct URL
-        url = self.get_compose_deployment_status.metadata['url']
+        url = self.get_compose_deployment_status.metadata["url"]
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', skip_quote=True)
+            "deploymentName": self._serialize.url("deployment_name", deployment_name, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -10555,17 +11661,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ComposeDeploymentStatusInfo', response)
+            deserialized = self._deserialize("ComposeDeploymentStatusInfo", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_compose_deployment_status.metadata = {'url': '/ComposeDeployments/{deploymentName}'}
+
+    get_compose_deployment_status.metadata = {"url": "/ComposeDeployments/{deploymentName}"}
 
     def get_compose_deployment_status_list(
-            self, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Gets the list of compose deployments created in the Service Fabric
         cluster.
 
@@ -10613,21 +11721,25 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0-preview"
 
         # Construct URL
-        url = self.get_compose_deployment_status_list.metadata['url']
+        url = self.get_compose_deployment_status_list.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if continuation_token is not None:
-            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+            query_parameters["ContinuationToken"] = self._serialize.query(
+                "continuation_token", continuation_token, "str", skip_quote=True
+            )
         if max_results is not None:
-            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
+            query_parameters["MaxResults"] = self._serialize.query("max_results", max_results, "long", minimum=0)
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -10640,17 +11752,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PagedComposeDeploymentStatusInfoList', response)
+            deserialized = self._deserialize("PagedComposeDeploymentStatusInfoList", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_compose_deployment_status_list.metadata = {'url': '/ComposeDeployments'}
+
+    get_compose_deployment_status_list.metadata = {"url": "/ComposeDeployments"}
 
     def get_compose_deployment_upgrade_progress(
-            self, deployment_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, deployment_name, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Gets details for the latest upgrade performed on this Service Fabric
         compose deployment.
 
@@ -10680,21 +11794,23 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0-preview"
 
         # Construct URL
-        url = self.get_compose_deployment_upgrade_progress.metadata['url']
+        url = self.get_compose_deployment_upgrade_progress.metadata["url"]
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', skip_quote=True)
+            "deploymentName": self._serialize.url("deployment_name", deployment_name, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -10707,17 +11823,21 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ComposeDeploymentUpgradeProgressInfo', response)
+            deserialized = self._deserialize("ComposeDeploymentUpgradeProgressInfo", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_compose_deployment_upgrade_progress.metadata = {'url': '/ComposeDeployments/{deploymentName}/$/GetUpgradeProgress'}
+
+    get_compose_deployment_upgrade_progress.metadata = {
+        "url": "/ComposeDeployments/{deploymentName}/$/GetUpgradeProgress"
+    }
 
     def remove_compose_deployment(
-            self, deployment_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, deployment_name, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Deletes an existing Service Fabric compose deployment from cluster.
 
         Deletes an existing Service Fabric compose deployment.
@@ -10742,17 +11862,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0-preview"
 
         # Construct URL
-        url = self.remove_compose_deployment.metadata['url']
+        url = self.remove_compose_deployment.metadata["url"]
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', skip_quote=True)
+            "deploymentName": self._serialize.url("deployment_name", deployment_name, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -10769,10 +11891,18 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    remove_compose_deployment.metadata = {'url': '/ComposeDeployments/{deploymentName}/$/Delete'}
+
+    remove_compose_deployment.metadata = {"url": "/ComposeDeployments/{deploymentName}/$/Delete"}
 
     def start_compose_deployment_upgrade(
-            self, deployment_name, compose_deployment_upgrade_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        deployment_name,
+        compose_deployment_upgrade_description,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Starts upgrading a compose deployment in the Service Fabric cluster.
 
         Validates the supplied upgrade parameters and starts upgrading the
@@ -10802,26 +11932,30 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0-preview"
 
         # Construct URL
-        url = self.start_compose_deployment_upgrade.metadata['url']
+        url = self.start_compose_deployment_upgrade.metadata["url"]
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', skip_quote=True)
+            "deploymentName": self._serialize.url("deployment_name", deployment_name, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(compose_deployment_upgrade_description, 'ComposeDeploymentUpgradeDescription')
+        body_content = self._serialize.body(
+            compose_deployment_upgrade_description, "ComposeDeploymentUpgradeDescription"
+        )
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -10833,10 +11967,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    start_compose_deployment_upgrade.metadata = {'url': '/ComposeDeployments/{deploymentName}/$/Upgrade'}
+
+    start_compose_deployment_upgrade.metadata = {"url": "/ComposeDeployments/{deploymentName}/$/Upgrade"}
 
     def start_rollback_compose_deployment_upgrade(
-            self, deployment_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, deployment_name, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Starts rolling back a compose deployment upgrade in the Service Fabric
         cluster.
 
@@ -10862,17 +11998,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4-preview"
 
         # Construct URL
-        url = self.start_rollback_compose_deployment_upgrade.metadata['url']
+        url = self.start_rollback_compose_deployment_upgrade.metadata["url"]
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', skip_quote=True)
+            "deploymentName": self._serialize.url("deployment_name", deployment_name, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -10889,10 +12027,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    start_rollback_compose_deployment_upgrade.metadata = {'url': '/ComposeDeployments/{deploymentName}/$/RollbackUpgrade'}
 
-    def get_chaos(
-            self, timeout=60, custom_headers=None, raw=False, **operation_config):
+    start_rollback_compose_deployment_upgrade.metadata = {
+        "url": "/ComposeDeployments/{deploymentName}/$/RollbackUpgrade"
+    }
+
+    def get_chaos(self, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Get the status of Chaos.
 
         Get the status of Chaos indicating whether or not Chaos is running, the
@@ -10918,17 +12058,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.2"
 
         # Construct URL
-        url = self.get_chaos.metadata['url']
+        url = self.get_chaos.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -10941,17 +12083,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('Chaos', response)
+            deserialized = self._deserialize("Chaos", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_chaos.metadata = {'url': '/Tools/Chaos'}
 
-    def start_chaos(
-            self, chaos_parameters, timeout=60, custom_headers=None, raw=False, **operation_config):
+    get_chaos.metadata = {"url": "/Tools/Chaos"}
+
+    def start_chaos(self, chaos_parameters, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Starts Chaos in the cluster.
 
         If Chaos is not already running in the cluster, it starts Chaos with
@@ -10983,22 +12125,24 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.start_chaos.metadata['url']
+        url = self.start_chaos.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(chaos_parameters, 'ChaosParameters')
+        body_content = self._serialize.body(chaos_parameters, "ChaosParameters")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -11010,10 +12154,10 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    start_chaos.metadata = {'url': '/Tools/Chaos/$/Start'}
 
-    def stop_chaos(
-            self, timeout=60, custom_headers=None, raw=False, **operation_config):
+    start_chaos.metadata = {"url": "/Tools/Chaos/$/Start"}
+
+    def stop_chaos(self, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Stops Chaos if it is running in the cluster and put the Chaos Schedule
         in a stopped state.
 
@@ -11042,13 +12186,15 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.stop_chaos.metadata['url']
+        url = self.stop_chaos.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -11065,10 +12211,20 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    stop_chaos.metadata = {'url': '/Tools/Chaos/$/Stop'}
+
+    stop_chaos.metadata = {"url": "/Tools/Chaos/$/Stop"}
 
     def get_chaos_events(
-            self, continuation_token=None, start_time_utc=None, end_time_utc=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        continuation_token=None,
+        start_time_utc=None,
+        end_time_utc=None,
+        max_results=0,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the next segment of the Chaos events based on the continuation
         token or the time range.
 
@@ -11129,25 +12285,29 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.2"
 
         # Construct URL
-        url = self.get_chaos_events.metadata['url']
+        url = self.get_chaos_events.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if continuation_token is not None:
-            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+            query_parameters["ContinuationToken"] = self._serialize.query(
+                "continuation_token", continuation_token, "str", skip_quote=True
+            )
         if start_time_utc is not None:
-            query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
+            query_parameters["StartTimeUtc"] = self._serialize.query("start_time_utc", start_time_utc, "str")
         if end_time_utc is not None:
-            query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+            query_parameters["EndTimeUtc"] = self._serialize.query("end_time_utc", end_time_utc, "str")
         if max_results is not None:
-            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
+            query_parameters["MaxResults"] = self._serialize.query("max_results", max_results, "long", minimum=0)
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -11160,17 +12320,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ChaosEventsSegment', response)
+            deserialized = self._deserialize("ChaosEventsSegment", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_chaos_events.metadata = {'url': '/Tools/Chaos/Events'}
 
-    def get_chaos_schedule(
-            self, timeout=60, custom_headers=None, raw=False, **operation_config):
+    get_chaos_events.metadata = {"url": "/Tools/Chaos/Events"}
+
+    def get_chaos_schedule(self, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Get the Chaos Schedule defining when and how to run Chaos.
 
         Gets the version of the Chaos Schedule in use and the Chaos Schedule
@@ -11195,17 +12355,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.2"
 
         # Construct URL
-        url = self.get_chaos_schedule.metadata['url']
+        url = self.get_chaos_schedule.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -11218,17 +12380,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ChaosScheduleDescription', response)
+            deserialized = self._deserialize("ChaosScheduleDescription", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_chaos_schedule.metadata = {'url': '/Tools/Chaos/Schedule'}
+
+    get_chaos_schedule.metadata = {"url": "/Tools/Chaos/Schedule"}
 
     def post_chaos_schedule(
-            self, timeout=60, version=None, schedule=None, custom_headers=None, raw=False, **operation_config):
+        self, timeout=60, version=None, schedule=None, custom_headers=None, raw=False, **operation_config
+    ):
         """Set the schedule used by Chaos.
 
         Chaos will automatically schedule runs based on the Chaos Schedule.
@@ -11264,22 +12428,24 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.2"
 
         # Construct URL
-        url = self.post_chaos_schedule.metadata['url']
+        url = self.post_chaos_schedule.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(chaos_schedule, 'ChaosScheduleDescription')
+        body_content = self._serialize.body(chaos_schedule, "ChaosScheduleDescription")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -11291,10 +12457,10 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    post_chaos_schedule.metadata = {'url': '/Tools/Chaos/Schedule'}
 
-    def upload_file(
-            self, content_path, timeout=60, custom_headers=None, raw=False, **operation_config):
+    post_chaos_schedule.metadata = {"url": "/Tools/Chaos/Schedule"}
+
+    def upload_file(self, content_path, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Uploads contents of the file to the image store.
 
         Uploads contents of the file to the image store. Use this API if the
@@ -11330,17 +12496,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.upload_file.metadata['url']
-        path_format_arguments = {
-            'contentPath': self._serialize.url("content_path", content_path, 'str')
-        }
+        url = self.upload_file.metadata["url"]
+        path_format_arguments = {"contentPath": self._serialize.url("content_path", content_path, "str")}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -11357,10 +12523,10 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    upload_file.metadata = {'url': '/ImageStore/{contentPath}'}
 
-    def get_image_store_content(
-            self, content_path, timeout=60, custom_headers=None, raw=False, **operation_config):
+    upload_file.metadata = {"url": "/ImageStore/{contentPath}"}
+
+    def get_image_store_content(self, content_path, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the image store content information.
 
         Returns the information about the image store content at the specified
@@ -11389,21 +12555,21 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.2"
 
         # Construct URL
-        url = self.get_image_store_content.metadata['url']
-        path_format_arguments = {
-            'contentPath': self._serialize.url("content_path", content_path, 'str')
-        }
+        url = self.get_image_store_content.metadata["url"]
+        path_format_arguments = {"contentPath": self._serialize.url("content_path", content_path, "str")}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -11416,17 +12582,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ImageStoreContent', response)
+            deserialized = self._deserialize("ImageStoreContent", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_image_store_content.metadata = {'url': '/ImageStore/{contentPath}'}
 
-    def delete_image_store_content(
-            self, content_path, timeout=60, custom_headers=None, raw=False, **operation_config):
+    get_image_store_content.metadata = {"url": "/ImageStore/{contentPath}"}
+
+    def delete_image_store_content(self, content_path, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Deletes existing image store content.
 
         Deletes existing image store content being found within the given image
@@ -11454,17 +12620,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.delete_image_store_content.metadata['url']
-        path_format_arguments = {
-            'contentPath': self._serialize.url("content_path", content_path, 'str')
-        }
+        url = self.delete_image_store_content.metadata["url"]
+        path_format_arguments = {"contentPath": self._serialize.url("content_path", content_path, "str")}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -11481,10 +12647,10 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete_image_store_content.metadata = {'url': '/ImageStore/{contentPath}'}
 
-    def get_image_store_root_content(
-            self, timeout=60, custom_headers=None, raw=False, **operation_config):
+    delete_image_store_content.metadata = {"url": "/ImageStore/{contentPath}"}
+
+    def get_image_store_root_content(self, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the content information at the root of the image store.
 
         Returns the information about the image store content at the root of
@@ -11509,17 +12675,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_image_store_root_content.metadata['url']
+        url = self.get_image_store_root_content.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -11532,17 +12700,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ImageStoreContent', response)
+            deserialized = self._deserialize("ImageStoreContent", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_image_store_root_content.metadata = {'url': '/ImageStore'}
+
+    get_image_store_root_content.metadata = {"url": "/ImageStore"}
 
     def copy_image_store_content(
-            self, image_store_copy_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, image_store_copy_description, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Copies image store content internally.
 
         Copies the image store content from the source image store relative
@@ -11570,22 +12740,24 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.copy_image_store_content.metadata['url']
+        url = self.copy_image_store_content.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(image_store_copy_description, 'ImageStoreCopyDescription')
+        body_content = self._serialize.body(image_store_copy_description, "ImageStoreCopyDescription")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -11597,10 +12769,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    copy_image_store_content.metadata = {'url': '/ImageStore/$/Copy'}
+
+    copy_image_store_content.metadata = {"url": "/ImageStore/$/Copy"}
 
     def delete_image_store_upload_session(
-            self, session_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, session_id, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Cancels an image store upload session.
 
         The DELETE request will cause the existing upload session to expire and
@@ -11628,14 +12802,16 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.delete_image_store_upload_session.metadata['url']
+        url = self.delete_image_store_upload_session.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['session-id'] = self._serialize.query("session_id", session_id, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["session-id"] = self._serialize.query("session_id", session_id, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -11652,10 +12828,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete_image_store_upload_session.metadata = {'url': '/ImageStore/$/DeleteUploadSession'}
+
+    delete_image_store_upload_session.metadata = {"url": "/ImageStore/$/DeleteUploadSession"}
 
     def commit_image_store_upload_session(
-            self, session_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, session_id, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Commit an image store upload session.
 
         When all file chunks have been uploaded, the upload session needs to be
@@ -11685,14 +12863,16 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.commit_image_store_upload_session.metadata['url']
+        url = self.commit_image_store_upload_session.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['session-id'] = self._serialize.query("session_id", session_id, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["session-id"] = self._serialize.query("session_id", session_id, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -11709,10 +12889,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    commit_image_store_upload_session.metadata = {'url': '/ImageStore/$/CommitUploadSession'}
+
+    commit_image_store_upload_session.metadata = {"url": "/ImageStore/$/CommitUploadSession"}
 
     def get_image_store_upload_session_by_id(
-            self, session_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, session_id, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Get the image store upload session by ID.
 
         Gets the image store upload session identified by the given ID. User
@@ -11741,18 +12923,20 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_image_store_upload_session_by_id.metadata['url']
+        url = self.get_image_store_upload_session_by_id.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['session-id'] = self._serialize.query("session_id", session_id, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["session-id"] = self._serialize.query("session_id", session_id, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -11765,17 +12949,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('UploadSession', response)
+            deserialized = self._deserialize("UploadSession", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_image_store_upload_session_by_id.metadata = {'url': '/ImageStore/$/GetUploadSession'}
+
+    get_image_store_upload_session_by_id.metadata = {"url": "/ImageStore/$/GetUploadSession"}
 
     def get_image_store_upload_session_by_path(
-            self, content_path, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, content_path, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Get the image store upload session by relative path.
 
         Gets the image store upload session associated with the given image
@@ -11804,21 +12990,21 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_image_store_upload_session_by_path.metadata['url']
-        path_format_arguments = {
-            'contentPath': self._serialize.url("content_path", content_path, 'str')
-        }
+        url = self.get_image_store_upload_session_by_path.metadata["url"]
+        path_format_arguments = {"contentPath": self._serialize.url("content_path", content_path, "str")}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -11831,17 +13017,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('UploadSession', response)
+            deserialized = self._deserialize("UploadSession", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_image_store_upload_session_by_path.metadata = {'url': '/ImageStore/{contentPath}/$/GetUploadSession'}
+
+    get_image_store_upload_session_by_path.metadata = {"url": "/ImageStore/{contentPath}/$/GetUploadSession"}
 
     def upload_file_chunk(
-            self, content_path, session_id, content_range, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, content_path, session_id, content_range, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Uploads a file chunk to the image store relative path.
 
         Uploads a file chunk to the image store with the specified upload
@@ -11888,24 +13076,24 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.upload_file_chunk.metadata['url']
-        path_format_arguments = {
-            'contentPath': self._serialize.url("content_path", content_path, 'str')
-        }
+        url = self.upload_file_chunk.metadata["url"]
+        path_format_arguments = {"contentPath": self._serialize.url("content_path", content_path, "str")}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['session-id'] = self._serialize.query("session_id", session_id, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["session-id"] = self._serialize.query("session_id", session_id, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Content-Range'] = self._serialize.header("content_range", content_range, 'str')
+        header_parameters["Content-Range"] = self._serialize.header("content_range", content_range, "str")
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters)
@@ -11917,10 +13105,10 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    upload_file_chunk.metadata = {'url': '/ImageStore/{contentPath}/$/UploadChunk'}
 
-    def get_image_store_root_folder_size(
-            self, timeout=60, custom_headers=None, raw=False, **operation_config):
+    upload_file_chunk.metadata = {"url": "/ImageStore/{contentPath}/$/UploadChunk"}
+
+    def get_image_store_root_folder_size(self, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Get the folder size at the root of the image store.
 
         Returns the total size of files at the root and children folders in
@@ -11945,17 +13133,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.5"
 
         # Construct URL
-        url = self.get_image_store_root_folder_size.metadata['url']
+        url = self.get_image_store_root_folder_size.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -11968,17 +13158,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('FolderSizeInfo', response)
+            deserialized = self._deserialize("FolderSizeInfo", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_image_store_root_folder_size.metadata = {'url': '/ImageStore/$/FolderSize'}
 
-    def get_image_store_folder_size(
-            self, content_path, timeout=60, custom_headers=None, raw=False, **operation_config):
+    get_image_store_root_folder_size.metadata = {"url": "/ImageStore/$/FolderSize"}
+
+    def get_image_store_folder_size(self, content_path, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Get the size of a folder in image store.
 
         Gets the total size of file under a image store folder, specified by
@@ -12007,21 +13197,21 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.5"
 
         # Construct URL
-        url = self.get_image_store_folder_size.metadata['url']
-        path_format_arguments = {
-            'contentPath': self._serialize.url("content_path", content_path, 'str')
-        }
+        url = self.get_image_store_folder_size.metadata["url"]
+        path_format_arguments = {"contentPath": self._serialize.url("content_path", content_path, "str")}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -12034,17 +13224,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('FolderSizeInfo', response)
+            deserialized = self._deserialize("FolderSizeInfo", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_image_store_folder_size.metadata = {'url': '/ImageStore/{contentPath}/$/FolderSize'}
 
-    def get_image_store_info(
-            self, timeout=60, custom_headers=None, raw=False, **operation_config):
+    get_image_store_folder_size.metadata = {"url": "/ImageStore/{contentPath}/$/FolderSize"}
+
+    def get_image_store_info(self, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the overall ImageStore information.
 
         Returns information about the primary ImageStore replica, such as disk
@@ -12070,17 +13260,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.5"
 
         # Construct URL
-        url = self.get_image_store_info.metadata['url']
+        url = self.get_image_store_info.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -12093,17 +13285,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ImageStoreInfo', response)
+            deserialized = self._deserialize("ImageStoreInfo", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_image_store_info.metadata = {'url': '/ImageStore/$/Info'}
+
+    get_image_store_info.metadata = {"url": "/ImageStore/$/Info"}
 
     def invoke_infrastructure_command(
-            self, command, service_id=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, command, service_id=None, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Invokes an administrative command on the given Infrastructure Service
         instance.
 
@@ -12144,20 +13338,22 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.invoke_infrastructure_command.metadata['url']
+        url = self.invoke_infrastructure_command.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['Command'] = self._serialize.query("command", command, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["Command"] = self._serialize.query("command", command, "str")
         if service_id is not None:
-            query_parameters['ServiceId'] = self._serialize.query("service_id", service_id, 'str')
+            query_parameters["ServiceId"] = self._serialize.query("service_id", service_id, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -12170,17 +13366,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('str', response)
+            deserialized = self._deserialize("str", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    invoke_infrastructure_command.metadata = {'url': '/$/InvokeInfrastructureCommand'}
+
+    invoke_infrastructure_command.metadata = {"url": "/$/InvokeInfrastructureCommand"}
 
     def invoke_infrastructure_query(
-            self, command, service_id=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, command, service_id=None, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Invokes a read-only query on the given infrastructure service instance.
 
         For clusters that have one or more instances of the Infrastructure
@@ -12220,20 +13418,22 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.invoke_infrastructure_query.metadata['url']
+        url = self.invoke_infrastructure_query.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['Command'] = self._serialize.query("command", command, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["Command"] = self._serialize.query("command", command, "str")
         if service_id is not None:
-            query_parameters['ServiceId'] = self._serialize.query("service_id", service_id, 'str')
+            query_parameters["ServiceId"] = self._serialize.query("service_id", service_id, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -12246,17 +13446,27 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('str', response)
+            deserialized = self._deserialize("str", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    invoke_infrastructure_query.metadata = {'url': '/$/InvokeInfrastructureQuery'}
+
+    invoke_infrastructure_query.metadata = {"url": "/$/InvokeInfrastructureQuery"}
 
     def start_data_loss(
-            self, service_id, partition_id, operation_id, data_loss_mode, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        service_id,
+        partition_id,
+        operation_id,
+        data_loss_mode,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """This API will induce data loss for the specified partition. It will
         trigger a call to the OnDataLossAsync API of the partition.
 
@@ -12313,20 +13523,22 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.start_data_loss.metadata['url']
+        url = self.start_data_loss.metadata["url"]
         path_format_arguments = {
-            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True),
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+            "serviceId": self._serialize.url("service_id", service_id, "str", skip_quote=True),
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['OperationId'] = self._serialize.query("operation_id", operation_id, 'str')
-        query_parameters['DataLossMode'] = self._serialize.query("data_loss_mode", data_loss_mode, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["OperationId"] = self._serialize.query("operation_id", operation_id, "str")
+        query_parameters["DataLossMode"] = self._serialize.query("data_loss_mode", data_loss_mode, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -12343,10 +13555,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    start_data_loss.metadata = {'url': '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/StartDataLoss'}
+
+    start_data_loss.metadata = {"url": "/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/StartDataLoss"}
 
     def get_data_loss_progress(
-            self, service_id, partition_id, operation_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, service_id, partition_id, operation_id, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Gets the progress of a partition data loss operation started using the
         StartDataLoss API.
 
@@ -12385,23 +13599,25 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_data_loss_progress.metadata['url']
+        url = self.get_data_loss_progress.metadata["url"]
         path_format_arguments = {
-            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True),
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+            "serviceId": self._serialize.url("service_id", service_id, "str", skip_quote=True),
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['OperationId'] = self._serialize.query("operation_id", operation_id, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["OperationId"] = self._serialize.query("operation_id", operation_id, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -12414,17 +13630,30 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PartitionDataLossProgress', response)
+            deserialized = self._deserialize("PartitionDataLossProgress", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_data_loss_progress.metadata = {'url': '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/GetDataLossProgress'}
+
+    get_data_loss_progress.metadata = {
+        "url": "/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/GetDataLossProgress"
+    }
 
     def start_quorum_loss(
-            self, service_id, partition_id, operation_id, quorum_loss_mode, quorum_loss_duration, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        service_id,
+        partition_id,
+        operation_id,
+        quorum_loss_mode,
+        quorum_loss_duration,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Induces quorum loss for a given stateful service partition.
 
         This API is useful for a temporary quorum loss situation on your
@@ -12475,21 +13704,25 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.start_quorum_loss.metadata['url']
+        url = self.start_quorum_loss.metadata["url"]
         path_format_arguments = {
-            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True),
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+            "serviceId": self._serialize.url("service_id", service_id, "str", skip_quote=True),
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['OperationId'] = self._serialize.query("operation_id", operation_id, 'str')
-        query_parameters['QuorumLossMode'] = self._serialize.query("quorum_loss_mode", quorum_loss_mode, 'str')
-        query_parameters['QuorumLossDuration'] = self._serialize.query("quorum_loss_duration", quorum_loss_duration, 'int')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["OperationId"] = self._serialize.query("operation_id", operation_id, "str")
+        query_parameters["QuorumLossMode"] = self._serialize.query("quorum_loss_mode", quorum_loss_mode, "str")
+        query_parameters["QuorumLossDuration"] = self._serialize.query(
+            "quorum_loss_duration", quorum_loss_duration, "int"
+        )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -12506,10 +13739,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    start_quorum_loss.metadata = {'url': '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/StartQuorumLoss'}
+
+    start_quorum_loss.metadata = {"url": "/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/StartQuorumLoss"}
 
     def get_quorum_loss_progress(
-            self, service_id, partition_id, operation_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, service_id, partition_id, operation_id, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Gets the progress of a quorum loss operation on a partition started
         using the StartQuorumLoss API.
 
@@ -12548,23 +13783,25 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_quorum_loss_progress.metadata['url']
+        url = self.get_quorum_loss_progress.metadata["url"]
         path_format_arguments = {
-            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True),
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+            "serviceId": self._serialize.url("service_id", service_id, "str", skip_quote=True),
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['OperationId'] = self._serialize.query("operation_id", operation_id, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["OperationId"] = self._serialize.query("operation_id", operation_id, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -12577,17 +13814,29 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PartitionQuorumLossProgress', response)
+            deserialized = self._deserialize("PartitionQuorumLossProgress", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_quorum_loss_progress.metadata = {'url': '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/GetQuorumLossProgress'}
+
+    get_quorum_loss_progress.metadata = {
+        "url": "/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/GetQuorumLossProgress"
+    }
 
     def start_partition_restart(
-            self, service_id, partition_id, operation_id, restart_partition_mode, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        service_id,
+        partition_id,
+        operation_id,
+        restart_partition_mode,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """This API will restart some or all replicas or instances of the
         specified partition.
 
@@ -12633,20 +13882,24 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.start_partition_restart.metadata['url']
+        url = self.start_partition_restart.metadata["url"]
         path_format_arguments = {
-            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True),
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+            "serviceId": self._serialize.url("service_id", service_id, "str", skip_quote=True),
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['OperationId'] = self._serialize.query("operation_id", operation_id, 'str')
-        query_parameters['RestartPartitionMode'] = self._serialize.query("restart_partition_mode", restart_partition_mode, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["OperationId"] = self._serialize.query("operation_id", operation_id, "str")
+        query_parameters["RestartPartitionMode"] = self._serialize.query(
+            "restart_partition_mode", restart_partition_mode, "str"
+        )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -12663,10 +13916,14 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    start_partition_restart.metadata = {'url': '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/StartRestart'}
+
+    start_partition_restart.metadata = {
+        "url": "/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/StartRestart"
+    }
 
     def get_partition_restart_progress(
-            self, service_id, partition_id, operation_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, service_id, partition_id, operation_id, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Gets the progress of a PartitionRestart operation started using
         StartPartitionRestart.
 
@@ -12705,23 +13962,25 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_partition_restart_progress.metadata['url']
+        url = self.get_partition_restart_progress.metadata["url"]
         path_format_arguments = {
-            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True),
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+            "serviceId": self._serialize.url("service_id", service_id, "str", skip_quote=True),
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['OperationId'] = self._serialize.query("operation_id", operation_id, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["OperationId"] = self._serialize.query("operation_id", operation_id, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -12734,17 +13993,30 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PartitionRestartProgress', response)
+            deserialized = self._deserialize("PartitionRestartProgress", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_partition_restart_progress.metadata = {'url': '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/GetRestartProgress'}
+
+    get_partition_restart_progress.metadata = {
+        "url": "/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/GetRestartProgress"
+    }
 
     def start_node_transition(
-            self, node_name, operation_id, node_transition_type, node_instance_id, stop_duration_in_seconds, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        node_name,
+        operation_id,
+        node_transition_type,
+        node_instance_id,
+        stop_duration_in_seconds,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Starts or stops a cluster node.
 
         Starts or stops a cluster node.  A cluster node is a process, not the
@@ -12792,21 +14064,25 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.start_node_transition.metadata['url']
-        path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str')
-        }
+        url = self.start_node_transition.metadata["url"]
+        path_format_arguments = {"nodeName": self._serialize.url("node_name", node_name, "str")}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['OperationId'] = self._serialize.query("operation_id", operation_id, 'str')
-        query_parameters['NodeTransitionType'] = self._serialize.query("node_transition_type", node_transition_type, 'str')
-        query_parameters['NodeInstanceId'] = self._serialize.query("node_instance_id", node_instance_id, 'str')
-        query_parameters['StopDurationInSeconds'] = self._serialize.query("stop_duration_in_seconds", stop_duration_in_seconds, 'int', minimum=0)
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["OperationId"] = self._serialize.query("operation_id", operation_id, "str")
+        query_parameters["NodeTransitionType"] = self._serialize.query(
+            "node_transition_type", node_transition_type, "str"
+        )
+        query_parameters["NodeInstanceId"] = self._serialize.query("node_instance_id", node_instance_id, "str")
+        query_parameters["StopDurationInSeconds"] = self._serialize.query(
+            "stop_duration_in_seconds", stop_duration_in_seconds, "int", minimum=0
+        )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -12823,10 +14099,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    start_node_transition.metadata = {'url': '/Faults/Nodes/{nodeName}/$/StartTransition/'}
+
+    start_node_transition.metadata = {"url": "/Faults/Nodes/{nodeName}/$/StartTransition/"}
 
     def get_node_transition_progress(
-            self, node_name, operation_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, node_name, operation_id, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Gets the progress of an operation started using StartNodeTransition.
 
         Gets the progress of an operation started with StartNodeTransition
@@ -12856,22 +14134,22 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_node_transition_progress.metadata['url']
-        path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str')
-        }
+        url = self.get_node_transition_progress.metadata["url"]
+        path_format_arguments = {"nodeName": self._serialize.url("node_name", node_name, "str")}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['OperationId'] = self._serialize.query("operation_id", operation_id, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["OperationId"] = self._serialize.query("operation_id", operation_id, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -12884,17 +14162,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('NodeTransitionProgress', response)
+            deserialized = self._deserialize("NodeTransitionProgress", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_node_transition_progress.metadata = {'url': '/Faults/Nodes/{nodeName}/$/GetTransitionProgress'}
+
+    get_node_transition_progress.metadata = {"url": "/Faults/Nodes/{nodeName}/$/GetTransitionProgress"}
 
     def get_fault_operation_list(
-            self, type_filter=65535, state_filter=65535, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, type_filter=65535, state_filter=65535, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Gets a list of user-induced fault operations filtered by provided
         input.
 
@@ -12938,19 +14218,21 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_fault_operation_list.metadata['url']
+        url = self.get_fault_operation_list.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['TypeFilter'] = self._serialize.query("type_filter", type_filter, 'int')
-        query_parameters['StateFilter'] = self._serialize.query("state_filter", state_filter, 'int')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["TypeFilter"] = self._serialize.query("type_filter", type_filter, "int")
+        query_parameters["StateFilter"] = self._serialize.query("state_filter", state_filter, "int")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -12963,17 +14245,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[OperationStatus]', response)
+            deserialized = self._deserialize("[OperationStatus]", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_fault_operation_list.metadata = {'url': '/Faults/'}
+
+    get_fault_operation_list.metadata = {"url": "/Faults/"}
 
     def cancel_operation(
-            self, operation_id, force=False, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, operation_id, force=False, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Cancels a user-induced fault operation.
 
         The following APIs start fault operations that may be cancelled by
@@ -13024,15 +14308,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.cancel_operation.metadata['url']
+        url = self.cancel_operation.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['OperationId'] = self._serialize.query("operation_id", operation_id, 'str')
-        query_parameters['Force'] = self._serialize.query("force", force, 'bool')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["OperationId"] = self._serialize.query("operation_id", operation_id, "str")
+        query_parameters["Force"] = self._serialize.query("force", force, "bool")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -13049,10 +14335,18 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    cancel_operation.metadata = {'url': '/Faults/$/Cancel'}
+
+    cancel_operation.metadata = {"url": "/Faults/$/Cancel"}
 
     def create_backup_policy(
-            self, backup_policy_description, timeout=60, validate_connection=False, custom_headers=None, raw=False, **operation_config):
+        self,
+        backup_policy_description,
+        timeout=60,
+        validate_connection=False,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Creates a backup policy.
 
         Creates a backup policy which can be associated later with a Service
@@ -13083,24 +14377,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.create_backup_policy.metadata['url']
+        url = self.create_backup_policy.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
         if validate_connection is not None:
-            query_parameters['ValidateConnection'] = self._serialize.query("validate_connection", validate_connection, 'bool')
+            query_parameters["ValidateConnection"] = self._serialize.query(
+                "validate_connection", validate_connection, "bool"
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(backup_policy_description, 'BackupPolicyDescription')
+        body_content = self._serialize.body(backup_policy_description, "BackupPolicyDescription")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -13112,10 +14410,10 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    create_backup_policy.metadata = {'url': '/BackupRestore/BackupPolicies/$/Create'}
 
-    def delete_backup_policy(
-            self, backup_policy_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+    create_backup_policy.metadata = {"url": "/BackupRestore/BackupPolicies/$/Create"}
+
+    def delete_backup_policy(self, backup_policy_name, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Deletes the backup policy.
 
         Deletes an existing backup policy. A backup policy must be created
@@ -13143,17 +14441,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.delete_backup_policy.metadata['url']
+        url = self.delete_backup_policy.metadata["url"]
         path_format_arguments = {
-            'backupPolicyName': self._serialize.url("backup_policy_name", backup_policy_name, 'str')
+            "backupPolicyName": self._serialize.url("backup_policy_name", backup_policy_name, "str")
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -13170,10 +14470,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete_backup_policy.metadata = {'url': '/BackupRestore/BackupPolicies/{backupPolicyName}/$/Delete'}
+
+    delete_backup_policy.metadata = {"url": "/BackupRestore/BackupPolicies/{backupPolicyName}/$/Delete"}
 
     def get_backup_policy_list(
-            self, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Gets all the backup policies configured.
 
         Get a list of all the backup policies configured.
@@ -13214,21 +14516,25 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.get_backup_policy_list.metadata['url']
+        url = self.get_backup_policy_list.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if continuation_token is not None:
-            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+            query_parameters["ContinuationToken"] = self._serialize.query(
+                "continuation_token", continuation_token, "str", skip_quote=True
+            )
         if max_results is not None:
-            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
+            query_parameters["MaxResults"] = self._serialize.query("max_results", max_results, "long", minimum=0)
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -13241,17 +14547,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PagedBackupPolicyDescriptionList', response)
+            deserialized = self._deserialize("PagedBackupPolicyDescriptionList", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_backup_policy_list.metadata = {'url': '/BackupRestore/BackupPolicies'}
+
+    get_backup_policy_list.metadata = {"url": "/BackupRestore/BackupPolicies"}
 
     def get_backup_policy_by_name(
-            self, backup_policy_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, backup_policy_name, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Gets a particular backup policy by name.
 
         Gets a particular backup policy identified by {backupPolicyName}.
@@ -13277,21 +14585,23 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.get_backup_policy_by_name.metadata['url']
+        url = self.get_backup_policy_by_name.metadata["url"]
         path_format_arguments = {
-            'backupPolicyName': self._serialize.url("backup_policy_name", backup_policy_name, 'str')
+            "backupPolicyName": self._serialize.url("backup_policy_name", backup_policy_name, "str")
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -13304,17 +14614,26 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('BackupPolicyDescription', response)
+            deserialized = self._deserialize("BackupPolicyDescription", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_backup_policy_by_name.metadata = {'url': '/BackupRestore/BackupPolicies/{backupPolicyName}'}
+
+    get_backup_policy_by_name.metadata = {"url": "/BackupRestore/BackupPolicies/{backupPolicyName}"}
 
     def get_all_entities_backed_up_by_policy(
-            self, backup_policy_name, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        backup_policy_name,
+        continuation_token=None,
+        max_results=0,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the list of backup entities that are associated with this policy.
 
         Returns a list of Service Fabric application, service or partition
@@ -13357,25 +14676,29 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.get_all_entities_backed_up_by_policy.metadata['url']
+        url = self.get_all_entities_backed_up_by_policy.metadata["url"]
         path_format_arguments = {
-            'backupPolicyName': self._serialize.url("backup_policy_name", backup_policy_name, 'str')
+            "backupPolicyName": self._serialize.url("backup_policy_name", backup_policy_name, "str")
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if continuation_token is not None:
-            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+            query_parameters["ContinuationToken"] = self._serialize.query(
+                "continuation_token", continuation_token, "str", skip_quote=True
+            )
         if max_results is not None:
-            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
+            query_parameters["MaxResults"] = self._serialize.query("max_results", max_results, "long", minimum=0)
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -13388,17 +14711,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PagedBackupEntityList', response)
+            deserialized = self._deserialize("PagedBackupEntityList", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_all_entities_backed_up_by_policy.metadata = {'url': '/BackupRestore/BackupPolicies/{backupPolicyName}/$/GetBackupEnabledEntities'}
+
+    get_all_entities_backed_up_by_policy.metadata = {
+        "url": "/BackupRestore/BackupPolicies/{backupPolicyName}/$/GetBackupEnabledEntities"
+    }
 
     def update_backup_policy(
-            self, backup_policy_description, backup_policy_name, timeout=60, validate_connection=False, custom_headers=None, raw=False, **operation_config):
+        self,
+        backup_policy_description,
+        backup_policy_name,
+        timeout=60,
+        validate_connection=False,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Updates the backup policy.
 
         Updates the backup policy identified by {backupPolicyName}.
@@ -13430,28 +14764,32 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.update_backup_policy.metadata['url']
+        url = self.update_backup_policy.metadata["url"]
         path_format_arguments = {
-            'backupPolicyName': self._serialize.url("backup_policy_name", backup_policy_name, 'str')
+            "backupPolicyName": self._serialize.url("backup_policy_name", backup_policy_name, "str")
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
         if validate_connection is not None:
-            query_parameters['ValidateConnection'] = self._serialize.query("validate_connection", validate_connection, 'bool')
+            query_parameters["ValidateConnection"] = self._serialize.query(
+                "validate_connection", validate_connection, "bool"
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(backup_policy_description, 'BackupPolicyDescription')
+        body_content = self._serialize.body(backup_policy_description, "BackupPolicyDescription")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -13463,10 +14801,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    update_backup_policy.metadata = {'url': '/BackupRestore/BackupPolicies/{backupPolicyName}/$/Update'}
+
+    update_backup_policy.metadata = {"url": "/BackupRestore/BackupPolicies/{backupPolicyName}/$/Update"}
 
     def enable_application_backup(
-            self, application_id, backup_policy_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, application_id, backup_policy_name, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Enables periodic backup of stateful partitions under this Service
         Fabric application.
 
@@ -13508,26 +14848,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.enable_application_backup.metadata['url']
+        url = self.enable_application_backup.metadata["url"]
         path_format_arguments = {
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(enable_backup_description, 'EnableBackupDescription')
+        body_content = self._serialize.body(enable_backup_description, "EnableBackupDescription")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -13539,10 +14881,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    enable_application_backup.metadata = {'url': '/Applications/{applicationId}/$/EnableBackup'}
+
+    enable_application_backup.metadata = {"url": "/Applications/{applicationId}/$/EnableBackup"}
 
     def disable_application_backup(
-            self, application_id, clean_backup, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, application_id, clean_backup, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Disables periodic backup of Service Fabric application.
 
         Disables periodic backup of Service Fabric application which was
@@ -13583,27 +14927,29 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.disable_application_backup.metadata['url']
+        url = self.disable_application_backup.metadata["url"]
         path_format_arguments = {
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
         if disable_backup_description is not None:
-            body_content = self._serialize.body(disable_backup_description, 'DisableBackupDescription')
+            body_content = self._serialize.body(disable_backup_description, "DisableBackupDescription")
         else:
             body_content = None
 
@@ -13617,10 +14963,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    disable_application_backup.metadata = {'url': '/Applications/{applicationId}/$/DisableBackup'}
+
+    disable_application_backup.metadata = {"url": "/Applications/{applicationId}/$/DisableBackup"}
 
     def get_application_backup_configuration_info(
-            self, application_id, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        application_id,
+        continuation_token=None,
+        max_results=0,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the Service Fabric application backup configuration information.
 
         Gets the Service Fabric backup configuration information for the
@@ -13671,25 +15026,29 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.get_application_backup_configuration_info.metadata['url']
+        url = self.get_application_backup_configuration_info.metadata["url"]
         path_format_arguments = {
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if continuation_token is not None:
-            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+            query_parameters["ContinuationToken"] = self._serialize.query(
+                "continuation_token", continuation_token, "str", skip_quote=True
+            )
         if max_results is not None:
-            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
+            query_parameters["MaxResults"] = self._serialize.query("max_results", max_results, "long", minimum=0)
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -13702,17 +15061,31 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PagedBackupConfigurationInfoList', response)
+            deserialized = self._deserialize("PagedBackupConfigurationInfoList", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_application_backup_configuration_info.metadata = {'url': '/Applications/{applicationId}/$/GetBackupConfigurationInfo'}
+
+    get_application_backup_configuration_info.metadata = {
+        "url": "/Applications/{applicationId}/$/GetBackupConfigurationInfo"
+    }
 
     def get_application_backup_list(
-            self, application_id, timeout=60, latest=False, start_date_time_filter=None, end_date_time_filter=None, continuation_token=None, max_results=0, custom_headers=None, raw=False, **operation_config):
+        self,
+        application_id,
+        timeout=60,
+        latest=False,
+        start_date_time_filter=None,
+        end_date_time_filter=None,
+        continuation_token=None,
+        max_results=0,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the list of backups available for every partition in this
         application.
 
@@ -13779,31 +15152,39 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.get_application_backup_list.metadata['url']
+        url = self.get_application_backup_list.metadata["url"]
         path_format_arguments = {
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
         if latest is not None:
-            query_parameters['Latest'] = self._serialize.query("latest", latest, 'bool')
+            query_parameters["Latest"] = self._serialize.query("latest", latest, "bool")
         if start_date_time_filter is not None:
-            query_parameters['StartDateTimeFilter'] = self._serialize.query("start_date_time_filter", start_date_time_filter, 'iso-8601')
+            query_parameters["StartDateTimeFilter"] = self._serialize.query(
+                "start_date_time_filter", start_date_time_filter, "iso-8601"
+            )
         if end_date_time_filter is not None:
-            query_parameters['EndDateTimeFilter'] = self._serialize.query("end_date_time_filter", end_date_time_filter, 'iso-8601')
+            query_parameters["EndDateTimeFilter"] = self._serialize.query(
+                "end_date_time_filter", end_date_time_filter, "iso-8601"
+            )
         if continuation_token is not None:
-            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+            query_parameters["ContinuationToken"] = self._serialize.query(
+                "continuation_token", continuation_token, "str", skip_quote=True
+            )
         if max_results is not None:
-            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
+            query_parameters["MaxResults"] = self._serialize.query("max_results", max_results, "long", minimum=0)
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -13816,17 +15197,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PagedBackupInfoList', response)
+            deserialized = self._deserialize("PagedBackupInfoList", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_application_backup_list.metadata = {'url': '/Applications/{applicationId}/$/GetBackups'}
+
+    get_application_backup_list.metadata = {"url": "/Applications/{applicationId}/$/GetBackups"}
 
     def suspend_application_backup(
-            self, application_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, application_id, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Suspends periodic backup for the specified Service Fabric application.
 
         The application which is configured to take periodic backups, is
@@ -13862,17 +15245,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.suspend_application_backup.metadata['url']
+        url = self.suspend_application_backup.metadata["url"]
         path_format_arguments = {
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -13889,10 +15274,10 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    suspend_application_backup.metadata = {'url': '/Applications/{applicationId}/$/SuspendBackup'}
 
-    def resume_application_backup(
-            self, application_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+    suspend_application_backup.metadata = {"url": "/Applications/{applicationId}/$/SuspendBackup"}
+
+    def resume_application_backup(self, application_id, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Resumes periodic backup of a Service Fabric application which was
         previously suspended.
 
@@ -13927,17 +15312,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.resume_application_backup.metadata['url']
+        url = self.resume_application_backup.metadata["url"]
         path_format_arguments = {
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -13954,10 +15341,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    resume_application_backup.metadata = {'url': '/Applications/{applicationId}/$/ResumeBackup'}
+
+    resume_application_backup.metadata = {"url": "/Applications/{applicationId}/$/ResumeBackup"}
 
     def enable_service_backup(
-            self, service_id, backup_policy_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, service_id, backup_policy_name, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Enables periodic backup of stateful partitions under this Service
         Fabric service.
 
@@ -14002,26 +15391,26 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.enable_service_backup.metadata['url']
-        path_format_arguments = {
-            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
-        }
+        url = self.enable_service_backup.metadata["url"]
+        path_format_arguments = {"serviceId": self._serialize.url("service_id", service_id, "str", skip_quote=True)}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(enable_backup_description, 'EnableBackupDescription')
+        body_content = self._serialize.body(enable_backup_description, "EnableBackupDescription")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -14033,10 +15422,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    enable_service_backup.metadata = {'url': '/Services/{serviceId}/$/EnableBackup'}
+
+    enable_service_backup.metadata = {"url": "/Services/{serviceId}/$/EnableBackup"}
 
     def disable_service_backup(
-            self, service_id, clean_backup, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, service_id, clean_backup, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Disables periodic backup of Service Fabric service which was previously
         enabled.
 
@@ -14080,27 +15471,27 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.disable_service_backup.metadata['url']
-        path_format_arguments = {
-            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
-        }
+        url = self.disable_service_backup.metadata["url"]
+        path_format_arguments = {"serviceId": self._serialize.url("service_id", service_id, "str", skip_quote=True)}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
         if disable_backup_description is not None:
-            body_content = self._serialize.body(disable_backup_description, 'DisableBackupDescription')
+            body_content = self._serialize.body(disable_backup_description, "DisableBackupDescription")
         else:
             body_content = None
 
@@ -14114,10 +15505,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    disable_service_backup.metadata = {'url': '/Services/{serviceId}/$/DisableBackup'}
+
+    disable_service_backup.metadata = {"url": "/Services/{serviceId}/$/DisableBackup"}
 
     def get_service_backup_configuration_info(
-            self, service_id, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        service_id,
+        continuation_token=None,
+        max_results=0,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the Service Fabric service backup configuration information.
 
         Gets the Service Fabric backup configuration information for the
@@ -14167,25 +15567,27 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.get_service_backup_configuration_info.metadata['url']
-        path_format_arguments = {
-            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
-        }
+        url = self.get_service_backup_configuration_info.metadata["url"]
+        path_format_arguments = {"serviceId": self._serialize.url("service_id", service_id, "str", skip_quote=True)}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if continuation_token is not None:
-            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+            query_parameters["ContinuationToken"] = self._serialize.query(
+                "continuation_token", continuation_token, "str", skip_quote=True
+            )
         if max_results is not None:
-            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
+            query_parameters["MaxResults"] = self._serialize.query("max_results", max_results, "long", minimum=0)
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -14198,17 +15600,29 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PagedBackupConfigurationInfoList', response)
+            deserialized = self._deserialize("PagedBackupConfigurationInfoList", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_service_backup_configuration_info.metadata = {'url': '/Services/{serviceId}/$/GetBackupConfigurationInfo'}
+
+    get_service_backup_configuration_info.metadata = {"url": "/Services/{serviceId}/$/GetBackupConfigurationInfo"}
 
     def get_service_backup_list(
-            self, service_id, timeout=60, latest=False, start_date_time_filter=None, end_date_time_filter=None, continuation_token=None, max_results=0, custom_headers=None, raw=False, **operation_config):
+        self,
+        service_id,
+        timeout=60,
+        latest=False,
+        start_date_time_filter=None,
+        end_date_time_filter=None,
+        continuation_token=None,
+        max_results=0,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the list of backups available for every partition in this service.
 
         Returns a list of backups available for every partition in this Service
@@ -14273,31 +15687,37 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.get_service_backup_list.metadata['url']
-        path_format_arguments = {
-            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
-        }
+        url = self.get_service_backup_list.metadata["url"]
+        path_format_arguments = {"serviceId": self._serialize.url("service_id", service_id, "str", skip_quote=True)}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
         if latest is not None:
-            query_parameters['Latest'] = self._serialize.query("latest", latest, 'bool')
+            query_parameters["Latest"] = self._serialize.query("latest", latest, "bool")
         if start_date_time_filter is not None:
-            query_parameters['StartDateTimeFilter'] = self._serialize.query("start_date_time_filter", start_date_time_filter, 'iso-8601')
+            query_parameters["StartDateTimeFilter"] = self._serialize.query(
+                "start_date_time_filter", start_date_time_filter, "iso-8601"
+            )
         if end_date_time_filter is not None:
-            query_parameters['EndDateTimeFilter'] = self._serialize.query("end_date_time_filter", end_date_time_filter, 'iso-8601')
+            query_parameters["EndDateTimeFilter"] = self._serialize.query(
+                "end_date_time_filter", end_date_time_filter, "iso-8601"
+            )
         if continuation_token is not None:
-            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+            query_parameters["ContinuationToken"] = self._serialize.query(
+                "continuation_token", continuation_token, "str", skip_quote=True
+            )
         if max_results is not None:
-            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
+            query_parameters["MaxResults"] = self._serialize.query("max_results", max_results, "long", minimum=0)
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -14310,17 +15730,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PagedBackupInfoList', response)
+            deserialized = self._deserialize("PagedBackupInfoList", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_service_backup_list.metadata = {'url': '/Services/{serviceId}/$/GetBackups'}
 
-    def suspend_service_backup(
-            self, service_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+    get_service_backup_list.metadata = {"url": "/Services/{serviceId}/$/GetBackups"}
+
+    def suspend_service_backup(self, service_id, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Suspends periodic backup for the specified Service Fabric service.
 
         The service which is configured to take periodic backups, is suspended
@@ -14354,17 +15774,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.suspend_service_backup.metadata['url']
-        path_format_arguments = {
-            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
-        }
+        url = self.suspend_service_backup.metadata["url"]
+        path_format_arguments = {"serviceId": self._serialize.url("service_id", service_id, "str", skip_quote=True)}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -14381,10 +15801,10 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    suspend_service_backup.metadata = {'url': '/Services/{serviceId}/$/SuspendBackup'}
 
-    def resume_service_backup(
-            self, service_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+    suspend_service_backup.metadata = {"url": "/Services/{serviceId}/$/SuspendBackup"}
+
+    def resume_service_backup(self, service_id, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Resumes periodic backup of a Service Fabric service which was
         previously suspended.
 
@@ -14417,17 +15837,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.resume_service_backup.metadata['url']
-        path_format_arguments = {
-            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
-        }
+        url = self.resume_service_backup.metadata["url"]
+        path_format_arguments = {"serviceId": self._serialize.url("service_id", service_id, "str", skip_quote=True)}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -14444,10 +15864,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    resume_service_backup.metadata = {'url': '/Services/{serviceId}/$/ResumeBackup'}
+
+    resume_service_backup.metadata = {"url": "/Services/{serviceId}/$/ResumeBackup"}
 
     def enable_partition_backup(
-            self, partition_id, backup_policy_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, partition_id, backup_policy_name, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Enables periodic backup of the stateful persisted partition.
 
         Enables periodic backup of stateful persisted partition. Each partition
@@ -14483,26 +15905,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.enable_partition_backup.metadata['url']
+        url = self.enable_partition_backup.metadata["url"]
         path_format_arguments = {
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(enable_backup_description, 'EnableBackupDescription')
+        body_content = self._serialize.body(enable_backup_description, "EnableBackupDescription")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -14514,10 +15938,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    enable_partition_backup.metadata = {'url': '/Partitions/{partitionId}/$/EnableBackup'}
+
+    enable_partition_backup.metadata = {"url": "/Partitions/{partitionId}/$/EnableBackup"}
 
     def disable_partition_backup(
-            self, partition_id, clean_backup, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, partition_id, clean_backup, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Disables periodic backup of Service Fabric partition which was
         previously enabled.
 
@@ -14556,27 +15982,29 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.disable_partition_backup.metadata['url']
+        url = self.disable_partition_backup.metadata["url"]
         path_format_arguments = {
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
         if disable_backup_description is not None:
-            body_content = self._serialize.body(disable_backup_description, 'DisableBackupDescription')
+            body_content = self._serialize.body(disable_backup_description, "DisableBackupDescription")
         else:
             body_content = None
 
@@ -14590,10 +16018,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    disable_partition_backup.metadata = {'url': '/Partitions/{partitionId}/$/DisableBackup'}
+
+    disable_partition_backup.metadata = {"url": "/Partitions/{partitionId}/$/DisableBackup"}
 
     def get_partition_backup_configuration_info(
-            self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Gets the partition backup configuration information.
 
         Gets the Service Fabric Backup configuration information for the
@@ -14621,21 +16051,23 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.get_partition_backup_configuration_info.metadata['url']
+        url = self.get_partition_backup_configuration_info.metadata["url"]
         path_format_arguments = {
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -14648,17 +16080,27 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PartitionBackupConfigurationInfo', response)
+            deserialized = self._deserialize("PartitionBackupConfigurationInfo", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_partition_backup_configuration_info.metadata = {'url': '/Partitions/{partitionId}/$/GetBackupConfigurationInfo'}
+
+    get_partition_backup_configuration_info.metadata = {"url": "/Partitions/{partitionId}/$/GetBackupConfigurationInfo"}
 
     def get_partition_backup_list(
-            self, partition_id, timeout=60, latest=False, start_date_time_filter=None, end_date_time_filter=None, custom_headers=None, raw=False, **operation_config):
+        self,
+        partition_id,
+        timeout=60,
+        latest=False,
+        start_date_time_filter=None,
+        end_date_time_filter=None,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the list of backups available for the specified partition.
 
         Returns a list of backups available for the specified partition. The
@@ -14701,27 +16143,33 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.get_partition_backup_list.metadata['url']
+        url = self.get_partition_backup_list.metadata["url"]
         path_format_arguments = {
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
         if latest is not None:
-            query_parameters['Latest'] = self._serialize.query("latest", latest, 'bool')
+            query_parameters["Latest"] = self._serialize.query("latest", latest, "bool")
         if start_date_time_filter is not None:
-            query_parameters['StartDateTimeFilter'] = self._serialize.query("start_date_time_filter", start_date_time_filter, 'iso-8601')
+            query_parameters["StartDateTimeFilter"] = self._serialize.query(
+                "start_date_time_filter", start_date_time_filter, "iso-8601"
+            )
         if end_date_time_filter is not None:
-            query_parameters['EndDateTimeFilter'] = self._serialize.query("end_date_time_filter", end_date_time_filter, 'iso-8601')
+            query_parameters["EndDateTimeFilter"] = self._serialize.query(
+                "end_date_time_filter", end_date_time_filter, "iso-8601"
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -14734,17 +16182,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PagedBackupInfoList', response)
+            deserialized = self._deserialize("PagedBackupInfoList", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_partition_backup_list.metadata = {'url': '/Partitions/{partitionId}/$/GetBackups'}
 
-    def suspend_partition_backup(
-            self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+    get_partition_backup_list.metadata = {"url": "/Partitions/{partitionId}/$/GetBackups"}
+
+    def suspend_partition_backup(self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Suspends periodic backup for the specified partition.
 
         The partition which is configured to take periodic backups, is
@@ -14770,17 +16218,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.suspend_partition_backup.metadata['url']
+        url = self.suspend_partition_backup.metadata["url"]
         path_format_arguments = {
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -14797,10 +16247,10 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    suspend_partition_backup.metadata = {'url': '/Partitions/{partitionId}/$/SuspendBackup'}
 
-    def resume_partition_backup(
-            self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+    suspend_partition_backup.metadata = {"url": "/Partitions/{partitionId}/$/SuspendBackup"}
+
+    def resume_partition_backup(self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Resumes periodic backup of partition which was previously suspended.
 
         The previously suspended partition resumes taking periodic backup as
@@ -14826,17 +16276,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.resume_partition_backup.metadata['url']
+        url = self.resume_partition_backup.metadata["url"]
         path_format_arguments = {
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -14853,10 +16305,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    resume_partition_backup.metadata = {'url': '/Partitions/{partitionId}/$/ResumeBackup'}
+
+    resume_partition_backup.metadata = {"url": "/Partitions/{partitionId}/$/ResumeBackup"}
 
     def backup_partition(
-            self, partition_id, backup_timeout=10, timeout=60, backup_storage=None, custom_headers=None, raw=False, **operation_config):
+        self,
+        partition_id,
+        backup_timeout=10,
+        timeout=60,
+        backup_storage=None,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Triggers backup of the partition's state.
 
         Creates a backup of the stateful persisted partition's state. In case
@@ -14904,29 +16365,31 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.backup_partition.metadata['url']
+        url = self.backup_partition.metadata["url"]
         path_format_arguments = {
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
         if backup_timeout is not None:
-            query_parameters['BackupTimeout'] = self._serialize.query("backup_timeout", backup_timeout, 'int')
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+            query_parameters["BackupTimeout"] = self._serialize.query("backup_timeout", backup_timeout, "int")
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
         if backup_partition_description is not None:
-            body_content = self._serialize.body(backup_partition_description, 'BackupPartitionDescription')
+            body_content = self._serialize.body(backup_partition_description, "BackupPartitionDescription")
         else:
             body_content = None
 
@@ -14940,10 +16403,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    backup_partition.metadata = {'url': '/Partitions/{partitionId}/$/Backup'}
+
+    backup_partition.metadata = {"url": "/Partitions/{partitionId}/$/Backup"}
 
     def get_partition_backup_progress(
-            self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Gets details for the latest backup triggered for this partition.
 
         Returns information about the state of the latest backup along with
@@ -14970,21 +16435,23 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.get_partition_backup_progress.metadata['url']
+        url = self.get_partition_backup_progress.metadata["url"]
         path_format_arguments = {
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -14997,17 +16464,26 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('BackupProgressInfo', response)
+            deserialized = self._deserialize("BackupProgressInfo", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_partition_backup_progress.metadata = {'url': '/Partitions/{partitionId}/$/GetBackupProgress'}
+
+    get_partition_backup_progress.metadata = {"url": "/Partitions/{partitionId}/$/GetBackupProgress"}
 
     def restore_partition(
-            self, partition_id, restore_partition_description, restore_timeout=10, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        partition_id,
+        restore_partition_description,
+        restore_timeout=10,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Triggers restore of the state of the partition using the specified
         restore partition description.
 
@@ -15053,28 +16529,30 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.restore_partition.metadata['url']
+        url = self.restore_partition.metadata["url"]
         path_format_arguments = {
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
         if restore_timeout is not None:
-            query_parameters['RestoreTimeout'] = self._serialize.query("restore_timeout", restore_timeout, 'int')
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+            query_parameters["RestoreTimeout"] = self._serialize.query("restore_timeout", restore_timeout, "int")
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(restore_partition_description, 'RestorePartitionDescription')
+        body_content = self._serialize.body(restore_partition_description, "RestorePartitionDescription")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -15086,10 +16564,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    restore_partition.metadata = {'url': '/Partitions/{partitionId}/$/Restore'}
+
+    restore_partition.metadata = {"url": "/Partitions/{partitionId}/$/Restore"}
 
     def get_partition_restore_progress(
-            self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Gets details for the latest restore operation triggered for this
         partition.
 
@@ -15117,21 +16597,23 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.get_partition_restore_progress.metadata['url']
+        url = self.get_partition_restore_progress.metadata["url"]
         path_format_arguments = {
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -15144,17 +16626,26 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('RestoreProgressInfo', response)
+            deserialized = self._deserialize("RestoreProgressInfo", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_partition_restore_progress.metadata = {'url': '/Partitions/{partitionId}/$/GetRestoreProgress'}
+
+    get_partition_restore_progress.metadata = {"url": "/Partitions/{partitionId}/$/GetRestoreProgress"}
 
     def get_backups_from_backup_location(
-            self, get_backup_by_storage_query_description, timeout=60, continuation_token=None, max_results=0, custom_headers=None, raw=False, **operation_config):
+        self,
+        get_backup_by_storage_query_description,
+        timeout=60,
+        continuation_token=None,
+        max_results=0,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets the list of backups available for the specified backed up entity
         at the specified backup location.
 
@@ -15201,27 +16692,33 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.get_backups_from_backup_location.metadata['url']
+        url = self.get_backups_from_backup_location.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
         if continuation_token is not None:
-            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+            query_parameters["ContinuationToken"] = self._serialize.query(
+                "continuation_token", continuation_token, "str", skip_quote=True
+            )
         if max_results is not None:
-            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
+            query_parameters["MaxResults"] = self._serialize.query("max_results", max_results, "long", minimum=0)
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Accept"] = "application/json"
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(get_backup_by_storage_query_description, 'GetBackupByStorageQueryDescription')
+        body_content = self._serialize.body(
+            get_backup_by_storage_query_description, "GetBackupByStorageQueryDescription"
+        )
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -15232,17 +16729,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PagedBackupInfoList', response)
+            deserialized = self._deserialize("PagedBackupInfoList", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_backups_from_backup_location.metadata = {'url': '/BackupRestore/$/GetBackups'}
 
-    def create_name(
-            self, name, timeout=60, custom_headers=None, raw=False, **operation_config):
+    get_backups_from_backup_location.metadata = {"url": "/BackupRestore/$/GetBackups"}
+
+    def create_name(self, name, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Creates a Service Fabric name.
 
         Creates the specified Service Fabric name.
@@ -15270,22 +16767,24 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.create_name.metadata['url']
+        url = self.create_name.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(name_description, 'NameDescription')
+        body_content = self._serialize.body(name_description, "NameDescription")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -15297,10 +16796,10 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    create_name.metadata = {'url': '/Names/$/Create'}
 
-    def get_name_exists_info(
-            self, name_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+    create_name.metadata = {"url": "/Names/$/Create"}
+
+    def get_name_exists_info(self, name_id, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Returns whether the Service Fabric name exists.
 
         Returns whether the specified Service Fabric name exists.
@@ -15326,17 +16825,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_name_exists_info.metadata['url']
-        path_format_arguments = {
-            'nameId': self._serialize.url("name_id", name_id, 'str', skip_quote=True)
-        }
+        url = self.get_name_exists_info.metadata["url"]
+        path_format_arguments = {"nameId": self._serialize.url("name_id", name_id, "str", skip_quote=True)}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -15353,10 +16852,10 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    get_name_exists_info.metadata = {'url': '/Names/{nameId}'}
 
-    def delete_name(
-            self, name_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+    get_name_exists_info.metadata = {"url": "/Names/{nameId}"}
+
+    def delete_name(self, name_id, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Deletes a Service Fabric name.
 
         Deletes the specified Service Fabric name. A name must be created
@@ -15384,17 +16883,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.delete_name.metadata['url']
-        path_format_arguments = {
-            'nameId': self._serialize.url("name_id", name_id, 'str', skip_quote=True)
-        }
+        url = self.delete_name.metadata["url"]
+        path_format_arguments = {"nameId": self._serialize.url("name_id", name_id, "str", skip_quote=True)}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -15411,10 +16910,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete_name.metadata = {'url': '/Names/{nameId}'}
+
+    delete_name.metadata = {"url": "/Names/{nameId}"}
 
     def get_sub_name_info_list(
-            self, name_id, recursive=False, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        name_id,
+        recursive=False,
+        continuation_token=None,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Enumerates all the Service Fabric names under a given name.
 
         Enumerates all the Service Fabric names under a given name. If the
@@ -15455,25 +16963,27 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_sub_name_info_list.metadata['url']
-        path_format_arguments = {
-            'nameId': self._serialize.url("name_id", name_id, 'str', skip_quote=True)
-        }
+        url = self.get_sub_name_info_list.metadata["url"]
+        path_format_arguments = {"nameId": self._serialize.url("name_id", name_id, "str", skip_quote=True)}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if recursive is not None:
-            query_parameters['Recursive'] = self._serialize.query("recursive", recursive, 'bool')
+            query_parameters["Recursive"] = self._serialize.query("recursive", recursive, "bool")
         if continuation_token is not None:
-            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+            query_parameters["ContinuationToken"] = self._serialize.query(
+                "continuation_token", continuation_token, "str", skip_quote=True
+            )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -15486,17 +16996,26 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PagedSubNameInfoList', response)
+            deserialized = self._deserialize("PagedSubNameInfoList", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_sub_name_info_list.metadata = {'url': '/Names/{nameId}/$/GetSubNames'}
+
+    get_sub_name_info_list.metadata = {"url": "/Names/{nameId}/$/GetSubNames"}
 
     def get_property_info_list(
-            self, name_id, include_values=False, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self,
+        name_id,
+        include_values=False,
+        continuation_token=None,
+        timeout=60,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets information on all Service Fabric properties under a given name.
 
         A Service Fabric name can have one or more named properties that store
@@ -15538,25 +17057,27 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_property_info_list.metadata['url']
-        path_format_arguments = {
-            'nameId': self._serialize.url("name_id", name_id, 'str', skip_quote=True)
-        }
+        url = self.get_property_info_list.metadata["url"]
+        path_format_arguments = {"nameId": self._serialize.url("name_id", name_id, "str", skip_quote=True)}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if include_values is not None:
-            query_parameters['IncludeValues'] = self._serialize.query("include_values", include_values, 'bool')
+            query_parameters["IncludeValues"] = self._serialize.query("include_values", include_values, "bool")
         if continuation_token is not None:
-            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+            query_parameters["ContinuationToken"] = self._serialize.query(
+                "continuation_token", continuation_token, "str", skip_quote=True
+            )
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -15569,17 +17090,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PagedPropertyInfoList', response)
+            deserialized = self._deserialize("PagedPropertyInfoList", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_property_info_list.metadata = {'url': '/Names/{nameId}/$/GetProperties'}
+
+    get_property_info_list.metadata = {"url": "/Names/{nameId}/$/GetProperties"}
 
     def put_property(
-            self, name_id, property_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, name_id, property_description, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Creates or updates a Service Fabric property.
 
         Creates or updates the specified Service Fabric property under a given
@@ -15610,26 +17133,26 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.put_property.metadata['url']
-        path_format_arguments = {
-            'nameId': self._serialize.url("name_id", name_id, 'str', skip_quote=True)
-        }
+        url = self.put_property.metadata["url"]
+        path_format_arguments = {"nameId": self._serialize.url("name_id", name_id, "str", skip_quote=True)}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(property_description, 'PropertyDescription')
+        body_content = self._serialize.body(property_description, "PropertyDescription")
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -15641,10 +17164,10 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    put_property.metadata = {'url': '/Names/{nameId}/$/GetProperty'}
 
-    def get_property_info(
-            self, name_id, property_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+    put_property.metadata = {"url": "/Names/{nameId}/$/GetProperty"}
+
+    def get_property_info(self, name_id, property_name, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the specified Service Fabric property.
 
         Gets the specified Service Fabric property under a given name. This
@@ -15674,22 +17197,22 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.get_property_info.metadata['url']
-        path_format_arguments = {
-            'nameId': self._serialize.url("name_id", name_id, 'str', skip_quote=True)
-        }
+        url = self.get_property_info.metadata["url"]
+        path_format_arguments = {"nameId": self._serialize.url("name_id", name_id, "str", skip_quote=True)}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['PropertyName'] = self._serialize.query("property_name", property_name, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["PropertyName"] = self._serialize.query("property_name", property_name, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -15702,17 +17225,17 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PropertyInfo', response)
+            deserialized = self._deserialize("PropertyInfo", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_property_info.metadata = {'url': '/Names/{nameId}/$/GetProperty'}
 
-    def delete_property(
-            self, name_id, property_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+    get_property_info.metadata = {"url": "/Names/{nameId}/$/GetProperty"}
+
+    def delete_property(self, name_id, property_name, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Deletes the specified Service Fabric property.
 
         Deletes the specified Service Fabric property under a given name. A
@@ -15741,18 +17264,18 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.delete_property.metadata['url']
-        path_format_arguments = {
-            'nameId': self._serialize.url("name_id", name_id, 'str', skip_quote=True)
-        }
+        url = self.delete_property.metadata["url"]
+        path_format_arguments = {"nameId": self._serialize.url("name_id", name_id, "str", skip_quote=True)}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['PropertyName'] = self._serialize.query("property_name", property_name, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
+        query_parameters["PropertyName"] = self._serialize.query("property_name", property_name, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
@@ -15769,10 +17292,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete_property.metadata = {'url': '/Names/{nameId}/$/GetProperty'}
+
+    delete_property.metadata = {"url": "/Names/{nameId}/$/GetProperty"}
 
     def submit_property_batch(
-            self, name_id, timeout=60, operations=None, custom_headers=None, raw=False, **operation_config):
+        self, name_id, timeout=60, operations=None, custom_headers=None, raw=False, **operation_config
+    ):
         """Submits a property batch.
 
         Submits a batch of property operations. Either all or none of the
@@ -15806,27 +17331,27 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.0"
 
         # Construct URL
-        url = self.submit_property_batch.metadata['url']
-        path_format_arguments = {
-            'nameId': self._serialize.url("name_id", name_id, 'str', skip_quote=True)
-        }
+        url = self.submit_property_batch.metadata["url"]
+        path_format_arguments = {"nameId": self._serialize.url("name_id", name_id, "str", skip_quote=True)}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Accept"] = "application/json"
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(property_batch_description_list, 'PropertyBatchDescriptionList')
+        body_content = self._serialize.body(property_batch_description_list, "PropertyBatchDescriptionList")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -15837,19 +17362,30 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('SuccessfulPropertyBatchInfo', response)
+            deserialized = self._deserialize("SuccessfulPropertyBatchInfo", response)
         if response.status_code == 409:
-            deserialized = self._deserialize('FailedPropertyBatchInfo', response)
+            deserialized = self._deserialize("FailedPropertyBatchInfo", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    submit_property_batch.metadata = {'url': '/Names/{nameId}/$/GetProperties/$/SubmitBatch'}
+
+    submit_property_batch.metadata = {"url": "/Names/{nameId}/$/GetProperties/$/SubmitBatch"}
 
     def get_cluster_event_list(
-            self, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        self,
+        start_time_utc,
+        end_time_utc,
+        timeout=60,
+        events_types_filter=None,
+        exclude_analysis_events=None,
+        skip_correlation_lookup=None,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets all Cluster-related events.
 
         The response is list of ClusterEvent objects.
@@ -15891,25 +17427,33 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.get_cluster_event_list.metadata['url']
+        url = self.get_cluster_event_list.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
-        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
-        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
+        query_parameters["StartTimeUtc"] = self._serialize.query("start_time_utc", start_time_utc, "str")
+        query_parameters["EndTimeUtc"] = self._serialize.query("end_time_utc", end_time_utc, "str")
         if events_types_filter is not None:
-            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+            query_parameters["EventsTypesFilter"] = self._serialize.query(
+                "events_types_filter", events_types_filter, "str"
+            )
         if exclude_analysis_events is not None:
-            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+            query_parameters["ExcludeAnalysisEvents"] = self._serialize.query(
+                "exclude_analysis_events", exclude_analysis_events, "bool"
+            )
         if skip_correlation_lookup is not None:
-            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+            query_parameters["SkipCorrelationLookup"] = self._serialize.query(
+                "skip_correlation_lookup", skip_correlation_lookup, "bool"
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -15922,17 +17466,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[ClusterEvent]', response)
+            deserialized = self._deserialize("[ClusterEvent]", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_cluster_event_list.metadata = {'url': '/EventsStore/Cluster/Events'}
+
+    get_cluster_event_list.metadata = {"url": "/EventsStore/Cluster/Events"}
 
     def get_containers_event_list(
-            self, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        self,
+        start_time_utc,
+        end_time_utc,
+        timeout=60,
+        events_types_filter=None,
+        exclude_analysis_events=None,
+        skip_correlation_lookup=None,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets all Containers-related events.
 
         The response is list of ContainerInstanceEvent objects.
@@ -15974,25 +17529,33 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.2-preview"
 
         # Construct URL
-        url = self.get_containers_event_list.metadata['url']
+        url = self.get_containers_event_list.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
-        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
-        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
+        query_parameters["StartTimeUtc"] = self._serialize.query("start_time_utc", start_time_utc, "str")
+        query_parameters["EndTimeUtc"] = self._serialize.query("end_time_utc", end_time_utc, "str")
         if events_types_filter is not None:
-            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+            query_parameters["EventsTypesFilter"] = self._serialize.query(
+                "events_types_filter", events_types_filter, "str"
+            )
         if exclude_analysis_events is not None:
-            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+            query_parameters["ExcludeAnalysisEvents"] = self._serialize.query(
+                "exclude_analysis_events", exclude_analysis_events, "bool"
+            )
         if skip_correlation_lookup is not None:
-            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+            query_parameters["SkipCorrelationLookup"] = self._serialize.query(
+                "skip_correlation_lookup", skip_correlation_lookup, "bool"
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -16005,17 +17568,29 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[ContainerInstanceEvent]', response)
+            deserialized = self._deserialize("[ContainerInstanceEvent]", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_containers_event_list.metadata = {'url': '/EventsStore/Containers/Events'}
+
+    get_containers_event_list.metadata = {"url": "/EventsStore/Containers/Events"}
 
     def get_node_event_list(
-            self, node_name, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        self,
+        node_name,
+        start_time_utc,
+        end_time_utc,
+        timeout=60,
+        events_types_filter=None,
+        exclude_analysis_events=None,
+        skip_correlation_lookup=None,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets a Node-related events.
 
         The response is list of NodeEvent objects.
@@ -16059,29 +17634,35 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.get_node_event_list.metadata['url']
-        path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str')
-        }
+        url = self.get_node_event_list.metadata["url"]
+        path_format_arguments = {"nodeName": self._serialize.url("node_name", node_name, "str")}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
-        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
-        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
+        query_parameters["StartTimeUtc"] = self._serialize.query("start_time_utc", start_time_utc, "str")
+        query_parameters["EndTimeUtc"] = self._serialize.query("end_time_utc", end_time_utc, "str")
         if events_types_filter is not None:
-            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+            query_parameters["EventsTypesFilter"] = self._serialize.query(
+                "events_types_filter", events_types_filter, "str"
+            )
         if exclude_analysis_events is not None:
-            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+            query_parameters["ExcludeAnalysisEvents"] = self._serialize.query(
+                "exclude_analysis_events", exclude_analysis_events, "bool"
+            )
         if skip_correlation_lookup is not None:
-            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+            query_parameters["SkipCorrelationLookup"] = self._serialize.query(
+                "skip_correlation_lookup", skip_correlation_lookup, "bool"
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -16094,17 +17675,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[NodeEvent]', response)
+            deserialized = self._deserialize("[NodeEvent]", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_node_event_list.metadata = {'url': '/EventsStore/Nodes/{nodeName}/$/Events'}
+
+    get_node_event_list.metadata = {"url": "/EventsStore/Nodes/{nodeName}/$/Events"}
 
     def get_nodes_event_list(
-            self, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        self,
+        start_time_utc,
+        end_time_utc,
+        timeout=60,
+        events_types_filter=None,
+        exclude_analysis_events=None,
+        skip_correlation_lookup=None,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets all Nodes-related Events.
 
         The response is list of NodeEvent objects.
@@ -16146,25 +17738,33 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.get_nodes_event_list.metadata['url']
+        url = self.get_nodes_event_list.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
-        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
-        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
+        query_parameters["StartTimeUtc"] = self._serialize.query("start_time_utc", start_time_utc, "str")
+        query_parameters["EndTimeUtc"] = self._serialize.query("end_time_utc", end_time_utc, "str")
         if events_types_filter is not None:
-            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+            query_parameters["EventsTypesFilter"] = self._serialize.query(
+                "events_types_filter", events_types_filter, "str"
+            )
         if exclude_analysis_events is not None:
-            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+            query_parameters["ExcludeAnalysisEvents"] = self._serialize.query(
+                "exclude_analysis_events", exclude_analysis_events, "bool"
+            )
         if skip_correlation_lookup is not None:
-            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+            query_parameters["SkipCorrelationLookup"] = self._serialize.query(
+                "skip_correlation_lookup", skip_correlation_lookup, "bool"
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -16177,17 +17777,29 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[NodeEvent]', response)
+            deserialized = self._deserialize("[NodeEvent]", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_nodes_event_list.metadata = {'url': '/EventsStore/Nodes/Events'}
+
+    get_nodes_event_list.metadata = {"url": "/EventsStore/Nodes/Events"}
 
     def get_application_event_list(
-            self, application_id, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        self,
+        application_id,
+        start_time_utc,
+        end_time_utc,
+        timeout=60,
+        events_types_filter=None,
+        exclude_analysis_events=None,
+        skip_correlation_lookup=None,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets an Application-related events.
 
         The response is list of ApplicationEvent objects.
@@ -16238,29 +17850,37 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.get_application_event_list.metadata['url']
+        url = self.get_application_event_list.metadata["url"]
         path_format_arguments = {
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            "applicationId": self._serialize.url("application_id", application_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
-        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
-        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
+        query_parameters["StartTimeUtc"] = self._serialize.query("start_time_utc", start_time_utc, "str")
+        query_parameters["EndTimeUtc"] = self._serialize.query("end_time_utc", end_time_utc, "str")
         if events_types_filter is not None:
-            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+            query_parameters["EventsTypesFilter"] = self._serialize.query(
+                "events_types_filter", events_types_filter, "str"
+            )
         if exclude_analysis_events is not None:
-            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+            query_parameters["ExcludeAnalysisEvents"] = self._serialize.query(
+                "exclude_analysis_events", exclude_analysis_events, "bool"
+            )
         if skip_correlation_lookup is not None:
-            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+            query_parameters["SkipCorrelationLookup"] = self._serialize.query(
+                "skip_correlation_lookup", skip_correlation_lookup, "bool"
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -16273,17 +17893,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[ApplicationEvent]', response)
+            deserialized = self._deserialize("[ApplicationEvent]", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_application_event_list.metadata = {'url': '/EventsStore/Applications/{applicationId}/$/Events'}
+
+    get_application_event_list.metadata = {"url": "/EventsStore/Applications/{applicationId}/$/Events"}
 
     def get_applications_event_list(
-            self, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        self,
+        start_time_utc,
+        end_time_utc,
+        timeout=60,
+        events_types_filter=None,
+        exclude_analysis_events=None,
+        skip_correlation_lookup=None,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets all Applications-related events.
 
         The response is list of ApplicationEvent objects.
@@ -16325,25 +17956,33 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.get_applications_event_list.metadata['url']
+        url = self.get_applications_event_list.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
-        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
-        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
+        query_parameters["StartTimeUtc"] = self._serialize.query("start_time_utc", start_time_utc, "str")
+        query_parameters["EndTimeUtc"] = self._serialize.query("end_time_utc", end_time_utc, "str")
         if events_types_filter is not None:
-            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+            query_parameters["EventsTypesFilter"] = self._serialize.query(
+                "events_types_filter", events_types_filter, "str"
+            )
         if exclude_analysis_events is not None:
-            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+            query_parameters["ExcludeAnalysisEvents"] = self._serialize.query(
+                "exclude_analysis_events", exclude_analysis_events, "bool"
+            )
         if skip_correlation_lookup is not None:
-            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+            query_parameters["SkipCorrelationLookup"] = self._serialize.query(
+                "skip_correlation_lookup", skip_correlation_lookup, "bool"
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -16356,17 +17995,29 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[ApplicationEvent]', response)
+            deserialized = self._deserialize("[ApplicationEvent]", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_applications_event_list.metadata = {'url': '/EventsStore/Applications/Events'}
+
+    get_applications_event_list.metadata = {"url": "/EventsStore/Applications/Events"}
 
     def get_service_event_list(
-            self, service_id, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        self,
+        service_id,
+        start_time_utc,
+        end_time_utc,
+        timeout=60,
+        events_types_filter=None,
+        exclude_analysis_events=None,
+        skip_correlation_lookup=None,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets a Service-related events.
 
         The response is list of ServiceEvent objects.
@@ -16416,29 +18067,35 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.get_service_event_list.metadata['url']
-        path_format_arguments = {
-            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
-        }
+        url = self.get_service_event_list.metadata["url"]
+        path_format_arguments = {"serviceId": self._serialize.url("service_id", service_id, "str", skip_quote=True)}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
-        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
-        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
+        query_parameters["StartTimeUtc"] = self._serialize.query("start_time_utc", start_time_utc, "str")
+        query_parameters["EndTimeUtc"] = self._serialize.query("end_time_utc", end_time_utc, "str")
         if events_types_filter is not None:
-            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+            query_parameters["EventsTypesFilter"] = self._serialize.query(
+                "events_types_filter", events_types_filter, "str"
+            )
         if exclude_analysis_events is not None:
-            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+            query_parameters["ExcludeAnalysisEvents"] = self._serialize.query(
+                "exclude_analysis_events", exclude_analysis_events, "bool"
+            )
         if skip_correlation_lookup is not None:
-            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+            query_parameters["SkipCorrelationLookup"] = self._serialize.query(
+                "skip_correlation_lookup", skip_correlation_lookup, "bool"
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -16451,17 +18108,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[ServiceEvent]', response)
+            deserialized = self._deserialize("[ServiceEvent]", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_service_event_list.metadata = {'url': '/EventsStore/Services/{serviceId}/$/Events'}
+
+    get_service_event_list.metadata = {"url": "/EventsStore/Services/{serviceId}/$/Events"}
 
     def get_services_event_list(
-            self, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        self,
+        start_time_utc,
+        end_time_utc,
+        timeout=60,
+        events_types_filter=None,
+        exclude_analysis_events=None,
+        skip_correlation_lookup=None,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets all Services-related events.
 
         The response is list of ServiceEvent objects.
@@ -16503,25 +18171,33 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.get_services_event_list.metadata['url']
+        url = self.get_services_event_list.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
-        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
-        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
+        query_parameters["StartTimeUtc"] = self._serialize.query("start_time_utc", start_time_utc, "str")
+        query_parameters["EndTimeUtc"] = self._serialize.query("end_time_utc", end_time_utc, "str")
         if events_types_filter is not None:
-            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+            query_parameters["EventsTypesFilter"] = self._serialize.query(
+                "events_types_filter", events_types_filter, "str"
+            )
         if exclude_analysis_events is not None:
-            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+            query_parameters["ExcludeAnalysisEvents"] = self._serialize.query(
+                "exclude_analysis_events", exclude_analysis_events, "bool"
+            )
         if skip_correlation_lookup is not None:
-            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+            query_parameters["SkipCorrelationLookup"] = self._serialize.query(
+                "skip_correlation_lookup", skip_correlation_lookup, "bool"
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -16534,17 +18210,29 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[ServiceEvent]', response)
+            deserialized = self._deserialize("[ServiceEvent]", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_services_event_list.metadata = {'url': '/EventsStore/Services/Events'}
+
+    get_services_event_list.metadata = {"url": "/EventsStore/Services/Events"}
 
     def get_partition_event_list(
-            self, partition_id, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        self,
+        partition_id,
+        start_time_utc,
+        end_time_utc,
+        timeout=60,
+        events_types_filter=None,
+        exclude_analysis_events=None,
+        skip_correlation_lookup=None,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets a Partition-related events.
 
         The response is list of PartitionEvent objects.
@@ -16588,29 +18276,37 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.get_partition_event_list.metadata['url']
+        url = self.get_partition_event_list.metadata["url"]
         path_format_arguments = {
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
-        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
-        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
+        query_parameters["StartTimeUtc"] = self._serialize.query("start_time_utc", start_time_utc, "str")
+        query_parameters["EndTimeUtc"] = self._serialize.query("end_time_utc", end_time_utc, "str")
         if events_types_filter is not None:
-            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+            query_parameters["EventsTypesFilter"] = self._serialize.query(
+                "events_types_filter", events_types_filter, "str"
+            )
         if exclude_analysis_events is not None:
-            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+            query_parameters["ExcludeAnalysisEvents"] = self._serialize.query(
+                "exclude_analysis_events", exclude_analysis_events, "bool"
+            )
         if skip_correlation_lookup is not None:
-            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+            query_parameters["SkipCorrelationLookup"] = self._serialize.query(
+                "skip_correlation_lookup", skip_correlation_lookup, "bool"
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -16623,17 +18319,28 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[PartitionEvent]', response)
+            deserialized = self._deserialize("[PartitionEvent]", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_partition_event_list.metadata = {'url': '/EventsStore/Partitions/{partitionId}/$/Events'}
+
+    get_partition_event_list.metadata = {"url": "/EventsStore/Partitions/{partitionId}/$/Events"}
 
     def get_partitions_event_list(
-            self, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        self,
+        start_time_utc,
+        end_time_utc,
+        timeout=60,
+        events_types_filter=None,
+        exclude_analysis_events=None,
+        skip_correlation_lookup=None,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets all Partitions-related events.
 
         The response is list of PartitionEvent objects.
@@ -16675,25 +18382,33 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.get_partitions_event_list.metadata['url']
+        url = self.get_partitions_event_list.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
-        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
-        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
+        query_parameters["StartTimeUtc"] = self._serialize.query("start_time_utc", start_time_utc, "str")
+        query_parameters["EndTimeUtc"] = self._serialize.query("end_time_utc", end_time_utc, "str")
         if events_types_filter is not None:
-            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+            query_parameters["EventsTypesFilter"] = self._serialize.query(
+                "events_types_filter", events_types_filter, "str"
+            )
         if exclude_analysis_events is not None:
-            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+            query_parameters["ExcludeAnalysisEvents"] = self._serialize.query(
+                "exclude_analysis_events", exclude_analysis_events, "bool"
+            )
         if skip_correlation_lookup is not None:
-            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+            query_parameters["SkipCorrelationLookup"] = self._serialize.query(
+                "skip_correlation_lookup", skip_correlation_lookup, "bool"
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -16706,17 +18421,30 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[PartitionEvent]', response)
+            deserialized = self._deserialize("[PartitionEvent]", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_partitions_event_list.metadata = {'url': '/EventsStore/Partitions/Events'}
+
+    get_partitions_event_list.metadata = {"url": "/EventsStore/Partitions/Events"}
 
     def get_partition_replica_event_list(
-            self, partition_id, replica_id, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        self,
+        partition_id,
+        replica_id,
+        start_time_utc,
+        end_time_utc,
+        timeout=60,
+        events_types_filter=None,
+        exclude_analysis_events=None,
+        skip_correlation_lookup=None,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets a Partition Replica-related events.
 
         The response is list of ReplicaEvent objects.
@@ -16762,30 +18490,38 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.get_partition_replica_event_list.metadata['url']
+        url = self.get_partition_replica_event_list.metadata["url"]
         path_format_arguments = {
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True),
-            'replicaId': self._serialize.url("replica_id", replica_id, 'str', skip_quote=True)
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True),
+            "replicaId": self._serialize.url("replica_id", replica_id, "str", skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
-        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
-        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
+        query_parameters["StartTimeUtc"] = self._serialize.query("start_time_utc", start_time_utc, "str")
+        query_parameters["EndTimeUtc"] = self._serialize.query("end_time_utc", end_time_utc, "str")
         if events_types_filter is not None:
-            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+            query_parameters["EventsTypesFilter"] = self._serialize.query(
+                "events_types_filter", events_types_filter, "str"
+            )
         if exclude_analysis_events is not None:
-            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+            query_parameters["ExcludeAnalysisEvents"] = self._serialize.query(
+                "exclude_analysis_events", exclude_analysis_events, "bool"
+            )
         if skip_correlation_lookup is not None:
-            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+            query_parameters["SkipCorrelationLookup"] = self._serialize.query(
+                "skip_correlation_lookup", skip_correlation_lookup, "bool"
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -16798,17 +18534,31 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[ReplicaEvent]', response)
+            deserialized = self._deserialize("[ReplicaEvent]", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_partition_replica_event_list.metadata = {'url': '/EventsStore/Partitions/{partitionId}/$/Replicas/{replicaId}/$/Events'}
+
+    get_partition_replica_event_list.metadata = {
+        "url": "/EventsStore/Partitions/{partitionId}/$/Replicas/{replicaId}/$/Events"
+    }
 
     def get_partition_replicas_event_list(
-            self, partition_id, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        self,
+        partition_id,
+        start_time_utc,
+        end_time_utc,
+        timeout=60,
+        events_types_filter=None,
+        exclude_analysis_events=None,
+        skip_correlation_lookup=None,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Gets all Replicas-related events for a Partition.
 
         The response is list of ReplicaEvent objects.
@@ -16852,29 +18602,37 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.get_partition_replicas_event_list.metadata['url']
+        url = self.get_partition_replicas_event_list.metadata["url"]
         path_format_arguments = {
-            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+            "partitionId": self._serialize.url("partition_id", partition_id, "str", skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
-        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
-        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
+        query_parameters["StartTimeUtc"] = self._serialize.query("start_time_utc", start_time_utc, "str")
+        query_parameters["EndTimeUtc"] = self._serialize.query("end_time_utc", end_time_utc, "str")
         if events_types_filter is not None:
-            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+            query_parameters["EventsTypesFilter"] = self._serialize.query(
+                "events_types_filter", events_types_filter, "str"
+            )
         if exclude_analysis_events is not None:
-            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+            query_parameters["ExcludeAnalysisEvents"] = self._serialize.query(
+                "exclude_analysis_events", exclude_analysis_events, "bool"
+            )
         if skip_correlation_lookup is not None:
-            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+            query_parameters["SkipCorrelationLookup"] = self._serialize.query(
+                "skip_correlation_lookup", skip_correlation_lookup, "bool"
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -16887,17 +18645,19 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[ReplicaEvent]', response)
+            deserialized = self._deserialize("[ReplicaEvent]", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_partition_replicas_event_list.metadata = {'url': '/EventsStore/Partitions/{partitionId}/$/Replicas/Events'}
+
+    get_partition_replicas_event_list.metadata = {"url": "/EventsStore/Partitions/{partitionId}/$/Replicas/Events"}
 
     def get_correlated_event_list(
-            self, event_instance_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        self, event_instance_id, timeout=60, custom_headers=None, raw=False, **operation_config
+    ):
         """Gets all correlated events for a given event.
 
         The response is list of FabricEvents.
@@ -16923,21 +18683,21 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         api_version = "6.4"
 
         # Construct URL
-        url = self.get_correlated_event_list.metadata['url']
-        path_format_arguments = {
-            'eventInstanceId': self._serialize.url("event_instance_id", event_instance_id, 'str')
-        }
+        url = self.get_correlated_event_list.metadata["url"]
+        path_format_arguments = {"eventInstanceId": self._serialize.url("event_instance_id", event_instance_id, "str")}
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
         if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+            query_parameters["timeout"] = self._serialize.query(
+                "timeout", timeout, "long", maximum=4294967295, minimum=1
+            )
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -16950,11 +18710,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[FabricEvent]', response)
+            deserialized = self._deserialize("[FabricEvent]", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_correlated_event_list.metadata = {'url': '/EventsStore/CorrelatedEvents/{eventInstanceId}/$/Events'}
+
+    get_correlated_event_list.metadata = {"url": "/EventsStore/CorrelatedEvents/{eventInstanceId}/$/Events"}

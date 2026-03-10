@@ -22,7 +22,6 @@ USAGE:
         For example, providing "_output1" would output documents like "https://<storageaccount>.blob.core.windows.net/<container>/_output1/document1.txt".
 """
 
-
 from azure.health.deidentification import DeidentificationClient
 from azure.health.deidentification.models import (
     DeidentificationJob,

@@ -3,15 +3,15 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from ._client import CertificateClient
-from ._enums import(
+from ._enums import (
     CertificatePolicyAction,
     KeyCurveName,
     KeyType,
     CertificateContentType,
     KeyUsageType,
-    WellKnownIssuerNames
+    WellKnownIssuerNames,
 )
-from ._models import(
+from ._models import (
     AdministratorContact,
     CertificateContact,
     CertificateIssuer,
@@ -23,7 +23,7 @@ from ._models import(
     IssuerProperties,
     LifetimeAction,
     KeyVaultCertificate,
-    KeyVaultCertificateIdentifier
+    KeyVaultCertificateIdentifier,
 )
 from ._shared.client_base import ApiVersion
 
@@ -49,8 +49,9 @@ __all__ = [
     "CertificateContentType",
     "WellKnownIssuerNames",
     "CertificateIssuer",
-    "IssuerProperties"
+    "IssuerProperties",
 ]
 
 from ._version import VERSION
+
 __version__ = VERSION

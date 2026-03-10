@@ -12,7 +12,7 @@ It will initialize an asynchronous RadiologyInsightsClient, build a Radiology In
 submit it to the client, RadiologyInsightsClient, and display
 -the Complete Order Discrepancy order type,
 -the missing body parts, and
--the missing body part measurements   
+-the missing body part measurements
 
 
 USAGE:
@@ -22,7 +22,7 @@ USAGE:
     - For more details how to use DefaultAzureCredential, please take a look at https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential
 
 2. python sample_complete_order_discrepancy_inference_async.py
-   
+
 """
 
 import asyncio

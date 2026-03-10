@@ -17,10 +17,7 @@ class TestModelsAsync(AzureRecordedTestCase):
     @pytest.mark.skip("InternalServerError, opened issue")
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")])
     async def test_models_list(self, client_async, api_type, api_version, **kwargs):
 
         models = client_async.models.list()
@@ -29,10 +26,7 @@ class TestModelsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")])
     async def test_models_retrieve(self, client_async, api_type, api_version, **kwargs):
 
         model = await client_async.models.retrieve(**kwargs)
@@ -40,10 +34,7 @@ class TestModelsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize(
-        "api_type, api_version",
-        [(OPENAI, "v1"), (ASST_AZURE, PREVIEW)]
-    )
+    @pytest.mark.parametrize("api_type, api_version", [(OPENAI, "v1"), (ASST_AZURE, PREVIEW)])
     async def test_files(self, client_async, api_type, api_version, **kwargs):
         file_name = f"test{uuid.uuid4()}.txt"
         with open(file_name, "w") as f:
@@ -52,10 +43,7 @@ class TestModelsAsync(AzureRecordedTestCase):
         try:
             path = pathlib.Path(file_name)
 
-            file1 = await client_async.files.create(
-                file=open(path, "rb"),
-                purpose="assistants"
-            )
+            file1 = await client_async.files.create(file=open(path, "rb"), purpose="assistants")
 
             files = client_async.files.list()
             async for file in files:
@@ -75,7 +63,5 @@ class TestModelsAsync(AzureRecordedTestCase):
             assert retrieved_file.bytes
 
         finally:
-            await client_async.files.delete(
-                file1.id
-            )
+            await client_async.files.delete(file1.id)
             os.remove(file_name)

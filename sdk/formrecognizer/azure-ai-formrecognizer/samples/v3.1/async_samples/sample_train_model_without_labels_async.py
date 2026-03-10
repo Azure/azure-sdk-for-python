@@ -42,9 +42,7 @@ class TrainModelWithoutLabelsSampleAsync(object):
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
         container_sas_url = os.environ["CONTAINER_SAS_URL_V2"]
 
-        async with FormTrainingClient(
-            endpoint, AzureKeyCredential(key)
-        ) as form_training_client:
+        async with FormTrainingClient(endpoint, AzureKeyCredential(key)) as form_training_client:
 
             poller = await form_training_client.begin_training(container_sas_url, use_training_labels=False)
             model = await poller.result()
@@ -61,10 +59,8 @@ class TrainModelWithoutLabelsSampleAsync(object):
             for submodel in model.submodels:
                 print("...The submodel has form type '{}'".format(submodel.form_type))
                 for name, field in submodel.fields.items():
-                    print("...The model found field '{}' to have label '{}'".format(
-                        name, field.label
-                    ))
-        # [END training_async]
+                    print("...The model found field '{}' to have label '{}'".format(name, field.label))
+            # [END training_async]
             # Training result information
             for doc in model.training_documents:
                 print("Document name: {}".format(doc.name))
@@ -78,5 +74,5 @@ async def main():
     await sample.train_model_without_labels()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

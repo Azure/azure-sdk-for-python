@@ -20,7 +20,6 @@ from ..._transport._pyamqp_transport import PyamqpTransport
 from ...exceptions import EventHubError, EventDataSendError, OperationTimeoutError
 from ..._constants import MAX_BUFFER_LENGTH
 
-
 if TYPE_CHECKING:
     from .._client_base_async import ClientBaseAsync, ConsumerProducerMixin
     from ..._pyamqp.message import Message
@@ -481,9 +480,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                 if isinstance(exception, errors.AuthenticationException):
                     await closable._close_connection_async()  # pylint:disable=protected-access
                 elif isinstance(exception, errors.AMQPLinkError):
-                    await cast(
-                        "ConsumerProducerMixin", closable
-                    )._close_handler_async()
+                    await cast("ConsumerProducerMixin", closable)._close_handler_async()
                 elif isinstance(exception, errors.AMQPConnectionError):
                     await closable._close_connection_async()  # pylint:disable=protected-access
                 # TODO: add MessageHandlerError in amqp?

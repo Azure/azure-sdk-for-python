@@ -36,7 +36,7 @@ class KeyVaultBackupClientPollingMethod(LROBasePolling):
     def get_continuation_token(self) -> str:
         """
         Get a continuation token to resume the polling later.
-        
+
         :return: A continuation token.
         :rtype: str
         """

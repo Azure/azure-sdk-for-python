@@ -10,6 +10,6 @@ from ._operations import MetadataRolesOperations
 from ._operations import MetadataPolicyOperations
 
 __all__ = [
-    'MetadataRolesOperations',
-    'MetadataPolicyOperations',
+    "MetadataRolesOperations",
+    "MetadataPolicyOperations",
 ]

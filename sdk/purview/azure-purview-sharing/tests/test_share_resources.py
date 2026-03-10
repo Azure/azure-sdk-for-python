@@ -12,6 +12,7 @@ from azure.purview.sharing.operations._operations import (
     build_share_resources_list_request,
 )
 
+
 class TestShareResources(TestPurviewSharing):
     @PurviewSharingPowerShellPreparer()
     @recorded_by_proxy
@@ -19,16 +20,15 @@ class TestShareResources(TestPurviewSharing):
         client = self.create_client(endpoint=purviewsharing_endpoint)
 
         list_request = build_share_resources_list_request(
-            filter="properties/storeKind eq 'AdlsGen2Account'",
-            order_by="properties/createdAt desc")
-        
+            filter="properties/storeKind eq 'AdlsGen2Account'", order_by="properties/createdAt desc"
+        )
+
         list_response = client.send_request(list_request)
 
         assert list_response is not None
         assert list_response.content is not None
-         
-        list = json.loads(list_response.content)['value']
+
+        list = json.loads(list_response.content)["value"]
 
         assert len(list) > 0, "Invalid number of share resources " + str(len(list))
         assert all(x["storeKind"] == "AdlsGen2Account" for x in list)
-

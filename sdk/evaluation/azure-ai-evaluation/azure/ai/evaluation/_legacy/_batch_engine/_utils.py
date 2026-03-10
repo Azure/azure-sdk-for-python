@@ -7,7 +7,6 @@ import os
 import re
 from typing import Any, Final, Mapping, Sequence, Tuple
 
-
 DEFAULTS_KEY: Final[str] = "$defaults$"
 
 

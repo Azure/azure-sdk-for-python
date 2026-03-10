@@ -19,7 +19,6 @@ from azure.appconfiguration.provider._azureappconfigurationproviderbase import (
 )
 from azure.appconfiguration.provider._azureappconfigurationprovider import _buildprovider
 
-
 AppConfigProviderPreparer = functools.partial(
     EnvironmentVariableLoader,
     "appconfiguration",

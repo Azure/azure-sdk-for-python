@@ -19,8 +19,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Asynchronous request in the Azure Cosmos database service.
-"""
+"""Asynchronous request in the Azure Cosmos database service."""
+
 import copy
 import json
 import time
@@ -38,8 +38,11 @@ from .._request_object import RequestObject
 from .._synchronized_request import _request_body_from_data, _replace_url_prefix
 from ..documents import _OperationType
 
+
 # cspell:ignore ppaf
-async def _Request(global_endpoint_manager, request_params, connection_policy, pipeline_client, request, **kwargs): # pylint: disable=too-many-statements
+async def _Request(
+    global_endpoint_manager, request_params, connection_policy, pipeline_client, request, **kwargs
+):  # pylint: disable=too-many-statements
     """Makes one http request using the requests module.
 
     :param _GlobalEndpointManager global_endpoint_manager:
@@ -64,7 +67,7 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
     read_timeout = kwargs.pop("read_timeout", read_timeout)
 
     # Every request tries to perform a refresh
-    client_timeout = kwargs.get('timeout')
+    client_timeout = kwargs.get("timeout")
     start_time = time.time()
     if request_params.healthy_tentative_location:
         read_timeout = connection_policy.RecoveryReadTimeout
@@ -76,8 +79,8 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
         connection_timeout = connection_policy.DBAConnectionTimeout
 
     if client_timeout is not None:
-        kwargs['timeout'] = client_timeout - (time.time() - start_time)
-        if kwargs['timeout'] <= 0:
+        kwargs["timeout"] = client_timeout - (time.time() - start_time)
+        if kwargs["timeout"] <= 0:
             raise exceptions.CosmosClientTimeoutError()
 
     if request_params.read_timeout_override:
@@ -87,8 +90,9 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
         base_url = request_params.endpoint_override
     else:
         pk_range_wrapper = None
-        if (global_endpoint_manager.is_circuit_breaker_applicable(request_params) or
-                global_endpoint_manager.is_per_partition_automatic_failover_applicable(request_params)):
+        if global_endpoint_manager.is_circuit_breaker_applicable(
+            request_params
+        ) or global_endpoint_manager.is_per_partition_automatic_failover_applicable(request_params):
             # Circuit breaker or per-partition failover are applicable, so we need to use the endpoint from the request
             pk_range_wrapper = await global_endpoint_manager.create_pk_range_wrapper(request_params)
         base_url = global_endpoint_manager.resolve_service_endpoint_for_partition(request_params, pk_range_wrapper)
@@ -157,10 +161,7 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
         try:
             result = json.loads(data)
         except Exception as e:
-            raise DecodeError(
-                message="Failed to decode JSON data: {}".format(e),
-                response=response,
-                error=e) from e
+            raise DecodeError(message="Failed to decode JSON data: {}".format(e), response=response, error=e) from e
 
     return result, headers
 
@@ -179,21 +180,16 @@ def _is_availability_strategy_applicable(request_params: RequestObject) -> bool:
     :returns: True if availability strategy should be applied, False otherwise
     :rtype: bool
     """
-    return (request_params.availability_strategy is not None and
-            not request_params.is_hedging_request and
-            request_params.resource_type == http_constants.ResourceType.Document and
-            (not _OperationType.IsWriteOperation(request_params.operation_type) or
-             request_params.retry_write > 0))
+    return (
+        request_params.availability_strategy is not None
+        and not request_params.is_hedging_request
+        and request_params.resource_type == http_constants.ResourceType.Document
+        and (not _OperationType.IsWriteOperation(request_params.operation_type) or request_params.retry_write > 0)
+    )
+
 
 async def AsynchronousRequest(
-    client,
-    request_params,
-    global_endpoint_manager,
-    connection_policy,
-    pipeline_client,
-    request,
-    request_data,
-    **kwargs
+    client, request_params, global_endpoint_manager, connection_policy, pipeline_client, request, request_data, **kwargs
 ):
     """Performs one asynchronous http request according to the parameters.
 
@@ -226,25 +222,11 @@ async def AsynchronousRequest(
             global_endpoint_manager,
             request,
             lambda req_param, r: _retry_utility_async.ExecuteAsync(
-                client,
-                global_endpoint_manager,
-                _Request,
-                req_param,
-                connection_policy,
-                pipeline_client,
-                r,
-                **kwargs
-            )
+                client, global_endpoint_manager, _Request, req_param, connection_policy, pipeline_client, r, **kwargs
+            ),
         )
 
     # Pass _Request function with its parameters to retry_utility's Execute method that wraps the call with retries
     return await _retry_utility_async.ExecuteAsync(
-        client,
-        global_endpoint_manager,
-        _Request,
-        request_params,
-        connection_policy,
-        pipeline_client,
-        request,
-        **kwargs
+        client, global_endpoint_manager, _Request, request_params, connection_policy, pipeline_client, request, **kwargs
     )

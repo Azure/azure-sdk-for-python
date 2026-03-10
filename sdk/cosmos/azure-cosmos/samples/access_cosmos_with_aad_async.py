@@ -41,11 +41,7 @@ PARTITION_KEY = PartitionKey(path="/id")
 
 
 def get_test_item(num):
-    test_item = {
-        'id': 'Item_' + str(num),
-        'test_object': True,
-        'lastName': 'Smith'
-    }
+    test_item = {"id": "Item_" + str(num), "test_object": True, "lastName": "Smith"}
     return test_item
 
 
@@ -71,9 +67,8 @@ async def run_sample():
     # The async ClientSecretCredentials, like the async client, also have a context manager,
     # and as such should be used with the `async with` keywords.
     async with ClientSecretCredential(
-            tenant_id=TENANT_ID,
-            client_id=CLIENT_ID,
-            client_secret=CLIENT_SECRET) as aad_credentials:
+        tenant_id=TENANT_ID, client_id=CLIENT_ID, client_secret=CLIENT_SECRET
+    ) as aad_credentials:
 
         # Use your credentials to authenticate your client.
         async with CosmosClient(HOST, aad_credentials) as aad_client:
@@ -92,12 +87,13 @@ async def run_sample():
 
             print("Container info: " + str(container.read()))
             await container.create_item(get_test_item(879))
-            print("Point read result: " + str(container.read_item(item='Item_0', partition_key='Item_0')))
-            query_results = [item async for item in
-                             container.query_items(query='select * from c', partition_key='Item_0')]
+            print("Point read result: " + str(container.read_item(item="Item_0", partition_key="Item_0")))
+            query_results = [
+                item async for item in container.query_items(query="select * from c", partition_key="Item_0")
+            ]
             assert len(query_results) == 1
             print("Query result: " + str(query_results[0]))
-            await container.delete_item(item='Item_0', partition_key='Item_0')
+            await container.delete_item(item="Item_0", partition_key="Item_0")
 
             # Attempting to do management operations will return a 403 Forbidden exception.
             try:

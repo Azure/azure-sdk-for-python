@@ -21,6 +21,7 @@ if TYPE_CHECKING:
 
 class MixinABC(ABC):
     """DO NOT use this class. It is for internal typing use only."""
+
     _client: "AsyncPipelineClient"
     _config: TextAnalyticsClientConfiguration
     _serialize: "Serializer"

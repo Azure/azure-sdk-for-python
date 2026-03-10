@@ -23,8 +23,8 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-"""Provide access to settings for globally used Azure configuration values.
-"""
+"""Provide access to settings for globally used Azure configuration values."""
+
 from __future__ import annotations
 from collections import namedtuple
 from enum import Enum

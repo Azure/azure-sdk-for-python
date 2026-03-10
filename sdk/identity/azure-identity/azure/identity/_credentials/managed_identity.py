@@ -11,7 +11,6 @@ from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
 from .._internal.decorators import log_get_token
 
-
 _LOGGER = logging.getLogger(__name__)
 
 

@@ -27,15 +27,15 @@ class JobErrorItem(Model):
     """
 
     _validation = {
-        'recommendations': {'readonly': True},
-        'code': {'readonly': True},
-        'message': {'readonly': True},
+        "recommendations": {"readonly": True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'recommendations': {'key': 'recommendations', 'type': '[str]'},
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "recommendations": {"key": "recommendations", "type": "[str]"},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
     def __init__(self, **kwargs) -> None:

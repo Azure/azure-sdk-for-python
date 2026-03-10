@@ -11,7 +11,7 @@ FILE: ml_sample_compliant_logger.py
 
 DESCRIPTION:
     These samples demonstrate how to migrate from shrike logger to SDK V2 compliant logger.
-    
+
 USAGE:
     python ml_sample_compliant_logger.py
 

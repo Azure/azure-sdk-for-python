@@ -11,7 +11,7 @@ from ._operations import CollectionsOperations
 from ._operations import ResourceSetRulesOperations
 
 __all__ = [
-    'AccountsOperations',
-    'CollectionsOperations',
-    'ResourceSetRulesOperations',
+    "AccountsOperations",
+    "CollectionsOperations",
+    "ResourceSetRulesOperations",
 ]

@@ -22,6 +22,7 @@
 """Internal class for container recreate retry policy implementation in the Azure
 Cosmos database service.
 """
+
 import json
 from typing import Optional, Any, Union
 
@@ -30,13 +31,17 @@ from azure.core.pipeline.transport._base import HttpRequest
 from . import http_constants
 from .partition_key import _Empty, _Undefined, _PartitionKeyKind
 
-
 # pylint: disable=protected-access
 
 
 class ContainerRecreateRetryPolicy:
-    def __init__(self, client: Optional[Any], container_caches: Optional[dict[str, dict[str, Any]]],
-                 request: Optional[HttpRequest], *args: Optional[list[Any]]):
+    def __init__(
+        self,
+        client: Optional[Any],
+        container_caches: Optional[dict[str, dict[str, Any]]],
+        request: Optional[HttpRequest],
+        *args: Optional[list[Any]]
+    ):
         self.retry_after_in_milliseconds = 0  # Same as in .net
         self.refresh_container_properties_cache = True
         self.args = args
@@ -69,8 +74,9 @@ class ContainerRecreateRetryPolicy:
             return True
         return False
 
-    def __find_container_link_with_rid(self, container_properties_caches: Optional[dict[str, Any]], rid: str) -> \
-            Optional[str]:
+    def __find_container_link_with_rid(
+        self, container_properties_caches: Optional[dict[str, Any]], rid: str
+    ) -> Optional[str]:
         if container_properties_caches:
             if rid in container_properties_caches:
                 return container_properties_caches[rid]["container_link"]
@@ -78,8 +84,9 @@ class ContainerRecreateRetryPolicy:
         # a container request so this retry is not needed. Return None.
         return None
 
-    def check_if_rid_different(self, container_link: str,
-                               container_properties_caches: Optional[dict[str, Any]], rid: str) -> bool:
+    def check_if_rid_different(
+        self, container_link: str, container_properties_caches: Optional[dict[str, Any]], rid: str
+    ) -> bool:
         if container_properties_caches:
             return container_properties_caches[container_link]["_rid"] == rid
         return not rid
@@ -91,13 +98,14 @@ class ContainerRecreateRetryPolicy:
             if partition_key_definition and partition_key_definition["kind"] == _PartitionKeyKind.MULTI_HASH:
                 # A null in the multihash partition key indicates a failure in extracting partition keys
                 # from the document definition
-                return 'null' in current_partition_key
+                return "null" in current_partition_key
             # These values indicate the partition key was not successfully extracted from the document definition
-            return current_partition_key in ('[{}]', '[]', [{}], [])
+            return current_partition_key in ("[{}]", "[]", [{}], [])
         return False
 
-    def _extract_partition_key(self, client: Optional[Any], container_cache: Optional[dict[str, Any]], body: str)\
-            -> Optional[Union[str, list, dict]]:
+    def _extract_partition_key(
+        self, client: Optional[Any], container_cache: Optional[dict[str, Any]], body: str
+    ) -> Optional[Union[str, list, dict]]:
         partition_key_definition = container_cache["partitionKey"] if container_cache else None
         body_dict = self.__str_to_dict(body)
         new_partition_key: Optional[Union[str, list, dict]] = None
@@ -111,15 +119,17 @@ class ContainerRecreateRetryPolicy:
                 new_partition_key = []
             # else serialize using json dumps method which apart from regular values will serialize None into null
             elif partition_key_definition and partition_key_definition["kind"] == _PartitionKeyKind.MULTI_HASH:
-                new_partition_key = json.dumps(options["partitionKey"], separators=(',', ':'))
+                new_partition_key = json.dumps(options["partitionKey"], separators=(",", ":"))
             else:
                 new_partition_key = json.dumps([options["partitionKey"]])
         return new_partition_key
 
-    async def _extract_partition_key_async(self, client: Optional[Any],
-                                           container_cache: Optional[dict[str, Any]],
-                                           body: str) -> Optional[Union[str, list, dict]]:
-        partition_key_definition: Optional[dict[str, Any]] = container_cache["partitionKey"] if container_cache else None # pylint: disable=line-too-long
+    async def _extract_partition_key_async(
+        self, client: Optional[Any], container_cache: Optional[dict[str, Any]], body: str
+    ) -> Optional[Union[str, list, dict]]:
+        partition_key_definition: Optional[dict[str, Any]] = (
+            container_cache["partitionKey"] if container_cache else None
+        )  # pylint: disable=line-too-long
         body_dict = self.__str_to_dict(body)
         new_partition_key: Optional[Union[str, list, dict]] = None
         if body_dict:
@@ -132,7 +142,7 @@ class ContainerRecreateRetryPolicy:
                 new_partition_key = []
             # else serialize using json dumps method which apart from regular values will serialize None into null
             elif partition_key_definition and partition_key_definition["kind"] == _PartitionKeyKind.MULTI_HASH:
-                new_partition_key = json.dumps(options["partitionKey"], separators=(',', ':'))
+                new_partition_key = json.dumps(options["partitionKey"], separators=(",", ":"))
             else:
                 new_partition_key = json.dumps([options["partitionKey"]])
         return new_partition_key
@@ -155,7 +165,7 @@ class ContainerRecreateRetryPolicy:
         if not body_dict:
             return body
         body_dict["parameters"][0]["value"] = self.link
-        return json.dumps(body_dict, separators=(',', ':'))
+        return json.dumps(body_dict, separators=(",", ":"))
 
     def __str_to_dict(self, dict_string: str) -> dict:
         try:

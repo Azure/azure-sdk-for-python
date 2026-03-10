@@ -7,6 +7,7 @@
 from testcase import PurviewScanningTest, PurviewScanningPowerShellPreparer
 from devtools_testutils import recorded_by_proxy
 
+
 class TestPurviewScanningSmoke(PurviewScanningTest):
 
     @PurviewScanningPowerShellPreparer()

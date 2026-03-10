@@ -19,8 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Interact with databases in the Azure Cosmos DB SQL API service.
-"""
+"""Interact with databases in the Azure Cosmos DB SQL API service."""
 
 from typing import Any, Union, Optional, Mapping, Callable, overload, Literal
 
@@ -46,7 +45,8 @@ __all__ = ("DatabaseProxy",)
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
-def _get_database_link(database_or_id: Union[str, 'DatabaseProxy', Mapping[str, Any]]) -> str:
+
+def _get_database_link(database_or_id: Union[str, "DatabaseProxy", Mapping[str, Any]]) -> str:
     if isinstance(database_or_id, str):
         return "dbs/{}".format(database_or_id)
     if isinstance(database_or_id, DatabaseProxy):
@@ -82,10 +82,7 @@ class DatabaseProxy(object):
     """
 
     def __init__(
-        self,
-        client_connection: CosmosClientConnection,
-        id: str,
-        properties: Optional[dict[str, Any]] = None
+        self, client_connection: CosmosClientConnection, id: str, properties: Optional[dict[str, Any]] = None
     ) -> None:
         """
         :param ClientSession client_connection: Client from which this database was retrieved.
@@ -127,7 +124,7 @@ class DatabaseProxy(object):
         populate_query_metrics: Optional[bool] = None,
         *,
         initial_headers: Optional[dict[str, str]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> CosmosDict:
         """Read the database properties.
 
@@ -137,12 +134,13 @@ class DatabaseProxy(object):
         :rtype: dict[Str, Any]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given database couldn't be retrieved.
         """
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get("session_token")
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                DeprecationWarning)
+                DeprecationWarning,
+            )
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
@@ -151,33 +149,31 @@ class DatabaseProxy(object):
 
         database_link = _get_database_link(self)
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs["initial_headers"] = initial_headers
         request_options = build_options(kwargs)
-        self._properties = self.client_connection.ReadDatabase(
-            database_link, options=request_options, **kwargs
-        )
+        self._properties = self.client_connection.ReadDatabase(database_link, options=request_options, **kwargs)
         return self._properties
 
     @overload
     def create_container(  # pylint:disable=docstring-missing-param
-            self,
-            id: str,
-            partition_key: PartitionKey,
-            indexing_policy: Optional[dict[str, Any]] = None,
-            default_ttl: Optional[int] = None,
-            populate_query_metrics: Optional[bool] = None,
-            offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-            unique_key_policy: Optional[dict[str, Any]] = None,
-            conflict_resolution_policy: Optional[dict[str, Any]] = None,
-            *,
-            initial_headers: Optional[dict[str, str]] = None,
-            analytical_storage_ttl: Optional[int] = None,
-            computed_properties: Optional[list[dict[str, str]]] = None,
-            vector_embedding_policy: Optional[dict[str, Any]] = None,
-            change_feed_policy: Optional[dict[str, Any]] = None,
-            full_text_policy: Optional[dict[str, Any]] = None,
-            return_properties: Literal[False] = False,
-            **kwargs: Any
+        self,
+        id: str,
+        partition_key: PartitionKey,
+        indexing_policy: Optional[dict[str, Any]] = None,
+        default_ttl: Optional[int] = None,
+        populate_query_metrics: Optional[bool] = None,
+        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+        unique_key_policy: Optional[dict[str, Any]] = None,
+        conflict_resolution_policy: Optional[dict[str, Any]] = None,
+        *,
+        initial_headers: Optional[dict[str, str]] = None,
+        analytical_storage_ttl: Optional[int] = None,
+        computed_properties: Optional[list[dict[str, str]]] = None,
+        vector_embedding_policy: Optional[dict[str, Any]] = None,
+        change_feed_policy: Optional[dict[str, Any]] = None,
+        full_text_policy: Optional[dict[str, Any]] = None,
+        return_properties: Literal[False] = False,
+        **kwargs: Any,
     ) -> ContainerProxy:
         """Create a new container with the given ID (name).
 
@@ -233,24 +229,24 @@ class DatabaseProxy(object):
 
     @overload
     def create_container(  # pylint:disable=docstring-missing-param
-            self,
-            id: str,
-            partition_key: PartitionKey,
-            indexing_policy: Optional[dict[str, Any]] = None,
-            default_ttl: Optional[int] = None,
-            populate_query_metrics: Optional[bool] = None,
-            offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-            unique_key_policy: Optional[dict[str, Any]] = None,
-            conflict_resolution_policy: Optional[dict[str, Any]] = None,
-            *,
-            initial_headers: Optional[dict[str, str]] = None,
-            analytical_storage_ttl: Optional[int] = None,
-            computed_properties: Optional[list[dict[str, str]]] = None,
-            vector_embedding_policy: Optional[dict[str, Any]] = None,
-            change_feed_policy: Optional[dict[str, Any]] = None,
-            full_text_policy: Optional[dict[str, Any]] = None,
-            return_properties: Literal[True],
-            **kwargs: Any
+        self,
+        id: str,
+        partition_key: PartitionKey,
+        indexing_policy: Optional[dict[str, Any]] = None,
+        default_ttl: Optional[int] = None,
+        populate_query_metrics: Optional[bool] = None,
+        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+        unique_key_policy: Optional[dict[str, Any]] = None,
+        conflict_resolution_policy: Optional[dict[str, Any]] = None,
+        *,
+        initial_headers: Optional[dict[str, str]] = None,
+        analytical_storage_ttl: Optional[int] = None,
+        computed_properties: Optional[list[dict[str, str]]] = None,
+        vector_embedding_policy: Optional[dict[str, Any]] = None,
+        change_feed_policy: Optional[dict[str, Any]] = None,
+        full_text_policy: Optional[dict[str, Any]] = None,
+        return_properties: Literal[True],
+        **kwargs: Any,
     ) -> tuple[ContainerProxy, CosmosDict]:
         """Create a new container with the given ID (name).
 
@@ -306,9 +302,7 @@ class DatabaseProxy(object):
 
     @distributed_trace
     def create_container(  # pylint:disable=docstring-missing-param, too-many-statements, docstring-should-be-keyword
-        self,
-        *args: Any,
-        **kwargs: Any
+        self, *args: Any, **kwargs: Any
     ) -> Union[ContainerProxy, tuple[ContainerProxy, CosmosDict]]:
         """Create a new container with the given ID (name).
 
@@ -362,45 +356,47 @@ class DatabaseProxy(object):
                 :dedent: 0
                 :caption: Create a container with specific settings; in this case, a custom partition key:
         """
-        id = args[0] if len(args) > 0 else kwargs.pop('id')
-        partition_key = args[1] if len(args) > 1 else kwargs.pop('partition_key')
-        indexing_policy = args[2] if len(args) > 2 else kwargs.pop('indexing_policy', None)
-        default_ttl = args[3] if len(args) > 3 else kwargs.pop('default_ttl', None)
-        populate_query_metrics = args[4] if len(args) > 4 else kwargs.pop('populate_query_metrics', None)
-        offer_throughput = args[5] if len(args) > 5 else kwargs.pop('offer_throughput', None)
-        unique_key_policy = args[6] if len(args) > 6 else kwargs.pop('unique_key_policy', None)
-        conflict_resolution_policy = args[7] if len(args) > 7 else kwargs.pop('conflict_resolution_policy', None)
+        id = args[0] if len(args) > 0 else kwargs.pop("id")
+        partition_key = args[1] if len(args) > 1 else kwargs.pop("partition_key")
+        indexing_policy = args[2] if len(args) > 2 else kwargs.pop("indexing_policy", None)
+        default_ttl = args[3] if len(args) > 3 else kwargs.pop("default_ttl", None)
+        populate_query_metrics = args[4] if len(args) > 4 else kwargs.pop("populate_query_metrics", None)
+        offer_throughput = args[5] if len(args) > 5 else kwargs.pop("offer_throughput", None)
+        unique_key_policy = args[6] if len(args) > 6 else kwargs.pop("unique_key_policy", None)
+        conflict_resolution_policy = args[7] if len(args) > 7 else kwargs.pop("conflict_resolution_policy", None)
         if len(args) > 8:
             raise TypeError(f"Unexpected positional parameters: {args[8:]}")
-        analytical_storage_ttl = kwargs.pop('analytical_storage_ttl', None)
-        vector_embedding_policy = kwargs.pop('vector_embedding_policy', None)
-        computed_properties = kwargs.pop('computed_properties', None)
-        change_feed_policy = kwargs.pop('change_feed_policy', None)
-        full_text_policy = kwargs.pop('full_text_policy', None)
-        return_properties = kwargs.pop('return_properties', False)
+        analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
+        vector_embedding_policy = kwargs.pop("vector_embedding_policy", None)
+        computed_properties = kwargs.pop("computed_properties", None)
+        change_feed_policy = kwargs.pop("change_feed_policy", None)
+        full_text_policy = kwargs.pop("full_text_policy", None)
+        return_properties = kwargs.pop("return_properties", False)
 
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get("session_token")
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                DeprecationWarning)
-        etag = kwargs.get('etag')
+                DeprecationWarning,
+            )
+        etag = kwargs.get("etag")
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
+                DeprecationWarning,
+            )
+        match_condition = kwargs.get("match_condition")
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                DeprecationWarning)
+                DeprecationWarning,
+            )
         if populate_query_metrics is not None:
             warnings.warn(
-                "The 'populate_query_metrics' flag does not apply to this method"
-                " and will be removed in the future",
+                "The 'populate_query_metrics' flag does not apply to this method" " and will be removed in the future",
                 DeprecationWarning,
             )
 
@@ -411,7 +407,7 @@ class DatabaseProxy(object):
             if indexing_policy.get("indexingMode") is IndexingMode.Lazy:
                 warnings.warn(
                     "Lazy indexing mode has been deprecated. Mode will be set to consistent indexing by the backend.",
-                    DeprecationWarning
+                    DeprecationWarning,
                 )
             definition["indexingPolicy"] = indexing_policy
         if default_ttl is not None:
@@ -442,24 +438,24 @@ class DatabaseProxy(object):
 
     @overload
     def create_container_if_not_exists(  # pylint:disable=docstring-missing-param
-            self,
-            id: str,
-            partition_key: PartitionKey,
-            indexing_policy: Optional[dict[str, Any]] = None,
-            default_ttl: Optional[int] = None,
-            populate_query_metrics: Optional[bool] = None,
-            offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-            unique_key_policy: Optional[dict[str, Any]] = None,
-            conflict_resolution_policy: Optional[dict[str, Any]] = None,
-            *,
-            initial_headers: Optional[dict[str, str]] = None,
-            analytical_storage_ttl: Optional[int] = None,
-            computed_properties: Optional[list[dict[str, str]]] = None,
-            vector_embedding_policy: Optional[dict[str, Any]] = None,
-            change_feed_policy: Optional[dict[str, Any]] = None,
-            full_text_policy: Optional[dict[str, Any]] = None,
-            return_properties: Literal[False] = False,
-            **kwargs: Any
+        self,
+        id: str,
+        partition_key: PartitionKey,
+        indexing_policy: Optional[dict[str, Any]] = None,
+        default_ttl: Optional[int] = None,
+        populate_query_metrics: Optional[bool] = None,
+        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+        unique_key_policy: Optional[dict[str, Any]] = None,
+        conflict_resolution_policy: Optional[dict[str, Any]] = None,
+        *,
+        initial_headers: Optional[dict[str, str]] = None,
+        analytical_storage_ttl: Optional[int] = None,
+        computed_properties: Optional[list[dict[str, str]]] = None,
+        vector_embedding_policy: Optional[dict[str, Any]] = None,
+        change_feed_policy: Optional[dict[str, Any]] = None,
+        full_text_policy: Optional[dict[str, Any]] = None,
+        return_properties: Literal[False] = False,
+        **kwargs: Any,
     ) -> ContainerProxy:
         """Create a container if it does not exist already.
 
@@ -501,24 +497,24 @@ class DatabaseProxy(object):
 
     @overload
     def create_container_if_not_exists(  # pylint:disable=docstring-missing-param
-            self,
-            id: str,
-            partition_key: PartitionKey,
-            indexing_policy: Optional[dict[str, Any]] = None,
-            default_ttl: Optional[int] = None,
-            populate_query_metrics: Optional[bool] = None,
-            offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-            unique_key_policy: Optional[dict[str, Any]] = None,
-            conflict_resolution_policy: Optional[dict[str, Any]] = None,
-            *,
-            initial_headers: Optional[dict[str, str]] = None,
-            analytical_storage_ttl: Optional[int] = None,
-            computed_properties: Optional[list[dict[str, str]]] = None,
-            vector_embedding_policy: Optional[dict[str, Any]] = None,
-            change_feed_policy: Optional[dict[str, Any]] = None,
-            full_text_policy: Optional[dict[str, Any]] = None,
-            return_properties: Literal[True],
-            **kwargs: Any
+        self,
+        id: str,
+        partition_key: PartitionKey,
+        indexing_policy: Optional[dict[str, Any]] = None,
+        default_ttl: Optional[int] = None,
+        populate_query_metrics: Optional[bool] = None,
+        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+        unique_key_policy: Optional[dict[str, Any]] = None,
+        conflict_resolution_policy: Optional[dict[str, Any]] = None,
+        *,
+        initial_headers: Optional[dict[str, str]] = None,
+        analytical_storage_ttl: Optional[int] = None,
+        computed_properties: Optional[list[dict[str, str]]] = None,
+        vector_embedding_policy: Optional[dict[str, Any]] = None,
+        change_feed_policy: Optional[dict[str, Any]] = None,
+        full_text_policy: Optional[dict[str, Any]] = None,
+        return_properties: Literal[True],
+        **kwargs: Any,
     ) -> tuple[ContainerProxy, CosmosDict]:
         """Create a container if it does not exist already.
 
@@ -560,9 +556,7 @@ class DatabaseProxy(object):
 
     @distributed_trace
     def create_container_if_not_exists(  # pylint:disable=docstring-missing-param, docstring-should-be-keyword
-        self,
-        *args: Any,
-        **kwargs: Any
+        self, *args: Any, **kwargs: Any
     ) -> Union[ContainerProxy, tuple[ContainerProxy, CosmosDict]]:
         """Create a container if it does not exist already.
 
@@ -603,49 +597,50 @@ class DatabaseProxy(object):
         :rtype: ~azure.cosmos.ContainerProxy or tuple[ ~azure.cosmos.ContainerProxy,  ~azure.cosmos.CosmosDict]
         """
 
-        id = args[0] if len(args) > 0 else kwargs.pop('id')
-        partition_key = args[1] if len(args) > 1 else kwargs.pop('partition_key')
-        indexing_policy = args[2] if len(args) > 2 else kwargs.pop('indexing_policy', None)
-        default_ttl = args[3] if len(args) > 3 else kwargs.pop('default_ttl', None)
-        populate_query_metrics = args[4] if len(args) > 4 else kwargs.pop('populate_query_metrics', None)
-        offer_throughput = args[5] if len(args) > 5 else kwargs.pop('offer_throughput', None)
-        unique_key_policy = args[6] if len(args) > 6 else kwargs.pop('unique_key_policy', None)
-        conflict_resolution_policy = args[7] if len(args) > 7 else kwargs.pop('conflict_resolution_policy', None)
+        id = args[0] if len(args) > 0 else kwargs.pop("id")
+        partition_key = args[1] if len(args) > 1 else kwargs.pop("partition_key")
+        indexing_policy = args[2] if len(args) > 2 else kwargs.pop("indexing_policy", None)
+        default_ttl = args[3] if len(args) > 3 else kwargs.pop("default_ttl", None)
+        populate_query_metrics = args[4] if len(args) > 4 else kwargs.pop("populate_query_metrics", None)
+        offer_throughput = args[5] if len(args) > 5 else kwargs.pop("offer_throughput", None)
+        unique_key_policy = args[6] if len(args) > 6 else kwargs.pop("unique_key_policy", None)
+        conflict_resolution_policy = args[7] if len(args) > 7 else kwargs.pop("conflict_resolution_policy", None)
         if len(args) > 8:
             raise TypeError(f"Unexpected positional parameters: {args[8:]}")
-        initial_headers = kwargs.pop('initial_headers', None)
-        analytical_storage_ttl = kwargs.pop('analytical_storage_ttl', None)
-        vector_embedding_policy = kwargs.pop('vector_embedding_policy', None)
-        computed_properties = kwargs.pop('computed_properties', None)
-        change_feed_policy = kwargs.pop('change_feed_policy', None)
-        full_text_policy = kwargs.pop('full_text_policy', None)
-        return_properties = kwargs.pop('return_properties', False)
+        initial_headers = kwargs.pop("initial_headers", None)
+        analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
+        vector_embedding_policy = kwargs.pop("vector_embedding_policy", None)
+        computed_properties = kwargs.pop("computed_properties", None)
+        change_feed_policy = kwargs.pop("change_feed_policy", None)
+        full_text_policy = kwargs.pop("full_text_policy", None)
+        return_properties = kwargs.pop("return_properties", False)
 
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get("session_token")
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                DeprecationWarning)
-        etag = kwargs.get('etag')
+                DeprecationWarning,
+            )
+        etag = kwargs.get("etag")
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
+                DeprecationWarning,
+            )
+        match_condition = kwargs.get("match_condition")
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                DeprecationWarning)
+                DeprecationWarning,
+            )
 
         try:
             container_proxy = self.get_container_client(id)
             properties = container_proxy.read(
-                populate_query_metrics=populate_query_metrics,
-                initial_headers=initial_headers,
-                **kwargs
+                populate_query_metrics=populate_query_metrics, initial_headers=initial_headers, **kwargs
             )
             if not return_properties:
                 return container_proxy
@@ -667,7 +662,7 @@ class DatabaseProxy(object):
                 change_feed_policy=change_feed_policy,
                 full_text_policy=full_text_policy,
                 return_properties=return_properties,
-                **kwargs
+                **kwargs,
             )
 
     @distributed_trace
@@ -677,7 +672,7 @@ class DatabaseProxy(object):
         populate_query_metrics: Optional[bool] = None,
         *,
         initial_headers: Optional[dict[str, str]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Delete a container.
 
@@ -694,24 +689,27 @@ class DatabaseProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the container couldn't be deleted.
         :rtype: None
         """
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get("session_token")
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                DeprecationWarning)
-        etag = kwargs.get('etag')
+                DeprecationWarning,
+            )
+        etag = kwargs.get("etag")
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
+                DeprecationWarning,
+            )
+        match_condition = kwargs.get("match_condition")
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                DeprecationWarning)
+                DeprecationWarning,
+            )
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
@@ -719,7 +717,7 @@ class DatabaseProxy(object):
             )
 
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs["initial_headers"] = initial_headers
         request_options = build_options(kwargs)
         collection_link = self._get_container_link(container)
         self.client_connection.DeleteContainer(collection_link, options=request_options, **kwargs)
@@ -758,7 +756,7 @@ class DatabaseProxy(object):
         *,
         initial_headers: Optional[dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[dict[str, Any]]], None]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ItemPaged[dict[str, Any]]:
         """List the containers in the database.
 
@@ -779,12 +777,13 @@ class DatabaseProxy(object):
                 :dedent: 0
                 :caption: List all containers in the database:
         """
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get("session_token")
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                DeprecationWarning)
+                DeprecationWarning,
+            )
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
@@ -792,19 +791,17 @@ class DatabaseProxy(object):
             )
 
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs["initial_headers"] = initial_headers
         feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
-        result = self.client_connection.ReadContainers(
-            database_link=self.database_link, options=feed_options, **kwargs
-        )
+        result = self.client_connection.ReadContainers(database_link=self.database_link, options=feed_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
 
     @distributed_trace
-    def query_containers(   # pylint:disable=docstring-missing-param
+    def query_containers(  # pylint:disable=docstring-missing-param
         self,
         query: Optional[str] = None,
         parameters: Optional[list[dict[str, Any]]] = None,
@@ -813,7 +810,7 @@ class DatabaseProxy(object):
         *,
         initial_headers: Optional[dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[dict[str, Any]]], None]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ItemPaged[dict[str, Any]]:
         """List the properties for containers in the current database.
 
@@ -827,12 +824,13 @@ class DatabaseProxy(object):
         :returns: An Iterable of container properties (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get("session_token")
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                DeprecationWarning)
+                DeprecationWarning,
+            )
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
@@ -840,7 +838,7 @@ class DatabaseProxy(object):
             )
 
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs["initial_headers"] = initial_headers
         feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
@@ -848,7 +846,7 @@ class DatabaseProxy(object):
             database_link=self.database_link,
             query=query if parameters is None else {"query": query, "parameters": parameters},
             options=feed_options,
-            **kwargs
+            **kwargs,
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
@@ -870,7 +868,7 @@ class DatabaseProxy(object):
         full_text_policy: Optional[dict[str, Any]] = None,
         return_properties: Literal[False] = False,
         vector_embedding_policy: Optional[dict[str, Any]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ContainerProxy:
         """Reset the properties of the container.
 
@@ -916,21 +914,21 @@ class DatabaseProxy(object):
 
     @overload
     def replace_container(  # pylint:disable=docstring-missing-param
-            self,
-            container: Union[str, ContainerProxy, Mapping[str, Any]],
-            partition_key: PartitionKey,
-            indexing_policy: Optional[dict[str, Any]] = None,
-            default_ttl: Optional[int] = None,
-            conflict_resolution_policy: Optional[dict[str, Any]] = None,
-            populate_query_metrics: Optional[bool] = None,
-            *,
-            initial_headers: Optional[dict[str, str]] = None,
-            analytical_storage_ttl: Optional[int] = None,
-            computed_properties: Optional[list[dict[str, str]]] = None,
-            full_text_policy: Optional[dict[str, Any]] = None,
-            return_properties: Literal[True],
-            vector_embedding_policy: Optional[dict[str, Any]] = None,
-            **kwargs: Any
+        self,
+        container: Union[str, ContainerProxy, Mapping[str, Any]],
+        partition_key: PartitionKey,
+        indexing_policy: Optional[dict[str, Any]] = None,
+        default_ttl: Optional[int] = None,
+        conflict_resolution_policy: Optional[dict[str, Any]] = None,
+        populate_query_metrics: Optional[bool] = None,
+        *,
+        initial_headers: Optional[dict[str, str]] = None,
+        analytical_storage_ttl: Optional[int] = None,
+        computed_properties: Optional[list[dict[str, str]]] = None,
+        full_text_policy: Optional[dict[str, Any]] = None,
+        return_properties: Literal[True],
+        vector_embedding_policy: Optional[dict[str, Any]] = None,
+        **kwargs: Any,
     ) -> tuple[ContainerProxy, CosmosDict]:
         """Reset the properties of the container.
 
@@ -976,9 +974,7 @@ class DatabaseProxy(object):
 
     @distributed_trace
     def replace_container(  # pylint:disable=docstring-missing-param, docstring-should-be-keyword
-        self,
-        *args: Any,
-        **kwargs: Any
+        self, *args: Any, **kwargs: Any
     ) -> Union[ContainerProxy, tuple[ContainerProxy, CosmosDict]]:
         """Reset the properties of the container.
 
@@ -1023,39 +1019,42 @@ class DatabaseProxy(object):
                 :caption: Reset the TTL property on a container, and display the updated properties:
         """
 
-        container = args[0] if len(args) > 0 else kwargs.pop('container', None)
-        partition_key = args[1] if len(args) > 1 else kwargs.pop('partition_key')
-        indexing_policy = args[2] if len(args) > 2 else kwargs.pop('indexing_policy', None)
-        default_ttl = args[3] if len(args) > 3 else kwargs.pop('default_ttl', None)
-        conflict_resolution_policy = args[4] if len(args) > 4 else kwargs.pop('conflict_resolution_policy', None)
-        populate_query_metrics = args[5] if len(args) > 5 else kwargs.pop('populate_query_metrics', None)
+        container = args[0] if len(args) > 0 else kwargs.pop("container", None)
+        partition_key = args[1] if len(args) > 1 else kwargs.pop("partition_key")
+        indexing_policy = args[2] if len(args) > 2 else kwargs.pop("indexing_policy", None)
+        default_ttl = args[3] if len(args) > 3 else kwargs.pop("default_ttl", None)
+        conflict_resolution_policy = args[4] if len(args) > 4 else kwargs.pop("conflict_resolution_policy", None)
+        populate_query_metrics = args[5] if len(args) > 5 else kwargs.pop("populate_query_metrics", None)
         if len(args) > 6:
             raise TypeError(f"Unexpected positional parameters: {args[6:]}")
-        initial_headers = kwargs.pop('initial_headers', None)
-        analytical_storage_ttl = kwargs.pop('analytical_storage_ttl', None)
-        computed_properties = kwargs.pop('computed_properties', None)
-        full_text_policy = kwargs.pop('full_text_policy', None)
-        return_properties = kwargs.pop('return_properties', False)
-        vector_embedding_policy = kwargs.pop('vector_embedding_policy', None)
+        initial_headers = kwargs.pop("initial_headers", None)
+        analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
+        computed_properties = kwargs.pop("computed_properties", None)
+        full_text_policy = kwargs.pop("full_text_policy", None)
+        return_properties = kwargs.pop("return_properties", False)
+        vector_embedding_policy = kwargs.pop("vector_embedding_policy", None)
 
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get("session_token")
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                DeprecationWarning)
-        etag = kwargs.get('etag')
+                DeprecationWarning,
+            )
+        etag = kwargs.get("etag")
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
+                DeprecationWarning,
+            )
+        match_condition = kwargs.get("match_condition")
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
-                DeprecationWarning)
+                DeprecationWarning,
+            )
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
@@ -1063,7 +1062,7 @@ class DatabaseProxy(object):
             )
 
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs["initial_headers"] = initial_headers
         request_options = build_options(kwargs)
 
         container_id = self._get_container_id(container)
@@ -1079,31 +1078,33 @@ class DatabaseProxy(object):
                 "analyticalStorageTtl": analytical_storage_ttl,
                 "computedProperties": computed_properties,
                 "fullTextPolicy": full_text_policy,
-                "vectorEmbeddingPolicy": vector_embedding_policy
+                "vectorEmbeddingPolicy": vector_embedding_policy,
             }.items()
             if value is not None
         }
 
         container_properties = self.client_connection.ReplaceContainer(
-            container_link, collection=parameters, options=request_options, **kwargs)
+            container_link, collection=parameters, options=request_options, **kwargs
+        )
 
         if not return_properties:
             return ContainerProxy(
-                self.client_connection,
-                self.database_link, container_properties["id"],
-                properties=container_properties)
-        return ContainerProxy(
-            self.client_connection,
-            self.database_link, container_properties["id"],
-            properties=container_properties), container_properties
+                self.client_connection, self.database_link, container_properties["id"], properties=container_properties
+            )
+        return (
+            ContainerProxy(
+                self.client_connection, self.database_link, container_properties["id"], properties=container_properties
+            ),
+            container_properties,
+        )
 
     @distributed_trace
     def list_users(
-            self,
-            max_item_count: Optional[int] = None,
-            *,
-            response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[dict[str, Any]]], None]] = None,
-            **kwargs: Any
+        self,
+        max_item_count: Optional[int] = None,
+        *,
+        response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[dict[str, Any]]], None]] = None,
+        **kwargs: Any,
     ) -> ItemPaged[dict[str, Any]]:
         """List all the users in the container.
 
@@ -1117,9 +1118,7 @@ class DatabaseProxy(object):
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
-        result = self.client_connection.ReadUsers(
-            database_link=self.database_link, options=feed_options, **kwargs
-        )
+        result = self.client_connection.ReadUsers(database_link=self.database_link, options=feed_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
@@ -1132,7 +1131,7 @@ class DatabaseProxy(object):
         max_item_count: Optional[int] = None,
         *,
         response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[dict[str, Any]]], None]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ItemPaged[dict[str, Any]]:
         """Return all users matching the given `query`.
 
@@ -1153,7 +1152,7 @@ class DatabaseProxy(object):
             database_link=self.database_link,
             query=query if parameters is None else {"query": query, "parameters": parameters},
             options=feed_options,
-            **kwargs
+            **kwargs,
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
@@ -1202,7 +1201,8 @@ class DatabaseProxy(object):
         request_options = build_options(kwargs)
 
         user = self.client_connection.CreateUser(
-            database_link=self.database_link, user=body, options=request_options, **kwargs)
+            database_link=self.database_link, user=body, options=request_options, **kwargs
+        )
 
         return UserProxy(
             client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
@@ -1224,7 +1224,8 @@ class DatabaseProxy(object):
         request_options = build_options(kwargs)
 
         user = self.client_connection.UpsertUser(
-            database_link=self.database_link, user=body, options=request_options, **kwargs)
+            database_link=self.database_link, user=body, options=request_options, **kwargs
+        )
 
         return UserProxy(
             client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
@@ -1232,10 +1233,7 @@ class DatabaseProxy(object):
 
     @distributed_trace
     def replace_user(
-            self,
-            user: Union[str, UserProxy, Mapping[str, Any]],
-            body: dict[str, Any],
-            **kwargs: Any
+        self, user: Union[str, UserProxy, Mapping[str, Any]], body: dict[str, Any], **kwargs: Any
     ) -> UserProxy:
         """Replaces the specified user if it exists in the container.
 
@@ -1259,7 +1257,7 @@ class DatabaseProxy(object):
             client_connection=self.client_connection,
             id=replaced_user["id"],
             database_link=self.database_link,
-            properties=replaced_user
+            properties=replaced_user,
         )
 
     @distributed_trace
@@ -1290,18 +1288,16 @@ class DatabaseProxy(object):
             the throughput properties could not be retrieved.
         :rtype: ~azure.cosmos.ThroughputProperties
         """
-        warnings.warn(
-            "read_offer is a deprecated method name, use get_throughput instead",
-            DeprecationWarning
-        )
+        warnings.warn("read_offer is a deprecated method name, use get_throughput instead", DeprecationWarning)
         return self.get_throughput(**kwargs)
 
     @distributed_trace
     def get_throughput(
-            self,
-            *,
-            response_hook: Optional[Callable[[Mapping[str, Any], list[dict[str, Any]]], None]] = None,
-            **kwargs: Any) -> ThroughputProperties:
+        self,
+        *,
+        response_hook: Optional[Callable[[Mapping[str, Any], list[dict[str, Any]]], None]] = None,
+        **kwargs: Any,
+    ) -> ThroughputProperties:
         """Get the ThroughputProperties object for this database.
 
         If no ThroughputProperties already exist for the database, an exception is raised.
@@ -1323,7 +1319,8 @@ class DatabaseProxy(object):
         if not throughput_properties:
             raise CosmosResourceNotFoundError(
                 status_code=_StatusCodes.NOT_FOUND,
-                message="Could not find ThroughputProperties for database " + self.database_link)
+                message="Could not find ThroughputProperties for database " + self.database_link,
+            )
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, throughput_properties)
@@ -1331,11 +1328,7 @@ class DatabaseProxy(object):
         return _deserialize_throughput(throughput=throughput_properties)
 
     @distributed_trace
-    def replace_throughput(
-        self,
-        throughput: Union[int, ThroughputProperties],
-        **kwargs: Any
-    ) -> ThroughputProperties:
+    def replace_throughput(self, throughput: Union[int, ThroughputProperties], **kwargs: Any) -> ThroughputProperties:
         """Replace the database-level throughput.
 
         :param throughput: The throughput to be set (an integer).
@@ -1356,12 +1349,11 @@ class DatabaseProxy(object):
         if not throughput_properties:
             raise CosmosResourceNotFoundError(
                 status_code=_StatusCodes.NOT_FOUND,
-                message="Could not find ThroughputProperties for database " + self.database_link)
+                message="Could not find ThroughputProperties for database " + self.database_link,
+            )
         new_offer = throughput_properties[0].copy()
         _replace_throughput(throughput=throughput, new_throughput_properties=new_offer)
         data = self.client_connection.ReplaceOffer(
-            offer_link=throughput_properties[0]["_self"],
-            offer=throughput_properties[0],
-            **kwargs
+            offer_link=throughput_properties[0]["_self"], offer=throughput_properties[0], **kwargs
         )
         return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)

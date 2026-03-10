@@ -41,6 +41,7 @@ class AuthenticationSample(object):
         # [START create_fr_client_with_key]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
+
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
@@ -69,6 +70,7 @@ class AuthenticationSample(object):
         # [START create_ft_client_with_key]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormTrainingClient
+
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
@@ -92,7 +94,7 @@ class AuthenticationSample(object):
         properties = form_training_client.get_account_properties()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample = AuthenticationSample()
     sample.authentication_with_api_key_credential_form_recognizer_client()
     sample.authentication_with_azure_active_directory_form_recognizer_client()

@@ -15,7 +15,7 @@ from devtools_testutils import (
     add_body_key_sanitizer,
     add_general_string_sanitizer,
     remove_batch_sanitizers,
-    set_custom_default_matcher
+    set_custom_default_matcher,
 )
 
 

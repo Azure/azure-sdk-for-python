@@ -85,9 +85,7 @@ class TestToDict(FormRecognizerTest):
                 ),
             ],
             page_number=2,
-            appearance=_models.TextAppearance(
-                style_name="other", style_confidence=0.90
-            ),
+            appearance=_models.TextAppearance(style_name="other", style_confidence=0.90),
         )
 
         d = form_line.to_dict()
@@ -189,9 +187,7 @@ class TestToDict(FormRecognizerTest):
         assert d == final
 
     def test_text_appearance_to_dict(self):
-        model = _models.TextAppearance(
-            style_name="other", style_confidence=0.98
-        )
+        model = _models.TextAppearance(style_name="other", style_confidence=0.98)
 
         d = model.to_dict()
         final = {"style_name": "other", "style_confidence": 0.98}
@@ -289,7 +285,7 @@ class TestToDict(FormRecognizerTest):
                     {"x": 1427.0, "y": 1698.0},
                 ],
                 "page_number": 1,
-                "field_elements": []
+                "field_elements": [],
             },
             "value_data": {
                 "text": "55554444",
@@ -300,7 +296,7 @@ class TestToDict(FormRecognizerTest):
                     {"x": 1427.0, "y": 1698.0},
                 ],
                 "page_number": 1,
-                "field_elements": []
+                "field_elements": [],
             },
             "name": "phone",
             "value": "55554444",
@@ -342,51 +338,52 @@ class TestToDict(FormRecognizerTest):
                     confidence=0.99,
                 )
             },
-            pages=[_models.FormPage(
-                page_number=1,
-                text_angle=180.0,
-                width=5.5,
-                height=8.0,
-                unit="pixel",
-                lines=[_models.FormLine(
-                        text="sample line",
-                        bounding_box=[
-                            _models.Point(1427.0, 1669.0),
-                            _models.Point(1527.0, 1669.0),
-                            _models.Point(1527.0, 1698.0),
-                            _models.Point(1427.0, 1698.0),
-                        ],
-                        words=[
-                            _models.FormWord(
-                                text="sample",
-                                confidence=0.92,
-                                page_number=1,
-                                bounding_box=[
-                                    _models.Point(1427.0, 1669.0),
-                                    _models.Point(1527.0, 1669.0),
-                                    _models.Point(1527.0, 1698.0),
-                                    _models.Point(1427.0, 1698.0),
-                                ],
-                            ),
-                            _models.FormWord(
-                                text="line",
-                                confidence=0.92,
-                                page_number=1,
-                                bounding_box=[
-                                    _models.Point(1427.0, 1669.0),
-                                    _models.Point(1527.0, 1669.0),
-                                    _models.Point(1527.0, 1698.0),
-                                    _models.Point(1427.0, 1698.0),
-                                ],
-                            ),
-                        ],
-                        page_number=2,
-                        appearance=_models.TextAppearance(
-                            style_name="other", style_confidence=0.90
-                        ),
-                    )],
+            pages=[
+                _models.FormPage(
+                    page_number=1,
+                    text_angle=180.0,
+                    width=5.5,
+                    height=8.0,
+                    unit="pixel",
+                    lines=[
+                        _models.FormLine(
+                            text="sample line",
+                            bounding_box=[
+                                _models.Point(1427.0, 1669.0),
+                                _models.Point(1527.0, 1669.0),
+                                _models.Point(1527.0, 1698.0),
+                                _models.Point(1427.0, 1698.0),
+                            ],
+                            words=[
+                                _models.FormWord(
+                                    text="sample",
+                                    confidence=0.92,
+                                    page_number=1,
+                                    bounding_box=[
+                                        _models.Point(1427.0, 1669.0),
+                                        _models.Point(1527.0, 1669.0),
+                                        _models.Point(1527.0, 1698.0),
+                                        _models.Point(1427.0, 1698.0),
+                                    ],
+                                ),
+                                _models.FormWord(
+                                    text="line",
+                                    confidence=0.92,
+                                    page_number=1,
+                                    bounding_box=[
+                                        _models.Point(1427.0, 1669.0),
+                                        _models.Point(1527.0, 1669.0),
+                                        _models.Point(1527.0, 1698.0),
+                                        _models.Point(1427.0, 1698.0),
+                                    ],
+                                ),
+                            ],
+                            page_number=2,
+                            appearance=_models.TextAppearance(style_name="other", style_confidence=0.90),
+                        )
+                    ],
                 )
-            ]
+            ],
         )
 
         d = form.to_dict()
@@ -395,7 +392,7 @@ class TestToDict(FormRecognizerTest):
             "form_type_confidence": "0.84",
             "model_id": "examplemodel123",
             "page_range": {"first_page_number": 1, "last_page_number": 1},
-            "fields": { 
+            "fields": {
                 "example": {
                     "value_type": "phoneNumber",
                     "label_data": {
@@ -407,7 +404,7 @@ class TestToDict(FormRecognizerTest):
                             {"x": 1427.0, "y": 1698.0},
                         ],
                         "page_number": 1,
-                        "field_elements": []
+                        "field_elements": [],
                     },
                     "value_data": {
                         "text": "55554444",
@@ -418,20 +415,226 @@ class TestToDict(FormRecognizerTest):
                             {"x": 1427.0, "y": 1698.0},
                         ],
                         "page_number": 1,
-                        "field_elements": []
+                        "field_elements": [],
                     },
                     "name": "phone",
                     "value": "55554444",
                     "confidence": 0.99,
                 }
             },
-            "pages": [{
-                "page_number": 1,
-                "text_angle": 180.0,
-                "width": 5.5,
-                "height": 8.0,
-                "unit": "pixel",
-                "lines": [{
+            "pages": [
+                {
+                    "page_number": 1,
+                    "text_angle": 180.0,
+                    "width": 5.5,
+                    "height": 8.0,
+                    "unit": "pixel",
+                    "lines": [
+                        {
+                            "text": "sample line",
+                            "bounding_box": [
+                                {"x": 1427.0, "y": 1669.0},
+                                {"x": 1527.0, "y": 1669.0},
+                                {"x": 1527.0, "y": 1698.0},
+                                {"x": 1427.0, "y": 1698.0},
+                            ],
+                            "words": [
+                                {
+                                    "text": "sample",
+                                    "bounding_box": [
+                                        {"x": 1427.0, "y": 1669.0},
+                                        {"x": 1527.0, "y": 1669.0},
+                                        {"x": 1527.0, "y": 1698.0},
+                                        {"x": 1427.0, "y": 1698.0},
+                                    ],
+                                    "confidence": 0.92,
+                                    "page_number": 1,
+                                    "kind": "word",
+                                },
+                                {
+                                    "text": "line",
+                                    "bounding_box": [
+                                        {"x": 1427.0, "y": 1669.0},
+                                        {"x": 1527.0, "y": 1669.0},
+                                        {"x": 1527.0, "y": 1698.0},
+                                        {"x": 1427.0, "y": 1698.0},
+                                    ],
+                                    "confidence": 0.92,
+                                    "page_number": 1,
+                                    "kind": "word",
+                                },
+                            ],
+                            "page_number": 2,
+                            "kind": "line",
+                            "appearance": {"style_name": "other", "style_confidence": 0.90},
+                        }
+                    ],
+                    "selection_marks": [],
+                    "tables": [],
+                }
+            ],
+        }
+        assert d == final
+
+    def test_form_page_to_dict(self):
+        form_page = _models.FormPage(
+            page_number=1,
+            text_angle=180.0,
+            width=5.5,
+            height=8.0,
+            unit="pixel",
+            tables=[
+                _models.FormTable(
+                    page_number=2,
+                    cells=[
+                        _models.FormTableCell(
+                            text="info",
+                            row_index=1,
+                            column_index=3,
+                            row_span=1,
+                            column_span=2,
+                            bounding_box=[
+                                _models.Point(1427.0, 1669.0),
+                                _models.Point(1527.0, 1669.0),
+                                _models.Point(1527.0, 1698.0),
+                                _models.Point(1427.0, 1698.0),
+                            ],
+                            confidence=0.87,
+                            is_header=False,
+                            is_footer=True,
+                            page_number=1,
+                            field_elements=[
+                                _models.FormWord(
+                                    text="word",
+                                    confidence=0.92,
+                                    page_number=1,
+                                    bounding_box=[
+                                        _models.Point(1427.0, 1669.0),
+                                        _models.Point(1527.0, 1669.0),
+                                        _models.Point(1527.0, 1698.0),
+                                        _models.Point(1427.0, 1698.0),
+                                    ],
+                                ),
+                            ],
+                        )
+                    ],
+                    row_count=10,
+                    column_count=5,
+                    bounding_box=[
+                        _models.Point(1427.0, 1669.0),
+                        _models.Point(1527.0, 1669.0),
+                        _models.Point(1527.0, 1698.0),
+                        _models.Point(1427.0, 1698.0),
+                    ],
+                ),
+            ],
+            lines=[
+                _models.FormLine(
+                    text="sample line",
+                    bounding_box=[
+                        _models.Point(1427.0, 1669.0),
+                        _models.Point(1527.0, 1669.0),
+                        _models.Point(1527.0, 1698.0),
+                        _models.Point(1427.0, 1698.0),
+                    ],
+                    words=[
+                        _models.FormWord(
+                            text="sample",
+                            confidence=0.92,
+                            page_number=1,
+                            bounding_box=[
+                                _models.Point(1427.0, 1669.0),
+                                _models.Point(1527.0, 1669.0),
+                                _models.Point(1527.0, 1698.0),
+                                _models.Point(1427.0, 1698.0),
+                            ],
+                        ),
+                        _models.FormWord(
+                            text="line",
+                            confidence=0.92,
+                            page_number=1,
+                            bounding_box=[
+                                _models.Point(1427.0, 1669.0),
+                                _models.Point(1527.0, 1669.0),
+                                _models.Point(1527.0, 1698.0),
+                                _models.Point(1427.0, 1698.0),
+                            ],
+                        ),
+                    ],
+                    page_number=2,
+                    appearance=_models.TextAppearance(style_name="other", style_confidence=0.90),
+                ),
+            ],
+            selection_marks=[
+                _models.FormSelectionMark(
+                    text="checkbox",
+                    state="selected",
+                    confidence=0.92,
+                    page_number=1,
+                    bounding_box=[
+                        _models.Point(1427.0, 1669.0),
+                        _models.Point(1527.0, 1669.0),
+                        _models.Point(1527.0, 1698.0),
+                        _models.Point(1427.0, 1698.0),
+                    ],
+                ),
+            ],
+        )
+        d = form_page.to_dict()
+        final = {
+            "page_number": 1,
+            "text_angle": 180.0,
+            "width": 5.5,
+            "height": 8.0,
+            "unit": "pixel",
+            "tables": [
+                {
+                    "cells": [
+                        {
+                            "text": "info",
+                            "bounding_box": [
+                                {"x": 1427.0, "y": 1669.0},
+                                {"x": 1527.0, "y": 1669.0},
+                                {"x": 1527.0, "y": 1698.0},
+                                {"x": 1427.0, "y": 1698.0},
+                            ],
+                            "row_index": 1,
+                            "column_index": 3,
+                            "row_span": 1,
+                            "column_span": 2,
+                            "confidence": 0.87,
+                            "is_header": False,
+                            "is_footer": True,
+                            "page_number": 1,
+                            "field_elements": [
+                                {
+                                    "text": "word",
+                                    "bounding_box": [
+                                        {"x": 1427.0, "y": 1669.0},
+                                        {"x": 1527.0, "y": 1669.0},
+                                        {"x": 1527.0, "y": 1698.0},
+                                        {"x": 1427.0, "y": 1698.0},
+                                    ],
+                                    "confidence": 0.92,
+                                    "page_number": 1,
+                                    "kind": "word",
+                                }
+                            ],
+                        },
+                    ],
+                    "page_number": 2,
+                    "row_count": 10,
+                    "column_count": 5,
+                    "bounding_box": [
+                        {"x": 1427.0, "y": 1669.0},
+                        {"x": 1527.0, "y": 1669.0},
+                        {"x": 1527.0, "y": 1698.0},
+                        {"x": 1427.0, "y": 1698.0},
+                    ],
+                },
+            ],
+            "lines": [
+                {
                     "text": "sample line",
                     "bounding_box": [
                         {"x": 1427.0, "y": 1669.0},
@@ -468,220 +671,23 @@ class TestToDict(FormRecognizerTest):
                     "page_number": 2,
                     "kind": "line",
                     "appearance": {"style_name": "other", "style_confidence": 0.90},
-                }],    
-                "selection_marks": [],
-                "tables": [],
-            }],
-        }
-        assert d == final
-
-    def test_form_page_to_dict(self):
-        form_page = _models.FormPage(
-            page_number=1,
-            text_angle=180.0,
-            width=5.5,
-            height=8.0,
-            unit="pixel",
-            tables= [
-                _models.FormTable(
-                    page_number=2,
-                    cells=[
-                        _models.FormTableCell(
-                            text="info",
-                            row_index=1,
-                            column_index=3,
-                            row_span=1,
-                            column_span=2,
-                            bounding_box=[
-                                    _models.Point(1427.0, 1669.0),
-                                    _models.Point(1527.0, 1669.0),
-                                    _models.Point(1527.0, 1698.0),
-                                    _models.Point(1427.0, 1698.0),
-                                ],
-                            confidence=0.87,
-                            is_header=False,
-                            is_footer=True,
-                            page_number=1,
-                            field_elements=[
-                                _models.FormWord(
-                                    text="word",
-                                    confidence=0.92,
-                                    page_number=1,
-                                    bounding_box=[
-                                        _models.Point(1427.0, 1669.0),
-                                        _models.Point(1527.0, 1669.0),
-                                        _models.Point(1527.0, 1698.0),
-                                        _models.Point(1427.0, 1698.0),
-                                    ],
-                                ),
-                            ]
-                        )
-                    ],
-                    row_count=10,
-                    column_count=5,
-                    bounding_box=[
-                        _models.Point(1427.0, 1669.0),
-                        _models.Point(1527.0, 1669.0),
-                        _models.Point(1527.0, 1698.0),
-                        _models.Point(1427.0, 1698.0),
-                    ],
-                ),
+                }
             ],
-            lines=[_models.FormLine(
-                    text="sample line",
-                    bounding_box=[
-                        _models.Point(1427.0, 1669.0),
-                        _models.Point(1527.0, 1669.0),
-                        _models.Point(1527.0, 1698.0),
-                        _models.Point(1427.0, 1698.0),
+            "selection_marks": [
+                {
+                    "text": "checkbox",
+                    "state": "selected",
+                    "bounding_box": [
+                        {"x": 1427.0, "y": 1669.0},
+                        {"x": 1527.0, "y": 1669.0},
+                        {"x": 1527.0, "y": 1698.0},
+                        {"x": 1427.0, "y": 1698.0},
                     ],
-                    words=[
-                        _models.FormWord(
-                            text="sample",
-                            confidence=0.92,
-                            page_number=1,
-                            bounding_box=[
-                                _models.Point(1427.0, 1669.0),
-                                _models.Point(1527.0, 1669.0),
-                                _models.Point(1527.0, 1698.0),
-                                _models.Point(1427.0, 1698.0),
-                            ],
-                        ),
-                        _models.FormWord(
-                            text="line",
-                            confidence=0.92,
-                            page_number=1,
-                            bounding_box=[
-                                _models.Point(1427.0, 1669.0),
-                                _models.Point(1527.0, 1669.0),
-                                _models.Point(1527.0, 1698.0),
-                                _models.Point(1427.0, 1698.0),
-                            ],
-                        ),
-                    ],
-                    page_number=2,
-                    appearance=_models.TextAppearance(
-                        style_name="other", style_confidence=0.90
-                    ),
-                ),
+                    "confidence": 0.92,
+                    "page_number": 1,
+                    "kind": "selectionMark",
+                }
             ],
-            selection_marks=[_models.FormSelectionMark(
-                    text="checkbox",
-                    state="selected",
-                    confidence=0.92,
-                    page_number=1,
-                    bounding_box=[
-                        _models.Point(1427.0, 1669.0),
-                        _models.Point(1527.0, 1669.0),
-                        _models.Point(1527.0, 1698.0),
-                        _models.Point(1427.0, 1698.0),
-                    ],
-                ),
-            ],
-            )
-        d = form_page.to_dict()
-        final = {
-            "page_number": 1,
-            "text_angle": 180.0,
-            "width": 5.5,
-            "height": 8.0,
-            "unit": "pixel",
-            "tables": [
-                {"cells": [
-                    {
-                        "text": "info",
-                        "bounding_box": [
-                            {"x": 1427.0, "y": 1669.0},
-                            {"x": 1527.0, "y": 1669.0},
-                            {"x": 1527.0, "y": 1698.0},
-                            {"x": 1427.0, "y": 1698.0},
-                        ],
-                        "row_index": 1,
-                        "column_index": 3,
-                        "row_span": 1,
-                        "column_span": 2,
-                        "confidence": 0.87,
-                        "is_header": False,
-                        "is_footer": True,
-                        "page_number": 1,
-                        "field_elements": [
-                            {
-                                "text": "word",
-                                "bounding_box": [
-                                    {"x": 1427.0, "y": 1669.0},
-                                    {"x": 1527.0, "y": 1669.0},
-                                    {"x": 1527.0, "y": 1698.0},
-                                    {"x": 1427.0, "y": 1698.0},
-                                ],
-                                "confidence": 0.92,
-                                "page_number": 1,
-                                "kind": "word",
-                            }
-                        ],
-                    },
-                ],
-                "page_number": 2,
-                "row_count": 10,
-                "column_count": 5,
-                "bounding_box": [
-                    {"x": 1427.0, "y": 1669.0},
-                    {"x": 1527.0, "y": 1669.0},
-                    {"x": 1527.0, "y": 1698.0},
-                    {"x": 1427.0, "y": 1698.0},
-                ],
-            },
-            ],
-            "lines": [{
-                "text": "sample line",
-                "bounding_box": [
-                    {"x": 1427.0, "y": 1669.0},
-                    {"x": 1527.0, "y": 1669.0},
-                    {"x": 1527.0, "y": 1698.0},
-                    {"x": 1427.0, "y": 1698.0},
-                ],
-                "words": [
-                    {
-                        "text": "sample",
-                        "bounding_box": [
-                            {"x": 1427.0, "y": 1669.0},
-                            {"x": 1527.0, "y": 1669.0},
-                            {"x": 1527.0, "y": 1698.0},
-                            {"x": 1427.0, "y": 1698.0},
-                        ],
-                        "confidence": 0.92,
-                        "page_number": 1,
-                        "kind": "word",
-                    },
-                    {
-                        "text": "line",
-                        "bounding_box": [
-                            {"x": 1427.0, "y": 1669.0},
-                            {"x": 1527.0, "y": 1669.0},
-                            {"x": 1527.0, "y": 1698.0},
-                            {"x": 1427.0, "y": 1698.0},
-                        ],
-                        "confidence": 0.92,
-                        "page_number": 1,
-                        "kind": "word",
-                    },
-                ],
-                "page_number": 2,
-                "kind": "line",
-                "appearance": {"style_name": "other", "style_confidence": 0.90},
-            }],
-            "selection_marks": [{
-                "text": "checkbox",
-                "state": "selected",
-                "bounding_box": [
-                    {"x": 1427.0, "y": 1669.0},
-                    {"x": 1527.0, "y": 1669.0},
-                    {"x": 1527.0, "y": 1698.0},
-                    {"x": 1427.0, "y": 1698.0},
-                ],
-                "confidence": 0.92,
-                "page_number": 1,
-                "kind": "selectionMark",
-            }],
         }
         assert d == final
 
@@ -693,11 +699,11 @@ class TestToDict(FormRecognizerTest):
             row_span=1,
             column_span=2,
             bounding_box=[
-                    _models.Point(1427.0, 1669.0),
-                    _models.Point(1527.0, 1669.0),
-                    _models.Point(1527.0, 1698.0),
-                    _models.Point(1427.0, 1698.0),
-                ],
+                _models.Point(1427.0, 1669.0),
+                _models.Point(1527.0, 1669.0),
+                _models.Point(1527.0, 1698.0),
+                _models.Point(1427.0, 1698.0),
+            ],
             confidence=0.87,
             is_header=False,
             is_footer=True,
@@ -714,7 +720,7 @@ class TestToDict(FormRecognizerTest):
                         _models.Point(1427.0, 1698.0),
                     ],
                 ),
-            ]
+            ],
         )
 
         d = table_cell.to_dict()
@@ -762,11 +768,11 @@ class TestToDict(FormRecognizerTest):
                     row_span=1,
                     column_span=2,
                     bounding_box=[
-                            _models.Point(1427.0, 1669.0),
-                            _models.Point(1527.0, 1669.0),
-                            _models.Point(1527.0, 1698.0),
-                            _models.Point(1427.0, 1698.0),
-                        ],
+                        _models.Point(1427.0, 1669.0),
+                        _models.Point(1527.0, 1669.0),
+                        _models.Point(1527.0, 1698.0),
+                        _models.Point(1427.0, 1698.0),
+                    ],
                     confidence=0.87,
                     is_header=False,
                     is_footer=True,
@@ -783,7 +789,7 @@ class TestToDict(FormRecognizerTest):
                                 _models.Point(1427.0, 1698.0),
                             ],
                         ),
-                    ]
+                    ],
                 )
             ],
             row_count=10,
@@ -874,7 +880,7 @@ class TestToDict(FormRecognizerTest):
             model_name="sample_model",
             properties=_models.CustomFormModelProperties(
                 is_composed_model=False,
-            )
+            ),
         )
         d = model.to_dict()
         final = {
@@ -885,7 +891,7 @@ class TestToDict(FormRecognizerTest):
             "model_name": "sample_model",
             "properties": {
                 "is_composed_model": False,
-            }
+            },
         }
         assert d == final
 
@@ -954,20 +960,20 @@ class TestToDict(FormRecognizerTest):
                     name="field",
                     accuracy=0.98,
                 )
-            }
+            },
         )
         d = model.to_dict()
         final = {
             "model_id": "1234",
             "form_type": "submodel",
             "accuracy": 0.98,
-            "fields": { 
+            "fields": {
                 "example": {
                     "label": "field_label",
                     "name": "field",
                     "accuracy": 0.98,
                 }
-            }
+            },
         }
         assert d == final
 
@@ -982,13 +988,13 @@ class TestToDict(FormRecognizerTest):
                     model_id="1234",
                     form_type="submodel",
                     accuracy=0.98,
-                    fields={ 
+                    fields={
                         "example": _models.CustomFormModelField(
                             label="field_label",
                             name="field",
                             accuracy=0.98,
                         )
-                    }
+                    },
                 )
             ],
             errors=[
@@ -1013,8 +1019,8 @@ class TestToDict(FormRecognizerTest):
             ],
             model_name="sample model",
             properties=_models.CustomFormModelProperties(
-                    is_composed_model=True,
-                )
+                is_composed_model=True,
+            ),
         )
         d = model.to_dict()
         final = {
@@ -1022,19 +1028,20 @@ class TestToDict(FormRecognizerTest):
             "status": "ready",
             "training_started_on": datetime(2021, 1, 10, 23, 55, 59, 342380),
             "training_completed_on": datetime(2021, 1, 10, 23, 55, 59, 342380),
-            "submodels": [{
-                "model_id": "1234",
-                "form_type": "submodel",
-                "accuracy": 0.98,
-                "fields": { 
-                    "example": 
-                    {
-                        "label": "field_label",
-                        "name": "field",
-                        "accuracy": 0.98,
-                    }
+            "submodels": [
+                {
+                    "model_id": "1234",
+                    "form_type": "submodel",
+                    "accuracy": 0.98,
+                    "fields": {
+                        "example": {
+                            "label": "field_label",
+                            "name": "field",
+                            "accuracy": 0.98,
+                        }
+                    },
                 }
-            }],
+            ],
             "errors": [
                 {
                     "code": 404,
@@ -1058,6 +1065,6 @@ class TestToDict(FormRecognizerTest):
             "model_name": "sample model",
             "properties": {
                 "is_composed_model": True,
-            }
+            },
         }
         assert d == final

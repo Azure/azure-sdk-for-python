@@ -24,11 +24,9 @@
 .. warning::
     This module is DEPRECATED. Use `azure.cosmos.exceptions` instead.
 """
+
 import warnings
 
-from .exceptions import * # pylint: disable=wildcard-import, unused-wildcard-import
+from .exceptions import *  # pylint: disable=wildcard-import, unused-wildcard-import
 
-warnings.warn(
-    "azure.cosmos.errors module is deprecated, use azure.cosmos.exceptions instead",
-    DeprecationWarning
-)
+warnings.warn("azure.cosmos.errors module is deprecated, use azure.cosmos.exceptions instead", DeprecationWarning)

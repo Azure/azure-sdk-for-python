@@ -128,9 +128,7 @@ async def run_sample():
                 db = client.get_database_client(DATABASE_ID)
 
             try:
-                container = await db.create_container(
-                    id=CONTAINER_ID, partition_key=PARTITION_KEY
-                )
+                container = await db.create_container(id=CONTAINER_ID, partition_key=PARTITION_KEY)
             except exceptions.CosmosResourceExistsError:
                 container = db.get_container_client(CONTAINER_ID)
 
@@ -207,14 +205,14 @@ async def run_sample():
             item_3 = await token_container.read_item(item=ITEM_3_ID, partition_key=USERNAME_2)
             permission_list = user_2.list_permissions()
             async for p in permission_list:
-                await user_2.delete_permission(p.get('id'))
+                await user_2.delete_permission(p.get("id"))
             user_2_permissions = [permission async for permission in user_2.list_permissions()]
             assert len(user_2_permissions) == 0
 
             permission_definition = {
                 "id": DOCUMENT_ALL_PERMISSION,
                 "permissionMode": documents.PermissionMode.All,
-                "resource": str(item_3.get('_self')) #this identifies the item with id "3"
+                "resource": str(item_3.get("_self")),  # this identifies the item with id "3"
             }
 
             permission = await create_permission_if_not_exists(user_2, permission_definition)
@@ -242,7 +240,7 @@ async def run_sample():
 
             # Cleaning up and closing current token client
             await token_client.delete_database(DATABASE_ID)
-            await token_client.close()  
+            await token_client.close()
 
         except exceptions.CosmosHttpResponseError as e:
             print("\nrun_sample has caught an error. {0}".format(e.message))

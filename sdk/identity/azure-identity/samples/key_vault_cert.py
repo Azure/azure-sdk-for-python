@@ -9,6 +9,7 @@ to authenticate you. The script creates a couple of self-signed certs in the giv
 Vault, retrieves their private keys, and constructs an instance of CertificateCredential
 with each.
 """
+
 import base64
 import os
 

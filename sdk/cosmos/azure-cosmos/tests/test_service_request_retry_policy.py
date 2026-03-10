@@ -29,10 +29,10 @@ class TestServiceRequestRetryPolicies(unittest.TestCase):
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
         cls.database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
 
-
     def test_write_failover_to_global_with_service_request_error(self):
-        container = self.database.create_container("service_request_mrr_test_" + str(uuid.uuid4()),
-                                                   PartitionKey(path="/id"))
+        container = self.database.create_container(
+            "service_request_mrr_test_" + str(uuid.uuid4()), PartitionKey(path="/id")
+        )
 
         # 1. Get write regions and ensure there are at least 2 for this test.
         endpoint_manager = self.client.client_connection._global_endpoint_manager
@@ -48,7 +48,7 @@ class TestServiceRequestRetryPolicies(unittest.TestCase):
         write_locations = list(write_locations_map.values())
 
         account_name = self.host.split(".")[0].split("//")[1]
-        region_to_fail_slug = write_endpoints[1].split('/')[2].replace(f"{account_name}-", "").split('.')[0]
+        region_to_fail_slug = write_endpoints[1].split("/")[2].replace(f"{account_name}-", "").split(".")[0]
 
         region_to_exclude = write_locations[0]  # Use the display name for ExcludedLocations
 
@@ -64,10 +64,10 @@ class TestServiceRequestRetryPolicies(unittest.TestCase):
             self.masterKey,
             connection_policy=policy,
             transport=fault_injection_transport,
-
         )
         container_with_faults = client_with_faults.get_database_client(self.database.id).get_container_client(
-            container.id)
+            container.id
+        )
 
         # 3. Configure fault injection to fail requests to the second write region with a ServiceRequestError.
         error_to_inject = ServiceRequestError(message="Simulated Service Request Error")
@@ -85,11 +85,10 @@ class TestServiceRequestRetryPolicies(unittest.TestCase):
 
         # 4. Execute a write operation. It should fail with ServiceRequestError as no regions are available.
         with self.assertRaises(ServiceRequestError) as context:
-            container_with_faults.create_item(body={'id': 'failover_test_id', 'pk': 'pk_value'})
+            container_with_faults.create_item(body={"id": "failover_test_id", "pk": "pk_value"})
 
         self.assertIn("Simulated Service Request Error", str(context.exception))
 
 
 if __name__ == "__main__":
     unittest.main()
-

@@ -26,13 +26,13 @@ class NetworkAdapterPosition(Model):
     """
 
     _validation = {
-        'network_group': {'readonly': True},
-        'port': {'readonly': True},
+        "network_group": {"readonly": True},
+        "port": {"readonly": True},
     }
 
     _attribute_map = {
-        'network_group': {'key': 'networkGroup', 'type': 'str'},
-        'port': {'key': 'port', 'type': 'int'},
+        "network_group": {"key": "networkGroup", "type": "str"},
+        "port": {"key": "port", "type": "int"},
     }
 
     def __init__(self, **kwargs):

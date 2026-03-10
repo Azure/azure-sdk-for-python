@@ -22,6 +22,7 @@
 """Internal class for health check retry policy implementation in the
 Azure Cosmos database service.
 """
+
 import os
 from azure.cosmos import _constants
 
@@ -31,21 +32,25 @@ class HealthCheckRetryPolicy(object):
 
     def __init__(self, connection_policy, *args):
         self.retry_count = 0
-        self.retry_after_in_milliseconds = int(os.getenv(
-            _constants._Constants.AZURE_COSMOS_HEALTH_CHECK_RETRY_AFTER_MS,
-            str(_constants._Constants.AZURE_COSMOS_HEALTH_CHECK_RETRY_AFTER_MS_DEFAULT)
-        ))
-        self.max_retry_attempt_count = int(os.getenv(
-            _constants._Constants.AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES,
-            str(_constants._Constants.AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES_DEFAULT)
-        ))
+        self.retry_after_in_milliseconds = int(
+            os.getenv(
+                _constants._Constants.AZURE_COSMOS_HEALTH_CHECK_RETRY_AFTER_MS,
+                str(_constants._Constants.AZURE_COSMOS_HEALTH_CHECK_RETRY_AFTER_MS_DEFAULT),
+            )
+        )
+        self.max_retry_attempt_count = int(
+            os.getenv(
+                _constants._Constants.AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES,
+                str(_constants._Constants.AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES_DEFAULT),
+            )
+        )
         self.connection_policy = connection_policy
         self.retry_factor = 2
         self.max_retry_after_in_milliseconds = 1000 * 60 * 3  # 3 minutes
         self.initial_connection_timeout = 5
         self.request = args[0] if args else None
 
-    def ShouldRetry(self, exception):# pylint: disable=unused-argument
+    def ShouldRetry(self, exception):  # pylint: disable=unused-argument
         """
         Determines if the given exception is transient and if a retry should be attempted.
 
@@ -55,17 +60,18 @@ class HealthCheckRetryPolicy(object):
         :rtype: bool
         """
         if self.retry_count > 0:
-            self.retry_after_in_milliseconds = min(self.retry_after_in_milliseconds +
-                                                   self.retry_factor ** self.retry_count,
-                                                   self.max_retry_after_in_milliseconds)
+            self.retry_after_in_milliseconds = min(
+                self.retry_after_in_milliseconds + self.retry_factor**self.retry_count,
+                self.max_retry_after_in_milliseconds,
+            )
         if self.request:
             # increase read timeout for each retry
             if self.request.read_timeout_override:
-                self.request.read_timeout_override = min(self.request.read_timeout_override ** 2,
-                                                         self.connection_policy.ReadTimeout)
+                self.request.read_timeout_override = min(
+                    self.request.read_timeout_override**2, self.connection_policy.ReadTimeout
+                )
             else:
                 self.request.read_timeout_override = self.initial_connection_timeout
-
 
         if self.retry_count < self.max_retry_attempt_count:
             self.retry_count += 1

@@ -65,11 +65,7 @@ class CommunicationIdentityClient(object):
         )
 
     @classmethod
-    def from_connection_string(
-        cls,
-        conn_str: str,
-        **kwargs: Any
-    ) -> "CommunicationIdentityClient":
+    def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "CommunicationIdentityClient":
         """Create CommunicationIdentityClient from a Connection String.
 
         :param str conn_str: A connection string to an Azure Communication Service resource.
@@ -96,7 +92,8 @@ class CommunicationIdentityClient(object):
     @distributed_trace
     def create_user_and_token(
         self,
-        scopes: List[Union[str, CommunicationTokenScope]], *,
+        scopes: List[Union[str, CommunicationTokenScope]],
+        *,
         token_expires_in: Optional[timedelta] = None,
         **kwargs: Any
     ) -> Tuple[CommunicationUserIdentifier, AccessToken]:
@@ -130,11 +127,7 @@ class CommunicationIdentityClient(object):
         return user_identifier, access_token
 
     @distributed_trace
-    def delete_user(
-        self,
-        user: CommunicationUserIdentifier,
-        **kwargs: Any
-    ) -> None:
+    def delete_user(self, user: CommunicationUserIdentifier, **kwargs: Any) -> None:
         """Triggers revocation event for user and deletes all its data.
 
         :param user: Azure Communication User to delete
@@ -148,7 +141,8 @@ class CommunicationIdentityClient(object):
     def get_token(
         self,
         user: CommunicationUserIdentifier,
-        scopes: List[Union[str, CommunicationTokenScope]], *,
+        scopes: List[Union[str, CommunicationTokenScope]],
+        *,
         token_expires_in: Optional[timedelta] = None,
         **kwargs: Any
     ) -> AccessToken:
@@ -176,11 +170,7 @@ class CommunicationIdentityClient(object):
         return AccessToken(access_token.token, access_token.expires_on)
 
     @distributed_trace
-    def revoke_tokens(
-        self,
-        user: CommunicationUserIdentifier,
-        **kwargs: Any
-    ) -> None:
+    def revoke_tokens(self, user: CommunicationUserIdentifier, **kwargs: Any) -> None:
         """Schedule revocation of all tokens of an identity.
 
         :param user: Azure Communication User.
@@ -194,11 +184,7 @@ class CommunicationIdentityClient(object):
 
     @distributed_trace
     def get_token_for_teams_user(
-        self,
-        aad_token: str,
-        client_id: str,
-        user_object_id: str,
-        **kwargs: Any
+        self, aad_token: str, client_id: str, user_object_id: str, **kwargs: Any
     ) -> AccessToken:
         """Exchanges an Azure AD access token of a Teams User for a new Communication Identity access token.
 

@@ -15,7 +15,6 @@ from azure.data.tables import EdmType, EntityProperty
 from azure.data.tables import TableServiceClient as SyncTableServiceClient
 from azure.data.tables.aio import TableServiceClient as AsyncTableServiceClient
 
-
 _LETTERS = string.ascii_letters
 
 _FULL_EDM_ENTITY = {

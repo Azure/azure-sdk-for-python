@@ -14,6 +14,7 @@ USAGE:
     2) EVENTGRID_TOPIC_ENDPOINT - The topic hostname. Typically it exists in the format
     "https://<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net/api/events".
 """
+
 # [START generate_sas]
 import os
 from azure.eventgrid import generate_sas

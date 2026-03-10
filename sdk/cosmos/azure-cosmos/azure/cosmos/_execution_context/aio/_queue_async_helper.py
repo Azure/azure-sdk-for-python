@@ -19,6 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+
 async def heap_push(heap, item, document_producer_comparator):
     """Push item onto heap, maintaining the heap invariant.
     :param list heap:

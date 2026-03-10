@@ -11,8 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class ContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Content type for upload
-    """
+    """Content type for upload"""
 
     #: Content Type 'application/pdf'.
     APPLICATION_PDF = "application/pdf"
@@ -25,9 +24,9 @@ class ContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Content Type 'application/json'.
     APPLICATION_JSON = "application/json"
 
+
 class FieldValueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Semantic data type of the field value.
-    """
+    """Semantic data type of the field value."""
 
     STRING = "string"
     DATE = "date"
@@ -38,12 +37,13 @@ class FieldValueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ARRAY = "array"
     OBJECT = "object"
 
+
 class Language(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Language code
-    """
+    """Language code"""
 
     EN = "en"
     ES = "es"
+
 
 class LengthUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The unit used by the width, height and boundingBox properties. For images, the unit is "pixel".
@@ -53,26 +53,26 @@ class LengthUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PIXEL = "pixel"
     INCH = "inch"
 
+
 class ModelStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Status of the model.
-    """
+    """Status of the model."""
 
     CREATING = "creating"
     READY = "ready"
     INVALID = "invalid"
 
+
 class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Status of the queued operation.
-    """
+    """Status of the queued operation."""
 
     NOT_STARTED = "notStarted"
     RUNNING = "running"
     SUCCEEDED = "succeeded"
     FAILED = "failed"
 
+
 class TrainStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Status of the training operation.
-    """
+    """Status of the training operation."""
 
     SUCCEEDED = "succeeded"
     PARTIALLY_SUCCEEDED = "partiallySucceeded"

@@ -66,6 +66,6 @@ __all__ = (
     "ConnectionRetryPolicy",
     "ThroughputProperties",
     "CosmosDict",
-    "CosmosList"
+    "CosmosList",
 )
 __version__ = VERSION

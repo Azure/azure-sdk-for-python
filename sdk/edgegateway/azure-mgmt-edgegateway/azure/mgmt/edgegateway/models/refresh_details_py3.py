@@ -33,13 +33,21 @@ class RefreshDetails(Model):
     """
 
     _attribute_map = {
-        'in_progress_refresh_job_id': {'key': 'inProgressRefreshJobId', 'type': 'str'},
-        'last_completed_refresh_job_time_in_utc': {'key': 'lastCompletedRefreshJobTimeInUTC', 'type': 'iso-8601'},
-        'error_manifest_file': {'key': 'errorManifestFile', 'type': 'str'},
-        'last_job': {'key': 'lastJob', 'type': 'str'},
+        "in_progress_refresh_job_id": {"key": "inProgressRefreshJobId", "type": "str"},
+        "last_completed_refresh_job_time_in_utc": {"key": "lastCompletedRefreshJobTimeInUTC", "type": "iso-8601"},
+        "error_manifest_file": {"key": "errorManifestFile", "type": "str"},
+        "last_job": {"key": "lastJob", "type": "str"},
     }
 
-    def __init__(self, *, in_progress_refresh_job_id: str=None, last_completed_refresh_job_time_in_utc=None, error_manifest_file: str=None, last_job: str=None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        in_progress_refresh_job_id: str = None,
+        last_completed_refresh_job_time_in_utc=None,
+        error_manifest_file: str = None,
+        last_job: str = None,
+        **kwargs
+    ) -> None:
         super(RefreshDetails, self).__init__(**kwargs)
         self.in_progress_refresh_job_id = in_progress_refresh_job_id
         self.last_completed_refresh_job_time_in_utc = last_completed_refresh_job_time_in_utc

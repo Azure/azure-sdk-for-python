@@ -73,12 +73,7 @@ class MCPToolsAgent(FoundryCBAgent):
                 if isinstance(t, dict):
                     name = t.get("name", "unknown_tool")
                     description = t.get("description")
-                    schema = (
-                        t.get("input_schema")
-                        or t.get("schema")
-                        or t.get("parameters")
-                        or {}
-                    )
+                    schema = t.get("input_schema") or t.get("schema") or t.get("parameters") or {}
                 else:  # Fallback to attribute access
                     name = getattr(t, "name", "unknown_tool")
                     description = getattr(t, "description", None)
@@ -146,20 +141,14 @@ class MCPToolsAgent(FoundryCBAgent):
                 )
                 yield ResponseOutputItemAddedEvent(output_index=1, item=assistant_item)
 
-                summary_text = "Discovered MCP tools: " + ", ".join(
-                    t.name for t in tools
-                )
+                summary_text = "Discovered MCP tools: " + ", ".join(t.name for t in tools)
                 assembled = ""
                 parts = summary_text.split(" ")
                 for i, token in enumerate(parts):
                     piece = token if i == len(parts) - 1 else token + " "  # keep spaces
                     assembled += piece
-                    yield ResponseTextDeltaEvent(
-                        output_index=1, content_index=0, delta=piece
-                    )
-                yield ResponseTextDoneEvent(
-                    output_index=1, content_index=0, text=assembled
-                )
+                    yield ResponseTextDeltaEvent(output_index=1, content_index=0, delta=piece)
+                yield ResponseTextDoneEvent(output_index=1, content_index=0, text=assembled)
 
                 final_response = OpenAIResponse(
                     metadata={},
@@ -173,9 +162,7 @@ class MCPToolsAgent(FoundryCBAgent):
                         ResponsesAssistantMessageItemResource(
                             id=assistant_item.id,
                             status="completed",
-                            content=[
-                                ItemContentOutputText(text=assembled, annotations=[])
-                            ],
+                            content=[ItemContentOutputText(text=assembled, annotations=[])],
                         ),
                     ],
                 )
@@ -207,9 +194,7 @@ class MCPToolsAgent(FoundryCBAgent):
                     "name": t.name,
                     "description": t.description,
                     # Provide only top-level schema keys if dict.
-                    "input_schema_keys": list(safe_schema.keys())
-                    if isinstance(safe_schema, dict)
-                    else safe_schema,
+                    "input_schema_keys": list(safe_schema.keys()) if isinstance(safe_schema, dict) else safe_schema,
                 }
             )
         summary = {

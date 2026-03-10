@@ -391,9 +391,7 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
             self._config.backoff_max,
             retried_times,
         )
-        if backoff <= self._config.backoff_max and (
-            timeout_time is None or time.time() + backoff <= timeout_time
-        ):
+        if backoff <= self._config.backoff_max and (timeout_time is None or time.time() + backoff <= timeout_time):
             time.sleep(backoff)
             _LOGGER.info(
                 "%r has an exception (%r). Retrying...",
@@ -419,9 +417,7 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
                 self._address, mgmt_auth=mgmt_auth, config=self._config
             )
             try:
-                conn = self._conn_manager.get_connection(
-                    endpoint=self._address.hostname, auth=mgmt_auth
-                )
+                conn = self._conn_manager.get_connection(endpoint=self._address.hostname, auth=mgmt_auth)
                 mgmt_client.open(connection=conn)
                 while not mgmt_client.client_ready():
                     time.sleep(0.05)

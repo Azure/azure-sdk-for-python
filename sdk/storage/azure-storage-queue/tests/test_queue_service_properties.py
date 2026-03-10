@@ -15,7 +15,6 @@ from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import QueuePreparer
 
-
 # ------------------------------------------------------------------------------
 
 

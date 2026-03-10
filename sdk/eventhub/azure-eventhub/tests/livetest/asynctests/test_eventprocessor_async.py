@@ -21,7 +21,6 @@ from azure.eventhub.aio._eventprocessor._ownership_manager import OwnershipManag
 from azure.eventhub.exceptions import OwnershipLostError, EventHubError
 from azure.eventhub._client_base import _Address
 
-
 TEST_NAMESPACE = "test_namespace"
 TEST_EVENTHUB = "test_eventhub"
 TEST_CONSUMER_GROUP = "test_consumer_group"

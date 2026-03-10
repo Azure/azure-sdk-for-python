@@ -16,7 +16,7 @@ except (SyntaxError, ImportError):
     from ._models import SqlQueryStringDataModel  # type: ignore
 
 __all__ = [
-    'SparkJob',
-    'SparkJobListViewResponse',
-    'SqlQueryStringDataModel',
+    "SparkJob",
+    "SparkJobListViewResponse",
+    "SqlQueryStringDataModel",
 ]

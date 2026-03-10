@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-""" Custom Sync Polling Methods for Azure Batch Operations."""
+"""Custom Sync Polling Methods for Azure Batch Operations."""
 
 import time
 from typing import Any, Callable, Optional

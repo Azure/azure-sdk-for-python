@@ -10,7 +10,7 @@
 FILE: get_templates_list.py
 
 DESCRIPTION:
-    This sample demonstrates fetching WhatsApp templates created in your WhatsApp Business account. The NotificationMessageClient is 
+    This sample demonstrates fetching WhatsApp templates created in your WhatsApp Business account. The NotificationMessageClient is
     authenticated using a connection string.
 USAGE:
     python get_templates_list.py

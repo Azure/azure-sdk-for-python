@@ -32,7 +32,7 @@ try:
     service_client = DigitalTwinsClient(url, credential)
 
     # List incoming relationships
-    digital_twin_id = "<DIGITAL_TWIN_ID>" # from the samples: BuildingTwin, FloorTwin, HVACTwin, RoomTwin
+    digital_twin_id = "<DIGITAL_TWIN_ID>"  # from the samples: BuildingTwin, FloorTwin, HVACTwin, RoomTwin
     incoming_relationships = service_client.list_incoming_relationships(digital_twin_id)
     for incoming_relationship in incoming_relationships:
         print(incoming_relationship)

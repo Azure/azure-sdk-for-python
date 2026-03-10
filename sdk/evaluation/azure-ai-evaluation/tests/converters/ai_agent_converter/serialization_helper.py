@@ -5,7 +5,6 @@ from datetime import datetime
 
 from azure.ai.evaluation._converters._models import ToolCall
 
-
 # Breaking changes introduced in newer version of the agents SDK
 # Models have been moved, so try a few different locations
 try:

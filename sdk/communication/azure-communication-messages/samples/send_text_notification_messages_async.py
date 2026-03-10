@@ -10,7 +10,7 @@
 FILE: send_text_notification_messages_async.py
 
 DESCRIPTION:
-    This sample demonstrates sending an Whatsapp message from business phone number to a single user. The NotificationMessageClient is 
+    This sample demonstrates sending an Whatsapp message from business phone number to a single user. The NotificationMessageClient is
     authenticated using a connection string.
 
 USAGE:

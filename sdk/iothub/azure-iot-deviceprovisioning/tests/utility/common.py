@@ -10,15 +10,12 @@ KEY_ENDING = "-key.pem"
 
 def create_random_name(prefix="dps_sdk_test", length=24):
     if len(prefix) > length:
-        raise ValueError(
-            "The length of the prefix must not be longer than random name length"
-        )
+        raise ValueError("The length of the prefix must not be longer than random name length")
 
     padding_size = length - len(prefix)
     if padding_size < 4:
         raise ValueError(
-            "The randomized part of the name is shorter than 4, which may not be able to offer enough "
-            "randomness"
+            "The randomized part of the name is shorter than 4, which may not be able to offer enough " "randomness"
         )
 
     random_bytes = urandom(int(ceil(float(padding_size) / 8) * 5))
@@ -49,16 +46,8 @@ def generate_attestation(
             primary_cert = {"certificate": primary_cert}
         if secondary_cert:
             secondary_cert = {"certificate": secondary_cert}
-        certs = (
-            {"primary": primary_cert, "secondary": secondary_cert}
-            if (primary_cert or secondary_cert)
-            else None
-        )
-        attestation["x509"] = (
-            {"signingCertificates": certs}
-            if signing_certs
-            else {"clientCertificates": certs}
-        )
+        certs = {"primary": primary_cert, "secondary": secondary_cert} if (primary_cert or secondary_cert) else None
+        attestation["x509"] = {"signingCertificates": certs} if signing_certs else {"clientCertificates": certs}
     return attestation
 
 
@@ -91,9 +80,7 @@ def generate_enrollment(
         secondary_cert=secondary_cert,
     )
     custom_allocation = (
-        {"webhookUrl": webhook_url, "apiVersion": api_version}
-        if allocation_policy == "custom"
-        else None
+        {"webhookUrl": webhook_url, "apiVersion": api_version} if allocation_policy == "custom" else None
     )
     enrollment = {
         "registrationId": id or create_random_name(),
@@ -140,9 +127,7 @@ def generate_enrollment_group(
         signing_certs=True,
     )
     custom_allocation = (
-        {"webhookUrl": webhook_url, "apiVersion": api_version}
-        if allocation_policy == "custom"
-        else None
+        {"webhookUrl": webhook_url, "apiVersion": api_version} if allocation_policy == "custom" else None
     )
 
     return {
@@ -222,9 +207,7 @@ def create_self_signed_certificate(
         .public_key(key.public_key())
         .serial_number(serial)
         .not_valid_before(datetime.datetime.utcnow())
-        .not_valid_after(
-            datetime.datetime.utcnow() + datetime.timedelta(days=valid_days)
-        )
+        .not_valid_after(datetime.datetime.utcnow() + datetime.timedelta(days=valid_days))
     )
 
     # sign

@@ -39,8 +39,7 @@ class DevicesOperations(object):
 
         self.config = config
 
-    def list_by_subscription(
-            self, expand=None, custom_headers=None, raw=False, **operation_config):
+    def list_by_subscription(self, expand=None, custom_headers=None, raw=False, **operation_config):
         """Gets all the data box edge/gateway devices in a subscription.
 
         :param expand: Specify $expand=details to populate additional fields
@@ -57,21 +56,24 @@ class DevicesOperations(object):
          ~azure.mgmt.edgegateway.models.DataBoxEdgeDevicePaged[~azure.mgmt.edgegateway.models.DataBoxEdgeDevice]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_subscription.metadata['url']
+                url = self.list_by_subscription.metadata["url"]
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    "subscriptionId": self._serialize.url(
+                        "self.config.subscription_id", self.config.subscription_id, "str"
+                    )
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
                 if expand is not None:
-                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+                    query_parameters["$expand"] = self._serialize.query("expand", expand, "str")
 
             else:
                 url = next_link
@@ -79,13 +81,15 @@ class DevicesOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
+            header_parameters["Accept"] = "application/json"
             if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+                header_parameters["x-ms-client-request-id"] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
             if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                header_parameters["accept-language"] = self._serialize.header(
+                    "self.config.accept_language", self.config.accept_language, "str"
+                )
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
@@ -93,7 +97,7 @@ class DevicesOperations(object):
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
+                exp.request_id = response.headers.get("x-ms-request-id")
                 raise exp
 
             return response
@@ -103,14 +107,20 @@ class DevicesOperations(object):
 
         if raw:
             header_dict = {}
-            client_raw_response = models.DataBoxEdgeDevicePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.DataBoxEdgeDevicePaged(
+                internal_paging, self._deserialize.dependencies, header_dict
+            )
             return client_raw_response
 
         return deserialized
-    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices'}
+
+    list_by_subscription.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices"
+    }
 
     def list_by_resource_group(
-            self, resource_group_name, expand=None, custom_headers=None, raw=False, **operation_config):
+        self, resource_group_name, expand=None, custom_headers=None, raw=False, **operation_config
+    ):
         """Gets all the data box edge/gateway devices in a resource group.
 
         :param resource_group_name: The resource group name.
@@ -129,22 +139,25 @@ class DevicesOperations(object):
          ~azure.mgmt.edgegateway.models.DataBoxEdgeDevicePaged[~azure.mgmt.edgegateway.models.DataBoxEdgeDevice]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_resource_group.metadata['url']
+                url = self.list_by_resource_group.metadata["url"]
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
+                    "subscriptionId": self._serialize.url(
+                        "self.config.subscription_id", self.config.subscription_id, "str"
+                    ),
+                    "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, "str"),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
                 if expand is not None:
-                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+                    query_parameters["$expand"] = self._serialize.query("expand", expand, "str")
 
             else:
                 url = next_link
@@ -152,13 +165,15 @@ class DevicesOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
+            header_parameters["Accept"] = "application/json"
             if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+                header_parameters["x-ms-client-request-id"] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
             if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                header_parameters["accept-language"] = self._serialize.header(
+                    "self.config.accept_language", self.config.accept_language, "str"
+                )
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
@@ -166,7 +181,7 @@ class DevicesOperations(object):
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
+                exp.request_id = response.headers.get("x-ms-request-id")
                 raise exp
 
             return response
@@ -176,14 +191,18 @@ class DevicesOperations(object):
 
         if raw:
             header_dict = {}
-            client_raw_response = models.DataBoxEdgeDevicePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.DataBoxEdgeDevicePaged(
+                internal_paging, self._deserialize.dependencies, header_dict
+            )
             return client_raw_response
 
         return deserialized
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices'}
 
-    def get(
-            self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+    list_by_resource_group.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices"
+    }
+
+    def get(self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """Gets the properties of the data box edge/gateway device.
 
         :param device_name: The device name.
@@ -201,27 +220,29 @@ class DevicesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.get.metadata["url"]
         path_format_arguments = {
-            'deviceName': self._serialize.url("device_name", device_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
+            "deviceName": self._serialize.url("device_name", device_name, "str"),
+            "subscriptionId": self._serialize.url("self.config.subscription_id", self.config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, "str"),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters["x-ms-client-request-id"] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            header_parameters["accept-language"] = self._serialize.header(
+                "self.config.accept_language", self.config.accept_language, "str"
+            )
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -229,50 +250,55 @@ class DevicesOperations(object):
 
         if response.status_code not in [200]:
             exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
+            exp.request_id = response.headers.get("x-ms-request-id")
             raise exp
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('DataBoxEdgeDevice', response)
+            deserialized = self._deserialize("DataBoxEdgeDevice", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}'}
 
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}"
+    }
 
     def _create_or_update_initial(
-            self, device_name, data_box_edge_device, resource_group_name, custom_headers=None, raw=False, **operation_config):
+        self, device_name, data_box_edge_device, resource_group_name, custom_headers=None, raw=False, **operation_config
+    ):
         # Construct URL
-        url = self.create_or_update.metadata['url']
+        url = self.create_or_update.metadata["url"]
         path_format_arguments = {
-            'deviceName': self._serialize.url("device_name", device_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
+            "deviceName": self._serialize.url("device_name", device_name, "str"),
+            "subscriptionId": self._serialize.url("self.config.subscription_id", self.config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, "str"),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Accept"] = "application/json"
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters["x-ms-client-request-id"] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            header_parameters["accept-language"] = self._serialize.header(
+                "self.config.accept_language", self.config.accept_language, "str"
+            )
 
         # Construct body
-        body_content = self._serialize.body(data_box_edge_device, 'DataBoxEdgeDevice')
+        body_content = self._serialize.body(data_box_edge_device, "DataBoxEdgeDevice")
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -280,13 +306,13 @@ class DevicesOperations(object):
 
         if response.status_code not in [200]:
             exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
+            exp.request_id = response.headers.get("x-ms-request-id")
             raise exp
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('DataBoxEdgeDevice', response)
+            deserialized = self._deserialize("DataBoxEdgeDevice", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -295,7 +321,15 @@ class DevicesOperations(object):
         return deserialized
 
     def create_or_update(
-            self, device_name, data_box_edge_device, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        self,
+        device_name,
+        data_box_edge_device,
+        resource_group_name,
+        custom_headers=None,
+        raw=False,
+        polling=True,
+        **operation_config
+    ):
         """Creates or updates a Data Box Edge/Gateway resource.
 
         :param device_name: The device name.
@@ -328,7 +362,7 @@ class DevicesOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('DataBoxEdgeDevice', response)
+            deserialized = self._deserialize("DataBoxEdgeDevice", response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -336,39 +370,43 @@ class DevicesOperations(object):
 
             return deserialized
 
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
+        lro_delay = operation_config.get("long_running_operation_timeout", self.config.long_running_operation_timeout)
+        if polling is True:
+            polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False:
+            polling_method = NoPolling()
+        else:
+            polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}'}
 
+    create_or_update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}"
+    }
 
-    def _delete_initial(
-            self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+    def _delete_initial(self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.delete.metadata['url']
+        url = self.delete.metadata["url"]
         path_format_arguments = {
-            'deviceName': self._serialize.url("device_name", device_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
+            "deviceName": self._serialize.url("device_name", device_name, "str"),
+            "subscriptionId": self._serialize.url("self.config.subscription_id", self.config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, "str"),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
 
         # Construct headers
         header_parameters = {}
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters["x-ms-client-request-id"] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            header_parameters["accept-language"] = self._serialize.header(
+                "self.config.accept_language", self.config.accept_language, "str"
+            )
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -376,7 +414,7 @@ class DevicesOperations(object):
 
         if response.status_code not in [200, 202, 204]:
             exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
+            exp.request_id = response.headers.get("x-ms-request-id")
             raise exp
 
         if raw:
@@ -384,7 +422,8 @@ class DevicesOperations(object):
             return client_raw_response
 
     def delete(
-            self, device_name, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        self, device_name, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config
+    ):
         """Deletes the data box edge/gateway device.
 
         :param device_name: The device name.
@@ -415,17 +454,20 @@ class DevicesOperations(object):
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
 
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
+        lro_delay = operation_config.get("long_running_operation_timeout", self.config.long_running_operation_timeout)
+        if polling is True:
+            polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False:
+            polling_method = NoPolling()
+        else:
+            polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}'}
 
-    def update(
-            self, device_name, resource_group_name, tags=None, custom_headers=None, raw=False, **operation_config):
+    delete.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}"
+    }
+
+    def update(self, device_name, resource_group_name, tags=None, custom_headers=None, raw=False, **operation_config):
         """Modifies a Data Box Edge/Gateway resource.
 
         :param device_name: The device name.
@@ -447,31 +489,33 @@ class DevicesOperations(object):
         parameters = models.DataBoxEdgeDevicePatch(tags=tags)
 
         # Construct URL
-        url = self.update.metadata['url']
+        url = self.update.metadata["url"]
         path_format_arguments = {
-            'deviceName': self._serialize.url("device_name", device_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
+            "deviceName": self._serialize.url("device_name", device_name, "str"),
+            "subscriptionId": self._serialize.url("self.config.subscription_id", self.config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, "str"),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Accept"] = "application/json"
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters["x-ms-client-request-id"] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            header_parameters["accept-language"] = self._serialize.header(
+                "self.config.accept_language", self.config.accept_language, "str"
+            )
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'DataBoxEdgeDevicePatch')
+        body_content = self._serialize.body(parameters, "DataBoxEdgeDevicePatch")
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
@@ -479,45 +523,50 @@ class DevicesOperations(object):
 
         if response.status_code not in [200]:
             exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
+            exp.request_id = response.headers.get("x-ms-request-id")
             raise exp
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('DataBoxEdgeDevice', response)
+            deserialized = self._deserialize("DataBoxEdgeDevice", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}'}
 
+    update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}"
+    }
 
     def _download_updates_initial(
-            self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+        self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config
+    ):
         # Construct URL
-        url = self.download_updates.metadata['url']
+        url = self.download_updates.metadata["url"]
         path_format_arguments = {
-            'deviceName': self._serialize.url("device_name", device_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
+            "deviceName": self._serialize.url("device_name", device_name, "str"),
+            "subscriptionId": self._serialize.url("self.config.subscription_id", self.config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, "str"),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
 
         # Construct headers
         header_parameters = {}
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters["x-ms-client-request-id"] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            header_parameters["accept-language"] = self._serialize.header(
+                "self.config.accept_language", self.config.accept_language, "str"
+            )
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
@@ -525,7 +574,7 @@ class DevicesOperations(object):
 
         if response.status_code not in [200, 202]:
             exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
+            exp.request_id = response.headers.get("x-ms-request-id")
             raise exp
 
         if raw:
@@ -533,7 +582,8 @@ class DevicesOperations(object):
             return client_raw_response
 
     def download_updates(
-            self, device_name, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        self, device_name, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config
+    ):
         """Downloads the updates on a data box edge/gateway device.
 
         :param device_name: The device name.
@@ -564,17 +614,22 @@ class DevicesOperations(object):
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
 
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
+        lro_delay = operation_config.get("long_running_operation_timeout", self.config.long_running_operation_timeout)
+        if polling is True:
+            polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False:
+            polling_method = NoPolling()
+        else:
+            polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    download_updates.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}/downloadUpdates'}
+
+    download_updates.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}/downloadUpdates"
+    }
 
     def get_extended_information(
-            self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+        self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config
+    ):
         """Gets additional information for the specified data box edge/gateway
         device.
 
@@ -594,27 +649,29 @@ class DevicesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_extended_information.metadata['url']
+        url = self.get_extended_information.metadata["url"]
         path_format_arguments = {
-            'deviceName': self._serialize.url("device_name", device_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
+            "deviceName": self._serialize.url("device_name", device_name, "str"),
+            "subscriptionId": self._serialize.url("self.config.subscription_id", self.config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, "str"),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters["x-ms-client-request-id"] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            header_parameters["accept-language"] = self._serialize.header(
+                "self.config.accept_language", self.config.accept_language, "str"
+            )
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
@@ -622,45 +679,50 @@ class DevicesOperations(object):
 
         if response.status_code not in [200]:
             exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
+            exp.request_id = response.headers.get("x-ms-request-id")
             raise exp
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('DataBoxEdgeDeviceExtendedInfo', response)
+            deserialized = self._deserialize("DataBoxEdgeDeviceExtendedInfo", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_extended_information.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}/getExtendedInformation'}
 
+    get_extended_information.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}/getExtendedInformation"
+    }
 
     def _install_updates_initial(
-            self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+        self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config
+    ):
         # Construct URL
-        url = self.install_updates.metadata['url']
+        url = self.install_updates.metadata["url"]
         path_format_arguments = {
-            'deviceName': self._serialize.url("device_name", device_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
+            "deviceName": self._serialize.url("device_name", device_name, "str"),
+            "subscriptionId": self._serialize.url("self.config.subscription_id", self.config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, "str"),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
 
         # Construct headers
         header_parameters = {}
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters["x-ms-client-request-id"] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            header_parameters["accept-language"] = self._serialize.header(
+                "self.config.accept_language", self.config.accept_language, "str"
+            )
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
@@ -668,7 +730,7 @@ class DevicesOperations(object):
 
         if response.status_code not in [200, 202]:
             exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
+            exp.request_id = response.headers.get("x-ms-request-id")
             raise exp
 
         if raw:
@@ -676,7 +738,8 @@ class DevicesOperations(object):
             return client_raw_response
 
     def install_updates(
-            self, device_name, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        self, device_name, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config
+    ):
         """Installs the updates on the data box edge/gateway device.
 
         :param device_name: The device name.
@@ -707,17 +770,22 @@ class DevicesOperations(object):
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
 
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
+        lro_delay = operation_config.get("long_running_operation_timeout", self.config.long_running_operation_timeout)
+        if polling is True:
+            polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False:
+            polling_method = NoPolling()
+        else:
+            polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    install_updates.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}/installUpdates'}
+
+    install_updates.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}/installUpdates"
+    }
 
     def get_network_settings(
-            self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+        self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config
+    ):
         """Gets the network settings of the specified data box edge/gateway
         device.
 
@@ -736,27 +804,29 @@ class DevicesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_network_settings.metadata['url']
+        url = self.get_network_settings.metadata["url"]
         path_format_arguments = {
-            'deviceName': self._serialize.url("device_name", device_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
+            "deviceName": self._serialize.url("device_name", device_name, "str"),
+            "subscriptionId": self._serialize.url("self.config.subscription_id", self.config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, "str"),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters["x-ms-client-request-id"] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            header_parameters["accept-language"] = self._serialize.header(
+                "self.config.accept_language", self.config.accept_language, "str"
+            )
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -764,45 +834,50 @@ class DevicesOperations(object):
 
         if response.status_code not in [200]:
             exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
+            exp.request_id = response.headers.get("x-ms-request-id")
             raise exp
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('NetworkSettings', response)
+            deserialized = self._deserialize("NetworkSettings", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_network_settings.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}/networkSettings/default'}
 
+    get_network_settings.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}/networkSettings/default"
+    }
 
     def _scan_for_updates_initial(
-            self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+        self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config
+    ):
         # Construct URL
-        url = self.scan_for_updates.metadata['url']
+        url = self.scan_for_updates.metadata["url"]
         path_format_arguments = {
-            'deviceName': self._serialize.url("device_name", device_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
+            "deviceName": self._serialize.url("device_name", device_name, "str"),
+            "subscriptionId": self._serialize.url("self.config.subscription_id", self.config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, "str"),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
 
         # Construct headers
         header_parameters = {}
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters["x-ms-client-request-id"] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            header_parameters["accept-language"] = self._serialize.header(
+                "self.config.accept_language", self.config.accept_language, "str"
+            )
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
@@ -810,7 +885,7 @@ class DevicesOperations(object):
 
         if response.status_code not in [200, 202]:
             exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
+            exp.request_id = response.headers.get("x-ms-request-id")
             raise exp
 
         if raw:
@@ -818,7 +893,8 @@ class DevicesOperations(object):
             return client_raw_response
 
     def scan_for_updates(
-            self, device_name, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        self, device_name, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config
+    ):
         """Scans for updates on a data box edge/gateway device.
 
         :param device_name: The device name.
@@ -849,45 +925,57 @@ class DevicesOperations(object):
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
 
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
+        lro_delay = operation_config.get("long_running_operation_timeout", self.config.long_running_operation_timeout)
+        if polling is True:
+            polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False:
+            polling_method = NoPolling()
+        else:
+            polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    scan_for_updates.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}/scanForUpdates'}
 
+    scan_for_updates.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}/scanForUpdates"
+    }
 
     def _create_or_update_security_settings_initial(
-            self, device_name, resource_group_name, device_admin_password, custom_headers=None, raw=False, **operation_config):
+        self,
+        device_name,
+        resource_group_name,
+        device_admin_password,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         security_settings = models.SecuritySettings(device_admin_password=device_admin_password)
 
         # Construct URL
-        url = self.create_or_update_security_settings.metadata['url']
+        url = self.create_or_update_security_settings.metadata["url"]
         path_format_arguments = {
-            'deviceName': self._serialize.url("device_name", device_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
+            "deviceName": self._serialize.url("device_name", device_name, "str"),
+            "subscriptionId": self._serialize.url("self.config.subscription_id", self.config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, "str"),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters["x-ms-client-request-id"] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            header_parameters["accept-language"] = self._serialize.header(
+                "self.config.accept_language", self.config.accept_language, "str"
+            )
 
         # Construct body
-        body_content = self._serialize.body(security_settings, 'SecuritySettings')
+        body_content = self._serialize.body(security_settings, "SecuritySettings")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -895,7 +983,7 @@ class DevicesOperations(object):
 
         if response.status_code not in [202, 204]:
             exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
+            exp.request_id = response.headers.get("x-ms-request-id")
             raise exp
 
         if raw:
@@ -903,7 +991,15 @@ class DevicesOperations(object):
             return client_raw_response
 
     def create_or_update_security_settings(
-            self, device_name, resource_group_name, device_admin_password, custom_headers=None, raw=False, polling=True, **operation_config):
+        self,
+        device_name,
+        resource_group_name,
+        device_admin_password,
+        custom_headers=None,
+        raw=False,
+        polling=True,
+        **operation_config
+    ):
         """Updates the security settings on a data box edge/gateway device.
 
         :param device_name: The device name.
@@ -942,17 +1038,20 @@ class DevicesOperations(object):
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
 
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
+        lro_delay = operation_config.get("long_running_operation_timeout", self.config.long_running_operation_timeout)
+        if polling is True:
+            polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False:
+            polling_method = NoPolling()
+        else:
+            polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update_security_settings.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}/securitySettings/default/update'}
 
-    def get_update_summary(
-            self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+    create_or_update_security_settings.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}/securitySettings/default/update"
+    }
+
+    def get_update_summary(self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """Gets information about the availability of updates based on the last
         scan of the device. It also gets information about any ongoing download
         or install jobs on the device.
@@ -972,27 +1071,29 @@ class DevicesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_update_summary.metadata['url']
+        url = self.get_update_summary.metadata["url"]
         path_format_arguments = {
-            'deviceName': self._serialize.url("device_name", device_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
+            "deviceName": self._serialize.url("device_name", device_name, "str"),
+            "subscriptionId": self._serialize.url("self.config.subscription_id", self.config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, "str"),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters["x-ms-client-request-id"] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            header_parameters["accept-language"] = self._serialize.header(
+                "self.config.accept_language", self.config.accept_language, "str"
+            )
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -1000,23 +1101,34 @@ class DevicesOperations(object):
 
         if response.status_code not in [200]:
             exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
+            exp.request_id = response.headers.get("x-ms-request-id")
             raise exp
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('UpdateSummary', response)
+            deserialized = self._deserialize("UpdateSummary", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_update_summary.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}/updateSummary/default'}
+
+    get_update_summary.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}/updateSummary/default"
+    }
 
     def upload_certificate(
-            self, device_name, resource_group_name, certificate, authentication_type=None, custom_headers=None, raw=False, **operation_config):
+        self,
+        device_name,
+        resource_group_name,
+        certificate,
+        authentication_type=None,
+        custom_headers=None,
+        raw=False,
+        **operation_config
+    ):
         """Uploads registration certificate for the device.
 
         :param device_name: The device name.
@@ -1042,31 +1154,33 @@ class DevicesOperations(object):
         parameters = models.UploadCertificateRequest(authentication_type=authentication_type, certificate=certificate)
 
         # Construct URL
-        url = self.upload_certificate.metadata['url']
+        url = self.upload_certificate.metadata["url"]
         path_format_arguments = {
-            'deviceName': self._serialize.url("device_name", device_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
+            "deviceName": self._serialize.url("device_name", device_name, "str"),
+            "subscriptionId": self._serialize.url("self.config.subscription_id", self.config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, "str"),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Accept"] = "application/json"
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters["x-ms-client-request-id"] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            header_parameters["accept-language"] = self._serialize.header(
+                "self.config.accept_language", self.config.accept_language, "str"
+            )
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'UploadCertificateRequest')
+        body_content = self._serialize.body(parameters, "UploadCertificateRequest")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -1074,17 +1188,20 @@ class DevicesOperations(object):
 
         if response.status_code not in [200]:
             exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
+            exp.request_id = response.headers.get("x-ms-request-id")
             raise exp
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('UploadCertificateResponse', response)
+            deserialized = self._deserialize("UploadCertificateResponse", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    upload_certificate.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}/uploadCertificate'}
+
+    upload_certificate.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/{deviceName}/uploadCertificate"
+    }

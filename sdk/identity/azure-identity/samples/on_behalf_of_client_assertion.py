@@ -13,10 +13,10 @@ USAGE:
 
 **Note** - This sample requires the `azure-keyvault-secrets` package.
 """
+
 # [START obo_client_assertion]
 from azure.identity import OnBehalfOfCredential, ManagedIdentityCredential
 from azure.keyvault.secrets import SecretClient
-
 
 # Replace the following variables with your own values.
 tenant_id = "<tenant_id>"

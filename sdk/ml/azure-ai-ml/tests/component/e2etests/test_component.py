@@ -508,12 +508,10 @@ class TestComponent(AzureRecordedTestCase):
 
         # create again with different code and check error msg
         code_path = tmp_path / "code.yml"
-        code_path.write_text(
-            f"""
+        code_path.write_text(f"""
         name: {component_name}
         version: 1
-        path: ."""
-        )
+        path: .""")
         new_code = load_code(source=code_path)
         code_resource = client._code.create_or_update(new_code)
         params_override = [{"name": component_name, "code": ARM_ID_PREFIX + code_resource.id}]

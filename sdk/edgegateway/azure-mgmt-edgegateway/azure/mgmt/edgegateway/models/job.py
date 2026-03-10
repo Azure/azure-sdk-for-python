@@ -66,40 +66,40 @@ class Job(Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'status': {'readonly': True},
-        'start_time': {'readonly': True},
-        'end_time': {'readonly': True},
-        'percent_complete': {'readonly': True},
-        'error': {'readonly': True},
-        'job_type': {'readonly': True},
-        'current_stage': {'readonly': True},
-        'download_progress': {'readonly': True},
-        'install_progress': {'readonly': True},
-        'total_refresh_errors': {'readonly': True},
-        'error_manifest_file': {'readonly': True},
-        'share_id': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "status": {"readonly": True},
+        "start_time": {"readonly": True},
+        "end_time": {"readonly": True},
+        "percent_complete": {"readonly": True},
+        "error": {"readonly": True},
+        "job_type": {"readonly": True},
+        "current_stage": {"readonly": True},
+        "download_progress": {"readonly": True},
+        "install_progress": {"readonly": True},
+        "total_refresh_errors": {"readonly": True},
+        "error_manifest_file": {"readonly": True},
+        "share_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'percent_complete': {'key': 'percentComplete', 'type': 'int'},
-        'error': {'key': 'error', 'type': 'JobErrorDetails'},
-        'job_type': {'key': 'properties.jobType', 'type': 'str'},
-        'current_stage': {'key': 'properties.currentStage', 'type': 'str'},
-        'download_progress': {'key': 'properties.downloadProgress', 'type': 'UpdateDownloadProgress'},
-        'install_progress': {'key': 'properties.installProgress', 'type': 'UpdateInstallProgress'},
-        'total_refresh_errors': {'key': 'properties.totalRefreshErrors', 'type': 'int'},
-        'error_manifest_file': {'key': 'properties.errorManifestFile', 'type': 'str'},
-        'share_id': {'key': 'properties.shareId', 'type': 'str'},
-        'folder': {'key': 'properties.folder', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "percent_complete": {"key": "percentComplete", "type": "int"},
+        "error": {"key": "error", "type": "JobErrorDetails"},
+        "job_type": {"key": "properties.jobType", "type": "str"},
+        "current_stage": {"key": "properties.currentStage", "type": "str"},
+        "download_progress": {"key": "properties.downloadProgress", "type": "UpdateDownloadProgress"},
+        "install_progress": {"key": "properties.installProgress", "type": "UpdateInstallProgress"},
+        "total_refresh_errors": {"key": "properties.totalRefreshErrors", "type": "int"},
+        "error_manifest_file": {"key": "properties.errorManifestFile", "type": "str"},
+        "share_id": {"key": "properties.shareId", "type": "str"},
+        "folder": {"key": "properties.folder", "type": "str"},
     }
 
     def __init__(self, **kwargs):
@@ -119,4 +119,4 @@ class Job(Model):
         self.total_refresh_errors = None
         self.error_manifest_file = None
         self.share_id = None
-        self.folder = kwargs.get('folder', None)
+        self.folder = kwargs.get("folder", None)

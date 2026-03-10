@@ -7,6 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 from datetime import timedelta, datetime
 from json import loads
 from typing import Any, List, MutableMapping, Sequence, Optional, Union, Tuple, TYPE_CHECKING

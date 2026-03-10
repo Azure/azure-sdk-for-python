@@ -10,7 +10,6 @@ from typing_extensions import TypedDict
 
 from ...._bicep.expressions import Parameter, ResourceSymbol
 
-
 VERSION = "2024-05-01"
 
 

@@ -78,7 +78,6 @@ from ._utils import (
 )
 from ._instrument_paged_wrappers import _AsyncInstrumentedItemPaged, _InstrumentedItemPaged
 
-
 _Unset: Any = object()
 
 logger = logging.getLogger(__name__)

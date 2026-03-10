@@ -11,7 +11,13 @@ from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TypeVa
 import warnings
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -19,10 +25,26 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ..._vendor import _convert_request
-from ...operations._operations import build_accounts_get_access_keys_request, build_accounts_get_account_properties_request, build_accounts_regenerate_access_key_request, build_accounts_update_account_properties_request, build_collections_create_or_update_collection_request, build_collections_delete_collection_request, build_collections_get_collection_path_request, build_collections_get_collection_request, build_collections_list_child_collection_names_request, build_collections_list_collections_request, build_resource_set_rules_create_or_update_resource_set_rule_request, build_resource_set_rules_delete_resource_set_rule_request, build_resource_set_rules_get_resource_set_rule_request, build_resource_set_rules_list_resource_set_rules_request
+from ...operations._operations import (
+    build_accounts_get_access_keys_request,
+    build_accounts_get_account_properties_request,
+    build_accounts_regenerate_access_key_request,
+    build_accounts_update_account_properties_request,
+    build_collections_create_or_update_collection_request,
+    build_collections_delete_collection_request,
+    build_collections_get_collection_path_request,
+    build_collections_get_collection_request,
+    build_collections_list_child_collection_names_request,
+    build_collections_list_collections_request,
+    build_resource_set_rules_create_or_update_resource_set_rule_request,
+    build_resource_set_rules_delete_resource_set_rule_request,
+    build_resource_set_rules_get_resource_set_rule_request,
+    build_resource_set_rules_list_resource_set_rules_request,
+)
 
-T = TypeVar('T')
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class AccountsOperations:
     """AccountsOperations async operations.
@@ -43,10 +65,7 @@ class AccountsOperations:
         self._config = config
 
     @distributed_trace_async
-    async def get_account_properties(
-        self,
-        **kwargs: Any
-    ) -> Any:
+    async def get_account_properties(self, **kwargs: Any) -> Any:
         """Get an account.
 
         :return: JSON object
@@ -124,22 +143,21 @@ class AccountsOperations:
                     "type": "str"  # Optional. Gets or sets the type.
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_accounts_get_account_properties_request(
-            template_url=self.get_account_properties.metadata['url'],
+            template_url=self.get_account_properties.metadata["url"],
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -156,15 +174,10 @@ class AccountsOperations:
 
         return deserialized
 
-    get_account_properties.metadata = {'url': '/'}  # type: ignore
-
+    get_account_properties.metadata = {"url": "/"}  # type: ignore
 
     @distributed_trace_async
-    async def update_account_properties(
-        self,
-        account_update_parameters: Any,
-        **kwargs: Any
-    ) -> Any:
+    async def update_account_properties(self, account_update_parameters: Any, **kwargs: Any) -> Any:
         """Updates an account.
 
         :param account_update_parameters:
@@ -249,27 +262,27 @@ class AccountsOperations:
                     "type": "str"  # Optional. Gets or sets the type.
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         json = account_update_parameters
 
         request = build_accounts_update_account_properties_request(
             content_type=content_type,
             json=json,
-            template_url=self.update_account_properties.metadata['url'],
+            template_url=self.update_account_properties.metadata["url"],
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -286,14 +299,10 @@ class AccountsOperations:
 
         return deserialized
 
-    update_account_properties.metadata = {'url': '/'}  # type: ignore
-
+    update_account_properties.metadata = {"url": "/"}  # type: ignore
 
     @distributed_trace_async
-    async def get_access_keys(
-        self,
-        **kwargs: Any
-    ) -> Any:
+    async def get_access_keys(self, **kwargs: Any) -> Any:
         """List the authorization keys associated with this account.
 
         :return: JSON object
@@ -309,22 +318,21 @@ class AccountsOperations:
                     "atlasKafkaSecondaryEndpoint": "str"  # Optional. Gets or sets the secondary connection string.
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_accounts_get_access_keys_request(
-            template_url=self.get_access_keys.metadata['url'],
+            template_url=self.get_access_keys.metadata["url"],
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -341,15 +349,10 @@ class AccountsOperations:
 
         return deserialized
 
-    get_access_keys.metadata = {'url': '/listkeys'}  # type: ignore
-
+    get_access_keys.metadata = {"url": "/listkeys"}  # type: ignore
 
     @distributed_trace_async
-    async def regenerate_access_key(
-        self,
-        key_options: Any,
-        **kwargs: Any
-    ) -> Any:
+    async def regenerate_access_key(self, key_options: Any, **kwargs: Any) -> Any:
         """Regenerate the authorization keys associated with this data catalog.
 
         :param key_options:
@@ -372,27 +375,27 @@ class AccountsOperations:
                     "atlasKafkaSecondaryEndpoint": "str"  # Optional. Gets or sets the secondary connection string.
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         json = key_options
 
         request = build_accounts_regenerate_access_key_request(
             content_type=content_type,
             json=json,
-            template_url=self.regenerate_access_key.metadata['url'],
+            template_url=self.regenerate_access_key.metadata["url"],
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -409,7 +412,8 @@ class AccountsOperations:
 
         return deserialized
 
-    regenerate_access_key.metadata = {'url': '/regeneratekeys'}  # type: ignore
+    regenerate_access_key.metadata = {"url": "/regeneratekeys"}  # type: ignore
+
 
 class CollectionsOperations:
     """CollectionsOperations async operations.
@@ -430,11 +434,7 @@ class CollectionsOperations:
         self._config = config
 
     @distributed_trace_async
-    async def get_collection(
-        self,
-        collection_name: str,
-        **kwargs: Any
-    ) -> Any:
+    async def get_collection(self, collection_name: str, **kwargs: Any) -> Any:
         """Get a collection.
 
         :param collection_name:
@@ -466,23 +466,22 @@ class CollectionsOperations:
                     }
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_collections_get_collection_request(
             collection_name=collection_name,
-            template_url=self.get_collection.metadata['url'],
+            template_url=self.get_collection.metadata["url"],
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -499,16 +498,10 @@ class CollectionsOperations:
 
         return deserialized
 
-    get_collection.metadata = {'url': '/collections/{collectionName}'}  # type: ignore
-
+    get_collection.metadata = {"url": "/collections/{collectionName}"}  # type: ignore
 
     @distributed_trace_async
-    async def create_or_update_collection(
-        self,
-        collection_name: str,
-        collection: Any,
-        **kwargs: Any
-    ) -> Any:
+    async def create_or_update_collection(self, collection_name: str, collection: Any, **kwargs: Any) -> Any:
         """Creates or updates a collection entity.
 
         :param collection_name:
@@ -562,13 +555,11 @@ class CollectionsOperations:
                     }
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         json = collection
 
@@ -576,14 +567,16 @@ class CollectionsOperations:
             collection_name=collection_name,
             content_type=content_type,
             json=json,
-            template_url=self.create_or_update_collection.metadata['url'],
+            template_url=self.create_or_update_collection.metadata["url"],
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -600,15 +593,10 @@ class CollectionsOperations:
 
         return deserialized
 
-    create_or_update_collection.metadata = {'url': '/collections/{collectionName}'}  # type: ignore
-
+    create_or_update_collection.metadata = {"url": "/collections/{collectionName}"}  # type: ignore
 
     @distributed_trace_async
-    async def delete_collection(
-        self,
-        collection_name: str,
-        **kwargs: Any
-    ) -> None:
+    async def delete_collection(self, collection_name: str, **kwargs: Any) -> None:
         """Deletes a Collection entity.
 
         :param collection_name:
@@ -617,23 +605,22 @@ class CollectionsOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_collections_delete_collection_request(
             collection_name=collection_name,
-            template_url=self.delete_collection.metadata['url'],
+            template_url=self.delete_collection.metadata["url"],
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -643,16 +630,10 @@ class CollectionsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete_collection.metadata = {'url': '/collections/{collectionName}'}  # type: ignore
-
+    delete_collection.metadata = {"url": "/collections/{collectionName}"}  # type: ignore
 
     @distributed_trace
-    def list_collections(
-        self,
-        *,
-        skip_token: Optional[str] = None,
-        **kwargs: Any
-    ) -> AsyncIterable[Any]:
+    def list_collections(self, *, skip_token: Optional[str] = None, **kwargs: Any) -> AsyncIterable[Any]:
         """List the collections in the account.
 
         :keyword skip_token:
@@ -690,38 +671,43 @@ class CollectionsOperations:
                     ]
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_collections_list_collections_request(
                     skip_token=skip_token,
-                    template_url=self.list_collections.metadata['url'],
+                    template_url=self.list_collections.metadata["url"],
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                
+
                 request = build_collections_list_collections_request(
                     skip_token=skip_token,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.method = "GET"
             return request
@@ -745,19 +731,13 @@ class CollectionsOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_collections.metadata = {'url': '/collections'}  # type: ignore
+    list_collections.metadata = {"url": "/collections"}  # type: ignore
 
     @distributed_trace
     def list_child_collection_names(
-        self,
-        collection_name: str,
-        *,
-        skip_token: Optional[str] = None,
-        **kwargs: Any
+        self, collection_name: str, *, skip_token: Optional[str] = None, **kwargs: Any
     ) -> AsyncIterable[Any]:
         """Lists the child collections names in the collection.
 
@@ -784,27 +764,28 @@ class CollectionsOperations:
                     ]
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_collections_list_child_collection_names_request(
                     collection_name=collection_name,
                     skip_token=skip_token,
-                    template_url=self.list_child_collection_names.metadata['url'],
+                    template_url=self.list_child_collection_names.metadata["url"],
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                
+
                 request = build_collections_list_child_collection_names_request(
                     collection_name=collection_name,
                     skip_token=skip_token,
@@ -812,12 +793,16 @@ class CollectionsOperations:
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.method = "GET"
             return request
@@ -841,18 +826,12 @@ class CollectionsOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_child_collection_names.metadata = {'url': '/collections/{collectionName}/getChildCollectionNames'}  # type: ignore
+    list_child_collection_names.metadata = {"url": "/collections/{collectionName}/getChildCollectionNames"}  # type: ignore
 
     @distributed_trace_async
-    async def get_collection_path(
-        self,
-        collection_name: str,
-        **kwargs: Any
-    ) -> Any:
+    async def get_collection_path(self, collection_name: str, **kwargs: Any) -> Any:
         """Gets the parent name and parent friendly name chains that represent the collection path.
 
         :param collection_name:
@@ -874,23 +853,22 @@ class CollectionsOperations:
                     ]
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_collections_get_collection_path_request(
             collection_name=collection_name,
-            template_url=self.get_collection_path.metadata['url'],
+            template_url=self.get_collection_path.metadata["url"],
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -907,7 +885,8 @@ class CollectionsOperations:
 
         return deserialized
 
-    get_collection_path.metadata = {'url': '/collections/{collectionName}/getCollectionPath'}  # type: ignore
+    get_collection_path.metadata = {"url": "/collections/{collectionName}/getCollectionPath"}  # type: ignore
+
 
 class ResourceSetRulesOperations:
     """ResourceSetRulesOperations async operations.
@@ -928,10 +907,7 @@ class ResourceSetRulesOperations:
         self._config = config
 
     @distributed_trace_async
-    async def get_resource_set_rule(
-        self,
-        **kwargs: Any
-    ) -> Any:
+    async def get_resource_set_rule(self, **kwargs: Any) -> Any:
         """Get a resource set config service model.
 
         :return: JSON object
@@ -955,8 +931,8 @@ class ResourceSetRulesOperations:
                                 "filterType": "Pattern",  # Optional. Default value is "Pattern". Possible values include: "Pattern", "Regex". Default value: "Pattern".
                                 "lastUpdatedTimestamp": 0.0,  # Optional. The configuration rules for path pattern extraction.
                                 "modifiedBy": "AzureDataCatalog",  # Optional. Default value is "AzureDataCatalog". The configuration rules for path pattern extraction.
-                                "name": "str",  # Required. 
-                                "path": "str"  # Required. 
+                                "name": "str",  # Required.
+                                "path": "str"  # Required.
                             }
                         ],
                         "complexReplacers": [
@@ -971,8 +947,8 @@ class ResourceSetRulesOperations:
                                 "typeName": "str"  # Optional. The configuration rules for path pattern extraction.
                             }
                         ],
-                        "createdBy": "str",  # Required. 
-                        "enableDefaultPatterns": bool,  # Required. 
+                        "createdBy": "str",  # Required.
+                        "enableDefaultPatterns": bool,  # Required.
                         "lastUpdatedTimestamp": 0.0,  # Optional. The configuration rules for path pattern extraction.
                         "modifiedBy": "AzureDataCatalog",  # Optional. Default value is "AzureDataCatalog". The configuration rules for path pattern extraction.
                         "normalizationRules": [
@@ -1008,7 +984,7 @@ class ResourceSetRulesOperations:
                                 "createdBy": "AzureDataCatalog",  # Optional. Default value is "AzureDataCatalog". The configuration rules for path pattern extraction.
                                 "description": "str",  # Optional. The configuration rules for path pattern extraction.
                                 "disableRecursiveReplacerApplication": bool,  # Optional. The configuration rules for path pattern extraction.
-                                "disabled": bool,  # Required. 
+                                "disabled": bool,  # Required.
                                 "doNotReplaceRegex": {
                                     "maxDigits": 0,  # Optional. The configuration rules for path pattern extraction.
                                     "maxLetters": 0,  # Optional. The configuration rules for path pattern extraction.
@@ -1024,7 +1000,7 @@ class ResourceSetRulesOperations:
                                 },
                                 "lastUpdatedTimestamp": 0.0,  # Optional. The configuration rules for path pattern extraction.
                                 "modifiedBy": "AzureDataCatalog",  # Optional. Default value is "AzureDataCatalog". The configuration rules for path pattern extraction.
-                                "name": "str",  # Required. 
+                                "name": "str",  # Required.
                                 "regex": {
                                     "maxDigits": 0,  # Optional. The configuration rules for path pattern extraction.
                                     "maxLetters": 0,  # Optional. The configuration rules for path pattern extraction.
@@ -1047,45 +1023,44 @@ class ResourceSetRulesOperations:
                                 "filterType": "Pattern",  # Optional. Default value is "Pattern". Possible values include: "Pattern", "Regex". Default value: "Pattern".
                                 "lastUpdatedTimestamp": 0.0,  # Optional. The configuration rules for path pattern extraction.
                                 "modifiedBy": "AzureDataCatalog",  # Optional. Default value is "AzureDataCatalog". The configuration rules for path pattern extraction.
-                                "name": "str",  # Required. 
-                                "path": "str"  # Required. 
+                                "name": "str",  # Required.
+                                "path": "str"  # Required.
                             }
                         ],
                         "scopedRules": [
                             {
-                                "bindingUrl": "str",  # Required. 
+                                "bindingUrl": "str",  # Required.
                                 "rules": [
                                     {
                                         "displayName": "str",  # Optional. The configuration rules for path pattern extraction.
                                         "isResourceSet": True,  # Optional. Default value is True. The configuration rules for path pattern extraction.
                                         "lastUpdatedTimestamp": 0.0,  # Optional. The configuration rules for path pattern extraction.
                                         "name": "str",  # Optional. The configuration rules for path pattern extraction.
-                                        "qualifiedName": "str"  # Required. 
+                                        "qualifiedName": "str"  # Required.
                                     }
                                 ],
-                                "storeType": "str"  # Required. 
+                                "storeType": "str"  # Required.
                             }
                         ],
                         "version": 0  # Optional. The configuration rules for path pattern extraction.
                     }
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_resource_set_rules_get_resource_set_rule_request(
-            template_url=self.get_resource_set_rule.metadata['url'],
+            template_url=self.get_resource_set_rule.metadata["url"],
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1102,15 +1077,10 @@ class ResourceSetRulesOperations:
 
         return deserialized
 
-    get_resource_set_rule.metadata = {'url': '/resourceSetRuleConfigs/defaultResourceSetRuleConfig'}  # type: ignore
-
+    get_resource_set_rule.metadata = {"url": "/resourceSetRuleConfigs/defaultResourceSetRuleConfig"}  # type: ignore
 
     @distributed_trace_async
-    async def create_or_update_resource_set_rule(
-        self,
-        resource_set_rule_config: Any,
-        **kwargs: Any
-    ) -> Any:
+    async def create_or_update_resource_set_rule(self, resource_set_rule_config: Any, **kwargs: Any) -> Any:
         """Creates or updates an resource set config.
 
         :param resource_set_rule_config:
@@ -1136,8 +1106,8 @@ class ResourceSetRulesOperations:
                                 "filterType": "Pattern",  # Optional. Default value is "Pattern". Possible values include: "Pattern", "Regex". Default value: "Pattern".
                                 "lastUpdatedTimestamp": 0.0,  # Optional. The configuration rules for path pattern extraction.
                                 "modifiedBy": "AzureDataCatalog",  # Optional. Default value is "AzureDataCatalog". The configuration rules for path pattern extraction.
-                                "name": "str",  # Required. 
-                                "path": "str"  # Required. 
+                                "name": "str",  # Required.
+                                "path": "str"  # Required.
                             }
                         ],
                         "complexReplacers": [
@@ -1152,8 +1122,8 @@ class ResourceSetRulesOperations:
                                 "typeName": "str"  # Optional. The configuration rules for path pattern extraction.
                             }
                         ],
-                        "createdBy": "str",  # Required. 
-                        "enableDefaultPatterns": bool,  # Required. 
+                        "createdBy": "str",  # Required.
+                        "enableDefaultPatterns": bool,  # Required.
                         "lastUpdatedTimestamp": 0.0,  # Optional. The configuration rules for path pattern extraction.
                         "modifiedBy": "AzureDataCatalog",  # Optional. Default value is "AzureDataCatalog". The configuration rules for path pattern extraction.
                         "normalizationRules": [
@@ -1189,7 +1159,7 @@ class ResourceSetRulesOperations:
                                 "createdBy": "AzureDataCatalog",  # Optional. Default value is "AzureDataCatalog". The configuration rules for path pattern extraction.
                                 "description": "str",  # Optional. The configuration rules for path pattern extraction.
                                 "disableRecursiveReplacerApplication": bool,  # Optional. The configuration rules for path pattern extraction.
-                                "disabled": bool,  # Required. 
+                                "disabled": bool,  # Required.
                                 "doNotReplaceRegex": {
                                     "maxDigits": 0,  # Optional. The configuration rules for path pattern extraction.
                                     "maxLetters": 0,  # Optional. The configuration rules for path pattern extraction.
@@ -1205,7 +1175,7 @@ class ResourceSetRulesOperations:
                                 },
                                 "lastUpdatedTimestamp": 0.0,  # Optional. The configuration rules for path pattern extraction.
                                 "modifiedBy": "AzureDataCatalog",  # Optional. Default value is "AzureDataCatalog". The configuration rules for path pattern extraction.
-                                "name": "str",  # Required. 
+                                "name": "str",  # Required.
                                 "regex": {
                                     "maxDigits": 0,  # Optional. The configuration rules for path pattern extraction.
                                     "maxLetters": 0,  # Optional. The configuration rules for path pattern extraction.
@@ -1228,23 +1198,23 @@ class ResourceSetRulesOperations:
                                 "filterType": "Pattern",  # Optional. Default value is "Pattern". Possible values include: "Pattern", "Regex". Default value: "Pattern".
                                 "lastUpdatedTimestamp": 0.0,  # Optional. The configuration rules for path pattern extraction.
                                 "modifiedBy": "AzureDataCatalog",  # Optional. Default value is "AzureDataCatalog". The configuration rules for path pattern extraction.
-                                "name": "str",  # Required. 
-                                "path": "str"  # Required. 
+                                "name": "str",  # Required.
+                                "path": "str"  # Required.
                             }
                         ],
                         "scopedRules": [
                             {
-                                "bindingUrl": "str",  # Required. 
+                                "bindingUrl": "str",  # Required.
                                 "rules": [
                                     {
                                         "displayName": "str",  # Optional. The configuration rules for path pattern extraction.
                                         "isResourceSet": True,  # Optional. Default value is True. The configuration rules for path pattern extraction.
                                         "lastUpdatedTimestamp": 0.0,  # Optional. The configuration rules for path pattern extraction.
                                         "name": "str",  # Optional. The configuration rules for path pattern extraction.
-                                        "qualifiedName": "str"  # Required. 
+                                        "qualifiedName": "str"  # Required.
                                     }
                                 ],
-                                "storeType": "str"  # Required. 
+                                "storeType": "str"  # Required.
                             }
                         ],
                         "version": 0  # Optional. The configuration rules for path pattern extraction.
@@ -1265,8 +1235,8 @@ class ResourceSetRulesOperations:
                                 "filterType": "Pattern",  # Optional. Default value is "Pattern". Possible values include: "Pattern", "Regex". Default value: "Pattern".
                                 "lastUpdatedTimestamp": 0.0,  # Optional. The configuration rules for path pattern extraction.
                                 "modifiedBy": "AzureDataCatalog",  # Optional. Default value is "AzureDataCatalog". The configuration rules for path pattern extraction.
-                                "name": "str",  # Required. 
-                                "path": "str"  # Required. 
+                                "name": "str",  # Required.
+                                "path": "str"  # Required.
                             }
                         ],
                         "complexReplacers": [
@@ -1281,8 +1251,8 @@ class ResourceSetRulesOperations:
                                 "typeName": "str"  # Optional. The configuration rules for path pattern extraction.
                             }
                         ],
-                        "createdBy": "str",  # Required. 
-                        "enableDefaultPatterns": bool,  # Required. 
+                        "createdBy": "str",  # Required.
+                        "enableDefaultPatterns": bool,  # Required.
                         "lastUpdatedTimestamp": 0.0,  # Optional. The configuration rules for path pattern extraction.
                         "modifiedBy": "AzureDataCatalog",  # Optional. Default value is "AzureDataCatalog". The configuration rules for path pattern extraction.
                         "normalizationRules": [
@@ -1318,7 +1288,7 @@ class ResourceSetRulesOperations:
                                 "createdBy": "AzureDataCatalog",  # Optional. Default value is "AzureDataCatalog". The configuration rules for path pattern extraction.
                                 "description": "str",  # Optional. The configuration rules for path pattern extraction.
                                 "disableRecursiveReplacerApplication": bool,  # Optional. The configuration rules for path pattern extraction.
-                                "disabled": bool,  # Required. 
+                                "disabled": bool,  # Required.
                                 "doNotReplaceRegex": {
                                     "maxDigits": 0,  # Optional. The configuration rules for path pattern extraction.
                                     "maxLetters": 0,  # Optional. The configuration rules for path pattern extraction.
@@ -1334,7 +1304,7 @@ class ResourceSetRulesOperations:
                                 },
                                 "lastUpdatedTimestamp": 0.0,  # Optional. The configuration rules for path pattern extraction.
                                 "modifiedBy": "AzureDataCatalog",  # Optional. Default value is "AzureDataCatalog". The configuration rules for path pattern extraction.
-                                "name": "str",  # Required. 
+                                "name": "str",  # Required.
                                 "regex": {
                                     "maxDigits": 0,  # Optional. The configuration rules for path pattern extraction.
                                     "maxLetters": 0,  # Optional. The configuration rules for path pattern extraction.
@@ -1357,50 +1327,50 @@ class ResourceSetRulesOperations:
                                 "filterType": "Pattern",  # Optional. Default value is "Pattern". Possible values include: "Pattern", "Regex". Default value: "Pattern".
                                 "lastUpdatedTimestamp": 0.0,  # Optional. The configuration rules for path pattern extraction.
                                 "modifiedBy": "AzureDataCatalog",  # Optional. Default value is "AzureDataCatalog". The configuration rules for path pattern extraction.
-                                "name": "str",  # Required. 
-                                "path": "str"  # Required. 
+                                "name": "str",  # Required.
+                                "path": "str"  # Required.
                             }
                         ],
                         "scopedRules": [
                             {
-                                "bindingUrl": "str",  # Required. 
+                                "bindingUrl": "str",  # Required.
                                 "rules": [
                                     {
                                         "displayName": "str",  # Optional. The configuration rules for path pattern extraction.
                                         "isResourceSet": True,  # Optional. Default value is True. The configuration rules for path pattern extraction.
                                         "lastUpdatedTimestamp": 0.0,  # Optional. The configuration rules for path pattern extraction.
                                         "name": "str",  # Optional. The configuration rules for path pattern extraction.
-                                        "qualifiedName": "str"  # Required. 
+                                        "qualifiedName": "str"  # Required.
                                     }
                                 ],
-                                "storeType": "str"  # Required. 
+                                "storeType": "str"  # Required.
                             }
                         ],
                         "version": 0  # Optional. The configuration rules for path pattern extraction.
                     }
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         json = resource_set_rule_config
 
         request = build_resource_set_rules_create_or_update_resource_set_rule_request(
             content_type=content_type,
             json=json,
-            template_url=self.create_or_update_resource_set_rule.metadata['url'],
+            template_url=self.create_or_update_resource_set_rule.metadata["url"],
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1417,36 +1387,31 @@ class ResourceSetRulesOperations:
 
         return deserialized
 
-    create_or_update_resource_set_rule.metadata = {'url': '/resourceSetRuleConfigs/defaultResourceSetRuleConfig'}  # type: ignore
-
+    create_or_update_resource_set_rule.metadata = {"url": "/resourceSetRuleConfigs/defaultResourceSetRuleConfig"}  # type: ignore
 
     @distributed_trace_async
-    async def delete_resource_set_rule(
-        self,
-        **kwargs: Any
-    ) -> None:
+    async def delete_resource_set_rule(self, **kwargs: Any) -> None:
         """Deletes a ResourceSetRuleConfig resource.
 
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_resource_set_rules_delete_resource_set_rule_request(
-            template_url=self.delete_resource_set_rule.metadata['url'],
+            template_url=self.delete_resource_set_rule.metadata["url"],
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 204]:
@@ -1456,16 +1421,10 @@ class ResourceSetRulesOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete_resource_set_rule.metadata = {'url': '/resourceSetRuleConfigs/defaultResourceSetRuleConfig'}  # type: ignore
-
+    delete_resource_set_rule.metadata = {"url": "/resourceSetRuleConfigs/defaultResourceSetRuleConfig"}  # type: ignore
 
     @distributed_trace
-    def list_resource_set_rules(
-        self,
-        *,
-        skip_token: Optional[str] = None,
-        **kwargs: Any
-    ) -> AsyncIterable[Any]:
+    def list_resource_set_rules(self, *, skip_token: Optional[str] = None, **kwargs: Any) -> AsyncIterable[Any]:
         """Get a resource set config service model.
 
         :keyword skip_token:
@@ -1495,8 +1454,8 @@ class ResourceSetRulesOperations:
                                         "filterType": "Pattern",  # Optional. Default value is "Pattern". Possible values include: "Pattern", "Regex". Default value: "Pattern".
                                         "lastUpdatedTimestamp": 0.0,  # Optional. The configuration rules for path pattern extraction.
                                         "modifiedBy": "AzureDataCatalog",  # Optional. Default value is "AzureDataCatalog". The configuration rules for path pattern extraction.
-                                        "name": "str",  # Required. 
-                                        "path": "str"  # Required. 
+                                        "name": "str",  # Required.
+                                        "path": "str"  # Required.
                                     }
                                 ],
                                 "complexReplacers": [
@@ -1511,8 +1470,8 @@ class ResourceSetRulesOperations:
                                         "typeName": "str"  # Optional. The configuration rules for path pattern extraction.
                                     }
                                 ],
-                                "createdBy": "str",  # Required. 
-                                "enableDefaultPatterns": bool,  # Required. 
+                                "createdBy": "str",  # Required.
+                                "enableDefaultPatterns": bool,  # Required.
                                 "lastUpdatedTimestamp": 0.0,  # Optional. The configuration rules for path pattern extraction.
                                 "modifiedBy": "AzureDataCatalog",  # Optional. Default value is "AzureDataCatalog". The configuration rules for path pattern extraction.
                                 "normalizationRules": [
@@ -1548,7 +1507,7 @@ class ResourceSetRulesOperations:
                                         "createdBy": "AzureDataCatalog",  # Optional. Default value is "AzureDataCatalog". The configuration rules for path pattern extraction.
                                         "description": "str",  # Optional. The configuration rules for path pattern extraction.
                                         "disableRecursiveReplacerApplication": bool,  # Optional. The configuration rules for path pattern extraction.
-                                        "disabled": bool,  # Required. 
+                                        "disabled": bool,  # Required.
                                         "doNotReplaceRegex": {
                                             "maxDigits": 0,  # Optional. The configuration rules for path pattern extraction.
                                             "maxLetters": 0,  # Optional. The configuration rules for path pattern extraction.
@@ -1564,7 +1523,7 @@ class ResourceSetRulesOperations:
                                         },
                                         "lastUpdatedTimestamp": 0.0,  # Optional. The configuration rules for path pattern extraction.
                                         "modifiedBy": "AzureDataCatalog",  # Optional. Default value is "AzureDataCatalog". The configuration rules for path pattern extraction.
-                                        "name": "str",  # Required. 
+                                        "name": "str",  # Required.
                                         "regex": {
                                             "maxDigits": 0,  # Optional. The configuration rules for path pattern extraction.
                                             "maxLetters": 0,  # Optional. The configuration rules for path pattern extraction.
@@ -1587,23 +1546,23 @@ class ResourceSetRulesOperations:
                                         "filterType": "Pattern",  # Optional. Default value is "Pattern". Possible values include: "Pattern", "Regex". Default value: "Pattern".
                                         "lastUpdatedTimestamp": 0.0,  # Optional. The configuration rules for path pattern extraction.
                                         "modifiedBy": "AzureDataCatalog",  # Optional. Default value is "AzureDataCatalog". The configuration rules for path pattern extraction.
-                                        "name": "str",  # Required. 
-                                        "path": "str"  # Required. 
+                                        "name": "str",  # Required.
+                                        "path": "str"  # Required.
                                     }
                                 ],
                                 "scopedRules": [
                                     {
-                                        "bindingUrl": "str",  # Required. 
+                                        "bindingUrl": "str",  # Required.
                                         "rules": [
                                             {
                                                 "displayName": "str",  # Optional. The configuration rules for path pattern extraction.
                                                 "isResourceSet": True,  # Optional. Default value is True. The configuration rules for path pattern extraction.
                                                 "lastUpdatedTimestamp": 0.0,  # Optional. The configuration rules for path pattern extraction.
                                                 "name": "str",  # Optional. The configuration rules for path pattern extraction.
-                                                "qualifiedName": "str"  # Required. 
+                                                "qualifiedName": "str"  # Required.
                                             }
                                         ],
-                                        "storeType": "str"  # Required. 
+                                        "storeType": "str"  # Required.
                                     }
                                 ],
                                 "version": 0  # Optional. The configuration rules for path pattern extraction.
@@ -1612,38 +1571,43 @@ class ResourceSetRulesOperations:
                     ]
                 }
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_resource_set_rules_list_resource_set_rules_request(
                     skip_token=skip_token,
-                    template_url=self.list_resource_set_rules.metadata['url'],
+                    template_url=self.list_resource_set_rules.metadata["url"],
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                
+
                 request = build_resource_set_rules_list_resource_set_rules_request(
                     skip_token=skip_token,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.method = "GET"
             return request
@@ -1667,8 +1631,6 @@ class ResourceSetRulesOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_resource_set_rules.metadata = {'url': '/resourceSetRuleConfigs'}  # type: ignore
+    list_resource_set_rules.metadata = {"url": "/resourceSetRuleConfigs"}  # type: ignore

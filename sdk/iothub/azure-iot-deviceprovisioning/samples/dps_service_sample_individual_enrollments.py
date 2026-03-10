@@ -44,18 +44,10 @@ class EnrollmentSamples(object):
         # Instantiate a DPS Service Client using a connection string
         from azure.iot.deviceprovisioning import DeviceProvisioningClient
 
-        dps_service_client = DeviceProvisioningClient.from_connection_string(
-            self.connection_string
-        )
+        dps_service_client = DeviceProvisioningClient.from_connection_string(self.connection_string)
 
         # Set initial twin properties
-        initial_twin = {
-            "properties": {
-                "desired": {
-                    "property": "value"
-                }
-            }
-        }
+        initial_twin = {"properties": {"desired": {"property": "value"}}}
 
         # Create an individual enrollment object with "SymmetricKey" attestation mechanism
         enrollment = {
@@ -63,20 +55,16 @@ class EnrollmentSamples(object):
             "attestation": {
                 "type": "symmetricKey",
             },
-            "initialTwin": initial_twin
+            "initialTwin": initial_twin,
         }
 
-        dps_service_client.enrollment.create_or_update(
-            id=self.symmetric_enrollment_id, enrollment=enrollment
-        )
+        dps_service_client.enrollment.create_or_update(id=self.symmetric_enrollment_id, enrollment=enrollment)
 
     def create_x590_enrollment_sample(self):
         # Instantiate a DPS Service Client using a connection string
         from azure.iot.deviceprovisioning import DeviceProvisioningClient
 
-        dps_service_client = DeviceProvisioningClient.from_connection_string(
-            self.connection_string
-        )
+        dps_service_client = DeviceProvisioningClient.from_connection_string(self.connection_string)
 
         # Load certificate contents from file
         certificate = open(self.x509_cert_path, "rt", encoding="utf-8")
@@ -96,17 +84,13 @@ class EnrollmentSamples(object):
             },
         }
 
-        dps_service_client.enrollment.create_or_update(
-            id=self.x509_enrollment_id, enrollment=enrollment
-        )
+        dps_service_client.enrollment.create_or_update(id=self.x509_enrollment_id, enrollment=enrollment)
 
     def create_tpm_enrollment_sample(self):
         # Instantiate a DPS Service Client using a connection string
         from azure.iot.deviceprovisioning import DeviceProvisioningClient
 
-        dps_service_client = DeviceProvisioningClient.from_connection_string(
-            self.connection_string
-        )
+        dps_service_client = DeviceProvisioningClient.from_connection_string(self.connection_string)
 
         # Create an individual enrollment object with "TPM" attestation mechanism
         enrollment = {
@@ -117,17 +101,13 @@ class EnrollmentSamples(object):
             },
         }
 
-        dps_service_client.enrollment.create_or_update(
-            id=self.tpm_enrollment_id, enrollment=enrollment
-        )
+        dps_service_client.enrollment.create_or_update(id=self.tpm_enrollment_id, enrollment=enrollment)
 
     def get_enrollment_sample(self):
         # Instantiate a DPS Service Client using a connection string
         from azure.iot.deviceprovisioning import DeviceProvisioningClient
 
-        dps_service_client = DeviceProvisioningClient.from_connection_string(
-            self.connection_string
-        )
+        dps_service_client = DeviceProvisioningClient.from_connection_string(self.connection_string)
 
         # Get individual enrollments
         dps_service_client.enrollment.get(id=self.symmetric_enrollment_id)
@@ -140,35 +120,23 @@ class EnrollmentSamples(object):
         # Instantiate a DPS Service Client using a connection string
         from azure.iot.deviceprovisioning import DeviceProvisioningClient
 
-        dps_service_client = DeviceProvisioningClient.from_connection_string(
-            self.connection_string
-        )
+        dps_service_client = DeviceProvisioningClient.from_connection_string(self.connection_string)
 
         # Get attestations for individual enrollments
-        dps_service_client.enrollment.get_attestation_mechanism(
-            id=self.x509_enrollment_id
-        )
+        dps_service_client.enrollment.get_attestation_mechanism(id=self.x509_enrollment_id)
 
-        dps_service_client.enrollment.get_attestation_mechanism(
-            id=self.symmetric_enrollment_id
-        )
+        dps_service_client.enrollment.get_attestation_mechanism(id=self.symmetric_enrollment_id)
 
-        dps_service_client.enrollment.get_attestation_mechanism(
-            id=self.tpm_enrollment_id
-        )
+        dps_service_client.enrollment.get_attestation_mechanism(id=self.tpm_enrollment_id)
 
     def update_enrollment_sample(self):
         # Instantiate a DPS Service Client using a connection string
         from azure.iot.deviceprovisioning import DeviceProvisioningClient
 
-        dps_service_client = DeviceProvisioningClient.from_connection_string(
-            self.connection_string
-        )
+        dps_service_client = DeviceProvisioningClient.from_connection_string(self.connection_string)
 
         # Get individual enrollment
-        sym_enrollment = dps_service_client.enrollment.get(
-            id=self.symmetric_enrollment_id
-        )
+        sym_enrollment = dps_service_client.enrollment.get(id=self.symmetric_enrollment_id)
 
         # Parse eTag to ensure update
         eTag = sym_enrollment["etag"]
@@ -188,20 +156,16 @@ class EnrollmentSamples(object):
         # Instantiate a DPS Service Client using a connection string
         from azure.iot.deviceprovisioning import DeviceProvisioningClient
 
-        dps_service_client = DeviceProvisioningClient.from_connection_string(
-            self.connection_string
-        )
+        dps_service_client = DeviceProvisioningClient.from_connection_string(self.connection_string)
 
         # Get individual enrollment
-        sym_enrollment = dps_service_client.enrollment.get(
-            id=self.symmetric_enrollment_id
-        )
+        sym_enrollment = dps_service_client.enrollment.get(id=self.symmetric_enrollment_id)
 
         # Parse eTag to ensure update
         eTag = sym_enrollment["etag"]
 
         # Create a new reprovisioning policy
-        sym_enrollment['reprovisionPolicy'] = {
+        sym_enrollment["reprovisionPolicy"] = {
             # update device's hub assignment
             "updateHubAssignment": True,
             # don't migrate device data to a new hub
@@ -219,9 +183,7 @@ class EnrollmentSamples(object):
         # Instantiate a DPS Service Client using a connection string
         from azure.iot.deviceprovisioning import DeviceProvisioningClient
 
-        dps_service_client = DeviceProvisioningClient.from_connection_string(
-            self.connection_string
-        )
+        dps_service_client = DeviceProvisioningClient.from_connection_string(self.connection_string)
 
         # Create a few more individual enrollments in bulk
         enrollment_id = "bulk_enrollment_1"
@@ -246,25 +208,19 @@ class EnrollmentSamples(object):
         bulk_operation = {"mode": "create", "enrollments": enrollments}
 
         # Send create operation
-        dps_service_client.enrollment.run_bulk_operation(
-            bulk_operation=bulk_operation
-        )
+        dps_service_client.enrollment.run_bulk_operation(bulk_operation=bulk_operation)
 
         # Modify bulk operation properties
         bulk_operation["mode"] = "delete"
 
         # Send delete operation
-        dps_service_client.enrollment.run_bulk_operation(
-            bulk_operation=bulk_operation
-        )
+        dps_service_client.enrollment.run_bulk_operation(bulk_operation=bulk_operation)
 
     def delete_enrollments_sample(self):
         # Instantiate a DPS Service Client using a connection string
         from azure.iot.deviceprovisioning import DeviceProvisioningClient
 
-        dps_service_client = DeviceProvisioningClient.from_connection_string(
-            self.connection_string
-        )
+        dps_service_client = DeviceProvisioningClient.from_connection_string(self.connection_string)
 
         # Delete individual enrollments
         dps_service_client.enrollment.delete(id=self.x509_enrollment_id)

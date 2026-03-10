@@ -60,12 +60,12 @@ setup(
             "tests",
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
-            'azure.digitaltwins',
+            "azure.digitaltwins",
         ]
     ),
     include_package_data=True,
     package_data={
-        'pytyped': ['py.typed'],
+        "pytyped": ["py.typed"],
     },
     python_requires=">=3.7",
     install_requires=[

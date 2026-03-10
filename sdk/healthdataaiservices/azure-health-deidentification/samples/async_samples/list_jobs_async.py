@@ -16,7 +16,6 @@ USAGE:
     1) HEALTHDATAAISERVICES_DEID_SERVICE_ENDPOINT - the service URL endpoint for a de-identification service.
 """
 
-
 import asyncio
 from azure.health.deidentification.aio import DeidentificationClient
 from azure.identity.aio import DefaultAzureCredential

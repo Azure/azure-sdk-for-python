@@ -15,12 +15,12 @@ PREREQUISITES:
 USAGE:
     Set these two environment variables before running the sample:
 
-    1) AZURE_AI_CHAT_ENDPOINT - Your endpoint URL for model inference, in the form 
+    1) AZURE_AI_CHAT_ENDPOINT - Your endpoint URL for model inference, in the form
        "https://<your-ai-services-resouce-name>.services.ai.azure.com/models".
        This URL is shown in the model card page in your AI Foundry project: Click on "Models + endpoints" tab,
        then click on the relevant model name to open the model card page. Copy the URL up to and including the
        "/models" route.
-       
+
     2) AZURE_AI_CHAT_MODEL_DEPLOYMENT_NAME - Your model deployment name, as appears under the "Name"
        in the "Deployment info" section of the model card page. Note that this may be different than the
        "Model name" shown in the card.

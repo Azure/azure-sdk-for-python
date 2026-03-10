@@ -12,7 +12,7 @@ It will initialize an asynchronous RadiologyInsightsClient, build a Radiology In
 submit it to the client, RadiologyInsightsClient, and display
 -the date and time of the follow-up communication,
 -the recipient of the follow-up communication, and
--whether the follow-up communication was acknowledged 
+-whether the follow-up communication was acknowledged
 
 
 USAGE:
@@ -22,7 +22,7 @@ USAGE:
     - For more details how to use DefaultAzureCredential, please take a look at https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential
 
 2. python sample_followup_communication_inference_async.py
-   
+
 """
 
 import asyncio

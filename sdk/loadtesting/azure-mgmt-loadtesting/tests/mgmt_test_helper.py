@@ -3,12 +3,8 @@ from azure.mgmt.keyvault import KeyVaultManagementClient
 from azure.keyvault.keys import KeyClient
 
 
-def create_managed_identity(
-    msi_client: ManagedServiceIdentityClient, msi_name, rg_name, location
-):
-    msi = msi_client.user_assigned_identities.create_or_update(
-        rg_name, msi_name, {"location": location}
-    )
+def create_managed_identity(msi_client: ManagedServiceIdentityClient, msi_name, rg_name, location):
+    msi = msi_client.user_assigned_identities.create_or_update(rg_name, msi_name, {"location": location})
     return msi
 
 

@@ -7,6 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 import asyncio
 import datetime
 import collections
@@ -42,7 +43,6 @@ from ._polling_async import (
 from ._operations import (
     _BatchClientOperationsMixin as BatchClientOperationsMixinGenerated,
 )
-
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]

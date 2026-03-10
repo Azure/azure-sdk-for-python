@@ -19,9 +19,7 @@ GRADE_PROMPT = (
 class GradeDocuments(BaseModel):
     """Grade documents using a binary score for relevance check."""
 
-    binary_score: str = Field(
-        description="Relevance score: 'yes' if relevant, or 'no' if not relevant"
-    )
+    binary_score: str = Field(description="Relevance score: 'yes' if relevant, or 'no' if not relevant")
 
 
 load_dotenv()
@@ -40,9 +38,7 @@ def grade_documents(
     response = (
         grader_model
         # highlight-next-line
-        .with_structured_output(GradeDocuments).invoke(
-            [{"role": "user", "content": prompt}]
-        )
+        .with_structured_output(GradeDocuments).invoke([{"role": "user", "content": prompt}])
     )
     score = response.binary_score
 

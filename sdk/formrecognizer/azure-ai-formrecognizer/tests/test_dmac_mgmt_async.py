@@ -11,16 +11,11 @@ from devtools_testutils import set_bodiless_matcher, set_custom_default_matcher
 from azure.core.pipeline.transport import AioHttpTransport
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
-from azure.ai.formrecognizer import (
-    DocumentModelAdministrationClient,
-    DocumentAnalysisApiVersion,
-    OperationDetails
-)
+from azure.ai.formrecognizer import DocumentModelAdministrationClient, DocumentAnalysisApiVersion, OperationDetails
 from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
 from preparers import FormRecognizerPreparer, get_async_client
 from asynctestcase import AsyncFormRecognizerTest
 from conftest import skip_flaky_test
-
 
 get_dma_client = functools.partial(get_async_client, DocumentModelAdministrationClient)
 
@@ -113,9 +108,11 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     async def test_mgmt_model(self, formrecognizer_storage_container_sas_url, **kwargs):
         client = get_dma_client()
         set_bodiless_matcher()
-        
+
         async with client:
-            poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url, description="mgmt model")
+            poller = await client.begin_build_document_model(
+                "template", blob_container_url=formrecognizer_storage_container_sas_url, description="mgmt model"
+            )
             model = await poller.result()
 
             model_from_get = await client.get_document_model(model.model_id)
@@ -233,7 +230,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )  
+        )
         transport = AioHttpTransport()
         dtc = get_dma_client(transport=transport)
 

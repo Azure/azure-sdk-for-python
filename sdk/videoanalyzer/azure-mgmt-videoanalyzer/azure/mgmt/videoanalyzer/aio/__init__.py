@@ -7,4 +7,5 @@
 # --------------------------------------------------------------------------
 
 from ._video_analyzer import VideoAnalyzer
-__all__ = ['VideoAnalyzer']
+
+__all__ = ["VideoAnalyzer"]

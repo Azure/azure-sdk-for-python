@@ -48,9 +48,7 @@ async def analyze_tax_us_w2_async():
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
-    document_analysis_client = DocumentAnalysisClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
+    document_analysis_client = DocumentAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     async with document_analysis_client:
         with open(path_to_sample_documents, "rb") as f:
             poller = await document_analysis_client.begin_analyze_document(
@@ -62,10 +60,7 @@ async def analyze_tax_us_w2_async():
         print(f"--------Analyzing US Tax W-2 Form #{idx + 1}--------")
         form_variant = w2.fields.get("W2FormVariant")
         if form_variant:
-            print(
-                f"Form variant: {form_variant.value} has confidence: "
-                f"{form_variant.confidence}"
-            )
+            print(f"Form variant: {form_variant.value} has confidence: " f"{form_variant.confidence}")
         tax_year = w2.fields.get("TaxYear")
         if tax_year:
             print(f"Tax year: {tax_year.value} has confidence: {tax_year.confidence}")
@@ -77,57 +72,40 @@ async def analyze_tax_us_w2_async():
             print("Employee data:")
             employee_name = employee.value.get("Name")
             if employee_name:
-                print(
-                    f"...Name: {employee_name.value} has confidence: {employee_name.confidence}"
-                )
+                print(f"...Name: {employee_name.value} has confidence: {employee_name.confidence}")
             employee_ssn = employee.value.get("SocialSecurityNumber")
             if employee_ssn:
-                print(
-                    f"...SSN: {employee_ssn.value} has confidence: {employee_ssn.confidence}"
-                )
+                print(f"...SSN: {employee_ssn.value} has confidence: {employee_ssn.confidence}")
             employee_address = employee.value.get("Address")
             if employee_address:
                 print(f"...Address: {format_address_value(employee_address.value)}")
                 print(f"......has confidence: {employee_address.confidence}")
             employee_zipcode = employee.value.get("ZipCode")
             if employee_zipcode:
-                print(
-                    f"...Zipcode: {employee_zipcode.value} has confidence: "
-                    f"{employee_zipcode.confidence}"
-                )
+                print(f"...Zipcode: {employee_zipcode.value} has confidence: " f"{employee_zipcode.confidence}")
         control_number = w2.fields.get("ControlNumber")
         if control_number:
-            print(
-                f"Control Number: {control_number.value} has confidence: "
-                f"{control_number.confidence}"
-            )
+            print(f"Control Number: {control_number.value} has confidence: " f"{control_number.confidence}")
         employer = w2.fields.get("Employer")
         if employer:
             print("Employer data:")
             employer_name = employer.value.get("Name")
             if employer_name:
-                print(
-                    f"...Name: {employer_name.value} has confidence: {employer_name.confidence}"
-                )
+                print(f"...Name: {employer_name.value} has confidence: {employer_name.confidence}")
             employer_id = employer.value.get("IdNumber")
             if employer_id:
-                print(
-                    f"...ID Number: {employer_id.value} has confidence: {employer_id.confidence}"
-                )
+                print(f"...ID Number: {employer_id.value} has confidence: {employer_id.confidence}")
             employer_address = employer.value.get("Address")
             if employer_address:
                 print(f"...Address: {format_address_value(employer_address.value)}")
                 print(f"\n......has confidence: {employer_address.confidence}")
             employer_zipcode = employer.value.get("ZipCode")
             if employer_zipcode:
-                print(
-                    f"...Zipcode: {employer_zipcode.value} has confidence: {employer_zipcode.confidence}"
-                )
+                print(f"...Zipcode: {employer_zipcode.value} has confidence: {employer_zipcode.confidence}")
         wages_tips = w2.fields.get("WagesTipsAndOtherCompensation")
         if wages_tips:
             print(
-                f"Wages, tips, and other compensation: {wages_tips.value} "
-                f"has confidence: {wages_tips.confidence}"
+                f"Wages, tips, and other compensation: {wages_tips.value} " f"has confidence: {wages_tips.confidence}"
             )
         fed_income_tax_withheld = w2.fields.get("FederalIncomeTaxWithheld")
         if fed_income_tax_withheld:
@@ -167,14 +145,10 @@ async def analyze_tax_us_w2_async():
             )
         allocated_tips = w2.fields.get("AllocatedTips")
         if allocated_tips:
-            print(
-                f"Allocated tips: {allocated_tips.value} has confidence: {allocated_tips.confidence}"
-            )
+            print(f"Allocated tips: {allocated_tips.value} has confidence: {allocated_tips.confidence}")
         verification_code = w2.fields.get("VerificationCode")
         if verification_code:
-            print(
-                f"Verification code: {verification_code.value} has confidence: {verification_code.confidence}"
-            )
+            print(f"Verification code: {verification_code.value} has confidence: {verification_code.confidence}")
         dependent_care_benefits = w2.fields.get("DependentCareBenefits")
         if dependent_care_benefits:
             print(
@@ -182,23 +156,17 @@ async def analyze_tax_us_w2_async():
             )
         non_qualified_plans = w2.fields.get("NonQualifiedPlans")
         if non_qualified_plans:
-            print(
-                f"Non-qualified plans: {non_qualified_plans.value} has confidence: {non_qualified_plans.confidence}"
-            )
+            print(f"Non-qualified plans: {non_qualified_plans.value} has confidence: {non_qualified_plans.confidence}")
         additional_info = w2.fields.get("AdditionalInfo")
         if additional_info:
             print("Additional information:")
             for item in additional_info.value:
                 letter_code = item.value.get("LetterCode")
                 if letter_code:
-                    print(
-                        f"...Letter code: {letter_code.value} has confidence: {letter_code.confidence}"
-                    )
+                    print(f"...Letter code: {letter_code.value} has confidence: {letter_code.confidence}")
                 amount = item.value.get("Amount")
                 if amount:
-                    print(
-                        f"...Amount: {amount.value} has confidence: {amount.confidence}"
-                    )
+                    print(f"...Amount: {amount.value} has confidence: {amount.confidence}")
         is_statutory_employee = w2.fields.get("IsStatutoryEmployee")
         if is_statutory_employee:
             print(
@@ -206,9 +174,7 @@ async def analyze_tax_us_w2_async():
             )
         is_retirement_plan = w2.fields.get("IsRetirementPlan")
         if is_retirement_plan:
-            print(
-                f"Is retirement plan: {is_retirement_plan.value} has confidence: {is_retirement_plan.confidence}"
-            )
+            print(f"Is retirement plan: {is_retirement_plan.value} has confidence: {is_retirement_plan.confidence}")
         third_party_sick_pay = w2.fields.get("IsThirdPartySickPay")
         if third_party_sick_pay:
             print(
@@ -216,9 +182,7 @@ async def analyze_tax_us_w2_async():
             )
         other_info = w2.fields.get("Other")
         if other_info:
-            print(
-                f"Other information: {other_info.value} has confidence: {other_info.confidence}"
-            )
+            print(f"Other information: {other_info.value} has confidence: {other_info.confidence}")
         state_tax_info = w2.fields.get("StateTaxInfos")
         if state_tax_info:
             print("State Tax info:")
@@ -262,10 +226,7 @@ async def analyze_tax_us_w2_async():
                     )
                 locality_name = tax.value.get("LocalityName")
                 if locality_name:
-                    print(
-                        f"...Locality name: {locality_name.value} has confidence: "
-                        f"{locality_name.confidence}"
-                    )
+                    print(f"...Locality name: {locality_name.value} has confidence: " f"{locality_name.confidence}")
 
 
 async def main():

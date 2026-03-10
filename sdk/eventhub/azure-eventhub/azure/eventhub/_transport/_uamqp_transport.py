@@ -579,10 +579,7 @@ if uamqp_installed:
             :param ~azure.eventhub._consumer.EventHubConsumer consumer: The EventHubConsumer.
             :param Exception exception: Exception to check.
             """
-            if (
-                isinstance(exception, errors.LinkDetach)
-                and exception.condition == constants.ErrorCodes.LinkStolen
-            ):
+            if isinstance(exception, errors.LinkDetach) and exception.condition == constants.ErrorCodes.LinkStolen:
                 raise consumer._handle_exception(exception)  # pylint: disable=protected-access
 
         @staticmethod
@@ -761,9 +758,7 @@ if uamqp_installed:
             return error
 
         @staticmethod
-        def _handle_exception(
-            exception, closable, *, is_consumer=False  # pylint:disable=unused-argument
-        ):
+        def _handle_exception(exception, closable, *, is_consumer=False):  # pylint:disable=unused-argument
             try:  # closable is a producer/consumer object
                 name = closable._name  # pylint: disable=protected-access
             except AttributeError:  # closable is an client object

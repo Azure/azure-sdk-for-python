@@ -11,7 +11,7 @@ from ._resource_changes_operations import ResourceChangesOperations
 from ._changes_operations import ChangesOperations
 
 __all__ = [
-    'Operations',
-    'ResourceChangesOperations',
-    'ChangesOperations',
+    "Operations",
+    "ResourceChangesOperations",
+    "ChangesOperations",
 ]

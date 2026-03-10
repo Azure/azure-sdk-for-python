@@ -19,6 +19,7 @@ The RougeScorer class can be instantiated with the tokenizers defined here. New
 tokenizers can be defined by creating a subclass of the Tokenizer abstract class
 and overriding the tokenize() method.
 """
+
 import abc
 
 from nltk.stem import porter

@@ -10,6 +10,7 @@ from ._version import VERSION
 __version__ = VERSION
 __all__ = models.__all__
 
+
 def _OverrideTopologySetRequestSerialize(self):
     topology_body = PipelineTopologySetRequestBody(name=self.pipeline_topology.name)
     topology_body.system_data = self.pipeline_topology.system_data
@@ -17,7 +18,9 @@ def _OverrideTopologySetRequestSerialize(self):
 
     return topology_body.serialize()
 
+
 PipelineTopologySetRequest.serialize = _OverrideTopologySetRequestSerialize
+
 
 def _OverrideInstanceSetRequestSerialize(self):
     live_pipeline_body = LivePipelineSetRequestBody(name=self.live_pipeline.name)
@@ -26,7 +29,9 @@ def _OverrideInstanceSetRequestSerialize(self):
 
     return live_pipeline_body.serialize()
 
+
 LivePipelineSetRequest.serialize = _OverrideInstanceSetRequestSerialize
+
 
 def _OverrideRemoteDeviceAdapterSetRequestSerialize(self):
     remote_device_adapter_body = RemoteDeviceAdapterSetRequestBody(name=self.remote_device_adapter.name)
@@ -34,5 +39,6 @@ def _OverrideRemoteDeviceAdapterSetRequestSerialize(self):
     remote_device_adapter_body.properties = self.remote_device_adapter.properties
 
     return remote_device_adapter_body.serialize()
+
 
 RemoteDeviceAdapterSetRequest.serialize = _OverrideRemoteDeviceAdapterSetRequestSerialize

@@ -8,6 +8,7 @@
 """
 An example to show receiving events from an Event Hub for a period of time.
 """
+
 import os
 import threading
 import time

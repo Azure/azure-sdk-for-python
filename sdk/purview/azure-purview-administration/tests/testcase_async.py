@@ -7,7 +7,9 @@
 from _aio_testcase import AzureRecordedAsyncTestCase
 from devtools_testutils import AzureRecordedTestCase
 from azure.purview.administration.account.aio import PurviewAccountClient as AsyncPurviewAccountClient
-from azure.purview.administration.metadatapolicies.aio import PurviewMetadataPoliciesClient as AsyncPurviewMetadataPoliciesClient
+from azure.purview.administration.metadatapolicies.aio import (
+    PurviewMetadataPoliciesClient as AsyncPurviewMetadataPoliciesClient,
+)
 
 
 class PurviewAccountTestAsync(AzureRecordedTestCase):

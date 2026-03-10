@@ -10,20 +10,21 @@ import functools
 from devtools_testutils import AzureRecordedTestCase, trim_kwargs_from_test_function
 from azure.agrifood.farming.aio import FarmBeatsClient
 
+
 class FarmBeatsAsyncTestCase(AzureRecordedTestCase):
     def create_client(self, agrifood_endpoint) -> FarmBeatsClient:
-        self.credential = self.get_credential(FarmBeatsClient, is_async= True)
+        self.credential = self.get_credential(FarmBeatsClient, is_async=True)
         self.client = self.create_client_from_credential(
             FarmBeatsClient,
             endpoint=agrifood_endpoint,
             credential=self.credential,
         )
         return self.client
-    
+
     async def close_client(self):
         await self.credential.close()
         await self.client.close()
-    
+
     @staticmethod
     def await_prepared_test(test_fn):
         """Synchronous wrapper for async test methods. Used to avoid making changes

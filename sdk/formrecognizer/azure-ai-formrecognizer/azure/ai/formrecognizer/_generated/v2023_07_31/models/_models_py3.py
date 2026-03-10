@@ -53,20 +53,20 @@ class AddressValue(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'house_number': {'key': 'houseNumber', 'type': 'str'},
-        'po_box': {'key': 'poBox', 'type': 'str'},
-        'road': {'key': 'road', 'type': 'str'},
-        'city': {'key': 'city', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'postal_code': {'key': 'postalCode', 'type': 'str'},
-        'country_region': {'key': 'countryRegion', 'type': 'str'},
-        'street_address': {'key': 'streetAddress', 'type': 'str'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'city_district': {'key': 'cityDistrict', 'type': 'str'},
-        'state_district': {'key': 'stateDistrict', 'type': 'str'},
-        'suburb': {'key': 'suburb', 'type': 'str'},
-        'house': {'key': 'house', 'type': 'str'},
-        'level': {'key': 'level', 'type': 'str'},
+        "house_number": {"key": "houseNumber", "type": "str"},
+        "po_box": {"key": "poBox", "type": "str"},
+        "road": {"key": "road", "type": "str"},
+        "city": {"key": "city", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "postal_code": {"key": "postalCode", "type": "str"},
+        "country_region": {"key": "countryRegion", "type": "str"},
+        "street_address": {"key": "streetAddress", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+        "city_district": {"key": "cityDistrict", "type": "str"},
+        "state_district": {"key": "stateDistrict", "type": "str"},
+        "suburb": {"key": "suburb", "type": "str"},
+        "house": {"key": "house", "type": "str"},
+        "level": {"key": "level", "type": "str"},
     }
 
     def __init__(
@@ -148,17 +148,11 @@ class AnalyzeDocumentRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'url_source': {'key': 'urlSource', 'type': 'str'},
-        'base64_source': {'key': 'base64Source', 'type': 'bytearray'},
+        "url_source": {"key": "urlSource", "type": "str"},
+        "base64_source": {"key": "base64Source", "type": "bytearray"},
     }
 
-    def __init__(
-        self,
-        *,
-        url_source: Optional[str] = None,
-        base64_source: Optional[bytearray] = None,
-        **kwargs
-    ):
+    def __init__(self, *, url_source: Optional[str] = None, base64_source: Optional[bytearray] = None, **kwargs):
         """
         :keyword url_source: Document URL to analyze.  Either urlSource or base64Source must be
          specified.
@@ -205,25 +199,25 @@ class AnalyzeResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'api_version': {'required': True},
-        'model_id': {'required': True, 'pattern': r'^[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}$'},
-        'string_index_type': {'required': True},
-        'content': {'required': True},
-        'pages': {'required': True},
+        "api_version": {"required": True},
+        "model_id": {"required": True, "pattern": r"^[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}$"},
+        "string_index_type": {"required": True},
+        "content": {"required": True},
+        "pages": {"required": True},
     }
 
     _attribute_map = {
-        'api_version': {'key': 'apiVersion', 'type': 'str'},
-        'model_id': {'key': 'modelId', 'type': 'str'},
-        'string_index_type': {'key': 'stringIndexType', 'type': 'str'},
-        'content': {'key': 'content', 'type': 'str'},
-        'pages': {'key': 'pages', 'type': '[DocumentPage]'},
-        'paragraphs': {'key': 'paragraphs', 'type': '[DocumentParagraph]'},
-        'tables': {'key': 'tables', 'type': '[DocumentTable]'},
-        'key_value_pairs': {'key': 'keyValuePairs', 'type': '[DocumentKeyValuePair]'},
-        'styles': {'key': 'styles', 'type': '[DocumentStyle]'},
-        'languages': {'key': 'languages', 'type': '[DocumentLanguage]'},
-        'documents': {'key': 'documents', 'type': '[Document]'},
+        "api_version": {"key": "apiVersion", "type": "str"},
+        "model_id": {"key": "modelId", "type": "str"},
+        "string_index_type": {"key": "stringIndexType", "type": "str"},
+        "content": {"key": "content", "type": "str"},
+        "pages": {"key": "pages", "type": "[DocumentPage]"},
+        "paragraphs": {"key": "paragraphs", "type": "[DocumentParagraph]"},
+        "tables": {"key": "tables", "type": "[DocumentTable]"},
+        "key_value_pairs": {"key": "keyValuePairs", "type": "[DocumentKeyValuePair]"},
+        "styles": {"key": "styles", "type": "[DocumentStyle]"},
+        "languages": {"key": "languages", "type": "[DocumentLanguage]"},
+        "documents": {"key": "documents", "type": "[Document]"},
     }
 
     def __init__(
@@ -305,17 +299,17 @@ class AnalyzeResultOperation(msrest.serialization.Model):
     """
 
     _validation = {
-        'status': {'required': True},
-        'created_date_time': {'required': True},
-        'last_updated_date_time': {'required': True},
+        "status": {"required": True},
+        "created_date_time": {"required": True},
+        "last_updated_date_time": {"required": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'last_updated_date_time': {'key': 'lastUpdatedDateTime', 'type': 'iso-8601'},
-        'error': {'key': 'error', 'type': 'Error'},
-        'analyze_result': {'key': 'analyzeResult', 'type': 'AnalyzeResult'},
+        "status": {"key": "status", "type": "str"},
+        "created_date_time": {"key": "createdDateTime", "type": "iso-8601"},
+        "last_updated_date_time": {"key": "lastUpdatedDateTime", "type": "iso-8601"},
+        "error": {"key": "error", "type": "Error"},
+        "analyze_result": {"key": "analyzeResult", "type": "AnalyzeResult"},
     }
 
     def __init__(
@@ -366,23 +360,18 @@ class AuthorizeCopyRequest(msrest.serialization.Model):
     """
 
     _validation = {
-        'model_id': {'required': True, 'pattern': r'^[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}$'},
-        'description': {'max_length': 4096, 'min_length': 0},
+        "model_id": {"required": True, "pattern": r"^[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}$"},
+        "description": {"max_length": 4096, "min_length": 0},
     }
 
     _attribute_map = {
-        'model_id': {'key': 'modelId', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "model_id": {"key": "modelId", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
-        self,
-        *,
-        model_id: str,
-        description: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
+        self, *, model_id: str, description: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs
     ):
         """
         :keyword model_id: Required. Unique document model name.
@@ -411,21 +400,15 @@ class AzureBlobContentSource(msrest.serialization.Model):
     """
 
     _validation = {
-        'container_url': {'required': True},
+        "container_url": {"required": True},
     }
 
     _attribute_map = {
-        'container_url': {'key': 'containerUrl', 'type': 'str'},
-        'prefix': {'key': 'prefix', 'type': 'str'},
+        "container_url": {"key": "containerUrl", "type": "str"},
+        "prefix": {"key": "prefix", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        container_url: str,
-        prefix: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, container_url: str, prefix: Optional[str] = None, **kwargs):
         """
         :keyword container_url: Required. Azure Blob Storage container URL.
         :paramtype container_url: str
@@ -450,22 +433,16 @@ class AzureBlobFileListContentSource(msrest.serialization.Model):
     """
 
     _validation = {
-        'container_url': {'required': True},
-        'file_list': {'required': True},
+        "container_url": {"required": True},
+        "file_list": {"required": True},
     }
 
     _attribute_map = {
-        'container_url': {'key': 'containerUrl', 'type': 'str'},
-        'file_list': {'key': 'fileList', 'type': 'str'},
+        "container_url": {"key": "containerUrl", "type": "str"},
+        "file_list": {"key": "fileList", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        container_url: str,
-        file_list: str,
-        **kwargs
-    ):
+    def __init__(self, *, container_url: str, file_list: str, **kwargs):
         """
         :keyword container_url: Required. Azure Blob Storage container URL.
         :paramtype container_url: str
@@ -490,22 +467,16 @@ class BoundingRegion(msrest.serialization.Model):
     """
 
     _validation = {
-        'page_number': {'required': True, 'minimum': 1},
-        'polygon': {'required': True},
+        "page_number": {"required": True, "minimum": 1},
+        "polygon": {"required": True},
     }
 
     _attribute_map = {
-        'page_number': {'key': 'pageNumber', 'type': 'int'},
-        'polygon': {'key': 'polygon', 'type': '[float]'},
+        "page_number": {"key": "pageNumber", "type": "int"},
+        "polygon": {"key": "polygon", "type": "[float]"},
     }
 
-    def __init__(
-        self,
-        *,
-        page_number: int,
-        polygon: List[float],
-        **kwargs
-    ):
+    def __init__(self, *, page_number: int, polygon: List[float], **kwargs):
         """
         :keyword page_number: Required. 1-based page number of page containing the bounding region.
         :paramtype page_number: int
@@ -532,15 +503,15 @@ class BuildDocumentClassifierRequest(msrest.serialization.Model):
     """
 
     _validation = {
-        'classifier_id': {'required': True, 'pattern': r'^[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}$'},
-        'description': {'max_length': 4096, 'min_length': 0},
-        'doc_types': {'required': True},
+        "classifier_id": {"required": True, "pattern": r"^[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}$"},
+        "description": {"max_length": 4096, "min_length": 0},
+        "doc_types": {"required": True},
     }
 
     _attribute_map = {
-        'classifier_id': {'key': 'classifierId', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'doc_types': {'key': 'docTypes', 'type': '{ClassifierDocumentTypeDetails}'},
+        "classifier_id": {"key": "classifierId", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "doc_types": {"key": "docTypes", "type": "{ClassifierDocumentTypeDetails}"},
     }
 
     def __init__(
@@ -590,18 +561,18 @@ class BuildDocumentModelRequest(msrest.serialization.Model):
     """
 
     _validation = {
-        'model_id': {'required': True, 'pattern': r'^[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}$'},
-        'description': {'max_length': 4096, 'min_length': 0},
-        'build_mode': {'required': True},
+        "model_id": {"required": True, "pattern": r"^[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}$"},
+        "description": {"max_length": 4096, "min_length": 0},
+        "build_mode": {"required": True},
     }
 
     _attribute_map = {
-        'model_id': {'key': 'modelId', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'build_mode': {'key': 'buildMode', 'type': 'str'},
-        'azure_blob_source': {'key': 'azureBlobSource', 'type': 'AzureBlobContentSource'},
-        'azure_blob_file_list_source': {'key': 'azureBlobFileListSource', 'type': 'AzureBlobFileListContentSource'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "model_id": {"key": "modelId", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "build_mode": {"key": "buildMode", "type": "str"},
+        "azure_blob_source": {"key": "azureBlobSource", "type": "AzureBlobContentSource"},
+        "azure_blob_file_list_source": {"key": "azureBlobFileListSource", "type": "AzureBlobFileListContentSource"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
@@ -658,8 +629,8 @@ class ClassifierDocumentTypeDetails(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'azure_blob_source': {'key': 'azureBlobSource', 'type': 'AzureBlobContentSource'},
-        'azure_blob_file_list_source': {'key': 'azureBlobFileListSource', 'type': 'AzureBlobFileListContentSource'},
+        "azure_blob_source": {"key": "azureBlobSource", "type": "AzureBlobContentSource"},
+        "azure_blob_file_list_source": {"key": "azureBlobFileListSource", "type": "AzureBlobFileListContentSource"},
     }
 
     def __init__(
@@ -697,17 +668,11 @@ class ClassifyDocumentRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'url_source': {'key': 'urlSource', 'type': 'str'},
-        'base64_source': {'key': 'base64Source', 'type': 'bytearray'},
+        "url_source": {"key": "urlSource", "type": "str"},
+        "base64_source": {"key": "base64Source", "type": "bytearray"},
     }
 
-    def __init__(
-        self,
-        *,
-        url_source: Optional[str] = None,
-        base64_source: Optional[bytearray] = None,
-        **kwargs
-    ):
+    def __init__(self, *, url_source: Optional[str] = None, base64_source: Optional[bytearray] = None, **kwargs):
         """
         :keyword url_source: Document URL to classify.  Either urlSource or base64Source must be
          specified.
@@ -731,19 +696,14 @@ class ComponentDocumentModelDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'model_id': {'required': True, 'pattern': r'^[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}$'},
+        "model_id": {"required": True, "pattern": r"^[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}$"},
     }
 
     _attribute_map = {
-        'model_id': {'key': 'modelId', 'type': 'str'},
+        "model_id": {"key": "modelId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        model_id: str,
-        **kwargs
-    ):
+    def __init__(self, *, model_id: str, **kwargs):
         """
         :keyword model_id: Required. Unique document model name.
         :paramtype model_id: str
@@ -769,16 +729,16 @@ class ComposeDocumentModelRequest(msrest.serialization.Model):
     """
 
     _validation = {
-        'model_id': {'required': True, 'pattern': r'^[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}$'},
-        'description': {'max_length': 4096, 'min_length': 0},
-        'component_models': {'required': True},
+        "model_id": {"required": True, "pattern": r"^[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}$"},
+        "description": {"max_length": 4096, "min_length": 0},
+        "component_models": {"required": True},
     }
 
     _attribute_map = {
-        'model_id': {'key': 'modelId', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'component_models': {'key': 'componentModels', 'type': '[ComponentDocumentModelDetails]'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "model_id": {"key": "modelId", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "component_models": {"key": "componentModels", "type": "[ComponentDocumentModelDetails]"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
@@ -831,21 +791,21 @@ class CopyAuthorization(msrest.serialization.Model):
     """
 
     _validation = {
-        'target_resource_id': {'required': True},
-        'target_resource_region': {'required': True},
-        'target_model_id': {'required': True, 'pattern': r'^[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}$'},
-        'target_model_location': {'required': True},
-        'access_token': {'required': True},
-        'expiration_date_time': {'required': True},
+        "target_resource_id": {"required": True},
+        "target_resource_region": {"required": True},
+        "target_model_id": {"required": True, "pattern": r"^[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}$"},
+        "target_model_location": {"required": True},
+        "access_token": {"required": True},
+        "expiration_date_time": {"required": True},
     }
 
     _attribute_map = {
-        'target_resource_id': {'key': 'targetResourceId', 'type': 'str'},
-        'target_resource_region': {'key': 'targetResourceRegion', 'type': 'str'},
-        'target_model_id': {'key': 'targetModelId', 'type': 'str'},
-        'target_model_location': {'key': 'targetModelLocation', 'type': 'str'},
-        'access_token': {'key': 'accessToken', 'type': 'str'},
-        'expiration_date_time': {'key': 'expirationDateTime', 'type': 'iso-8601'},
+        "target_resource_id": {"key": "targetResourceId", "type": "str"},
+        "target_resource_region": {"key": "targetResourceRegion", "type": "str"},
+        "target_model_id": {"key": "targetModelId", "type": "str"},
+        "target_model_location": {"key": "targetModelLocation", "type": "str"},
+        "access_token": {"key": "accessToken", "type": "str"},
+        "expiration_date_time": {"key": "expirationDateTime", "type": "iso-8601"},
     }
 
     def __init__(
@@ -899,22 +859,17 @@ class CurrencyValue(msrest.serialization.Model):
     """
 
     _validation = {
-        'amount': {'required': True},
+        "amount": {"required": True},
     }
 
     _attribute_map = {
-        'amount': {'key': 'amount', 'type': 'float'},
-        'currency_symbol': {'key': 'currencySymbol', 'type': 'str'},
-        'currency_code': {'key': 'currencyCode', 'type': 'str'},
+        "amount": {"key": "amount", "type": "float"},
+        "currency_symbol": {"key": "currencySymbol", "type": "str"},
+        "currency_code": {"key": "currencyCode", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        amount: float,
-        currency_symbol: Optional[str] = None,
-        currency_code: Optional[str] = None,
-        **kwargs
+        self, *, amount: float, currency_symbol: Optional[str] = None, currency_code: Optional[str] = None, **kwargs
     ):
         """
         :keyword amount: Required. Currency amount.
@@ -943,22 +898,16 @@ class CustomDocumentModelsDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'count': {'required': True},
-        'limit': {'required': True},
+        "count": {"required": True},
+        "limit": {"required": True},
     }
 
     _attribute_map = {
-        'count': {'key': 'count', 'type': 'int'},
-        'limit': {'key': 'limit', 'type': 'int'},
+        "count": {"key": "count", "type": "int"},
+        "limit": {"key": "limit", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        count: int,
-        limit: int,
-        **kwargs
-    ):
+    def __init__(self, *, count: int, limit: int, **kwargs):
         """
         :keyword count: Required. Number of custom document models in the current resource.
         :paramtype count: int
@@ -989,17 +938,17 @@ class Document(msrest.serialization.Model):
     """
 
     _validation = {
-        'doc_type': {'required': True, 'max_length': 64, 'min_length': 2},
-        'spans': {'required': True},
-        'confidence': {'required': True, 'maximum': 1, 'minimum': 0},
+        "doc_type": {"required": True, "max_length": 64, "min_length": 2},
+        "spans": {"required": True},
+        "confidence": {"required": True, "maximum": 1, "minimum": 0},
     }
 
     _attribute_map = {
-        'doc_type': {'key': 'docType', 'type': 'str'},
-        'bounding_regions': {'key': 'boundingRegions', 'type': '[BoundingRegion]'},
-        'spans': {'key': 'spans', 'type': '[DocumentSpan]'},
-        'fields': {'key': 'fields', 'type': '{DocumentField}'},
-        'confidence': {'key': 'confidence', 'type': 'float'},
+        "doc_type": {"key": "docType", "type": "str"},
+        "bounding_regions": {"key": "boundingRegions", "type": "[BoundingRegion]"},
+        "spans": {"key": "spans", "type": "[DocumentSpan]"},
+        "fields": {"key": "fields", "type": "{DocumentField}"},
+        "confidence": {"key": "confidence", "type": "float"},
     }
 
     def __init__(
@@ -1052,18 +1001,18 @@ class DocumentBarcode(msrest.serialization.Model):
     """
 
     _validation = {
-        'kind': {'required': True},
-        'value': {'required': True},
-        'span': {'required': True},
-        'confidence': {'required': True, 'maximum': 1, 'minimum': 0},
+        "kind": {"required": True},
+        "value": {"required": True},
+        "span": {"required": True},
+        "confidence": {"required": True, "maximum": 1, "minimum": 0},
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-        'polygon': {'key': 'polygon', 'type': '[float]'},
-        'span': {'key': 'span', 'type': 'DocumentSpan'},
-        'confidence': {'key': 'confidence', 'type': 'float'},
+        "kind": {"key": "kind", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+        "polygon": {"key": "polygon", "type": "[float]"},
+        "span": {"key": "span", "type": "DocumentSpan"},
+        "confidence": {"key": "confidence", "type": "float"},
     }
 
     def __init__(
@@ -1130,30 +1079,35 @@ class OperationDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'operation_id': {'required': True},
-        'status': {'required': True},
-        'percent_completed': {'maximum': 100, 'minimum': 0},
-        'created_date_time': {'required': True},
-        'last_updated_date_time': {'required': True},
-        'kind': {'required': True},
-        'resource_location': {'required': True},
+        "operation_id": {"required": True},
+        "status": {"required": True},
+        "percent_completed": {"maximum": 100, "minimum": 0},
+        "created_date_time": {"required": True},
+        "last_updated_date_time": {"required": True},
+        "kind": {"required": True},
+        "resource_location": {"required": True},
     }
 
     _attribute_map = {
-        'operation_id': {'key': 'operationId', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'percent_completed': {'key': 'percentCompleted', 'type': 'int'},
-        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'last_updated_date_time': {'key': 'lastUpdatedDateTime', 'type': 'iso-8601'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'resource_location': {'key': 'resourceLocation', 'type': 'str'},
-        'api_version': {'key': 'apiVersion', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'error': {'key': 'error', 'type': 'Error'},
+        "operation_id": {"key": "operationId", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "percent_completed": {"key": "percentCompleted", "type": "int"},
+        "created_date_time": {"key": "createdDateTime", "type": "iso-8601"},
+        "last_updated_date_time": {"key": "lastUpdatedDateTime", "type": "iso-8601"},
+        "kind": {"key": "kind", "type": "str"},
+        "resource_location": {"key": "resourceLocation", "type": "str"},
+        "api_version": {"key": "apiVersion", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "error": {"key": "error", "type": "Error"},
     }
 
     _subtype_map = {
-        'kind': {'documentClassifierBuild': 'DocumentClassifierBuildOperationDetails', 'documentModelBuild': 'DocumentModelBuildOperationDetails', 'documentModelCompose': 'DocumentModelComposeOperationDetails', 'documentModelCopyTo': 'DocumentModelCopyToOperationDetails'}
+        "kind": {
+            "documentClassifierBuild": "DocumentClassifierBuildOperationDetails",
+            "documentModelBuild": "DocumentModelBuildOperationDetails",
+            "documentModelCompose": "DocumentModelComposeOperationDetails",
+            "documentModelCopyTo": "DocumentModelCopyToOperationDetails",
+        }
     }
 
     def __init__(
@@ -1237,27 +1191,27 @@ class DocumentClassifierBuildOperationDetails(OperationDetails):
     """
 
     _validation = {
-        'operation_id': {'required': True},
-        'status': {'required': True},
-        'percent_completed': {'maximum': 100, 'minimum': 0},
-        'created_date_time': {'required': True},
-        'last_updated_date_time': {'required': True},
-        'kind': {'required': True},
-        'resource_location': {'required': True},
+        "operation_id": {"required": True},
+        "status": {"required": True},
+        "percent_completed": {"maximum": 100, "minimum": 0},
+        "created_date_time": {"required": True},
+        "last_updated_date_time": {"required": True},
+        "kind": {"required": True},
+        "resource_location": {"required": True},
     }
 
     _attribute_map = {
-        'operation_id': {'key': 'operationId', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'percent_completed': {'key': 'percentCompleted', 'type': 'int'},
-        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'last_updated_date_time': {'key': 'lastUpdatedDateTime', 'type': 'iso-8601'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'resource_location': {'key': 'resourceLocation', 'type': 'str'},
-        'api_version': {'key': 'apiVersion', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'error': {'key': 'error', 'type': 'Error'},
-        'result': {'key': 'result', 'type': 'DocumentClassifierDetails'},
+        "operation_id": {"key": "operationId", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "percent_completed": {"key": "percentCompleted", "type": "int"},
+        "created_date_time": {"key": "createdDateTime", "type": "iso-8601"},
+        "last_updated_date_time": {"key": "lastUpdatedDateTime", "type": "iso-8601"},
+        "kind": {"key": "kind", "type": "str"},
+        "resource_location": {"key": "resourceLocation", "type": "str"},
+        "api_version": {"key": "apiVersion", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "error": {"key": "error", "type": "Error"},
+        "result": {"key": "result", "type": "DocumentClassifierDetails"},
     }
 
     def __init__(
@@ -1300,8 +1254,19 @@ class DocumentClassifierBuildOperationDetails(OperationDetails):
         :keyword result: Operation result upon success.
         :paramtype result: ~azure.ai.formrecognizer.v2023_07_31.models.DocumentClassifierDetails
         """
-        super(DocumentClassifierBuildOperationDetails, self).__init__(operation_id=operation_id, status=status, percent_completed=percent_completed, created_date_time=created_date_time, last_updated_date_time=last_updated_date_time, resource_location=resource_location, api_version=api_version, tags=tags, error=error, **kwargs)
-        self.kind = 'documentClassifierBuild'  # type: str
+        super(DocumentClassifierBuildOperationDetails, self).__init__(
+            operation_id=operation_id,
+            status=status,
+            percent_completed=percent_completed,
+            created_date_time=created_date_time,
+            last_updated_date_time=last_updated_date_time,
+            resource_location=resource_location,
+            api_version=api_version,
+            tags=tags,
+            error=error,
+            **kwargs
+        )
+        self.kind = "documentClassifierBuild"  # type: str
         self.result = result
 
 
@@ -1327,20 +1292,20 @@ class DocumentClassifierDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'classifier_id': {'required': True, 'pattern': r'^[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}$'},
-        'description': {'max_length': 4096, 'min_length': 0},
-        'created_date_time': {'required': True},
-        'api_version': {'required': True},
-        'doc_types': {'required': True},
+        "classifier_id": {"required": True, "pattern": r"^[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}$"},
+        "description": {"max_length": 4096, "min_length": 0},
+        "created_date_time": {"required": True},
+        "api_version": {"required": True},
+        "doc_types": {"required": True},
     }
 
     _attribute_map = {
-        'classifier_id': {'key': 'classifierId', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'expiration_date_time': {'key': 'expirationDateTime', 'type': 'iso-8601'},
-        'api_version': {'key': 'apiVersion', 'type': 'str'},
-        'doc_types': {'key': 'docTypes', 'type': '{ClassifierDocumentTypeDetails}'},
+        "classifier_id": {"key": "classifierId", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "created_date_time": {"key": "createdDateTime", "type": "iso-8601"},
+        "expiration_date_time": {"key": "expirationDateTime", "type": "iso-8601"},
+        "api_version": {"key": "apiVersion", "type": "str"},
+        "doc_types": {"key": "docTypes", "type": "{ClassifierDocumentTypeDetails}"},
     }
 
     def __init__(
@@ -1429,30 +1394,30 @@ class DocumentField(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
-        'confidence': {'maximum': 1, 'minimum': 0},
+        "type": {"required": True},
+        "confidence": {"maximum": 1, "minimum": 0},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'value_string': {'key': 'valueString', 'type': 'str'},
-        'value_date': {'key': 'valueDate', 'type': 'date'},
-        'value_time': {'key': 'valueTime', 'type': 'time'},
-        'value_phone_number': {'key': 'valuePhoneNumber', 'type': 'str'},
-        'value_number': {'key': 'valueNumber', 'type': 'float'},
-        'value_integer': {'key': 'valueInteger', 'type': 'long'},
-        'value_selection_mark': {'key': 'valueSelectionMark', 'type': 'str'},
-        'value_signature': {'key': 'valueSignature', 'type': 'str'},
-        'value_country_region': {'key': 'valueCountryRegion', 'type': 'str'},
-        'value_array': {'key': 'valueArray', 'type': '[DocumentField]'},
-        'value_object': {'key': 'valueObject', 'type': '{DocumentField}'},
-        'value_currency': {'key': 'valueCurrency', 'type': 'CurrencyValue'},
-        'value_address': {'key': 'valueAddress', 'type': 'AddressValue'},
-        'value_boolean': {'key': 'valueBoolean', 'type': 'bool'},
-        'content': {'key': 'content', 'type': 'str'},
-        'bounding_regions': {'key': 'boundingRegions', 'type': '[BoundingRegion]'},
-        'spans': {'key': 'spans', 'type': '[DocumentSpan]'},
-        'confidence': {'key': 'confidence', 'type': 'float'},
+        "type": {"key": "type", "type": "str"},
+        "value_string": {"key": "valueString", "type": "str"},
+        "value_date": {"key": "valueDate", "type": "date"},
+        "value_time": {"key": "valueTime", "type": "time"},
+        "value_phone_number": {"key": "valuePhoneNumber", "type": "str"},
+        "value_number": {"key": "valueNumber", "type": "float"},
+        "value_integer": {"key": "valueInteger", "type": "long"},
+        "value_selection_mark": {"key": "valueSelectionMark", "type": "str"},
+        "value_signature": {"key": "valueSignature", "type": "str"},
+        "value_country_region": {"key": "valueCountryRegion", "type": "str"},
+        "value_array": {"key": "valueArray", "type": "[DocumentField]"},
+        "value_object": {"key": "valueObject", "type": "{DocumentField}"},
+        "value_currency": {"key": "valueCurrency", "type": "CurrencyValue"},
+        "value_address": {"key": "valueAddress", "type": "AddressValue"},
+        "value_boolean": {"key": "valueBoolean", "type": "bool"},
+        "content": {"key": "content", "type": "str"},
+        "bounding_regions": {"key": "boundingRegions", "type": "[BoundingRegion]"},
+        "spans": {"key": "spans", "type": "[DocumentSpan]"},
+        "confidence": {"key": "confidence", "type": "float"},
     }
 
     def __init__(
@@ -1566,15 +1531,15 @@ class DocumentFieldSchema(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'example': {'key': 'example', 'type': 'str'},
-        'items': {'key': 'items', 'type': 'DocumentFieldSchema'},
-        'properties': {'key': 'properties', 'type': '{DocumentFieldSchema}'},
+        "type": {"key": "type", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "example": {"key": "example", "type": "str"},
+        "items": {"key": "items", "type": "DocumentFieldSchema"},
+        "properties": {"key": "properties", "type": "{DocumentFieldSchema}"},
     }
 
     def __init__(
@@ -1628,18 +1593,18 @@ class DocumentFormula(msrest.serialization.Model):
     """
 
     _validation = {
-        'kind': {'required': True},
-        'value': {'required': True},
-        'span': {'required': True},
-        'confidence': {'required': True, 'maximum': 1, 'minimum': 0},
+        "kind": {"required": True},
+        "value": {"required": True},
+        "span": {"required": True},
+        "confidence": {"required": True, "maximum": 1, "minimum": 0},
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-        'polygon': {'key': 'polygon', 'type': '[float]'},
-        'span': {'key': 'span', 'type': 'DocumentSpan'},
-        'confidence': {'key': 'confidence', 'type': 'float'},
+        "kind": {"key": "kind", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+        "polygon": {"key": "polygon", "type": "[float]"},
+        "span": {"key": "span", "type": "DocumentSpan"},
+        "confidence": {"key": "confidence", "type": "float"},
     }
 
     def __init__(
@@ -1687,14 +1652,14 @@ class DocumentKeyValueElement(msrest.serialization.Model):
     """
 
     _validation = {
-        'content': {'required': True},
-        'spans': {'required': True},
+        "content": {"required": True},
+        "spans": {"required": True},
     }
 
     _attribute_map = {
-        'content': {'key': 'content', 'type': 'str'},
-        'bounding_regions': {'key': 'boundingRegions', 'type': '[BoundingRegion]'},
-        'spans': {'key': 'spans', 'type': '[DocumentSpan]'},
+        "content": {"key": "content", "type": "str"},
+        "bounding_regions": {"key": "boundingRegions", "type": "[BoundingRegion]"},
+        "spans": {"key": "spans", "type": "[DocumentSpan]"},
     }
 
     def __init__(
@@ -1734,14 +1699,14 @@ class DocumentKeyValuePair(msrest.serialization.Model):
     """
 
     _validation = {
-        'key': {'required': True},
-        'confidence': {'required': True, 'maximum': 1, 'minimum': 0},
+        "key": {"required": True},
+        "confidence": {"required": True, "maximum": 1, "minimum": 0},
     }
 
     _attribute_map = {
-        'key': {'key': 'key', 'type': 'DocumentKeyValueElement'},
-        'value': {'key': 'value', 'type': 'DocumentKeyValueElement'},
-        'confidence': {'key': 'confidence', 'type': 'float'},
+        "key": {"key": "key", "type": "DocumentKeyValueElement"},
+        "value": {"key": "value", "type": "DocumentKeyValueElement"},
+        "confidence": {"key": "confidence", "type": "float"},
     }
 
     def __init__(
@@ -1782,25 +1747,18 @@ class DocumentLanguage(msrest.serialization.Model):
     """
 
     _validation = {
-        'locale': {'required': True},
-        'spans': {'required': True},
-        'confidence': {'required': True, 'maximum': 1, 'minimum': 0},
+        "locale": {"required": True},
+        "spans": {"required": True},
+        "confidence": {"required": True, "maximum": 1, "minimum": 0},
     }
 
     _attribute_map = {
-        'locale': {'key': 'locale', 'type': 'str'},
-        'spans': {'key': 'spans', 'type': '[DocumentSpan]'},
-        'confidence': {'key': 'confidence', 'type': 'float'},
+        "locale": {"key": "locale", "type": "str"},
+        "spans": {"key": "spans", "type": "[DocumentSpan]"},
+        "confidence": {"key": "confidence", "type": "float"},
     }
 
-    def __init__(
-        self,
-        *,
-        locale: str,
-        spans: List["_models.DocumentSpan"],
-        confidence: float,
-        **kwargs
-    ):
+    def __init__(self, *, locale: str, spans: List["_models.DocumentSpan"], confidence: float, **kwargs):
         """
         :keyword locale: Required. Detected language.  Value may an ISO 639-1 language code (ex. "en",
          "fr") or BCP 47 language tag (ex. "zh-Hans").
@@ -1831,23 +1789,18 @@ class DocumentLine(msrest.serialization.Model):
     """
 
     _validation = {
-        'content': {'required': True},
-        'spans': {'required': True},
+        "content": {"required": True},
+        "spans": {"required": True},
     }
 
     _attribute_map = {
-        'content': {'key': 'content', 'type': 'str'},
-        'polygon': {'key': 'polygon', 'type': '[float]'},
-        'spans': {'key': 'spans', 'type': '[DocumentSpan]'},
+        "content": {"key": "content", "type": "str"},
+        "polygon": {"key": "polygon", "type": "[float]"},
+        "spans": {"key": "spans", "type": "[DocumentSpan]"},
     }
 
     def __init__(
-        self,
-        *,
-        content: str,
-        spans: List["_models.DocumentSpan"],
-        polygon: Optional[List[float]] = None,
-        **kwargs
+        self, *, content: str, spans: List["_models.DocumentSpan"], polygon: Optional[List[float]] = None, **kwargs
     ):
         """
         :keyword content: Required. Concatenated content of the contained elements in reading order.
@@ -1894,27 +1847,27 @@ class DocumentModelBuildOperationDetails(OperationDetails):
     """
 
     _validation = {
-        'operation_id': {'required': True},
-        'status': {'required': True},
-        'percent_completed': {'maximum': 100, 'minimum': 0},
-        'created_date_time': {'required': True},
-        'last_updated_date_time': {'required': True},
-        'kind': {'required': True},
-        'resource_location': {'required': True},
+        "operation_id": {"required": True},
+        "status": {"required": True},
+        "percent_completed": {"maximum": 100, "minimum": 0},
+        "created_date_time": {"required": True},
+        "last_updated_date_time": {"required": True},
+        "kind": {"required": True},
+        "resource_location": {"required": True},
     }
 
     _attribute_map = {
-        'operation_id': {'key': 'operationId', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'percent_completed': {'key': 'percentCompleted', 'type': 'int'},
-        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'last_updated_date_time': {'key': 'lastUpdatedDateTime', 'type': 'iso-8601'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'resource_location': {'key': 'resourceLocation', 'type': 'str'},
-        'api_version': {'key': 'apiVersion', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'error': {'key': 'error', 'type': 'Error'},
-        'result': {'key': 'result', 'type': 'DocumentModelDetails'},
+        "operation_id": {"key": "operationId", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "percent_completed": {"key": "percentCompleted", "type": "int"},
+        "created_date_time": {"key": "createdDateTime", "type": "iso-8601"},
+        "last_updated_date_time": {"key": "lastUpdatedDateTime", "type": "iso-8601"},
+        "kind": {"key": "kind", "type": "str"},
+        "resource_location": {"key": "resourceLocation", "type": "str"},
+        "api_version": {"key": "apiVersion", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "error": {"key": "error", "type": "Error"},
+        "result": {"key": "result", "type": "DocumentModelDetails"},
     }
 
     def __init__(
@@ -1957,8 +1910,19 @@ class DocumentModelBuildOperationDetails(OperationDetails):
         :keyword result: Operation result upon success.
         :paramtype result: ~azure.ai.formrecognizer.v2023_07_31.models.DocumentModelDetails
         """
-        super(DocumentModelBuildOperationDetails, self).__init__(operation_id=operation_id, status=status, percent_completed=percent_completed, created_date_time=created_date_time, last_updated_date_time=last_updated_date_time, resource_location=resource_location, api_version=api_version, tags=tags, error=error, **kwargs)
-        self.kind = 'documentModelBuild'  # type: str
+        super(DocumentModelBuildOperationDetails, self).__init__(
+            operation_id=operation_id,
+            status=status,
+            percent_completed=percent_completed,
+            created_date_time=created_date_time,
+            last_updated_date_time=last_updated_date_time,
+            resource_location=resource_location,
+            api_version=api_version,
+            tags=tags,
+            error=error,
+            **kwargs
+        )
+        self.kind = "documentModelBuild"  # type: str
         self.result = result
 
 
@@ -1993,27 +1957,27 @@ class DocumentModelComposeOperationDetails(OperationDetails):
     """
 
     _validation = {
-        'operation_id': {'required': True},
-        'status': {'required': True},
-        'percent_completed': {'maximum': 100, 'minimum': 0},
-        'created_date_time': {'required': True},
-        'last_updated_date_time': {'required': True},
-        'kind': {'required': True},
-        'resource_location': {'required': True},
+        "operation_id": {"required": True},
+        "status": {"required": True},
+        "percent_completed": {"maximum": 100, "minimum": 0},
+        "created_date_time": {"required": True},
+        "last_updated_date_time": {"required": True},
+        "kind": {"required": True},
+        "resource_location": {"required": True},
     }
 
     _attribute_map = {
-        'operation_id': {'key': 'operationId', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'percent_completed': {'key': 'percentCompleted', 'type': 'int'},
-        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'last_updated_date_time': {'key': 'lastUpdatedDateTime', 'type': 'iso-8601'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'resource_location': {'key': 'resourceLocation', 'type': 'str'},
-        'api_version': {'key': 'apiVersion', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'error': {'key': 'error', 'type': 'Error'},
-        'result': {'key': 'result', 'type': 'DocumentModelDetails'},
+        "operation_id": {"key": "operationId", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "percent_completed": {"key": "percentCompleted", "type": "int"},
+        "created_date_time": {"key": "createdDateTime", "type": "iso-8601"},
+        "last_updated_date_time": {"key": "lastUpdatedDateTime", "type": "iso-8601"},
+        "kind": {"key": "kind", "type": "str"},
+        "resource_location": {"key": "resourceLocation", "type": "str"},
+        "api_version": {"key": "apiVersion", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "error": {"key": "error", "type": "Error"},
+        "result": {"key": "result", "type": "DocumentModelDetails"},
     }
 
     def __init__(
@@ -2056,8 +2020,19 @@ class DocumentModelComposeOperationDetails(OperationDetails):
         :keyword result: Operation result upon success.
         :paramtype result: ~azure.ai.formrecognizer.v2023_07_31.models.DocumentModelDetails
         """
-        super(DocumentModelComposeOperationDetails, self).__init__(operation_id=operation_id, status=status, percent_completed=percent_completed, created_date_time=created_date_time, last_updated_date_time=last_updated_date_time, resource_location=resource_location, api_version=api_version, tags=tags, error=error, **kwargs)
-        self.kind = 'documentModelCompose'  # type: str
+        super(DocumentModelComposeOperationDetails, self).__init__(
+            operation_id=operation_id,
+            status=status,
+            percent_completed=percent_completed,
+            created_date_time=created_date_time,
+            last_updated_date_time=last_updated_date_time,
+            resource_location=resource_location,
+            api_version=api_version,
+            tags=tags,
+            error=error,
+            **kwargs
+        )
+        self.kind = "documentModelCompose"  # type: str
         self.result = result
 
 
@@ -2092,27 +2067,27 @@ class DocumentModelCopyToOperationDetails(OperationDetails):
     """
 
     _validation = {
-        'operation_id': {'required': True},
-        'status': {'required': True},
-        'percent_completed': {'maximum': 100, 'minimum': 0},
-        'created_date_time': {'required': True},
-        'last_updated_date_time': {'required': True},
-        'kind': {'required': True},
-        'resource_location': {'required': True},
+        "operation_id": {"required": True},
+        "status": {"required": True},
+        "percent_completed": {"maximum": 100, "minimum": 0},
+        "created_date_time": {"required": True},
+        "last_updated_date_time": {"required": True},
+        "kind": {"required": True},
+        "resource_location": {"required": True},
     }
 
     _attribute_map = {
-        'operation_id': {'key': 'operationId', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'percent_completed': {'key': 'percentCompleted', 'type': 'int'},
-        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'last_updated_date_time': {'key': 'lastUpdatedDateTime', 'type': 'iso-8601'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'resource_location': {'key': 'resourceLocation', 'type': 'str'},
-        'api_version': {'key': 'apiVersion', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'error': {'key': 'error', 'type': 'Error'},
-        'result': {'key': 'result', 'type': 'DocumentModelDetails'},
+        "operation_id": {"key": "operationId", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "percent_completed": {"key": "percentCompleted", "type": "int"},
+        "created_date_time": {"key": "createdDateTime", "type": "iso-8601"},
+        "last_updated_date_time": {"key": "lastUpdatedDateTime", "type": "iso-8601"},
+        "kind": {"key": "kind", "type": "str"},
+        "resource_location": {"key": "resourceLocation", "type": "str"},
+        "api_version": {"key": "apiVersion", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "error": {"key": "error", "type": "Error"},
+        "result": {"key": "result", "type": "DocumentModelDetails"},
     }
 
     def __init__(
@@ -2155,8 +2130,19 @@ class DocumentModelCopyToOperationDetails(OperationDetails):
         :keyword result: Operation result upon success.
         :paramtype result: ~azure.ai.formrecognizer.v2023_07_31.models.DocumentModelDetails
         """
-        super(DocumentModelCopyToOperationDetails, self).__init__(operation_id=operation_id, status=status, percent_completed=percent_completed, created_date_time=created_date_time, last_updated_date_time=last_updated_date_time, resource_location=resource_location, api_version=api_version, tags=tags, error=error, **kwargs)
-        self.kind = 'documentModelCopyTo'  # type: str
+        super(DocumentModelCopyToOperationDetails, self).__init__(
+            operation_id=operation_id,
+            status=status,
+            percent_completed=percent_completed,
+            created_date_time=created_date_time,
+            last_updated_date_time=last_updated_date_time,
+            resource_location=resource_location,
+            api_version=api_version,
+            tags=tags,
+            error=error,
+            **kwargs
+        )
+        self.kind = "documentModelCopyTo"  # type: str
         self.result = result
 
 
@@ -2182,19 +2168,19 @@ class DocumentModelDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'model_id': {'required': True, 'pattern': r'^[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}$'},
-        'description': {'max_length': 4096, 'min_length': 0},
-        'created_date_time': {'required': True},
+        "model_id": {"required": True, "pattern": r"^[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}$"},
+        "description": {"max_length": 4096, "min_length": 0},
+        "created_date_time": {"required": True},
     }
 
     _attribute_map = {
-        'model_id': {'key': 'modelId', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'expiration_date_time': {'key': 'expirationDateTime', 'type': 'iso-8601'},
-        'api_version': {'key': 'apiVersion', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'doc_types': {'key': 'docTypes', 'type': '{DocumentTypeDetails}'},
+        "model_id": {"key": "modelId", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "created_date_time": {"key": "createdDateTime", "type": "iso-8601"},
+        "expiration_date_time": {"key": "expirationDateTime", "type": "iso-8601"},
+        "api_version": {"key": "apiVersion", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "doc_types": {"key": "docTypes", "type": "{DocumentTypeDetails}"},
     }
 
     def __init__(
@@ -2257,18 +2243,18 @@ class DocumentModelSummary(msrest.serialization.Model):
     """
 
     _validation = {
-        'model_id': {'required': True, 'pattern': r'^[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}$'},
-        'description': {'max_length': 4096, 'min_length': 0},
-        'created_date_time': {'required': True},
+        "model_id": {"required": True, "pattern": r"^[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}$"},
+        "description": {"max_length": 4096, "min_length": 0},
+        "created_date_time": {"required": True},
     }
 
     _attribute_map = {
-        'model_id': {'key': 'modelId', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'expiration_date_time': {'key': 'expirationDateTime', 'type': 'iso-8601'},
-        'api_version': {'key': 'apiVersion', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "model_id": {"key": "modelId", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "created_date_time": {"key": "createdDateTime", "type": "iso-8601"},
+        "expiration_date_time": {"key": "expirationDateTime", "type": "iso-8601"},
+        "api_version": {"key": "apiVersion", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
@@ -2340,25 +2326,25 @@ class DocumentPage(msrest.serialization.Model):
     """
 
     _validation = {
-        'page_number': {'required': True, 'minimum': 1},
-        'angle': {'maximum': 180, 'minimum_ex': -180},
-        'width': {'minimum': 0},
-        'height': {'minimum': 0},
-        'spans': {'required': True},
+        "page_number": {"required": True, "minimum": 1},
+        "angle": {"maximum": 180, "minimum_ex": -180},
+        "width": {"minimum": 0},
+        "height": {"minimum": 0},
+        "spans": {"required": True},
     }
 
     _attribute_map = {
-        'page_number': {'key': 'pageNumber', 'type': 'int'},
-        'angle': {'key': 'angle', 'type': 'float'},
-        'width': {'key': 'width', 'type': 'float'},
-        'height': {'key': 'height', 'type': 'float'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'spans': {'key': 'spans', 'type': '[DocumentSpan]'},
-        'words': {'key': 'words', 'type': '[DocumentWord]'},
-        'selection_marks': {'key': 'selectionMarks', 'type': '[DocumentSelectionMark]'},
-        'lines': {'key': 'lines', 'type': '[DocumentLine]'},
-        'barcodes': {'key': 'barcodes', 'type': '[DocumentBarcode]'},
-        'formulas': {'key': 'formulas', 'type': '[DocumentFormula]'},
+        "page_number": {"key": "pageNumber", "type": "int"},
+        "angle": {"key": "angle", "type": "float"},
+        "width": {"key": "width", "type": "float"},
+        "height": {"key": "height", "type": "float"},
+        "unit": {"key": "unit", "type": "str"},
+        "spans": {"key": "spans", "type": "[DocumentSpan]"},
+        "words": {"key": "words", "type": "[DocumentWord]"},
+        "selection_marks": {"key": "selectionMarks", "type": "[DocumentSelectionMark]"},
+        "lines": {"key": "lines", "type": "[DocumentLine]"},
+        "barcodes": {"key": "barcodes", "type": "[DocumentBarcode]"},
+        "formulas": {"key": "formulas", "type": "[DocumentFormula]"},
     }
 
     def __init__(
@@ -2436,15 +2422,15 @@ class DocumentParagraph(msrest.serialization.Model):
     """
 
     _validation = {
-        'content': {'required': True},
-        'spans': {'required': True},
+        "content": {"required": True},
+        "spans": {"required": True},
     }
 
     _attribute_map = {
-        'role': {'key': 'role', 'type': 'str'},
-        'content': {'key': 'content', 'type': 'str'},
-        'bounding_regions': {'key': 'boundingRegions', 'type': '[BoundingRegion]'},
-        'spans': {'key': 'spans', 'type': '[DocumentSpan]'},
+        "role": {"key": "role", "type": "str"},
+        "content": {"key": "content", "type": "str"},
+        "bounding_regions": {"key": "boundingRegions", "type": "[BoundingRegion]"},
+        "spans": {"key": "spans", "type": "[DocumentSpan]"},
     }
 
     def __init__(
@@ -2490,16 +2476,16 @@ class DocumentSelectionMark(msrest.serialization.Model):
     """
 
     _validation = {
-        'state': {'required': True},
-        'span': {'required': True},
-        'confidence': {'required': True, 'maximum': 1, 'minimum': 0},
+        "state": {"required": True},
+        "span": {"required": True},
+        "confidence": {"required": True, "maximum": 1, "minimum": 0},
     }
 
     _attribute_map = {
-        'state': {'key': 'state', 'type': 'str'},
-        'polygon': {'key': 'polygon', 'type': '[float]'},
-        'span': {'key': 'span', 'type': 'DocumentSpan'},
-        'confidence': {'key': 'confidence', 'type': 'float'},
+        "state": {"key": "state", "type": "str"},
+        "polygon": {"key": "polygon", "type": "[float]"},
+        "span": {"key": "span", "type": "DocumentSpan"},
+        "confidence": {"key": "confidence", "type": "float"},
     }
 
     def __init__(
@@ -2542,22 +2528,16 @@ class DocumentSpan(msrest.serialization.Model):
     """
 
     _validation = {
-        'offset': {'required': True, 'minimum': 0},
-        'length': {'required': True, 'minimum': 0},
+        "offset": {"required": True, "minimum": 0},
+        "length": {"required": True, "minimum": 0},
     }
 
     _attribute_map = {
-        'offset': {'key': 'offset', 'type': 'int'},
-        'length': {'key': 'length', 'type': 'int'},
+        "offset": {"key": "offset", "type": "int"},
+        "length": {"key": "length", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        offset: int,
-        length: int,
-        **kwargs
-    ):
+    def __init__(self, *, offset: int, length: int, **kwargs):
         """
         :keyword offset: Required. Zero-based index of the content represented by the span.
         :paramtype offset: int
@@ -2595,21 +2575,21 @@ class DocumentStyle(msrest.serialization.Model):
     """
 
     _validation = {
-        'color': {'pattern': r'^#[0-9a-f]{6}$'},
-        'background_color': {'pattern': r'^#[0-9a-f]{6}$'},
-        'spans': {'required': True},
-        'confidence': {'required': True, 'maximum': 1, 'minimum': 0},
+        "color": {"pattern": r"^#[0-9a-f]{6}$"},
+        "background_color": {"pattern": r"^#[0-9a-f]{6}$"},
+        "spans": {"required": True},
+        "confidence": {"required": True, "maximum": 1, "minimum": 0},
     }
 
     _attribute_map = {
-        'is_handwritten': {'key': 'isHandwritten', 'type': 'bool'},
-        'similar_font_family': {'key': 'similarFontFamily', 'type': 'str'},
-        'font_style': {'key': 'fontStyle', 'type': 'str'},
-        'font_weight': {'key': 'fontWeight', 'type': 'str'},
-        'color': {'key': 'color', 'type': 'str'},
-        'background_color': {'key': 'backgroundColor', 'type': 'str'},
-        'spans': {'key': 'spans', 'type': '[DocumentSpan]'},
-        'confidence': {'key': 'confidence', 'type': 'float'},
+        "is_handwritten": {"key": "isHandwritten", "type": "bool"},
+        "similar_font_family": {"key": "similarFontFamily", "type": "str"},
+        "font_style": {"key": "fontStyle", "type": "str"},
+        "font_weight": {"key": "fontWeight", "type": "str"},
+        "color": {"key": "color", "type": "str"},
+        "background_color": {"key": "backgroundColor", "type": "str"},
+        "spans": {"key": "spans", "type": "[DocumentSpan]"},
+        "confidence": {"key": "confidence", "type": "float"},
     }
 
     def __init__(
@@ -2674,18 +2654,18 @@ class DocumentTable(msrest.serialization.Model):
     """
 
     _validation = {
-        'row_count': {'required': True, 'minimum': 1},
-        'column_count': {'required': True, 'minimum': 1},
-        'cells': {'required': True},
-        'spans': {'required': True},
+        "row_count": {"required": True, "minimum": 1},
+        "column_count": {"required": True, "minimum": 1},
+        "cells": {"required": True},
+        "spans": {"required": True},
     }
 
     _attribute_map = {
-        'row_count': {'key': 'rowCount', 'type': 'int'},
-        'column_count': {'key': 'columnCount', 'type': 'int'},
-        'cells': {'key': 'cells', 'type': '[DocumentTableCell]'},
-        'bounding_regions': {'key': 'boundingRegions', 'type': '[BoundingRegion]'},
-        'spans': {'key': 'spans', 'type': '[DocumentSpan]'},
+        "row_count": {"key": "rowCount", "type": "int"},
+        "column_count": {"key": "columnCount", "type": "int"},
+        "cells": {"key": "cells", "type": "[DocumentTableCell]"},
+        "bounding_regions": {"key": "boundingRegions", "type": "[BoundingRegion]"},
+        "spans": {"key": "spans", "type": "[DocumentSpan]"},
     }
 
     def __init__(
@@ -2743,23 +2723,23 @@ class DocumentTableCell(msrest.serialization.Model):
     """
 
     _validation = {
-        'row_index': {'required': True},
-        'column_index': {'required': True},
-        'row_span': {'minimum': 1},
-        'column_span': {'minimum': 1},
-        'content': {'required': True},
-        'spans': {'required': True},
+        "row_index": {"required": True},
+        "column_index": {"required": True},
+        "row_span": {"minimum": 1},
+        "column_span": {"minimum": 1},
+        "content": {"required": True},
+        "spans": {"required": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'row_index': {'key': 'rowIndex', 'type': 'int'},
-        'column_index': {'key': 'columnIndex', 'type': 'int'},
-        'row_span': {'key': 'rowSpan', 'type': 'int'},
-        'column_span': {'key': 'columnSpan', 'type': 'int'},
-        'content': {'key': 'content', 'type': 'str'},
-        'bounding_regions': {'key': 'boundingRegions', 'type': '[BoundingRegion]'},
-        'spans': {'key': 'spans', 'type': '[DocumentSpan]'},
+        "kind": {"key": "kind", "type": "str"},
+        "row_index": {"key": "rowIndex", "type": "int"},
+        "column_index": {"key": "columnIndex", "type": "int"},
+        "row_span": {"key": "rowSpan", "type": "int"},
+        "column_span": {"key": "columnSpan", "type": "int"},
+        "content": {"key": "content", "type": "str"},
+        "bounding_regions": {"key": "boundingRegions", "type": "[BoundingRegion]"},
+        "spans": {"key": "spans", "type": "[DocumentSpan]"},
     }
 
     def __init__(
@@ -2823,15 +2803,15 @@ class DocumentTypeDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'description': {'max_length': 4096, 'min_length': 0},
-        'field_schema': {'required': True},
+        "description": {"max_length": 4096, "min_length": 0},
+        "field_schema": {"required": True},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'build_mode': {'key': 'buildMode', 'type': 'str'},
-        'field_schema': {'key': 'fieldSchema', 'type': '{DocumentFieldSchema}'},
-        'field_confidence': {'key': 'fieldConfidence', 'type': '{float}'},
+        "description": {"key": "description", "type": "str"},
+        "build_mode": {"key": "buildMode", "type": "str"},
+        "field_schema": {"key": "fieldSchema", "type": "{DocumentFieldSchema}"},
+        "field_confidence": {"key": "fieldConfidence", "type": "{float}"},
     }
 
     def __init__(
@@ -2878,16 +2858,16 @@ class DocumentWord(msrest.serialization.Model):
     """
 
     _validation = {
-        'content': {'required': True},
-        'span': {'required': True},
-        'confidence': {'required': True, 'maximum': 1, 'minimum': 0},
+        "content": {"required": True},
+        "span": {"required": True},
+        "confidence": {"required": True, "maximum": 1, "minimum": 0},
     }
 
     _attribute_map = {
-        'content': {'key': 'content', 'type': 'str'},
-        'polygon': {'key': 'polygon', 'type': '[float]'},
-        'span': {'key': 'span', 'type': 'DocumentSpan'},
-        'confidence': {'key': 'confidence', 'type': 'float'},
+        "content": {"key": "content", "type": "str"},
+        "polygon": {"key": "polygon", "type": "[float]"},
+        "span": {"key": "span", "type": "DocumentSpan"},
+        "confidence": {"key": "confidence", "type": "float"},
     }
 
     def __init__(
@@ -2934,16 +2914,16 @@ class Error(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
+        "code": {"required": True},
+        "message": {"required": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[Error]'},
-        'innererror': {'key': 'innererror', 'type': 'InnerError'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[Error]"},
+        "innererror": {"key": "innererror", "type": "InnerError"},
     }
 
     def __init__(
@@ -2986,19 +2966,14 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'error': {'required': True},
+        "error": {"required": True},
     }
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'Error'},
+        "error": {"key": "error", "type": "Error"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: "_models.Error",
-        **kwargs
-    ):
+    def __init__(self, *, error: "_models.Error", **kwargs):
         """
         :keyword error: Required. Error info.
         :paramtype error: ~azure.ai.formrecognizer.v2023_07_31.models.Error
@@ -3019,21 +2994,15 @@ class GetDocumentClassifiersResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[DocumentClassifierDetails]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[DocumentClassifierDetails]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.DocumentClassifierDetails"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.DocumentClassifierDetails"], next_link: Optional[str] = None, **kwargs):
         """
         :keyword value: Required. List of document classifiers.
         :paramtype value: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentClassifierDetails]
@@ -3057,21 +3026,15 @@ class GetDocumentModelsResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[DocumentModelSummary]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[DocumentModelSummary]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.DocumentModelSummary"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.DocumentModelSummary"], next_link: Optional[str] = None, **kwargs):
         """
         :keyword value: Required. List of document models.
         :paramtype value: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentModelSummary]
@@ -3095,21 +3058,15 @@ class GetOperationsResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[OperationSummary]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[OperationSummary]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.OperationSummary"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.OperationSummary"], next_link: Optional[str] = None, **kwargs):
         """
         :keyword value: Required. List of operations.
         :paramtype value: list[~azure.ai.formrecognizer.v2023_07_31.models.OperationSummary]
@@ -3135,22 +3092,17 @@ class InnerError(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'required': True},
+        "code": {"required": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'innererror': {'key': 'innererror', 'type': 'InnerError'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "innererror": {"key": "innererror", "type": "InnerError"},
     }
 
     def __init__(
-        self,
-        *,
-        code: str,
-        message: Optional[str] = None,
-        innererror: Optional["_models.InnerError"] = None,
-        **kwargs
+        self, *, code: str, message: Optional[str] = None, innererror: Optional["_models.InnerError"] = None, **kwargs
     ):
         """
         :keyword code: Required. Error code.
@@ -3194,25 +3146,25 @@ class OperationSummary(msrest.serialization.Model):
     """
 
     _validation = {
-        'operation_id': {'required': True},
-        'status': {'required': True},
-        'percent_completed': {'maximum': 100, 'minimum': 0},
-        'created_date_time': {'required': True},
-        'last_updated_date_time': {'required': True},
-        'kind': {'required': True},
-        'resource_location': {'required': True},
+        "operation_id": {"required": True},
+        "status": {"required": True},
+        "percent_completed": {"maximum": 100, "minimum": 0},
+        "created_date_time": {"required": True},
+        "last_updated_date_time": {"required": True},
+        "kind": {"required": True},
+        "resource_location": {"required": True},
     }
 
     _attribute_map = {
-        'operation_id': {'key': 'operationId', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'percent_completed': {'key': 'percentCompleted', 'type': 'int'},
-        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'last_updated_date_time': {'key': 'lastUpdatedDateTime', 'type': 'iso-8601'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'resource_location': {'key': 'resourceLocation', 'type': 'str'},
-        'api_version': {'key': 'apiVersion', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "operation_id": {"key": "operationId", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "percent_completed": {"key": "percentCompleted", "type": "int"},
+        "created_date_time": {"key": "createdDateTime", "type": "iso-8601"},
+        "last_updated_date_time": {"key": "lastUpdatedDateTime", "type": "iso-8601"},
+        "kind": {"key": "kind", "type": "str"},
+        "resource_location": {"key": "resourceLocation", "type": "str"},
+        "api_version": {"key": "apiVersion", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
@@ -3279,25 +3231,18 @@ class QuotaDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'used': {'required': True},
-        'quota': {'required': True},
-        'quota_reset_date_time': {'required': True},
+        "used": {"required": True},
+        "quota": {"required": True},
+        "quota_reset_date_time": {"required": True},
     }
 
     _attribute_map = {
-        'used': {'key': 'used', 'type': 'int'},
-        'quota': {'key': 'quota', 'type': 'int'},
-        'quota_reset_date_time': {'key': 'quotaResetDateTime', 'type': 'iso-8601'},
+        "used": {"key": "used", "type": "int"},
+        "quota": {"key": "quota", "type": "int"},
+        "quota_reset_date_time": {"key": "quotaResetDateTime", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        *,
-        used: int,
-        quota: int,
-        quota_reset_date_time: datetime.datetime,
-        **kwargs
-    ):
+    def __init__(self, *, used: int, quota: int, quota_reset_date_time: datetime.datetime, **kwargs):
         """
         :keyword used: Required. Amount of the resource quota used.
         :paramtype used: int
@@ -3328,13 +3273,13 @@ class ResourceDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'custom_document_models': {'required': True},
-        'custom_neural_document_model_builds': {'required': True},
+        "custom_document_models": {"required": True},
+        "custom_neural_document_model_builds": {"required": True},
     }
 
     _attribute_map = {
-        'custom_document_models': {'key': 'customDocumentModels', 'type': 'CustomDocumentModelsDetails'},
-        'custom_neural_document_model_builds': {'key': 'customNeuralDocumentModelBuilds', 'type': 'QuotaDetails'},
+        "custom_document_models": {"key": "customDocumentModels", "type": "CustomDocumentModelsDetails"},
+        "custom_neural_document_model_builds": {"key": "customNeuralDocumentModelBuilds", "type": "QuotaDetails"},
     }
 
     def __init__(

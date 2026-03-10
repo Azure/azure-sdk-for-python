@@ -10,7 +10,13 @@ from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TypeVa
 import warnings
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -20,9 +26,17 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._container_apps_revisions_operations import build_activate_revision_request, build_deactivate_revision_request, build_get_revision_request, build_list_revisions_request, build_restart_revision_request
-T = TypeVar('T')
+from ...operations._container_apps_revisions_operations import (
+    build_activate_revision_request,
+    build_deactivate_revision_request,
+    build_get_revision_request,
+    build_list_revisions_request,
+    build_restart_revision_request,
+)
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class ContainerAppsRevisionsOperations:
     """ContainerAppsRevisionsOperations async operations.
@@ -48,10 +62,7 @@ class ContainerAppsRevisionsOperations:
 
     @distributed_trace
     def list_revisions(
-        self,
-        resource_group_name: str,
-        container_app_name: str,
-        **kwargs: Any
+        self, resource_group_name: str, container_app_name: str, **kwargs: Any
     ) -> AsyncIterable["_models.RevisionCollection"]:
         """Get the Revisions for a given Container App.
 
@@ -67,25 +78,24 @@ class ContainerAppsRevisionsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~container_apps_api_client.models.RevisionCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RevisionCollection"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.RevisionCollection"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_revisions_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     container_app_name=container_app_name,
-                    template_url=self.list_revisions.metadata['url'],
+                    template_url=self.list_revisions.metadata["url"],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
-                
+
                 request = build_list_revisions_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
@@ -117,19 +127,13 @@ class ContainerAppsRevisionsOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_revisions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions'}  # type: ignore
+    list_revisions.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions"}  # type: ignore
 
     @distributed_trace_async
     async def get_revision(
-        self,
-        resource_group_name: str,
-        container_app_name: str,
-        name: str,
-        **kwargs: Any
+        self, resource_group_name: str, container_app_name: str, name: str, **kwargs: Any
     ) -> "_models.Revision":
         """Get a revision of a Container App.
 
@@ -146,19 +150,16 @@ class ContainerAppsRevisionsOperations:
         :rtype: ~container_apps_api_client.models.Revision
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Revision"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Revision"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_get_revision_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             container_app_name=container_app_name,
             name=name,
-            template_url=self.get_revision.metadata['url'],
+            template_url=self.get_revision.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -171,23 +172,18 @@ class ContainerAppsRevisionsOperations:
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Revision', pipeline_response)
+        deserialized = self._deserialize("Revision", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_revision.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}'}  # type: ignore
-
+    get_revision.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}"}  # type: ignore
 
     @distributed_trace_async
     async def activate_revision(
-        self,
-        resource_group_name: str,
-        container_app_name: str,
-        name: str,
-        **kwargs: Any
+        self, resource_group_name: str, container_app_name: str, name: str, **kwargs: Any
     ) -> None:
         """Activates a revision for a Container App.
 
@@ -204,19 +200,16 @@ class ContainerAppsRevisionsOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_activate_revision_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             container_app_name=container_app_name,
             name=name,
-            template_url=self.activate_revision.metadata['url'],
+            template_url=self.activate_revision.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -232,16 +225,11 @@ class ContainerAppsRevisionsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    activate_revision.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}/activate'}  # type: ignore
-
+    activate_revision.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}/activate"}  # type: ignore
 
     @distributed_trace_async
     async def deactivate_revision(
-        self,
-        resource_group_name: str,
-        container_app_name: str,
-        name: str,
-        **kwargs: Any
+        self, resource_group_name: str, container_app_name: str, name: str, **kwargs: Any
     ) -> None:
         """Deactivates a revision for a Container App.
 
@@ -258,19 +246,16 @@ class ContainerAppsRevisionsOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_deactivate_revision_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             container_app_name=container_app_name,
             name=name,
-            template_url=self.deactivate_revision.metadata['url'],
+            template_url=self.deactivate_revision.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -286,16 +271,11 @@ class ContainerAppsRevisionsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    deactivate_revision.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}/deactivate'}  # type: ignore
-
+    deactivate_revision.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}/deactivate"}  # type: ignore
 
     @distributed_trace_async
     async def restart_revision(
-        self,
-        resource_group_name: str,
-        container_app_name: str,
-        name: str,
-        **kwargs: Any
+        self, resource_group_name: str, container_app_name: str, name: str, **kwargs: Any
     ) -> None:
         """Restarts a revision for a Container App.
 
@@ -312,19 +292,16 @@ class ContainerAppsRevisionsOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_restart_revision_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             container_app_name=container_app_name,
             name=name,
-            template_url=self.restart_revision.metadata['url'],
+            template_url=self.restart_revision.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -340,5 +317,4 @@ class ContainerAppsRevisionsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    restart_revision.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}/restart'}  # type: ignore
-
+    restart_revision.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}/restart"}  # type: ignore

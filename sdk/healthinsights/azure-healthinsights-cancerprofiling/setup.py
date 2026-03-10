@@ -11,7 +11,6 @@ import os
 import re
 from setuptools import setup, find_packages
 
-
 PACKAGE_NAME = "azure-healthinsights-cancerprofiling"
 PACKAGE_PPRINT_NAME = "Cognitive Services Health Insights Cancer Profilings"
 
@@ -29,7 +28,7 @@ if not version:
 setup(
     name=PACKAGE_NAME,
     version=version,
-    description='Microsoft {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
+    description="Microsoft {} Client Library for Python".format(PACKAGE_PPRINT_NAME),
     long_description=open("README.md", "r").read(),
     long_description_content_type="text/markdown",
     license="MIT License",

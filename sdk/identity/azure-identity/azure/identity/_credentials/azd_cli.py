@@ -20,7 +20,6 @@ from .. import CredentialUnavailableError
 from .._internal import encode_base64, resolve_tenant, within_dac, validate_tenant_id, validate_scope
 from .._internal.decorators import log_get_token
 
-
 _LOGGER = logging.getLogger(__name__)
 
 CLI_NOT_FOUND = (

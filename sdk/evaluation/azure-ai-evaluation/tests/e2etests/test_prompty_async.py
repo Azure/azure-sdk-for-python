@@ -14,7 +14,6 @@ from openai.types.chat import ChatCompletion
 from azure.ai.evaluation._legacy.prompty import AsyncPrompty, InvalidInputError
 from azure.ai.evaluation import AzureOpenAIModelConfiguration
 
-
 PROMPTY_TEST_DIR: Final[Path] = Path(path.dirname(__file__), "data").resolve()
 EVALUATOR_ROOT_DIR: Final[Path] = Path(path.dirname(__file__), "../../azure/ai/evaluation/_evaluators").resolve()
 BASIC_PROMPTY: Final[Path] = PROMPTY_TEST_DIR / "basic.prompty"

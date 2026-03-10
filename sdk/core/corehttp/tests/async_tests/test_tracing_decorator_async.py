@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 """Tests for the distributed_trace_async policy."""
+
 import asyncio
 import pytest
 

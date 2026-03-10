@@ -41,20 +41,19 @@ class DataBoxEdgeManagementClientConfiguration(AzureConfiguration):
     :param str base_url: Service URL
     """
 
-    def __init__(
-            self, credentials, subscription_id, base_url=None):
+    def __init__(self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
         if not base_url:
-            base_url = 'https://management.azure.com'
+            base_url = "https://management.azure.com"
 
         super(DataBoxEdgeManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('azure-mgmt-edgegateway/{}'.format(VERSION))
-        self.add_user_agent('Azure-SDK-For-Python')
+        self.add_user_agent("azure-mgmt-edgegateway/{}".format(VERSION))
+        self.add_user_agent("Azure-SDK-For-Python")
 
         self.credentials = credentials
         self.subscription_id = subscription_id
@@ -99,38 +98,31 @@ class DataBoxEdgeManagementClient(SDKClient):
     :param str base_url: Service URL
     """
 
-    def __init__(
-            self, credentials, subscription_id, base_url=None):
+    def __init__(self, credentials, subscription_id, base_url=None):
 
         self.config = DataBoxEdgeManagementClientConfiguration(credentials, subscription_id, base_url)
         super(DataBoxEdgeManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-03-01'
+        self.api_version = "2019-03-01"
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.operations = Operations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.devices = DevicesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.alerts = AlertsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self.config, self._serialize, self._deserialize)
+        self.devices = DevicesOperations(self._client, self.config, self._serialize, self._deserialize)
+        self.alerts = AlertsOperations(self._client, self.config, self._serialize, self._deserialize)
         self.bandwidth_schedules = BandwidthSchedulesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.jobs = JobsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
+            self._client, self.config, self._serialize, self._deserialize
+        )
+        self.jobs = JobsOperations(self._client, self.config, self._serialize, self._deserialize)
         self.operations_status = OperationsStatusOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.orders = OrdersOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.roles = RolesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.shares = SharesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
+            self._client, self.config, self._serialize, self._deserialize
+        )
+        self.orders = OrdersOperations(self._client, self.config, self._serialize, self._deserialize)
+        self.roles = RolesOperations(self._client, self.config, self._serialize, self._deserialize)
+        self.shares = SharesOperations(self._client, self.config, self._serialize, self._deserialize)
         self.storage_account_credentials = StorageAccountCredentialsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.triggers = TriggersOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.users = UsersOperations(
-            self._client, self.config, self._serialize, self._deserialize)
+            self._client, self.config, self._serialize, self._deserialize
+        )
+        self.triggers = TriggersOperations(self._client, self.config, self._serialize, self._deserialize)
+        self.users = UsersOperations(self._client, self.config, self._serialize, self._deserialize)

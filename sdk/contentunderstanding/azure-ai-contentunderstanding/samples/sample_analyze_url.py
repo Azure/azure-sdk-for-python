@@ -90,9 +90,7 @@ def main() -> None:
     # DocumentContent derives from AnalysisContent and provides additional properties
     # to access full information about document, including Pages, Tables and many others
     document_content = cast(DocumentContent, content)
-    print(
-        f"\nPages: {document_content.start_page_number} - {document_content.end_page_number}"
-    )
+    print(f"\nPages: {document_content.start_page_number} - {document_content.end_page_number}")
 
     # Check for pages
     if document_content.pages and len(document_content.pages) > 0:
@@ -132,9 +130,7 @@ def main() -> None:
         if summary and hasattr(summary, "value"):
             print(f"Summary: {summary.value}")
 
-        print(
-            f"Start: {video_content.start_time_ms} ms, End: {video_content.end_time_ms} ms"
-        )
+        print(f"Start: {video_content.start_time_ms} ms, End: {video_content.end_time_ms} ms")
         print(f"Frame size: {video_content.width} x {video_content.height}")
 
         print("---------------------")
@@ -178,7 +174,9 @@ def main() -> None:
     print("\n" + "=" * 60)
     print("IMAGE ANALYSIS FROM URL")
     print("=" * 60)
-    image_url = "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/image/pieChart.jpg"
+    image_url = (
+        "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/image/pieChart.jpg"
+    )
 
     print(f"Analyzing image from URL with prebuilt-imageSearch...")
     print(f"  URL: {image_url}")

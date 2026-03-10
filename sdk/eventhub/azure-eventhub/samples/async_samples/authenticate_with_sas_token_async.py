@@ -8,6 +8,7 @@
 """
 Example to demonstrate utilizing SAS (Shared Access Signature) tokens to authenticate with Event Hubs
 """
+
 from types import TracebackType
 from typing import Optional, Type
 import asyncio

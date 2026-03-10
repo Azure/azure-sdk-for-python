@@ -5,7 +5,6 @@
 from typing import Any
 from typing_extensions import TypeAlias
 
-
 try:
     from promptflow.core._errors import MissingRequiredPackage as _MissingRequiredPackage
 except ImportError:

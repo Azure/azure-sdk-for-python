@@ -27,18 +27,16 @@ def check_for_unsupported_actions_types(*args, **kwargs):
         return
 
     actions_version_mapping = {
-        "2023-04-01":
-        [
+        "2023-04-01": [
             "ExtractiveSummaryAction",
             "AbstractiveSummaryAction",
         ],
-        "2022-05-01":
-        [
+        "2022-05-01": [
             "RecognizeCustomEntitiesAction",
             "SingleLabelClassifyAction",
             "MultiLabelClassifyAction",
-            "AnalyzeHealthcareEntitiesAction"
-        ]
+            "AnalyzeHealthcareEntitiesAction",
+        ],
     }
 
     unsupported = {
@@ -46,8 +44,8 @@ def check_for_unsupported_actions_types(*args, **kwargs):
         for version, args in actions_version_mapping.items()
         for arg in args
         if arg in [action.__class__.__name__ for action in actions]
-           and selected_api_version != version
-           and VERSIONS_SUPPORTED.index(selected_api_version) < VERSIONS_SUPPORTED.index(version)
+        and selected_api_version != version
+        and VERSIONS_SUPPORTED.index(selected_api_version) < VERSIONS_SUPPORTED.index(version)
     }
 
     if unsupported:
@@ -78,8 +76,11 @@ def validate_multiapi_args(**kwargs: typing.Any) -> typing.Callable[[typing.Call
             if selected_api_version == VERSIONS_SUPPORTED[-1]:
                 return func(*args, **kwargs)
 
-            if version_method_added and version_method_added != selected_api_version and \
-                    VERSIONS_SUPPORTED.index(selected_api_version) < VERSIONS_SUPPORTED.index(version_method_added):
+            if (
+                version_method_added
+                and version_method_added != selected_api_version
+                and VERSIONS_SUPPORTED.index(selected_api_version) < VERSIONS_SUPPORTED.index(version_method_added)
+            ):
                 raise ValueError(
                     f"'{client.__class__.__name__}.{func.__name__}' is not available in API version "
                     f"{selected_api_version}. Use service API version {version_method_added} or newer."

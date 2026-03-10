@@ -19,8 +19,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Create permissions in the Azure Cosmos DB SQL API service.
-"""
+"""Create permissions in the Azure Cosmos DB SQL API service."""
+
 from typing import Any, Mapping
 
 # Keeping this import for API backcompat
@@ -28,15 +28,10 @@ from .documents import PermissionMode  # pylint: disable=unused-import
 
 
 class Permission:
-    """Represents a Permission object in the Azure Cosmos DB SQL API service.
-    """
+    """Represents a Permission object in the Azure Cosmos DB SQL API service."""
+
     def __init__(
-        self,
-        id: str,
-        user_link: str,
-        permission_mode: str,
-        resource_link: str,
-        properties: Mapping[str, Any]
+        self, id: str, user_link: str, permission_mode: str, resource_link: str, properties: Mapping[str, Any]
     ) -> None:
         self.id = id
         self.user_link = user_link

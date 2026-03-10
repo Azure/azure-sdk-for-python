@@ -30,34 +30,28 @@ class TestCancerProfiling(AzureRecordedTestCase):
         assert cancer_profiling_client is not None
 
         data = {
-          "configuration": {
-            "checkForCancerCase": True,
-            "verbose": False,
-            "includeEvidence": True
-          },
-          "patients": [
-            {
-              "id": "patient1",
-              "data": [
+            "configuration": {"checkForCancerCase": True, "verbose": False, "includeEvidence": True},
+            "patients": [
                 {
-                  "kind": "note",
-                  "clinicalType": "pathology",
-                  "id": "document1",
-                  "language": "en",
-                  "createdDateTime": "2022-01-01T00:00:00",
-                  "content": {
-                    "sourceType": "inline",
-                    "value": "Laterality:  Left \n   Tumor type present:  Invasive duct carcinoma; duct carcinoma in situ \n   Tumor site:  Upper inner quadrant \n   Invasive carcinoma \n   Histologic type:  Ductal \n   Size of invasive component:  0.9 cm \n   Histologic Grade - Nottingham combined histologic score:  1 out of 3 \n   In situ carcinoma (DCIS) \n   Histologic type of DCIS:  Cribriform and solid \n   Necrosis in DCIS:  Yes \n   DCIS component of invasive carcinoma:  Extensive \n"
-                  }
+                    "id": "patient1",
+                    "data": [
+                        {
+                            "kind": "note",
+                            "clinicalType": "pathology",
+                            "id": "document1",
+                            "language": "en",
+                            "createdDateTime": "2022-01-01T00:00:00",
+                            "content": {
+                                "sourceType": "inline",
+                                "value": "Laterality:  Left \n   Tumor type present:  Invasive duct carcinoma; duct carcinoma in situ \n   Tumor site:  Upper inner quadrant \n   Invasive carcinoma \n   Histologic type:  Ductal \n   Size of invasive component:  0.9 cm \n   Histologic Grade - Nottingham combined histologic score:  1 out of 3 \n   In situ carcinoma (DCIS) \n   Histologic type of DCIS:  Cribriform and solid \n   Necrosis in DCIS:  Yes \n   DCIS component of invasive carcinoma:  Extensive \n",
+                            },
+                        }
+                    ],
                 }
-              ]
-            }
-          ]
+            ],
         }
 
         poller = cancer_profiling_client.begin_infer_cancer_profile(data)
         results = poller.result()
 
         assert len(results.results.patients[0].inferences) is not 0
-
-

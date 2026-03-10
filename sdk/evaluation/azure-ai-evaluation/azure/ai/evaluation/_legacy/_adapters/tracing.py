@@ -5,7 +5,6 @@
 from typing import Callable, Dict, Final, Optional
 from typing_extensions import TypeAlias
 
-
 try:
     from promptflow.tracing import ThreadPoolExecutorWithContext as _ThreadPoolExecutorWithContext
     from promptflow.tracing._integrations._openai_injector import (

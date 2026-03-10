@@ -18,7 +18,6 @@ from azure.monitor.ingestion._helpers import (
     GZIP_MAGIC_NUMBER,
 )
 
-
 ALPHANUMERIC_CHARACTERS = string.ascii_letters + string.digits
 
 random.seed(42)  # For repeatability

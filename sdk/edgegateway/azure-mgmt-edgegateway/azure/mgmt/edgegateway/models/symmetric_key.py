@@ -21,9 +21,9 @@ class SymmetricKey(Model):
     """
 
     _attribute_map = {
-        'connection_string': {'key': 'connectionString', 'type': 'AsymmetricEncryptedSecret'},
+        "connection_string": {"key": "connectionString", "type": "AsymmetricEncryptedSecret"},
     }
 
     def __init__(self, **kwargs):
         super(SymmetricKey, self).__init__(**kwargs)
-        self.connection_string = kwargs.get('connection_string', None)
+        self.connection_string = kwargs.get("connection_string", None)

@@ -9,7 +9,6 @@ from cryptography.hazmat.primitives import padding
 from ..algorithm import SymmetricEncryptionAlgorithm
 from ..transform import BlockCryptoTransform
 
-
 # pylint: disable=W0223
 
 _CBC_BLOCK_SIZE = 128

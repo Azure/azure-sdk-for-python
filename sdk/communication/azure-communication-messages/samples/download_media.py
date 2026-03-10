@@ -10,7 +10,7 @@
 FILE: download_media.py
 
 DESCRIPTION:
-    This sample demonstrates receiving media from a Whatsapp message from business phone number. The NotificationMessageClient is 
+    This sample demonstrates receiving media from a Whatsapp message from business phone number. The NotificationMessageClient is
     authenticated using a connection string.
 USAGE:
     python download_media.py

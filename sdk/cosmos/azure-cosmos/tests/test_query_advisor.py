@@ -5,12 +5,7 @@ import json
 import unittest
 from urllib.parse import quote
 
-from azure.cosmos._query_advisor import (
-    QueryAdvice,
-    QueryAdviceEntry,
-    RuleDirectory,
-    get_query_advice_info
-)
+from azure.cosmos._query_advisor import QueryAdvice, QueryAdviceEntry, RuleDirectory, get_query_advice_info
 
 
 class TestQueryAdvisor(unittest.TestCase):
@@ -19,10 +14,10 @@ class TestQueryAdvisor(unittest.TestCase):
     def test_rule_directory_loads_rules(self):
         """Test that RuleDirectory loads all 10 rules."""
         directory = RuleDirectory()
-        
+
         # Check URL prefix
         self.assertTrue(directory.url_prefix.startswith("https://"))
-        
+
         # Check all 10 rules exist
         for rule_id in [f"QA{1000 + i}" for i in range(10)]:
             message = directory.get_rule_message(rule_id)
@@ -42,7 +37,7 @@ class TestQueryAdvisor(unittest.TestCase):
         """Test creating QueryAdviceEntry from dictionary."""
         data = {"Id": "QA1000", "Params": ["param1", "param2"]}
         entry = QueryAdviceEntry.from_dict(data)
-        
+
         self.assertEqual(entry.id, "QA1000")
         self.assertEqual(entry.parameters, ["param1", "param2"])
 
@@ -50,9 +45,9 @@ class TestQueryAdvisor(unittest.TestCase):
         """Test formatting QueryAdviceEntry as string."""
         directory = RuleDirectory()
         entry = QueryAdviceEntry("QA1000", [])
-        
+
         result = str(entry)
-        
+
         self.assertIsNotNone(result)
         self.assertIn("QA1000:", result)
         self.assertIn("ARRAY_CONTAINS", result)
@@ -63,9 +58,9 @@ class TestQueryAdvisor(unittest.TestCase):
         """Test formatting QueryAdviceEntry with parameters."""
         # Create a mock entry that would use parameters
         entry = QueryAdviceEntry("QA1000", ["field1", "field2"])
-        
+
         result = str(entry)
-        
+
         self.assertIsNotNone(result)
         self.assertIn("QA1000:", result)
 
@@ -116,9 +111,9 @@ class TestQueryAdvisor(unittest.TestCase):
         data = [{"Id": "QA1002", "Params": []}]
         json_str = json.dumps(data)
         encoded = quote(json_str)
-        
+
         advice = QueryAdvice.try_create_from_string(encoded)
-        
+
         self.assertIsNotNone(advice)
         self.assertEqual(len(advice.entries), 1)
         self.assertEqual(advice.entries[0].id, "QA1002")
@@ -126,15 +121,12 @@ class TestQueryAdvisor(unittest.TestCase):
     def test_query_advice_try_create_from_string_multiple_entries(self):
         """Test parsing query advice with multiple entries."""
         # Create URL-encoded JSON
-        data = [
-            {"Id": "QA1008", "Params": []},
-            {"Id": "QA1009", "Params": []}
-        ]
+        data = [{"Id": "QA1008", "Params": []}, {"Id": "QA1009", "Params": []}]
         json_str = json.dumps(data)
         encoded = quote(json_str)
-        
+
         advice = QueryAdvice.try_create_from_string(encoded)
-        
+
         self.assertIsNotNone(advice)
         self.assertEqual(len(advice.entries), 2)
         self.assertEqual(advice.entries[0].id, "QA1008")
@@ -160,10 +152,10 @@ class TestQueryAdvisor(unittest.TestCase):
         data = [{"Id": "QA1002", "Params": []}]
         json_str = json.dumps(data)
         encoded = quote(json_str)
-        
+
         advice = QueryAdvice.try_create_from_string(encoded)
         result = str(advice)
-        
+
         self.assertIsInstance(result, str)
         self.assertIn("QA1002:", result)
         self.assertIn("STARTSWITH", result)
@@ -171,16 +163,13 @@ class TestQueryAdvisor(unittest.TestCase):
 
     def test_query_advice_str_multiple_entries(self):
         """Test formatting QueryAdvice with multiple entries as multi-line string."""
-        data = [
-            {"Id": "QA1008", "Params": []},
-            {"Id": "QA1009", "Params": []}
-        ]
+        data = [{"Id": "QA1008", "Params": []}, {"Id": "QA1009", "Params": []}]
         json_str = json.dumps(data)
         encoded = quote(json_str)
-        
+
         advice = QueryAdvice.try_create_from_string(encoded)
         result = str(advice)
-        
+
         self.assertIsInstance(result, str)
         lines = result.split("\n")
         self.assertEqual(len(lines), 2)
@@ -201,9 +190,9 @@ class TestQueryAdvisor(unittest.TestCase):
         data = [{"Id": "QA1002", "Params": []}]
         json_str = json.dumps(data)
         encoded = quote(json_str)
-        
+
         result = get_query_advice_info(encoded)
-        
+
         self.assertIsInstance(result, str)
         self.assertIn("QA1002:", result)
         self.assertIn("STARTSWITH", result)
@@ -221,7 +210,7 @@ class TestQueryAdvisor(unittest.TestCase):
     def test_query_advice_filters_null_entries(self):
         """Test that QueryAdvice filters out None entries."""
         advice = QueryAdvice([QueryAdviceEntry("QA1000"), None, QueryAdviceEntry("QA1002")])
-        
+
         self.assertEqual(len(advice.entries), 2)
         self.assertEqual(advice.entries[0].id, "QA1000")
         self.assertEqual(advice.entries[1].id, "QA1002")

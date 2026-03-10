@@ -20,7 +20,6 @@ Environment variables:
     4) AZURE_QUESTIONANSWERING_DEPLOYMENT (optional; defaults to 'production')
 """
 
-
 from __future__ import annotations
 
 

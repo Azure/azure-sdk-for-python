@@ -29,7 +29,6 @@ from credscan_ignore import (
 )
 from helpers import INVALID_CHARACTERS, GET_TOKEN_METHODS
 
-
 POPEN = AzurePowerShellCredential.__module__ + ".subprocess.Popen"
 
 # an example of harmless stderr output

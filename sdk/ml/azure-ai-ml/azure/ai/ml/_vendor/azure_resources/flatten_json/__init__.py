@@ -12,7 +12,6 @@ import re
 import sys
 from math import isnan
 
-
 try:
     # 3.8 and up
     from collections.abc import Iterable

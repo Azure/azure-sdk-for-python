@@ -24,12 +24,14 @@ class MetricDimensionV1(Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'to_be_exported_for_shoebox': {'key': 'toBeExportedForShoebox', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "to_be_exported_for_shoebox": {"key": "toBeExportedForShoebox", "type": "bool"},
     }
 
-    def __init__(self, *, name: str=None, display_name: str=None, to_be_exported_for_shoebox: bool=None, **kwargs) -> None:
+    def __init__(
+        self, *, name: str = None, display_name: str = None, to_be_exported_for_shoebox: bool = None, **kwargs
+    ) -> None:
         super(MetricDimensionV1, self).__init__(**kwargs)
         self.name = name
         self.display_name = display_name

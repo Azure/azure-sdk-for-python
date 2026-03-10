@@ -49,13 +49,9 @@ def classify_document(classifier_id):
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
     classifier_id = os.getenv("CLASSIFIER_ID", classifier_id)
 
-    document_analysis_client = DocumentAnalysisClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
+    document_analysis_client = DocumentAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     with open(path_to_sample_documents, "rb") as f:
-        poller = document_analysis_client.begin_classify_document(
-            classifier_id, document=f
-        )
+        poller = document_analysis_client.begin_classify_document(classifier_id, document=f)
     result = poller.result()
 
     print("----Classified documents----")

@@ -31,7 +31,6 @@ from azure.core.exceptions import HttpResponseError
 
 import pytest
 
-
 T = TypeVar("T")
 
 

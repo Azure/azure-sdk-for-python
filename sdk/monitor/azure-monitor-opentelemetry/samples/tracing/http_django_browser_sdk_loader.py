@@ -23,8 +23,7 @@ from azure.monitor.opentelemetry import configure_azure_monitor
 
 
 def index(_request):
-    return HttpResponse(
-        """<!DOCTYPE html>
+    return HttpResponse("""<!DOCTYPE html>
 <html>
 <head>
     <meta charset=\"utf-8\" />
@@ -35,8 +34,7 @@ def index(_request):
     <p>Refresh this page and inspect the HTML source for injected browser SDK snippet.</p>
 </body>
 </html>
-"""
-    )
+""")
 
 
 urlpatterns = [

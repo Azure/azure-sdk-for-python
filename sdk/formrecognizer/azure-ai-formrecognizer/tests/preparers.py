@@ -1,4 +1,3 @@
-
 # coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -11,13 +10,13 @@ import functools
 from devtools_testutils import PowerShellPreparer, AzureMgmtPreparer, is_live, get_credential
 from azure.core.credentials import AzureKeyCredential
 
-ENABLE_LOGGER = os.getenv('ENABLE_LOGGER', "False")
-REGION = os.getenv('FORMRECOGNIZER_LOCATION', None)
+ENABLE_LOGGER = os.getenv("ENABLE_LOGGER", "False")
+REGION = os.getenv("FORMRECOGNIZER_LOCATION", None)
 
 
 FormRecognizerPreparer = functools.partial(
     PowerShellPreparer,
-    'formrecognizer',
+    "formrecognizer",
     formrecognizer_test_endpoint="https://fakeendpoint.cognitiveservices.azure.com",
     formrecognizer_storage_container_sas_url="https://blob_sas_url",
     formrecognizer_testing_data_container_sas_url="https://blob_sas_url",
@@ -34,11 +33,12 @@ FormRecognizerPreparer = functools.partial(
     formrecognizer_table_fixed_rows_container_sas_url_v2="https://blob_sas_url",
     formrecognizer_training_data_classifier="https://blob_sas_url",
     formrecognizer_resource_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.CognitiveServices/accounts/formrecognizername",
-    formrecognizer_region="region"
+    formrecognizer_region="region",
 )
 
+
 def get_sync_client(client_cls, **kwargs):
-    ENABLE_LOGGER = os.getenv('ENABLE_LOGGER', "False")
+    ENABLE_LOGGER = os.getenv("ENABLE_LOGGER", "False")
     polling_interval = kwargs.pop("polling_interval", None)
     if is_live():
         form_recognizer_account = os.environ["FORMRECOGNIZER_TEST_ENDPOINT"]
@@ -65,8 +65,9 @@ def get_sync_client(client_cls, **kwargs):
         **kwargs
     )
 
+
 def get_async_client(client_cls, **kwargs):
-    ENABLE_LOGGER = os.getenv('ENABLE_LOGGER', "False")
+    ENABLE_LOGGER = os.getenv("ENABLE_LOGGER", "False")
     polling_interval = kwargs.pop("polling_interval", None)
     if is_live():
         form_recognizer_account = os.environ["FORMRECOGNIZER_TEST_ENDPOINT"]

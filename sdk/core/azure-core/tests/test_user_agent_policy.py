@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for the user agent policy."""
+
 from azure.core.pipeline.policies import UserAgentPolicy
 from azure.core.pipeline import PipelineRequest, PipelineContext
 

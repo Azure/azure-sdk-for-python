@@ -13,10 +13,7 @@ class DeviceUpdateTest(AzureRecordedTestCase):
     def create_client(self, endpoint, instance_id):
         credential = self.get_credential(DeviceUpdateClient)
         return self.create_client_from_credential(
-            DeviceUpdateClient,
-            endpoint=endpoint,
-            instance_id=instance_id,
-            credential=credential
+            DeviceUpdateClient, endpoint=endpoint, instance_id=instance_id, credential=credential
         )
 
 
@@ -28,5 +25,5 @@ DeviceUpdatePowerShellPreparer = functools.partial(
     deviceupdate_update_provider="foo",
     deviceupdate_update_name="bar",
     deviceupdate_update_version="1.2",
-    deviceupdate_device_group="foo"
+    deviceupdate_device_group="foo",
 )

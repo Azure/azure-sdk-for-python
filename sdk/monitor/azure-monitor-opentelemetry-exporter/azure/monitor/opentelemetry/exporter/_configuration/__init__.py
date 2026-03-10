@@ -16,7 +16,6 @@ from azure.monitor.opentelemetry.exporter._configuration._utils import _Configur
 from azure.monitor.opentelemetry.exporter._configuration._utils import make_onesettings_request
 from azure.monitor.opentelemetry.exporter._utils import Singleton
 
-
 # Set up logger
 logger = logging.getLogger(__name__)
 

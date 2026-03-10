@@ -60,13 +60,9 @@ async def sample_extractive_summarization_async():
         extract_summary_results = await poller.result()
         async for result in extract_summary_results:
             if result.kind == "ExtractiveSummarization":
-                print("Summary extracted: \n{}".format(
-                    " ".join([sentence.text for sentence in result.sentences]))
-                )
+                print("Summary extracted: \n{}".format(" ".join([sentence.text for sentence in result.sentences])))
             elif result.is_error is True:
-                print("...Is an error with code '{}' and message '{}'".format(
-                    result.error.code, result.error.message
-                ))
+                print("...Is an error with code '{}' and message '{}'".format(result.error.code, result.error.message))
     # [END extract_summary_async]
 
 
@@ -74,5 +70,5 @@ async def main():
     await sample_extractive_summarization_async()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

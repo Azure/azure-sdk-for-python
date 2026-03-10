@@ -22,12 +22,16 @@ class TestCopyModel(FormRecognizerTest):
     @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
     @recorded_by_proxy
-    def test_copy_model_successful_v2(self, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):
-        client = get_ft_client(api_version="2.0")        
+    def test_copy_model_successful_v2(
+        self, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs
+    ):
+        client = get_ft_client(api_version="2.0")
         poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
         model = poller.result()
 
-        target = client.get_copy_authorization(resource_region=formrecognizer_region, resource_id=formrecognizer_resource_id)
+        target = client.get_copy_authorization(
+            resource_region=formrecognizer_region, resource_id=formrecognizer_resource_id
+        )
 
         poller = client.begin_copy_model(model.model_id, target=target)
         copy = poller.result()
@@ -44,35 +48,18 @@ class TestCopyModel(FormRecognizerTest):
     @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
     @recorded_by_proxy
-    def test_copy_model_with_labeled_model_name_v21(self, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):
+    def test_copy_model_with_labeled_model_name_v21(
+        self, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs
+    ):
         client = get_ft_client(api_version="2.1")
-        poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=True, model_name="mymodel")
+        poller = client.begin_training(
+            formrecognizer_storage_container_sas_url_v2, use_training_labels=True, model_name="mymodel"
+        )
         model = poller.result()
 
-        target = client.get_copy_authorization(resource_region=formrecognizer_region, resource_id=formrecognizer_resource_id)
-
-        poller = client.begin_copy_model(model.model_id, target=target)
-        copy = poller.result()
-
-        copied_model = client.get_custom_model(copy.model_id)
-
-        assert copy.status =="ready"
-        assert copy.training_started_on
-        assert copy.training_completed_on
-        assert target["modelId"] == copy.model_id
-        assert target["modelId"] != model.model_id
-        assert copied_model
-        assert copied_model.model_name == "mymodel"
-
-    @pytest.mark.skip("Test is flaky and hangs")
-    @FormRecognizerPreparer()
-    @recorded_by_proxy
-    def test_copy_model_with_unlabeled_model_name_v21(self, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):
-        client = get_ft_client(api_version="2.1")
-        poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False, model_name="mymodel")
-        model = poller.result()
-
-        target = client.get_copy_authorization(resource_region=formrecognizer_region, resource_id=formrecognizer_resource_id)
+        target = client.get_copy_authorization(
+            resource_region=formrecognizer_region, resource_id=formrecognizer_resource_id
+        )
 
         poller = client.begin_copy_model(model.model_id, target=target)
         copy = poller.result()
@@ -90,7 +77,38 @@ class TestCopyModel(FormRecognizerTest):
     @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
     @recorded_by_proxy
-    def test_copy_model_fail_v21(self, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):
+    def test_copy_model_with_unlabeled_model_name_v21(
+        self, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs
+    ):
+        client = get_ft_client(api_version="2.1")
+        poller = client.begin_training(
+            formrecognizer_storage_container_sas_url_v2, use_training_labels=False, model_name="mymodel"
+        )
+        model = poller.result()
+
+        target = client.get_copy_authorization(
+            resource_region=formrecognizer_region, resource_id=formrecognizer_resource_id
+        )
+
+        poller = client.begin_copy_model(model.model_id, target=target)
+        copy = poller.result()
+
+        copied_model = client.get_custom_model(copy.model_id)
+
+        assert copy.status == "ready"
+        assert copy.training_started_on
+        assert copy.training_completed_on
+        assert target["modelId"] == copy.model_id
+        assert target["modelId"] != model.model_id
+        assert copied_model
+        assert copied_model.model_name == "mymodel"
+
+    @pytest.mark.skip("Test is flaky and hangs")
+    @FormRecognizerPreparer()
+    @recorded_by_proxy
+    def test_copy_model_fail_v21(
+        self, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs
+    ):
         client = get_ft_client(api_version="2.1")
         poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
         model = poller.result()
@@ -107,13 +125,17 @@ class TestCopyModel(FormRecognizerTest):
     @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
     @recorded_by_proxy
-    def test_copy_model_case_insensitive_region_v21(self, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):
+    def test_copy_model_case_insensitive_region_v21(
+        self, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs
+    ):
         client = get_ft_client(api_version="2.1")
         poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
         model = poller.result()
 
         # give region all uppercase
-        target = client.get_copy_authorization(resource_region=formrecognizer_region.upper(), resource_id=formrecognizer_resource_id)
+        target = client.get_copy_authorization(
+            resource_region=formrecognizer_region.upper(), resource_id=formrecognizer_resource_id
+        )
 
         poller = client.begin_copy_model(model.model_id, target=target)
         copy = poller.result()
@@ -153,18 +175,28 @@ class TestCopyModel(FormRecognizerTest):
     @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
     @recorded_by_proxy
-    def test_copy_model_with_composed_model_v21(self, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):
+    def test_copy_model_with_composed_model_v21(
+        self, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs
+    ):
         client = get_ft_client(api_version="2.1")
-        poller_1 = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=True, model_name="model1")
+        poller_1 = client.begin_training(
+            formrecognizer_storage_container_sas_url_v2, use_training_labels=True, model_name="model1"
+        )
         model_1 = poller_1.result()
 
-        poller_2 = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=True, model_name="model2")
+        poller_2 = client.begin_training(
+            formrecognizer_storage_container_sas_url_v2, use_training_labels=True, model_name="model2"
+        )
         model_2 = poller_2.result()
 
-        composed_poller = client.begin_create_composed_model([model_1.model_id, model_2.model_id], model_name="composedmodel")
+        composed_poller = client.begin_create_composed_model(
+            [model_1.model_id, model_2.model_id], model_name="composedmodel"
+        )
         composed_model = composed_poller.result()
 
-        target = client.get_copy_authorization(resource_region=formrecognizer_region, resource_id=formrecognizer_resource_id)
+        target = client.get_copy_authorization(
+            resource_region=formrecognizer_region, resource_id=formrecognizer_resource_id
+        )
 
         poller = client.begin_copy_model(composed_model.model_id, target=target)
         copy = poller.result()

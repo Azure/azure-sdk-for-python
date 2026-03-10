@@ -62,7 +62,7 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
             ),
             "jordan": RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier(self.id4), role=ParticipantRole.COLLABORATOR
-            )
+            ),
         }
 
     @recorded_by_proxy_async
@@ -75,7 +75,7 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
     @recorded_by_proxy_async
     async def test_create_room_only_participants_async(self):
         # add john and chris to room
-        participants = [self.users["john"], self.users["chris"],self.users["jordan"]]
+        participants = [self.users["john"], self.users["chris"], self.users["jordan"]]
 
         async with self.rooms_client:
             response = await self.rooms_client.create_room(participants=participants)
@@ -300,7 +300,7 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
     @recorded_by_proxy_async
     async def test_add_or_update_participant_async(self):
         # add john and chris to room
-        create_participants = [self.users["john"], self.users["chris"],self.users["jordan"]]
+        create_participants = [self.users["john"], self.users["chris"], self.users["jordan"]]
         # update john to consumer, and add fred to room
         self.users["john"].role = ParticipantRole.CONSUMER
         update_participants = [self.users["john"], self.users["fred"]]

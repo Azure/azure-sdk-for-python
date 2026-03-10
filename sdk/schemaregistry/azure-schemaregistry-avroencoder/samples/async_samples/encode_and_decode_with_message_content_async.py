@@ -46,6 +46,7 @@ This example uses ClientSecretCredential, which requests a token from Azure Acti
 For more information on ClientSecretCredential, see:
     https://learn.microsoft.com/python/api/azure-identity/azure.identity.clientsecretcredential?view=azure-python
 """
+
 import os
 import asyncio
 
@@ -59,9 +60,7 @@ TENANT_ID = os.environ["AZURE_TENANT_ID"]
 CLIENT_ID = os.environ["AZURE_CLIENT_ID"]
 CLIENT_SECRET = os.environ["AZURE_CLIENT_SECRET"]
 
-SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ[
-    "SCHEMAREGISTRY_AVRO_FULLY_QUALIFIED_NAMESPACE"
-]
+SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ["SCHEMAREGISTRY_AVRO_FULLY_QUALIFIED_NAMESPACE"]
 GROUP_NAME = os.environ["SCHEMAREGISTRY_GROUP"]
 SCHEMA_STRING = """
 {"namespace": "example.avro",
@@ -75,9 +74,7 @@ SCHEMA_STRING = """
 }"""
 
 
-token_credential = ClientSecretCredential(
-    tenant_id=TENANT_ID, client_id=CLIENT_ID, client_secret=CLIENT_SECRET
-)
+token_credential = ClientSecretCredential(tenant_id=TENANT_ID, client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
 
 
 async def encode_message_content_dict(encoder):
@@ -89,6 +86,7 @@ async def encode_message_content_dict(encoder):
         encoded_message_content_ben["content"],
         encoded_message_content_ben["content_type"],
     )
+
 
 async def decode_with_content_and_content_type(encoder, event_data):
     # get content as bytes
@@ -108,13 +106,12 @@ async def main():
         fully_qualified_namespace=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE,
         credential=token_credential,
     )
-    encoder = AvroEncoder(
-        client=schema_registry, group_name=GROUP_NAME, auto_register=True
-    )
+    encoder = AvroEncoder(client=schema_registry, group_name=GROUP_NAME, auto_register=True)
     event_data = await encode_message_content_dict(encoder)
     decoded_content = await decode_with_content_and_content_type(encoder, event_data)
     await encoder.close()
     await token_credential.close()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

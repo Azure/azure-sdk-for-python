@@ -59,11 +59,9 @@ setup(
     ),
     include_package_data=True,
     package_data={
-        'azure.openai': ['py.typed'],
+        "azure.openai": ["py.typed"],
     },
-    install_requires=[
-        "azure-identity<2.0.0,>=1.15.0"
-    ],
+    install_requires=["azure-identity<2.0.0,>=1.15.0"],
     python_requires=">=3.7",
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",

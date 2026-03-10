@@ -31,9 +31,7 @@ def generate_sas_token(audience: str, policy: str, key: str, expiry: int = 3600)
 
     ttl = int(time() + expiry)
     sign_key = f"{encoded_uri}\n{ttl}"
-    signature = b64encode(
-        HMAC(b64decode(key), sign_key.encode("utf-8"), sha256).digest()
-    )
+    signature = b64encode(HMAC(b64decode(key), sign_key.encode("utf-8"), sha256).digest())
     result = {"sr": audience, "sig": signature, "se": str(ttl)}
     if policy:
         result["skn"] = policy
@@ -49,9 +47,7 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
 
     def _add_authorization_header(self, request: PipelineRequest) -> None:
         try:
-            auth_string = generate_sas_token(
-                audience=self.endpoint, policy=self.policy_name, key=self.key
-            )
+            auth_string = generate_sas_token(audience=self.endpoint, policy=self.policy_name, key=self.key)
             request.http_request.headers["Authorization"] = auth_string
         except Exception as ex:
             # TODO - Wrap error as a signing error?
@@ -67,9 +63,7 @@ class SasCredentialPolicy(SansIOHTTPPolicy):
     :type credential: ~azure.core.credentials.AzureSasCredential
     """
 
-    def __init__(
-        self, credential: AzureSasCredential, **kwargs
-    ):  # pylint: disable=unused-argument
+    def __init__(self, credential: AzureSasCredential, **kwargs):  # pylint: disable=unused-argument
         super(SasCredentialPolicy, self).__init__()
         self._credential = credential
 

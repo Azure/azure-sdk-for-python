@@ -7,11 +7,11 @@ DESCRIPTION:
     This sample demonstrates how to find representatives sub-regions of the image file sample.jpg,
     for thumbnail generation, with priority given to include faces. It uses an asynchronous client.
 
-    Thumbnails often need to have a certain aspect ratio, where aspect ratio is defined as the 
+    Thumbnails often need to have a certain aspect ratio, where aspect ratio is defined as the
     width in pixels divided by the height in pixels. For example, 1.0 for a square image, or 1.77
     for a 16:9 widescreen image.
 
-    You can optionally request one or more aspect ratios by setting the `smart_crops_aspect_ratios` 
+    You can optionally request one or more aspect ratios by setting the `smart_crops_aspect_ratios`
     argument in the call to `analyze`. Supported values are from 0.75 to 1.8 (inclusive).
     If you do not set this value, the service will return one result with an aspect ratio it sees
     fit between 0.5 and 2.0 (inclusive).
@@ -49,10 +49,7 @@ def sample_smart_crops_image_file():
         exit()
 
     # Create an Image Analysis client
-    client = ImageAnalysisClient(
-        endpoint=endpoint,
-        credential=AzureKeyCredential(key)
-    )
+    client = ImageAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Load image to analyze into a 'bytes' object
     with open("sample.jpg", "rb") as f:

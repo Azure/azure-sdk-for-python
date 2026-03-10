@@ -17,7 +17,6 @@ from azure.eventhub._eventprocessor.in_memory_checkpoint_store import (
 )
 from azure.eventhub._client_base import _Address
 
-
 TEST_NAMESPACE = "test_namespace"
 TEST_EVENTHUB = "test_eventhub"
 TEST_CONSUMER_GROUP = "test_consumer_group"

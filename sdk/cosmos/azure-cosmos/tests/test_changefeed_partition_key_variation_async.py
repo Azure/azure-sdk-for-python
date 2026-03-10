@@ -5,6 +5,7 @@ from azure.cosmos.aio import CosmosClient
 import test_config
 from azure.cosmos.partition_key import PartitionKey, _get_partition_key_from_partition_key_definition
 
+
 @pytest.mark.cosmosEmulator
 @pytest.mark.asyncio
 class TestChangeFeedPKVariationAsync(unittest.IsolatedAsyncioTestCase):
@@ -17,30 +18,22 @@ class TestChangeFeedPKVariationAsync(unittest.IsolatedAsyncioTestCase):
     client: CosmosClient = None
 
     # Items for Hash V1 partition key
-    single_hash_items = [
-                        {"id": str(i), "pk": f"short_string"} for i in range(1, 101)
-                    ] + [
-                        {"id": str(i), "pk": f"long_string_" + "a" * 251} for i in range(101, 201)
-                    ] + [
-                        {"id": str(i), "pk": 1000} for i in range(201, 301)
-                    ] + [
-                        {"id": str(i), "pk": 1000 * 1.1111} for i in range(301, 401)
-                    ] + [
-                        {"id": str(i), "pk": True} for i in range(401, 501)
-                    ]
+    single_hash_items = (
+        [{"id": str(i), "pk": f"short_string"} for i in range(1, 101)]
+        + [{"id": str(i), "pk": f"long_string_" + "a" * 251} for i in range(101, 201)]
+        + [{"id": str(i), "pk": 1000} for i in range(201, 301)]
+        + [{"id": str(i), "pk": 1000 * 1.1111} for i in range(301, 401)]
+        + [{"id": str(i), "pk": True} for i in range(401, 501)]
+    )
 
     # Items for Hierarchical Partition Keys
-    hpk_items = [
-                    {"id": str(i), "pk1": "level1_", "pk2": "level2_"} for i in range(1, 101)
-                ] + [
-                    {"id": str(i), "pk1": "level1_", "pk2": f"level2_long__" + "c" * 101} for i in range(101, 201)
-                ] + [
-                    {"id": str(i), "pk1": 10, "pk2": 1000} for i in range(201, 301)
-                ] + [
-                    {"id": str(i), "pk1": 10 * 1.1, "pk2": 10 * 2.2} for i in range(301, 401)
-                ] + [
-                        {"id": str(i), "pk1": True, 'pk2': False} for i in range(401, 501)
-                    ]
+    hpk_items = (
+        [{"id": str(i), "pk1": "level1_", "pk2": "level2_"} for i in range(1, 101)]
+        + [{"id": str(i), "pk1": "level1_", "pk2": f"level2_long__" + "c" * 101} for i in range(101, 201)]
+        + [{"id": str(i), "pk1": 10, "pk2": 1000} for i in range(201, 301)]
+        + [{"id": str(i), "pk1": 10 * 1.1, "pk2": 10 * 2.2} for i in range(301, 401)]
+        + [{"id": str(i), "pk1": True, "pk2": False} for i in range(401, 501)]
+    )
 
     test_data_hash = [
         {
@@ -53,21 +46,19 @@ class TestChangeFeedPKVariationAsync(unittest.IsolatedAsyncioTestCase):
         },
         {
             "version": 2,
-            "expected_epk": (
-                "2032D236DA8678BFB900E866D7EBCE76"
-            ),
+            "expected_epk": ("2032D236DA8678BFB900E866D7EBCE76"),
         },
     ]
 
     @classmethod
     async def asyncSetUpClass(cls):
         cls.config = test_config.TestConfig()
-        if (cls.config.masterKey == '[YOUR_KEY_HERE]' or
-                cls.config.host == '[YOUR_ENDPOINT_HERE]'):
+        if cls.config.masterKey == "[YOUR_KEY_HERE]" or cls.config.host == "[YOUR_ENDPOINT_HERE]":
             raise Exception(
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
-                "tests.")
+                "tests."
+            )
 
     async def asyncSetUp(self):
         self.client = CosmosClient(self.host, self.masterKey)
@@ -80,9 +71,9 @@ class TestChangeFeedPKVariationAsync(unittest.IsolatedAsyncioTestCase):
         """Helper to create a container with a specific partition key definition."""
         if isinstance(partition_key, list):
             # Assume multihash (hierarchical partition key) for the container
-            pk_definition = PartitionKey(path=partition_key, kind='MultiHash')
+            pk_definition = PartitionKey(path=partition_key, kind="MultiHash")
         else:
-            pk_definition = PartitionKey(path=partition_key, kind='Hash', version=version)
+            pk_definition = PartitionKey(path=partition_key, kind="Hash", version=version)
         if throughput:
             return await db.create_container(container_id, pk_definition, offer_throughput=throughput)
         return await db.create_container(container_id, pk_definition)
@@ -116,7 +107,7 @@ class TestChangeFeedPKVariationAsync(unittest.IsolatedAsyncioTestCase):
             ["level1_", "level2_long__" + "c" * 101],
             [10, 1000],
             [10 * 1.1, 10 * 2.2],
-            [True, False]
+            [True, False],
         ]
         for pk in partition_keys:
             # Perform a change feed query
@@ -138,13 +129,11 @@ class TestChangeFeedPKVariationAsync(unittest.IsolatedAsyncioTestCase):
         for hash_data in self.test_data_hash:
             version = hash_data["version"]
             expected_epk = hash_data["expected_epk"]
-            part_k = ("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghij"
-                      "klmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz")
-            partition_key = PartitionKey(
-                path="/field1",
-                kind="Hash",
-                version=version
+            part_k = (
+                "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghij"
+                "klmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"
             )
+            partition_key = PartitionKey(path="/field1", kind="Hash", version=version)
             epk_str = partition_key._get_effective_partition_key_string(part_k)
             assert epk_str.upper() == expected_epk
 
@@ -244,8 +233,9 @@ class TestChangeFeedPKVariationAsync(unittest.IsolatedAsyncioTestCase):
             container_properties = await container._get_properties()
             partition_key_definition = container_properties["partitionKey"]
             # Ensure the version key is not included in the definition
-            assert "version" not in partition_key_definition, ("Version key should not be included "
-                                                               "in the partition key definition.")
+            assert "version" not in partition_key_definition, (
+                "Version key should not be included " "in the partition key definition."
+            )
 
             # Create a PartitionKey instance from the definition and validate
             partition_key_instance = _get_partition_key_from_partition_key_definition(partition_key_definition)
@@ -253,11 +243,7 @@ class TestChangeFeedPKVariationAsync(unittest.IsolatedAsyncioTestCase):
             assert partition_key_instance.version == 1, "Partition key version mismatch."
 
             # Upsert items and validate _get_epk_range_for_partition_key
-            items = [
-                {"id": "1", "pk": "value1"},
-                {"id": "2", "pk": "value2"},
-                {"id": "3", "pk": "value3"}
-            ]
+            items = [{"id": "1", "pk": "value1"}, {"id": "2", "pk": "value2"}, {"id": "3", "pk": "value3"}]
             await self.insert_items(container, items)
 
             for item in items:
@@ -276,7 +262,7 @@ class TestChangeFeedPKVariationAsync(unittest.IsolatedAsyncioTestCase):
                 f"while {len(items)} items were created."
             )
             for index, item in enumerate(items):
-                assert item['id'] == change_feed_items[index]['id'], f"Item {item} not found in change feed results."
+                assert item["id"] == change_feed_items[index]["id"], f"Item {item} not found in change feed results."
 
         finally:
             # Clean up the container
@@ -284,5 +270,5 @@ class TestChangeFeedPKVariationAsync(unittest.IsolatedAsyncioTestCase):
             await self.db.delete_container(container.id)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

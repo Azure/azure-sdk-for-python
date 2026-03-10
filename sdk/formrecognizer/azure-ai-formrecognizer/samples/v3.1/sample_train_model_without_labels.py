@@ -57,9 +57,7 @@ class TrainModelWithoutLabelsSample(object):
         for submodel in model.submodels:
             print("...The submodel has form type '{}'".format(submodel.form_type))
             for name, field in submodel.fields.items():
-                print("...The model found field '{}' to have label '{}'".format(
-                    name, field.label
-                ))
+                print("...The model found field '{}' to have label '{}'".format(name, field.label))
         # [END training]
         # Training result information
         for doc in model.training_documents:
@@ -69,6 +67,6 @@ class TrainModelWithoutLabelsSample(object):
             print("Document errors: {}".format(doc.errors))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample = TrainModelWithoutLabelsSample()
     sample.train_model_without_labels()

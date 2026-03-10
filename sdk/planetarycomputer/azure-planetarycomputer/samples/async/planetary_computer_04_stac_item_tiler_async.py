@@ -32,9 +32,7 @@ from azure.planetarycomputer.models import (
 import logging
 
 # Enable HTTP request/response logging
-logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(
-    logging.ERROR
-)
+logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.ERROR)
 logging.basicConfig(level=logging.INFO)
 
 
@@ -52,9 +50,7 @@ async def display_response(response, filename):
 
 async def get_tile_matrix_definitions(client: "PlanetaryComputerProClient"):
     """Get tile matrix definitions for WebMercatorQuad."""
-    result = await client.data.get_tile_matrix_definitions(
-        tile_matrix_set_id="WebMercatorQuad"
-    )
+    result = await client.data.get_tile_matrix_definitions(tile_matrix_set_id="WebMercatorQuad")
     logging.info(result)
 
 
@@ -64,29 +60,19 @@ async def list_tile_matrices(client: "PlanetaryComputerProClient"):
     logging.info(result)
 
 
-async def get_asset_statistics(
-    client: PlanetaryComputerProClient, collection_id, item_id
-):
+async def get_asset_statistics(client: PlanetaryComputerProClient, collection_id, item_id):
     """Get asset statistics for an item."""
-    result = await client.data.get_asset_statistics(
-        collection_id=collection_id, item_id=item_id, assets=["image"]
-    )
+    result = await client.data.get_asset_statistics(collection_id=collection_id, item_id=item_id, assets=["image"])
     logging.info(result)
 
 
-async def list_available_assets(
-    client: PlanetaryComputerProClient, collection_id, item_id
-):
+async def list_available_assets(client: PlanetaryComputerProClient, collection_id, item_id):
     """List available assets for an item."""
-    result = client.data.list_available_assets(
-        collection_id=collection_id, item_id=item_id
-    )
+    result = client.data.list_available_assets(collection_id=collection_id, item_id=item_id)
     logging.info(result)
 
 
-async def get_item_asset_details(
-    client: PlanetaryComputerProClient, collection_id, item_id
-):
+async def get_item_asset_details(client: PlanetaryComputerProClient, collection_id, item_id):
     """Get basic info for dataset's assets.
 
     Returns dataset's basic information including data types, bounds, and other metadata
@@ -107,9 +93,7 @@ async def get_bounds(client: PlanetaryComputerProClient, collection_id, item_id)
     logging.info(result)
 
 
-async def crop_geo_json(
-    client: PlanetaryComputerProClient, collection_id, item_id, geojson
-):
+async def crop_geo_json(client: PlanetaryComputerProClient, collection_id, item_id, geojson):
     """Crop an item using GeoJSON geometry."""
     crop_geo_json_response = await client.data.crop_geo_json(
         collection_id=collection_id,
@@ -123,30 +107,22 @@ async def crop_geo_json(
     await display_response(crop_geo_json_response, f"crop_geojson_{item_id}.png")
 
 
-async def crop_geo_json_with_dimensions(
-    client: PlanetaryComputerProClient, collection_id, item_id, geojson
-):
+async def crop_geo_json_with_dimensions(client: PlanetaryComputerProClient, collection_id, item_id, geojson):
     """Crop an item using GeoJSON geometry with specific dimensions."""
-    crop_geo_json_with_dimensions_response = (
-        await client.data.crop_geo_json_with_dimensions(
-            collection_id=collection_id,
-            item_id=item_id,
-            format=TilerImageFormat.PNG,
-            width=512,
-            height=512,
-            assets=["image"],
-            asset_band_indices="image|1,2,3",
-            body=geojson,
-        )
+    crop_geo_json_with_dimensions_response = await client.data.crop_geo_json_with_dimensions(
+        collection_id=collection_id,
+        item_id=item_id,
+        format=TilerImageFormat.PNG,
+        width=512,
+        height=512,
+        assets=["image"],
+        asset_band_indices="image|1,2,3",
+        body=geojson,
     )
-    await display_response(
-        crop_geo_json_with_dimensions_response, f"crop_geojson_dims_{item_id}.png"
-    )
+    await display_response(crop_geo_json_with_dimensions_response, f"crop_geojson_dims_{item_id}.png")
 
 
-async def get_geo_json_statistics(
-    client: PlanetaryComputerProClient, collection_id, item_id, geojson
-):
+async def get_geo_json_statistics(client: PlanetaryComputerProClient, collection_id, item_id, geojson):
     """Get statistics for a GeoJSON area."""
     result = await client.data.get_geo_json_statistics(
         collection_id=collection_id, item_id=item_id, body=geojson, assets=["image"]
@@ -156,9 +132,7 @@ async def get_geo_json_statistics(
 
 async def get_info_geo_json(client: PlanetaryComputerProClient, collection_id, item_id):
     """Get info for GeoJSON."""
-    result = await client.data.get_info_geo_json(
-        collection_id=collection_id, item_id=item_id, assets=["image"]
-    )
+    result = await client.data.get_info_geo_json(collection_id=collection_id, item_id=item_id, assets=["image"])
     logging.info(result)
 
 
@@ -180,9 +154,7 @@ async def get_part(client: PlanetaryComputerProClient, collection_id, item_id, b
     await display_response(get_part_response, f"part_{item_id}.png")
 
 
-async def get_part_with_dimensions(
-    client: PlanetaryComputerProClient, collection_id, item_id, bounds
-):
+async def get_part_with_dimensions(client: PlanetaryComputerProClient, collection_id, item_id, bounds):
     """Get a part of an item with specific bounds and dimensions."""
     get_part_with_dimensions_response = await client.data.get_part_with_dimensions(
         collection_id=collection_id,
@@ -197,9 +169,7 @@ async def get_part_with_dimensions(
         assets=["image"],
         asset_band_indices="image|1,2,3",
     )
-    await display_response(
-        get_part_with_dimensions_response, f"part_dims_{item_id}.png"
-    )
+    await display_response(get_part_with_dimensions_response, f"part_dims_{item_id}.png")
 
 
 async def get_point(client: PlanetaryComputerProClient, collection_id, item_id, point):
@@ -229,9 +199,7 @@ async def get_preview(client: PlanetaryComputerProClient, collection_id, item_id
     await display_response(get_preview_response, f"preview_{item_id}.png")
 
 
-async def get_preview_with_format(
-    client: PlanetaryComputerProClient, collection_id, item_id
-):
+async def get_preview_with_format(client: PlanetaryComputerProClient, collection_id, item_id):
     """Get a preview of an item with specific format."""
     get_preview_with_format_response = await client.data.get_preview_with_format(
         collection_id=collection_id,
@@ -242,16 +210,12 @@ async def get_preview_with_format(
         assets=["image"],
         asset_band_indices="image|1,2,3",
     )
-    await display_response(
-        get_preview_with_format_response, f"preview_format_{item_id}.png"
-    )
+    await display_response(get_preview_with_format_response, f"preview_format_{item_id}.png")
 
 
 async def list_statistics(client: PlanetaryComputerProClient, collection_id, item_id):
     """List statistics for an item."""
-    result = client.data.list_statistics(
-        collection_id=collection_id, item_id=item_id, assets=["image"]
-    )
+    result = client.data.list_statistics(collection_id=collection_id, item_id=item_id, assets=["image"])
     logging.info(result)
 
 
@@ -285,14 +249,10 @@ async def get_tile(client: PlanetaryComputerProClient, collection_id, item_id):
         assets=["image"],
         asset_band_indices="image|1,2,3",
     )
-    await display_response(
-        get_tile_with_matrix_set_response, f"tile_{item_id}_z14_x4349_y6564.png"
-    )
+    await display_response(get_tile_with_matrix_set_response, f"tile_{item_id}_z14_x4349_y6564.png")
 
 
-async def get_wmts_capabilities(
-    client: PlanetaryComputerProClient, collection_id, item_id
-):
+async def get_wmts_capabilities(client: PlanetaryComputerProClient, collection_id, item_id):
     """Get WMTS capabilities and save it locally."""
     get_wmts_capabilities_response = await client.data.get_wmts_capabilities(
         collection_id=collection_id,

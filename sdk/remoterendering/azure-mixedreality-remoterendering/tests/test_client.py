@@ -9,12 +9,14 @@ import json
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
-from azure.mixedreality.remoterendering import (AssetConversionInputSettings,
-                                                AssetConversionOutputSettings,
-                                                AssetConversionStatus,
-                                                RemoteRenderingClient,
-                                                RenderingSessionSize,
-                                                RenderingSessionStatus)
+from azure.mixedreality.remoterendering import (
+    AssetConversionInputSettings,
+    AssetConversionOutputSettings,
+    AssetConversionStatus,
+    RemoteRenderingClient,
+    RenderingSessionSize,
+    RenderingSessionStatus,
+)
 from devtools_testutils import AzureRecordedTestCase
 
 
@@ -25,7 +27,7 @@ class TestRemoteRenderingClient(AzureRecordedTestCase):
             endpoint=account_info["service_endpoint"],
             account_id=account_info["account_id"],
             account_domain=account_info["account_domain"],
-            credential=account_info["key_credential"]
+            credential=account_info["key_credential"],
         )
         assert client is not None
 
@@ -35,28 +37,32 @@ class TestRemoteRenderingClient(AzureRecordedTestCase):
                 endpoint=None,
                 account_id=account_info["account_id"],
                 account_domain=account_info["account_domain"],
-                credential=account_info["key_credential"])
+                credential=account_info["key_credential"],
+            )
 
         with pytest.raises(ValueError):
             RemoteRenderingClient(
                 endpoint=account_info["service_endpoint"],
                 account_id=None,
                 account_domain=account_info["account_domain"],
-                credential=account_info["key_credential"])
+                credential=account_info["key_credential"],
+            )
 
         with pytest.raises(ValueError):
             RemoteRenderingClient(
                 endpoint=account_info["service_endpoint"],
                 account_id=account_info["account_id"],
                 account_domain=None,
-                credential=account_info["key_credential"])
+                credential=account_info["key_credential"],
+            )
 
         with pytest.raises(ValueError):
             RemoteRenderingClient(
                 endpoint=account_info["service_endpoint"],
                 account_id=account_info["account_id"],
                 account_domain=account_info["account_domain"],
-                credential=None)
+                credential=None,
+            )
 
         with pytest.raises(ValueError):
             RemoteRenderingClient(
@@ -64,32 +70,39 @@ class TestRemoteRenderingClient(AzureRecordedTestCase):
                 account_id=account_info["account_id"],
                 account_domain=account_info["account_domain"],
                 credential=account_info["key_credential"],
-                authentication_endpoint_url="#")
+                authentication_endpoint_url="#",
+            )
 
     def test_simple_conversion(self, recorded_test, account_info, arr_client):
         conversion_id = account_info["id_placeholder"]
         if self.is_live:
             conversion_id += str(uuid.uuid4())
-            
+
         print("Using conversion id: {}".format(conversion_id))
 
-        storage_container_uri = "https://"+account_info["storage_account_name"] + \
-            ".blob."+account_info["storage_endpoint_suffix"]+"/"+account_info["blob_container_name"]
+        storage_container_uri = (
+            "https://"
+            + account_info["storage_account_name"]
+            + ".blob."
+            + account_info["storage_endpoint_suffix"]
+            + "/"
+            + account_info["blob_container_name"]
+        )
 
         input_settings = AssetConversionInputSettings(
             storage_container_uri=storage_container_uri,
             relative_input_asset_path="testBox.fbx",
             blob_prefix="Input",
-            storage_container_read_list_sas="?"+account_info["sas_token"]
+            storage_container_read_list_sas="?" + account_info["sas_token"],
         )
         output_settings = AssetConversionOutputSettings(
             storage_container_uri=storage_container_uri,
             blob_prefix=conversion_id,
-            storage_container_write_sas="?"+account_info["sas_token"]
+            storage_container_write_sas="?" + account_info["sas_token"],
         )
 
         conversion_poller = arr_client.begin_asset_conversion(
-            conversion_id=conversion_id,  input_settings=input_settings, output_settings=output_settings
+            conversion_id=conversion_id, input_settings=input_settings, output_settings=output_settings
         )
 
         conversion = arr_client.get_asset_conversion(conversion_id)
@@ -100,14 +113,17 @@ class TestRemoteRenderingClient(AzureRecordedTestCase):
         finished_conversion = conversion_poller.result()
 
         assert finished_conversion.id == conversion_id
-        assert finished_conversion.settings.input_settings.relative_input_asset_path == input_settings.relative_input_asset_path
+        assert (
+            finished_conversion.settings.input_settings.relative_input_asset_path
+            == input_settings.relative_input_asset_path
+        )
         assert finished_conversion.status == AssetConversionStatus.SUCCEEDED
-        finished_conversion.output.asset_uri.endswith(conversion_id+"/testBox.arrAsset")
+        finished_conversion.output.asset_uri.endswith(conversion_id + "/testBox.arrAsset")
 
         foundConversion = False
         conversions = arr_client.list_asset_conversions()
         for c in conversions:
-            if(c.id == conversion_id):
+            if c.id == conversion_id:
                 foundConversion = True
                 break
         assert foundConversion == True
@@ -117,34 +133,40 @@ class TestRemoteRenderingClient(AzureRecordedTestCase):
             endpoint=account_info["service_endpoint"],
             account_id=account_info["account_id"],
             account_domain=account_info["account_domain"],
-            credential=AzureKeyCredential("wrong_key")
+            credential=AzureKeyCredential("wrong_key"),
         )
 
         conversion_id = account_info["id_placeholder"]
         if self.is_live:
             conversion_id += str(uuid.uuid4())
-            
+
         print("Using conversion id: {}".format(conversion_id))
 
-        storage_container_uri = "https://"+account_info["storage_account_name"] + \
-            ".blob."+account_info["storage_endpoint_suffix"]+"/"+account_info["blob_container_name"]
+        storage_container_uri = (
+            "https://"
+            + account_info["storage_account_name"]
+            + ".blob."
+            + account_info["storage_endpoint_suffix"]
+            + "/"
+            + account_info["blob_container_name"]
+        )
 
         input_settings = AssetConversionInputSettings(
             storage_container_uri=storage_container_uri,
             relative_input_asset_path="testBox.fbx",
-            blob_prefix="Input"
+            blob_prefix="Input",
             # Do not provide SAS access to the container, and assume the test account is not linked to the storage.
         )
         output_settings = AssetConversionOutputSettings(
             storage_container_uri=storage_container_uri,
-            blob_prefix=conversion_id
+            blob_prefix=conversion_id,
             # Do not provide SAS access to the container, and assume the test account is not linked to the storage.
         )
 
         with pytest.raises(HttpResponseError) as excinfo:
             # make the request which cannot access the storage account
             conversion_poller = client.begin_asset_conversion(
-                conversion_id=conversion_id,  input_settings=input_settings, output_settings=output_settings
+                conversion_id=conversion_id, input_settings=input_settings, output_settings=output_settings
             )
 
         exception = excinfo.value
@@ -156,25 +178,31 @@ class TestRemoteRenderingClient(AzureRecordedTestCase):
         if self.is_live:
             conversion_id += str(uuid.uuid4())
 
-        storage_container_uri = "https://"+account_info["storage_account_name"] + \
-            ".blob."+account_info["storage_endpoint_suffix"]+"/"+account_info["blob_container_name"]
+        storage_container_uri = (
+            "https://"
+            + account_info["storage_account_name"]
+            + ".blob."
+            + account_info["storage_endpoint_suffix"]
+            + "/"
+            + account_info["blob_container_name"]
+        )
 
         input_settings = AssetConversionInputSettings(
             storage_container_uri=storage_container_uri,
             relative_input_asset_path="testBox.fbx",
-            blob_prefix="Input"
+            blob_prefix="Input",
             # Do not provide SAS access to the container, and assume the test account is not linked to the storage.
         )
         output_settings = AssetConversionOutputSettings(
             storage_container_uri=storage_container_uri,
-            blob_prefix=conversion_id
+            blob_prefix=conversion_id,
             # Do not provide SAS access to the container, and assume the test account is not linked to the storage.
         )
 
         with pytest.raises(HttpResponseError) as excinfo:
             # make the request which cannot access the storage account
             conversion_poller = arr_client.begin_asset_conversion(
-                conversion_id=conversion_id,  input_settings=input_settings, output_settings=output_settings
+                conversion_id=conversion_id, input_settings=input_settings, output_settings=output_settings
             )
 
         assert excinfo.value.status_code == 403
@@ -189,25 +217,32 @@ class TestRemoteRenderingClient(AzureRecordedTestCase):
 
         print("Using conversion id: {}".format(conversion_id))
 
-        storage_container_uri = "https://"+account_info["storage_account_name"] + \
-            ".blob."+account_info["storage_endpoint_suffix"]+"/"+account_info["blob_container_name"]
+        storage_container_uri = (
+            "https://"
+            + account_info["storage_account_name"]
+            + ".blob."
+            + account_info["storage_endpoint_suffix"]
+            + "/"
+            + account_info["blob_container_name"]
+        )
 
         input_settings = AssetConversionInputSettings(
             storage_container_uri=storage_container_uri,
             relative_input_asset_path="testBoxWhichDoesNotExist.fbx",
             blob_prefix="Input",
-            storage_container_read_list_sas="?"+account_info["sas_token"]
+            storage_container_read_list_sas="?" + account_info["sas_token"],
         )
         output_settings = AssetConversionOutputSettings(
             storage_container_uri=storage_container_uri,
             blob_prefix=conversion_id,
-            storage_container_write_sas="?"+account_info["sas_token"]
+            storage_container_write_sas="?" + account_info["sas_token"],
         )
 
         with pytest.raises(HttpResponseError) as excinfo:
             # make the request which fails in polling because of the missing asset
             conversion_poller = arr_client.begin_asset_conversion(
-                conversion_id=conversion_id,  input_settings=input_settings, output_settings=output_settings)
+                conversion_id=conversion_id, input_settings=input_settings, output_settings=output_settings
+            )
             conversion_poller.result()
 
         error_details = excinfo.value
@@ -227,7 +262,8 @@ class TestRemoteRenderingClient(AzureRecordedTestCase):
         print("Using session id: {}".format(session_id))
 
         session_poller = arr_client.begin_rendering_session(
-            session_id=session_id, size=RenderingSessionSize.STANDARD, lease_time_minutes=15)
+            session_id=session_id, size=RenderingSessionSize.STANDARD, lease_time_minutes=15
+        )
 
         session = arr_client.get_rendering_session(session_id)
         assert session.id == session_id
@@ -244,7 +280,7 @@ class TestRemoteRenderingClient(AzureRecordedTestCase):
         assert ready_session.arr_inspector_port is not None
         assert ready_session.handshake_port is not None
 
-        extended_session = arr_client.update_rendering_session(session_id=session_id,  lease_time_minutes=20)
+        extended_session = arr_client.update_rendering_session(session_id=session_id, lease_time_minutes=20)
         assert extended_session.id == session_id
         assert extended_session.lease_time_minutes == 15 or extended_session.lease_time_minutes == 20
         assert extended_session.status == RenderingSessionStatus.READY
@@ -264,13 +300,14 @@ class TestRemoteRenderingClient(AzureRecordedTestCase):
         session_id = account_info["id_placeholder"]
         if self.is_live:
             session_id += str(uuid.uuid4())
-            
+
         print("Using session id: {}".format(session_id))
 
         with pytest.raises(HttpResponseError) as excinfo:
             # Make an invalid request (negative lease time).
             session_poller = arr_client.begin_rendering_session(
-                session_id=session_id, size=RenderingSessionSize.STANDARD, lease_time_minutes=-4)
+                session_id=session_id, size=RenderingSessionSize.STANDARD, lease_time_minutes=-4
+            )
 
         assert excinfo.value.status_code == 400
         exception = excinfo.value

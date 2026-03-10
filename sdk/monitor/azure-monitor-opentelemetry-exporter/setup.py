@@ -13,7 +13,6 @@ import re
 
 from setuptools import setup, find_packages
 
-
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-monitor-opentelemetry-exporter"
 PACKAGE_PPRINT_NAME = "Azure Monitor Opentelemetry Exporter"

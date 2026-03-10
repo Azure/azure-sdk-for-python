@@ -23,7 +23,6 @@ from .._internal import (
 )
 from .._internal.decorators import log_get_token
 
-
 _LOGGER = logging.getLogger(__name__)
 
 AZ_ACCOUNT_NOT_INSTALLED = "Az.Account module >= 2.2.0 is not installed"

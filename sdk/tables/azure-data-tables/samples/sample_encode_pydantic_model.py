@@ -19,6 +19,7 @@ USAGE:
     2) TABLES_STORAGE_ACCOUNT_NAME - the name of the storage account
     3) TABLES_PRIMARY_STORAGE_ACCOUNT_KEY - the storage account access key
 """
+
 import os
 from typing import Literal, Optional
 from datetime import datetime, timezone

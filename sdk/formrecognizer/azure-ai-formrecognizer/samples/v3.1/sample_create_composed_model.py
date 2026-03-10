@@ -47,10 +47,10 @@ class ComposedModelSample(object):
 
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-        po_supplies = os.environ['PURCHASE_ORDER_OFFICE_SUPPLIES_SAS_URL_V2']
-        po_equipment = os.environ['PURCHASE_ORDER_OFFICE_EQUIPMENT_SAS_URL_V2']
-        po_furniture = os.environ['PURCHASE_ORDER_OFFICE_FURNITURE_SAS_URL_V2']
-        po_cleaning_supplies = os.environ['PURCHASE_ORDER_OFFICE_CLEANING_SUPPLIES_SAS_URL_V2']
+        po_supplies = os.environ["PURCHASE_ORDER_OFFICE_SUPPLIES_SAS_URL_V2"]
+        po_equipment = os.environ["PURCHASE_ORDER_OFFICE_EQUIPMENT_SAS_URL_V2"]
+        po_furniture = os.environ["PURCHASE_ORDER_OFFICE_FURNITURE_SAS_URL_V2"]
+        po_cleaning_supplies = os.environ["PURCHASE_ORDER_OFFICE_CLEANING_SUPPLIES_SAS_URL_V2"]
 
         form_training_client = FormTrainingClient(endpoint=endpoint, credential=AzureKeyCredential(key))
         supplies_poller = form_training_client.begin_training(
@@ -74,7 +74,7 @@ class ComposedModelSample(object):
             supplies_model.model_id,
             equipment_model.model_id,
             furniture_model.model_id,
-            cleaning_supplies_model.model_id
+            cleaning_supplies_model.model_id,
         ]
 
         poller = form_training_client.begin_create_composed_model(
@@ -95,13 +95,13 @@ class ComposedModelSample(object):
         print("Recognized fields:")
         for submodel in model.submodels:
             print("The submodel has model ID: {}".format(submodel.model_id))
-            print("...The submodel with form type {} has an average accuracy '{}'".format(
-                submodel.form_type, submodel.accuracy
-            ))
+            print(
+                "...The submodel with form type {} has an average accuracy '{}'".format(
+                    submodel.form_type, submodel.accuracy
+                )
+            )
             for name, field in submodel.fields.items():
-                print("...The model found the field '{}' with an accuracy of {}".format(
-                    name, field.accuracy
-                ))
+                print("...The model found the field '{}' with an accuracy of {}".format(name, field.accuracy))
 
         # Training result information
         for doc in model.training_documents:
@@ -112,6 +112,6 @@ class ComposedModelSample(object):
             print("Document errors: {}".format(doc.errors))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample = ComposedModelSample()
     sample.create_composed_model()

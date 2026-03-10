@@ -7,4 +7,5 @@
 # --------------------------------------------------------------------------
 
 from ._monitoring_client import MonitoringClient
-__all__ = ['MonitoringClient']
+
+__all__ = ["MonitoringClient"]

@@ -46,6 +46,6 @@ except KeyError:
 client = ArtifactsClient(endpoint=endpoint, credential=DefaultAzureCredential())
 
 try:
-    linked_service = client.linked_service.get_linked_service(linked_service_name='my_linked_service_name')
+    linked_service = client.linked_service.get_linked_service(linked_service_name="my_linked_service_name")
 except HttpResponseError as e:
-    print('Failed to get linked service: {}'.format(e.response.json()))
+    print("Failed to get linked service: {}".format(e.response.json()))

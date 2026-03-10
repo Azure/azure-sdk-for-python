@@ -18,8 +18,8 @@ class StorageAccountCredentialPaged(Paged):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[StorageAccountCredential]'}
+        "next_link": {"key": "nextLink", "type": "str"},
+        "current_page": {"key": "value", "type": "[StorageAccountCredential]"},
     }
 
     def __init__(self, *args, **kwargs):

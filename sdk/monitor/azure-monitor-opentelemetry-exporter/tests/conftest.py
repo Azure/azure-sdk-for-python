@@ -25,7 +25,6 @@
 # --------------------------------------------------------------------------
 import sys
 
-
 # Ignore tests for Python < 3.6
 collect_ignore_glob = []
 if sys.version_info < (3, 6):

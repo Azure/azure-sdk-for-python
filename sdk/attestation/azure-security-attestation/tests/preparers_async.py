@@ -37,7 +37,7 @@ def AllInstanceTypes(func: Callable[..., Awaitable[T]] = None, include_shared: b
     """Decorator to apply to function to add instance_url kwarg for each instance type."""
 
     async def wrapper(*args, **kwargs) -> Callable[..., Awaitable[T]]:
-        instances = []  # type:List[str]
+        instances = []  # type: List[str]
         instances.append(kwargs.get("attestation_aad_url"))
         instances.append(kwargs.get("attestation_isolated_url"))
         if include_shared:

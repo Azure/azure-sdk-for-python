@@ -588,7 +588,7 @@ class TestWorkspaceOperation:
         mock_workspace_operation_base._operation.get = MagicMock(return_value=None)
         mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=LROPoller)
         mock_workspace_operation_base.begin_create(ws)
-        (_, param, _) = spy.spy_return
+        _, param, _ = spy.spy_return
         settings = param["serverless_compute_settings"]["value"]
         if serverless_compute_settings is None:
             # settings is an empty JSON REST object at this point

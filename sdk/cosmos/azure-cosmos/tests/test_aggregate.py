@@ -18,9 +18,9 @@ class _config:
     host = test_config.TestConfig.host
     master_key = test_config.TestConfig.masterKey
     connection_policy = test_config.TestConfig.connectionPolicy
-    PARTITION_KEY = 'key'
-    UNIQUE_PARTITION_KEY = 'uniquePartitionKey'
-    FIELD = 'field'
+    PARTITION_KEY = "key"
+    UNIQUE_PARTITION_KEY = "uniquePartitionKey"
+    FIELD = "field"
     DOCUMENTS_COUNT = 400
     DOCS_WITH_SAME_PARTITION_KEY = 200
     docs_with_numeric_id = 0
@@ -50,7 +50,8 @@ class TestAggregateQuery(unittest.TestCase):
             raise Exception(
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
-                "tests.")
+                "tests."
+            )
 
         cls.client = cosmos_client.CosmosClient(_config.host, _config.master_key)
         cls.created_db = cls.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
@@ -61,81 +62,96 @@ class TestAggregateQuery(unittest.TestCase):
 
         values = [None, False, True, "abc", "cdfg", "opqrs", "ttttttt", "xyz", "oo", "ppp"]
         for value in values:
-            d = {_config.PARTITION_KEY: value, 'id': str(uuid.uuid4())}
+            d = {_config.PARTITION_KEY: value, "id": str(uuid.uuid4())}
             document_definitions.append(d)
 
         for i in range(_config.DOCS_WITH_SAME_PARTITION_KEY):
-            d = {_config.PARTITION_KEY: _config.UNIQUE_PARTITION_KEY,
-                 'resourceId': i,
-                 _config.FIELD: i + 1,
-                 'id': str(uuid.uuid4())}
+            d = {
+                _config.PARTITION_KEY: _config.UNIQUE_PARTITION_KEY,
+                "resourceId": i,
+                _config.FIELD: i + 1,
+                "id": str(uuid.uuid4()),
+            }
             document_definitions.append(d)
 
-        _config.docs_with_numeric_id = \
-            _config.DOCUMENTS_COUNT - len(values) - _config.DOCS_WITH_SAME_PARTITION_KEY
+        _config.docs_with_numeric_id = _config.DOCUMENTS_COUNT - len(values) - _config.DOCS_WITH_SAME_PARTITION_KEY
         for i in range(_config.docs_with_numeric_id):
-            d = {_config.PARTITION_KEY: i + 1, 'id': str(uuid.uuid4())}
+            d = {_config.PARTITION_KEY: i + 1, "id": str(uuid.uuid4())}
             document_definitions.append(d)
 
-        _config.sum = _config.docs_with_numeric_id \
-                      * (_config.docs_with_numeric_id + 1) / 2.0
+        _config.sum = _config.docs_with_numeric_id * (_config.docs_with_numeric_id + 1) / 2.0
 
         cls._insert_doc(cls.created_collection, document_definitions)
 
     @classmethod
     def _generate_test_configs(cls):
-        aggregate_query_format = 'SELECT VALUE {}(r.{}) FROM r WHERE {}'
-        aggregate_orderby_query_format = 'SELECT VALUE {}(r.{}) FROM r WHERE {} ORDER BY r.{}'
+        aggregate_query_format = "SELECT VALUE {}(r.{}) FROM r WHERE {}"
+        aggregate_orderby_query_format = "SELECT VALUE {}(r.{}) FROM r WHERE {} ORDER BY r.{}"
         aggregate_configs = [
-            ['AVG', _config.sum / _config.docs_with_numeric_id,
-             'IS_NUMBER(r.{})'.format(_config.PARTITION_KEY)],
-            ['AVG', None, 'true'],
-            ['COUNT', _config.DOCUMENTS_COUNT, 'true'],
-            ['MAX', 'xyz', 'true'],
-            ['MIN', None, 'true'],
-            ['SUM', _config.sum, 'IS_NUMBER(r.{})'.format(_config.PARTITION_KEY)],
-            ['SUM', None, 'true']
+            ["AVG", _config.sum / _config.docs_with_numeric_id, "IS_NUMBER(r.{})".format(_config.PARTITION_KEY)],
+            ["AVG", None, "true"],
+            ["COUNT", _config.DOCUMENTS_COUNT, "true"],
+            ["MAX", "xyz", "true"],
+            ["MIN", None, "true"],
+            ["SUM", _config.sum, "IS_NUMBER(r.{})".format(_config.PARTITION_KEY)],
+            ["SUM", None, "true"],
         ]
         for operator, expected, condition in aggregate_configs:
-            cls._all_tests.append([
-                '{} {}'.format(operator, condition),
-                aggregate_query_format.format(operator, _config.PARTITION_KEY, condition),
-                expected])
-            cls._all_tests.append([
-                '{} {} OrderBy'.format(operator, condition),
-                aggregate_orderby_query_format.format(operator, _config.PARTITION_KEY, condition,
-                                                      _config.PARTITION_KEY),
-                expected])
+            cls._all_tests.append(
+                [
+                    "{} {}".format(operator, condition),
+                    aggregate_query_format.format(operator, _config.PARTITION_KEY, condition),
+                    expected,
+                ]
+            )
+            cls._all_tests.append(
+                [
+                    "{} {} OrderBy".format(operator, condition),
+                    aggregate_orderby_query_format.format(
+                        operator, _config.PARTITION_KEY, condition, _config.PARTITION_KEY
+                    ),
+                    expected,
+                ]
+            )
 
-        aggregate_single_partition_format = 'SELECT VALUE {}(r.{}) FROM r WHERE r.{} = \'{}\''
-        aggregate_orderby_single_partition_format = 'SELECT {}(r.{}) FROM r WHERE r.{} = \'{}\''
+        aggregate_single_partition_format = "SELECT VALUE {}(r.{}) FROM r WHERE r.{} = '{}'"
+        aggregate_orderby_single_partition_format = "SELECT {}(r.{}) FROM r WHERE r.{} = '{}'"
         same_partiton_sum = _config.DOCS_WITH_SAME_PARTITION_KEY * (_config.DOCS_WITH_SAME_PARTITION_KEY + 1) / 2.0
         aggregate_single_partition_configs = [
-            ['AVG', same_partiton_sum / _config.DOCS_WITH_SAME_PARTITION_KEY],
-            ['COUNT', _config.DOCS_WITH_SAME_PARTITION_KEY],
-            ['MAX', _config.DOCS_WITH_SAME_PARTITION_KEY],
-            ['MIN', 1],
-            ['SUM', same_partiton_sum]
+            ["AVG", same_partiton_sum / _config.DOCS_WITH_SAME_PARTITION_KEY],
+            ["COUNT", _config.DOCS_WITH_SAME_PARTITION_KEY],
+            ["MAX", _config.DOCS_WITH_SAME_PARTITION_KEY],
+            ["MIN", 1],
+            ["SUM", same_partiton_sum],
         ]
         for operator, expected in aggregate_single_partition_configs:
-            cls._all_tests.append([
-                '{} SinglePartition {}'.format(operator, 'SELECT VALUE'),
-                aggregate_single_partition_format.format(
-                    operator, _config.FIELD, _config.PARTITION_KEY, _config.UNIQUE_PARTITION_KEY), expected])
-            cls._all_tests.append([
-                '{} SinglePartition {}'.format(operator, 'SELECT'),
-                aggregate_orderby_single_partition_format.format(
-                    operator, _config.FIELD, _config.PARTITION_KEY, _config.UNIQUE_PARTITION_KEY),
-                Exception()])
+            cls._all_tests.append(
+                [
+                    "{} SinglePartition {}".format(operator, "SELECT VALUE"),
+                    aggregate_single_partition_format.format(
+                        operator, _config.FIELD, _config.PARTITION_KEY, _config.UNIQUE_PARTITION_KEY
+                    ),
+                    expected,
+                ]
+            )
+            cls._all_tests.append(
+                [
+                    "{} SinglePartition {}".format(operator, "SELECT"),
+                    aggregate_orderby_single_partition_format.format(
+                        operator, _config.FIELD, _config.PARTITION_KEY, _config.UNIQUE_PARTITION_KEY
+                    ),
+                    Exception(),
+                ]
+            )
 
     def test_run_all(self):
         for test_name, query, expected_result in self._all_tests:
             test_name = "test_%s" % test_name
             try:
                 self._run_one(query, expected_result)
-                print(test_name + ': ' + query + " PASSED")
+                print(test_name + ": " + query + " PASSED")
             except Exception as e:
-                print(test_name + ': ' + query + " FAILED")
+                print(test_name + ": " + query + " FAILED")
                 raise e
 
     def _run_one(self, query, expected_result):
@@ -145,29 +161,20 @@ class TestAggregateQuery(unittest.TestCase):
     def _create_collection(cls, created_db):
         # type: (Database) -> Container
         created_collection = created_db.create_container(
-            id='aggregate tests collection ' + str(uuid.uuid4()),
+            id="aggregate tests collection " + str(uuid.uuid4()),
             indexing_policy={
-                'includedPaths': [
+                "includedPaths": [
                     {
-                        'path': '/',
-                        'indexes': [
-                            {
-                                'kind': 'Range',
-                                'dataType': 'Number'
-                            },
-                            {
-                                'kind': 'Range',
-                                'dataType': 'String'
-                            }
-                        ]
+                        "path": "/",
+                        "indexes": [{"kind": "Range", "dataType": "Number"}, {"kind": "Range", "dataType": "String"}],
                     }
                 ]
             },
             partition_key=PartitionKey(
-                path='/{}'.format(_config.PARTITION_KEY),
+                path="/{}".format(_config.PARTITION_KEY),
                 kind=documents.PartitionKind.Hash,
             ),
-            offer_throughput=10100
+            offer_throughput=10100,
         )
         return created_collection
 
@@ -185,10 +192,7 @@ class TestAggregateQuery(unittest.TestCase):
         # type: (Container, str, Dict[str, Any]) -> None
 
         # executes the query and validates the results against the expected results
-        result_iterable = collection.query_items(
-            query=query,
-            enable_cross_partition_query=True
-        )
+        result_iterable = collection.query_items(query=query, enable_cross_partition_query=True)
 
         def _verify_result():
             ######################################

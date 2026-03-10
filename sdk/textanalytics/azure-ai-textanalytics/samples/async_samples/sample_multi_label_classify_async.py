@@ -58,9 +58,7 @@ async def sample_classify_document_multi_label_async() -> None:
 
     async with text_analytics_client:
         poller = await text_analytics_client.begin_multi_label_classify(
-            document,
-            project_name=project_name,
-            deployment_name=deployment_name
+            document, project_name=project_name, deployment_name=deployment_name
         )
 
         pages = await poller.result()
@@ -73,13 +71,13 @@ async def sample_classify_document_multi_label_async() -> None:
             classifications = classification_result.classifications
             print(f"\nThe movie plot '{doc}' was classified as the following genres:\n")
             for classification in classifications:
-                print("'{}' with confidence score {}.".format(
-                    classification.category, classification.confidence_score
-                ))
+                print("'{}' with confidence score {}.".format(classification.category, classification.confidence_score))
         elif classification_result.is_error is True:
-            print("Movie plot '{}' has an error with code '{}' and message '{}'".format(
-                doc, classification_result.error.code, classification_result.error.message
-            ))
+            print(
+                "Movie plot '{}' has an error with code '{}' and message '{}'".format(
+                    doc, classification_result.error.code, classification_result.error.message
+                )
+            )
     # [END multi_label_classify_async]
 
 
@@ -87,5 +85,5 @@ async def main():
     await sample_classify_document_multi_label_async()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

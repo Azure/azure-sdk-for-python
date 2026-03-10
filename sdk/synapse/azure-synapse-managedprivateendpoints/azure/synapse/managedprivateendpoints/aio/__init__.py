@@ -7,4 +7,5 @@
 # --------------------------------------------------------------------------
 
 from ._vnet_client import VnetClient
-__all__ = ['VnetClient']
+
+__all__ = ["VnetClient"]

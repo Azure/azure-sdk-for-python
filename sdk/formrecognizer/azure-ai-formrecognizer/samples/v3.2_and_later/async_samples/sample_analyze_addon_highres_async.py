@@ -67,9 +67,7 @@ async def analyze_with_highres():
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
-    document_analysis_client = DocumentAnalysisClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
+    document_analysis_client = DocumentAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     async with document_analysis_client:
         # Specify which add-on capabilities to enable.
@@ -86,9 +84,7 @@ async def analyze_with_highres():
 
     for page in result.pages:
         print(f"----Analyzing layout from page #{page.page_number}----")
-        print(
-            f"Page has width: {page.width} and height: {page.height}, measured with unit: {page.unit}"
-        )
+        print(f"Page has width: {page.width} and height: {page.height}, measured with unit: {page.unit}")
 
         for line_idx, line in enumerate(page.lines):
             words = line.get_words()
@@ -98,9 +94,7 @@ async def analyze_with_highres():
             )
 
             for word in words:
-                print(
-                    f"......Word '{word.content}' has a confidence of {word.confidence}"
-                )
+                print(f"......Word '{word.content}' has a confidence of {word.confidence}")
 
         for selection_mark in page.selection_marks:
             print(
@@ -109,18 +103,11 @@ async def analyze_with_highres():
             )
 
     for table_idx, table in enumerate(result.tables):
-        print(
-            f"Table # {table_idx} has {table.row_count} rows and "
-            f"{table.column_count} columns"
-        )
+        print(f"Table # {table_idx} has {table.row_count} rows and " f"{table.column_count} columns")
         for region in table.bounding_regions:
-            print(
-                f"Table # {table_idx} location on page: {region.page_number} is {format_polygon(region.polygon)}"
-            )
+            print(f"Table # {table_idx} location on page: {region.page_number} is {format_polygon(region.polygon)}")
         for cell in table.cells:
-            print(
-                f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'"
-            )
+            print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
             for region in cell.bounding_regions:
                 print(
                     f"...content on page {region.page_number} is within bounding polygon '{format_polygon(region.polygon)}'"

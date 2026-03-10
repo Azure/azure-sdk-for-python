@@ -32,9 +32,7 @@ from azure.planetarycomputer.models import (
 import logging
 
 # Enable HTTP request/response logging
-logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(
-    logging.ERROR
-)
+logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.ERROR)
 logging.basicConfig(level=logging.INFO)
 
 
@@ -56,24 +54,16 @@ def register_mosaics_search(client: PlanetaryComputerProClient, collection_id):
             ],
         },
         filter_lang=FilterLanguage.CQL2_JSON,
-        sort_by=[
-            StacSortExtension(
-                direction=StacSearchSortingDirection.DESC, field="datetime"
-            )
-        ],
+        sort_by=[StacSortExtension(direction=StacSearchSortingDirection.DESC, field="datetime")],
     )
-    register_search_response = client.data.register_mosaics_search(
-        register_search_request
-    )
+    register_search_response = client.data.register_mosaics_search(register_search_request)
     logging.info(register_search_response)
     return register_search_response
 
 
 def get_mosaics_search_info(client: PlanetaryComputerProClient, search_id):
     """Get mosaics search info."""
-    mosaics_info_search_response = client.data.get_mosaics_search_info(
-        search_id=search_id
-    )
+    mosaics_info_search_response = client.data.get_mosaics_search_info(search_id=search_id)
     search = mosaics_info_search_response.search
     return search
 
@@ -113,9 +103,7 @@ def get_mosaics_tile(client: PlanetaryComputerProClient, search_id, collection_i
     filename = f"mosaic_tile_{search_id}_z13_x2174_y3282.png"
     with open(filename, "wb") as f:
         f.write(mosaics_tile_matrix_sets_bytes)
-    logging.info(
-        f"Tile saved as: {filename} ({len(mosaics_tile_matrix_sets_bytes)} bytes)"
-    )
+    logging.info(f"Tile saved as: {filename} ({len(mosaics_tile_matrix_sets_bytes)} bytes)")
 
 
 def get_mosaics_wmts_capabilities(client: PlanetaryComputerProClient, search_id):
@@ -157,9 +145,7 @@ def get_mosaics_assets_for_point(client: PlanetaryComputerProClient, search_id):
     logging.info(f"Assets for point: {get_lon_lat_assets_response[0]['id']}")
 
 
-def get_mosaics_assets_for_tile(
-    client: PlanetaryComputerProClient, search_id, collection_id
-):
+def get_mosaics_assets_for_tile(client: PlanetaryComputerProClient, search_id, collection_id):
     """Get mosaic assets for a specific tile."""
     result = client.data.get_mosaics_assets_for_tile(
         search_id=search_id,
@@ -219,9 +205,7 @@ def create_static_image(client: PlanetaryComputerProClient, collection_id):
     )
 
     # Create static image
-    image_response = client.data.create_static_image(
-        collection_id=collection_id, body=image_request
-    )
+    image_response = client.data.create_static_image(collection_id=collection_id, body=image_request)
 
     # Extract image ID from the response URL
     image_id = image_response.url.split("?")[0].split("/")[-1]
@@ -258,9 +242,7 @@ def main():
     assert endpoint is not None
     assert collection_id is not None
 
-    client = PlanetaryComputerProClient(
-        endpoint=endpoint, credential=DefaultAzureCredential()
-    )
+    client = PlanetaryComputerProClient(endpoint=endpoint, credential=DefaultAzureCredential())
 
     # Execute mosaic tiler operations
     register_search_response = register_mosaics_search(client, collection_id)

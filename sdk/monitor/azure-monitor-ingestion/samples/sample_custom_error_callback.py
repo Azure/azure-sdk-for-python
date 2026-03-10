@@ -33,7 +33,6 @@ from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
 from azure.monitor.ingestion import LogsIngestionClient, LogsUploadError
 
-
 endpoint = os.environ["DATA_COLLECTION_ENDPOINT"]
 credential = DefaultAzureCredential()
 

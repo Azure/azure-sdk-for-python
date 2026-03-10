@@ -38,7 +38,8 @@ class MeshVolumeOperations(object):
         self.api_version = "6.4-preview"
 
     def create_or_update(
-            self, volume_resource_name, volume_resource_description, custom_headers=None, raw=False, **operation_config):
+        self, volume_resource_name, volume_resource_description, custom_headers=None, raw=False, **operation_config
+    ):
         """Creates or updates a Volume resource.
 
         Creates a Volume resource with the specified name, description and
@@ -63,25 +64,27 @@ class MeshVolumeOperations(object):
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
         # Construct URL
-        url = self.create_or_update.metadata['url']
+        url = self.create_or_update.metadata["url"]
         path_format_arguments = {
-            'volumeResourceName': self._serialize.url("volume_resource_name", volume_resource_name, 'str', skip_quote=True)
+            "volumeResourceName": self._serialize.url(
+                "volume_resource_name", volume_resource_name, "str", skip_quote=True
+            )
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Accept"] = "application/json"
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(volume_resource_description, 'VolumeResourceDescription')
+        body_content = self._serialize.body(volume_resource_description, "VolumeResourceDescription")
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -92,19 +95,19 @@ class MeshVolumeOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('VolumeResourceDescription', response)
+            deserialized = self._deserialize("VolumeResourceDescription", response)
         if response.status_code == 201:
-            deserialized = self._deserialize('VolumeResourceDescription', response)
+            deserialized = self._deserialize("VolumeResourceDescription", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/Resources/Volumes/{volumeResourceName}'}
 
-    def get(
-            self, volume_resource_name, custom_headers=None, raw=False, **operation_config):
+    create_or_update.metadata = {"url": "/Resources/Volumes/{volumeResourceName}"}
+
+    def get(self, volume_resource_name, custom_headers=None, raw=False, **operation_config):
         """Gets the Volume resource with the given name.
 
         Gets the information about the Volume resource with the given name. The
@@ -124,19 +127,21 @@ class MeshVolumeOperations(object):
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.get.metadata["url"]
         path_format_arguments = {
-            'volumeResourceName': self._serialize.url("volume_resource_name", volume_resource_name, 'str', skip_quote=True)
+            "volumeResourceName": self._serialize.url(
+                "volume_resource_name", volume_resource_name, "str", skip_quote=True
+            )
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -149,17 +154,17 @@ class MeshVolumeOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('VolumeResourceDescription', response)
+            deserialized = self._deserialize("VolumeResourceDescription", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/Resources/Volumes/{volumeResourceName}'}
 
-    def delete(
-            self, volume_resource_name, custom_headers=None, raw=False, **operation_config):
+    get.metadata = {"url": "/Resources/Volumes/{volumeResourceName}"}
+
+    def delete(self, volume_resource_name, custom_headers=None, raw=False, **operation_config):
         """Deletes the Volume resource.
 
         Deletes the Volume resource identified by the name.
@@ -177,15 +182,17 @@ class MeshVolumeOperations(object):
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
         # Construct URL
-        url = self.delete.metadata['url']
+        url = self.delete.metadata["url"]
         path_format_arguments = {
-            'volumeResourceName': self._serialize.url("volume_resource_name", volume_resource_name, 'str', skip_quote=True)
+            "volumeResourceName": self._serialize.url(
+                "volume_resource_name", volume_resource_name, "str", skip_quote=True
+            )
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
 
         # Construct headers
         header_parameters = {}
@@ -202,10 +209,10 @@ class MeshVolumeOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/Resources/Volumes/{volumeResourceName}'}
 
-    def list(
-            self, custom_headers=None, raw=False, **operation_config):
+    delete.metadata = {"url": "/Resources/Volumes/{volumeResourceName}"}
+
+    def list(self, custom_headers=None, raw=False, **operation_config):
         """Lists all the volume resources.
 
         Gets the information about all volume resources in a given resource
@@ -225,15 +232,15 @@ class MeshVolumeOperations(object):
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
         # Construct URL
-        url = self.list.metadata['url']
+        url = self.list.metadata["url"]
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("self.api_version", self.api_version, "str")
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if custom_headers:
             header_parameters.update(custom_headers)
 
@@ -246,11 +253,12 @@ class MeshVolumeOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PagedVolumeResourceDescriptionList', response)
+            deserialized = self._deserialize("PagedVolumeResourceDescriptionList", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/Resources/Volumes'}
+
+    list.metadata = {"url": "/Resources/Volumes"}

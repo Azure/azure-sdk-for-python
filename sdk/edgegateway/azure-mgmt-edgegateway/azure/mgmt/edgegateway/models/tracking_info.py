@@ -26,15 +26,15 @@ class TrackingInfo(Model):
     """
 
     _attribute_map = {
-        'serial_number': {'key': 'serialNumber', 'type': 'str'},
-        'carrier_name': {'key': 'carrierName', 'type': 'str'},
-        'tracking_id': {'key': 'trackingId', 'type': 'str'},
-        'tracking_url': {'key': 'trackingUrl', 'type': 'str'},
+        "serial_number": {"key": "serialNumber", "type": "str"},
+        "carrier_name": {"key": "carrierName", "type": "str"},
+        "tracking_id": {"key": "trackingId", "type": "str"},
+        "tracking_url": {"key": "trackingUrl", "type": "str"},
     }
 
     def __init__(self, **kwargs):
         super(TrackingInfo, self).__init__(**kwargs)
-        self.serial_number = kwargs.get('serial_number', None)
-        self.carrier_name = kwargs.get('carrier_name', None)
-        self.tracking_id = kwargs.get('tracking_id', None)
-        self.tracking_url = kwargs.get('tracking_url', None)
+        self.serial_number = kwargs.get("serial_number", None)
+        self.carrier_name = kwargs.get("carrier_name", None)
+        self.tracking_id = kwargs.get("tracking_id", None)
+        self.tracking_url = kwargs.get("tracking_url", None)

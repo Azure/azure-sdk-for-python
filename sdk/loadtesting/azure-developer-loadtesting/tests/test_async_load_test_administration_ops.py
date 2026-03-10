@@ -22,9 +22,7 @@ class TestLoadTestAdministrationOperations(LoadTestingAsyncTest):
     @LoadTestingPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_create_or_update_load_test(
-        self, loadtesting_endpoint, loadtesting_test_id
-    ):
+    async def test_create_or_update_load_test(self, loadtesting_endpoint, loadtesting_test_id):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
@@ -229,9 +227,7 @@ class TestLoadTestAdministrationOperations(LoadTestingAsyncTest):
     @LoadTestingPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_get_server_metrics_config(
-        self, loadtesting_endpoint, loadtesting_test_id
-    ):
+    async def test_get_server_metrics_config(self, loadtesting_endpoint, loadtesting_test_id):
         set_bodiless_matcher()
         client = self.create_administration_client(loadtesting_endpoint)
         result = await client.get_server_metrics_config(loadtesting_test_id)
@@ -243,9 +239,7 @@ class TestLoadTestAdministrationOperations(LoadTestingAsyncTest):
     @LoadTestingPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_create_or_update_trigger(
-        self, loadtesting_endpoint, loadtesting_test_id
-    ):
+    async def test_create_or_update_trigger(self, loadtesting_endpoint, loadtesting_test_id):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
@@ -390,15 +384,11 @@ class TestLoadTestAdministrationOperations(LoadTestingAsyncTest):
     @LoadTestingPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_begin_generate_test_plan_recommendations(
-        self, loadtesting_endpoint, loadtesting_recording_test_id
-    ):
+    async def test_begin_generate_test_plan_recommendations(self, loadtesting_endpoint, loadtesting_recording_test_id):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        result = await client.begin_generate_test_plan_recommendations(
-            loadtesting_recording_test_id
-        )
+        result = await client.begin_generate_test_plan_recommendations(loadtesting_recording_test_id)
         assert result is not None
 
         await self.close_admin_client()
@@ -411,14 +401,14 @@ class TestLoadTestAdministrationOperations(LoadTestingAsyncTest):
 
         client = self.create_administration_client(loadtesting_endpoint)
         new_test_id = "new-cloned-test-id-async"
-        
+
         poller = await client.begin_clone_test(
             loadtesting_test_id,
             new_test_id=new_test_id,
             display_name="Cloned Test",
             description="Cloned test for pytest",
         )
-        
+
         result = await poller.result()
         assert result is not None
         assert poller.done() is True
@@ -431,7 +421,7 @@ class TestLoadTestAdministrationOperations(LoadTestingAsyncTest):
         # Clean up cloned test
         result = await client.delete_test(new_test_id)
         await self.close_admin_client()
-    
+
     @LoadTestingPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio

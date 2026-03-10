@@ -58,37 +58,37 @@ class NetworkAdapter(Model):
     """
 
     _validation = {
-        'adapter_id': {'readonly': True},
-        'adapter_position': {'readonly': True},
-        'index': {'readonly': True},
-        'node_id': {'readonly': True},
-        'network_adapter_name': {'readonly': True},
-        'label': {'readonly': True},
-        'mac_address': {'readonly': True},
-        'link_speed': {'readonly': True},
-        'status': {'readonly': True},
-        'ipv4_configuration': {'readonly': True},
-        'ipv6_configuration': {'readonly': True},
-        'ipv6_link_local_address': {'readonly': True},
-        'dns_servers': {'readonly': True},
+        "adapter_id": {"readonly": True},
+        "adapter_position": {"readonly": True},
+        "index": {"readonly": True},
+        "node_id": {"readonly": True},
+        "network_adapter_name": {"readonly": True},
+        "label": {"readonly": True},
+        "mac_address": {"readonly": True},
+        "link_speed": {"readonly": True},
+        "status": {"readonly": True},
+        "ipv4_configuration": {"readonly": True},
+        "ipv6_configuration": {"readonly": True},
+        "ipv6_link_local_address": {"readonly": True},
+        "dns_servers": {"readonly": True},
     }
 
     _attribute_map = {
-        'adapter_id': {'key': 'adapterId', 'type': 'str'},
-        'adapter_position': {'key': 'adapterPosition', 'type': 'NetworkAdapterPosition'},
-        'index': {'key': 'index', 'type': 'int'},
-        'node_id': {'key': 'nodeId', 'type': 'str'},
-        'network_adapter_name': {'key': 'networkAdapterName', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
-        'mac_address': {'key': 'macAddress', 'type': 'str'},
-        'link_speed': {'key': 'linkSpeed', 'type': 'long'},
-        'status': {'key': 'status', 'type': 'str'},
-        'rdma_status': {'key': 'rdmaStatus', 'type': 'str'},
-        'dhcp_status': {'key': 'dhcpStatus', 'type': 'str'},
-        'ipv4_configuration': {'key': 'ipv4Configuration', 'type': 'Ipv4Config'},
-        'ipv6_configuration': {'key': 'ipv6Configuration', 'type': 'Ipv6Config'},
-        'ipv6_link_local_address': {'key': 'ipv6LinkLocalAddress', 'type': 'str'},
-        'dns_servers': {'key': 'dnsServers', 'type': '[str]'},
+        "adapter_id": {"key": "adapterId", "type": "str"},
+        "adapter_position": {"key": "adapterPosition", "type": "NetworkAdapterPosition"},
+        "index": {"key": "index", "type": "int"},
+        "node_id": {"key": "nodeId", "type": "str"},
+        "network_adapter_name": {"key": "networkAdapterName", "type": "str"},
+        "label": {"key": "label", "type": "str"},
+        "mac_address": {"key": "macAddress", "type": "str"},
+        "link_speed": {"key": "linkSpeed", "type": "long"},
+        "status": {"key": "status", "type": "str"},
+        "rdma_status": {"key": "rdmaStatus", "type": "str"},
+        "dhcp_status": {"key": "dhcpStatus", "type": "str"},
+        "ipv4_configuration": {"key": "ipv4Configuration", "type": "Ipv4Config"},
+        "ipv6_configuration": {"key": "ipv6Configuration", "type": "Ipv6Config"},
+        "ipv6_link_local_address": {"key": "ipv6LinkLocalAddress", "type": "str"},
+        "dns_servers": {"key": "dnsServers", "type": "[str]"},
     }
 
     def __init__(self, **kwargs):
@@ -102,8 +102,8 @@ class NetworkAdapter(Model):
         self.mac_address = None
         self.link_speed = None
         self.status = None
-        self.rdma_status = kwargs.get('rdma_status', None)
-        self.dhcp_status = kwargs.get('dhcp_status', None)
+        self.rdma_status = kwargs.get("rdma_status", None)
+        self.dhcp_status = kwargs.get("dhcp_status", None)
         self.ipv4_configuration = None
         self.ipv6_configuration = None
         self.ipv6_link_local_address = None

@@ -18,6 +18,7 @@ from conftest import skip_flaky_test
 get_dma_client = functools.partial(get_async_client, DocumentModelAdministrationClient)
 get_da_client = functools.partial(get_async_client, DocumentAnalysisClient)
 
+
 class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
@@ -39,7 +40,9 @@ class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
     @skip_flaky_test
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
-    async def test_custom_document_selection_mark(self, formrecognizer_selection_mark_storage_container_sas_url, **kwargs):
+    async def test_custom_document_selection_mark(
+        self, formrecognizer_selection_mark_storage_container_sas_url, **kwargs
+    ):
         client = get_dma_client()
         set_bodiless_matcher()
         da_client = client.get_document_analysis_client()
@@ -53,12 +56,12 @@ class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
             responses.append(document)
 
         async with client:
-            poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_selection_mark_storage_container_sas_url)
+            poller = await client.begin_build_document_model(
+                "template", blob_container_url=formrecognizer_selection_mark_storage_container_sas_url
+            )
             model = await poller.result()
             poller = await da_client.begin_analyze_document_from_url(
-                model_id=model.model_id,
-                document_url=self.selection_mark_url_pdf,
-                cls=callback
+                model_id=model.model_id, document_url=self.selection_mark_url_pdf, cls=callback
             )
             document = await poller.result()
         raw_analyze_result = responses[0].analyze_result
@@ -72,7 +75,9 @@ class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
         self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
         self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
         self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
-        self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
+        self.assertDocumentKeyValuePairsTransformCorrect(
+            returned_model.key_value_pairs, raw_analyze_result.key_value_pairs
+        )
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
         # check page range
@@ -96,13 +101,12 @@ class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
 
         async with client:
             build_poller = await client.begin_build_document_model(
-                "template", blob_container_url=formrecognizer_table_variable_rows_container_sas_url)
+                "template", blob_container_url=formrecognizer_table_variable_rows_container_sas_url
+            )
             model = await build_poller.result()
 
             poller = await da_client.begin_analyze_document_from_url(
-                model.model_id,
-                self.label_table_variable_row_url_pdf,
-                cls=callback
+                model.model_id, self.label_table_variable_row_url_pdf, cls=callback
             )
             document = await poller.result()
 
@@ -117,7 +121,9 @@ class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
         self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
         self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
         self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
-        self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
+        self.assertDocumentKeyValuePairsTransformCorrect(
+            returned_model.key_value_pairs, raw_analyze_result.key_value_pairs
+        )
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
         # check page range
@@ -140,13 +146,13 @@ class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
             responses.append(document)
 
         async with client:
-            build_poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_table_fixed_rows_container_sas_url)
+            build_poller = await client.begin_build_document_model(
+                "template", blob_container_url=formrecognizer_table_fixed_rows_container_sas_url
+            )
             model = await build_poller.result()
 
             poller = await da_client.begin_analyze_document_from_url(
-                model.model_id,
-                self.label_table_fixed_row_url_pdf,
-                cls=callback
+                model.model_id, self.label_table_fixed_row_url_pdf, cls=callback
             )
             form = await poller.result()
 
@@ -161,7 +167,9 @@ class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
         self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
         self.assertDocumentTransformCorrect(returned_model.documents, raw_analyze_result.documents)
         self.assertDocumentTablesTransformCorrect(returned_model.tables, raw_analyze_result.tables)
-        self.assertDocumentKeyValuePairsTransformCorrect(returned_model.key_value_pairs, raw_analyze_result.key_value_pairs)
+        self.assertDocumentKeyValuePairsTransformCorrect(
+            returned_model.key_value_pairs, raw_analyze_result.key_value_pairs
+        )
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
         # check page range

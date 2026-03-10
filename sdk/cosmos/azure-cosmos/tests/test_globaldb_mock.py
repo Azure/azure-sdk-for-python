@@ -12,8 +12,9 @@ import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
 import test_config
 from azure.cosmos import _retry_utility
-from azure.cosmos._global_partition_endpoint_manager_circuit_breaker import \
-    _GlobalPartitionEndpointManagerForCircuitBreaker
+from azure.cosmos._global_partition_endpoint_manager_circuit_breaker import (
+    _GlobalPartitionEndpointManagerForCircuitBreaker,
+)
 from azure.cosmos.http_constants import StatusCodes
 
 location_changed = False
@@ -86,19 +87,23 @@ class MockGlobalEndpointManager(_GlobalPartitionEndpointManagerForCircuitBreaker
 
     def GetDatabaseAccount1(self):
         database_account = documents.DatabaseAccount()
-        database_account._ReadableLocations = [{'name': TestGlobalDBMock.read_location,
-                                                'databaseAccountEndpoint': TestGlobalDBMock.read_location_host}]
-        database_account._WritableLocations = [{'name': TestGlobalDBMock.write_location,
-                                                'databaseAccountEndpoint': TestGlobalDBMock.write_location_host}]
+        database_account._ReadableLocations = [
+            {"name": TestGlobalDBMock.read_location, "databaseAccountEndpoint": TestGlobalDBMock.read_location_host}
+        ]
+        database_account._WritableLocations = [
+            {"name": TestGlobalDBMock.write_location, "databaseAccountEndpoint": TestGlobalDBMock.write_location_host}
+        ]
 
         return database_account
 
     def GetDatabaseAccount2(self):
         database_account = documents.DatabaseAccount()
-        database_account._ReadableLocations = [{'name': TestGlobalDBMock.write_location,
-                                                'databaseAccountEndpoint': TestGlobalDBMock.write_location_host}]
-        database_account._WritableLocations = [{'name': TestGlobalDBMock.read_location,
-                                                'databaseAccountEndpoint': TestGlobalDBMock.read_location_host}]
+        database_account._ReadableLocations = [
+            {"name": TestGlobalDBMock.write_location, "databaseAccountEndpoint": TestGlobalDBMock.write_location_host}
+        ]
+        database_account._WritableLocations = [
+            {"name": TestGlobalDBMock.read_location, "databaseAccountEndpoint": TestGlobalDBMock.read_location_host}
+        ]
 
         return database_account
 
@@ -128,12 +133,12 @@ class TestGlobalDBMock(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        if (cls.masterKey == '[YOUR_KEY_HERE]' or
-                cls.host == '[YOUR_GLOBAL_ENDPOINT_HERE]'):
+        if cls.masterKey == "[YOUR_KEY_HERE]" or cls.host == "[YOUR_GLOBAL_ENDPOINT_HERE]":
             raise Exception(
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
-                "tests.")
+                "tests."
+            )
 
     def setUp(self):
         self.endpoint_discovery_retry_count = 0
@@ -154,30 +159,37 @@ class TestGlobalDBMock(unittest.TestCase):
 
     def MockGetDatabaseAccountStub(self, endpoint):
         raise exceptions.CosmosHttpResponseError(
-            status_code=StatusCodes.INTERNAL_SERVER_ERROR, message="Internal Server Error")
+            status_code=StatusCodes.INTERNAL_SERVER_ERROR, message="Internal Server Error"
+        )
 
     def test_global_db_endpoint_discovery_retry_policy(self):
         connection_policy = documents.ConnectionPolicy()
         connection_policy.EnableEndpointDiscovery = True
 
-        write_location_client = cosmos_client.CosmosClient(TestGlobalDBMock.write_location_host,
-                                                           TestGlobalDBMock.masterKey,
-                                                           consistency_level="Session",
-                                                           connection_policy=connection_policy)
-        write_location_client.client_connection._global_endpoint_manager = MockGlobalEndpointManager(write_location_client.client_connection)
+        write_location_client = cosmos_client.CosmosClient(
+            TestGlobalDBMock.write_location_host,
+            TestGlobalDBMock.masterKey,
+            consistency_level="Session",
+            connection_policy=connection_policy,
+        )
+        write_location_client.client_connection._global_endpoint_manager = MockGlobalEndpointManager(
+            write_location_client.client_connection
+        )
         write_location_client.client_connection._global_endpoint_manager.refresh_endpoint_list(None)
-        self.assertEqual(write_location_client.client_connection.WriteEndpoint,
-                         TestGlobalDBMock.write_location_host)
+        self.assertEqual(write_location_client.client_connection.WriteEndpoint, TestGlobalDBMock.write_location_host)
 
-        self.assertEqual(write_location_client.client_connection.WriteEndpoint,
-                         TestGlobalDBMock.read_location_host)
+        self.assertEqual(write_location_client.client_connection.WriteEndpoint, TestGlobalDBMock.read_location_host)
 
     def test_global_db_database_account_unavailable(self):
         connection_policy = documents.ConnectionPolicy()
         connection_policy.EnableEndpointDiscovery = True
 
-        client = cosmos_client.CosmosClient(TestGlobalDBMock.host, TestGlobalDBMock.masterKey,
-                                            consistency_level="Session", connection_policy=connection_policy)
+        client = cosmos_client.CosmosClient(
+            TestGlobalDBMock.host,
+            TestGlobalDBMock.masterKey,
+            consistency_level="Session",
+            connection_policy=connection_policy,
+        )
         client.client_connection._global_endpoint_manager = MockGlobalEndpointManager(client.client_connection)
         client.client_connection._global_endpoint_manager.refresh_endpoint_list(None)
 
@@ -193,5 +205,5 @@ class TestGlobalDBMock(unittest.TestCase):
         self.assertEqual(client.client_connection.ReadEndpoint, TestGlobalDBMock.host)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

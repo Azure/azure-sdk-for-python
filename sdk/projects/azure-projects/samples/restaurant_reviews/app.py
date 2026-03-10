@@ -14,7 +14,6 @@ from azure.data.tables import TableClient, UpdateMode
 
 from models import Restaurant, Review
 
-
 app = Flask(__name__, template_folder="templates", static_folder="static")
 
 

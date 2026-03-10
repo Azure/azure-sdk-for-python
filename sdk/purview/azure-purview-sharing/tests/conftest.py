@@ -38,13 +38,13 @@ from devtools_testutils import (
     remove_batch_sanitizers,
 )
 
-
 # Ignore async tests for Python < 3.5
 collect_ignore_glob = []
 if sys.version_info < (3, 5) or platform.python_implementation() == "PyPy":
     collect_ignore_glob.append("*_async.py")
 
 load_dotenv()
+
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):

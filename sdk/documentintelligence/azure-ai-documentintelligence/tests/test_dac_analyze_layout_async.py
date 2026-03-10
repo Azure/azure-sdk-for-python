@@ -19,7 +19,6 @@ from asynctestcase import AsyncDocumentIntelligenceTest
 from conftest import skip_flaky_test
 from preparers import DocumentIntelligencePreparer, GlobalClientPreparerAsync as _GlobalClientPreparer
 
-
 DocumentIntelligenceClientPreparer = functools.partial(_GlobalClientPreparer, DocumentIntelligenceClient)
 
 

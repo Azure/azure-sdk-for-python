@@ -17,10 +17,7 @@ def test_success_by_remove_leading_empty_space():
         Third line
 """
     result = remove_leading_empty_space(prompt_str)
-    assert (
-        result
-        == """First line
+    assert result == """First line
 
   Second line
     Third line"""
-    )

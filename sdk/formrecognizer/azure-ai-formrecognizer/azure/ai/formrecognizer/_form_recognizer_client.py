@@ -503,7 +503,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
             )
         except ValueError as e:
             if "begin_analyze_invoice_async" in str(e):
-                raise ValueError("Method 'begin_recognize_invoices' is only available for API version V2_1 and up")  # pylint: disable=raise-missing-from
+                raise ValueError(
+                    "Method 'begin_recognize_invoices' is only available for API version V2_1 and up"
+                )  # pylint: disable=raise-missing-from
             raise e
 
     @distributed_trace

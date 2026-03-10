@@ -53,9 +53,7 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
 
             query = "SELECT * FROM c WHERE c.pk = @pk"
             query_iterable = created_collection.query_items(
-                query=query,
-                parameters=[{"name": "@pk", "value": "test"}],
-                partition_key="test"
+                query=query, parameters=[{"name": "@pk", "value": "test"}], partition_key="test"
             )
 
             # Iterate through items using async for loop (pagination)
@@ -106,7 +104,7 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
                 query=query,
                 parameters=[{"name": "@pk", "value": "test"}],
                 partition_key="test",
-                max_item_count=5  # Force pagination with 5 items per page
+                max_item_count=5,  # Force pagination with 5 items per page
             )
 
             # Iterate through items using async for loop (pagination)
@@ -146,9 +144,7 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
 
             query = "SELECT * FROM c WHERE c.pk = @pk"
             query_iterable = created_collection.query_items(
-                query=query,
-                parameters=[{"name": "@pk", "value": "nonexistent"}],
-                partition_key="nonexistent"
+                query=query, parameters=[{"name": "@pk", "value": "nonexistent"}], partition_key="nonexistent"
             )
 
             # Iterate through items (should be empty)
@@ -186,7 +182,7 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
                 query=query,
                 parameters=[{"name": "@pk", "value": "test"}],
                 partition_key="test",
-                populate_query_metrics=True
+                populate_query_metrics=True,
             )
 
             # Iterate through items
@@ -230,7 +226,7 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
                 query=query,
                 parameters=[{"name": "@pk", "value": "test"}],
                 partition_key="test",
-                max_item_count=3  # Force multiple pages
+                max_item_count=3,  # Force multiple pages
             )
 
             # Iterate by page
@@ -265,10 +261,7 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
             await created_collection.create_item(body={"pk": "test", "id": "item_1"})
 
             query = "SELECT * FROM c"
-            query_iterable = created_collection.query_items(
-                query=query,
-                partition_key="test"
-            )
+            query_iterable = created_collection.query_items(query=query, partition_key="test")
 
             # Iterate
             async for item in query_iterable:
@@ -290,7 +283,7 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_query_response_headers_concurrent_async(self):
         """Test that response headers are captured correctly when multiple async queries run concurrently.
-        
+
         This test verifies that each query operation captures its own headers independently,
         without interference from concurrent queries. This is the key thread-safety guarantee.
         """
@@ -315,7 +308,7 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
                     parameters=[{"name": "@pk", "value": partition_key}],
                     partition_key=partition_key,
                     max_item_count=2,  # Small page size to ensure multiple pages
-                    populate_query_metrics=True
+                    populate_query_metrics=True,
                 )
 
                 # Consume all items
@@ -327,7 +320,7 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
                     "partition_key": partition_key,
                     "item_count": len(items),
                     "header_count": len(headers),
-                    "headers": headers
+                    "headers": headers,
                 }
 
             # Run multiple queries concurrently using asyncio.gather
@@ -344,21 +337,20 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
 
             # Verify each query captured headers correctly
             for result in results:
-                assert result["item_count"] == items_per_partition, \
-                    f"Query {result['query_id']} got wrong item count"
-                assert result["header_count"] > 0, \
-                    f"Query {result['query_id']} should have captured headers"
-                
+                assert result["item_count"] == items_per_partition, f"Query {result['query_id']} got wrong item count"
+                assert result["header_count"] > 0, f"Query {result['query_id']} should have captured headers"
+
                 # Verify headers contain expected keys
                 for header_dict in result["headers"]:
-                    assert "x-ms-request-charge" in header_dict, \
-                        f"Query {result['query_id']} headers missing x-ms-request-charge"
+                    assert (
+                        "x-ms-request-charge" in header_dict
+                    ), f"Query {result['query_id']} headers missing x-ms-request-charge"
 
             # Verify that different queries have independent header lists
             if len(results) >= 2:
                 headers_0 = results[0]["headers"]
                 headers_1 = results[1]["headers"]
-                
+
                 # They should be different objects
                 assert headers_0 is not headers_1
                 if len(headers_0) > 0 and len(headers_1) > 0:
@@ -369,7 +361,7 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_query_response_headers_high_concurrency_async(self):
         """Test with high concurrency to stress-test the thread-safety.
-        
+
         This test specifically targets the race condition that would occur if headers
         were captured from a shared client.last_response_headers after fetch operations.
         """
@@ -379,9 +371,7 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
         try:
             # Create enough items to ensure multiple pages
             for i in range(50):
-                await created_collection.create_item(
-                    body={"pk": "shared", "id": f"item_{i}", "value": i}
-                )
+                await created_collection.create_item(body={"pk": "shared", "id": f"item_{i}", "value": i})
 
             # Use an event to synchronize all coroutines
             start_event = asyncio.Event()
@@ -393,7 +383,7 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
                     parameters=[{"name": "@pk", "value": "shared"}],
                     partition_key="shared",
                     max_item_count=5,  # Small pages = more fetches
-                    populate_query_metrics=True
+                    populate_query_metrics=True,
                 )
 
                 # Wait for the start signal
@@ -407,9 +397,7 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
                     "query_id": query_id,
                     "item_count": len(items),
                     "header_count": len(headers),
-                    "request_charges": [
-                        float(h.get("x-ms-request-charge", 0)) for h in headers
-                    ]
+                    "request_charges": [float(h.get("x-ms-request-charge", 0)) for h in headers],
                 }
 
             # Create tasks but don't start fetching yet
@@ -431,14 +419,11 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
             # Verify all queries completed correctly
             assert len(results) == num_concurrent
             for result in results:
-                assert result["item_count"] == 50, \
-                    f"Query {result['query_id']} should have gotten all 50 items"
-                assert result["header_count"] > 0, \
-                    f"Query {result['query_id']} should have captured headers"
+                assert result["item_count"] == 50, f"Query {result['query_id']} should have gotten all 50 items"
+                assert result["header_count"] > 0, f"Query {result['query_id']} should have captured headers"
                 # Each request should have a positive request charge
                 for charge in result["request_charges"]:
-                    assert charge > 0, \
-                        f"Query {result['query_id']} should have positive request charges"
+                    assert charge > 0, f"Query {result['query_id']} should have positive request charges"
 
         finally:
             await self.created_db.delete_container(created_collection.id)

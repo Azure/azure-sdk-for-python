@@ -8,10 +8,7 @@ from typing import BinaryIO, Union, cast, IO, Dict, Any, Mapping, TYPE_CHECKING
 from io import BytesIO
 import avro  # type: ignore
 from avro.io import DatumWriter, DatumReader, BinaryDecoder, BinaryEncoder  # type: ignore
-from ._abstract_avro_encoder import (  # pylint: disable=import-error
-    AbstractAvroObjectEncoder,
-    AvroDataReader
-)
+from ._abstract_avro_encoder import AbstractAvroObjectEncoder, AvroDataReader  # pylint: disable=import-error
 
 if TYPE_CHECKING:
     from avro import schema
@@ -38,9 +35,7 @@ class ApacheAvroObjectEncoder(AbstractAvroObjectEncoder):
         return DatumWriter(schema)
 
     @lru_cache(maxsize=128)
-    def get_schema_reader(
-        self, schema, readers_schema=None
-    ):
+    def get_schema_reader(self, schema, readers_schema=None):
         schema = self.parse_schema(schema)
         if readers_schema:
             readers_schema = self.parse_schema(readers_schema)

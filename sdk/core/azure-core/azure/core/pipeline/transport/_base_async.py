@@ -41,7 +41,6 @@ from types import TracebackType
 from ._base import _HttpResponseBase, _HttpClientTransportResponse, HttpRequest
 from ...utils._pipeline_transport_rest_shared_async import _PartGenerator
 
-
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")

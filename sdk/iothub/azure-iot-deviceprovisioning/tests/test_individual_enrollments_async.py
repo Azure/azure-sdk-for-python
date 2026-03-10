@@ -24,9 +24,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
     @ProvisioningServicePreparer()
     @recorded_by_proxy_async
     async def test_enrollment_tpm_lifecycle(self, iothub_dps_endpoint):
-        client = self.create_provisioning_service_client(
-            iothub_dps_endpoint
-        )
+        client = self.create_provisioning_service_client(iothub_dps_endpoint)
 
         attestation_type = "tpm"
         enrollment_id = self.create_random_name("ind_enroll_tpm_")
@@ -40,24 +38,17 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
             allocation_policy="static",
         )
 
-        enrollment_response = await client.enrollment.create_or_update(
-            id=enrollment_id, enrollment=enrollment
-        )
+        enrollment_response = await client.enrollment.create_or_update(id=enrollment_id, enrollment=enrollment)
 
         assert enrollment_response["registrationId"] == enrollment_id
         assert enrollment_response["attestation"]["tpm"]
-        assert (
-            enrollment_response["attestation"]["tpm"]["endorsementKey"]
-            == TEST_ENDORSEMENT_KEY
-        )
+        assert enrollment_response["attestation"]["tpm"]["endorsementKey"] == TEST_ENDORSEMENT_KEY
         assert enrollment_response["allocationPolicy"] == "static"
         assert enrollment_response["deviceId"] == device_id
         assert enrollment_response["provisioningStatus"] == "enabled"
 
         # check for enrollment in query response
-        enrollment_list = await client.enrollment.query(
-            query_specification={"query": "SELECT *"}
-        )
+        enrollment_list = await client.enrollment.query(query_specification={"query": "SELECT *"})
         enrollments = [e async for e in enrollment_list]
         assert len(enrollments) == 1
         assert enrollments[0]["registrationId"] == enrollment_id
@@ -68,11 +59,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         assert enrollment_response["registrationId"] == enrollment_id
 
         # check attestation
-        attestation_response = (
-            await client.enrollment.get_attestation_mechanism(
-                id=enrollment_id
-            )
-        )
+        attestation_response = await client.enrollment.get_attestation_mechanism(id=enrollment_id)
 
         assert attestation_response["tpm"]["endorsementKey"] == TEST_ENDORSEMENT_KEY
 
@@ -87,26 +74,19 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
 
         assert enrollment_response["provisioningStatus"] == "disabled"
 
-        assert (
-            enrollment_response["optionalDeviceInformation"]["additionalProperties"]
-            == TEST_DICT
-        )
+        assert enrollment_response["optionalDeviceInformation"]["additionalProperties"] == TEST_DICT
 
         # delete enrollment
         await client.enrollment.delete(id=enrollment_id)
 
         # ensure deletion
-        enrollment_list = await client.enrollment.query(
-            query_specification={"query": "SELECT *"}
-        )
+        enrollment_list = await client.enrollment.query(query_specification={"query": "SELECT *"})
         assert len([e async for e in enrollment_list]) == 0
 
     @ProvisioningServicePreparer()
     @recorded_by_proxy_async
     async def test_enrollment_x509_lifecycle(self, iothub_dps_endpoint):
-        client = self.create_provisioning_service_client(
-            iothub_dps_endpoint
-        )
+        client = self.create_provisioning_service_client(iothub_dps_endpoint)
         enrollment_id = self.create_random_name("x509_enrollment_")
         device_id = self.create_random_name("x509_device_")
         attestation_type = "x509"
@@ -139,16 +119,12 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         assert enrollment_response["attestation"]["x509"]
         assert enrollment_response["attestation"]["type"] == "x509"
         assert (
-            enrollment_response["attestation"]["x509"]["clientCertificates"]["primary"][
-                "info"
-            ]["subjectName"]
+            enrollment_response["attestation"]["x509"]["clientCertificates"]["primary"]["info"]["subjectName"]
             == f"CN={cert_name}"
         )
         if self.is_live:
             assert (
-                enrollment_response["attestation"]["x509"]["clientCertificates"][
-                    "primary"
-                ]["info"]["sha256Thumbprint"]
+                enrollment_response["attestation"]["x509"]["clientCertificates"]["primary"]["info"]["sha256Thumbprint"]
                 == thumb
             )
 
@@ -158,9 +134,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         assert enrollment_response["reprovisionPolicy"]["updateHubAssignment"]
 
         # check for enrollment in query response
-        enrollment_list = await client.enrollment.query(
-            query_specification={"query": "SELECT *"}
-        )
+        enrollment_list = await client.enrollment.query(query_specification={"query": "SELECT *"})
         enrollments = [e async for e in enrollment_list]
         assert len(enrollments) == 1
         assert enrollments[0]["registrationId"] == enrollment_id
@@ -182,32 +156,20 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
 
         assert enrollment_response["registrationId"] == enrollment_id
         assert enrollment_response["provisioningStatus"] == "disabled"
-        assert (
-            enrollment_response["customAllocationDefinition"]["webhookUrl"]
-            == WEBHOOK_URL
-        )
-        assert (
-            enrollment_response["customAllocationDefinition"]["apiVersion"]
-            == API_VERSION
-        )
+        assert enrollment_response["customAllocationDefinition"]["webhookUrl"] == WEBHOOK_URL
+        assert enrollment_response["customAllocationDefinition"]["apiVersion"] == API_VERSION
 
         # delete enrollment
         await client.enrollment.delete(id=enrollment_id)
 
         # ensure deletion
-        enrollment_list = await client.enrollment.query(
-            query_specification={"query": "SELECT *"}
-        )
+        enrollment_list = await client.enrollment.query(query_specification={"query": "SELECT *"})
         assert len([e async for e in enrollment_list]) == 0
 
     @ProvisioningServicePreparer()
     @recorded_by_proxy_async
-    async def test_enrollment_symmetrickey_lifecycle(
-        self, iothub_dps_endpoint
-    ):
-        client = self.create_provisioning_service_client(
-            iothub_dps_endpoint
-        )
+    async def test_enrollment_symmetrickey_lifecycle(self, iothub_dps_endpoint):
+        client = self.create_provisioning_service_client(iothub_dps_endpoint)
         attestation_type = "symmetricKey"
         enrollment_id = self.create_random_name("sym_enrollment_")
         primary_key = generate_key()
@@ -229,9 +191,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         enrollment_id2 = self.create_random_name("sym_enrollment2_")
 
         # Use provided keys
-        enrollment_response = await client.enrollment.create_or_update(
-            id=enrollment_id, enrollment=enrollment
-        )
+        enrollment_response = await client.enrollment.create_or_update(id=enrollment_id, enrollment=enrollment)
 
         assert enrollment_response["registrationId"] == enrollment_id
         assert enrollment_response["deviceId"] == device_id
@@ -239,23 +199,15 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         assert enrollment_response["initialTwin"] == INITIAL_TWIN_PROPERTIES
 
         if self.is_live:
-            assert (
-                enrollment_response["attestation"]["symmetricKey"]["primaryKey"]
-                == primary_key
-            )
-            assert (
-                enrollment_response["attestation"]["symmetricKey"]["secondaryKey"]
-                == secondary_key
-            )
+            assert enrollment_response["attestation"]["symmetricKey"]["primaryKey"] == primary_key
+            assert enrollment_response["attestation"]["symmetricKey"]["secondaryKey"] == secondary_key
         # reprovision migrate true
         assert enrollment_response["reprovisionPolicy"]["migrateDeviceData"]
         # reprovision update true
         assert enrollment_response["reprovisionPolicy"]["updateHubAssignment"]
 
         # check for enrollment in query response
-        enrollment_list = await client.enrollment.query(
-            query_specification={"query": "SELECT *"}
-        )
+        enrollment_list = await client.enrollment.query(query_specification={"query": "SELECT *"})
         enrollments = [e async for e in enrollment_list]
         assert len(enrollments) == 1
         assert enrollments[0]["registrationId"] == enrollment_id
@@ -265,11 +217,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         assert enrollment_response["registrationId"] == enrollment_id
 
         # check attestation
-        attestation_response = (
-            await client.enrollment.get_attestation_mechanism(
-                id=enrollment_id
-            )
-        )
+        attestation_response = await client.enrollment.get_attestation_mechanism(id=enrollment_id)
         if self.is_live:
             assert attestation_response["symmetricKey"]["primaryKey"] == primary_key
             assert attestation_response["symmetricKey"]["secondaryKey"] == secondary_key
@@ -287,14 +235,8 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         assert enrollment_response["registrationId"] == enrollment_id
         assert enrollment_response["provisioningStatus"] == "disabled"
 
-        assert (
-            enrollment_response["customAllocationDefinition"]["webhookUrl"]
-            == WEBHOOK_URL
-        )
-        assert (
-            enrollment_response["customAllocationDefinition"]["apiVersion"]
-            == API_VERSION
-        )
+        assert enrollment_response["customAllocationDefinition"]["webhookUrl"] == WEBHOOK_URL
+        assert enrollment_response["customAllocationDefinition"]["apiVersion"] == API_VERSION
 
         # reprovision migrate true
         assert enrollment_response["reprovisionPolicy"]["migrateDeviceData"]
@@ -309,16 +251,12 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
             webhook_url=WEBHOOK_URL,
             api_version=API_VERSION,
         )
-        enrollment_2 = await client.enrollment.create_or_update(
-            id=enrollment_id2, enrollment=enrollment2
-        )
+        enrollment_2 = await client.enrollment.create_or_update(id=enrollment_id2, enrollment=enrollment2)
 
         assert enrollment_2
 
         # check both enrollments
-        enrollment_list = await client.enrollment.query(
-            query_specification={"query": "SELECT *"}
-        )
+        enrollment_list = await client.enrollment.query(query_specification={"query": "SELECT *"})
         enrollments = [e["registrationId"] async for e in enrollment_list]
         assert len(enrollments) == 2
         assert enrollment_id in enrollments
@@ -329,19 +267,13 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         await client.enrollment.delete(id=enrollment_id2)
 
         # ensure deletion
-        enrollment_list = await client.enrollment.query(
-            query_specification={"query": "SELECT *"}
-        )
+        enrollment_list = await client.enrollment.query(query_specification={"query": "SELECT *"})
         assert len([e async for e in enrollment_list]) == 0
 
     @ProvisioningServicePreparer()
     @recorded_by_proxy_async
-    async def test_individual_enrollment_bulk_operations(
-        self, iothub_dps_endpoint
-    ):
-        client = self.create_provisioning_service_client(
-            iothub_dps_endpoint
-        )
+    async def test_individual_enrollment_bulk_operations(self, iothub_dps_endpoint):
+        client = self.create_provisioning_service_client(iothub_dps_endpoint)
         attestation_type = "tpm"
         enrollment_id = self.create_random_name("ind_enroll_tpm_")
         device_id = self.create_random_name("device_")
@@ -376,28 +308,16 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
             "mode": "create",
         }
 
-        bulk_enrollment_response = (
-            await client.enrollment.run_bulk_operation(
-                bulk_operation=bulk_enrollment_operation
-            )
-        )
+        bulk_enrollment_response = await client.enrollment.run_bulk_operation(bulk_operation=bulk_enrollment_operation)
         assert bulk_enrollment_response
 
         bulk_enrollment_operation["enrollments"][0]["provisioningStatus"] == "disabled"
         bulk_enrollment_operation["enrollments"][1]["provisioningStatus"] == "disabled"
         bulk_enrollment_operation["mode"] = "update"
 
-        bulk_enrollment_response = (
-            await client.enrollment.run_bulk_operation(
-                bulk_operation=bulk_enrollment_operation
-            )
-        )
+        bulk_enrollment_response = await client.enrollment.run_bulk_operation(bulk_operation=bulk_enrollment_operation)
         assert bulk_enrollment_response
 
         bulk_enrollment_operation["mode"] = "delete"
-        bulk_enrollment_response = (
-            await client.enrollment.run_bulk_operation(
-                bulk_operation=bulk_enrollment_operation
-            )
-        )
+        bulk_enrollment_response = await client.enrollment.run_bulk_operation(bulk_operation=bulk_enrollment_operation)
         assert bulk_enrollment_response

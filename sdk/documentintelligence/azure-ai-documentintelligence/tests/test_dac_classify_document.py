@@ -18,7 +18,6 @@ from testcase import DocumentIntelligenceTest
 from conftest import skip_flaky_test
 from preparers import DocumentIntelligencePreparer, GlobalClientPreparer as _GlobalClientPreparer
 
-
 DocumentModelAdministrationClientPreparer = functools.partial(
     _GlobalClientPreparer, DocumentIntelligenceAdministrationClient
 )

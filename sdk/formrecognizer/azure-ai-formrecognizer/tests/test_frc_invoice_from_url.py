@@ -26,14 +26,14 @@ class TestInvoiceFromUrl(FormRecognizerTest):
     @recorded_by_proxy
     def test_polling_interval(self, **kwargs):
         client = get_fr_client(polling_interval=7)
-        assert client._client._config.polling_interval ==  7
+        assert client._client._config.polling_interval == 7
 
         poller = client.begin_recognize_invoices_from_url(self.invoice_url_pdf, polling_interval=6)
         poller.wait()
-        assert poller._polling_method._timeout ==  6
+        assert poller._polling_method._timeout == 6
         poller2 = client.begin_recognize_invoices_from_url(self.invoice_url_pdf)
         poller2.wait()
-        assert poller2._polling_method._timeout ==  7  # goes back to client default
+        assert poller2._polling_method._timeout == 7  # goes back to client default
 
     @FormRecognizerPreparer()
     @recorded_by_proxy
@@ -56,9 +56,7 @@ class TestInvoiceFromUrl(FormRecognizerTest):
             responses.append(extracted_invoice)
 
         poller = client.begin_recognize_invoices_from_url(
-            invoice_url=self.multipage_vendor_url_pdf,
-            include_field_elements=True,
-            cls=callback
+            invoice_url=self.multipage_vendor_url_pdf, include_field_elements=True, cls=callback
         )
 
         result = poller.result()
@@ -68,16 +66,16 @@ class TestInvoiceFromUrl(FormRecognizerTest):
         document_results = raw_response.analyze_result.document_results
         page_results = raw_response.analyze_result.page_results
 
-        assert 1 ==  len(returned_models)
+        assert 1 == len(returned_models)
         returned_model = returned_models[0]
-        assert 2 ==  len(returned_model.pages)
-        assert 1 ==  returned_model.page_range.first_page_number
-        assert 2 ==  returned_model.page_range.last_page_number
+        assert 2 == len(returned_model.pages)
+        assert 1 == returned_model.page_range.first_page_number
+        assert 2 == returned_model.page_range.last_page_number
 
-        assert 1 ==  len(document_results)
+        assert 1 == len(document_results)
         document_result = document_results[0]
-        assert 1 ==  document_result.page_range[0]  # checking first page number
-        assert 2 ==  document_result.page_range[1]  # checking last page number
+        assert 1 == document_result.page_range[0]  # checking first page number
+        assert 2 == document_result.page_range[1]  # checking last page number
 
         for invoice, document_result in zip(returned_models, document_results):
             self.assertFormFieldsTransformCorrect(invoice.fields, document_result.fields, read_results)
@@ -101,7 +99,9 @@ class TestInvoiceFromUrl(FormRecognizerTest):
         client = get_fr_client(api_version=FormRecognizerApiVersion.V2_0)
         with pytest.raises(ValueError) as e:
             client.begin_recognize_invoices_from_url(self.invoice_url_tiff)
-        assert "Method 'begin_recognize_invoices_from_url' is only available for API version V2_1 and up" in str(e.value)
+        assert "Method 'begin_recognize_invoices_from_url' is only available for API version V2_1 and up" in str(
+            e.value
+        )
 
     @skip_flaky_test
     @FormRecognizerPreparer()
@@ -109,7 +109,7 @@ class TestInvoiceFromUrl(FormRecognizerTest):
     def test_invoice_locale_specified(self):
         client = get_fr_client()
         poller = client.begin_recognize_invoices_from_url(self.invoice_url_pdf, locale="en-US")
-        assert 'en-US' == poller._polling_method._initial_response.http_response.request.query['locale']
+        assert "en-US" == poller._polling_method._initial_response.http_response.request.query["locale"]
         result = poller.result()
         assert result
 
@@ -127,7 +127,7 @@ class TestInvoiceFromUrl(FormRecognizerTest):
     def test_pages_kwarg_specified(self):
         client = get_fr_client()
         poller = client.begin_recognize_invoices_from_url(self.invoice_url_pdf, pages=["1"])
-        assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
+        assert "1" == poller._polling_method._initial_response.http_response.request.query["pages"]
         result = poller.result()
         assert result
 
@@ -135,7 +135,7 @@ class TestInvoiceFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_invoice_no_sub_line_items(self):
-        client = get_fr_client()        
+        client = get_fr_client()
         poller = client.begin_recognize_invoices_from_url(
             invoice_url=self.invoice_no_sub_line_item,
         )

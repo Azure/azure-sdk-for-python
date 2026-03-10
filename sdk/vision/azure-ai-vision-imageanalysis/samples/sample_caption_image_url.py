@@ -13,7 +13,7 @@ DESCRIPTION:
 
     The synchronous (blocking) `analyze` method call returns an `ImageAnalysisResult` object.
     Its `caption` property (a `CaptionResult` object) contains:
-    - The text of the caption. Captions are only supported in English at the moment. 
+    - The text of the caption. Captions are only supported in English at the moment.
     - A confidence score in the range [0, 1], with higher values indicating greater confidences in
       the caption.
 
@@ -44,10 +44,7 @@ def sample_caption_image_url():
         exit()
 
     # Create an Image Analysis client
-    client = ImageAnalysisClient(
-        endpoint=endpoint,
-        credential=AzureKeyCredential(key)
-    )
+    client = ImageAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # [START caption]
     # Get a caption for the image. This will be a synchronously (blocking) call.

@@ -13,7 +13,17 @@ from azure.core import PipelineClient
 from msrest import Deserializer, Serializer
 
 from ._configuration import PurviewScanningClientConfiguration
-from .operations import ClassificationRulesOperations, DataSourcesOperations, FiltersOperations, KeyVaultConnectionsOperations, ScanResultOperations, ScanRulesetsOperations, ScansOperations, SystemScanRulesetsOperations, TriggersOperations
+from .operations import (
+    ClassificationRulesOperations,
+    DataSourcesOperations,
+    FiltersOperations,
+    KeyVaultConnectionsOperations,
+    ScanResultOperations,
+    ScanRulesetsOperations,
+    ScansOperations,
+    SystemScanRulesetsOperations,
+    TriggersOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -21,6 +31,7 @@ if TYPE_CHECKING:
 
     from azure.core.credentials import TokenCredential
     from azure.core.rest import HttpRequest, HttpResponse
+
 
 class PurviewScanningClient(object):
     """Creates a Microsoft.Scanning management client.
@@ -57,23 +68,28 @@ class PurviewScanningClient(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        _endpoint = '{Endpoint}'
+        _endpoint = "{Endpoint}"
         self._config = PurviewScanningClientConfiguration(endpoint, credential, **kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.key_vault_connections = KeyVaultConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.classification_rules = ClassificationRulesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.key_vault_connections = KeyVaultConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.classification_rules = ClassificationRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.data_sources = DataSourcesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.filters = FiltersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.scans = ScansOperations(self._client, self._config, self._serialize, self._deserialize)
         self.scan_result = ScanResultOperations(self._client, self._config, self._serialize, self._deserialize)
         self.scan_rulesets = ScanRulesetsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.system_scan_rulesets = SystemScanRulesetsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.system_scan_rulesets = SystemScanRulesetsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.triggers = TriggersOperations(self._client, self._config, self._serialize, self._deserialize)
-
 
     def send_request(
         self,
@@ -100,7 +116,7 @@ class PurviewScanningClient(object):
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

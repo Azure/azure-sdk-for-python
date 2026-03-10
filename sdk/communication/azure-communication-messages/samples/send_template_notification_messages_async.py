@@ -10,7 +10,7 @@
 FILE: send_template_notification_messages_async.py
 
 DESCRIPTION:
-    This sample demonstrates sending an Whatsapp template message from business phone number to a single user. 
+    This sample demonstrates sending an Whatsapp template message from business phone number to a single user.
     Template to be used in the sample needs to be created in WhatsApp Business account first.
     Follow the instructions in the Meta Business Help Center at https://www.facebook.com/business/help/2055875911147364?id=2129163877102343.
     The NotificationMessageClient is authenticated using a connection string.

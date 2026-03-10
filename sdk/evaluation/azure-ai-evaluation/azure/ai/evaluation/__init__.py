@@ -50,7 +50,6 @@ from ._aoai.text_similarity_grader import AzureOpenAITextSimilarityGrader
 from ._aoai.score_model_grader import AzureOpenAIScoreModelGrader
 from ._aoai.python_grader import AzureOpenAIPythonGrader
 
-
 _patch_all = []
 
 # The converter from the AI service to the evaluator schema requires a dependency on

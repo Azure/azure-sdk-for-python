@@ -13,6 +13,7 @@ USAGE:
     1) STORAGE_QUEUE_CONN_STR: The connection string to the Storage account
     3) STORAGE_QUEUE_NAME: The name of the storage queue.
 """
+
 from typing import List
 from azure.core.messaging import CloudEvent
 from azure.storage.queue import QueueServiceClient, BinaryBase64DecodePolicy

@@ -20,14 +20,18 @@ class WebpubsubClientTestAsync(AzureRecordedTestCase):
         **kwargs,
     ):
         service_client = WebPubSubServiceClient.from_connection_string(connection_string, hub)
+
         async def client_access_url_provider():
             return (await service_client.get_client_access_token(roles=roles))["url"]
+
         return WebPubSubClient(
             credential=WebPubSubClientCredential(client_access_url_provider),
             **kwargs,
         )
 
+
 TEST_RESULT_ASYNC = set()
+
 
 async def on_group_message(msg: OnGroupDataMessageArgs):
     TEST_RESULT_ASYNC.add(msg.data)

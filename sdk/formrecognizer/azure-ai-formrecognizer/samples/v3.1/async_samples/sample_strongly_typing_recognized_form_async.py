@@ -41,41 +41,41 @@ class Receipt(object):
     """
 
     def __init__(self, form: RecognizedForm) -> None:
-        self.receipt_type: FormField  = form.fields.get("ReceiptType", FormField())
-        self.merchant_name: FormField  = form.fields.get("MerchantName", FormField())
-        self.merchant_address: FormField  = form.fields.get("MerchantAddress", FormField())
-        self.merchant_phone_number: FormField  = form.fields.get("MerchantPhoneNumber", FormField())
-        self.receipt_items: List[ReceiptItem]  = self.convert_to_receipt_item(form.fields.get("Items", FormField()))
-        self.subtotal: FormField  = form.fields.get("Subtotal", FormField())
-        self.tax: FormField  = form.fields.get("Tax", FormField())
-        self.tip: FormField  = form.fields.get("Tip", FormField())
-        self.total: FormField  = form.fields.get("Total", FormField())
-        self.transaction_date: FormField  = form.fields.get("TransactionDate", FormField())
-        self.transaction_time: FormField  = form.fields.get("TransactionTime", FormField())
+        self.receipt_type: FormField = form.fields.get("ReceiptType", FormField())
+        self.merchant_name: FormField = form.fields.get("MerchantName", FormField())
+        self.merchant_address: FormField = form.fields.get("MerchantAddress", FormField())
+        self.merchant_phone_number: FormField = form.fields.get("MerchantPhoneNumber", FormField())
+        self.receipt_items: List[ReceiptItem] = self.convert_to_receipt_item(form.fields.get("Items", FormField()))
+        self.subtotal: FormField = form.fields.get("Subtotal", FormField())
+        self.tax: FormField = form.fields.get("Tax", FormField())
+        self.tip: FormField = form.fields.get("Tip", FormField())
+        self.total: FormField = form.fields.get("Total", FormField())
+        self.transaction_date: FormField = form.fields.get("TransactionDate", FormField())
+        self.transaction_time: FormField = form.fields.get("TransactionTime", FormField())
 
     def convert_to_receipt_item(self, items: FormField) -> List["ReceiptItem"]:
-        """Converts Items in a receipt to a list of strongly-typed ReceiptItem
-        """
+        """Converts Items in a receipt to a list of strongly-typed ReceiptItem"""
         if items is None:
             return []
         return [ReceiptItem(item) for item in items.value]
 
 
 class ReceiptItem(object):
-    """Creates a strongly-typed ReceiptItem for every receipt item found in a RecognizedForm
-    """
+    """Creates a strongly-typed ReceiptItem for every receipt item found in a RecognizedForm"""
 
     def __init__(self, item: FormField) -> None:
-        self.name: FormField  = item.value.get("Name", FormField())
-        self.quantity: FormField  = item.value.get("Quantity", FormField())
-        self.price: FormField  = item.value.get("Price", FormField())
-        self.total_price: FormField  = item.value.get("TotalPrice", FormField())
+        self.name: FormField = item.value.get("Name", FormField())
+        self.quantity: FormField = item.value.get("Quantity", FormField())
+        self.price: FormField = item.value.get("Price", FormField())
+        self.total_price: FormField = item.value.get("TotalPrice", FormField())
 
 
 class StronglyTypedRecognizedFormSampleAsync(object):
 
     async def strongly_typed_receipt_async(self):
-        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "..", "./sample_forms/receipt/contoso-allinone.jpg"))
+        path_to_sample_forms = os.path.abspath(
+            os.path.join(os.path.abspath(__file__), "..", "..", "..", "./sample_forms/receipt/contoso-allinone.jpg")
+        )
 
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
@@ -93,15 +93,31 @@ class StronglyTypedRecognizedFormSampleAsync(object):
 
         for receipt in receipts:
             my_receipt = Receipt(receipt)
-            print("Receipt Type: {} has confidence: {}".format(my_receipt.receipt_type.value, my_receipt.receipt_type.confidence))
-            print("Merchant Name: {} has confidence: {}".format(my_receipt.merchant_name.value, my_receipt.merchant_name.confidence))
-            print("Transaction Date: {} has confidence: {}".format(my_receipt.transaction_date.value, my_receipt.transaction_date.confidence))
+            print(
+                "Receipt Type: {} has confidence: {}".format(
+                    my_receipt.receipt_type.value, my_receipt.receipt_type.confidence
+                )
+            )
+            print(
+                "Merchant Name: {} has confidence: {}".format(
+                    my_receipt.merchant_name.value, my_receipt.merchant_name.confidence
+                )
+            )
+            print(
+                "Transaction Date: {} has confidence: {}".format(
+                    my_receipt.transaction_date.value, my_receipt.transaction_date.confidence
+                )
+            )
             print("Receipt items:")
             for item in my_receipt.receipt_items:
                 print("...Item Name: {} has confidence: {}".format(item.name.value, item.name.confidence))
                 print("...Item Quantity: {} has confidence: {}".format(item.quantity.value, item.quantity.confidence))
                 print("...Individual Item Price: {} has confidence: {}".format(item.price.value, item.price.confidence))
-                print("...Total Item Price: {} has confidence: {}".format(item.total_price.value, item.total_price.confidence))
+                print(
+                    "...Total Item Price: {} has confidence: {}".format(
+                        item.total_price.value, item.total_price.confidence
+                    )
+                )
             print("Subtotal: {} has confidence: {}".format(my_receipt.subtotal.value, my_receipt.subtotal.confidence))
             print("Tax: {} has confidence: {}".format(my_receipt.tax.value, my_receipt.tax.confidence))
             print("Tip: {} has confidence: {}".format(my_receipt.tip.value, my_receipt.tip.confidence))
@@ -113,5 +129,5 @@ async def main():
     await sample.strongly_typed_receipt_async()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

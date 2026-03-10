@@ -38,10 +38,8 @@ async def sample_model_version_async() -> None:
     key = os.environ["AZURE_LANGUAGE_KEY"]
 
     text_analytics_client = TextAnalyticsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-    documents = [
-        "I work for Foo Company, and we hired Contoso for our annual founding ceremony. The food \
-        was amazing and we all can't say enough good words about the quality and the level of service."
-    ]
+    documents = ["I work for Foo Company, and we hired Contoso for our annual founding ceremony. The food \
+        was amazing and we all can't say enough good words about the quality and the level of service."]
 
     async with text_analytics_client:
         print("\nSetting model_version='latest' with recognize_entities")
@@ -55,10 +53,7 @@ async def sample_model_version_async() -> None:
 
         print("\nSetting model_version='latest' with recognize entities action in begin_analyze_actions")
         poller = await text_analytics_client.begin_analyze_actions(
-            documents,
-            actions=[
-                RecognizeEntitiesAction(model_version="latest")
-            ]
+            documents, actions=[RecognizeEntitiesAction(model_version="latest")]
         )
 
         print("...Results of Recognize Entities Action:")
@@ -69,14 +64,16 @@ async def sample_model_version_async() -> None:
                 for entity in action_result.entities:
                     print(f"......Entity '{entity.text}' has category '{entity.category}'")
             elif action_result.is_error is True:
-                print("......Is an error with code '{}' and message '{}'".format(
-                    action_result.error.code, action_result.error.message
-                ))
+                print(
+                    "......Is an error with code '{}' and message '{}'".format(
+                        action_result.error.code, action_result.error.message
+                    )
+                )
 
 
 async def main():
     await sample_model_version_async()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

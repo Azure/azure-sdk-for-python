@@ -10,7 +10,6 @@ from azure.ai.ml._schema.core.fields import NestedField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from .route import RouteSchema
 
-
 module_logger = logging.getLogger(__name__)
 
 

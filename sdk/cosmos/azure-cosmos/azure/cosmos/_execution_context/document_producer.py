@@ -39,8 +39,17 @@ class _DocumentProducer(object):
     result of each.
     """
 
-    def __init__(self, partition_key_target_range, client, collection_link, query, document_producer_comp, options,
-                 response_hook, raw_response_hook):
+    def __init__(
+        self,
+        partition_key_target_range,
+        client,
+        collection_link,
+        query,
+        document_producer_comp,
+        options,
+        response_hook,
+        raw_response_hook,
+    ):
         """
         Constructor
         """
@@ -60,8 +69,15 @@ class _DocumentProducer(object):
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
         def fetch_fn(options):
-            return self._client.QueryFeed(path, collection_id, query, options, partition_key_target_range["id"],
-                                          response_hook=response_hook, raw_response_hook=raw_response_hook)
+            return self._client.QueryFeed(
+                path,
+                collection_id,
+                query,
+                options,
+                partition_key_target_range["id"],
+                response_hook=response_hook,
+                raw_response_hook=raw_response_hook,
+            )
 
         self._ex_context = _DefaultQueryExecutionContext(client, self._options, fetch_fn)
 
@@ -87,9 +103,9 @@ class _DocumentProducer(object):
 
     def get_target_range(self):
         """Returns the target partition key range.
-            :return:
-                Target partition key range.
-            :rtype: dict
+        :return:
+            Target partition key range.
+        :rtype: dict
         """
         return self._partition_key_target_range
 
@@ -217,8 +233,7 @@ def _peek_order_by_items(peek_result):
 
 
 class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProducerComparator):
-    """Provide a Comparator for document producers which respects orderby sort order.
-    """
+    """Provide a Comparator for document producers which respects orderby sort order."""
 
     def __init__(self, sort_order):  # pylint: disable=super-init-not-called
         """Instantiates this class
@@ -292,8 +307,7 @@ class _NonStreamingItemResultProducer:
         self._sort_order = sort_order
 
     def __lt__(self, other):
-        res = _OrderByHelper.compare(self._item_result["orderByItems"][0],
-                                               other._item_result["orderByItems"][0])
+        res = _OrderByHelper.compare(self._item_result["orderByItems"][0], other._item_result["orderByItems"][0])
         if res != 0:
             if self._sort_order[0] == "Descending":
                 res = -res

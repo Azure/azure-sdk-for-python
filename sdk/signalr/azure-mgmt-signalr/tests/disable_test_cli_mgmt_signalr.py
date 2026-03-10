@@ -1,10 +1,10 @@
 # coding: utf-8
 
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 
 # TEST SCENARIO COVERAGE
@@ -21,16 +21,15 @@ import unittest
 import azure.mgmt.signalr
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
-AZURE_LOCATION = 'eastus'
+AZURE_LOCATION = "eastus"
+
 
 class MgmtSignalRTest(AzureMgmtTestCase):
 
     def setUp(self):
         super(MgmtSignalRTest, self).setUp()
-        self.mgmt_client = self.create_mgmt_client(
-            azure.mgmt.signalr.SignalRManagementClient
-        )
-    
+        self.mgmt_client = self.create_mgmt_client(azure.mgmt.signalr.SignalRManagementClient)
+
     @unittest.skip("skip test")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_signalr(self, resource_group):
@@ -43,31 +42,17 @@ class MgmtSignalRTest(AzureMgmtTestCase):
 
         # /SignalR/put/SignalR_CreateOrUpdate[put]
         BODY = {
-          'tags': {
-            "key1": "value1"
-          },
-          'sku': {
-            "name": "Standard_S1",
-            "tier": "Standard",
-            "capacity": "1"
-          },
-          'properties': {
-            "features": [
-              {
-                "flag": "ServiceMode",
-                "value": "Serverless"
-              }
-            ],
-            "cors": {
-              "allowed_origins": [
-                "https://foo.com",
-                "https://bar.com"
-              ]
-            }
-          },
-          'location': 'eastus'
+            "tags": {"key1": "value1"},
+            "sku": {"name": "Standard_S1", "tier": "Standard", "capacity": "1"},
+            "properties": {
+                "features": [{"flag": "ServiceMode", "value": "Serverless"}],
+                "cors": {"allowed_origins": ["https://foo.com", "https://bar.com"]},
+            },
+            "location": "eastus",
         }
-        result = self.mgmt_client.signal_r.create_or_update(resource_group_name=RESOURCE_GROUP, resource_name=RESOURCE_NAME, parameters=BODY)
+        result = self.mgmt_client.signal_r.create_or_update(
+            resource_group_name=RESOURCE_GROUP, resource_name=RESOURCE_NAME, parameters=BODY
+        )
         result = result.result()
 
         # /SignalR/get/SignalR_Get[get]
@@ -98,40 +83,28 @@ class MgmtSignalRTest(AzureMgmtTestCase):
 
         # /SignalR/patch/SignalR_Update[patch]
         BODY = {
-          "tags": {
-            "key1": "value1"
-          },
-          "sku": {
-            "name": "Standard_S1",
-            "tier": "Standard",
-            "capacity": "1"
-          },
-          "properties": {
-            "features": [
-              {
-                "flag": "ServiceMode",
-                "value": "Serverless"
-              }
-            ],
-            "cors": {
-              "allowed_origins": [
-                "https://foo.com",
-                "https://bar.com"
-              ]
-            }
-          }
+            "tags": {"key1": "value1"},
+            "sku": {"name": "Standard_S1", "tier": "Standard", "capacity": "1"},
+            "properties": {
+                "features": [{"flag": "ServiceMode", "value": "Serverless"}],
+                "cors": {"allowed_origins": ["https://foo.com", "https://bar.com"]},
+            },
         }
-        result = self.mgmt_client.signal_r.update(resource_group_name=RESOURCE_GROUP, resource_name=RESOURCE_NAME, parameters=BODY)
+        result = self.mgmt_client.signal_r.update(
+            resource_group_name=RESOURCE_GROUP, resource_name=RESOURCE_NAME, parameters=BODY
+        )
         result = result.result()
 
         # /SignalR/post/SignalR_CheckNameAvailability[post]
-        result = self.mgmt_client.signal_r.check_name_availability(location="eastus", type="Microsoft.SignalRService/SignalR", name="my-signalr-service")
+        result = self.mgmt_client.signal_r.check_name_availability(
+            location="eastus", type="Microsoft.SignalRService/SignalR", name="my-signalr-service"
+        )
 
         # /SignalR/delete/SignalR_Delete[delete]
         result = self.mgmt_client.signal_r.delete(resource_group_name=RESOURCE_GROUP, resource_name=RESOURCE_NAME)
         result = result.result()
 
 
-#------------------------------------------------------------------------------
-if __name__ == '__main__':
+# ------------------------------------------------------------------------------
+if __name__ == "__main__":
     unittest.main()

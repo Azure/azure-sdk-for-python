@@ -6,7 +6,6 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.questionanswering.authoring.aio import QuestionAnsweringAuthoringClient
 
 
-
 class TestCreateAndDeployAsync(QuestionAnsweringAuthoringTestCase):
     @pytest.mark.asyncio
     async def test_create_project(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined] # pylint: disable=unused-argument
@@ -15,7 +14,7 @@ class TestCreateAndDeployAsync(QuestionAnsweringAuthoringTestCase):
         )
         project_name = "IsaacNewton"
         async with client:
-            await client.create_project( # pylint: disable=no-value-for-parameter
+            await client.create_project(  # pylint: disable=no-value-for-parameter
                 project_name=project_name,
                 options={
                     "description": "Biography of Sir Isaac Newton",
@@ -41,7 +40,7 @@ class TestCreateAndDeployAsync(QuestionAnsweringAuthoringTestCase):
                 client,
                 project_name=project_name,
                 is_deployable=True,
-                polling_interval=0 if self.is_playback else None, # pylint: disable=using-constant-test
+                polling_interval=0 if self.is_playback else None,  # pylint: disable=using-constant-test
             )
             deployment_poller = await client.begin_deploy_project(
                 project_name=project_name,

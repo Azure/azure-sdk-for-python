@@ -20,7 +20,9 @@ try:
     instance = os.environ["DEVICEUPDATE_INSTANCE_ID"]
     group = os.environ["DEVICEUPDATE_DEVICE_GROUP"]
 except KeyError:
-    print("Missing one of environment variables: DEVICEUPDATE_ENDPOINT, DEVICEUPDATE_INSTANCE_ID, DEVICEUPDATE_DEVICE_GROUP")
+    print(
+        "Missing one of environment variables: DEVICEUPDATE_ENDPOINT, DEVICEUPDATE_INSTANCE_ID, DEVICEUPDATE_DEVICE_GROUP"
+    )
     exit()
 
 # Build a client through AAD
@@ -52,4 +54,4 @@ try:
         print(f"  {item['update']['updateId']['name']}")
         print(f"  {item['update']['updateId']['version']}")
 except HttpResponseError as e:
-    print('Failed to get device message: {}'.format(e))
+    print("Failed to get device message: {}".format(e))

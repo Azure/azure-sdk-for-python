@@ -56,8 +56,7 @@ class CopyModelSampleAsync(object):
 
         async with target_client:
             target = await target_client.get_copy_authorization(
-                resource_region=target_region,
-                resource_id=target_resource_id
+                resource_region=target_region, resource_id=target_resource_id
             )
         # model ID that target client will use to access the model once copy is complete
         print("Model ID: {}".format(target["modelId"]))
@@ -68,8 +67,7 @@ class CopyModelSampleAsync(object):
 
         async with source_client:
             poller = await source_client.begin_copy_model(
-                model_id=source_model_id,
-                target=target  # output from target client's call to get_copy_authorization()
+                model_id=source_model_id, target=target  # output from target client's call to get_copy_authorization()
             )
             copied_over_model = await poller.result()
 
@@ -92,18 +90,17 @@ async def main():
         if not endpoint or not key:
             raise ValueError("Please provide endpoint and API key to run the samples.")
 
-        form_training_client = FormTrainingClient(
-            endpoint=endpoint, credential=AzureKeyCredential(key)
-        )
+        form_training_client = FormTrainingClient(endpoint=endpoint, credential=AzureKeyCredential(key))
         async with form_training_client:
             container_sas_url = os.getenv("CONTAINER_SAS_URL_V2")
             if container_sas_url is not None:
-                model = await (await form_training_client.begin_training(
-                    container_sas_url, use_training_labels=True)).result()
+                model = await (
+                    await form_training_client.begin_training(container_sas_url, use_training_labels=True)
+                ).result()
                 model_id = model.model_id
 
     await sample.copy_model_async(model_id)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

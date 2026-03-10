@@ -41,8 +41,7 @@ class AcceptedAge(_model_base.Model):
         *,
         unit: Union[str, "_models.AgeUnit"],
         value: float,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -76,8 +75,7 @@ class AcceptedAgeRange(_model_base.Model):
         *,
         minimum_age: Optional["_models.AcceptedAge"] = None,
         maximum_age: Optional["_models.AcceptedAge"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -114,10 +112,9 @@ This is an array of 2 decimal numbers, longitude and latitude (precisely in this
     def __init__(
         self,
         *,
-        type: Union[str, "_models.GeoJsonGeometryType"], # pylint: disable=redefined-builtin
+        type: Union[str, "_models.GeoJsonGeometryType"],  # pylint: disable=redefined-builtin
         coordinates: List[float],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -153,8 +150,7 @@ class AreaProperties(_model_base.Model):
         *,
         sub_type: Union[str, "_models.GeoJsonPropertiesSubType"],
         radius: float,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -199,8 +195,7 @@ class ClinicalCodedElement(_model_base.Model):
         code: str,
         name: Optional[str] = None,
         value: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -245,8 +240,7 @@ class ClinicalNoteEvidence(_model_base.Model):
         offset: int,
         length: int,
         text: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -283,8 +277,7 @@ class ClinicalTrialDemographics(_model_base.Model):
         *,
         accepted_sex: Optional[Union[str, "_models.ClinicalTrialAcceptedSex"]] = None,
         accepted_age_range: Optional["_models.AcceptedAgeRange"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -331,8 +324,7 @@ class ClinicalTrialDetails(_model_base.Model):
         metadata: "_models.ClinicalTrialMetadata",
         eligibility_criteria_text: Optional[str] = None,
         demographics: Optional["_models.ClinicalTrialDemographics"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -405,8 +397,7 @@ Each clinical trial can be in a certain phase or in multiple phases. """
         sponsors: Optional[List[str]] = None,
         contacts: Optional[List["_models.ContactDetails"]] = None,
         facilities: Optional[List["_models.ClinicalTrialResearchFacility"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -525,8 +516,7 @@ class ClinicalTrialRegistryFilter(_model_base.Model):  # pylint: disable=too-man
         facility_names: Optional[List[str]] = None,
         facility_locations: Optional[List["_models.GeographicLocation"]] = None,
         facility_areas: Optional[List["_models.GeographicArea"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -571,8 +561,7 @@ class ClinicalTrialResearchFacility(_model_base.Model):
         country_or_region: str,
         city: Optional[str] = None,
         state: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -612,8 +601,7 @@ clinical trial registry. """
         *,
         custom_trials: Optional[List["_models.ClinicalTrialDetails"]] = None,
         registry_filters: Optional[List["_models.ClinicalTrialRegistryFilter"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -651,8 +639,7 @@ class ContactDetails(_model_base.Model):
         name: Optional[str] = None,
         email: Optional[str] = None,
         phone: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -694,8 +681,7 @@ class DocumentContent(_model_base.Model):
         *,
         source_type: Union[str, "_models.DocumentContentSourceType"],
         value: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -747,8 +733,7 @@ class Error(_model_base.Model):
         details: List["_models.Error"],
         target: Optional[str] = None,
         innererror: Optional["_models.InnerError"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -808,8 +793,7 @@ class ExtendedClinicalCodedElement(_model_base.Model):
         value: Optional[str] = None,
         semantic_type: Optional[str] = None,
         category: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -836,7 +820,7 @@ class GeographicArea(_model_base.Model):
     :vartype properties: ~azure.healthinsights.clinicalmatching.models.AreaProperties
     """
 
-    type: Union[str, "_models.GeoJsonType"] = rest_field() # pylint: disable=redefined-builtin
+    type: Union[str, "_models.GeoJsonType"] = rest_field()  # pylint: disable=redefined-builtin
     """``GeoJSON`` type. Required. \"Feature\""""
     geometry: "_models.AreaGeometry" = rest_field()
     """``GeoJSON`` geometry, representing the area circle's center. Required. """
@@ -847,11 +831,10 @@ class GeographicArea(_model_base.Model):
     def __init__(
         self,
         *,
-        type: Union[str, "_models.GeoJsonType"], # pylint: disable=redefined-builtin
+        type: Union[str, "_models.GeoJsonType"],  # pylint: disable=redefined-builtin
         geometry: "_models.AreaGeometry",
         properties: "_models.AreaProperties",
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -895,8 +878,7 @@ class GeographicLocation(_model_base.Model):
         country_or_region: str,
         city: Optional[str] = None,
         state: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -933,8 +915,7 @@ class InnerError(_model_base.Model):
         *,
         code: str,
         innererror: Optional["_models.InnerError"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -973,7 +954,7 @@ class PatientDocument(_model_base.Model):
     :vartype content: ~azure.healthinsights.clinicalmatching.models.DocumentContent
     """
 
-    type: Union[str, "_models.DocumentType"] = rest_field() # pylint: disable=redefined-builtin
+    type: Union[str, "_models.DocumentType"] = rest_field()  # pylint: disable=redefined-builtin
     """The type of the patient document, such as 'note' (text document) or 'fhirBundle' (FHIR JSON document).
     Required. Known values are: \"note\", \"fhirBundle\", \"dicom\", and \"genomicSequencing\". """
     clinical_type: Optional[Union[str, "_models.ClinicalDocumentType"]] = rest_field(name="clinicalType")
@@ -992,14 +973,13 @@ class PatientDocument(_model_base.Model):
     def __init__(
         self,
         *,
-        type: Union[str, "_models.DocumentType"], # pylint: disable=redefined-builtin
+        type: Union[str, "_models.DocumentType"],  # pylint: disable=redefined-builtin
         id: str,  # pylint: disable=redefined-builtin
         content: "_models.DocumentContent",
         clinical_type: Optional[Union[str, "_models.ClinicalDocumentType"]] = None,
         language: Optional[str] = None,
         created_date_time: Optional[datetime.datetime] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1039,8 +1019,7 @@ class PatientInfo(_model_base.Model):
         sex: Optional[Union[str, "_models.PatientInfoSex"]] = None,
         birth_date: Optional[datetime.date] = None,
         clinical_info: Optional[List["_models.ClinicalCodedElement"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1082,8 +1061,7 @@ class PatientRecord(_model_base.Model):
         id: str,  # pylint: disable=redefined-builtin
         info: Optional["_models.PatientInfo"] = None,
         data: Optional[List["_models.PatientDocument"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1119,8 +1097,7 @@ class TrialMatcherData(_model_base.Model):
         *,
         patients: List["_models.PatientRecord"],
         configuration: Optional["_models.TrialMatcherModelConfiguration"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1158,7 +1135,7 @@ class TrialMatcherInference(_model_base.Model):
     :vartype metadata: ~azure.healthinsights.clinicalmatching.models.ClinicalTrialMetadata
     """
 
-    type: Union[str, "_models.TrialMatcherInferenceType"] = rest_field() # pylint: disable=redefined-builtin
+    type: Union[str, "_models.TrialMatcherInferenceType"] = rest_field()  # pylint: disable=redefined-builtin
     """The type of the Trial Matcher inference. Required. \"trialEligibility\""""
     value: str = rest_field()
     """The value of the inference, as relevant for the given inference type. Required. """
@@ -1179,7 +1156,7 @@ class TrialMatcherInference(_model_base.Model):
     def __init__(
         self,
         *,
-        type: Union[str, "_models.TrialMatcherInferenceType"], # pylint: disable=redefined-builtin
+        type: Union[str, "_models.TrialMatcherInferenceType"],  # pylint: disable=redefined-builtin
         value: str,
         description: Optional[str] = None,
         confidence_score: Optional[float] = None,
@@ -1187,8 +1164,7 @@ class TrialMatcherInference(_model_base.Model):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         source: Optional[Union[str, "_models.ClinicalTrialSource"]] = None,
         metadata: Optional["_models.ClinicalTrialMetadata"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1237,8 +1213,7 @@ system. """
         patient_data_evidence: Optional["_models.ClinicalNoteEvidence"] = None,
         patient_info_evidence: Optional["_models.ClinicalCodedElement"] = None,
         importance: Optional[float] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1286,8 +1261,7 @@ resulting trial set is a union of the two sets. Required. """
         clinical_trials: "_models.ClinicalTrials",
         verbose: bool = False,
         include_evidence: bool = True,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1331,8 +1305,7 @@ class TrialMatcherPatientResult(_model_base.Model):
         id: str,  # pylint: disable=redefined-builtin
         inferences: List["_models.TrialMatcherInference"],
         needed_clinical_info: Optional[List["_models.ExtendedClinicalCodedElement"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1418,8 +1391,7 @@ class TrialMatcherResults(_model_base.Model):
         patients: List["_models.TrialMatcherPatientResult"],
         model_version: str,
         knowledge_graph_last_update_date: Optional[datetime.date] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):

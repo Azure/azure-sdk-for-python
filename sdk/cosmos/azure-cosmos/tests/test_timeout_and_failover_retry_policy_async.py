@@ -14,27 +14,31 @@ from azure.cosmos._location_cache import RegionalRoutingContext, EndpointOperati
 from azure.cosmos.aio import CosmosClient, _retry_utility_async
 
 COLLECTION = "created_collection"
+
+
 @pytest_asyncio.fixture()
 async def setup():
-    if (TestTimeoutRetryPolicyAsync.masterKey == '[YOUR_KEY_HERE]' or
-            TestTimeoutRetryPolicyAsync.host == '[YOUR_ENDPOINT_HERE]'):
+    if (
+        TestTimeoutRetryPolicyAsync.masterKey == "[YOUR_KEY_HERE]"
+        or TestTimeoutRetryPolicyAsync.host == "[YOUR_ENDPOINT_HERE]"
+    ):
         raise Exception(
             "You must specify your Azure Cosmos account values for "
             "'masterKey' and 'host' at the top of this class to run the "
-            "tests.")
+            "tests."
+        )
 
-    client = CosmosClient(TestTimeoutRetryPolicyAsync.host, TestTimeoutRetryPolicyAsync.masterKey, consistency_level="Session")
+    client = CosmosClient(
+        TestTimeoutRetryPolicyAsync.host, TestTimeoutRetryPolicyAsync.masterKey, consistency_level="Session"
+    )
     created_database = client.get_database_client(TestTimeoutRetryPolicyAsync.TEST_DATABASE_ID)
-    created_collection = await created_database.create_container(TestTimeoutRetryPolicyAsync.TEST_CONTAINER_SINGLE_PARTITION_ID,
-                                                                 partition_key=PartitionKey("/pk"))
-    yield {
-        COLLECTION: created_collection
-    }
+    created_collection = await created_database.create_container(
+        TestTimeoutRetryPolicyAsync.TEST_CONTAINER_SINGLE_PARTITION_ID, partition_key=PartitionKey("/pk")
+    )
+    yield {COLLECTION: created_collection}
 
     await created_database.delete_container(TestTimeoutRetryPolicyAsync.TEST_CONTAINER_SINGLE_PARTITION_ID)
     await client.close()
-
-
 
 
 def error_codes():
@@ -53,10 +57,12 @@ class TestTimeoutRetryPolicyAsync:
 
     @pytest.mark.parametrize("error_code", error_codes())
     async def test_timeout_failover_retry_policy_for_read_success_async(self, setup, error_code):
-        document_definition = {'id': 'failoverDoc-' + str(uuid.uuid4()),
-                               'pk': 'pk',
-                               'name': 'sample document',
-                               'key': 'value'}
+        document_definition = {
+            "id": "failoverDoc-" + str(uuid.uuid4()),
+            "pk": "pk",
+            "name": "sample document",
+            "key": "value",
+        }
 
         created_document = await setup[COLLECTION].create_item(body=document_definition)
         self.original_execute_function = _retry_utility_async.ExecuteFunctionAsync
@@ -64,28 +70,35 @@ class TestTimeoutRetryPolicyAsync:
             # should retry once and then succeed
             mf = self.MockExecuteFunction(self.original_execute_function, 1, error_code)
             _retry_utility_async.ExecuteFunctionAsync = mf
-            doc = await setup[COLLECTION].read_item(item=created_document['id'],
-                                                    partition_key=created_document['pk'])
+            doc = await setup[COLLECTION].read_item(item=created_document["id"], partition_key=created_document["pk"])
             assert doc == created_document
         finally:
             _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
     @pytest.mark.parametrize("error_code", error_codes())
     async def test_timeout_failover_retry_policy_for_read_failure_async(self, setup, error_code):
-        document_definition = {'id': 'failoverDoc-' + str(uuid.uuid4()),
-                               'pk': 'pk',
-                               'name': 'sample document',
-                               'key': 'value'}
+        document_definition = {
+            "id": "failoverDoc-" + str(uuid.uuid4()),
+            "pk": "pk",
+            "name": "sample document",
+            "key": "value",
+        }
 
         created_document = await setup[COLLECTION].create_item(body=document_definition)
         self.original_execute_function = _retry_utility_async.ExecuteFunctionAsync
-        num_exceptions = max(2, len(setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.read_regional_routing_contexts))
+        num_exceptions = max(
+            2,
+            len(
+                setup[
+                    COLLECTION
+                ].client_connection._global_endpoint_manager.location_cache.read_regional_routing_contexts
+            ),
+        )
         try:
             # should retry and then succeed
             mf = self.MockExecuteFunction(self.original_execute_function, num_exceptions, error_code)
             _retry_utility_async.ExecuteFunctionAsync = mf
-            await setup[COLLECTION].read_item(item=created_document['id'],
-                                              partition_key=created_document['pk'])
+            await setup[COLLECTION].read_item(item=created_document["id"], partition_key=created_document["pk"])
             pytest.fail("Exception was not raised.")
         except exceptions.CosmosHttpResponseError as err:
             assert err.status_code == error_code
@@ -97,10 +110,12 @@ class TestTimeoutRetryPolicyAsync:
         mock_client = CosmosClient(self.host, self.masterKey)
         db = mock_client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(self.TEST_CONTAINER_SINGLE_PARTITION_ID)
-        document_definition = {'id': 'failoverDoc' + str(uuid.uuid4()),
-                               'pk': 'pk',
-                               'name': 'sample document',
-                               'key': 'value'}
+        document_definition = {
+            "id": "failoverDoc" + str(uuid.uuid4()),
+            "pk": "pk",
+            "name": "sample document",
+            "key": "value",
+        }
 
         created_document = await container.create_item(body=document_definition)
         self.original_execute_function = _retry_utility_async.ExecuteFunctionAsync
@@ -111,28 +126,38 @@ class TestTimeoutRetryPolicyAsync:
         region_1 = "East US"
         region_2 = "West US"
         original_location_cache.account_read_locations = [region_1, region_2]
-        original_location_cache.account_read_regional_routing_contexts_by_location = {region_1: regional_routing_context,
-                                                                                  region_2: regional_routing_context_2
-                                                                                  }
+        original_location_cache.account_read_regional_routing_contexts_by_location = {
+            region_1: regional_routing_context,
+            region_2: regional_routing_context_2,
+        }
         original_location_cache.read_regional_routing_contexts = [regional_routing_context, regional_routing_context_2]
         try:
             # should retry once and then succeed
             mf = self.MockExecuteFunctionCrossRegion(self.original_execute_function, error_code, fake_endpoint)
             _retry_utility_async.ExecuteFunctionAsync = mf
-            await container.read_item(item=created_document['id'], partition_key=created_document['pk'])
+            await container.read_item(item=created_document["id"], partition_key=created_document["pk"])
         finally:
             _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
             await mock_client.close()
 
     @pytest.mark.parametrize("error_code", error_codes())
     async def test_timeout_failover_retry_policy_for_write_failure_async(self, setup, error_code):
-        document_definition = {'id': 'failoverDoc' + str(uuid.uuid4()),
-                               'pk': 'pk',
-                               'name': 'sample document',
-                               'key': 'value'}
+        document_definition = {
+            "id": "failoverDoc" + str(uuid.uuid4()),
+            "pk": "pk",
+            "name": "sample document",
+            "key": "value",
+        }
 
         self.original_execute_function = _retry_utility_async.ExecuteFunctionAsync
-        num_exceptions_503 = max(2, len(setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.write_regional_routing_contexts))
+        num_exceptions_503 = max(
+            2,
+            len(
+                setup[
+                    COLLECTION
+                ].client_connection._global_endpoint_manager.location_cache.write_regional_routing_contexts
+            ),
+        )
         try:
             # timeouts should fail immediately for writes - except for 503s, which should retry on every preferred location
             num_exceptions = num_exceptions_503 if error_code == 503 else 0
@@ -159,9 +184,8 @@ class TestTimeoutRetryPolicyAsync:
             else:
                 self.counter += 1
                 raise exceptions.CosmosHttpResponseError(
-                    status_code=self.status_code,
-                    message="Some Exception",
-                    response=test_config.FakeResponse({}))
+                    status_code=self.status_code, message="Some Exception", response=test_config.FakeResponse({})
+                )
 
     class MockExecuteFunctionCrossRegion(object):
         def __init__(self, org_func, status_code, location_endpoint_to_route):
@@ -178,11 +202,9 @@ class TestTimeoutRetryPolicyAsync:
             else:
                 self.counter += 1
                 raise exceptions.CosmosHttpResponseError(
-                    status_code=self.status_code,
-                    message="Some Exception",
-                    response=test_config.FakeResponse({}))
+                    status_code=self.status_code, message="Some Exception", response=test_config.FakeResponse({})
+                )
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

@@ -46,9 +46,7 @@ class TestWebpubsubClientNoRecoveryNoReconnect(WebpubsubClientTest):
     # disable recovery and auto reconnect, then send message concurrently
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy
-    def test_disable_recovery_and_autoconnect_send_concurrently(
-        self, webpubsubclient_connection_string
-    ):
+    def test_disable_recovery_and_autoconnect_send_concurrently(self, webpubsubclient_connection_string):
         client = self.create_client(
             connection_string=webpubsubclient_connection_string,
             reconnect_retry_total=0,

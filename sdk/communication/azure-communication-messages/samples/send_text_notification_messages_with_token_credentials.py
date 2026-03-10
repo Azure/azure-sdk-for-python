@@ -10,7 +10,7 @@
 FILE: send_text_notification_messages_with_token_credentials.py
 
 DESCRIPTION:
-    This sample demonstrates sending an Whatsapp message from business phone number to a single user. The NotificationMessageClient is 
+    This sample demonstrates sending an Whatsapp message from business phone number to a single user. The NotificationMessageClient is
     authenticated using Bearer TokenCredentials with azureidentity.
     More information here: https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python
 USAGE:

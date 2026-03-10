@@ -9,5 +9,5 @@
 from ._mixed_reality_sts_rest_client_operations import MixedRealityStsRestClientOperationsMixin
 
 __all__ = [
-    'MixedRealityStsRestClientOperationsMixin',
+    "MixedRealityStsRestClientOperationsMixin",
 ]

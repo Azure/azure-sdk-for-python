@@ -35,10 +35,8 @@ def sample_model_version() -> None:
     key = os.environ["AZURE_LANGUAGE_KEY"]
 
     text_analytics_client = TextAnalyticsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-    documents = [
-        "I work for Foo Company, and we hired Contoso for our annual founding ceremony. The food \
-        was amazing and we all can't say enough good words about the quality and the level of service."
-    ]
+    documents = ["I work for Foo Company, and we hired Contoso for our annual founding ceremony. The food \
+        was amazing and we all can't say enough good words about the quality and the level of service."]
 
     print("\nSetting model_version='latest' with recognize_entities")
     result = text_analytics_client.recognize_entities(documents, model_version="latest")
@@ -51,10 +49,7 @@ def sample_model_version() -> None:
 
     print("\nSetting model_version='latest' with recognize entities action in begin_analyze_actions")
     poller = text_analytics_client.begin_analyze_actions(
-        documents,
-        actions=[
-            RecognizeEntitiesAction(model_version="latest")
-        ]
+        documents, actions=[RecognizeEntitiesAction(model_version="latest")]
     )
 
     print("...Results of Recognize Entities Action:")
@@ -65,10 +60,12 @@ def sample_model_version() -> None:
             for entity in action_result.entities:
                 print(f"......Entity '{entity.text}' has category '{entity.category}'")
         elif action_result.is_error is True:
-            print("......Is an error with code '{}' and message '{}'".format(
-                action_result.error.code, action_result.error.message
-            ))
+            print(
+                "......Is an error with code '{}' and message '{}'".format(
+                    action_result.error.code, action_result.error.message
+                )
+            )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample_model_version()

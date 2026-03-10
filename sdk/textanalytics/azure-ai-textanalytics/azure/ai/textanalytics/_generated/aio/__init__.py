@@ -7,4 +7,5 @@
 # --------------------------------------------------------------------------
 
 from ._text_analytics_client import TextAnalyticsClient
-__all__ = ['TextAnalyticsClient']
+
+__all__ = ["TextAnalyticsClient"]

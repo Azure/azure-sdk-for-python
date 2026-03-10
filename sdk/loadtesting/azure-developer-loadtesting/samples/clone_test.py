@@ -21,6 +21,7 @@ USAGE:
     4)  LOADTESTSERVICE_ENDPOINT - Data Plane endpoint for Loadtestservice
     5)  SOURCE_TEST_ID - The ID of the existing load test to be cloned
 """
+
 from azure.developer.loadtesting import LoadTestAdministrationClient
 from azure.identity import DefaultAzureCredential
 
@@ -30,9 +31,7 @@ from dotenv import load_dotenv
 load_dotenv()
 LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
 
-client = LoadTestAdministrationClient(
-    credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT
-)
+client = LoadTestAdministrationClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
 
 SOURCE_TEST_ID = os.environ["LOADTESTSERVICE_SOURCE_TEST_ID"]
 NEW_TEST_ID = "my-cloned-test-id"

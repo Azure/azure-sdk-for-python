@@ -8,6 +8,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 from azure.ai.textanalytics.aio import TextAnalyticsClient as AsyncTextAnalyticsClient
 
+
 class DetectLanguagePerfStressTest(PerfStressTest):
     def __init__(self, arguments):
         super().__init__(arguments)

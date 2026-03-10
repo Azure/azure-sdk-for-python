@@ -6,9 +6,15 @@
 
 from azure.core.credentials import AccessToken, AzureKeyCredential
 
-from azure.mixedreality.authentication._shared.aio.mixed_reality_token_credential import get_mixedreality_credential, MixedRealityTokenCredential
+from azure.mixedreality.authentication._shared.aio.mixed_reality_token_credential import (
+    get_mixedreality_credential,
+    MixedRealityTokenCredential,
+)
 from azure.mixedreality.authentication._shared.aio.static_access_token_credential import StaticAccessTokenCredential
-from azure.mixedreality.authentication._shared.aio.mixedreality_account_key_credential import MixedRealityAccountKeyCredential
+from azure.mixedreality.authentication._shared.aio.mixedreality_account_key_credential import (
+    MixedRealityAccountKeyCredential,
+)
+
 
 class TestMixedRealityTokenCredential:
     def test_get_mixedreality_credential_static_credential(self):
@@ -19,7 +25,8 @@ class TestMixedRealityTokenCredential:
             account_id="account_id",
             account_domain="account_domain",
             endpoint_url="http://my.endpoint.url",
-            credential=credential)
+            credential=credential,
+        )
 
         assert credential == actual_credential
 
@@ -31,7 +38,8 @@ class TestMixedRealityTokenCredential:
             account_id="account_id",
             account_domain="account_domain",
             endpoint_url="http://my.endpoint.url",
-            credential=credential)
+            credential=credential,
+        )
 
         assert credential != actual_credential
         assert isinstance(actual_credential, MixedRealityTokenCredential)

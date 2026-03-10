@@ -13,7 +13,6 @@ from testcase import FormRecognizerTest
 from conftest import skip_flaky_test
 from preparers import FormRecognizerPreparer, get_sync_client
 
-
 get_fr_client = functools.partial(get_sync_client, FormRecognizerClient)
 
 
@@ -27,10 +26,7 @@ class TestBusinessCard(FormRecognizerTest):
         client = get_fr_client()
         with open(self.business_card_png, "rb") as fd:
             my_file = fd.read()
-        poller = client.begin_recognize_business_cards(
-            my_file,
-            content_type=FormContentType.IMAGE_PNG
-        )
+        poller = client.begin_recognize_business_cards(my_file, content_type=FormContentType.IMAGE_PNG)
         result = poller.result()
         assert result is not None
 
@@ -39,18 +35,14 @@ class TestBusinessCard(FormRecognizerTest):
         client = get_fr_client()
         damaged_pdf = b"\x50\x44\x46\x55\x55\x55"  # doesn't match any magic file numbers
         with pytest.raises(ValueError):
-            poller = client.begin_recognize_business_cards(
-                damaged_pdf
-            )
+            poller = client.begin_recognize_business_cards(damaged_pdf)
 
     @FormRecognizerPreparer()
     def test_damaged_file_bytes_io_fails_autodetect(self, **kwargs):
         client = get_fr_client()
         damaged_pdf = BytesIO(b"\x50\x44\x46\x55\x55\x55")  # doesn't match any magic file numbers
         with pytest.raises(ValueError):
-            poller = client.begin_recognize_business_cards(
-                damaged_pdf
-            )
+            poller = client.begin_recognize_business_cards(damaged_pdf)
 
     @FormRecognizerPreparer()
     def test_passing_bad_content_type_param_passed(self, **kwargs):
@@ -58,10 +50,7 @@ class TestBusinessCard(FormRecognizerTest):
         with open(self.business_card_jpg, "rb") as fd:
             my_file = fd.read()
         with pytest.raises(ValueError):
-            poller = client.begin_recognize_business_cards(
-                my_file,
-                content_type="application/jpeg"
-            )
+            poller = client.begin_recognize_business_cards(my_file, content_type="application/jpeg")
 
     @skip_flaky_test
     @FormRecognizerPreparer()
@@ -77,8 +66,8 @@ class TestBusinessCard(FormRecognizerTest):
         business_card = result[0]
         assert len(business_card.fields.get("ContactNames").value) == 1
         assert business_card.fields.get("ContactNames").value[0].value_data.page_number == 1
-        assert business_card.fields.get("ContactNames").value[0].value['FirstName'].value == 'JOHN'
-        assert business_card.fields.get("ContactNames").value[0].value['LastName'].value == 'SINGER'
+        assert business_card.fields.get("ContactNames").value[0].value["FirstName"].value == "JOHN"
+        assert business_card.fields.get("ContactNames").value[0].value["LastName"].value == "SINGER"
 
         assert len(business_card.fields.get("JobTitles").value) == 1
         assert business_card.fields.get("JobTitles").value[0].value == "Software Engineer"
@@ -95,8 +84,8 @@ class TestBusinessCard(FormRecognizerTest):
         business_card = result[1]
         assert len(business_card.fields.get("ContactNames").value) == 1
         assert business_card.fields.get("ContactNames").value[0].value_data.page_number == 2
-        assert business_card.fields.get("ContactNames").value[0].value['FirstName'].value == 'Avery'
-        assert business_card.fields.get("ContactNames").value[0].value['LastName'].value == 'Smith'
+        assert business_card.fields.get("ContactNames").value[0].value["FirstName"].value == "Avery"
+        assert business_card.fields.get("ContactNames").value[0].value["LastName"].value == "Smith"
 
         assert len(business_card.fields.get("JobTitles").value) == 1
         assert business_card.fields.get("JobTitles").value[0].value == "Senior Researcher"
@@ -143,13 +132,15 @@ class TestBusinessCard(FormRecognizerTest):
 
         for name, field in business_card.fields.items():
             for f in field.value:
-                self.assertFieldElementsHasValues(f.value_data.field_elements, business_card.page_range.first_page_number)
-        
+                self.assertFieldElementsHasValues(
+                    f.value_data.field_elements, business_card.page_range.first_page_number
+                )
+
         # check dict values
         assert len(business_card.fields.get("ContactNames").value) == 1
         assert business_card.fields.get("ContactNames").value[0].value_data.page_number == 1
-        assert business_card.fields.get("ContactNames").value[0].value['FirstName'].value == 'Avery'
-        assert business_card.fields.get("ContactNames").value[0].value['LastName'].value == 'Smith'
+        assert business_card.fields.get("ContactNames").value[0].value["FirstName"].value == "Avery"
+        assert business_card.fields.get("ContactNames").value[0].value["LastName"].value == "Smith"
 
         assert len(business_card.fields.get("JobTitles").value) == 1
         assert business_card.fields.get("JobTitles").value[0].value == "Senior Researcher"
@@ -181,7 +172,7 @@ class TestBusinessCard(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     def test_business_card_v2(self, **kwargs):
-        client = get_fr_client(api_version=FormRecognizerApiVersion.V2_0)        
+        client = get_fr_client(api_version=FormRecognizerApiVersion.V2_0)
         with open(self.business_card_jpg, "rb") as fd:
             business_card = fd.read()
         with pytest.raises(ValueError) as e:

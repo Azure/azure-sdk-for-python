@@ -101,11 +101,9 @@ def validate_message(message: Union[MessageType, MessageContent]):
             content = message["content"]
             content_type = message["content_type"]
         except (KeyError, TypeError) as exc:
-            raise TypeError(
-                f"""The content model {str(message)} must be a subtype of the MessageType protocol or type
+            raise TypeError(f"""The content model {str(message)} must be a subtype of the MessageType protocol or type
                     MessageContent. If using an Azure SDK model class, please check the README.md
-                    for the full list of supported Azure SDK models and their corresponding versions."""
-            ) from exc
+                    for the full list of supported Azure SDK models and their corresponding versions.""") from exc
 
     try:
         content_type_parts = content_type.split("+")
@@ -147,7 +145,7 @@ def decode_content(
         ) from exc
 
     try:
-        dict_value: Dict[str, Any]= avro_encoder.decode(content, reader)
+        dict_value: Dict[str, Any] = avro_encoder.decode(content, reader)
     except SchemaResolutionException as exc:
         raise InvalidSchemaError(
             f"Incompatible schemas.\nWriter's Schema: {schema_definition}\nReader's Schema: {readers_schema}",

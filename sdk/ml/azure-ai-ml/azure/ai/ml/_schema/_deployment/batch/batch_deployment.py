@@ -32,21 +32,17 @@ module_logger = logging.getLogger(__name__)
 class BatchDeploymentSchema(DeploymentSchema):
     compute = ComputeField(required=False)
     error_threshold = fields.Int(
-        metadata={
-            "description": """Error threshold, if the error count for the entire input goes above this value,\r\n
+        metadata={"description": """Error threshold, if the error count for the entire input goes above this value,\r\n
             the batch inference will be aborted. Range is [-1, int.MaxValue].\r\n
             For FileDataset, this value is the count of file failures.\r\n
             For TabularDataset, this value is the count of record failures.\r\n
-            If set to -1 (the lower bound), all failures during batch inference will be ignored."""
-        }
+            If set to -1 (the lower bound), all failures during batch inference will be ignored."""}
     )
     retry_settings = NestedField(BatchRetrySettingsSchema)
     mini_batch_size = fields.Int()
     logging_level = fields.Str(
-        metadata={
-            "description": """A string of the logging level name, which is defined in 'logging'.
-            Possible values are 'warning', 'info', and 'debug'."""
-        }
+        metadata={"description": """A string of the logging level name, which is defined in 'logging'.
+            Possible values are 'warning', 'info', and 'debug'."""}
     )
     output_action = StringTransformedEnum(
         allowed_values=[

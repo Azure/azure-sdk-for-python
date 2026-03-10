@@ -12,7 +12,6 @@ import sys
 from azure.identity import AuthenticationRequiredError, InteractiveBrowserCredential
 from azure.keyvault.secrets import SecretClient
 
-
 # This sample uses Key Vault only for demonstration. Any client accepting azure-identity credentials will work the same.
 VAULT_URL = os.environ.get("VAULT_URL")
 if not VAULT_URL:
