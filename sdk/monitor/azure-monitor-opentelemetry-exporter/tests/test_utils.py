@@ -10,6 +10,7 @@ from unittest.mock import patch
 from opentelemetry.sdk.resources import Resource
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._generated.exporter.models import TelemetryItem
+from azure.monitor.opentelemetry.exporter._constants import _GEN_AI_ATTRIBUTES
 from opentelemetry.sdk.resources import Resource
 from unittest.mock import patch
 
@@ -53,40 +54,51 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(filtered["short"], "ok")
         self.assertNotIn("k" * 151, filtered)
 
-    def test_filter_custom_properties_preserves_large_values_after_disable_limit(self):
-        # Ensure values larger than 64KiB are not truncated when the env variable is set to true
-        enable_values = ["true", "True", "TRUE", "TrUE", "  true  "]
+    def test_custom_properties_gen_ai_attributes_not_truncated(self):
+        # All values in _GEN_AI_ATTRIBUTES should not be truncated even when > 64KiB
         large_value = "x" * (64 * 1024 + 1000)
-        properties = {"large_key": large_value}
+        properties = {key: large_value for key in _GEN_AI_ATTRIBUTES}
+        filtered = _utils._filter_custom_properties(properties)
+        for key in _GEN_AI_ATTRIBUTES:
+            with self.subTest(key=key):
+                self.assertIn(key, filtered)
+                self.assertEqual(len(filtered[key]), 64 * 1024 + 1000)
 
-        for env_value in enable_values:
-            with self.subTest(env_value=env_value):
-                with patch.dict(
-                    "azure.monitor.opentelemetry.exporter._utils.environ",
-                    {"AZURE_MONITOR_DISABLE_CUSTOM_DIMENSIONS_LIMIT": env_value},
-                ):
-                    filtered = _utils._filter_custom_properties(properties)
-                    self.assertIn("large_key", filtered)
-                    self.assertEqual(filtered["large_key"], large_value)
-                    self.assertEqual(len(filtered["large_key"]), 64 * 1024 + 1000)
-
-    def test_filter_custom_properties_preserves_large_values_after_enable_limit(self):
-        # Ensure values larger than 64KiB are not truncated when the env variable is set to false/empty/invalid
-        disable_values = ["", "False", "truthy", "89", "fALSE", " "]
-        large_value = "x" * (64 * 1024 + 1000)
+    def test_filter_custom_properties_non_gen_ai_truncated_at_64kb(self):
+        # Regular properties exceeding 64KiB should be truncated
         max_length = 64 * 1024
-        properties = {"large_key": large_value}
+        large_value = "y" * (max_length + 2000)
+        properties = {
+            "span_kind": large_value,
+            "gen_ai.agent.version": large_value,
+            "http.method": large_value,
+            "custom.attribute": large_value,
+        }
+        filtered = _utils._filter_custom_properties(properties)
+        for key in properties:
+            with self.subTest(key=key):
+                self.assertIn(key, filtered)
+                self.assertEqual(len(filtered[key]), max_length)
 
-        for env_value in disable_values:
-            with self.subTest(env_value=env_value):
-                with patch.dict(
-                    "azure.monitor.opentelemetry.exporter._utils.environ",
-                    {"AZURE_MONITOR_DISABLE_CUSTOM_DIMENSIONS_LIMIT": env_value},
-                ):
-                    filtered = _utils._filter_custom_properties(properties)
-                    self.assertIn("large_key", filtered)
-                    self.assertEqual(filtered["large_key"], "x" * max_length)
-                    self.assertEqual(len(filtered["large_key"]), max_length)
+    def test_filter_custom_properties_mixed_gen_ai_and_regular(self):
+        # Gen AI attributes keep full value, regular ones are truncated
+        max_length = 64 * 1024
+        large_value = "z" * (max_length + 3000)
+        properties = {
+            "gen_ai.input.messages": large_value,
+            "gen_ai.output.messages": large_value,
+            "gen_ai.agent.version": large_value,
+            "span_kind": large_value,
+            "db.statement": large_value,
+        }
+        filtered = _utils._filter_custom_properties(properties)
+        # Gen AI attributes — not truncated
+        self.assertEqual(len(filtered["gen_ai.input.messages"]), max_length + 3000)
+        self.assertEqual(len(filtered["gen_ai.output.messages"]), max_length + 3000)
+        # Regular attributes — truncated
+        self.assertEqual(len(filtered["gen_ai.agent.version"]), max_length)
+        self.assertEqual(len(filtered["span_kind"]), max_length)
+        self.assertEqual(len(filtered["db.statement"]), max_length)
 
     def test_nanoseconds_to_duration(self):
         ns_to_duration = _utils.ns_to_duration
