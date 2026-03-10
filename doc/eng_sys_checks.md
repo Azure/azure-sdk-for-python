@@ -5,6 +5,7 @@
   - [Skipping a check at build queue time](#skipping-a-check-at-build-queue-time)
   - [Skipping entire sections of builds](#skipping-entire-sections-of-builds)
   - [The pyproject.toml](#the-pyprojecttoml)
+    - [Required Metadata](#required-metadata)
     - [Coverage Enforcement](#coverage-enforcement)
   - [Environment variables important to CI](#environment-variables-important-to-ci)
     - [Atomic Overrides](#atomic-overrides)
