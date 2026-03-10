@@ -5,7 +5,7 @@ This sample hosts a two-step Agent Framework workflow—`Writer` followed by `Re
 ### What `workflow_agent_simple.py` does
 - Builds a workflow with `WorkflowBuilder`
 - Passes a workflow factory (`lambda: create_workflow(client)`) to `from_agent_framework(...).run_async()`, so a fresh workflow is created per request.
-- Uses `Agent(client=AzureOpenAIResponsesClient(project_endpoint=..., credential=...))` for the writer and reviewer nodes.
+- Uses `Agent(client=AzureOpenAIChatClient(credential=...))` for the writer and reviewer nodes.
 
 The workflow factory is invoked for each incoming request, so keep workflow construction deterministic and side-effect free.
 
@@ -19,11 +19,7 @@ The workflow factory is invoked for each incoming request, so keep workflow cons
 ---
 
 ## Setup
-1. Copy `.envtemplate` to `.env` and fill in your project details:
-     ```
-     AZURE_AI_PROJECT_ENDPOINT=<foundry-project-endpoint>
-     AZURE_AI_MODEL_DEPLOYMENT_NAME=<model-deployment-name>
-     ```
+1. Copy `.envtemplate` to `.env` and fill in your project details
 2. Install the sample dependencies:
      ```bash
      pip install -r requirements.txt

@@ -2,17 +2,13 @@
 
 import json
 from dataclasses import dataclass
-from typing import Dict, List, Tuple
 from uuid import uuid4
 
 from agent_framework import (
-    AgentRunResponseUpdate,
-    AgentRunUpdateEvent,
-    ChatClientProtocol,
-    ChatMessage,
-    Contents,
+    AgentResponse,
     Executor,
-    Role,
+    Message,
+    SupportsChatGetResponse,
     WorkflowContext,
     handler,
 )
@@ -23,8 +19,8 @@ class ReviewRequest:
     """Structured request passed from Worker to Reviewer for evaluation."""
 
     request_id: str
-    user_messages: List[ChatMessage]
-    agent_messages: List[ChatMessage]
+    user_messages: list[Message]
+    agent_messages: list[Message]
 
 
 @dataclass
@@ -46,23 +42,20 @@ class ReviewResponse:
         )
 
 
-PendingReviewState = Tuple[ReviewRequest, List[ChatMessage]]
-
-
 class Worker(Executor):
     """Executor that generates responses and incorporates feedback when necessary."""
 
-    def __init__(self, id: str, chat_client: ChatClientProtocol) -> None:
+    def __init__(self, id: str, chat_client: SupportsChatGetResponse) -> None:
         super().__init__(id=id)
         self._chat_client = chat_client
-        self._pending_requests: Dict[str, PendingReviewState] = {}
+        self._pending_requests: dict[str, tuple[ReviewRequest, list[Message]]] = {}
 
     @handler
-    async def handle_user_messages(self, user_messages: List[ChatMessage], ctx: WorkflowContext[ReviewRequest]) -> None:
+    async def handle_user_messages(self, user_messages: list[Message], ctx: WorkflowContext[ReviewRequest]) -> None:
         print("Worker: Received user messages, generating response...")
 
         # Initialize chat with system prompt.
-        messages = [ChatMessage(role=Role.SYSTEM, text="You are a helpful assistant.")]
+        messages = [Message("system", ["You are a helpful assistant."])]
         messages.extend(user_messages)
 
         print("Worker: Calling LLM to generate response...")
@@ -81,7 +74,9 @@ class Worker(Executor):
         self._pending_requests[request.request_id] = (request, messages)
 
     @handler
-    async def handle_review_response(self, review: ReviewResponse, ctx: WorkflowContext[ReviewRequest]) -> None:
+    async def handle_review_response(
+        self, review: ReviewResponse, ctx: WorkflowContext[ReviewRequest, AgentResponse]
+    ) -> None:
         print(f"Worker: Received review for request {review.request_id[:8]} - Approved: {review.approved}")
 
         if review.request_id not in self._pending_requests:
@@ -91,24 +86,16 @@ class Worker(Executor):
 
         if review.approved:
             print("Worker: Response approved. Emitting to external consumer...")
-            contents: List[Contents] = []
-            for message in request.agent_messages:
-                contents.extend(message.contents)
-
-            # Emit approved result to external consumer via AgentRunUpdateEvent.
-            await ctx.add_event(
-                AgentRunUpdateEvent(self.id, data=AgentRunResponseUpdate(contents=contents, role=Role.ASSISTANT))
-            )
+            # Emit approved result to external consumer
+            await ctx.yield_output(AgentResponse(messages=request.agent_messages))
             return
 
         print(f"Worker: Response not approved. Feedback: {review.feedback}")
         print("Worker: Regenerating response with feedback...")
 
         # Incorporate review feedback.
-        messages.append(ChatMessage(role=Role.SYSTEM, text=review.feedback))
-        messages.append(
-            ChatMessage(role=Role.SYSTEM, text="Please incorporate the feedback and regenerate the response.")
-        )
+        messages.append(Message("system", [review.feedback]))
+        messages.append(Message("system", ["Please incorporate the feedback and regenerate the response."]))
         messages.extend(request.user_messages)
 
         # Retry with updated prompt.
@@ -126,14 +113,14 @@ class Worker(Executor):
         # Track new request for further evaluation.
         self._pending_requests[new_request.request_id] = (new_request, messages)
 
-    async def on_checkpoint_save(self) -> Dict:
+    async def on_checkpoint_save(self) -> dict:
         """
         Persist pending requests during checkpointing.
         In memory implementation for demonstration purposes.
         """
         return {"pending_requests": self._pending_requests}
 
-    async def on_checkpoint_restore(self, data: Dict) -> None:
+    async def on_checkpoint_restore(self, data: dict) -> None:
         """
         Load pending requests from checkpoint data.
         In memory implementation for demonstration purposes.

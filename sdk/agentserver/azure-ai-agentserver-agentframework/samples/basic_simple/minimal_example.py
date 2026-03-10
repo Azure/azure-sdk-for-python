@@ -4,7 +4,7 @@ from random import randint
 from typing import Annotated
 
 from agent_framework import Agent
-from agent_framework.azure import AzureOpenAIResponsesClient
+from agent_framework.azure import AzureOpenAIChatClient
 from azure.identity import AzureCliCredential
 from dotenv import load_dotenv
 
@@ -23,7 +23,7 @@ def get_weather(
 
 def main() -> None:
     agent = Agent(
-        client=AzureOpenAIResponsesClient(credential=AzureCliCredential()),
+        client=AzureOpenAIChatClient(credential=AzureCliCredential()),
         instructions="You are a helpful weather agent.",
         tools=get_weather,
     )

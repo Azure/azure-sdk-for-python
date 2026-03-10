@@ -5,6 +5,7 @@ from typing import Annotated
 
 from agent_framework import Agent, tool
 from agent_framework.azure import AzureOpenAIChatClient
+from azure.identity import AzureCliCredential
 from dotenv import load_dotenv
 
 from azure.ai.agentserver.agentframework import from_agent_framework
@@ -30,7 +31,7 @@ def add_to_calendar(
 
 def build_agent() -> Agent:
     return Agent(
-        client=AzureOpenAIChatClient(),
+        client=AzureOpenAIChatClient(credential=AzureCliCredential()),
         name="CalendarAgent",
         instructions="You are a helpful calendar assistant.",
         tools=[add_to_calendar],

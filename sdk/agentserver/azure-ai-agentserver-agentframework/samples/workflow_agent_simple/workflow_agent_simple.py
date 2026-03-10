@@ -5,14 +5,14 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from agent_framework import Agent, Workflow, WorkflowBuilder
-from agent_framework.azure import AzureOpenAIResponsesClient
+from agent_framework import Agent, BaseChatClient, Workflow, WorkflowBuilder
+from agent_framework.azure import AzureOpenAIChatClient
 from azure.identity import AzureCliCredential
 
 from azure.ai.agentserver.agentframework import from_agent_framework
 
 
-def create_writer_agent(client: AzureOpenAIResponsesClient) -> Agent:
+def create_writer_agent(client: BaseChatClient) -> Agent:
     return Agent(
         client=client,
         name="Writer",
@@ -22,7 +22,7 @@ def create_writer_agent(client: AzureOpenAIResponsesClient) -> Agent:
     )
 
 
-def create_reviewer_agent(client: AzureOpenAIResponsesClient) -> Agent:
+def create_reviewer_agent(client: BaseChatClient) -> Agent:
     return Agent(
         client=client,
         name="Reviewer",
@@ -34,18 +34,14 @@ def create_reviewer_agent(client: AzureOpenAIResponsesClient) -> Agent:
     )
 
 
-def create_workflow(client: AzureOpenAIResponsesClient) -> Workflow:
+def create_workflow(client: BaseChatClient) -> Workflow:
     writer = create_writer_agent(client)
     reviewer = create_reviewer_agent(client)
     return WorkflowBuilder(start_executor=writer).add_edge(writer, reviewer).build()
 
 
 async def main() -> None:
-    project_endpoint = os.getenv("AZURE_AI_PROJECT_ENDPOINT", "")
-    client = AzureOpenAIResponsesClient(
-        project_endpoint=project_endpoint,
-        credential=AzureCliCredential(),
-    )
+    client = AzureOpenAIChatClient(credential=AzureCliCredential())
     await from_agent_framework(lambda: create_workflow(client)).run_async()
 
 

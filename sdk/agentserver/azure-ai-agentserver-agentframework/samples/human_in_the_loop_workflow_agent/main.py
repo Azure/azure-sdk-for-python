@@ -92,7 +92,12 @@ def create_workflow() -> Workflow:
         chat_client=AzureOpenAIChatClient(credential=AzureCliCredential()),
     )
     reviewer = ReviewerWithHumanInTheLoop(worker_id=worker.id)
-    return WorkflowBuilder(start_executor=worker).add_edge(worker, reviewer).add_edge(reviewer, worker).build()
+    return (
+        WorkflowBuilder(start_executor=worker, name="workflow_as_agent_hitl")
+            .add_edge(worker, reviewer)
+            .add_edge(reviewer, worker)
+            .build()
+    )
 
 
 async def run_agent() -> None:

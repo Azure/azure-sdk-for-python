@@ -11,7 +11,7 @@ This sample demonstrates how to use the agents hosting adapter in an async imple
 Copy `.envtemplate` to `.env` and supply:
 
 ```
-AZURE_OPENAI_ENDPOINT=https://<endpoint-name>.cognitiveservices.azure.com/
+AZURE_OPENAI_ENDPOINT=https://<endpoint-name>.openai.azure.com
 OPENAI_API_VERSION=2025-03-01-preview
 AZURE_OPENAI_CHAT_DEPLOYMENT_NAME=<deployment-name>
 ```
