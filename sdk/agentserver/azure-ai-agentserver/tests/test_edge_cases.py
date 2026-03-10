@@ -239,10 +239,13 @@ class TestResponseHeaders:
 
     @pytest.mark.asyncio
     async def test_agent_custom_invocation_id_not_overwritten(self, custom_header_client):
-        """If agent sets x-agent-invocation-id, the server doesn't overwrite it."""
+        """If agent sets x-agent-invocation-id, the server overwrites it with the canonical value."""
         resp = await custom_header_client.post("/invocations", content=b"{}")
         assert resp.status_code == 200
-        assert resp.headers["x-agent-invocation-id"] == "custom-id-from-agent"
+        # Server always controls the invocation-id header; handler cannot override it.
+        invocation_id = resp.headers["x-agent-invocation-id"]
+        assert invocation_id != "custom-id-from-agent"
+        uuid.UUID(invocation_id)  # must be a valid server-generated UUID
 
     @pytest.mark.asyncio
     async def test_invocation_id_injected_when_missing(self, echo_client):
@@ -251,6 +254,31 @@ class TestResponseHeaders:
         assert resp.status_code == 200
         invocation_id = resp.headers.get("x-agent-invocation-id")
         assert invocation_id is not None
+        uuid.UUID(invocation_id)  # valid UUID
+
+    @pytest.mark.asyncio
+    async def test_invocation_id_accepted_from_request_header(self, echo_client):
+        """If caller sends x-agent-invocation-id in the request, server uses it."""
+        custom_id = "caller-provided-id-12345"
+        resp = await echo_client.post(
+            "/invocations",
+            content=b"hello",
+            headers={"x-agent-invocation-id": custom_id},
+        )
+        assert resp.status_code == 200
+        assert resp.headers["x-agent-invocation-id"] == custom_id
+
+    @pytest.mark.asyncio
+    async def test_invocation_id_generated_when_request_header_empty(self, echo_client):
+        """If caller sends empty x-agent-invocation-id, server generates a new one."""
+        resp = await echo_client.post(
+            "/invocations",
+            content=b"hello",
+            headers={"x-agent-invocation-id": ""},
+        )
+        assert resp.status_code == 200
+        invocation_id = resp.headers["x-agent-invocation-id"]
+        assert invocation_id != ""
         uuid.UUID(invocation_id)  # valid UUID
 
 

@@ -22,7 +22,7 @@ from . import _config
 logger = logging.getLogger("azure.ai.agentserver")
 
 
-class AgentServer:
+class AgentServer:  # pylint: disable=too-many-instance-attributes
     """Agent server with pluggable protocol heads.
 
     Instantiate and register handlers with decorators::
@@ -205,7 +205,13 @@ class AgentServer:
     # ------------------------------------------------------------------
 
     async def _dispatch_invoke(self, request: Request) -> Response:
-        """Dispatch to the registered invoke handler."""
+        """Dispatch to the registered invoke handler.
+
+        :param request: The incoming Starlette request.
+        :type request: Request
+        :return: The response from the invoke handler.
+        :rtype: Response
+        """
         if self._invoke_fn is not None:
             return await self._invoke_fn(request)
         raise RuntimeError(
@@ -213,13 +219,25 @@ class AgentServer:
         )
 
     async def _dispatch_get_invocation(self, request: Request) -> Response:
-        """Dispatch to the registered get-invocation handler, or return 404."""
+        """Dispatch to the registered get-invocation handler, or return 404.
+
+        :param request: The incoming Starlette request.
+        :type request: Request
+        :return: The response from the get-invocation handler.
+        :rtype: Response
+        """
         if self._get_invocation_fn is not None:
             return await self._get_invocation_fn(request)
         return error_response("not_supported", "get_invocation not supported", status_code=404)
 
     async def _dispatch_cancel_invocation(self, request: Request) -> Response:
-        """Dispatch to the registered cancel-invocation handler, or return 404."""
+        """Dispatch to the registered cancel-invocation handler, or return 404.
+
+        :param request: The incoming Starlette request.
+        :type request: Request
+        :return: The response from the cancel-invocation handler.
+        :rtype: Response
+        """
         if self._cancel_invocation_fn is not None:
             return await self._cancel_invocation_fn(request)
         return error_response("not_supported", "cancel_invocation not supported", status_code=404)
@@ -380,7 +398,10 @@ class AgentServer:
         :return: The invocation result or error response.
         :rtype: Response
         """
-        invocation_id = str(uuid.uuid4())
+        invocation_id = (
+            request.headers.get(Constants.INVOCATION_ID_HEADER)
+            or str(uuid.uuid4())
+        )
         request.state.invocation_id = invocation_id
 
         # Validate request body against OpenAPI spec
@@ -449,9 +470,8 @@ class AgentServer:
         elif self._tracing is not None:
             self._tracing.end_span(otel_span)
 
-        # Auto-inject invocation_id header if developer didn't set it
-        if Constants.INVOCATION_ID_HEADER not in response.headers:
-            response.headers[Constants.INVOCATION_ID_HEADER] = invocation_id
+        # Always set invocation_id header (overrides any handler-set value)
+        response.headers[Constants.INVOCATION_ID_HEADER] = invocation_id
 
         return response
 
@@ -542,5 +562,3 @@ class AgentServer:
         :rtype: Response
         """
         return JSONResponse({"status": "ready"})
-
-

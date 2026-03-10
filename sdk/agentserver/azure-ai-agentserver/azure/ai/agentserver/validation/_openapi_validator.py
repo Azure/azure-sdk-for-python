@@ -29,7 +29,7 @@ import json
 import logging
 import re
 from collections import Counter
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Any, Optional
 
 import jsonschema
@@ -49,7 +49,13 @@ _EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 @_format_checker.checks("date-time", raises=ValueError)
 def _check_datetime(value: object) -> bool:
-    """Validate RFC 3339 / ISO 8601 date-time strings using stdlib only."""
+    """Validate RFC 3339 / ISO 8601 date-time strings using stdlib only.
+
+    :param value: The value to validate.
+    :type value: object
+    :return: True if valid.
+    :rtype: bool
+    """
     if not isinstance(value, str):
         return True  # non-string is not a format error
     normalized = value.replace("Z", "+00:00") if value.endswith("Z") else value
@@ -59,7 +65,13 @@ def _check_datetime(value: object) -> bool:
 
 @_format_checker.checks("date", raises=ValueError)
 def _check_date(value: object) -> bool:
-    """Validate ISO 8601 date strings (YYYY-MM-DD)."""
+    """Validate ISO 8601 date strings (YYYY-MM-DD).
+
+    :param value: The value to validate.
+    :type value: object
+    :return: True if valid.
+    :rtype: bool
+    """
     if not isinstance(value, str):
         return True
     datetime.strptime(value, "%Y-%m-%d")
@@ -68,7 +80,13 @@ def _check_date(value: object) -> bool:
 
 @_format_checker.checks("email", raises=ValueError)
 def _check_email(value: object) -> bool:
-    """Basic RFC 5322 email format check (no DNS lookup)."""
+    """Basic RFC 5322 email format check (no DNS lookup).
+
+    :param value: The value to validate.
+    :type value: object
+    :return: True if valid.
+    :rtype: bool
+    """
     if not isinstance(value, str):
         return True
     if not _EMAIL_RE.match(value):
@@ -467,7 +485,7 @@ def _collect_composition_errors(error: ValidationError) -> list[str]:
     """
     # Group sub-errors by branch index (first element of schema_path)
     branch_groups: dict[int, list[ValidationError]] = {}
-    for sub in error.context:
+    for sub in error.context or []:
         if sub.schema_path:
             idx = sub.schema_path[0]
             if isinstance(idx, int):
@@ -651,7 +669,9 @@ def _resolve_ref(spec: dict[str, Any], schema: dict[str, Any]) -> dict[str, Any]
     return current if isinstance(current, dict) else schema
 
 
-def _resolve_refs_deep(spec: dict[str, Any], node: Any, _seen: Optional[set[str]] = None) -> Any:
+def _resolve_refs_deep(  # pylint: disable=too-many-return-statements
+    spec: dict[str, Any], node: Any, _seen: Optional[set[str]] = None
+) -> Any:
     """Recursively resolve all ``$ref`` pointers in a schema tree.
 
     Walks the schema, replacing every ``{"$ref": "..."}`` with the referenced
