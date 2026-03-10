@@ -43,7 +43,7 @@ class TestAgentFileSearchCodeInterpreterFunction(TestBase):
         3. Function Tool: Agent saves the computed results
         """
 
-        model = kwargs.get("model_deployment_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)

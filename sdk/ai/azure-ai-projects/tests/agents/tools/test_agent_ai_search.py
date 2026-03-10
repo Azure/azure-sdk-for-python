@@ -81,7 +81,7 @@ class TestAgentAISearch(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = kwargs.get("model_deployment_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         # Get AI Search connection and index from environment
         ai_search_connection_id = kwargs.get("ai_search_project_connection_id")

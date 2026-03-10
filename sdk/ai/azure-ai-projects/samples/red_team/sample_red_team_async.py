@@ -16,9 +16,9 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project.
-    2) MODEL_DEPLOYMENT_NAME - Required. Your model deployment name.
+    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - Required. Your model deployment name.
     3) MODEL_ENDPOINT - Required. The Azure AI Model endpoint, as found in the overview page of your
        Microsoft Foundry project. Example: https://<account_name>.services.ai.azure.com
     4) MODEL_API_KEY - Required. The API key for your Azure AI Model.
@@ -43,11 +43,11 @@ async def sample_red_team_async() -> None:
     """Demonstrates how to perform Red Team operations using the AIProjectClient."""
 
     endpoint = os.environ[
-        "PROJECT_ENDPOINT"
+        "AZURE_AI_PROJECT_ENDPOINT"
     ]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
     model_endpoint = os.environ["MODEL_ENDPOINT"]  # Sample : https://<account_name>.services.ai.azure.com
     model_api_key = os.environ["MODEL_API_KEY"]
-    model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]  # Sample : gpt-4o-mini
+    model_deployment_name = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]  # Sample : gpt-4o-mini
 
     async with (
         DefaultAzureCredential() as credential,

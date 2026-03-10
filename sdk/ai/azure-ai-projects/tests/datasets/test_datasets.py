@@ -137,7 +137,7 @@ class TestDatasets(TestBase):
     @recorded_by_proxy
     def test_datasets_upload_folder(self, **kwargs):
 
-        endpoint = kwargs.pop("project_endpoint")
+        endpoint = kwargs.pop("azure_ai_project_endpoint")
         print("\n=====> Endpoint:", endpoint)
 
         dataset_name = self.test_datasets_params["dataset_name_2"]

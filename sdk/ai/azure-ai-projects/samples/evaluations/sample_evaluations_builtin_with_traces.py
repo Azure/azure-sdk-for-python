@@ -19,12 +19,12 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv azure-monitor-query
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
     2) APPINSIGHTS_RESOURCE_ID - Required. The Azure Application Insights resource ID that stores agent traces.
        It has the form: /subscriptions/<subscription_id>/resourceGroups/<rg_name>/providers/Microsoft.Insights/components/<resource_name>.
     3) AGENT_ID - Required. The agent identifier emitted by the Azure tracing integration, used to filter traces.
-    4) MODEL_DEPLOYMENT_NAME - Required. The Azure OpenAI deployment name to use with the built-in evaluators.
+    4) AZURE_AI_MODEL_DEPLOYMENT_NAME - Required. The Azure OpenAI deployment name to use with the built-in evaluators.
     5) TRACE_LOOKBACK_HOURS - Optional. Number of hours to look back when querying traces and in the evaluation run.
        Defaults to 1.
 """
@@ -44,12 +44,12 @@ from pprint import pprint
 load_dotenv()
 
 
-endpoint = os.environ["PROJECT_ENDPOINT"]
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 appinsights_resource_id = os.environ[
     "APPINSIGHTS_RESOURCE_ID"
 ]  # Sample : /subscriptions/<subscription_id>/resourceGroups/<rg_name>/providers/Microsoft.Insights/components/<resource_name>
 agent_id = os.environ["AGENT_ID"]
-model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
+model_deployment_name = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]
 trace_query_hours = int(os.environ.get("TRACE_LOOKBACK_HOURS", "1"))
 
 

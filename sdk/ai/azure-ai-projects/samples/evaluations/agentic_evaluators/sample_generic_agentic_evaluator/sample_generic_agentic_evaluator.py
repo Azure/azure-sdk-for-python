@@ -18,9 +18,9 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
-    2) MODEL_DEPLOYMENT_NAME - Required. The name of the model deployment to use for evaluation.
+    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - Required. The name of the model deployment to use for evaluation.
 """
 
 from dotenv import load_dotenv
@@ -36,7 +36,7 @@ def _get_evaluator_initialization_parameters(evaluator_name: str) -> dict[str, s
     if evaluator_name == "task_navigation_efficiency":
         return {"matching_mode": "exact_match"}  #  Can be "exact_match", "in_order_match", or "any_order_match"
     else:
-        model_deployment_name = os.environ.get("MODEL_DEPLOYMENT_NAME", "")  # Sample : gpt-4o-mini
+        model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "")  # Sample : gpt-4o-mini
         return {"deployment_name": model_deployment_name}
 
 

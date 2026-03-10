@@ -138,7 +138,7 @@ class TestDatasetsAsync(TestBase):
     @recorded_by_proxy_async
     async def test_datasets_upload_folder_async(self, **kwargs):
 
-        endpoint = kwargs.pop("project_endpoint")
+        endpoint = kwargs.pop("azure_ai_project_endpoint")
         print("\n=====> Endpoint:", endpoint)
 
         dataset_name = self.test_datasets_params["dataset_name_4"]

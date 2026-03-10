@@ -59,7 +59,7 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
         assert AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
         browser_automation_connection_id = kwargs.get("browser_automation_project_connection_id")
         assert deployment_name is not None
         if browser_automation_connection_id is None:
@@ -194,7 +194,7 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
         assert not AIProjectInstrumentor().is_content_recording_enabled()
 
         project_client = self.create_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
         browser_automation_connection_id = kwargs.get("browser_automation_project_connection_id")
         assert deployment_name is not None
         if browser_automation_connection_id is None:
@@ -320,7 +320,7 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
         self.setup_telemetry()
 
         project_client = self.create_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
         browser_automation_connection_id = kwargs.get("browser_automation_project_connection_id")
         assert deployment_name is not None
         if browser_automation_connection_id is None:
@@ -448,7 +448,7 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
         self.setup_telemetry()
 
         project_client = self.create_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
         browser_automation_connection_id = kwargs.get("browser_automation_project_connection_id")
         assert deployment_name is not None
         if browser_automation_connection_id is None:

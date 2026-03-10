@@ -18,8 +18,8 @@ class TestDeploymentsAsync(TestBase):
     async def test_deployments_async(self, **kwargs):
 
         model_publisher = "OpenAI"
-        model_name = kwargs.get("model_deployment_name")
-        model_deployment_name = kwargs.get("model_deployment_name")
+        model_name = kwargs.get("azure_ai_model_deployment_name")
+        model_deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with self.create_async_client(**kwargs) as project_client:
 

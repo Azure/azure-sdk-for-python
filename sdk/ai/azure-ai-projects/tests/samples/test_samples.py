@@ -62,8 +62,8 @@ class TestSamples(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=resource_management_instructions,
-            project_endpoint=kwargs["project_endpoint"],
-            model=kwargs["model_deployment_name"],
+            project_endpoint=kwargs["azure_ai_project_endpoint"],
+            model=kwargs["azure_ai_model_deployment_name"],
         )
 
     @pytest.mark.parametrize(
@@ -86,8 +86,8 @@ class TestSamples(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=memories_instructions,
-            project_endpoint=kwargs["project_endpoint"],
-            model=kwargs["model_deployment_name"],
+            project_endpoint=kwargs["azure_ai_project_endpoint"],
+            model=kwargs["azure_ai_model_deployment_name"],
         )
 
     @pytest.mark.parametrize(
@@ -106,8 +106,8 @@ class TestSamples(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=agents_instructions,
-            project_endpoint=kwargs["project_endpoint"],
-            model=kwargs["model_deployment_name"],
+            project_endpoint=kwargs["azure_ai_project_endpoint"],
+            model=kwargs["azure_ai_model_deployment_name"],
         )
 
     @pytest.mark.parametrize(
@@ -128,8 +128,8 @@ class TestSamples(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=resource_management_instructions,
-            project_endpoint=kwargs["project_endpoint"],
-            model=kwargs["model_deployment_name"],
+            project_endpoint=kwargs["azure_ai_project_endpoint"],
+            model=kwargs["azure_ai_model_deployment_name"],
         )
 
     @pytest.mark.parametrize(
@@ -148,8 +148,8 @@ class TestSamples(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=resource_management_instructions,
-            project_endpoint=kwargs["project_endpoint"],
-            model=kwargs["model_deployment_name"],
+            project_endpoint=kwargs["azure_ai_project_endpoint"],
+            model=kwargs["azure_ai_model_deployment_name"],
         )
 
     @pytest.mark.parametrize(
@@ -168,8 +168,8 @@ class TestSamples(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=resource_management_instructions,
-            project_endpoint=kwargs["project_endpoint"],
-            model=kwargs["model_deployment_name"],
+            project_endpoint=kwargs["azure_ai_project_endpoint"],
+            model=kwargs["azure_ai_model_deployment_name"],
         )
 
     @pytest.mark.parametrize(
@@ -188,8 +188,8 @@ class TestSamples(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=resource_management_instructions,
-            project_endpoint=kwargs["project_endpoint"],
-            model=kwargs["model_deployment_name"],
+            project_endpoint=kwargs["azure_ai_project_endpoint"],
+            model=kwargs["azure_ai_model_deployment_name"],
         )
 
     @pytest.mark.parametrize(
@@ -211,6 +211,6 @@ class TestSamples(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=fine_tuning_instructions,
-            project_endpoint=kwargs["project_endpoint"],
-            model=kwargs["model_deployment_name"],
+            project_endpoint=kwargs["azure_ai_project_endpoint"],
+            model=kwargs["azure_ai_model_deployment_name"],
         )

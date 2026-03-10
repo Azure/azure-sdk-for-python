@@ -17,7 +17,7 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
     2) AZURE_AI_AGENT_NAME - Required. The name of the Agent to perform red teaming evaluation on.
 """
@@ -45,7 +45,7 @@ from typing import Union
 def main() -> None:
     load_dotenv()
     #
-    endpoint = os.environ.get("PROJECT_ENDPOINT", "")
+    endpoint = os.environ.get("AZURE_AI_PROJECT_ENDPOINT", "")
     agent_name = os.environ.get("AZURE_AI_AGENT_NAME", "")
 
     with (
@@ -56,7 +56,7 @@ def main() -> None:
         agent_version = project_client.agents.create_version(
             agent_name=agent_name,
             definition=PromptAgentDefinition(
-                model=os.environ["MODEL_DEPLOYMENT_NAME"],
+                model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
                 instructions="You are a helpful assistant that answers general questions",
             ),
         )

@@ -18,9 +18,9 @@ USAGE:
     pip install openai azure-identity python-dotenv
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
-    2) MODEL_DEPLOYMENT_NAME - Required. The name of the model deployment to use for evaluation.
+    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - Required. The name of the model deployment to use for evaluation.
 """
 
 import os
@@ -42,10 +42,10 @@ load_dotenv()
 
 client = OpenAI(
     api_key=get_bearer_token_provider(DefaultAzureCredential(), "https://ai.azure.com/.default"),
-    base_url=os.environ["PROJECT_ENDPOINT"].rstrip("/") + "/openai/v1",
+    base_url=os.environ["AZURE_AI_PROJECT_ENDPOINT"].rstrip("/") + "/openai/v1",
 )
 
-model_deployment_name = os.environ.get("MODEL_DEPLOYMENT_NAME", "")  # Sample : gpt-4o-mini
+model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "")  # Sample : gpt-4o-mini
 
 data_source_config = DataSourceConfigCustom(
     {
