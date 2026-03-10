@@ -19,6 +19,7 @@ Tests cover:
 """
 
 from typing import Any, Dict, List, Optional
+from pathlib import Path
 import pytest
 import asyncio
 
@@ -29,6 +30,8 @@ pytest.importorskip("pyrit", reason="redteam extra is not installed")
 from azure.ai.evaluation.red_team import RedTeam, RiskCategory, AttackStrategy
 from azure.ai.evaluation.red_team._red_team_result import RedTeamResult
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration
+
+SEEDS_DIR = str(Path(__file__).parent / "data" / "redteam_seeds")
 
 
 @pytest.mark.usefixtures("recording_injection", "recorded_test")
@@ -645,6 +648,7 @@ class TestRedTeamFoundry:
             credential=azure_cred,
             risk_categories=[RiskCategory.TaskAdherence],
             num_objectives=1,
+            custom_attack_seed_prompts=str(Path(SEEDS_DIR) / "task_adherence_seeds.json"),
         )
 
         result = asyncio.run(
@@ -710,6 +714,7 @@ class TestRedTeamFoundry:
             credential=azure_cred,
             risk_categories=[RiskCategory.SensitiveDataLeakage],
             num_objectives=1,
+            custom_attack_seed_prompts=str(Path(SEEDS_DIR) / "sensitive_data_leakage_seeds.json"),
         )
 
         result = asyncio.run(
