@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -855,7 +856,7 @@ class WorkspaceProperties(_Model):
     :ivar key_vaults: Key vaults.
     :vartype key_vaults: list[str]
     :ivar managed_network: Managed network configuration.
-    :vartype managed_network: any
+    :vartype managed_network: dict[str, str]
     :ivar ml_flow_tracking_uri: The URI associated with this workspace that machine learning flow
      must point at to set up tracking.
     :vartype ml_flow_tracking_uri: str
@@ -974,7 +975,7 @@ class WorkspaceProperties(_Model):
         name="keyVaults", visibility=["read", "create", "update", "delete", "query"]
     )
     """Key vaults."""
-    managed_network: Optional[Any] = rest_field(
+    managed_network: Optional[dict[str, str]] = rest_field(
         name="managedNetwork", visibility=["read", "create", "update", "delete", "query"]
     )
     """Managed network configuration."""
@@ -1068,7 +1069,7 @@ class WorkspaceProperties(_Model):
         image_build_compute: Optional[str] = None,
         key_vault: Optional[str] = None,
         key_vaults: Optional[list[str]] = None,
-        managed_network: Optional[Any] = None,
+        managed_network: Optional[dict[str, str]] = None,
         primary_user_assigned_identity: Optional[str] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccessType"]] = None,
         service_managed_resources_settings: Optional["_models.ServiceManagedResourcesSettings"] = None,
