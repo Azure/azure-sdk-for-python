@@ -1,6 +1,6 @@
 # Release History
 
-## 1.16.0 (Unreleased)
+## 1.16.0 (2026-03-10)
 
 ### Bugs Fixed
 - Fixed `UnicodeDecodeError` on Windows when reading red team JSONL files containing non-ASCII characters (UnicodeConfusable strategy, CJK languages) by adding explicit `encoding="utf-8"` to all file open calls in the result processing path.
