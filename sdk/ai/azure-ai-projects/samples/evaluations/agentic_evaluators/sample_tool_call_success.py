@@ -105,7 +105,7 @@ def main() -> None:
                         "type": "tool_call",
                         "tool_call_id": "call_FileUpload456",
                         "name": "upload_file",
-                        "arguments": {"file_path": "/documents/report.pd", "destination": "cloud_storage"},
+                        "arguments": {"file_path": "/documents/report.pdf", "destination": "cloud_storage"},
                     }
                 ],
             },

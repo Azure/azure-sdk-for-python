@@ -58,7 +58,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disable
         yield
         self.cleanup()
 
-    def test_instrumentation(self, **_kwargs):
+    def test_instrumentation(self):
         # Make sure code is not instrumented due to a previous test exception
         AIProjectInstrumentor().uninstrument()
         os.environ["AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING"] = "true"
@@ -76,7 +76,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disable
             os.environ.pop("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", None)
         assert exception_caught == False
 
-    def test_instrumenting_twice_does_not_cause_exception(self, **_kwargs):
+    def test_instrumenting_twice_does_not_cause_exception(self):
         # Make sure code is not instrumented due to a previous test exception
         AIProjectInstrumentor().uninstrument()
         os.environ["AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING"] = "true"
@@ -92,7 +92,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disable
             os.environ.pop("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", None)
         assert exception_caught == False
 
-    def test_uninstrumenting_uninstrumented_does_not_cause_exception(self, **_kwargs):
+    def test_uninstrumenting_uninstrumented_does_not_cause_exception(self):
         # Make sure code is not instrumented due to a previous test exception
         AIProjectInstrumentor().uninstrument()
         exception_caught = False
@@ -103,7 +103,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disable
             print(e)
         assert exception_caught == False
 
-    def test_uninstrumenting_twice_does_not_cause_exception(self, **_kwargs):
+    def test_uninstrumenting_twice_does_not_cause_exception(self):
         # Make sure code is not instrumented due to a previous test exception
         AIProjectInstrumentor().uninstrument()
         os.environ["AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING"] = "true"

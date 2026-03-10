@@ -81,7 +81,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
         return openai_client, model_deployment_name
 
-    def test_instrumentation(self, **_kwargs):
+    def test_instrumentation(self):
         # Make sure code is not instrumented due to a previous test exception
         AIProjectInstrumentor().uninstrument()
         os.environ["AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING"] = "true"
@@ -99,7 +99,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
             os.environ.pop("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", None)
         assert exception_caught == False
 
-    def test_instrumenting_twice_does_not_cause_exception(self, **_kwargs):
+    def test_instrumenting_twice_does_not_cause_exception(self):
         # Make sure code is not instrumented due to a previous test exception
         AIProjectInstrumentor().uninstrument()
         os.environ["AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING"] = "true"
@@ -115,7 +115,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
             os.environ.pop("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", None)
         assert exception_caught == False
 
-    def test_uninstrumenting_uninstrumented_does_not_cause_exception(self, **_kwargs):
+    def test_uninstrumenting_uninstrumented_does_not_cause_exception(self):
         # Make sure code is not instrumented due to a previous test exception
         AIProjectInstrumentor().uninstrument()
         exception_caught = False
@@ -126,7 +126,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
             print(e)
         assert exception_caught == False
 
-    def test_uninstrumenting_twice_does_not_cause_exception(self, **_kwargs):
+    def test_uninstrumenting_twice_does_not_cause_exception(self):
         # Make sure code is not instrumented due to a previous test exception
         AIProjectInstrumentor().uninstrument()
         os.environ["AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING"] = "true"
@@ -184,7 +184,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
         self,
         env_value: Optional[str],
         expected_enabled: bool,
-        _expected_instrumented: bool,
+        expected_instrumented: bool, # Note: Why is this not used?
     ):
         def set_env_var(var_name, value):
             if value is None:
@@ -653,7 +653,6 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            _deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
             # Create a conversation
             conversation = client.conversations.create()
@@ -5155,9 +5154,10 @@ trigger:
         self.setup_telemetry()
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
 
-        with self.create_client(operation_group="tracing", **kwargs) as project_client:
-            _deployment_name = kwargs.get("azure_ai_model_deployment_name")
-            openai_client = project_client.get_openai_client()
+        with (
+            self.create_client(operation_group="tracing", **kwargs) as project_client,
+            project_client.get_openai_client() as openai_client
+        ):
 
             workflow_yaml = """
 kind: workflow
@@ -5474,9 +5474,10 @@ trigger:
         self.setup_telemetry()
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
 
-        with self.create_client(operation_group="tracing", **kwargs) as project_client:
-            _deployment_name = kwargs.get("azure_ai_model_deployment_name")
-            openai_client = project_client.get_openai_client()
+        with (
+            self.create_client(operation_group="tracing", **kwargs) as project_client,
+            project_client.get_openai_client() as openai_client
+        ):
 
             workflow_yaml = """
 kind: workflow

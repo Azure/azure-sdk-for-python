@@ -102,7 +102,7 @@ TRANSPORTATION,Contoso air,1100000
                 conversation = openai_client.conversations.create()
 
                 # Ask question that triggers code interpreter
-                _response = openai_client.responses.create(
+                _ = openai_client.responses.create(
                     conversation=conversation.id,
                     input="Calculate the average operating profit from the transportation data",
                     extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
@@ -110,7 +110,7 @@ TRANSPORTATION,Contoso air,1100000
 
                 # Explicitly call and iterate through conversation items
                 items = openai_client.conversations.items.list(conversation_id=conversation.id)
-                for _item in items:
+                for _ in items:
                     pass
 
                 # Check spans
@@ -289,7 +289,7 @@ TRANSPORTATION,Contoso air,1100000
                 conversation = openai_client.conversations.create()
 
                 # Ask question that triggers code interpreter
-                _response = openai_client.responses.create(
+                _ = openai_client.responses.create(
                     conversation=conversation.id,
                     input="Calculate the average operating profit from the transportation data",
                     extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
@@ -297,7 +297,7 @@ TRANSPORTATION,Contoso air,1100000
 
                 # Explicitly call and iterate through conversation items
                 items = openai_client.conversations.items.list(conversation_id=conversation.id)
-                for _item in items:
+                for _ in items:
                     pass
 
                 # Check spans
@@ -493,7 +493,7 @@ TRANSPORTATION,Contoso air,1100000
 
                 # Explicitly call and iterate through conversation items
                 items = openai_client.conversations.items.list(conversation_id=conversation.id)
-                for _item in items:
+                for _ in items:
                     pass
 
                 # Check spans
@@ -684,7 +684,7 @@ TRANSPORTATION,Contoso air,1100000
 
                 # Explicitly call and iterate through conversation items
                 items = openai_client.conversations.items.list(conversation_id=conversation.id)
-                for _item in items:
+                for _ in items:
                     pass
 
                 # Check spans

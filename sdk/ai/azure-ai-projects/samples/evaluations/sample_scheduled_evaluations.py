@@ -36,8 +36,8 @@ from pprint import pprint
 from azure.ai.projects.models._models import PromptAgentDefinition
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.mgmt.authorization import AuthorizationManagementClient  # pylint: disable=no-name-in-module
-from azure.mgmt.resource import ResourceManagementClient  # pylint: disable=no-name-in-module
+from azure.mgmt.authorization import AuthorizationManagementClient
+from azure.mgmt.resource import ResourceManagementClient
 import uuid
 from azure.ai.projects.models import (
     AgentVersionDetails,

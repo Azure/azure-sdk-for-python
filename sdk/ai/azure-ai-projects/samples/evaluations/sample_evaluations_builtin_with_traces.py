@@ -36,7 +36,7 @@ from pprint import pprint
 from typing import Any, Dict, List
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
-from azure.monitor.query import LogsQueryClient, LogsQueryStatus  # pylint: disable=no-name-in-module
+from azure.monitor.query import LogsQueryClient, LogsQueryStatus
 from azure.ai.projects import AIProjectClient
 
 load_dotenv()

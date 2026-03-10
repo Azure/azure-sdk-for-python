@@ -318,7 +318,7 @@ class TestFineTuning(TestBase):
                 self._cleanup_test_file(openai_client, train_file.id)
                 self._cleanup_test_file(openai_client, validation_file.id)
 
-    def _extract_account_name_from_endpoint(self, project_endpoint, _test_prefix):
+    def _extract_account_name_from_endpoint(self, project_endpoint: str) -> str:
         endpoint_clean = project_endpoint.replace("https://", "").replace("http://", "")
         if ".services.ai.azure.com" not in endpoint_clean:
             raise ValueError(
@@ -327,7 +327,7 @@ class TestFineTuning(TestBase):
         return endpoint_clean.split(".services.ai.azure.com")[0]
 
     def _test_deploy_and_infer_helper(
-        self, completed_job_id, deployment_format, deployment_capacity, test_prefix, inference_content, **kwargs
+        self, completed_job_id: str, deployment_format: str, deployment_capacity: int, test_prefix: str, inference_content: str, **kwargs
     ):
         if not completed_job_id:
             pytest.skip(f"completed_job_id parameter not set - skipping {test_prefix} deploy and infer test")
@@ -341,7 +341,7 @@ class TestFineTuning(TestBase):
                 f"Missing required environment variables for deployment (azure_subscription_id, azure_resource_group, azure_ai_project_endpoint) - skipping {test_prefix} deploy and infer test"
             )
 
-        account_name = self._extract_account_name_from_endpoint(project_endpoint, test_prefix)
+        account_name = self._extract_account_name_from_endpoint(project_endpoint)
         print(f"[{test_prefix}] Account name: {account_name}")
 
         with self.create_client(**kwargs) as project_client:
