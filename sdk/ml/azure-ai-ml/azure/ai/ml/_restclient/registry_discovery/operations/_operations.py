@@ -56,7 +56,7 @@ def build_async_operations_get_status_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, **kwargs)
 
 
-def build_registry_management_non_workspace_registry_management_non_workspace_request(  # pylint: disable=name-too-long
+def build_registry_management_non_workspace_get_registry_management_non_workspace_request(  # pylint: disable=name-too-long
     registry_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -155,7 +155,7 @@ class RegistryManagementNonWorkspaceOperations:
 
         Instead, you should access the following operations through
         :class:`~registry_discovery.RegistryDiscoveryClient`'s
-        :attr:`registry_management_non_workspace` attribute.
+        :attr:`get_registry_management_non_workspace` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -166,7 +166,7 @@ class RegistryManagementNonWorkspaceOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def registry_management_non_workspace(self, registry_name: str, **kwargs: Any) -> _models.RegistryDiscoveryDto:
+    def get_registry_management_non_workspace(self, registry_name: str, **kwargs: Any) -> _models.RegistryDiscoveryDto:
         """Get registry discovery information.
 
         :param registry_name: The registry name. Required.
@@ -188,7 +188,7 @@ class RegistryManagementNonWorkspaceOperations:
 
         cls: ClsType[_models.RegistryDiscoveryDto] = kwargs.pop("cls", None)
 
-        _request = build_registry_management_non_workspace_registry_management_non_workspace_request(
+        _request = build_registry_management_non_workspace_get_registry_management_non_workspace_request(
             registry_name=registry_name,
             api_version=self._config.api_version,
             headers=_headers,

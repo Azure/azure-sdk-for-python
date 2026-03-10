@@ -222,7 +222,7 @@ def mock_machinelearning_registry_client(mocker: MockFixture) -> MLClient:
     mock_response.resource_group = "resourceGroup"
     mock_response.subscription_id = "subscriptionId"
     mocker.patch(
-        "azure.ai.ml._restclient.registry_discovery.operations._operations.RegistryManagementNonWorkspaceOperations.registry_management_non_workspace",
+        "azure.ai.ml._restclient.registry_discovery.operations._operations.RegistryManagementNonWorkspaceOperations.get_registry_management_non_workspace",
         return_value=mock_response,
     )
     yield MLClient(

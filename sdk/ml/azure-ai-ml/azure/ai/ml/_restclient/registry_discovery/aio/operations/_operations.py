@@ -28,7 +28,7 @@ from ..._utils.model_base import _deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import (
     build_async_operations_get_status_request,
-    build_registry_management_non_workspace_registry_management_non_workspace_request,
+    build_registry_management_non_workspace_get_registry_management_non_workspace_request,
 )
 from .._configuration import RegistryDiscoveryClientConfiguration
 
@@ -109,7 +109,7 @@ class RegistryManagementNonWorkspaceOperations:
 
         Instead, you should access the following operations through
         :class:`~registry_discovery.aio.RegistryDiscoveryClient`'s
-        :attr:`registry_management_non_workspace` attribute.
+        :attr:`get_registry_management_non_workspace` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -120,7 +120,7 @@ class RegistryManagementNonWorkspaceOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def registry_management_non_workspace(
+    async def get_registry_management_non_workspace(
         self, registry_name: str, **kwargs: Any
     ) -> _models.RegistryDiscoveryDto:
         """Get registry discovery information.
@@ -144,7 +144,7 @@ class RegistryManagementNonWorkspaceOperations:
 
         cls: ClsType[_models.RegistryDiscoveryDto] = kwargs.pop("cls", None)
 
-        _request = build_registry_management_non_workspace_registry_management_non_workspace_request(
+        _request = build_registry_management_non_workspace_get_registry_management_non_workspace_request(
             registry_name=registry_name,
             api_version=self._config.api_version,
             headers=_headers,

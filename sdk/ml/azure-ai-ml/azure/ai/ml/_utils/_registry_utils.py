@@ -42,7 +42,7 @@ class RegistryDiscovery:
         self.workspace_region = kwargs.get("workspace_location", None)
 
     def _get_registry_details(self) -> str:
-        response = self.service_client_registry_discovery_client.registry_management_non_workspace.registry_management_non_workspace(  # pylint: disable=line-too-long
+        response = self.service_client_registry_discovery_client.registry_management_non_workspace.get_registry_management_non_workspace(  # pylint: disable=line-too-long
             self.registry_name
         )
         if self.workspace_region:
