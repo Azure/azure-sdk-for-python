@@ -1,9 +1,9 @@
 # Release History
 
-## 1.15.3 (Unreleased)
+## 1.16.0 (Unreleased)
 
 ### Bugs Fixed
-
+- Fixed `NotFoundError: 404` when using `model_config` dict target with Foundry-style endpoints (`*.services.ai.azure.com`) by appending `/openai/v1` to the endpoint URL for PyRIT compatibility.
 - Fixed red team scan status stuck at `in_progress` in results.json despite the scan completing, by treating leftover `pending` entries as `failed`.
 - Fixed `ungrounded_attributes` risk category being silently skipped due to a cache key mismatch (`isa` vs `ungrounded_attributes`) in the Foundry execution path.
 - Fixed RAI evaluation service errors (`ServiceInvocationException`) incorrectly inflating attack success rate by treating error responses as undetermined instead of attack success.
