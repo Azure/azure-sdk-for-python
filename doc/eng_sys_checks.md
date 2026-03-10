@@ -145,7 +145,7 @@ If a package does not yet have a `pyproject.toml`, creating one with just the se
 
 Packages with a stable GA release must have a `[tool.azure-sdk-conda]` section in their `pyproject.toml`. 
 - This section defines if the package is released individually to Conda, or grouped with other packages in one release bundle (see [conda-release.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/conda-release.md)). 
-- This is enforced by the `verifywhl` CI check.
+- This is enforced by the `verifywhl` CI check. Service teams are responsible for updating this metadata.
 
 Here's an example:
 
