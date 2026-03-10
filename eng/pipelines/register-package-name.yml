@@ -55,18 +55,30 @@ steps:
 
       foreach ($pkg in $candidatePackages) {
           $pypiUrl = "https://pypi.org/pypi/$pkg/json"
-          try {
-              $response = Invoke-WebRequest -Uri $pypiUrl -Method Head -SkipHttpErrorCheck
-              if ($response.StatusCode -eq 404) {
-                  $unregisteredPackages += $pkg
-                  Write-Host "  NOT on PyPI: $pkg"
-              } else {
-                  Write-Host "  Already on PyPI: $pkg (skipping)"
+          $maxAttempts = 3
+          $attempt = 0
+          $checked = $false
+
+          while (-not $checked -and $attempt -lt $maxAttempts) {
+              $attempt += 1
+              try {
+                  $response = Invoke-WebRequest -Uri $pypiUrl -Method Head -SkipHttpErrorCheck
+                  if ($response.StatusCode -eq 404) {
+                      $unregisteredPackages += $pkg
+                      Write-Host "  NOT on PyPI: $pkg"
+                  } else {
+                      Write-Host "  Already on PyPI: $pkg (skipping, status code: $($response.StatusCode))"
+                  }
+                  $checked = $true
+              } catch {
+                  if ($attempt -lt $maxAttempts) {
+                      Write-Host "  PyPI check attempt $attempt for $pkg failed (`"$($_.Exception.Message)`"). Retrying..."
+                      Start-Sleep -Seconds 5
+                  } else {
+                      Write-Host "  PyPI check failed for $pkg after $maxAttempts attempts (`"$($_.Exception.Message)`"). Skipping reservation for this package."
+                      $checked = $true
+                  }
               }
-          } catch {
-              # Network error or other issue, treat as not found
-              $unregisteredPackages += $pkg
-              Write-Host "  PyPI check failed for $pkg (will attempt registration): $_"
           }
       }
 
