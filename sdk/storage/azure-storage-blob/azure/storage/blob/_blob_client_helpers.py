@@ -326,7 +326,7 @@ def _download_blob_options(
         'modified_access_conditions': mod_conditions,
         'cpk_info': cpk_info,
         'download_cls': kwargs.pop('cls', None) or deserialize_blob_stream,
-        'max_concurrency':kwargs.pop('max_concurrency', None) or DEFAULT_MAX_CONCURRENCY,
+        'max_concurrency': kwargs.pop('max_concurrency', None) or DEFAULT_MAX_CONCURRENCY,
         'encoding': encoding,
         'timeout': kwargs.pop('timeout', None),
         'name': blob_name,
