@@ -42,10 +42,9 @@ class TestFeatureSetEntity:
             feature_set_rest.properties.materialization_settings.schedule.interval
             == feature_set.materialization_settings.schedule.interval
         )
-        assert (
-            feature_set_rest.properties.materialization_settings.spark_configuration
-            == {k: str(v) for k, v in feature_set.materialization_settings.spark_configuration.items()}
-        )
+        assert feature_set_rest.properties.materialization_settings.spark_configuration == {
+            k: str(v) for k, v in feature_set.materialization_settings.spark_configuration.items()
+        }
         assert (
             feature_set_rest.properties.materialization_settings.resource.instance_type
             == feature_set.materialization_settings.resource.instance_type

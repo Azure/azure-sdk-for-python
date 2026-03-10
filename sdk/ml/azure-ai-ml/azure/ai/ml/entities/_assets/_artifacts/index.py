@@ -86,9 +86,7 @@ class Index(Artifact):
             stage=index_rest_object.stage,
             path=index_rest_object.storage_uri,
             # pylint: disable-next=protected-access
-            creation_context=SystemData._from_rest_object(
-                index_rest_object.system_data
-            ),
+            creation_context=SystemData._from_rest_object(index_rest_object.system_data),
         )
 
     def _to_rest_object(self) -> RestIndex:
