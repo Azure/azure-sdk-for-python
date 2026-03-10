@@ -13,7 +13,6 @@ from math import ceil
 from typing import AsyncGenerator, Union
 
 from . import encode_base64, url_quote
-from .constants import DEFAULT_MAX_CONCURRENCY
 from .request_handlers import get_length
 from .response_handlers import return_response_headers
 from .uploads import SubStream, IterStreamer  # pylint: disable=unused-import
@@ -70,7 +69,6 @@ async def upload_data_chunks(
     **kwargs,
 ):
 
-    max_concurrency = max_concurrency or DEFAULT_MAX_CONCURRENCY
     parallel = max_concurrency > 1
     if parallel and "modified_access_conditions" in kwargs:
         # Access conditions do not work with parallelism
@@ -117,7 +115,6 @@ async def upload_substream_blocks(
     progress_hook=None,
     **kwargs,
 ):
-    max_concurrency = max_concurrency or DEFAULT_MAX_CONCURRENCY
     parallel = max_concurrency > 1
     if parallel and "modified_access_conditions" in kwargs:
         # Access conditions do not work with parallelism

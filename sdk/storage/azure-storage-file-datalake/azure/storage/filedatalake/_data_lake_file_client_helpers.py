@@ -125,7 +125,9 @@ def _upload_options(
     validate_content = kwargs.pop('validate_content', False)
     content_settings = kwargs.pop('content_settings', None)
     metadata = kwargs.pop('metadata', None)
-    max_concurrency = kwargs.pop('max_concurrency', None) or DEFAULT_MAX_CONCURRENCY
+    max_concurrency = kwargs.pop('max_concurrency', None)
+    if max_concurrency is None:
+        max_concurrency = DEFAULT_MAX_CONCURRENCY
 
     kwargs['properties'] = add_metadata_headers(metadata)
     kwargs['lease_access_conditions'] = get_access_conditions(kwargs.pop('lease', None))
