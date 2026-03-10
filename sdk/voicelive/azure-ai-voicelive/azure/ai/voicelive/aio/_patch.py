@@ -694,7 +694,6 @@ class _VoiceLiveConnectionManager(
         self.__extra_query = extra_query
         self.__extra_headers = extra_headers
         self.__connection_options = self._map_to_aiohttp_ws_options(connection_options or {})
-        self.__proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
 
     def _map_to_aiohttp_ws_options(self, options: WebsocketConnectionOptions) -> dict[str, Any]:
         """
