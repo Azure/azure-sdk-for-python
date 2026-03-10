@@ -21,7 +21,7 @@ evaluationsPreparer = functools.partial(
     "",
     foundry_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
     foundry_model_name="sanitized-model-deployment-name",
-    azure_ai_agent_name="sanitized-agent-name",
+    foundry_agent_name="sanitized-agent-name",
 )
 
 evaluations_instructions = """

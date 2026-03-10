@@ -19,7 +19,7 @@ USAGE:
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
-    2) AZURE_AI_AGENT_NAME - Required. The name of the Agent to perform red teaming evaluation on.
+    2) FOUNDRY_AGENT_NAME - Required. The name of the Agent to perform red teaming evaluation on.
 """
 
 import os
@@ -46,7 +46,7 @@ def main() -> None:
     load_dotenv()
     #
     endpoint = os.environ.get("FOUNDRY_PROJECT_ENDPOINT", "")
-    agent_name = os.environ.get("AZURE_AI_AGENT_NAME", "")
+    agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "")
 
     with (
         DefaultAzureCredential() as credential,

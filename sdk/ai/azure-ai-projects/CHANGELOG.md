@@ -16,12 +16,12 @@
 
 ### Sample updates
 
-* Placeholder
+* Renamed environment variable `AZURE_AI_PROJECT_ENDPOINT` to `FOUNDRY_PROJECT_ENDPOINT` in all samples.
+* Renamed environment variable `AZURE_AI_MODEL_DEPLOYMENT_NAME` to `FOUNDRY_MODEL_NAME` in all samples.
 
 ### Other Changes
 
-* Renamed environment variable `AZURE_AI_PROJECT_ENDPOINT` to `FOUNDRY_PROJECT_ENDPOINT`
-* Renamed environment variable `AZURE_AI_MODEL_DEPLOYMENT_NAME` to `FOUNDRY_MODEL_NAME`
+* Placeholder
 
 ## 2.0.0 (2026-03-06)
 
