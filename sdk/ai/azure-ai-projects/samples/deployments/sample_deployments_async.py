@@ -16,9 +16,9 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv aiohttp
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - Required. The name of the deployment to retrieve.
+    2) FOUNDRY_MODEL_NAME - Required. The name of the deployment to retrieve.
     3) MODEL_PUBLISHER - Optional. The publisher of the model to filter by.
     4) MODEL_NAME - Optional. The name of the model to filter by.
 """
@@ -35,8 +35,8 @@ load_dotenv()
 
 async def main() -> None:
 
-    endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
-    model_deployment_name = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]
+    endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+    model_deployment_name = os.environ["FOUNDRY_MODEL_NAME"]
     model_publisher = os.environ.get("MODEL_PUBLISHER", "Microsoft")
     model_name = os.environ.get("MODEL_NAME", "Phi-4")
 

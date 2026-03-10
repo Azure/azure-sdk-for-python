@@ -334,11 +334,11 @@ class TestFineTuning(TestBase):
 
         subscription_id = kwargs.get("azure_subscription_id")
         resource_group = kwargs.get("azure_resource_group")
-        project_endpoint = kwargs.get("azure_ai_project_endpoint")
+        project_endpoint = kwargs.get("foundry_project_endpoint")
 
         if not all([subscription_id, resource_group, project_endpoint]):
             pytest.skip(
-                f"Missing required environment variables for deployment (azure_subscription_id, azure_resource_group, azure_ai_project_endpoint) - skipping {test_prefix} deploy and infer test"
+                f"Missing required environment variables for deployment (azure_subscription_id, azure_resource_group, foundry_project_endpoint) - skipping {test_prefix} deploy and infer test"
             )
 
         account_name = self._extract_account_name_from_endpoint(project_endpoint, test_prefix)
