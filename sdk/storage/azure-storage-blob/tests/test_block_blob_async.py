@@ -2102,8 +2102,8 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         finally:
             await self.bsc.delete_container(self.container_name)
 
-    @pytest.mark.live_test_only
     @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_put_block_blob_with_none_concurrency(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")

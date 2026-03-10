@@ -1663,8 +1663,8 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         result += stream.readall()
         assert result == data
 
-    @pytest.mark.live_test_only
     @BlobPreparer()
+    @recorded_by_proxy
     def test_get_blob_to_bytes_with_none_concurrency(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
