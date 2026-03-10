@@ -1,6 +1,13 @@
 # Release History
 
 
+## 1.0.0b16 (2026-03-10)
+
+### Other Changes
+
+- Upgraded to support agent-framework v1.0.0rc3.
+
+
 ## 1.0.0b15 (2026-03-02)
 
 ### Other Changes
