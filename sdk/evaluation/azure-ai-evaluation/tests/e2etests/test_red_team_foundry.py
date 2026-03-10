@@ -52,9 +52,9 @@ class TestRedTeamFoundry:
         :param min_conversation_length: Minimum number of messages per conversation (default: 2)
         """
         assert attack_details is not None, "attack_details should not be None"
-        assert len(attack_details) >= min_attacks, (
-            f"Expected at least {min_attacks} attack detail(s), got {len(attack_details)}"
-        )
+        assert (
+            len(attack_details) >= min_attacks
+        ), f"Expected at least {min_attacks} attack detail(s), got {len(attack_details)}"
 
         for attack in attack_details:
             # Required fields per RAISvc contract
@@ -64,24 +64,24 @@ class TestRedTeamFoundry:
 
             # Validate risk category if expected
             if expected_risk_category is not None:
-                assert attack["risk_category"] == expected_risk_category, (
-                    f"Expected risk_category '{expected_risk_category}', got '{attack['risk_category']}'"
-                )
+                assert (
+                    attack["risk_category"] == expected_risk_category
+                ), f"Expected risk_category '{expected_risk_category}', got '{attack['risk_category']}'"
 
             # Validate conversation structure
             conversation = attack["conversation"]
-            assert len(conversation) >= min_conversation_length, (
-                f"Expected at least {min_conversation_length} messages in conversation, got {len(conversation)}"
-            )
+            assert (
+                len(conversation) >= min_conversation_length
+            ), f"Expected at least {min_conversation_length} messages in conversation, got {len(conversation)}"
 
             # Validate role alternation: first message should be user, then alternating
-            assert conversation[0]["role"] == "user", (
-                f"First conversation message should have role 'user', got '{conversation[0]['role']}'"
-            )
+            assert (
+                conversation[0]["role"] == "user"
+            ), f"First conversation message should have role 'user', got '{conversation[0]['role']}'"
             if len(conversation) >= 2:
-                assert conversation[1]["role"] == "assistant", (
-                    f"Second conversation message should have role 'assistant', got '{conversation[1]['role']}'"
-                )
+                assert (
+                    conversation[1]["role"] == "assistant"
+                ), f"Second conversation message should have role 'assistant', got '{conversation[1]['role']}'"
 
     @pytest.mark.azuretest
     @pytest.mark.parametrize(
@@ -821,9 +821,9 @@ class TestRedTeamFoundry:
             # Validate role alternation
             for i in range(len(conversation)):
                 expected_role = "user" if i % 2 == 0 else "assistant"
-                assert conversation[i]["role"] == expected_role, (
-                    f"Message {i} should have role '{expected_role}', got '{conversation[i]['role']}'"
-                )
+                assert (
+                    conversation[i]["role"] == expected_role
+                ), f"Message {i} should have role '{expected_role}', got '{conversation[i]['role']}'"
 
     @pytest.mark.azuretest
     @pytest.mark.parametrize(
@@ -877,6 +877,6 @@ class TestRedTeamFoundry:
             # Validate role alternation
             for i in range(len(conversation)):
                 expected_role = "user" if i % 2 == 0 else "assistant"
-                assert conversation[i]["role"] == expected_role, (
-                    f"Message {i} should have role '{expected_role}', got '{conversation[i]['role']}'"
-                )
+                assert (
+                    conversation[i]["role"] == expected_role
+                ), f"Message {i} should have role '{expected_role}', got '{conversation[i]['role']}'"
