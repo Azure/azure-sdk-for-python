@@ -8,7 +8,7 @@ import logging
 from logging import getLogger
 from opentelemetry import trace
 from opentelemetry.sdk._logs import LogRecordProcessor, ReadWriteLogRecord
-from azure.monitor.opentelemetry._configure import configure_azure_monitor
+from azure.monitor.opentelemetry import configure_azure_monitor
 
 logger = getLogger(__name__)
 logger.setLevel(logging.INFO)
