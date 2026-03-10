@@ -26,6 +26,7 @@
 import time
 import pytest
 import signal
+import sys
 import os
 import subprocess
 import random
@@ -60,7 +61,7 @@ def start_testserver():
         # to set these additional env vars for pypy
         os.environ["LC_ALL"] = "C.UTF-8"
         os.environ["LANG"] = "C.UTF-8"
-    cmd = "flask run -p {}".format(port)
+    cmd = f"{sys.executable} -m flask run -p {port}"
     if os.name == "nt":  # On windows, subprocess creation works without being in the shell
         child_process = subprocess.Popen(cmd, env=dict(os.environ))
     else:
@@ -81,7 +82,7 @@ def terminate_testserver(process):
         os.killpg(os.getpgid(process.pid), signal.SIGTERM)  # cspell:disable-line
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def port():
     server = start_testserver()
     yield os.environ["FLASK_PORT"]
