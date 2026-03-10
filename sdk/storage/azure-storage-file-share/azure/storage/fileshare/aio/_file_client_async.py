@@ -43,6 +43,7 @@ from .._serialize import (
 )
 from .._shared.base_client import StorageAccountHostsMixin, parse_query
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, parse_connection_str
+from .._shared.constants import DEFAULT_MAX_CONCURRENCY
 from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers, get_length
 from .._shared.response_handlers import process_storage_error, return_response_headers
@@ -588,7 +589,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         """
         metadata = kwargs.pop('metadata', None)
         content_settings = kwargs.pop('content_settings', None)
-        max_concurrency = kwargs.pop('max_concurrency', 1)
+        max_concurrency = kwargs.pop('max_concurrency', None)
+        if max_concurrency is None:
+            max_concurrency = DEFAULT_MAX_CONCURRENCY
         validate_content = kwargs.pop('validate_content', False)
         progress_hook = kwargs.pop('progress_hook', None)
         timeout = kwargs.pop('timeout', None)
