@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -1246,7 +1247,7 @@ class PatchOperation(_Model):
     """A JSON Patch operation.
 
     :ivar value: The value to apply.
-    :vartype value: any
+    :vartype value: str
     :ivar path: The path to the property to modify.
     :vartype path: str
     :ivar operation_type: The operation type (e.g., add, remove, replace).
@@ -1255,7 +1256,7 @@ class PatchOperation(_Model):
     :vartype from_path: str
     """
 
-    value: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The value to apply."""
     path: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The path to the property to modify."""
@@ -1268,7 +1269,7 @@ class PatchOperation(_Model):
     def __init__(
         self,
         *,
-        value: Optional[Any] = None,
+        value: Optional[str] = None,
         path: Optional[str] = None,
         operation_type: Optional[str] = None,
         from_path: Optional[str] = None,
