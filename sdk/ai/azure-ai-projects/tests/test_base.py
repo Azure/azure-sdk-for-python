@@ -41,8 +41,8 @@ _BUILTIN_OPEN = open
 servicePreparer = functools.partial(
     EnvironmentVariableLoader,
     "",
-    azure_ai_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
-    azure_ai_model_deployment_name="sanitized-model-deployment-name",
+    foundry_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+    foundry_model_name="sanitized-model-deployment-name",
     image_generation_model_deployment_name="sanitized-gpt-image",
     bing_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-bing-connection",
     ai_search_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-ai-search-connection",
@@ -75,8 +75,8 @@ servicePreparer = functools.partial(
 fineTuningServicePreparer = functools.partial(
     EnvironmentVariableLoader,
     "",
-    azure_ai_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
-    azure_ai_model_deployment_name="sanitized-model-deployment-name",
+    foundry_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+    foundry_model_name="sanitized-model-deployment-name",
     azure_ai_projects_azure_subscription_id="00000000-0000-0000-0000-000000000000",
     azure_ai_projects_azure_resource_group="sanitized-resource-group",
     azure_ai_projects_azure_aoai_account="sanitized-aoai-account",
@@ -297,7 +297,7 @@ class TestBase(AzureRecordedTestCase):
     # helper function: create projects client using environment variables
     def create_client(self, *, allow_preview: bool = False, **kwargs) -> AIProjectClient:
         # fetch environment variables
-        endpoint = kwargs.pop("azure_ai_project_endpoint")
+        endpoint = kwargs.pop("foundry_project_endpoint")
         credential = self.get_credential(AIProjectClient, is_async=False)
 
         print(f"Creating AIProjectClient with endpoint: {endpoint}")
@@ -314,7 +314,7 @@ class TestBase(AzureRecordedTestCase):
     # helper function: create async projects client using environment variables
     def create_async_client(self, *, allow_preview: bool = False, **kwargs) -> AsyncAIProjectClient:
         # fetch environment variables
-        endpoint = kwargs.pop("azure_ai_project_endpoint")
+        endpoint = kwargs.pop("foundry_project_endpoint")
         credential = self.get_credential(AsyncAIProjectClient, is_async=True)
 
         print(f"Creating AsyncAIProjectClient with endpoint: {endpoint}")

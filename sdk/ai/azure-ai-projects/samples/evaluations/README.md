@@ -11,8 +11,8 @@ pip install "azure-ai-projects>=2.0.0" python-dotenv
 ```
 
 Set these environment variables:
-- `AZURE_AI_PROJECT_ENDPOINT` - Your Azure AI Project endpoint (e.g., `https://<account>.services.ai.azure.com/api/projects/<project>`)
-- `AZURE_AI_MODEL_DEPLOYMENT_NAME` - The model deployment name (e.g., `gpt-4o-mini`)
+- `FOUNDRY_PROJECT_ENDPOINT` - Your Azure AI Project endpoint (e.g., `https://<account>.services.ai.azure.com/api/projects/<project>`)
+- `FOUNDRY_MODEL_NAME` - The model deployment name (e.g., `gpt-4o-mini`)
 
 ## Sample Index
 
@@ -94,8 +94,8 @@ Located in the [agentic_evaluators](https://github.com/Azure/azure-sdk-for-pytho
 
 ```bash
 # Set environment variables
-export AZURE_AI_PROJECT_ENDPOINT="https://<your-account>.services.ai.azure.com/api/projects/<your-project>"
-export AZURE_AI_MODEL_DEPLOYMENT_NAME="gpt-4o-mini" # Replace with your model
+export FOUNDRY_PROJECT_ENDPOINT="https://<your-account>.services.ai.azure.com/api/projects/<your-project>"
+export FOUNDRY_MODEL_NAME="gpt-4o-mini" # Replace with your model
 
 # Run a sample
 python sample_evaluations_builtin_with_inline_data.py
