@@ -10,6 +10,7 @@
 ### Bugs Fixed
 
 ### Other Changes
+- Remove internal import from sample file
 
 ## 1.8.6 (2026-02-05)
 
