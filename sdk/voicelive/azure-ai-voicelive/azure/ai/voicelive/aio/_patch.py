@@ -42,7 +42,6 @@ from azure.ai.voicelive.models._models import (
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import AzureError
-from azure.core.pipeline import policies
 
 # === Local ===
 from ..models import ClientEvent, ServerEvent, RequestSession
