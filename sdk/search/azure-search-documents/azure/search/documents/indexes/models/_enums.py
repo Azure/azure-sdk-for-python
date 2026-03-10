@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines,enum-must-be-uppercase
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -14,9 +14,11 @@ from azure.core import CaseInsensitiveEnumMeta
 class AIFoundryModelCatalogName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The name of the embedding model from the Azure AI Foundry Catalog that will be called."""
 
-    OPEN_AICLIP_IMAGE_TEXT_EMBEDDINGS_VIT_BASE_PATCH32 = "OpenAI-CLIP-Image-Text-Embeddings-vit-base-patch32"
+    OPEN_AI_CLIP_IMAGE_TEXT_EMBEDDINGS_VIT_BASE_PATCH32 = "OpenAI-CLIP-Image-Text-Embeddings-vit-base-patch32"
     """OpenAI-CLIP-Image-Text-Embeddings-vit-base-patch32."""
-    OPEN_AICLIP_IMAGE_TEXT_EMBEDDINGS_VI_T_LARGE_PATCH14336 = "OpenAI-CLIP-Image-Text-Embeddings-ViT-Large-Patch14-336"
+    OPEN_AI_CLIP_IMAGE_TEXT_EMBEDDINGS_VI_T_LARGE_PATCH14_336 = (
+        "OpenAI-CLIP-Image-Text-Embeddings-ViT-Large-Patch14-336"
+    )
     """OpenAI-CLIP-Image-Text-Embeddings-ViT-Large-Patch14-336."""
     FACEBOOK_DINO_V2_IMAGE_EMBEDDINGS_VI_T_BASE = "Facebook-DinoV2-Image-Embeddings-ViT-Base"
     """Facebook-DinoV2-Image-Embeddings-ViT-Base."""
@@ -138,7 +140,7 @@ class CharFilterName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ChatCompletionExtraParametersBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies how 'extraParameters' should be handled by Azure AI Foundry. Defaults to 'error'."""
 
-    PASS_THROUGH = "pass-through"
+    PASS_THROUGH = "passThrough"
     """Passes any extra parameters directly to the model."""
     DROP = "drop"
     """Drops all extra parameters."""
@@ -1235,7 +1237,7 @@ class OcrSkillLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Ho (Devanagiri)."""
     HU = "hu"
     """Hungarian."""
-    ISEnum = "is"
+    IS_ENUM = "is"
     """Icelandic."""
     SMN = "smn"
     """Inari Sami."""
@@ -1736,7 +1738,7 @@ class SplitSkillLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Hungarian."""
     ID = "id"
     """Indonesian."""
-    ISEnum = "is"
+    IS_ENUM = "is"
     """Icelandic."""
     IT = "it"
     """Italian."""
@@ -2028,7 +2030,7 @@ class TextTranslationSkillLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """Hmong Daw."""
     HU = "hu"
     """Hungarian."""
-    ISEnum = "is"
+    IS_ENUM = "is"
     """Icelandic."""
     ID = "id"
     """Indonesian."""

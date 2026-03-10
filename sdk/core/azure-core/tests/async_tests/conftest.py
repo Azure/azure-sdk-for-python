@@ -60,7 +60,7 @@ def start_testserver():
     port = get_port()
     os.environ["FLASK_APP"] = "coretestserver"
     os.environ["FLASK_PORT"] = str(port)
-    cmd = "flask run -p {}".format(port)
+    cmd = f"{sys.executable} -m flask run -p {port}"
     if os.name == "nt":  # On windows, subprocess creation works without being in the shell
         child_process = subprocess.Popen(cmd, env=dict(os.environ))
     else:

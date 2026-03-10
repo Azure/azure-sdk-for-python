@@ -13,7 +13,12 @@ from azure.ai.evaluation.red_team._utils.constants import (
 )
 from azure.ai.evaluation.red_team._attack_strategy import AttackStrategy
 from azure.ai.evaluation.red_team._attack_objective_generator import RiskCategory
-from azure.ai.evaluation import ViolenceEvaluator, HateUnfairnessEvaluator, SexualEvaluator, SelfHarmEvaluator
+from azure.ai.evaluation import (
+    ViolenceEvaluator,
+    HateUnfairnessEvaluator,
+    SexualEvaluator,
+    SelfHarmEvaluator,
+)
 
 
 @pytest.mark.unittest

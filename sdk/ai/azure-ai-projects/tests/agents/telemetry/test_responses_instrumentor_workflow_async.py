@@ -6,6 +6,7 @@
 """
 Async tests for ResponsesInstrumentor with workflow agents.
 """
+
 import os
 import pytest
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
@@ -20,7 +21,6 @@ from gen_ai_trace_verifier import GenAiTraceVerifier
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import RecordedTransport
 from azure.ai.projects.models import (
-    AgentReference,
     PromptAgentDefinition,
     WorkflowAgentDefinition,
 )
@@ -242,10 +242,10 @@ trigger:
                 # Non-streaming request
                 response = await openai_client.responses.create(
                     conversation=conversation.id,
-                    extra_body={"agent": AgentReference(name=workflow.name).as_dict()},
+                    extra_body={"agent_reference": {"name": workflow.name, "type": "agent_reference"}},
                     input="1 + 1 = ?",
                     stream=False,
-                    metadata={"x-ms-debug-mode-enabled": "1"},
+                    # Remove me? metadata={"x-ms-debug-mode-enabled": "1"},
                 )
 
                 # Verify response has output
@@ -403,10 +403,10 @@ trigger:
                 # Non-streaming request
                 response = await openai_client.responses.create(
                     conversation=conversation.id,
-                    extra_body={"agent": AgentReference(name=workflow.name).as_dict()},
+                    extra_body={"agent_reference": {"name": workflow.name, "type": "agent_reference"}},
                     input="1 + 1 = ?",
                     stream=False,
-                    metadata={"x-ms-debug-mode-enabled": "1"},
+                    # Remove me? metadata={"x-ms-debug-mode-enabled": "1"},
                 )
 
                 # Verify response has output
@@ -568,10 +568,10 @@ trigger:
                 # Streaming request
                 stream = await openai_client.responses.create(
                     conversation=conversation.id,
-                    extra_body={"agent": AgentReference(name=workflow.name).as_dict()},
+                    extra_body={"agent_reference": {"name": workflow.name, "type": "agent_reference"}},
                     input="1 + 1 = ?",
                     stream=True,
-                    metadata={"x-ms-debug-mode-enabled": "1"},
+                    # Remove me? metadata={"x-ms-debug-mode-enabled": "1"},
                 )
 
                 # Consume stream
@@ -734,10 +734,10 @@ trigger:
                 # Streaming request
                 stream = await openai_client.responses.create(
                     conversation=conversation.id,
-                    extra_body={"agent": AgentReference(name=workflow.name).as_dict()},
+                    extra_body={"agent_reference": {"name": workflow.name, "type": "agent_reference"}},
                     input="1 + 1 = ?",
                     stream=True,
-                    metadata={"x-ms-debug-mode-enabled": "1"},
+                    # Remove me? metadata={"x-ms-debug-mode-enabled": "1"},
                 )
 
                 # Consume stream

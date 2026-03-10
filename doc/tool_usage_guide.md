@@ -11,7 +11,7 @@ A `tool` in this context is merely a single entrypoint provided by the `azpysdk`
 
 ## Available Tools
 
-This repo is currently migrating all checks from a slower `tox`-based framework, to a lightweight implementation that uses `asyncio` to simultaneously run checks. This tools list is the current set that has been migrated from `tox` to the `azpysdk` entrypoint.
+The following checks are available via the `azpysdk` entrypoint.
 
 |tool|description|invocation|
 |---|---|---|

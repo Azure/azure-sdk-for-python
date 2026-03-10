@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,function-redefined
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,8 +8,11 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 import re
-from typing import Any, Dict, List, Optional, TypeVar
+from enum import Enum
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, TypeVar
+from azure.core import CaseInsensitiveEnumMeta
 from azure.core.polling import LROPoller, PollingMethod
 from ._models import (
     StringField,
@@ -21,17 +24,62 @@ from ._models import (
     ArrayField,
     ObjectField,
     JsonField,
-    ContentField,
+    ContentField,  # pyright: ignore[reportAssignmentType]
 )
 
-# Note: The .value property is added to ContentField classes at runtime in patch_sdk()
-# Type annotations are set on the classes' __annotations__ for type checker support
+# Type-only redeclarations so type checkers (pyright / mypy) see the .value
+# property that patch_sdk() adds at runtime.  Each class inherits from the
+# generated version, preserving all original attributes.
+if TYPE_CHECKING:
+
+    class ContentField(ContentField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Any: ...
+
+    class StringField(StringField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[str]: ...
+
+    class IntegerField(IntegerField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[int]: ...
+
+    class NumberField(NumberField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[float]: ...
+
+    class BooleanField(BooleanField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[bool]: ...
+
+    class DateField(DateField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[str]: ...
+
+    class TimeField(TimeField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[str]: ...
+
+    class ArrayField(ArrayField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[List[Any]]: ...
+
+    class ObjectField(ObjectField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[Dict[str, Any]]: ...
+
+    class JsonField(JsonField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[Any]: ...
+
 
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
 __all__ = [
     "RecordMergePatchUpdate",
     "AnalyzeLROPoller",
+    "ProcessingLocation",
+    "ContentField",
     "StringField",
     "IntegerField",
     "NumberField",
@@ -48,6 +96,21 @@ __all__ = [
 RecordMergePatchUpdate = Dict[str, str]
 
 
+# SDK-FIX: Redefine ProcessingLocation enum with correct member name GLOBAL.
+# The typespec-python emitter generates "GLOBALEnum" because "global" is a Python reserved keyword.
+# This redefinition restores the expected GLOBAL name and is visible in APIView.
+# Must be kept in sync with the generated _enums.ProcessingLocation if new members are added.
+class ProcessingLocation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The location where the data may be processed."""
+
+    GEOGRAPHY = "geography"
+    """Data may be processed in the same geography as the resource."""
+    DATA_ZONE = "dataZone"
+    """Data may be processed in the same data zone as the resource."""
+    GLOBAL = "global"
+    """Data may be processed in any Azure data center globally."""
+
+
 def _parse_operation_id(operation_location_header: str) -> str:
     """Parse operation ID from Operation-Location header for analyze operations.
 
@@ -62,7 +125,9 @@ def _parse_operation_id(operation_location_header: str) -> str:
 
     match = re.search(regex, operation_location_header)
     if not match:
-        raise ValueError(f"Could not extract operation ID from: {operation_location_header}")
+        raise ValueError(
+            f"Could not extract operation ID from: {operation_location_header}"
+        )
 
     return match.group(1)
 
@@ -91,7 +156,7 @@ class AnalyzeLROPoller(LROPoller[PollingReturnType_co]):
             raise ValueError(f"Could not extract operation ID: {str(e)}") from e
 
     @classmethod
-    def from_poller(cls, poller: LROPoller[PollingReturnType_co]) -> "AnalyzeLROPoller[PollingReturnType_co]":  # pyright: ignore[reportInvalidTypeArguments]
+    def from_poller(cls, poller: LROPoller[PollingReturnType_co]) -> "AnalyzeLROPoller[PollingReturnType_co]":  # pyright: ignore[reportInvalidTypeArguments]  # fmt: skip
         """Wrap an existing LROPoller without re-initializing the polling method.
 
         This avoids duplicate HTTP requests that would occur if we created a new
@@ -103,14 +168,17 @@ class AnalyzeLROPoller(LROPoller[PollingReturnType_co]):
         :rtype: AnalyzeLROPoller
         """
         # Create instance without calling __init__ to avoid re-initialization
-        instance: AnalyzeLROPoller[PollingReturnType_co] = object.__new__(cls)  # pyright: ignore[reportInvalidTypeArguments]
+        instance: "AnalyzeLROPoller[PollingReturnType_co]" = object.__new__(cls)  # pyright: ignore[reportInvalidTypeArguments]  # fmt: skip
         # Copy all attributes from the original poller
         instance.__dict__.update(poller.__dict__)
         return instance
 
     @classmethod
     def from_continuation_token(
-        cls, polling_method: PollingMethod[PollingReturnType_co], continuation_token: str, **kwargs: Any
+        cls,
+        polling_method: PollingMethod[PollingReturnType_co],
+        continuation_token: str,
+        **kwargs: Any,
     ) -> "AnalyzeLROPoller":
         """Create a poller from a continuation token.
 
@@ -131,7 +199,9 @@ class AnalyzeLROPoller(LROPoller[PollingReturnType_co]):
         return cls(client, initial_response, deserialization_callback, polling_method)
 
 
-def _add_value_property_to_field(field_class: type, value_attr: str, return_type: Any = Any) -> None:
+def _add_value_property_to_field(
+    field_class: type, value_attr: str, return_type: Any = Any
+) -> None:
     """Add a .value property implementation at runtime.
 
     This function adds the actual property implementation so IntelliSense works.

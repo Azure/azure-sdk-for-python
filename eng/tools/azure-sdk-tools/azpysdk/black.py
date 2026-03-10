@@ -40,6 +40,8 @@ class black(Check):
         results: List[int] = []
 
         for parsed in targeted:
+            if os.getcwd() != parsed.folder:
+                os.chdir(parsed.folder)
             package_dir = parsed.folder
             package_name = parsed.name
 
@@ -90,5 +92,8 @@ class black(Check):
 
             except subprocess.CalledProcessError as e:
                 logger.error(f"Unable to invoke black for {package_name}. Ran into exception {e}.")
+                if e.stderr:
+                    logger.error(e.stderr.decode("utf-8"))
+                results.append(e.returncode)
 
         return max(results) if results else 0

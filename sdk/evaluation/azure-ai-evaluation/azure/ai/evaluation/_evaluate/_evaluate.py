@@ -1103,7 +1103,7 @@ def _build_internal_log_attributes(
     # Create a copy of the base log attributes
     internal_log_attributes: Dict[str, str] = log_attributes.copy()
     # Add threshold if present
-    if event_data.get("threshold"):
+    if event_data.get("threshold") is not None:
         internal_log_attributes["gen_ai.evaluation.threshold"] = str(event_data["threshold"])
 
     # Add testing criteria details if present
@@ -2030,6 +2030,11 @@ def _extract_testing_criteria_metadata(
             "metrics": metrics,
             "is_inverse": is_inverse,
         }
+        # Propagate pass_threshold from evaluator config so result events can include it
+        if evaluator_config and criteria_name in evaluator_config:
+            pass_threshold = evaluator_config[criteria_name].get("_pass_threshold")
+            if pass_threshold is not None:
+                testing_criteria_metadata[criteria_name]["pass_threshold"] = pass_threshold
 
     return testing_criteria_metadata
 
@@ -2364,7 +2369,7 @@ def _convert_single_row_to_aoai_format(
             top_sample = sample
 
     # Add error summaries if needed
-    _add_error_summaries(run_output_results, eval_run_summary, testing_criteria_metadata)
+    _add_error_summaries(run_output_results, eval_run_summary, testing_criteria_metadata, row_idx)
 
     return {
         "object": "eval.run.output_item",
@@ -2502,6 +2507,14 @@ def _process_criteria_metrics(
 
     # Extract metric values
     result_per_metric = _extract_metric_values(criteria_name, criteria_type, metrics, expected_metrics, logger)
+
+    # Inject threshold from evaluator config when not present in raw results
+    # (e.g., PythonGrader/code evaluators don't emit a threshold column)
+    config_threshold = testing_criteria_metadata.get(criteria_name, {}).get("pass_threshold")
+    if config_threshold is not None:
+        for metric_values in result_per_metric.values():
+            if _is_none_or_nan(metric_values.get("threshold")):
+                metric_values["threshold"] = config_threshold
 
     # Convert to result objects
     results = []
@@ -2695,19 +2708,25 @@ def _update_metric_value(
             logger.warning(f"Failed to parse _sample_output value as JSON: {e}")
     elif metric_key.endswith("_total_tokens"):
         _ensure_usage_dict(metric_dict)
-        metric_dict["sample"]["usage"]["total_tokens"] = None if _is_none_or_nan(metric_value) else metric_value
+        metric_dict["sample"]["usage"]["total_tokens"] = (
+            None if _is_none_or_nan(metric_value) else int(float(metric_value))
+        )
         result_name = "sample"
         result_name_child_level = "usage"
         result_name_nested_child_level = "total_tokens"
     elif metric_key.endswith("_prompt_tokens"):
         _ensure_usage_dict(metric_dict)
-        metric_dict["sample"]["usage"]["prompt_tokens"] = None if _is_none_or_nan(metric_value) else metric_value
+        metric_dict["sample"]["usage"]["prompt_tokens"] = (
+            None if _is_none_or_nan(metric_value) else int(float(metric_value))
+        )
         result_name = "sample"
         result_name_child_level = "usage"
         result_name_nested_child_level = "prompt_tokens"
     elif metric_key.endswith("_completion_tokens"):
         _ensure_usage_dict(metric_dict)
-        metric_dict["sample"]["usage"]["completion_tokens"] = None if _is_none_or_nan(metric_value) else metric_value
+        metric_dict["sample"]["usage"]["completion_tokens"] = (
+            None if _is_none_or_nan(metric_value) else int(float(metric_value))
+        )
         result_name = "sample"
         result_name_child_level = "usage"
         result_name_nested_child_level = "completion_tokens"
@@ -2955,11 +2974,14 @@ def _add_error_summaries(
     run_output_results: List[Dict[str, Any]],
     eval_run_summary: Optional[Dict[str, Any]],
     testing_criteria_metadata: Dict[str, Any],
+    row_idx: int = 0,
 ) -> None:
     """Add error summaries to results for failed evaluations.
 
     This method processes evaluation run summary to add error result objects
     for criteria that failed during evaluation, ensuring proper error reporting.
+    When per-line errors are available, only the error for the current row is used;
+    rows that succeeded are not stamped with another row's error.
 
     :param run_output_results: List to append error result objects to
     :type run_output_results: List[Dict[str, Any]]
@@ -2967,6 +2989,8 @@ def _add_error_summaries(
     :type eval_run_summary: Optional[Dict[str, Any]]
     :param testing_criteria_metadata: Metadata about available testing criteria including metrics and types
     :type testing_criteria_metadata: Dict[str, Any]
+    :param row_idx: Zero-based index of the current row, used to look up per-line errors
+    :type row_idx: int
     :return: None (modifies run_output_results in place)
     :rtype: None
 
@@ -2975,12 +2999,14 @@ def _add_error_summaries(
         eval_run_summary = {
             "coherence": {
                 "error_code": "TIMEOUT",
-                "error_message": "Evaluation timed out"
+                "error_message": "Evaluation timed out",
+                "per_line_errors": {0: "Row 0 timed out"}
             }
         }
         testing_criteria_metadata = {
             "coherence": {"metrics": ["score"], "type": "quality"}
         }
+        row_idx = 0
 
     Example Output:
         run_output_results becomes [
@@ -2996,7 +3022,7 @@ def _add_error_summaries(
                 "sample": {
                     "error": {
                         "code": "TIMEOUT",
-                        "message": "Evaluation timed out"
+                        "message": "Row 0 timed out"
                     }
                 }
             }
@@ -3009,10 +3035,26 @@ def _add_error_summaries(
         if not isinstance(criteria_summary, dict) or criteria_summary.get("error_code") is None:
             continue
 
-        error_info = {
-            "code": criteria_summary.get("error_code"),
-            "message": criteria_summary.get("error_message"),
-        }
+        # Use per-line error if available, otherwise fall back to batch-level error
+        per_line_errors = criteria_summary.get("per_line_errors", {})
+        per_line_error_msg = per_line_errors.get(row_idx, None)
+
+        if per_line_error_msg is not None:
+            # This row has a specific error
+            error_info = {
+                "code": criteria_summary.get("error_code"),
+                "message": per_line_error_msg,
+            }
+        elif per_line_errors:
+            # Per-line errors exist but not for this row — this row succeeded, skip error stamping
+            continue
+        else:
+            # No per-line errors available, fall back to batch-level error
+            error_info = {
+                "code": criteria_summary.get("error_code"),
+                "message": criteria_summary.get("error_message"),
+            }
+
         sample = {"error": error_info} if error_info["code"] is not None else None
 
         metrics = testing_criteria_metadata.get(criteria_name, {}).get("metrics", [])

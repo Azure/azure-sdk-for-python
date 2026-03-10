@@ -27,6 +27,8 @@ from .._client_manager_base import (
 )
 from .._models import SettingSelector
 from .._constants import FEATURE_FLAG_PREFIX
+from .._snapshot_reference_parser import SnapshotReferenceParser
+from .._constants import SNAPSHOT_REF_CONTENT_TYPE
 from ._async_discovery import find_auto_failover_endpoints
 
 if TYPE_CHECKING:
@@ -138,13 +140,13 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
 
     @distributed_trace
     async def load_configuration_settings(self, selects: List[SettingSelector], **kwargs) -> List[ConfigurationSetting]:
-        configuration_settings = []
+        configuration_settings: List[ConfigurationSetting] = []
         for select in selects:
+            configurations: AsyncItemPaged[ConfigurationSetting]
             if select.snapshot_name is not None:
                 # When loading from a snapshot, ignore key_filter, label_filter, and tag_filters
-                snapshot = await self._client.get_snapshot(select.snapshot_name)
-                if snapshot.composition_type != SnapshotComposition.KEY:
-                    raise ValueError(f"Snapshot '{select.snapshot_name}' is not a key snapshot.")
+                if not await self._validate_snapshot(select.snapshot_name):
+                    return []
                 configurations = self._client.list_configuration_settings(snapshot_name=select.snapshot_name, **kwargs)
             else:
                 # Use traditional filtering when not loading from a snapshot
@@ -172,9 +174,8 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
             feature_flags: AsyncItemPaged[ConfigurationSetting]
             if select.snapshot_name is not None:
                 # When loading from a snapshot, ignore key_filter, label_filter, and tag_filters
-                snapshot = await self._client.get_snapshot(select.snapshot_name)
-                if snapshot.composition_type != SnapshotComposition.KEY:
-                    raise ValueError(f"Composition type for '{select.snapshot_name}' must be 'key'.")
+                if not await self._validate_snapshot(select.snapshot_name):
+                    return []
                 feature_flags = self._client.list_configuration_settings(snapshot_name=select.snapshot_name, **kwargs)
             else:
                 # Handle None key_filter by converting to empty string
@@ -254,6 +255,30 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         """
         return await self._client.get_configuration_setting(key=key, label=label, **kwargs)
 
+    async def _validate_snapshot(self, snapshot_name: str) -> bool:
+        """Gets and validates a snapshot by name.
+
+        Returns True if the snapshot is found and has a valid composition type,
+        or False if the snapshot does not exist (404).
+
+        :param str snapshot_name: The name of the snapshot to retrieve
+        :return: True if the snapshot is valid, False if not found
+        :rtype: bool
+        :raises HttpResponseError: If the error is not a 404
+        :raises ValueError: If the snapshot composition type is not 'key'
+        """
+        snapshot = None
+        try:
+            snapshot = await self._client.get_snapshot(snapshot_name)
+        except HttpResponseError as e:
+            if e.status_code == 404:
+                self.LOGGER.warning("Snapshot '%s' not found when resolving snapshot.", snapshot_name)
+                return False
+            raise e
+        if snapshot.composition_type != SnapshotComposition.KEY:
+            raise ValueError(f"Composition type for '{snapshot_name}' must be 'key'.")
+        return True
+
     def is_active(self) -> bool:
         """
         Checks if the client is active and can be used.
@@ -275,6 +300,31 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
 
     async def __aexit__(self, *args):
         await self._client.__aexit__(*args)
+
+    async def resolve_snapshot_reference(self, setting: ConfigurationSetting, **kwargs) -> List[ConfigurationSetting]:
+        """
+        Resolve a snapshot reference configuration setting to the actual snapshot data.
+
+        :param ConfigurationSetting setting: The snapshot reference configuration setting
+        :return: A list of resolved configuration settings from the snapshot
+        :rtype: List[ConfigurationSetting]
+        :raises ValueError: When the setting is not a valid snapshot reference
+        """
+        if setting.content_type != SNAPSHOT_REF_CONTENT_TYPE:
+            raise ValueError("Setting is not a snapshot reference")
+
+        # Parse the snapshot reference
+        snapshot_name = SnapshotReferenceParser.parse(setting)
+        if not await self._validate_snapshot(snapshot_name):
+            return []
+
+        # Create a selector for the snapshot
+        snapshot_selector = SettingSelector(snapshot_name=snapshot_name)
+
+        # Use existing load_configuration_settings to load from snapshot
+        configurations = await self.load_configuration_settings([snapshot_selector], **kwargs)
+
+        return configurations
 
 
 class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disable=too-many-instance-attributes

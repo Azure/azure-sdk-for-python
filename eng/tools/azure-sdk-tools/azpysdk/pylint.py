@@ -3,11 +3,10 @@ import os
 import sys
 
 from typing import Optional, List
-import subprocess
 from subprocess import CalledProcessError, check_call
 
 from .Check import Check
-from ci_tools.functions import install_into_venv, get_pip_command
+from ci_tools.functions import install_into_venv
 from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.variables import discover_repo_root, in_ci, set_envvar_defaults
 from ci_tools.environment_exclusions import is_check_enabled
@@ -15,7 +14,6 @@ from ci_tools.logging import logger, run_logged
 
 REPO_ROOT = discover_repo_root()
 PYLINT_VERSION = "3.2.7"
-PYGITHUB_VERSION = "1.59.0"
 
 
 class pylint(Check):
@@ -42,15 +40,19 @@ class pylint(Check):
         logger.info("Running pylint check...")
 
         set_envvar_defaults()
+
         targeted = self.get_targeted_directories(args)
 
         results: List[int] = []
 
         for parsed in targeted:
+            if os.getcwd() != parsed.folder:
+                os.chdir(parsed.folder)
             package_dir = parsed.folder
             package_name = parsed.name
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
             logger.info(f"Processing {package_name} for pylint check")
+            package_failed = False
 
             # install dependencies
             self.install_dev_reqs(executable, args, package_dir)
@@ -83,7 +85,7 @@ class pylint(Check):
             try:
                 if args.next:
                     # use latest version of pylint
-                    install_into_venv(executable, ["pylint", f"PyGithub=={PYGITHUB_VERSION}"], package_dir)
+                    install_into_venv(executable, ["pylint"], package_dir)
                 else:
                     install_into_venv(executable, [f"pylint=={PYLINT_VERSION}"], package_dir)
             except CalledProcessError as e:
@@ -137,6 +139,7 @@ class pylint(Check):
                     )
                 )
                 results.append(e.returncode)
+                package_failed = True
 
             # Run pylint on tests and samples with appropriate pylintrc if they exist and next pylint is being used
             if args.next:
@@ -176,6 +179,7 @@ class pylint(Check):
                             )
                         )
                         results.append(e.returncode)
+                        package_failed = True
 
                 # Run samples with samples_pylintrc
                 if os.path.exists(samples_dir):
@@ -210,15 +214,17 @@ class pylint(Check):
                             )
                         )
                         results.append(e.returncode)
-
-            if args.next and in_ci() and any(result > 0 for result in results):
-                from gh_tools.vnext_issue_creator import create_vnext_issue
-
-                create_vnext_issue(package_dir, "pylint")
+                        package_failed = True
 
             if args.next and in_ci():
-                from gh_tools.vnext_issue_creator import close_vnext_issue
+                if package_failed:
+                    from gh_tools.vnext_issue_creator import create_vnext_issue
 
-                close_vnext_issue(package_name, "pylint")
+                    check_version = self.get_check_version(executable, "pylint")
+                    create_vnext_issue(package_dir, "pylint", check_version)
+                else:
+                    from gh_tools.vnext_issue_creator import close_vnext_issue
+
+                    close_vnext_issue(package_name, "pylint")
 
         return max(results) if results else 0

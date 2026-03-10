@@ -28,7 +28,8 @@
     "Tadmaq",
     "Udbk",
     "UPIA",
-    "xhigh"
+    "xhigh",
+    "genexpr"
   ],
   "ignorePaths": [
     "*.csv",
