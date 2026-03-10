@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,docstring-missing-param,docstring-missing-return,docstring-missing-rtype,unused-argument
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -32,14 +32,12 @@ USAGE:
 import os
 import time
 from datetime import datetime, timedelta, timezone
+from pprint import pprint
 from typing import Any, Dict, List
-
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
-from azure.monitor.query import LogsQueryClient, LogsQueryStatus
+from azure.monitor.query import LogsQueryClient, LogsQueryStatus  # pylint: disable=no-name-in-module
 from azure.ai.projects import AIProjectClient
-
-from pprint import pprint
 
 load_dotenv()
 
@@ -85,7 +83,7 @@ def get_trace_ids(
     Returns:
         List of distinct operation IDs (trace IDs).
     """
-    query = f"""
+    query = """
 dependencies
 | where timestamp between (datetime({start_time.isoformat()}) .. datetime({end_time.isoformat()}))
 | extend agent_id = tostring(customDimensions["gen_ai.agent.id"])

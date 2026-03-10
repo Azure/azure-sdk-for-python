@@ -47,8 +47,8 @@ with (
         agent_name="teacher-agent",
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-            instructions="""You are a teacher that create pre-school math question for student and check answer. 
-                            If the answer is correct, you stop the conversation by saying [COMPLETE]. 
+            instructions="""You are a teacher that create pre-school math question for student and check answer.
+                            If the answer is correct, you stop the conversation by saying [COMPLETE].
                             If the answer is wrong, you ask student to fix it.""",
         ),
     )
@@ -59,14 +59,14 @@ with (
         agent_name="student-agent",
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-            instructions="""You are a student who answers questions from the teacher. 
+            instructions="""You are a student who answers questions from the teacher.
                             When the teacher gives you a question, you answer it.""",
         ),
     )
     print(f"Agent created (id: {student_agent.id}, name: {student_agent.name}, version: {student_agent.version})")
 
     # Create Multi-Agent Workflow
-    workflow_yaml = f"""
+    workflow_yaml = """
 kind: workflow
 trigger:
   kind: OnConversationStart
@@ -109,7 +109,7 @@ trigger:
 
     - kind: SendActivity
       id: send_teacher_reply
-      activity: "{{Last(Local.LatestMessage).Text}}"                
+      activity: "{{Last(Local.LatestMessage).Text}}"
 
     - kind: SetVariable
       id: set_variable_turncount
@@ -158,7 +158,7 @@ trigger:
     for event in stream:
         print(f"Event {event.sequence_number} type '{event.type}'", end="")
         if (
-            event.type == "response.output_item.added" or event.type == "response.output_item.done"
+            event.type in ("response.output_item.added", "response.output_item.done")
         ) and event.item.type == "workflow_action":
             print(
                 f": item action ID '{event.item.action_id}' is '{event.item.status}' (previous action ID: '{event.item.previous_action_id}')",

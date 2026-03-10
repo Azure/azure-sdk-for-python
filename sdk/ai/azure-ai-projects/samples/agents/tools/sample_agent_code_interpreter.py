@@ -71,7 +71,7 @@ with (
     # Print code executed by the code interpreter tool.
     # [START code_output_extraction]
     code = next((output.code for output in response.output if output.type == "code_interpreter_call"), "")
-    print(f"Code Interpreter code:")
+    print("Code Interpreter code:")
     print(code)
     # [END code_output_extraction]
 

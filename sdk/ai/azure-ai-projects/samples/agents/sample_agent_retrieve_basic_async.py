@@ -31,9 +31,9 @@ USAGE:
 import os
 import asyncio
 from dotenv import load_dotenv
+from agent_retrieve_helper import create_and_retrieve_agent_and_conversation_async  # pylint: disable=import-error
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
-from agent_retrieve_helper import create_and_retrieve_agent_and_conversation_async
 
 load_dotenv()
 
@@ -67,7 +67,7 @@ async def main():
             conversation_id=conversation.id,
             items=[{"type": "message", "role": "user", "content": "How many feet are in a mile?"}],
         )
-        print(f"Added a user message to the conversation")
+        print("Added a user message to the conversation")
 
         response = await openai_client.responses.create(
             conversation=conversation.id,

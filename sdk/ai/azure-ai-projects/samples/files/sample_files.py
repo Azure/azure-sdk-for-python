@@ -22,10 +22,11 @@ USAGE:
 """
 
 import os
-from azure.identity import DefaultAzureCredential
-from dotenv import load_dotenv
-from azure.ai.projects import AIProjectClient
 from pathlib import Path
+
+from dotenv import load_dotenv
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
 
 load_dotenv()
 

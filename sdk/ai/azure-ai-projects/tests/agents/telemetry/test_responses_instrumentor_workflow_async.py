@@ -7,8 +7,17 @@
 Async tests for ResponsesInstrumentor with workflow agents.
 """
 
+import json
 import os
 import pytest
+from gen_ai_trace_verifier import GenAiTraceVerifier  # pylint: disable=import-error
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import RecordedTransport
+from test_base import servicePreparer
+from test_ai_instrumentor_base import (  # pylint: disable=import-error
+    TestAiAgentsInstrumentorBase,
+    CONTENT_TRACING_ENV_VARIABLE,
+)
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
 from azure.ai.projects.telemetry._utils import (
     OPERATION_NAME_INVOKE_AGENT,
@@ -16,25 +25,14 @@ from azure.ai.projects.telemetry._utils import (
     _set_use_message_events,
     RESPONSES_PROVIDER,
 )
-from azure.core.settings import settings
-from gen_ai_trace_verifier import GenAiTraceVerifier
-from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils import RecordedTransport
 from azure.ai.projects.models import (
     PromptAgentDefinition,
     WorkflowAgentDefinition,
 )
-
-from test_base import servicePreparer
-from test_ai_instrumentor_base import (
-    TestAiAgentsInstrumentorBase,
-    CONTENT_TRACING_ENV_VARIABLE,
-)
-
-import json
+from azure.core.settings import settings
 
 settings.tracing_implementation = "OpenTelemetry"
-_utils._span_impl_type = settings.tracing_implementation()
+_utils._span_impl_type = settings.tracing_implementation()  # pylint: disable=not-callable
 
 
 def checkWorkflowEventContents(content, content_recording_enabled):
@@ -190,7 +188,7 @@ trigger:
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_workflow_non_streaming_with_content_recording(self, **kwargs):
+    async def test_async_workflow_non_streaming_with_content_recording(self, **kwargs):  # pylint: disable=too-many-locals,too-many-statements
         """Test asynchronous workflow agent with non-streaming and content recording enabled."""
         self.cleanup()
         _set_use_message_events(True)
@@ -216,8 +214,8 @@ trigger:
                 agent_name="teacher-agent",
                 definition=PromptAgentDefinition(
                     model=deployment_name,
-                    instructions="""You are a teacher that creates pre-school math questions for students and checks answers. 
-                                    If the answer is correct, you stop the conversation by saying [COMPLETE]. 
+                    instructions="""You are a teacher that creates pre-school math questions for students and checks answers.
+                                    If the answer is correct, you stop the conversation by saying [COMPLETE].
                                     If the answer is wrong, you ask student to fix it.""",
                 ),
             )
@@ -227,7 +225,7 @@ trigger:
                 agent_name="student-agent",
                 definition=PromptAgentDefinition(
                     model=deployment_name,
-                    instructions="""You are a student who answers questions from the teacher. 
+                    instructions="""You are a student who answers questions from the teacher.
                                     When the teacher gives you a question, you answer it.""",
                 ),
             )
@@ -306,7 +304,7 @@ trigger:
                             continue
                         try:
                             data = json.loads(event_content)
-                        except Exception:
+                        except Exception:  # pylint: disable=broad-exception-caught
                             continue
                         if isinstance(data, list) and any(entry.get("role") == "workflow" for entry in data):
                             checkWorkflowEventContents(event_content, True)
@@ -351,7 +349,7 @@ trigger:
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_workflow_non_streaming_without_content_recording(self, **kwargs):
+    async def test_async_workflow_non_streaming_without_content_recording(self, **kwargs):  # pylint: disable=too-many-locals,too-many-statements
         """Test asynchronous workflow agent with non-streaming and content recording disabled."""
         self.cleanup()
         _set_use_message_events(True)
@@ -377,8 +375,8 @@ trigger:
                 agent_name="teacher-agent",
                 definition=PromptAgentDefinition(
                     model=deployment_name,
-                    instructions="""You are a teacher that creates pre-school math questions for students and checks answers. 
-                                    If the answer is correct, you stop the conversation by saying [COMPLETE]. 
+                    instructions="""You are a teacher that creates pre-school math questions for students and checks answers.
+                                    If the answer is correct, you stop the conversation by saying [COMPLETE].
                                     If the answer is wrong, you ask student to fix it.""",
                 ),
             )
@@ -388,7 +386,7 @@ trigger:
                 agent_name="student-agent",
                 definition=PromptAgentDefinition(
                     model=deployment_name,
-                    instructions="""You are a student who answers questions from the teacher. 
+                    instructions="""You are a student who answers questions from the teacher.
                                     When the teacher gives you a question, you answer it.""",
                 ),
             )
@@ -467,7 +465,7 @@ trigger:
                             continue
                         try:
                             data = json.loads(event_content)
-                        except Exception:
+                        except Exception:  # pylint: disable=broad-exception-caught
                             continue
                         if isinstance(data, list) and any(entry.get("role") == "workflow" for entry in data):
                             checkWorkflowEventContents(event_content, False)
@@ -516,7 +514,7 @@ trigger:
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_workflow_streaming_with_content_recording(self, **kwargs):
+    async def test_async_workflow_streaming_with_content_recording(self, **kwargs):  # pylint: disable=too-many-locals,too-many-statements
         """Test asynchronous workflow agent with streaming and content recording enabled."""
         self.cleanup()
         _set_use_message_events(True)
@@ -542,8 +540,8 @@ trigger:
                 agent_name="teacher-agent",
                 definition=PromptAgentDefinition(
                     model=deployment_name,
-                    instructions="""You are a teacher that creates pre-school math questions for students and checks answers. 
-                                    If the answer is correct, you stop the conversation by saying [COMPLETE]. 
+                    instructions="""You are a teacher that creates pre-school math questions for students and checks answers.
+                                    If the answer is correct, you stop the conversation by saying [COMPLETE].
                                     If the answer is wrong, you ask student to fix it.""",
                 ),
             )
@@ -553,7 +551,7 @@ trigger:
                 agent_name="student-agent",
                 definition=PromptAgentDefinition(
                     model=deployment_name,
-                    instructions="""You are a student who answers questions from the teacher. 
+                    instructions="""You are a student who answers questions from the teacher.
                                     When the teacher gives you a question, you answer it.""",
                 ),
             )
@@ -637,7 +635,7 @@ trigger:
                             continue
                         try:
                             data = json.loads(event_content)
-                        except Exception:
+                        except Exception:  # pylint: disable=broad-exception-caught
                             continue
                         if isinstance(data, list) and any(entry.get("role") == "workflow" for entry in data):
                             checkWorkflowEventContents(event_content, True)
@@ -682,7 +680,7 @@ trigger:
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_workflow_streaming_without_content_recording(self, **kwargs):
+    async def test_async_workflow_streaming_without_content_recording(self, **kwargs):  # pylint: disable=too-many-locals,too-many-statements
         """Test asynchronous workflow agent with streaming and content recording disabled."""
         self.cleanup()
         _set_use_message_events(True)
@@ -708,8 +706,8 @@ trigger:
                 agent_name="teacher-agent",
                 definition=PromptAgentDefinition(
                     model=deployment_name,
-                    instructions="""You are a teacher that creates pre-school math questions for students and checks answers. 
-                                    If the answer is correct, you stop the conversation by saying [COMPLETE]. 
+                    instructions="""You are a teacher that creates pre-school math questions for students and checks answers.
+                                    If the answer is correct, you stop the conversation by saying [COMPLETE].
                                     If the answer is wrong, you ask student to fix it.""",
                 ),
             )
@@ -719,7 +717,7 @@ trigger:
                 agent_name="student-agent",
                 definition=PromptAgentDefinition(
                     model=deployment_name,
-                    instructions="""You are a student who answers questions from the teacher. 
+                    instructions="""You are a student who answers questions from the teacher.
                                     When the teacher gives you a question, you answer it.""",
                 ),
             )
@@ -803,7 +801,7 @@ trigger:
                             continue
                         try:
                             data = json.loads(event_content)
-                        except Exception:
+                        except Exception:  # pylint: disable=broad-exception-caught
                             continue
                         if isinstance(data, list) and any(entry.get("role") == "workflow" for entry in data):
                             checkWorkflowEventContents(event_content, False)

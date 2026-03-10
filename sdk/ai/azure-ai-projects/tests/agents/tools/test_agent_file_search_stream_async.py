@@ -6,7 +6,6 @@
 # cSpell:disable
 
 import os
-import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import RecordedTransport

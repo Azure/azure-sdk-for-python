@@ -85,7 +85,7 @@ with (
         elif event.type == "response.output_text.delta":
             print(f"Delta: {event.delta}")
         elif event.type == "response.text.done":
-            print(f"\nFollow-up response done!")
+            print("\nFollow-up response done!")
         elif event.type == "response.output_item.done":
             item = event.item
             if item.type == "a2a_preview_call":
@@ -97,7 +97,7 @@ with (
             elif item.type == "a2a_preview_call_output":
                 print(f"Response ID: {getattr(item, 'id')}")
         elif event.type == "response.completed":
-            print(f"\nFollow-up completed!")
+            print("\nFollow-up completed!")
             print(f"Full response: {event.response.output_text}")
 
     print("\nCleaning up...")

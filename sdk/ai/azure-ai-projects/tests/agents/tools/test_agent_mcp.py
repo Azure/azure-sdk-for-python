@@ -9,8 +9,8 @@ import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils import is_live_and_not_recording
 from devtools_testutils import recorded_by_proxy, RecordedTransport
-from azure.ai.projects.models import PromptAgentDefinition, MCPTool, Tool
 from openai.types.responses.response_input_param import McpApprovalResponse, ResponseInputParam
+from azure.ai.projects.models import PromptAgentDefinition, MCPTool, Tool
 
 
 class TestAgentMCP(TestBase):

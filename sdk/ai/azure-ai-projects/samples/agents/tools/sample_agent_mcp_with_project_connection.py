@@ -27,10 +27,10 @@ USAGE:
 
 import os
 from dotenv import load_dotenv
+from openai.types.responses.response_input_param import McpApprovalResponse, ResponseInputParam
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition, MCPTool, Tool
-from openai.types.responses.response_input_param import McpApprovalResponse, ResponseInputParam
+from azure.ai.projects.models import PromptAgentDefinition, MCPTool
 
 load_dotenv()
 

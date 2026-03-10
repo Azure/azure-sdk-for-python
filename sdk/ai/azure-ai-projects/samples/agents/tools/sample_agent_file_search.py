@@ -49,7 +49,7 @@ with (
 
     # Upload file to vector store
     file = openai_client.vector_stores.files.upload_and_poll(
-        vector_store_id=vector_store.id, file=open(asset_file_path, "rb")
+        vector_store_id=vector_store.id, file=open(asset_file_path, "rb")  # pylint: disable=consider-using-with
     )
     print(f"File uploaded to vector store (id: {file.id})")
 

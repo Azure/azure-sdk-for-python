@@ -23,10 +23,11 @@ USAGE:
 
 import asyncio
 import os
+from pathlib import Path
+
 from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
-from pathlib import Path
 
 load_dotenv()
 

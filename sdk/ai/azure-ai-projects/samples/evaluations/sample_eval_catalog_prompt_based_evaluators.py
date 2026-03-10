@@ -57,21 +57,20 @@ USAGE:
 """
 
 import os
-from azure.identity import DefaultAzureCredential
-from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import EvaluatorCategory, EvaluatorDefinitionType
+import time
+from pprint import pprint
 
+from dotenv import load_dotenv
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     CreateEvalJSONLRunDataSourceParam,
     SourceFileContent,
     SourceFileContentContent,
 )
 from openai.types.eval_create_params import DataSourceConfigCustom
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import EvaluatorCategory, EvaluatorDefinitionType
 
-from pprint import pprint
-import time
-
-from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -97,8 +96,8 @@ with (
                 "prompt_text": """
                         You are a Groundedness Evaluator.
 
-                        Your task is to evaluate how well the given response is grounded in the provided ground truth.  
-                        Groundedness means the response’s statements are factually supported by the ground truth.  
+                        Your task is to evaluate how well the given response is grounded in the provided ground truth.
+                        Groundedness means the response’s statements are factually supported by the ground truth.
                         Evaluate factual alignment only — ignore grammar, fluency, or completeness.
 
                         ---
@@ -116,10 +115,10 @@ with (
                         ---
 
                         ### Scoring Scale (1–5):
-                        5 → Fully grounded. All claims supported by ground truth.  
-                        4 → Mostly grounded. Minor unsupported details.  
-                        3 → Partially grounded. About half the claims supported.  
-                        2 → Mostly ungrounded. Only a few details supported.  
+                        5 → Fully grounded. All claims supported by ground truth.
+                        4 → Mostly grounded. Minor unsupported details.
+                        3 → Partially grounded. About half the claims supported.
+                        2 → Mostly ungrounded. Only a few details supported.
                         1 → Not grounded. Almost all information unsupported.
 
                         ---
@@ -255,7 +254,7 @@ with (
 
     while True:
         run = client.evals.runs.retrieve(run_id=eval_run_response.id, eval_id=eval_object.id)
-        if run.status == "completed" or run.status == "failed":
+        if run.status in ("completed", "failed"):
             output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
             pprint(output_items)
             print(f"Eval Run Report URL: {run.report_url}")

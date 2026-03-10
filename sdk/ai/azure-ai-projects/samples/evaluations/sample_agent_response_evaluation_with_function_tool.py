@@ -25,18 +25,19 @@ USAGE:
        the "Models + endpoints" tab in your Microsoft Foundry project.
 """
 
+# pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
 import json
 import os
 import time
 from typing import Union
 from pprint import pprint
 from dotenv import load_dotenv
-from azure.identity import DefaultAzureCredential
-from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition, Tool, FunctionTool
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 from openai.types.evals.run_create_response import RunCreateResponse
 from openai.types.evals.run_retrieve_response import RunRetrieveResponse
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import PromptAgentDefinition, Tool, FunctionTool
 
 load_dotenv()
 

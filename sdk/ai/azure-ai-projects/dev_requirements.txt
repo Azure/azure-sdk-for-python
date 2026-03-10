@@ -10,3 +10,8 @@ azure-core-tracing-opentelemetry
 azure-monitor-opentelemetry
 azure-mgmt-cognitiveservices
 jsonref
+Pillow
+azure-mgmt-authorization
+azure-mgmt-resource
+azure-monitor-query
+mcp

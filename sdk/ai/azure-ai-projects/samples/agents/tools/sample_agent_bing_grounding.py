@@ -97,7 +97,7 @@ with (
         elif event.type == "response.output_text.delta":
             print(f"Delta: {event.delta}")
         elif event.type == "response.text.done":
-            print(f"\nFollow-up response done!")
+            print("\nFollow-up response done!")
         elif event.type == "response.output_item.done":
             if event.item.type == "message":
                 item = event.item
@@ -107,7 +107,7 @@ with (
                         if annotation.type == "url_citation":
                             print(f"URL Citation: {annotation.url}")
         elif event.type == "response.completed":
-            print(f"\nFollow-up completed!")
+            print("\nFollow-up completed!")
             print(f"Full response: {event.response.output_text}")
 
     print("\nCleaning up...")

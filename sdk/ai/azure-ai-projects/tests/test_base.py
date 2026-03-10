@@ -10,13 +10,14 @@ import json
 import os
 import tempfile
 from typing import Optional, Any, Dict, Final, IO, Union, overload, Literal, TextIO, BinaryIO
+from openai.types.responses import Response
+from openai.types.conversations import ConversationItem
+from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from azure.ai.projects.models import (
-    ApiKeyCredentials,
     AzureAISearchIndex,
     Connection,
     ConnectionType,
     CredentialType,
-    CustomCredential,
     DatasetCredential,
     DatasetType,
     DatasetVersion,
@@ -26,11 +27,8 @@ from azure.ai.projects.models import (
     IndexType,
     ModelDeployment,
 )
-from openai.types.responses import Response
-from openai.types.conversations import ConversationItem
 from azure.ai.projects.models._models import AgentDetails, AgentVersionDetails
-from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
-from azure.ai.projects import AIProjectClient as AIProjectClient
+from azure.ai.projects import AIProjectClient
 from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
 
 # Store reference to built-in open before any mocking occurs
@@ -157,11 +155,10 @@ def patched_open_crlf_to_lf(*args, **kwargs):
                 if args:
                     # File path was passed as positional arg
                     return _BUILTIN_OPEN(temp_path, *args[1:], **kwargs)
-                else:
-                    # File path was passed as keyword arg
-                    kwargs = kwargs.copy()
-                    kwargs["file"] = temp_path
-                    return _BUILTIN_OPEN(**kwargs)
+                # File path was passed as keyword arg
+                kwargs = kwargs.copy()
+                kwargs["file"] = temp_path
+                return _BUILTIN_OPEN(**kwargs)
 
     return _BUILTIN_OPEN(*args, **kwargs)
 
@@ -187,7 +184,7 @@ class TestBase(AzureRecordedTestCase):
     }
 
     test_indexes_params = {
-        "index_name": f"test-index-name",
+        "index_name": "test-index-name",
         "index_version": "1",
         "ai_search_connection_name": "my-ai-search-connection",
         "ai_search_index_name": "my-ai-search-index",
@@ -438,7 +435,7 @@ class TestBase(AzureRecordedTestCase):
         expected_model_deployment_name: Optional[str] = None,
         expected_model_publisher: Optional[str] = None,
     ):
-        assert type(deployment) == ModelDeployment
+        assert isinstance(deployment, ModelDeployment)
         assert deployment.type == DeploymentType.MODEL_DEPLOYMENT
         assert deployment.model_version is not None
         # Comment out the below, since I see that `Cohere-embed-v3-english` has an empty capabilities dict.
@@ -465,7 +462,7 @@ class TestBase(AzureRecordedTestCase):
         TestBase.assert_equal_or_not_none(index.version, expected_index_version)
 
         if expected_index_type == IndexType.AZURE_SEARCH:
-            assert type(index) == AzureAISearchIndex
+            assert isinstance(index, AzureAISearchIndex)
             assert index.type == IndexType.AZURE_SEARCH
             TestBase.assert_equal_or_not_none(index.connection_name, expected_ai_search_connection_name)
             TestBase.assert_equal_or_not_none(index.index_name, expected_ai_search_index_name)
@@ -485,7 +482,7 @@ class TestBase(AzureRecordedTestCase):
         if expected_dataset_type:
             assert dataset.type == expected_dataset_type
         else:
-            assert dataset.type == DatasetType.URI_FILE or dataset.type == DatasetType.URI_FOLDER
+            assert dataset.type in (DatasetType.URI_FILE, DatasetType.URI_FOLDER)
 
         TestBase.assert_equal_or_not_none(dataset.name, expected_dataset_name)
         TestBase.assert_equal_or_not_none(dataset.version, expected_dataset_version)
@@ -632,7 +629,7 @@ class TestBase(AzureRecordedTestCase):
         TestBase.assert_equal_or_not_none(job_obj.status, expected_status)
 
     def _request_callback(self, pipeline_request) -> None:
-        self.pipeline_request = pipeline_request
+        self.pipeline_request = pipeline_request  # pylint: disable=attribute-defined-outside-init
 
     @staticmethod
     def _are_json_equal(json_str1: str, json_str2: str) -> bool:

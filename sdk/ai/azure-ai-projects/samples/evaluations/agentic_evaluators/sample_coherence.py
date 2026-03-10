@@ -23,20 +23,20 @@ USAGE:
     2) AZURE_AI_MODEL_DEPLOYMENT_NAME - Required. The name of the model deployment to use for evaluation.
 """
 
-from dotenv import load_dotenv
-import json
 import os
 import time
 from pprint import pprint
 
-from azure.identity import DefaultAzureCredential
-from azure.ai.projects import AIProjectClient
+from dotenv import load_dotenv
+
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     CreateEvalJSONLRunDataSourceParam,
     SourceFileContent,
     SourceFileContentContent,
 )
 from openai.types.eval_create_params import DataSourceConfigCustom
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
 
 load_dotenv()
 
@@ -80,7 +80,7 @@ def main() -> None:
             data_source_config=data_source_config,
             testing_criteria=testing_criteria,  # type: ignore
         )
-        print(f"Evaluation created")
+        print("Evaluation created")
 
         print("Get Evaluation by Id")
         eval_object_response = client.evals.retrieve(eval_object.id)
@@ -114,7 +114,7 @@ def main() -> None:
             ),
         )
 
-        print(f"Eval Run created")
+        print("Eval Run created")
         pprint(eval_run_object)
 
         print("Get Eval Run by Id")
@@ -126,7 +126,7 @@ def main() -> None:
 
         while True:
             run = client.evals.runs.retrieve(run_id=eval_run_response.id, eval_id=eval_object.id)
-            if run.status == "completed" or run.status == "failed":
+            if run.status in ("completed", "failed"):
                 output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
                 pprint(output_items)
                 print(f"Eval Run Status: {run.status}")

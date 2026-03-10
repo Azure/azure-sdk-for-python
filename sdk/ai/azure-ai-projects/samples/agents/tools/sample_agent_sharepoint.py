@@ -60,7 +60,7 @@ with (
         agent_name="MyAgent",
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-            instructions="""You are a helpful agent that can use SharePoint tools to assist users. 
+            instructions="""You are a helpful agent that can use SharePoint tools to assist users.
             Use the available SharePoint tools to answer questions and perform tasks.""",
             tools=[tool],
         ),
@@ -85,7 +85,7 @@ with (
         elif event.type == "response.output_text.delta":
             print(f"Delta: {event.delta}")
         elif event.type == "response.text.done":
-            print(f"\nFollow-up response done!")
+            print("\nFollow-up response done!")
         elif event.type == "response.output_item.done":
             if event.item.type == "message":
                 item = event.item
@@ -99,7 +99,7 @@ with (
                                 f"End index: {annotation.end_index}"
                             )
         elif event.type == "response.completed":
-            print(f"\nFollow-up completed!")
+            print("\nFollow-up completed!")
             print(f"Agent response: {event.response.output_text}")
 
     print("Cleaning up...")

@@ -24,9 +24,9 @@ USAGE:
 """
 
 import os
+from typing import Any, cast
 import jsonref
 from dotenv import load_dotenv
-from typing import Any, cast
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
@@ -49,7 +49,7 @@ with (
     weather_asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/weather_openapi.json"))
 
     # [START tool_declaration]
-    with open(weather_asset_file_path, "r") as f:
+    with open(weather_asset_file_path, "r", encoding="utf-8") as f:
         openapi_weather = cast(dict[str, Any], jsonref.loads(f.read()))
 
     tool = OpenApiTool(

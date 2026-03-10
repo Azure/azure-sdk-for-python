@@ -52,7 +52,7 @@ async def sample_red_team_async() -> None:
     async with (
         DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-        project_client.get_openai_client() as openai_client,
+        project_client.get_openai_client() as _openai_client,
     ):
         # [START red_team_sample]
         print("Creating a Red Team scan for direct model testing")

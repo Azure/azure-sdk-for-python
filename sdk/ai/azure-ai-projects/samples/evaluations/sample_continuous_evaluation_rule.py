@@ -118,7 +118,7 @@ with (
             conversation_id=conversation.id,
             items=[{"type": "message", "role": "user", "content": f"Question {i}: What is the capital city?"}],
         )
-        print(f"Added a user message to the conversation")
+        print("Added a user message to the conversation")
 
         response = openai_client.responses.create(
             conversation=conversation.id,
@@ -145,7 +145,7 @@ with (
 
     MAX_LOOP = 20
     for _ in range(0, MAX_LOOP):
-        print(f"Waiting for eval run to complete...")
+        print("Waiting for eval run to complete...")
 
         eval_run_list = openai_client.evals.runs.list(
             eval_id=eval_object.id,

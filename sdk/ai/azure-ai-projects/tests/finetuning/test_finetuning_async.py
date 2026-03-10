@@ -5,9 +5,9 @@
 # ------------------------------------
 
 import os
-import pytest
 import asyncio
 from pathlib import Path
+import pytest
 from test_base import (
     TestBase,
     servicePreparer,
@@ -329,7 +329,7 @@ class TestFineTuningAsync(TestBase):
             await self._cleanup_test_file_async(openai_client, train_file.id)
             await self._cleanup_test_file_async(openai_client, validation_file.id)
 
-    def _extract_account_name_from_endpoint(self, project_endpoint, test_prefix):
+    def _extract_account_name_from_endpoint(self, project_endpoint, _test_prefix):
         endpoint_clean = project_endpoint.replace("https://", "").replace("http://", "")
         if ".services.ai.azure.com" not in endpoint_clean:
             raise ValueError(

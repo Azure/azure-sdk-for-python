@@ -47,7 +47,7 @@ with (
     )
 
     # Upload the CSV file for the code interpreter
-    file = openai_client.files.create(purpose="assistants", file=open(asset_file_path, "rb"))
+    file = openai_client.files.create(purpose="assistants", file=open(asset_file_path, "rb"))  # pylint: disable=consider-using-with
     tool = CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[file.id]))
     # [END tool_declaration]
 

@@ -36,7 +36,7 @@ load_dotenv()
 endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
 
-async def main() -> None:
+async def main() -> None:  # pylint: disable=too-many-statements
     async with (
         DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
@@ -52,7 +52,7 @@ async def main() -> None:
         # Upload file to vector store
         try:
             file = await openai_client.vector_stores.files.upload_and_poll(
-                vector_store_id=vector_store.id, file=open(asset_file_path, "rb")
+                vector_store_id=vector_store.id, file=open(asset_file_path, "rb")  # pylint: disable=consider-using-with
             )
             print(f"File uploaded to vector store (id: {file.id})")
         except FileNotFoundError:
@@ -104,7 +104,7 @@ async def main() -> None:
             elif event.type == "response.text.done":
                 print(f"\nResponse done with full message: {event.text}")
             elif event.type == "response.completed":
-                print(f"\nResponse completed!")
+                print("\nResponse completed!")
                 print(f"Full response: {event.response.output_text}")
 
         print("\n" + "=" * 60)
@@ -134,7 +134,7 @@ async def main() -> None:
             elif event.type == "response.output_text.delta":
                 print(f"Delta: {event.delta}")
             elif event.type == "response.text.done":
-                print(f"\nFollow-up response done!")
+                print("\nFollow-up response done!")
             elif event.type == "response.output_item.done":
                 if event.item.type == "message":
                     item = event.item
@@ -144,7 +144,7 @@ async def main() -> None:
                             if annotation.type == "file_citation":
                                 print(f"File Citation - Filename: {annotation.filename}, File ID: {annotation.file_id}")
             elif event.type == "response.completed":
-                print(f"\nFollow-up completed!")
+                print("\nFollow-up completed!")
                 print(f"Agent response: {event.response.output_text}")
 
         # Clean up resources
@@ -160,7 +160,7 @@ async def main() -> None:
         try:
             await openai_client.vector_stores.delete(vector_store.id)
             print("Vector store deleted")
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-exception-caught
             print(f"Warning: Could not delete vector store: {e}")
 
     print("\nFile search streaming sample completed!")

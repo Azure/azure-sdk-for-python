@@ -6,11 +6,10 @@
 # cSpell:disable
 
 import json
-import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
-from azure.ai.projects.models import PromptAgentDefinition, FunctionTool
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
+from azure.ai.projects.models import PromptAgentDefinition, FunctionTool
 
 
 class TestAgentFunctionTool(TestBase):
@@ -162,7 +161,7 @@ class TestAgentFunctionTool(TestBase):
 
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_agent_function_tool_multi_turn_with_multiple_calls(self, **kwargs):
+    def test_agent_function_tool_multi_turn_with_multiple_calls(self, **kwargs):  # pylint: disable=too-many-statements
         """
         Test multi-turn conversation where agent calls functions multiple times.
 

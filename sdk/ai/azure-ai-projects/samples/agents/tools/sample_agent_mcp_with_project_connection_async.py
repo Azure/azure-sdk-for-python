@@ -28,10 +28,10 @@ USAGE:
 import os
 import asyncio
 from dotenv import load_dotenv
+from openai.types.responses.response_input_param import McpApprovalResponse, ResponseInputParam
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import PromptAgentDefinition, MCPTool, Tool
-from openai.types.responses.response_input_param import McpApprovalResponse, ResponseInputParam
 
 load_dotenv()
 

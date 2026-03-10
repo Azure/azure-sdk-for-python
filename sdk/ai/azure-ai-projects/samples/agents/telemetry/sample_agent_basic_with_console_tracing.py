@@ -1,3 +1,4 @@
+# pylint: disable=wrong-import-position,wrong-import-order,docstring-missing-param,ungrouped-imports
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -50,7 +51,7 @@ from openai.types.responses.response_output_text import ResponseOutputText
 load_dotenv()
 
 
-def display_conversation_item(item: Any) -> None:
+def display_conversation_item(item: Any) -> None:  # pylint: disable=redefined-outer-name
     """Safely display conversation item information"""
     print(f"Item ID: {getattr(item, 'id', 'N/A')}")
     print(f"Type: {getattr(item, 'type', 'N/A')}")
@@ -118,7 +119,7 @@ with tracer.start_as_current_span(scenario):
         )
         print(f"Answer: {response.output}")
 
-        print(f"\n📋 Listing conversation items...")
+        print("\n📋 Listing conversation items...")
         items = openai_client.conversations.items.list(conversation_id=conversation.id)
 
         # Print all the items

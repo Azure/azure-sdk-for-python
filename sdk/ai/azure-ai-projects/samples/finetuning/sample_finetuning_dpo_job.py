@@ -26,9 +26,9 @@ USAGE:
 
 import os
 from dotenv import load_dotenv
+from fine_tuning_sample_helper import resolve_data_file_path  # pylint: disable=import-error
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from fine_tuning_sample_helper import resolve_data_file_path
 
 load_dotenv()
 

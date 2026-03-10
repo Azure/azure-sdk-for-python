@@ -34,6 +34,7 @@ USAGE:
 
 import os
 from dotenv import load_dotenv
+from openai.types.responses import EasyInputMessageParam
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
@@ -42,7 +43,6 @@ from azure.ai.projects.models import (
     MemoryStoreDefaultOptions,
     MemorySearchOptions,
 )
-from openai.types.responses import EasyInputMessageParam
 
 load_dotenv()
 
