@@ -9,6 +9,8 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Exempt specific GenAI attributes values from custom properties truncation
+  ([#45596](https://github.com/Azure/azure-sdk-for-python/pull/45596))
 - Fix attributes override in Rate Limited Sampler
   ([#45592](https://github.com/Azure/azure-sdk-for-python/pull/45592))
 - Add environment variable to disable/enable custom properties truncation
