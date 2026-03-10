@@ -20,7 +20,9 @@
 
 ### Other Changes
 
-* Placeholder
+* Replace environment variable name, `AZURE_AI_PROJECT_ENDPOINT` TO `PROJECT_ENDPOINT`.
+* Replace environment variable name, `AZURE_AI_MODEL_DEPLOYMENT_NAME` TO `MODEL_DEPLOYMENT_NAME`.
+
 
 ## 2.0.0 (2026-03-06)
 

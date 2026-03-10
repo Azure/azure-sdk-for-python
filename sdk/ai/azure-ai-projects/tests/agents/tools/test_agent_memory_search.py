@@ -54,7 +54,7 @@ class TestAgentMemorySearch(TestBase):
         DELETE /memory_stores/{memory_store_name}            project_client.beta.memory_stores.delete()
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("model_deployment_name")
         chat_model = kwargs.get("memory_store_chat_model_deployment_name")
         embedding_model = kwargs.get("memory_store_embedding_model_deployment_name")
 

@@ -38,7 +38,7 @@ class TestAgentWebSearch(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("model_deployment_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,

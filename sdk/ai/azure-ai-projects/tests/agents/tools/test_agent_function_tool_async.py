@@ -28,7 +28,7 @@ class TestAgentFunctionToolAsync(TestBase):
         3. Receive function results and incorporate them into responses
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("model_deployment_name")
         agent_name = "function-tool-agent-async"
 
         # Setup
@@ -160,7 +160,7 @@ class TestAgentFunctionToolAsync(TestBase):
         - Ability to use previous function results in subsequent queries
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("model_deployment_name")
 
         # Setup
         project_client = self.create_async_client(operation_group="agents", **kwargs)
@@ -370,7 +370,7 @@ class TestAgentFunctionToolAsync(TestBase):
         remembering parameters from the first query.
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("model_deployment_name")
 
         # Setup
         async with (

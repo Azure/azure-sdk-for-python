@@ -41,7 +41,7 @@ class TestAgentFunctionTool(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("model_deployment_name")
         agent_name = "function-tool-agent"
 
         with (
@@ -172,7 +172,7 @@ class TestAgentFunctionTool(TestBase):
         - Ability to use previous function results in subsequent queries
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("model_deployment_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -381,7 +381,7 @@ class TestAgentFunctionTool(TestBase):
         remembering parameters from the first query.
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("model_deployment_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,

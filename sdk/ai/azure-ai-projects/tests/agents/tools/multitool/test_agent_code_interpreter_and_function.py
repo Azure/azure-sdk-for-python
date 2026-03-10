@@ -40,7 +40,7 @@ class TestAgentCodeInterpreterAndFunction(TestBase):
         2. Function Tool: Saves the computed result
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("model_deployment_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
@@ -100,7 +100,7 @@ class TestAgentCodeInterpreterAndFunction(TestBase):
         2. Function Tool: Creates a report with the computed statistics
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("model_deployment_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
