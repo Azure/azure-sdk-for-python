@@ -148,13 +148,15 @@ Packages with a stable GA release must have a `[tool.azure-sdk-conda]` section i
 - The `[tool.azure-sdk-conda]` table **must** include an `in_bundle` key (boolean) indicating whether the package is part of a bundle. When `in_bundle = true`, a `bundle_name` key is also **required** so the conda tooling can map the package into the correct bundle.
 - The presence and correctness of these keys is enforced by the `verifywhl` CI check. Service teams are responsible for updating this metadata.
 
-Here's an example:
+Here are examples:
 
 ```toml
 # Package is released to Conda individually
 [tool.azure-sdk-conda]
 in_bundle = false
+```
 
+```toml
 # Package is released within the `azure-communication` bundle
 [tool.azure-sdk-conda]
 in_bundle = true
