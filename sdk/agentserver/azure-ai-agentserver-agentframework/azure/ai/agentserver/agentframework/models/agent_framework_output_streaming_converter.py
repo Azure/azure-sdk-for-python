@@ -9,7 +9,7 @@ import datetime
 import json
 from typing import Any, AsyncIterable, List
 
-from agent_framework import AgentResponseUpdate, Content, ResponseStream
+from agent_framework import AgentResponseUpdate, Content
 
 from azure.ai.agentserver.core import AgentRunContext
 from azure.ai.agentserver.core.models import (

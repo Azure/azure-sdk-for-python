@@ -56,7 +56,13 @@ _RESULT_HINT_FIELDS = (
 
 
 def to_chat_message(item: ConversationItem) -> Optional[Message]:
-    """Convert a ConversationItem from the Conversations API to an AF Message."""
+    """Convert a ConversationItem from the Conversations API to an AF Message.
+
+    :param item: The conversation item to convert.
+    :type item: ConversationItem
+    :return: The converted message, or None if the item is unsupported.
+    :rtype: Optional[Message]
+    """
     if item is None:
         return None
 

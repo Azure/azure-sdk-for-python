@@ -43,7 +43,8 @@ class HumanInTheLoopHelper:
             pending_events = getattr(checkpoint, "pending_request_info_events", None) or getattr(
                 checkpoint, "pending_events", None
             )
-            logger.info("Checking checkpoint for pending HITL requests, found %d pending events", len(pending_events) if pending_events else 0)
+            pending_count = len(pending_events) if pending_events else 0
+            logger.info("Checking checkpoint for pending HITL requests, found %d pending events", pending_count)
             if pending_events:
                 for call_id, request in pending_events.items():
                     logger.info("Processing pending event with call_id %s from checkpoint %s", call_id, type(request))
@@ -138,7 +139,13 @@ class HumanInTheLoopHelper:
         return Message(role="tool", contents=[response_content])
 
     def remove_hitl_content_from_session(self, session_messages: List[Message]) -> List[Message]:
-        """Remove HITL function call contents and related results from a conversation session."""
+        """Remove HITL function call contents and related results from a conversation session.
+
+        :param session_messages: The list of messages in the conversation session.
+        :type session_messages: List[Message]
+        :return: The filtered list of messages with HITL content removed.
+        :rtype: List[Message]
+        """
         filtered_messages: List[Message] = []
 
         prev_function_call = None

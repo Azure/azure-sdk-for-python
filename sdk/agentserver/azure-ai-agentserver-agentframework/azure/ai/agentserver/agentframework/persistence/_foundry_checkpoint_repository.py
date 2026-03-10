@@ -4,7 +4,7 @@
 """Foundry-backed checkpoint repository implementation."""
 
 import logging
-from typing import Dict, Mapping, MutableMapping, Optional, Union
+from typing import MutableMapping, Optional, Union
 
 from agent_framework import CheckpointStorage
 

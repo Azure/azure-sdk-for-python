@@ -9,7 +9,7 @@ from typing import Any, AsyncGenerator, Dict, Optional, Union
 from agent_framework import SupportsAgentRun
 
 from azure.ai.agentserver.core import AgentRunContext
-from azure.ai.agentserver.core.logger import get_logger, get_project_endpoint
+from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.models import (
     Response as OpenAIResponse,
     ResponseStreamEvent,
