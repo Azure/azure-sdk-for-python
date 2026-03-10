@@ -1493,7 +1493,10 @@ class ResultProcessor:
     ) -> str:
         """Determine the run-level status based on red team info status values."""
 
-        # Check if any tasks are still incomplete/failed
+        # Check if any tasks are incomplete/failed/were never executed.
+        # By the time this method is called the scan is finished, so "pending"
+        # (category was skipped or never ran) and "running" are also terminal
+        # failures rather than signs of ongoing work.
         if isinstance(red_team_info, dict):
             for risk_data in red_team_info.values():
                 if not isinstance(risk_data, dict):
@@ -1502,10 +1505,8 @@ class ResultProcessor:
                     if not isinstance(details, dict):
                         continue
                     status = details.get("status", "").lower()
-                    if status in ("incomplete", "failed", "timeout"):
+                    if status in ("incomplete", "failed", "timeout", "pending", "running"):
                         return "failed"
-                    elif status in ("running", "pending"):
-                        return "in_progress"
 
         return "completed"
 

@@ -10,11 +10,40 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AutoRenew(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Auto renew status."""
+
+    ENABLED = "Enabled"
+    """Auto renew is enabled."""
+    DISABLED = "Disabled"
+    """Auto renew is disabled."""
+
+
+class BenefitPlanStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Benefit plans status."""
+
+    ENABLED = "Enabled"
+    """Benefit plan is enabled."""
+    DISABLED = "Disabled"
+    """Benefit plan is disabled."""
+
+
 class BillingModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Billing model."""
 
     CAPACITY = "Capacity"
     """Billed on capacity."""
+
+
+class BillingStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Billing status."""
+
+    ENABLED = "Enabled"
+    """Billing is enabled."""
+    DISABLED = "Disabled"
+    """Billing is disabled."""
+    STOPPED = "Stopped"
+    """Billing is stopped."""
 
 
 class ConnectionIntent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -48,6 +77,15 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity was created by a key."""
 
 
+class PricingModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Pricing model."""
+
+    TRIAL = "Trial"
+    """Trial pricing model."""
+    ANNUAL = "Annual"
+    """Annual pricing model."""
+
+
 class RegistrationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Registration status."""
 
@@ -75,3 +113,12 @@ class ResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Resource creation failed."""
     CANCELED = "Canceled"
     """Resource creation was canceled."""
+
+
+class SystemReboot(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """System Reboot."""
+
+    REQUIRED = "Required"
+    """System reboot is required."""
+    NOT_REQUIRED = "NotRequired"
+    """System reboot is not required."""

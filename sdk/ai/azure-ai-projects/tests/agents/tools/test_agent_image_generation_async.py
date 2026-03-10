@@ -15,9 +15,6 @@ from azure.ai.projects.models import PromptAgentDefinition, ImageGenTool
 from azure.core.exceptions import ResourceNotFoundError
 
 
-@pytest.mark.skip(
-    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-)
 class TestAgentImageGenerationAsync(TestBase):
 
     @servicePreparer()
