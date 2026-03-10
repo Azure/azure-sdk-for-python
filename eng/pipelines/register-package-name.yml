@@ -93,7 +93,7 @@ steps:
       Write-Host "`n=== Step 3: Triggering name reservation pipeline ==="
       $pipelineUrl = "https://dev.azure.com/azure-sdk/internal/_apis/pipelines/8013/runs?api-version=7.1"
       $headers = @{
-          "Authorization" = "Bearer $(System.AccessToken)"
+          "Authorization" = "Bearer $env:SYSTEM_ACCESSTOKEN"
           "Content-Type"  = "application/json"
       }
 
