@@ -1,13 +1,14 @@
 [project]
-name = "azure-ai-agentserver-langgraph"
+name = "azure-ai-agentserver"
 dynamic = ["version", "readme"]
-description = "LangGraph adapter for Azure AI Agent Server"
+description = "Generic agent server for Azure AI with pluggable protocol heads"
 requires-python = ">=3.10"
 authors = [
   { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
 ]
 license = "MIT"
 classifiers = [
+    "Development Status :: 4 - Beta",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
@@ -16,20 +17,28 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
-keywords = ["azure", "azure sdk"]
+keywords = ["azure", "azure sdk", "agent", "agentserver"]
 
 dependencies = [
-    "azure-ai-agentserver-core",
-    "langchain>0.3.5",
-    "langchain-openai>0.3.10",
-    "langchain-azure-ai[opentelemetry]>=0.1.4",
-    "langgraph>0.5.0",
-    "opentelemetry-exporter-otlp-proto-http",
+    "azure-core>=1.35.0",
+    "starlette>=0.45.0",
+    "hypercorn>=0.17.0",
+    "jsonschema>=4.0.0",
+]
+
+[project.optional-dependencies]
+tracing = [
+    "opentelemetry-api>=1.20.0",
+    "opentelemetry-sdk>=1.20.0",
+    "azure-monitor-opentelemetry-exporter>=1.0.0b21",
 ]
 
 [build-system]
 requires = ["setuptools>=69", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
 
 [tool.setuptools.packages.find]
 exclude = [
@@ -41,7 +50,7 @@ exclude = [
 ]
 
 [tool.setuptools.dynamic]
-version = { attr = "azure.ai.agentserver.langgraph._version.VERSION" }
+version = { attr = "azure.ai.agentserver._version.VERSION" }
 readme = { file = ["README.md"], content-type = "text/markdown" }
 
 [tool.setuptools.package-data]
@@ -49,20 +58,19 @@ pytyped = ["py.typed"]
 
 [tool.ruff]
 line-length = 120
-target-version = "py311"
-lint.select = ["E", "F", "B", "I"]   # E=pycodestyle errors, F=Pyflakes, B=bugbear, I=import sort
+target-version = "py310"
+lint.select = ["E", "F", "B", "I"]
 lint.ignore = []
 fix = false
 
 [tool.ruff.lint.isort]
-known-first-party = ["azure.ai.agentserver.langgraph"]
+known-first-party = ["azure.ai.agentserver"]
 combine-as-imports = true
 
 [tool.azure-sdk-build]
-breaking = false   # incompatible python version
-pyright = false
-verifytypes = false   # incompatible python version for -core
-verify_keywords = false
-mindependency = false  # depends on -core package
-whl_no_aio = false
-apistub = false  # pip 24.0 crashes resolving langchain/langgraph transitive deps during stub generation
+breaking = false
+mypy = true
+pyright = true
+verifytypes = true
+pylint = true
+type_check_samples = false  # samples require env-specific deps (langchain, agent-framework, etc.)
