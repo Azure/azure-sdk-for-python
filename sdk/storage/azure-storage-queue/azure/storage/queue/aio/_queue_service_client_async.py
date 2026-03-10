@@ -17,8 +17,8 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ._models import QueuePropertiesPaged
 from ._queue_client_async import QueueClient
 from .._encryption import StorageEncryptionMixin
-from .._generated.aio import AzureQueueStorage
-from .._generated.models import KeyInfo, StorageServiceProperties
+from .._generated.azure.storage.queues.aio import QueuesClient as AzureQueueStorage
+from .._generated.azure.storage.queues.models import KeyInfo, QueueServiceProperties as StorageServiceProperties
 from .._models import CorsRule, QueueProperties, service_properties_deserialize, service_stats_deserialize
 from .._queue_service_client_helpers import _parse_url
 from .._serialize import get_api_version
@@ -116,7 +116,7 @@ class QueueServiceClient(  # type: ignore [misc]
             **kwargs,
         )
         self._client = AzureQueueStorage(
-            self.url, get_api_version(api_version), base_url=self.url, pipeline=self._pipeline, loop=loop
+            self.url, version=get_api_version(api_version), pipeline=self._pipeline
         )
         self._loop = loop
         self._configure_encryption(kwargs)

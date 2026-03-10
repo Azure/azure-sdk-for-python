@@ -17,8 +17,8 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ._models import MessagesPaged
 from .._deserialize import deserialize_queue_creation, deserialize_queue_properties
 from .._encryption import modify_user_agent_for_encryption, StorageEncryptionMixin
-from .._generated.aio import AzureQueueStorage
-from .._generated.models import QueueMessage as GenQueueMessage, SignedIdentifier
+from .._generated.azure.storage.queues.aio import QueuesClient as AzureQueueStorage
+from .._generated.azure.storage.queues.models import QueueMessage as GenQueueMessage, SignedIdentifier
 from .._message_encoding import NoDecodePolicy, NoEncodePolicy
 from .._models import AccessPolicy, QueueMessage
 from .._queue_client_helpers import _format_url, _from_queue_url, _parse_url
@@ -133,7 +133,7 @@ class QueueClient(  # type: ignore [misc]
         self._message_encode_policy = message_encode_policy or NoEncodePolicy()
         self._message_decode_policy = message_decode_policy or NoDecodePolicy()
         self._client = AzureQueueStorage(
-            self.url, get_api_version(api_version), base_url=self.url, pipeline=self._pipeline, loop=loop
+            self.url, version=get_api_version(api_version), pipeline=self._pipeline
         )
         self._loop = loop
         self._configure_encryption(kwargs)

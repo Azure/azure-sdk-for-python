@@ -14,8 +14,8 @@ from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
 from ._encryption import StorageEncryptionMixin
-from ._generated import AzureQueueStorage
-from ._generated.models import KeyInfo, StorageServiceProperties
+from ._generated.azure.storage.queues import QueuesClient as AzureQueueStorage
+from ._generated.azure.storage.queues.models import KeyInfo, QueueServiceProperties as StorageServiceProperties
 from ._models import (
     CorsRule,
     QueueProperties,
@@ -117,7 +117,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             **kwargs,
         )
         self._client = AzureQueueStorage(
-            self.url, get_api_version(api_version), base_url=self.url, pipeline=self._pipeline
+            self.url, version=get_api_version(api_version), pipeline=self._pipeline
         )
         self._configure_encryption(kwargs)
 

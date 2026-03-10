@@ -15,8 +15,8 @@ from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from ._deserialize import deserialize_queue_creation, deserialize_queue_properties
 from ._encryption import modify_user_agent_for_encryption, StorageEncryptionMixin
-from ._generated import AzureQueueStorage
-from ._generated.models import QueueMessage as GenQueueMessage, SignedIdentifier
+from ._generated.azure.storage.queues import QueuesClient as AzureQueueStorage
+from ._generated.azure.storage.queues.models import QueueMessage as GenQueueMessage, SignedIdentifier
 from ._message_encoding import NoDecodePolicy, NoEncodePolicy
 from ._models import AccessPolicy, MessagesPaged, QueueMessage
 from ._queue_client_helpers import _format_url, _from_queue_url, _parse_url
@@ -120,7 +120,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         self._message_encode_policy = message_encode_policy or NoEncodePolicy()
         self._message_decode_policy = message_decode_policy or NoDecodePolicy()
         self._client = AzureQueueStorage(
-            self.url, get_api_version(api_version), base_url=self.url, pipeline=self._pipeline
+            self.url, version=get_api_version(api_version), pipeline=self._pipeline
         )
         self._configure_encryption(kwargs)
 
