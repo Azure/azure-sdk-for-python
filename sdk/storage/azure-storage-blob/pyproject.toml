@@ -10,7 +10,7 @@ authors = [
 description = "Microsoft Azure Blob Storage Client Library for Python"
 keywords = ["azure", "azure sdk"]
 requires-python = ">=3.9"
-license = "MIT"
+license = "MIT License"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Programming Language :: Python",
