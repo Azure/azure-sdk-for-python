@@ -11,6 +11,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import Any, List
 from ._patch_agents import AgentsOperations
 from ._patch_datasets import DatasetsOperations
+from ._patch_evaluation_rules import EvaluationRulesOperations
 from ._patch_telemetry import TelemetryOperations
 from ._patch_connections import ConnectionsOperations
 from ._patch_memories import BetaMemoryStoresOperations
@@ -56,6 +57,7 @@ class BetaOperations(GeneratedBetaOperations):
 __all__: List[str] = [
     "AgentsOperations",
     "BetaEvaluationTaxonomiesOperations",
+    "EvaluationRulesOperations",
     "BetaEvaluatorsOperations",
     "BetaInsightsOperations",
     "BetaMemoryStoresOperations",
