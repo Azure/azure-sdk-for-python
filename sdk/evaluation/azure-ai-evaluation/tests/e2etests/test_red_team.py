@@ -100,7 +100,7 @@ class TestRedTeam:
 
         # Validate per_testing_criteria_results contains both risk categories and attack strategies
         if result.scan_result:
-            summary = result.scan_result.get("aoai_compatible_summary", result.scan_result)
+            summary = result.scan_result.get("AOAI_Compatible_Summary", result.scan_result)
             per_testing = summary.get("per_testing_criteria_results", [])
             if per_testing:
                 # Should have at least one risk category entry and one attack strategy entry

@@ -78,7 +78,7 @@ class TestRedTeamFoundry:
 
         # Validate per_testing_criteria_results contains both risk categories and attack strategies
         if result.scan_result:
-            summary = result.scan_result.get("aoai_compatible_summary", result.scan_result)
+            summary = result.scan_result.get("AOAI_Compatible_Summary", result.scan_result)
             per_testing = summary.get("per_testing_criteria_results", [])
             if per_testing:
                 risk_entries = [r for r in per_testing if "attack_strategy" not in r]

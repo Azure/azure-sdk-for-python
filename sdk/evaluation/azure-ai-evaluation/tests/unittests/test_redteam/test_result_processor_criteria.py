@@ -2,6 +2,7 @@ import pytest
 from azure.ai.evaluation.red_team._result_processor import ResultProcessor
 
 
+@pytest.mark.unittest
 class TestComputePerTestingCriteria:
     """Tests for ResultProcessor._compute_per_testing_criteria."""
 
