@@ -224,6 +224,39 @@ class TestRateLimitedSampler(unittest.TestCase):
                 self.assertGreaterEqual(float(sample_rate), 0.0)
                 self.assertLessEqual(float(sample_rate), 100.0)
 
+    def test_sampling_percentage_100_does_not_add_sample_rate_attribute(self):
+        sampler = RateLimitedSampler(25.0)
+
+        sampler._sampling_percentage_generator.get = Mock(return_value=100.0)
+
+        original_attributes = {"service.name": "test-service", "operation.name": "test-operation"}
+        result = sampler.should_sample(
+            parent_context=None, trace_id=123, name="test-span", attributes=original_attributes
+        )
+
+        self.assertEqual(dict(result.attributes), original_attributes)
+        self.assertNotIn(_SAMPLE_RATE_KEY, result.attributes)
+        self.assertNotIn(_SAMPLE_RATE_KEY, original_attributes)
+
+        result_none = sampler.should_sample(parent_context=None, trace_id=124, name="test-span", attributes=None)
+        self.assertEqual(dict(result_none.attributes), {})
+        self.assertNotIn(_SAMPLE_RATE_KEY, result_none.attributes)
+
+    def test_sampling_percentage_non_100_adds_sample_rate_attribute(self):
+        sampler = RateLimitedSampler(25.0)
+
+        sampler._sampling_percentage_generator.get = Mock(return_value=42.0)
+
+        original_attributes = {"service.name": "test-service", "operation.name": "test-operation"}
+        result = sampler.should_sample(
+            parent_context=None, trace_id=123, name="test-span", attributes=original_attributes
+        )
+
+        self.assertEqual(dict(result.attributes), {**original_attributes, _SAMPLE_RATE_KEY: 42.0})
+        self.assertIn(_SAMPLE_RATE_KEY, result.attributes)
+        self.assertEqual(result.attributes[_SAMPLE_RATE_KEY], 42.0)
+        self.assertNotIn(_SAMPLE_RATE_KEY, original_attributes)
+
     # Test sampling behavior with edge case trace ID values
     def test_sampler_with_extreme_trace_ids(self):
         sampler = RateLimitedSampler(1.0)

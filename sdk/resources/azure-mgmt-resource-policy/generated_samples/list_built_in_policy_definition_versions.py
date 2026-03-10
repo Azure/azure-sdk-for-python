@@ -38,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/resources/resource-manager/Microsoft.Authorization/policy/stable/2023-04-01/examples/listBuiltInPolicyDefinitionVersions.json
+# x-ms-original-file: specification/resources/resource-manager/Microsoft.Authorization/policy/stable/2025-03-01/examples/listBuiltInPolicyDefinitionVersions.json
 if __name__ == "__main__":
     main()

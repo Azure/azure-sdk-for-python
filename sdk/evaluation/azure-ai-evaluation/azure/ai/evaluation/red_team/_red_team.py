@@ -1304,6 +1304,7 @@ class RedTeam:
         self.taxonomy_risk_categories = taxonomy_risk_categories or {}
         is_agent_target: Optional[bool] = kwargs.get("is_agent_target", False)
         client_id: Optional[str] = kwargs.get("client_id")
+        http_timeout: Optional[int] = kwargs.get("_http_timeout")
 
         with UserAgentSingleton().add_useragent_product(user_agent):
             # Initialize scan
@@ -1402,7 +1403,7 @@ class RedTeam:
                     client_id,
                 )
 
-                chat_target = get_chat_target(target, credential=self.credential)
+                chat_target = get_chat_target(target, credential=self.credential, http_timeout=http_timeout)
                 self.chat_target = chat_target
 
                 # Execute attacks - use Foundry if orchestrator is not available
@@ -1746,7 +1747,7 @@ class RedTeam:
                 objectives_by_risk[risk_value] = []
 
                 # Get baseline objectives for this risk category from cache
-                baseline_key = ((risk_value,), "baseline")
+                baseline_key = ((get_attack_objective_from_risk_category(risk_category).lower(),), "baseline")
                 self.logger.debug(f"Looking for baseline_key: {baseline_key}")
                 self.logger.debug(f"Available keys in attack_objectives: {list(self.attack_objectives.keys())}")
                 if baseline_key in self.attack_objectives:

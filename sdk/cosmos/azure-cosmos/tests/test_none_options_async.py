@@ -74,6 +74,7 @@ class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
         pager = self.container.query_items("SELECT * FROM c", continuation_token_limit=None, enable_scan_in_query=None,
                                       initial_headers=None, max_integrated_cache_staleness_in_ms=None, max_item_count=None,
                                       parameters=None, partition_key=None, populate_index_metrics=None,
+                                      populate_query_advice=None,
                                       populate_query_metrics=None, priority=None, response_hook=None, session_token=None,
                                       throughput_bucket=None)
         items = [doc async for doc in pager]
@@ -148,7 +149,7 @@ class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
         pager = self.container.query_items("SELECT * FROM c WHERE c.pk = @pk", parameters=[{"name": "@pk", "value": pk_value}],
                                            partition_key=None, continuation_token_limit=None, enable_scan_in_query=None,
                                            initial_headers=None, max_integrated_cache_staleness_in_ms=None, max_item_count=None,
-                                           populate_index_metrics=None, populate_query_metrics=None, priority=None,
+                                           populate_index_metrics=None, populate_query_advice=None, populate_query_metrics=None, priority=None,
                                            response_hook=None, session_token=None, throughput_bucket=None)
         _items = [doc async for doc in pager]
         assert _items == _items
