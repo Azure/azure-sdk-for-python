@@ -51,7 +51,7 @@ endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "")
 
 
-def image_to_data_uri(image_path: str) -> str:
+def image_to_data_uri(image_path: str) -> str:  # pylint: disable=redefined-outer-name
     with Image.open(image_path) as img:
         buffered = BytesIO()
         img.save(buffered, format=img.format or "PNG")
