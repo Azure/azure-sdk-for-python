@@ -87,6 +87,7 @@ azure-confidentialledger-certificate
 azure-ai-projects
 starlette
 uvicorn
+hypercorn
 opentelemetry-exporter-otlp-proto-http
 agent-framework-azure-ai
 langgraph
