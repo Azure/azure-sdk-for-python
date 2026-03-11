@@ -24,7 +24,7 @@ from azure.storage.blob import DelimitedTextDialect as BlobDelimitedTextDialect
 from azure.storage.blob import LeaseProperties as BlobLeaseProperties
 from azure.storage.blob import ResourceTypes as BlobResourceTypes
 from azure.storage.blob import UserDelegationKey as BlobUserDelegationKey
-from azure.storage.blob._generated.models import (
+from azure.storage.blob._generated.azure.storage.blobs.models import (
     CorsRule as GenCorsRule,
     Logging as GenLogging,
     Metrics as GenMetrics,
