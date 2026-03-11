@@ -10,6 +10,7 @@
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed regression where `user_agent_overwrite` kwarg was not cleaned up properly, causing `TypeError` crash on sync client construction. See [PR 45653](https://github.com/Azure/azure-sdk-for-python/pull/45653)
 
 #### Other Changes
 
