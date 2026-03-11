@@ -21,29 +21,29 @@ if TYPE_CHECKING:
 class AccessPolicy(_Model):
     """Represents an access policy.
 
-    :ivar start: The date-time the policy is active. Required.
+    :ivar start: The date-time the policy is active.
     :vartype start: str
-    :ivar expiry: The date-time the policy expires. Required.
+    :ivar expiry: The date-time the policy expires.
     :vartype expiry: str
-    :ivar permission: The permissions for acl the policy. Required.
+    :ivar permission: The permissions for acl the policy.
     :vartype permission: str
     """
 
-    start: str = rest_field(
+    start: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Start", "text": False, "unwrapped": False},
     )
-    """The date-time the policy is active. Required."""
-    expiry: str = rest_field(
+    """The date-time the policy is active."""
+    expiry: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Expiry", "text": False, "unwrapped": False},
     )
-    """The date-time the policy expires. Required."""
-    permission: str = rest_field(
+    """The date-time the policy expires."""
+    permission: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Permission", "text": False, "unwrapped": False},
     )
-    """The permissions for acl the policy. Required."""
+    """The permissions for acl the policy."""
 
     _xml = {"attribute": False, "name": "AccessPolicy", "text": False, "unwrapped": False}
 
@@ -51,9 +51,9 @@ class AccessPolicy(_Model):
     def __init__(
         self,
         *,
-        start: str,
-        expiry: str,
-        permission: str,
+        start: Optional[str] = None,
+        expiry: Optional[str] = None,
+        permission: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -1475,12 +1475,13 @@ class Error(_Model):
     :ivar code: The error code. Known values are: "AccountAlreadyExists", "AccountBeingCreated",
      "AccountIsDisabled", "AuthenticationFailed", "AuthorizationFailure",
      "ConditionHeadersNotSupported", "ConditionNotMet", "EmptyMetadataKey",
-     "InsufficientAccountPermissions", "InternalError", "InvalidAuthenticationInfo",
-     "InvalidHeaderValue", "InvalidHttpVerb", "InvalidInput", "InvalidMd5", "InvalidMetadata",
-     "InvalidQueryParameterValue", "InvalidRange", "InvalidRequestUrl", "InvalidUri",
-     "InvalidXmlDocument", "InvalidXmlNodeValue", "Md5Mismatch", "MetadataTooLarge",
-     "MissingContentLengthHeader", "MissingRequiredXmlNode", "MissingRequiredHeader",
-     "MissingRequiredQueryParameter", "MultipleConditionHeadersNotSupported", "OperationTimedOut",
+     "IncrementalCopyOfEarlierSnapshotNotAllowed", "InsufficientAccountPermissions",
+     "InternalError", "InvalidAuthenticationInfo", "InvalidHeaderValue", "InvalidHttpVerb",
+     "InvalidInput", "InvalidMd5", "InvalidMetadata", "InvalidQueryParameterValue", "InvalidRange",
+     "InvalidRequestUrl", "InvalidResourceName", "InvalidUri", "InvalidXmlDocument",
+     "InvalidXmlNodeValue", "Md5Mismatch", "MetadataTooLarge", "MissingContentLengthHeader",
+     "MissingRequiredXmlNode", "MissingRequiredHeader", "MissingRequiredQueryParameter",
+     "MultipleConditionHeadersNotSupported", "NoAuthenticationInformation", "OperationTimedOut",
      "OutOfRangeInput", "OutOfRangeQueryParameterValue", "RequestBodyTooLarge",
      "ResourceTypeMismatch", "RequestUrlFailedToParse", "ResourceAlreadyExists", "ResourceNotFound",
      "ServerBusy", "UnsupportedHeader", "UnsupportedXmlNode", "UnsupportedQueryParameter",
@@ -1512,23 +1513,29 @@ class Error(_Model):
     :vartype code: str or ~azure.storage.blobs.models.StorageErrorCode
     :ivar message: The error message.
     :vartype message: str
+    :ivar copy_source_status_code: Copy source status code.
+    :vartype copy_source_status_code: int
+    :ivar copy_source_error_code: Copy source error code.
+    :vartype copy_source_error_code: str
+    :ivar copy_source_error_message: Copy source error message.
+    :vartype copy_source_error_message: str
     """
 
     code: Optional[Union[str, "_models.StorageErrorCode"]] = rest_field(
-        name="Code",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Code", "text": False, "unwrapped": False},
     )
     """The error code. Known values are: \"AccountAlreadyExists\", \"AccountBeingCreated\",
      \"AccountIsDisabled\", \"AuthenticationFailed\", \"AuthorizationFailure\",
      \"ConditionHeadersNotSupported\", \"ConditionNotMet\", \"EmptyMetadataKey\",
-     \"InsufficientAccountPermissions\", \"InternalError\", \"InvalidAuthenticationInfo\",
-     \"InvalidHeaderValue\", \"InvalidHttpVerb\", \"InvalidInput\", \"InvalidMd5\",
-     \"InvalidMetadata\", \"InvalidQueryParameterValue\", \"InvalidRange\", \"InvalidRequestUrl\",
-     \"InvalidUri\", \"InvalidXmlDocument\", \"InvalidXmlNodeValue\", \"Md5Mismatch\",
-     \"MetadataTooLarge\", \"MissingContentLengthHeader\", \"MissingRequiredXmlNode\",
-     \"MissingRequiredHeader\", \"MissingRequiredQueryParameter\",
-     \"MultipleConditionHeadersNotSupported\", \"OperationTimedOut\", \"OutOfRangeInput\",
+     \"IncrementalCopyOfEarlierSnapshotNotAllowed\", \"InsufficientAccountPermissions\",
+     \"InternalError\", \"InvalidAuthenticationInfo\", \"InvalidHeaderValue\", \"InvalidHttpVerb\",
+     \"InvalidInput\", \"InvalidMd5\", \"InvalidMetadata\", \"InvalidQueryParameterValue\",
+     \"InvalidRange\", \"InvalidRequestUrl\", \"InvalidResourceName\", \"InvalidUri\",
+     \"InvalidXmlDocument\", \"InvalidXmlNodeValue\", \"Md5Mismatch\", \"MetadataTooLarge\",
+     \"MissingContentLengthHeader\", \"MissingRequiredXmlNode\", \"MissingRequiredHeader\",
+     \"MissingRequiredQueryParameter\", \"MultipleConditionHeadersNotSupported\",
+     \"NoAuthenticationInformation\", \"OperationTimedOut\", \"OutOfRangeInput\",
      \"OutOfRangeQueryParameterValue\", \"RequestBodyTooLarge\", \"ResourceTypeMismatch\",
      \"RequestUrlFailedToParse\", \"ResourceAlreadyExists\", \"ResourceNotFound\", \"ServerBusy\",
      \"UnsupportedHeader\", \"UnsupportedXmlNode\", \"UnsupportedQueryParameter\",
@@ -1561,11 +1568,28 @@ class Error(_Model):
      \"AuthorizationPermissionMismatch\", \"AuthorizationServiceMismatch\",
      \"AuthorizationResourceTypeMismatch\", and \"BlobAccessTierNotSupportedForAccountType\"."""
     message: Optional[str] = rest_field(
-        name="Message",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Message", "text": False, "unwrapped": False},
     )
     """The error message."""
+    copy_source_status_code: Optional[int] = rest_field(
+        name="copySourceStatusCode",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "CopySourceStatusCode", "text": False, "unwrapped": False},
+    )
+    """Copy source status code."""
+    copy_source_error_code: Optional[str] = rest_field(
+        name="copySourceErrorCode",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "CopySourceErrorCode", "text": False, "unwrapped": False},
+    )
+    """Copy source error code."""
+    copy_source_error_message: Optional[str] = rest_field(
+        name="copySourceErrorMessage",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "CopySourceErrorMessage", "text": False, "unwrapped": False},
+    )
+    """Copy source error message."""
 
     _xml = {"attribute": False, "name": "Error", "text": False, "unwrapped": False}
 
@@ -1575,6 +1599,9 @@ class Error(_Model):
         *,
         code: Optional[Union[str, "_models.StorageErrorCode"]] = None,
         message: Optional[str] = None,
+        copy_source_status_code: Optional[int] = None,
+        copy_source_error_code: Optional[str] = None,
+        copy_source_error_message: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -2553,7 +2580,7 @@ class SignedIdentifier(_Model):
 
     :ivar id: The unique ID for the signed identifier. Required.
     :vartype id: str
-    :ivar access_policy: The access policy for the signed identifier. Required.
+    :ivar access_policy: The access policy for the signed identifier.
     :vartype access_policy: ~azure.storage.blobs.models.AccessPolicy
     """
 
@@ -2562,12 +2589,12 @@ class SignedIdentifier(_Model):
         xml={"attribute": False, "name": "Id", "text": False, "unwrapped": False},
     )
     """The unique ID for the signed identifier. Required."""
-    access_policy: "_models.AccessPolicy" = rest_field(
+    access_policy: Optional["_models.AccessPolicy"] = rest_field(
         name="accessPolicy",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "AccessPolicy", "text": False, "unwrapped": False},
     )
-    """The access policy for the signed identifier. Required."""
+    """The access policy for the signed identifier."""
 
     _xml = {"attribute": False, "name": "SignedIdentifier", "text": False, "unwrapped": False}
 
@@ -2576,7 +2603,7 @@ class SignedIdentifier(_Model):
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        access_policy: "_models.AccessPolicy",
+        access_policy: Optional["_models.AccessPolicy"] = None,
     ) -> None: ...
 
     @overload

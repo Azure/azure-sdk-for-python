@@ -51,6 +51,10 @@ Use the returned token credential to authenticate the client:
 
 ```
 
+## Key concepts
+## Troubleshooting
+## Next steps
+
 ## Contributing
 
 This project welcomes contributions and suggestions. Most contributions require

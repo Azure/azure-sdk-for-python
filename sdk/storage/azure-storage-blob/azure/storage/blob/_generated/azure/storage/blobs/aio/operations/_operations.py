@@ -646,9 +646,7 @@ class ServiceOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        multipart_content_type: str = kwargs.pop(
-            "multipart_content_type", _headers.pop("Content-Type", "multipart/mixed")
-        )
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "multipart/mixed"))
         cls: ClsType[_models.SubmitBatchRequest] = kwargs.pop("cls", None)
 
         _body = body.as_dict() if isinstance(body, _Model) else body
@@ -659,7 +657,7 @@ class ServiceOperations:
         _request = build_service_submit_batch_request(
             content_length=content_length,
             timeout=timeout,
-            multipart_content_type=multipart_content_type,
+            content_type=content_type,
             version=self._config.version,
             files=_files,
             headers=_headers,
@@ -678,7 +676,7 @@ class ServiceOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [202]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
@@ -1551,9 +1549,7 @@ class ContainerOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        multipart_content_type: str = kwargs.pop(
-            "multipart_content_type", _headers.pop("Content-Type", "multipart/mixed")
-        )
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "multipart/mixed"))
         cls: ClsType[_models.SubmitBatchRequest] = kwargs.pop("cls", None)
 
         _body = body.as_dict() if isinstance(body, _Model) else body
@@ -1564,7 +1560,7 @@ class ContainerOperations:
         _request = build_container_submit_batch_request(
             content_length=content_length,
             timeout=timeout,
-            multipart_content_type=multipart_content_type,
+            content_type=content_type,
             version=self._config.version,
             files=_files,
             headers=_headers,
@@ -3482,9 +3478,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
     async def set_immutability_policy(
         self,
         *,
-        immutability_policy_expiry: datetime.datetime,
         timeout: Optional[int] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
+        immutability_policy_expiry: Optional[datetime.datetime] = None,
         immutability_policy_mode: Optional[Union[str, _models.ImmutabilityPolicyMode]] = None,
         snapshot: Optional[str] = None,
         version_id: Optional[str] = None,
@@ -3492,9 +3488,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
     ) -> None:
         """Set the immutability policy of a blob.
 
-        :keyword immutability_policy_expiry: Specifies the date time when the blobs immutability policy
-         is set to expire. Required.
-        :paramtype immutability_policy_expiry: ~datetime.datetime
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>. Default value is None.
@@ -3502,6 +3495,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
          resource has not been modified since the specified date-time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword immutability_policy_expiry: Specifies the date time when the blobs immutability policy
+         is set to expire. Default value is None.
+        :paramtype immutability_policy_expiry: ~datetime.datetime
         :keyword immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
          Known values are: "mutable", "locked", and "unlocked". Default value is None.
         :paramtype immutability_policy_mode: str or ~azure.storage.blobs.models.ImmutabilityPolicyMode
@@ -3533,13 +3529,12 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_set_immutability_policy_request(
-            immutability_policy_expiry=immutability_policy_expiry,
             timeout=timeout,
             if_unmodified_since=if_unmodified_since,
+            immutability_policy_expiry=immutability_policy_expiry,
             immutability_policy_mode=immutability_policy_mode,
             snapshot=snapshot,
             version_id=version_id,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
