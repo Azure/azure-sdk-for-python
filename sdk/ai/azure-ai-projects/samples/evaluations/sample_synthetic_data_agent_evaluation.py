@@ -111,7 +111,8 @@ with (
     #
     # You can guide query generation in two ways:
     #   - "prompt": A text description of the queries to generate (used below).
-    #   - "reference_files": A list of file IDs (uploaded via the datasets API)
+    #   - "reference_files": A list of dataset asset IDs (uploaded via the datasets API)
+    #     in the format of 'azureai://accounts/<account-name>/projects/<project-name>/data/<dataset-name>/versions/<version-no>'
     #     whose content the service uses as context for generating queries.
     # You can use either or both together.
     data_source = {
