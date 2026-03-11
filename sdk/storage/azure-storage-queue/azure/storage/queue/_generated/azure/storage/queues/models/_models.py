@@ -1172,9 +1172,9 @@ class UserDelegationKey(_Model):
     :ivar signed_tid: The Azure Active Directory tenant ID in GUID format. Required.
     :vartype signed_tid: str
     :ivar signed_start: The date-time the key is active. Required.
-    :vartype signed_start: ~datetime.datetime
+    :vartype signed_start: str
     :ivar signed_expiry: The date-time the key expires. Required.
-    :vartype signed_expiry: ~datetime.datetime
+    :vartype signed_expiry: str
     :ivar signed_service: The service that created the key. Required.
     :vartype signed_service: str
     :ivar signed_version: The version of the service that created the key. Required.
@@ -1198,17 +1198,15 @@ class UserDelegationKey(_Model):
         xml={"attribute": False, "name": "SignedTid", "text": False, "unwrapped": False},
     )
     """The Azure Active Directory tenant ID in GUID format. Required."""
-    signed_start: datetime.datetime = rest_field(
+    signed_start: str = rest_field(
         name="signedStart",
         visibility=["read", "create", "update", "delete", "query"],
-        format="rfc7231",
         xml={"attribute": False, "name": "SignedStart", "text": False, "unwrapped": False},
     )
     """The date-time the key is active. Required."""
-    signed_expiry: datetime.datetime = rest_field(
+    signed_expiry: str = rest_field(
         name="signedExpiry",
         visibility=["read", "create", "update", "delete", "query"],
-        format="rfc7231",
         xml={"attribute": False, "name": "SignedExpiry", "text": False, "unwrapped": False},
     )
     """The date-time the key expires. Required."""
@@ -1244,8 +1242,8 @@ class UserDelegationKey(_Model):
         *,
         signed_oid: str,
         signed_tid: str,
-        signed_start: datetime.datetime,
-        signed_expiry: datetime.datetime,
+        signed_start: str,
+        signed_expiry: str,
         signed_service: str,
         signed_version: str,
         value: str,
