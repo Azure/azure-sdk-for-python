@@ -33,14 +33,18 @@ VALID_SCOPE_CHARACTERS = frozenset(ascii_letters + digits + "_-.:/")
 VALID_SUBSCRIPTION_CHARACTERS = frozenset(ascii_letters + digits + "_-. ")
 
 
-def get_refresh_status(token: AccessTokenInfo, last_request_time: int) -> TokenRefreshStatus:
+def get_refresh_status(token: Optional[AccessTokenInfo], last_request_time: int) -> TokenRefreshStatus:
     """Determine the refresh status of a token.
 
-    :param ~azure.core.credentials.AccessTokenInfo token: The token to evaluate.
+    :param ~azure.core.credentials.AccessTokenInfo or None token: The token to evaluate.
+        If None, a refresh is required.
     :param int last_request_time: The time of the last failed proactive refresh attempt.
     :return: The refresh status of the token.
     :rtype: TokenRefreshStatus
     """
+    if token is None:
+        return TokenRefreshStatus.REQUIRED
+
     now = int(time.time())
 
     # Token is expired - must refresh.

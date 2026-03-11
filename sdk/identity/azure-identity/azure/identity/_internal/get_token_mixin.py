@@ -122,23 +122,18 @@ class GetTokenMixin(abc.ABC):
             token = self._acquire_token_silently(
                 *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
             )
-            if not token:
+            refresh_status = get_refresh_status(token, self._last_request_time)
+            if refresh_status == TokenRefreshStatus.REQUIRED:
                 token = self._request_token(
                     *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
                 )
-            else:
-                refresh_status = get_refresh_status(token, self._last_request_time)
-                if refresh_status == TokenRefreshStatus.REQUIRED:
+            elif refresh_status == TokenRefreshStatus.RECOMMENDED:
+                try:
                     token = self._request_token(
                         *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
                     )
-                elif refresh_status == TokenRefreshStatus.RECOMMENDED:
-                    try:
-                        token = self._request_token(
-                            *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
-                        )
-                    except Exception:  # pylint:disable=broad-except
-                        self._last_request_time = int(time.time())
+                except Exception:  # pylint:disable=broad-except
+                    self._last_request_time = int(time.time())
             _LOGGER.log(
                 logging.DEBUG if within_credential_chain.get() else logging.INFO,
                 "%s.%s succeeded",

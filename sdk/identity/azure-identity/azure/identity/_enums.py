@@ -67,7 +67,7 @@ class RegionalAuthority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     US_WEST_CENTRAL = "westcentralus"
 
 
-class TokenRefreshStatus(Enum):
+class TokenRefreshStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents the refresh status of a token.
 
     REQUIRED: The token is expired or otherwise unusable and must be refreshed.
