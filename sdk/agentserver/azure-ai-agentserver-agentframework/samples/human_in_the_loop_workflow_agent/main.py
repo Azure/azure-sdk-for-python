@@ -93,7 +93,7 @@ def create_workflow() -> Workflow:
     )
     reviewer = ReviewerWithHumanInTheLoop(worker_id=worker.id)
     return (
-        WorkflowBuilder(start_executor=worker, name="workflow_as_agent_hitl")
+        WorkflowBuilder(start_executor=worker, name="workflow_as_agent_hitl") # workflow name is required for checkpoint
             .add_edge(worker, reviewer)
             .add_edge(reviewer, worker)
             .build()
