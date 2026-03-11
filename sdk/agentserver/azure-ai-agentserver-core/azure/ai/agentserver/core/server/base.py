@@ -111,10 +111,17 @@ class FoundryCBAgent:
             # Set up tracing context and span
             context = request.state.agent_run_context
             ctx = request_context.get()
+            # Extract W3C trace context from incoming request headers so the
+            # server span becomes a child of the caller's span when a
+            # traceparent header is present.
+            parent_ctx = TraceContextTextMapPropagator().extract(
+                carrier=dict(request.headers)
+            )
             with self.tracer.start_as_current_span(
                 name=f"HostedAgents-{context.response_id}",
                 attributes=ctx,
                 kind=trace.SpanKind.SERVER,
+                context=parent_ctx,
             ):
                 try:
                     logger.info("Start processing CreateResponse request.")
