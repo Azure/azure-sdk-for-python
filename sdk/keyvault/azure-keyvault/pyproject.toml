@@ -10,6 +10,7 @@ authors = [
 ]
 description = "Microsoft Azure Key Vault Client Libraries for Python"
 keywords = ["azure", "azure sdk"]
+requires-python = ">=3.8"
 license = {text = "MIT License"}
 classifiers = [
     "Development Status :: 5 - Production/Stable",
