@@ -50,9 +50,10 @@ with (
 
     # Upload file to vector store
     try:
-        file = openai_client.vector_stores.files.upload_and_poll(
-            vector_store_id=vector_store.id, file=open(asset_file_path, "rb")  # pylint: disable=consider-using-with
-        )
+        with open(asset_file_path, "rb") as f:
+            file = openai_client.vector_stores.files.upload_and_poll(
+                vector_store_id=vector_store.id, file=f
+            )
         print(f"File uploaded to vector store (id: {file.id})")
     except FileNotFoundError:
         print(f"Warning: Asset file not found at {asset_file_path}")
