@@ -12,7 +12,7 @@ import os
 #
 # 3. Set environment variable MANAGED_HSM_URL with the URL of your managed HSM and AZURE_CLIENT_ID with the ID of a
 #    service principal
-#    
+#
 # 4. Set up your environment to use azure-identity's DefaultAzureCredential. For more information about how to configure
 #    the DefaultAzureCredential, refer to https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
 #
@@ -80,12 +80,12 @@ print("\n.. Update a role definition")
 new_permissions = [
     KeyVaultPermission(
         data_actions=[KeyVaultDataAction.READ_HSM_KEY],
-        not_data_actions=[KeyVaultDataAction.CREATE_HSM_KEY]
+        not_data_actions=[KeyVaultDataAction.CREATE_HSM_KEY],
     )
 ]
 unique_definition_name = role_definition.name
 updated_definition = client.set_role_definition(
-    scope=scope, name=unique_definition_name, role_name=role_name, permissions=new_permissions
+    scope=scope, name=unique_definition_name, role_name=role_name, permissions=new_permissions,
 )
 # [END update_a_role_definition]
 print(f"Role definition '{updated_definition.role_name}' updated successfully.")

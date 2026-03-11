@@ -44,6 +44,7 @@ exclude = ["samples*", "tests*", "azure", "azure.keyvault"]
 pytyped = ["py.typed"]
 
 [tool.azure-sdk-build]
+pyright = false
 
 [tool.uv.sources]
 azure-core = { path = "../../core/azure-core" }

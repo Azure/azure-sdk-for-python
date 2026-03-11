@@ -39,6 +39,7 @@ readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
 
 [tool.azure-sdk-build]
 pylint = false
+pyright = false
 
 [tool.uv.sources]
 azure-sdk-tools = { path = "../../../eng/tools/azure-sdk-tools" }
