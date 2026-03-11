@@ -766,13 +766,13 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
                 value.start = serialize_iso(value.start)
                 value.expiry = serialize_iso(value.expiry)
             identifiers.append(SignedIdentifier(id=key, access_policy=value)) # type: ignore
-        signed_identifiers = identifiers # type: ignore
+        signed_identifiers = identifiers or None # type: ignore
 
         mod_conditions = get_modify_conditions(kwargs)
         access_conditions = get_access_conditions(lease)
         try:
             return cast(Dict[str, Union[str, datetime]], await self._client.container.set_access_policy(
-                container_acl=SignedIdentifiers(items_property=signed_identifiers),
+                container_acl=SignedIdentifiers(items_property=signed_identifiers) if signed_identifiers else None,
                 timeout=timeout,
                 access=public_access,
                 lease_access_conditions=access_conditions,
