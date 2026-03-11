@@ -15,7 +15,7 @@ DESCRIPTION:
     project for reuse.
 
     For evaluating a Foundry agent instead of a model, see
-    sample_synthetic_data_evaluation.py.
+    sample_synthetic_data_agent_evaluation.py.
 
     This feature is currently in preview.
 
@@ -95,12 +95,19 @@ with (
     # Configure the synthetic data generation data source with a model target.
     # The service generates queries based on the prompt, sends them to the model,
     # and evaluates the responses.
+    #
+    # You can guide query generation in two ways:
+    #   - "prompt": A text description of the queries to generate (used below).
+    #   - "reference_files": A list of file IDs (uploaded via the datasets API)
+    #     whose content the service uses as context for generating queries.
+    # You can use either or both together.
     data_source = {
         "type": "azure_ai_synthetic_data_gen_preview",
         "item_generation_params": {
             "type": "synthetic_data_gen_preview",
             "samples_count": 5,
             "prompt": "Generate customer service questions about returning defective products",
+            # "reference_files": ["<file-id-1>", "<file-id-2>"],
             "model_deployment_name": model_deployment_name,
             "output_dataset_name": "synthetic-model-eval-dataset",
         },
