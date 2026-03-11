@@ -115,7 +115,7 @@ class FoundryCBAgent:
             # server span becomes a child of the caller's span when a
             # traceparent header is present.
             parent_ctx = TraceContextTextMapPropagator().extract(
-                carrier=dict(request.headers)
+                carrier=request.headers
             )
             with self.tracer.start_as_current_span(
                 name=f"HostedAgents-{context.response_id}",
