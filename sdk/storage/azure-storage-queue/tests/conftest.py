@@ -36,4 +36,4 @@ def add_sanitizers(test_proxy):
 
     add_uri_string_sanitizer(target=".preprod.", value=".")
     add_remove_header_sanitizer(headers="Accept")
-    set_custom_default_matcher(excluded_headers="Accept")
+    set_custom_default_matcher(excluded_headers="Accept", ignore_query_ordering=True)

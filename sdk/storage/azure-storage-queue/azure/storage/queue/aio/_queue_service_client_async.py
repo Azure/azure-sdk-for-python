@@ -410,7 +410,7 @@ class QueueServiceClient(  # type: ignore [misc]
         """
         include = ["metadata"] if include_metadata else None
         command = functools.partial(
-            self._client.service.list_queues_segment,
+            self._client.service.list_queues,
             prefix=name_starts_with,
             include=include,
             timeout=timeout,

@@ -411,7 +411,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         """
         include = ["metadata"] if include_metadata else None
         command = functools.partial(
-            self._client.service.list_queues_segment,
+            self._client.service.get_queues,
             prefix=name_starts_with,
             include=include,
             timeout=timeout,

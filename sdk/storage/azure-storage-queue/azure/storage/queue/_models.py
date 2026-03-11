@@ -45,8 +45,7 @@ class RetentionPolicy(GeneratedRetentionPolicy):
     """Indicates the number of days that metrics or logging or soft-deleted data should be retained."""
 
     def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
-        self.enabled = enabled
-        self.days = days
+        super().__init__(enabled=enabled, days=days)
         if self.enabled and (self.days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
 
@@ -84,11 +83,13 @@ class QueueAnalyticsLogging(GeneratedLogging):
     """The retention policy for the metrics."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.version = kwargs.get("version", "1.0")
-        self.delete = kwargs.get("delete", False)
-        self.read = kwargs.get("read", False)
-        self.write = kwargs.get("write", False)
-        self.retention_policy = kwargs.get("retention_policy") or RetentionPolicy()
+        super().__init__(
+            version=kwargs.get("version", "1.0"),
+            delete=kwargs.get("delete", False),
+            read=kwargs.get("read", False),
+            write=kwargs.get("write", False),
+            retention_policy=kwargs.get("retention_policy") or RetentionPolicy(),
+        )
 
     @classmethod
     def _from_generated(cls, generated: Any) -> Self:
@@ -127,10 +128,12 @@ class Metrics(GeneratedMetrics):
     """The retention policy for the metrics."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.version = kwargs.get("version", "1.0")
-        self.enabled = kwargs.get("enabled", False)
-        self.include_apis = kwargs.get("include_apis")
-        self.retention_policy = kwargs.get("retention_policy") or RetentionPolicy()
+        super().__init__(
+            version=kwargs.get("version", "1.0"),
+            enabled=kwargs.get("enabled", False),
+            include_apis=kwargs.get("include_apis"),
+            retention_policy=kwargs.get("retention_policy") or RetentionPolicy(),
+        )
 
     @classmethod
     def _from_generated(cls, generated: Any) -> Self:
@@ -191,11 +194,13 @@ class CorsRule(GeneratedCorsRule):
         request."""
 
     def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
-        self.allowed_origins = ",".join(allowed_origins)
-        self.allowed_methods = ",".join(allowed_methods)
-        self.allowed_headers = ",".join(kwargs.get("allowed_headers", []))
-        self.exposed_headers = ",".join(kwargs.get("exposed_headers", []))
-        self.max_age_in_seconds = kwargs.get("max_age_in_seconds", 0)
+        super().__init__(
+            allowed_origins=",".join(allowed_origins),
+            allowed_methods=",".join(allowed_methods),
+            allowed_headers=",".join(kwargs.get("allowed_headers", [])),
+            exposed_headers=",".join(kwargs.get("exposed_headers", [])),
+            max_age_in_seconds=kwargs.get("max_age_in_seconds", 0),
+        )
 
     @staticmethod
     def _to_generated(rules: Optional[List["CorsRule"]]) -> Optional[List[GeneratedCorsRule]]:
@@ -343,9 +348,7 @@ class AccessPolicy(GenAccessPolicy):
         expiry: Optional[Union["datetime", str]] = None,
         start: Optional[Union["datetime", str]] = None,
     ) -> None:
-        self.start = start
-        self.expiry = expiry
-        self.permission = permission
+        super().__init__(start=start, expiry=expiry, permission=permission)
 
 
 class QueueMessage(DictMixin):
@@ -446,11 +449,11 @@ class MessagesPaged(PageIterator):
 
     def _extract_data_cb(self, messages: Any) -> Tuple[str, List[QueueMessage]]:
         # There is no concept of continuation token, so raising on my own condition
-        if not messages:
+        if not messages or not messages.items_property:
             raise StopIteration("End of paging")
         if self._max_messages is not None:
-            self._max_messages = self._max_messages - len(messages)
-        return "TOKEN_IGNORED", [QueueMessage._from_generated(q) for q in messages]  # pylint: disable=protected-access
+            self._max_messages = self._max_messages - len(messages.items_property)
+        return "TOKEN_IGNORED", [QueueMessage._from_generated(q) for q in messages.items_property]  # pylint: disable=protected-access
 
 
 class QueueProperties(DictMixin):
