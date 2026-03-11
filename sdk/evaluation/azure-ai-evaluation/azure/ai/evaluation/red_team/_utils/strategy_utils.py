@@ -4,6 +4,7 @@ Utility functions for handling attack strategies and converters in Red Team Agen
 
 import random
 from typing import Dict, List, Union, Optional, Any, Callable, cast
+from urllib.parse import urlparse
 import logging
 
 import httpx
@@ -217,6 +218,18 @@ def get_chat_target(
     chat_target = None
     if not isinstance(target, Callable):
         if "azure_deployment" in target and "azure_endpoint" in target:  # Azure OpenAI
+            # Fix Foundry-style endpoints for PyRIT compatibility
+            # Foundry endpoints (*.services.ai.azure.com) need /openai/v1 appended
+            # because PyRIT's OpenAIChatTarget passes the URL directly to AsyncOpenAI(base_url=)
+            endpoint = target["azure_endpoint"].rstrip("/")
+            parsed = urlparse(endpoint)
+            hostname = (parsed.hostname or "").lower()
+            if hostname.endswith(".services.ai.azure.com"):
+                if endpoint.endswith("/openai"):
+                    endpoint = endpoint + "/v1"
+                elif not endpoint.endswith("/openai/v1"):
+                    endpoint = endpoint + "/openai/v1"
+
             api_key = target.get("api_key", None)
             # Check for credential in target dict or use passed credential parameter
             target_credential = target.get("credential", None) or credential
@@ -224,7 +237,7 @@ def get_chat_target(
                 # Use API key authentication
                 chat_target = OpenAIChatTarget(
                     model_name=target["azure_deployment"],
-                    endpoint=target["azure_endpoint"],
+                    endpoint=endpoint,
                     api_key=api_key,
                     httpx_client_kwargs={"timeout": timeout},
                 )
@@ -233,7 +246,7 @@ def get_chat_target(
                 token_provider = _create_token_provider(target_credential)
                 chat_target = OpenAIChatTarget(
                     model_name=target["azure_deployment"],
-                    endpoint=target["azure_endpoint"],
+                    endpoint=endpoint,
                     api_key=token_provider,  # PyRIT accepts callable that returns token
                     httpx_client_kwargs={"timeout": timeout},
                 )
@@ -243,7 +256,7 @@ def get_chat_target(
 
                 chat_target = OpenAIChatTarget(
                     model_name=target["azure_deployment"],
-                    endpoint=target["azure_endpoint"],
+                    endpoint=endpoint,
                     api_key=get_azure_openai_auth(target["azure_endpoint"]),
                     httpx_client_kwargs={"timeout": timeout},
                 )

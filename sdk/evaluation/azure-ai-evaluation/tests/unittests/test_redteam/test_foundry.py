@@ -111,7 +111,11 @@ class TestGetAttackTypeName:
 
     def test_with_dict_identifier(self):
         """Test with current pyrit 0.11.0 dict form."""
-        identifier = {"__type__": "PromptSendingAttack", "__module__": "pyrit.executor", "id": "abc"}
+        identifier = {
+            "__type__": "PromptSendingAttack",
+            "__module__": "pyrit.executor",
+            "id": "abc",
+        }
         assert _get_attack_type_name(identifier) == "PromptSendingAttack"
 
     def test_with_dict_missing_type(self):
@@ -1032,6 +1036,83 @@ class TestScenarioOrchestrator:
         assert "MorseAttack" in asr_by_strategy
         assert asr_by_strategy["MorseAttack"] == pytest.approx(1.0)  # 1/1
 
+    @pytest.mark.asyncio
+    async def test_execute_swallows_run_async_exception_with_partial_results(self, mock_logger):
+        """Test that when run_async raises, execute() does not propagate the exception
+        and _scenario_result captures partial results from _result if available."""
+        from pyrit.scenario.foundry import FoundryStrategy
+
+        mock_target = MagicMock()
+        mock_scorer = MagicMock()
+        mock_dataset = MagicMock()
+        mock_dataset.get_all_seed_groups.return_value = [MagicMock()]
+
+        orchestrator = ScenarioOrchestrator(
+            risk_category="violence",
+            objective_target=mock_target,
+            rai_scorer=mock_scorer,
+            logger=mock_logger,
+        )
+
+        # Simulate partial results stored on the internal _result attribute
+        partial_result = MagicMock()
+        mock_foundry = AsyncMock()
+        mock_foundry.initialize_async = AsyncMock()
+        mock_foundry.run_async = AsyncMock(side_effect=RuntimeError("mid-execution failure"))
+        mock_foundry._result = partial_result
+
+        with patch(
+            "azure.ai.evaluation.red_team._foundry._scenario_orchestrator.FoundryScenario",
+            return_value=mock_foundry,
+        ), patch("pyrit.executor.attack.AttackScoringConfig"):
+            # Should NOT raise
+            result = await orchestrator.execute(
+                dataset_config=mock_dataset,
+                strategies=[FoundryStrategy.Base64],
+            )
+
+            assert result == orchestrator
+            # Partial result should be captured
+            assert orchestrator._scenario_result is partial_result
+            mock_logger.warning.assert_called_once()
+
+    @pytest.mark.asyncio
+    async def test_execute_swallows_run_async_exception_no_partial_results(self, mock_logger):
+        """Test that when run_async raises and _result is absent, execute() still returns
+        normally with _scenario_result remaining None."""
+        from pyrit.scenario.foundry import FoundryStrategy
+
+        mock_target = MagicMock()
+        mock_scorer = MagicMock()
+        mock_dataset = MagicMock()
+        mock_dataset.get_all_seed_groups.return_value = [MagicMock()]
+
+        orchestrator = ScenarioOrchestrator(
+            risk_category="violence",
+            objective_target=mock_target,
+            rai_scorer=mock_scorer,
+            logger=mock_logger,
+        )
+
+        mock_foundry = AsyncMock()
+        mock_foundry.initialize_async = AsyncMock()
+        mock_foundry.run_async = AsyncMock(side_effect=RuntimeError("total failure"))
+        # No _result attribute on mock_foundry (simulate missing private attr)
+        del mock_foundry._result
+
+        with patch(
+            "azure.ai.evaluation.red_team._foundry._scenario_orchestrator.FoundryScenario",
+            return_value=mock_foundry,
+        ), patch("pyrit.executor.attack.AttackScoringConfig"):
+            result = await orchestrator.execute(
+                dataset_config=mock_dataset,
+                strategies=[FoundryStrategy.Base64],
+            )
+
+            assert result == orchestrator
+            assert orchestrator._scenario_result is None
+            mock_logger.warning.assert_called_once()
+
 
 # =============================================================================
 # Tests for FoundryResultProcessor
@@ -1510,7 +1591,9 @@ class TestFoundryExecutionManager:
         self, mock_credential, mock_azure_ai_project, mock_logger
     ):
         """Test that strategy keys match ATTACK_STRATEGY_COMPLEXITY_MAP."""
-        from azure.ai.evaluation.red_team._utils.constants import ATTACK_STRATEGY_COMPLEXITY_MAP
+        from azure.ai.evaluation.red_team._utils.constants import (
+            ATTACK_STRATEGY_COMPLEXITY_MAP,
+        )
 
         manager = FoundryExecutionManager(
             credential=mock_credential,
