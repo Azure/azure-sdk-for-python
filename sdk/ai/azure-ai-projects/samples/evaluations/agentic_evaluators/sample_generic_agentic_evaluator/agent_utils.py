@@ -29,7 +29,7 @@ def run_evaluator(
     data_mapping: dict[str, str],
 ) -> None:
     endpoint = os.environ[
-        "AZURE_AI_PROJECT_ENDPOINT"
+        "FOUNDRY_PROJECT_ENDPOINT"
     ]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
 
     with (

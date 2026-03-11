@@ -77,7 +77,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
         openai_client = project_client.get_openai_client()
 
         # Get the model deployment name from test parameters
-        model_deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        model_deployment_name = kwargs.get("foundry_model_name")
 
         return openai_client, model_deployment_name
 
@@ -232,7 +232,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Create a conversation
             conversation = client.conversations.create()
@@ -354,7 +354,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Create a conversation
             conversation = client.conversations.create()
@@ -477,7 +477,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Create a conversation
             conversation = client.conversations.create()
@@ -698,7 +698,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Create a conversation
             conversation = client.conversations.create()
@@ -775,7 +775,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Create a conversation
             conversation = client.conversations.create()
@@ -884,7 +884,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
 
         with project_client:
             # Get the OpenAI client from the project client
@@ -991,7 +991,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Define a function tool
             func_tool = FunctionTool(
@@ -1250,7 +1250,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Define a function tool
             func_tool = FunctionTool(
@@ -1574,7 +1574,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Define a function tool
             func_tool = FunctionTool(
@@ -1810,7 +1810,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Define a function tool
             func_tool = FunctionTool(
@@ -2128,7 +2128,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Define a function tool
             func_tool = FunctionTool(
@@ -2278,7 +2278,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Define a function tool
             func_tool = FunctionTool(
@@ -2426,7 +2426,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Create a conversation
             conversation = client.conversations.create()
@@ -2523,7 +2523,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Create a conversation
             conversation = client.conversations.create()
@@ -2628,7 +2628,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Create a conversation
             conversation = client.conversations.create()
@@ -2720,7 +2720,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Create a conversation
             conversation = client.conversations.create()
@@ -2821,7 +2821,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -2926,7 +2926,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -3030,7 +3030,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -3134,7 +3134,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -3242,7 +3242,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -3351,7 +3351,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -3460,7 +3460,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -3568,7 +3568,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -3680,7 +3680,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -3793,7 +3793,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -3905,7 +3905,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -4017,7 +4017,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -4133,7 +4133,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -4250,7 +4250,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -4367,7 +4367,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -4483,7 +4483,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -4598,7 +4598,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -4651,7 +4651,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -4706,7 +4706,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Define a function tool
             function_tool = FunctionTool(
@@ -4820,7 +4820,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Define a function tool
             function_tool = FunctionTool(
@@ -4959,7 +4959,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
             openai_client = project_client.get_openai_client()
 
             # Create Teacher Agent
@@ -5280,7 +5280,7 @@ trigger:
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
             openai_client = project_client.get_openai_client()
 
             # Create Teacher Agent

@@ -36,7 +36,7 @@ class TestMultiToolWithConversations(TestBase):
         - Verifying conversation state preserves all tool interactions
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)

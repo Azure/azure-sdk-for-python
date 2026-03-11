@@ -55,7 +55,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         async with project_client:
             agent_definition = PromptAgentDefinition(
@@ -166,7 +166,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="agents", **kwargs)
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         async with project_client:
             agent_definition = PromptAgentDefinition(
@@ -386,7 +386,7 @@ trigger:
         project_client = self.create_async_client(operation_group=operation_group, **kwargs)
 
         async with project_client:
-            model = kwargs.get("azure_ai_model_deployment_name")
+            model = kwargs.get("foundry_model_name")
 
             test_schema = {
                 "type": "object",
@@ -571,7 +571,7 @@ trigger:
         project_client = self.create_async_client(operation_group=operation_group, **kwargs)
 
         async with project_client:
-            model = kwargs.get("azure_ai_model_deployment_name")
+            model = kwargs.get("foundry_model_name")
 
             test_schema = {
                 "type": "object",

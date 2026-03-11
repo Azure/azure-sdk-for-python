@@ -207,7 +207,7 @@ trigger:
         assert AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
         assert deployment_name is not None
 
         with project_client:
@@ -374,7 +374,7 @@ trigger:
         assert AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
         assert deployment_name is not None
 
         with project_client:
@@ -543,7 +543,7 @@ trigger:
         assert AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
         assert deployment_name is not None
 
         with project_client:
@@ -713,7 +713,7 @@ trigger:
         assert AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
         assert deployment_name is not None
 
         with project_client:

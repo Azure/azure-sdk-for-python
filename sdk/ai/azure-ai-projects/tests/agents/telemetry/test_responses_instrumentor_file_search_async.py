@@ -57,7 +57,7 @@ class TestResponsesInstrumentorFileSearchAsync(TestAiAgentsInstrumentorBase):
         assert AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
         assert deployment_name is not None
 
         async with project_client:
@@ -268,7 +268,7 @@ Return Policy: 30-day return policy with no questions asked
         assert AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
         assert deployment_name is not None
 
         async with project_client:
@@ -477,7 +477,7 @@ Return Policy: 30-day return policy with no questions asked
         assert AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
         assert deployment_name is not None
 
         async with project_client:
@@ -684,7 +684,7 @@ Return Policy: 30-day return policy with no questions asked
         assert AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
         assert deployment_name is not None
 
         async with project_client:

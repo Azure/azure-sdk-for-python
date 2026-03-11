@@ -16,7 +16,11 @@
 
 ### Sample updates
 
-* Placeholder
+* Renamed environment variable `AZURE_AI_PROJECT_ENDPOINT` to `FOUNDRY_PROJECT_ENDPOINT` in all samples.
+* Renamed environment variable `AZURE_AI_MODEL_DEPLOYMENT_NAME` to `FOUNDRY_MODEL_NAME` in all samples.
+* Renamed environment variable `AZURE_AI_MODEL_AGENT_NAME` to `FOUNDRY_AGENT_NAME` in all samples.
+* Added CSV evaluation sample (`sample_evaluations_builtin_with_csv.py`) demonstrating evaluation with an uploaded CSV dataset.
+* Added synthetic data evaluation samples (`sample_synthetic_data_agent_evaluation.py`) and (`sample_synthetic_data_model_evaluation.py`).
 
 ### Other Changes
 

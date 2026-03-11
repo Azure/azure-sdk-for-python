@@ -17,14 +17,14 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv azure-mgmt-authorization azure-mgmt-resource
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
     2) AZURE_SUBSCRIPTION_ID - Required for RBAC assignment. The Azure subscription ID where the project is located.
     3) AZURE_RESOURCE_GROUP_NAME - Required for RBAC assignment. The resource group name where the project is located.
     4) DATASET_NAME - Optional. The name of the Dataset to create and use in this sample.
     5) DATASET_VERSION - Optional. The version of the Dataset to create and use in this sample.
     6) DATA_FOLDER - Optional. The folder path where the data files for upload are located.
-    7) AZURE_AI_AGENT_NAME - Required. The name of the Agent to perform red teaming evaluation on.
+    7) FOUNDRY_AGENT_NAME - Required. The name of the Agent to perform red teaming evaluation on.
 """
 
 from datetime import datetime
@@ -74,13 +74,13 @@ def assign_rbac():  # pylint: disable=too-many-statements
     """
     load_dotenv()
 
-    endpoint = os.environ.get("AZURE_AI_PROJECT_ENDPOINT", "")
+    endpoint = os.environ.get("FOUNDRY_PROJECT_ENDPOINT", "")
     subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", "")
     resource_group_name = os.environ.get("AZURE_RESOURCE_GROUP_NAME", "")
 
     if not endpoint or not subscription_id or not resource_group_name:
         print(
-            "Error: AZURE_AI_PROJECT_ENDPOINT, AZURE_SUBSCRIPTION_ID, and AZURE_RESOURCE_GROUP_NAME environment variables are required"
+            "Error: FOUNDRY_PROJECT_ENDPOINT, AZURE_SUBSCRIPTION_ID, and AZURE_RESOURCE_GROUP_NAME environment variables are required"
         )
         return
 
@@ -213,7 +213,7 @@ def assign_rbac():  # pylint: disable=too-many-statements
 
 
 def schedule_dataset_evaluation() -> None:
-    endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+    endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
     dataset_name = os.environ.get("DATASET_NAME", "")
     dataset_version = os.environ.get("DATASET_VERSION", "1")
     # Construct the paths to the data folder and data file used in this sample
@@ -326,8 +326,8 @@ def schedule_dataset_evaluation() -> None:
 def schedule_redteam_evaluation() -> None:  # pylint: disable=too-many-locals
     load_dotenv()
     #
-    endpoint = os.environ.get("AZURE_AI_PROJECT_ENDPOINT", "")
-    agent_name = os.environ.get("AZURE_AI_AGENT_NAME", "")
+    endpoint = os.environ.get("FOUNDRY_PROJECT_ENDPOINT", "")
+    agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "")
 
     # Construct the paths to the data folder and data file used in this sample
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -342,7 +342,7 @@ def schedule_redteam_evaluation() -> None:  # pylint: disable=too-many-locals
         agent_version = project_client.agents.create_version(
             agent_name=agent_name,
             definition=PromptAgentDefinition(
-                model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+                model=os.environ["FOUNDRY_MODEL_NAME"],
                 instructions="You are a helpful assistant that answers general questions",
             ),
         )

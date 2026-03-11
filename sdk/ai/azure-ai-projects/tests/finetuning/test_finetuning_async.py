@@ -351,11 +351,11 @@ class TestFineTuningAsync(TestBase):
 
         subscription_id = kwargs.get("azure_subscription_id")
         resource_group = kwargs.get("azure_resource_group")
-        project_endpoint = kwargs.get("azure_ai_project_endpoint")
+        project_endpoint = kwargs.get("foundry_project_endpoint")
 
         if not all([subscription_id, resource_group, project_endpoint]):
             pytest.skip(
-                f"Missing required environment variables for deployment (azure_subscription_id, azure_resource_group, azure_ai_project_endpoint) - skipping {test_prefix} deploy and infer test"
+                f"Missing required environment variables for deployment (azure_subscription_id, azure_resource_group, foundry_project_endpoint) - skipping {test_prefix} deploy and infer test"
             )
 
         account_name = self._extract_account_name_from_endpoint(project_endpoint)
@@ -685,6 +685,10 @@ class TestFineTuningAsync(TestBase):
             await self._cleanup_test_file_async(openai_client, train_file.id)
             await self._cleanup_test_file_async(openai_client, validation_file.id)
 
+    @pytest.mark.skipif(
+        not is_live_and_not_recording() or os.getenv("RUN_EXTENDED_FINE_TUNING_LIVE_TESTS", "false").lower() != "true",
+        reason="Skipped extended FT live tests. Those only run live, without recordings, when RUN_EXTENDED_FINE_TUNING_LIVE_TESTS=true",
+    )
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_finetuning_pause_job_async(self, **kwargs):
@@ -716,6 +720,10 @@ class TestFineTuningAsync(TestBase):
             print(f"[test_finetuning_pause_job] Job status after pause: {paused_job.status}")
             print(f"[test_finetuning_pause_job] Successfully paused and verified job: {running_job_id}")
 
+    @pytest.mark.skipif(
+        not is_live_and_not_recording() or os.getenv("RUN_EXTENDED_FINE_TUNING_LIVE_TESTS", "false").lower() != "true",
+        reason="Skipped extended FT live tests. Those only run live, without recordings, when RUN_EXTENDED_FINE_TUNING_LIVE_TESTS=true",
+    )
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_finetuning_resume_job_async(self, **kwargs):

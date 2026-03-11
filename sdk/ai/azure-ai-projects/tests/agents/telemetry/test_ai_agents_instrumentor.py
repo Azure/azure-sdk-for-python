@@ -253,7 +253,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disable
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
 
-            model = kwargs.get("azure_ai_model_deployment_name")
+            model = kwargs.get("foundry_model_name")
             print(f"Using model deployment: {model}")
 
             agent_definition = PromptAgentDefinition(
@@ -367,7 +367,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disable
 
         with self.create_client(operation_group="agents", **kwargs) as project_client:
 
-            model = kwargs.get("azure_ai_model_deployment_name")
+            model = kwargs.get("foundry_model_name")
             agent_definition = PromptAgentDefinition(
                 model=model,
                 instructions="You are a helpful AI assistant. Always be polite and provide accurate information.",
@@ -589,7 +589,7 @@ trigger:
         operation_group = "tracing" if content_recording_enabled else "agents"
         with self.create_client(operation_group=operation_group, **kwargs) as project_client:
 
-            model = kwargs.get("azure_ai_model_deployment_name")
+            model = kwargs.get("foundry_model_name")
 
             test_schema = {
                 "type": "object",
@@ -777,7 +777,7 @@ trigger:
         operation_group = "tracing" if content_recording_enabled else "agents"
         with self.create_client(operation_group=operation_group, **kwargs) as project_client:
 
-            model = kwargs.get("azure_ai_model_deployment_name")
+            model = kwargs.get("foundry_model_name")
 
             test_schema = {
                 "type": "object",

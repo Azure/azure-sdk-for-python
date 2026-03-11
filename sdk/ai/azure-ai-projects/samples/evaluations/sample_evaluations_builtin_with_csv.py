@@ -7,11 +7,14 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the synchronous
-    `openai.evals.*` methods to create, get and list evaluation and and eval runs
-    using a dataset by ID.
+    `openai.evals.*` methods to create, get and list evaluation and eval runs
+    using a CSV file uploaded as a dataset.
+
+    Unlike JSONL-based evaluations, this sample uses the `csv` data source type
+    to run evaluations directly against a CSV file.
 
 USAGE:
-    python sample_evaluations_builtin_with_dataset_id.py
+    python sample_evaluations_builtin_with_csv.py
 
     Before running the sample:
 
@@ -27,17 +30,18 @@ USAGE:
 """
 
 import os
-import time
-from datetime import datetime
-from pprint import pprint
-from dotenv import load_dotenv
-from openai.types.evals.create_eval_jsonl_run_data_source_param import CreateEvalJSONLRunDataSourceParam, SourceFileID
-from openai.types.eval_create_params import DataSourceConfigCustom
+
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
+
+import time
+from pprint import pprint
+from openai.types.eval_create_params import DataSourceConfigCustom
 from azure.ai.projects.models import (
     DatasetVersion,
 )
+from dotenv import load_dotenv
+from datetime import datetime, timezone
 
 load_dotenv()
 
@@ -47,10 +51,10 @@ model_deployment_name = os.environ.get("FOUNDRY_MODEL_NAME", "")
 dataset_name = os.environ.get("DATASET_NAME", "")
 dataset_version = os.environ.get("DATASET_VERSION", "1")
 
-# Construct the paths to the data folder and data file used in this sample
+# Construct the paths to the data folder and CSV data file used in this sample
 script_dir = os.path.dirname(os.path.abspath(__file__))
 data_folder = os.environ.get("DATA_FOLDER", os.path.join(script_dir, "data_folder"))
-data_file = os.path.join(data_folder, "sample_data_evaluation.jsonl")
+data_file = os.path.join(data_folder, "sample_data_evaluation.csv")
 
 with (
     DefaultAzureCredential() as credential,
@@ -58,9 +62,9 @@ with (
     project_client.get_openai_client() as client,
 ):
 
-    print("Upload a single file and create a new Dataset to reference the file.")
+    print("Upload a CSV file and create a new Dataset to reference the file.")
     dataset: DatasetVersion = project_client.datasets.upload_file(
-        name=dataset_name or f"eval-data-{datetime.utcnow().strftime('%Y-%m-%d_%H%M%S_UTC')}",
+        name=dataset_name or f"eval-csv-data-{datetime.now(timezone.utc).strftime('%Y-%m-%d_%H%M%S_UTC')}",
         version=dataset_version,
         file_path=data_file,
     )
@@ -96,44 +100,39 @@ with (
             "type": "azure_ai_evaluator",
             "name": "coherence",
             "evaluator_name": "builtin.coherence",
+            "data_mapping": {"query": "{{item.query}}", "response": "{{item.response}}"},
             "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
         },
     ]
 
     print("Creating evaluation")
     eval_object = client.evals.create(
-        name="label model test with dataset ID",
-        data_source_config=data_source_config,
+        name="CSV evaluation with built-in evaluators",
+        data_source_config=data_source_config,  # type: ignore
         testing_criteria=testing_criteria,  # type: ignore
     )
     print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 
-    print("Get evaluation by Id")
-    eval_object_response = client.evals.retrieve(eval_object.id)
-    print("Evaluation Response:")
-    pprint(eval_object_response)
-
-    print("Creating evaluation run with Dataset ID")
+    print("Creating evaluation run with CSV data source")
     eval_run_object = client.evals.runs.create(
         eval_id=eval_object.id,
-        name="dataset_id_run",
-        metadata={"team": "eval-exp", "scenario": "dataset-id-v1"},
-        data_source=CreateEvalJSONLRunDataSourceParam(
-            type="jsonl", source=SourceFileID(type="file_id", id=dataset.id if dataset.id else "")
-        ),
+        name="csv_evaluation_run",
+        metadata={"team": "eval-exp", "scenario": "csv-eval-v1"},
+        data_source={  # type: ignore
+            "type": "csv",
+            "source": {
+                "type": "file_id",
+                "id": dataset.id if dataset.id else "",
+            },
+        },
     )
 
     print(f"Evaluation run created (id: {eval_run_object.id})")
     pprint(eval_run_object)
 
-    print("Get evaluation run by Id")
-    eval_run_response = client.evals.runs.retrieve(run_id=eval_run_object.id, eval_id=eval_object.id)
-    print("Evaluation run Response:")
-    pprint(eval_run_response)
-
     while True:
-        run = client.evals.runs.retrieve(run_id=eval_run_response.id, eval_id=eval_object.id)
-        if run.status in ("completed", "failed"):
+        run = client.evals.runs.retrieve(run_id=eval_run_object.id, eval_id=eval_object.id)
+        if run.status in ["completed", "failed"]:
             output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
             pprint(output_items)
             print(f"Eval Run Report URL: {run.report_url}")
