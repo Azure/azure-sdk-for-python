@@ -7,20 +7,20 @@
 """
 DESCRIPTION:
     This sample demonstrates how to create and run a synthetic data evaluation
-    against a Foundry agent using the synchronous AIProjectClient.
+    against a deployed model using the synchronous AIProjectClient.
 
     Synthetic data evaluation generates test queries based on a prompt you provide,
-    sends them to a Foundry agent, and evaluates the responses — no pre-existing
+    sends them to a deployed model, and evaluates the responses — no pre-existing
     test dataset required. The generated queries are stored as a dataset in your
     project for reuse.
 
-    For evaluating a deployed model instead of an agent, see
-    sample_synthetic_data_model_evaluation.py.
+    For evaluating a Foundry agent instead of a model, see
+    sample_synthetic_data_evaluation.py.
 
     This feature is currently in preview.
 
 USAGE:
-    python sample_synthetic_data_evaluation.py
+    python sample_synthetic_data_model_evaluation.py
 
     Before running the sample:
 
@@ -30,8 +30,7 @@ USAGE:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
     2) AZURE_AI_MODEL_DEPLOYMENT_NAME - Required. The name of the model deployment to use for generating
-       synthetic data and for AI-assisted evaluators.
-    3) AZURE_AI_AGENT_NAME - Required. The name of the Foundry agent to evaluate.
+       synthetic data and as the evaluation target.
 """
 
 import os
@@ -41,7 +40,6 @@ from typing import Union
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition
 from openai.types.evals.run_create_response import RunCreateResponse
 from openai.types.evals.run_retrieve_response import RunRetrieveResponse
 
@@ -49,30 +47,19 @@ load_dotenv()
 
 endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]
-agent_name = os.environ["AZURE_AI_AGENT_NAME"]
 
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     project_client.get_openai_client() as client,
 ):
-    # Create (or update) an agent version to evaluate
-    agent = project_client.agents.create_version(
-        agent_name=agent_name,
-        definition=PromptAgentDefinition(
-            model=model_deployment_name,
-            instructions="You are a helpful customer service agent. Be empathetic and solution-oriented.",
-        ),
-    )
-    print(f"Agent created (name: {agent.name}, version: {agent.version})")
-
     # Use the azure_ai_source data source config with the synthetic_data_gen_preview scenario.
     # The schema is inferred from the service — no custom item_schema is needed.
     data_source_config = {"type": "azure_ai_source", "scenario": "synthetic_data_gen_preview"}
 
     # Define testing criteria using builtin evaluators.
     # {{item.query}} references the synthetically generated query.
-    # {{sample.output_text}} references the agent's plain text response.
+    # {{sample.output_text}} references the model's response.
     testing_criteria = [
         {
             "type": "azure_ai_evaluator",
@@ -99,14 +86,14 @@ with (
 
     print("Creating evaluation for synthetic data generation")
     eval_object = client.evals.create(
-        name="Synthetic Data Evaluation",
+        name="Synthetic Data Model Evaluation",
         data_source_config=data_source_config,  # type: ignore
         testing_criteria=testing_criteria,  # type: ignore
     )
     print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 
-    # Configure the synthetic data generation data source with an agent target.
-    # The service generates queries based on the prompt, sends them to the agent,
+    # Configure the synthetic data generation data source with a model target.
+    # The service generates queries based on the prompt, sends them to the model,
     # and evaluates the responses.
     data_source = {
         "type": "azure_ai_synthetic_data_gen_preview",
@@ -115,18 +102,34 @@ with (
             "samples_count": 5,
             "prompt": "Generate customer service questions about returning defective products",
             "model_deployment_name": model_deployment_name,
-            "output_dataset_name": "synthetic-eval-dataset",
+            "output_dataset_name": "synthetic-model-eval-dataset",
         },
         "target": {
-            "type": "azure_ai_agent",
-            "name": agent.name,
-            "version": agent.version,
+            "type": "azure_ai_model",
+            "model": model_deployment_name,
+        },
+        # Optional: add a system prompt to shape the target model's behavior.
+        # When using input_messages with synthetic data generation, include only
+        # system/developer role messages — the service provides the generated queries
+        # as user messages automatically.
+        "input_messages": {
+            "type": "template",
+            "template": [
+                {
+                    "type": "message",
+                    "role": "developer",
+                    "content": {
+                        "type": "input_text",
+                        "text": "You are a helpful customer service agent. Be empathetic and solution-oriented.",
+                    },
+                }
+            ],
         },
     }
 
     eval_run: Union[RunCreateResponse, RunRetrieveResponse] = client.evals.runs.create(
         eval_id=eval_object.id,
-        name="synthetic-data-evaluation-run",
+        name="synthetic-data-model-evaluation-run",
         data_source=data_source,  # type: ignore
     )
     print(f"Evaluation run created (id: {eval_run.id})")

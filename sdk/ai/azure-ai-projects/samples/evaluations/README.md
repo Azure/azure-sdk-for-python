@@ -33,7 +33,8 @@ Set these environment variables:
 | [sample_agent_response_evaluation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_agent_response_evaluation.py) | Evaluate given agent responses |
 | [sample_agent_response_evaluation_with_function_tool.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_agent_response_evaluation_with_function_tool.py) | Evaluate agent responses with function tools |
 | [sample_model_evaluation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_model_evaluation.py) | Create response from model and evaluate |
-| [sample_synthetic_data_evaluation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_synthetic_data_evaluation.py) | Generate synthetic test data, run model, and evaluate (preview) |
+| [sample_synthetic_data_evaluation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_synthetic_data_evaluation.py) | Generate synthetic test data, evaluate a Foundry agent (preview) |
+| [sample_synthetic_data_model_evaluation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_synthetic_data_model_evaluation.py) | Generate synthetic test data, evaluate a model (preview) |
 
 ### Red Team Evaluations
 
