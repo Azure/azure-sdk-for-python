@@ -3150,7 +3150,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 semaphore = asyncio.Semaphore(effective_concurrency)
 
                 async def _query_range(overlapping_range):
-                    """Query a single partition range with its own header copy."""
+                    """Query a single partition range with its own header copy.
+
+                    :param dict overlapping_range: The partition key range to query.
+                    :returns: A tuple of partial results and response headers.
+                    :rtype: tuple
+                    """
                     task_headers = dict(req_headers)
                     single_range = routing_range.Range.PartitionKeyRangeToRange(overlapping_range)
                     EPK_sub_range = routing_range.Range(

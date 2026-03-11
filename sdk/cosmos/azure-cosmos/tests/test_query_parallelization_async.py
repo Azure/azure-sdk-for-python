@@ -924,9 +924,9 @@ class TestPrefixQueryParallelFanOut:
 
         semaphore = asyncio.Semaphore(3)
 
-        async def _run(coro_fn):
+        async def _run(coroutine_fn):
             async with semaphore:
-                return await coro_fn()
+                return await coroutine_fn()
 
         tasks = [
             asyncio.create_task(_run(mock_post_success)),
