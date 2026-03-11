@@ -8,7 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Any, List
+from typing import Any, Dict, List
 from ._patch_agents import AgentsOperations
 from ._patch_datasets import DatasetsOperations
 from ._patch_evaluation_rules import EvaluationRulesOperations
@@ -23,6 +23,33 @@ from ._operations import (
     BetaSchedulesOperations,
     BetaOperations as GeneratedBetaOperations,
 )
+
+
+_BETA_CUSTOM_HEADERS: Dict[str, str] = {"MyHeader": "MyValue"}
+
+
+class _HeaderInjectingProxy:
+    """A proxy that injects custom HTTP request headers into all public method calls on the wrapped object."""
+
+    def __init__(self, wrapped: Any, headers: Dict[str, str]) -> None:
+        object.__setattr__(self, "_wrapped", wrapped)
+        object.__setattr__(self, "_headers", headers)
+
+    def __getattr__(self, name: str) -> Any:
+        attr = getattr(object.__getattribute__(self, "_wrapped"), name)
+        if callable(attr) and not name.startswith("_"):
+            inj_headers = object.__getattribute__(self, "_headers")
+
+            def _wrapper(*args: Any, **kwargs: Any) -> Any:
+                existing = kwargs.pop("headers", {}) or {}
+                kwargs["headers"] = {**inj_headers, **existing}
+                return attr(*args, **kwargs)
+
+            return _wrapper
+        return attr
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        setattr(object.__getattribute__(self, "_wrapped"), name, value)
 
 
 class BetaOperations(GeneratedBetaOperations):
@@ -50,8 +77,15 @@ class BetaOperations(GeneratedBetaOperations):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        # Replace with patched class that includes begin_update_memories
-        self.memory_stores = BetaMemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
+        # Wrap all public operation properties to inject custom headers on every HTTP request
+        self.evaluation_taxonomies = _HeaderInjectingProxy(self.evaluation_taxonomies, _BETA_CUSTOM_HEADERS)  # type: ignore[assignment]
+        self.evaluators = _HeaderInjectingProxy(self.evaluators, _BETA_CUSTOM_HEADERS)  # type: ignore[assignment]
+        self.insights = _HeaderInjectingProxy(self.insights, _BETA_CUSTOM_HEADERS)  # type: ignore[assignment]
+        # Replace with patched class that includes begin_update_memories, then wrap for header injection
+        raw_memory_stores = BetaMemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.memory_stores = _HeaderInjectingProxy(raw_memory_stores, _BETA_CUSTOM_HEADERS)  # type: ignore[assignment]
+        self.red_teams = _HeaderInjectingProxy(self.red_teams, _BETA_CUSTOM_HEADERS)  # type: ignore[assignment]
+        self.schedules = _HeaderInjectingProxy(self.schedules, _BETA_CUSTOM_HEADERS)  # type: ignore[assignment]
 
 
 __all__: List[str] = [
