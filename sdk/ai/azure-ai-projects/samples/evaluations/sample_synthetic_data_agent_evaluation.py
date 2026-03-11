@@ -27,9 +27,9 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - Required. The name of the model deployment to use for generating
+    2) FOUNDRY_MODEL_NAME - Required. The name of the model deployment to use for generating
        synthetic data and for AI-assisted evaluators.
     3) AZURE_AI_AGENT_NAME - Required. The name of the Foundry agent to evaluate.
 """
@@ -47,8 +47,8 @@ from openai.types.evals.run_retrieve_response import RunRetrieveResponse
 
 load_dotenv()
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
-model_deployment_name = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+model_deployment_name = os.environ["FOUNDRY_MODEL_NAME"]
 agent_name = os.environ["AZURE_AI_AGENT_NAME"]
 
 with (
