@@ -29,7 +29,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _KUBERNETES_SERVICE_HOST,
     _PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY,
     _WEBSITE_SITE_NAME,
-    AZURE_MONITOR_DISABLE_CUSTOM_DIMENSIONS_LIMIT,
+    _GEN_AI_ATTRIBUTES,
 )
 from azure.monitor.opentelemetry.exporter._constants import (
     _TYPE_MAP,
@@ -351,9 +351,7 @@ def _is_any_synthetic_source(properties: Optional[Any]) -> bool:
 
 # pylint: disable=W0622
 def _filter_custom_properties(properties: Attributes, filter=None) -> Dict[str, str]:
-    disable_custom_dimensions_limit = (
-        environ.get(AZURE_MONITOR_DISABLE_CUSTOM_DIMENSIONS_LIMIT, "").strip().lower() == "true"
-    )
+    max_length = 64 * 1024
     processed_properties: Dict[str, str] = {}
     if not properties:
         return processed_properties
@@ -362,14 +360,13 @@ def _filter_custom_properties(properties: Attributes, filter=None) -> Dict[str, 
         if filter is not None:
             if not filter(key, val):
                 continue
-        # Apply truncation/filtering rules
-        # Max key length is 150
+        # Apply truncation rules
+        # Max key length is 150, value is 64 * 1024
         if not key or len(key) > 150 or val is None:
             continue
-        if disable_custom_dimensions_limit:
+        if key in _GEN_AI_ATTRIBUTES:
             processed_properties[key] = str(val)
         else:
-            max_length = 64 * 1024
             processed_properties[key] = str(val)[:max_length]
     return processed_properties
 
