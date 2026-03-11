@@ -206,7 +206,7 @@ trigger:
         assert AIProjectInstrumentor().is_content_recording_enabled()
         assert AIProjectInstrumentor().is_instrumented()
 
-        project_client = self.create_client(operation_group="tracing", **kwargs)
+        project_client = self.create_client(operation_group="tracing", allow_preview=True, **kwargs)
         deployment_name = kwargs.get("foundry_model_name")
         assert deployment_name is not None
 
@@ -373,7 +373,7 @@ trigger:
         assert not AIProjectInstrumentor().is_content_recording_enabled()
         assert AIProjectInstrumentor().is_instrumented()
 
-        project_client = self.create_client(operation_group="tracing", **kwargs)
+        project_client = self.create_client(operation_group="tracing", allow_preview=True, **kwargs)
         deployment_name = kwargs.get("foundry_model_name")
         assert deployment_name is not None
 
@@ -542,7 +542,7 @@ trigger:
         assert AIProjectInstrumentor().is_content_recording_enabled()
         assert AIProjectInstrumentor().is_instrumented()
 
-        project_client = self.create_client(operation_group="tracing", **kwargs)
+        project_client = self.create_client(operation_group="tracing", allow_preview=True, **kwargs)
         deployment_name = kwargs.get("foundry_model_name")
         assert deployment_name is not None
 
@@ -712,7 +712,7 @@ trigger:
         assert not AIProjectInstrumentor().is_content_recording_enabled()
         assert AIProjectInstrumentor().is_instrumented()
 
-        project_client = self.create_client(operation_group="tracing", **kwargs)
+        project_client = self.create_client(operation_group="tracing", allow_preview=True, **kwargs)
         deployment_name = kwargs.get("foundry_model_name")
         assert deployment_name is not None
 

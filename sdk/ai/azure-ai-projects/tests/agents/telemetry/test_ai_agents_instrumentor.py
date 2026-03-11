@@ -470,7 +470,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disable
         from azure.ai.projects.models import WorkflowAgentDefinition
 
         operation_group = "tracing" if content_recording_enabled else "agents"
-        with self.create_client(operation_group=operation_group, **kwargs) as project_client:
+        with self.create_client(operation_group=operation_group, allow_preview=True, **kwargs) as project_client:
 
             workflow_yaml = """
 kind: workflow

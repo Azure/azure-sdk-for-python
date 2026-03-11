@@ -4958,7 +4958,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
         self.setup_telemetry()
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
 
-        with self.create_client(operation_group="tracing", **kwargs) as project_client:
+        with self.create_client(operation_group="tracing", allow_preview=True, **kwargs) as project_client:
             deployment_name = kwargs.get("foundry_model_name")
             openai_client = project_client.get_openai_client()
 
@@ -5160,7 +5160,7 @@ trigger:
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
 
         with (
-            self.create_client(operation_group="tracing", **kwargs) as project_client,
+            self.create_client(operation_group="tracing", allow_preview=True, **kwargs) as project_client,
             project_client.get_openai_client() as openai_client,
         ):
 
@@ -5279,7 +5279,7 @@ trigger:
         self.setup_telemetry()
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
 
-        with self.create_client(operation_group="tracing", **kwargs) as project_client:
+        with self.create_client(operation_group="tracing", allow_preview=True, **kwargs) as project_client:
             deployment_name = kwargs.get("foundry_model_name")
             openai_client = project_client.get_openai_client()
 
@@ -5482,7 +5482,7 @@ trigger:
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
 
         with (
-            self.create_client(operation_group="tracing", **kwargs) as project_client,
+            self.create_client(operation_group="tracing", allow_preview=True, **kwargs) as project_client,
             project_client.get_openai_client() as openai_client,
         ):
 

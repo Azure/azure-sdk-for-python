@@ -3214,7 +3214,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
         self.setup_telemetry()
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
 
-        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+        project_client = self.create_async_client(operation_group="tracing", allow_preview=True, **kwargs)
 
         async with project_client:
             # Create a simple workflow agent
@@ -3332,7 +3332,7 @@ trigger:
         self.setup_telemetry()
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
 
-        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+        project_client = self.create_async_client(operation_group="tracing", allow_preview=True, **kwargs)
 
         async with project_client:
             workflow_yaml = """
@@ -3456,7 +3456,7 @@ trigger:
         self.setup_telemetry()
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
 
-        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+        project_client = self.create_async_client(operation_group="tracing", allow_preview=True, **kwargs)
 
         async with project_client:
             workflow_yaml = """
@@ -3578,7 +3578,7 @@ trigger:
         self.setup_telemetry()
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
 
-        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+        project_client = self.create_async_client(operation_group="tracing", allow_preview=True, **kwargs)
 
         async with project_client:
             workflow_yaml = """

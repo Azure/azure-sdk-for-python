@@ -266,7 +266,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         from azure.ai.projects.models import WorkflowAgentDefinition
 
         operation_group = "tracing" if content_recording_enabled else "agents"
-        project_client = self.create_async_client(operation_group=operation_group, **kwargs)
+        project_client = self.create_async_client(operation_group=operation_group, allow_preview=True, **kwargs)
 
         async with project_client:
             workflow_yaml = """
