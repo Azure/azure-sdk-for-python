@@ -167,6 +167,9 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
                 "sample_scheduled_evaluations.py",  # Missing dependency azure.mgmt.resource (ModuleNotFoundError)
                 "sample_evaluations_builtin_with_dataset_id.py",  # Requires dataset upload / Blob Storage prerequisite
                 "sample_continuous_evaluation_rule.py",  # Requires manual RBAC assignment in Azure Portal
+                "sample_evaluations_builtin_with_csv.py",  # Requires CSV file upload prerequisite
+                "sample_synthetic_data_agent_evaluation.py",  # Synthetic data gen is long-running preview feature
+                "sample_synthetic_data_model_evaluation.py",  # Synthetic data gen is long-running preview feature
             ],
         ),
     )
