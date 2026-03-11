@@ -30,18 +30,18 @@ USAGE:
 """
 
 import os
+import time
+from datetime import datetime, timezone
+from pprint import pprint
+
+from dotenv import load_dotenv
+from openai.types.eval_create_params import DataSourceConfigCustom
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-
-import time
-from pprint import pprint
-from openai.types.eval_create_params import DataSourceConfigCustom
 from azure.ai.projects.models import (
     DatasetVersion,
 )
-from dotenv import load_dotenv
-from datetime import datetime, timezone
 
 load_dotenv()
 

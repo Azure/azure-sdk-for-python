@@ -38,12 +38,14 @@ import os
 import time
 from pprint import pprint
 from typing import Union
+
 from dotenv import load_dotenv
+from openai.types.evals.run_create_response import RunCreateResponse
+from openai.types.evals.run_retrieve_response import RunRetrieveResponse
+
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import PromptAgentDefinition
-from openai.types.evals.run_create_response import RunCreateResponse
-from openai.types.evals.run_retrieve_response import RunRetrieveResponse
 
 load_dotenv()
 
