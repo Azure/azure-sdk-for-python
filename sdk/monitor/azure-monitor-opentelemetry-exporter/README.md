@@ -139,10 +139,6 @@ All configuration options can be passed through the constructors of exporters th
 * `storage_directory`: Storage directory in which to store retry files. Defaults to `<tempfile.gettempdir()>/Microsoft/AzureMonitor/opentelemetry-python-<your-instrumentation-key>`.
 * `credential`: Token credential, such as ManagedIdentityCredential or ClientSecretCredential, used for [Azure Active Directory (AAD) authentication][aad_for_ai_docs]. Defaults to None. See [samples][exporter_samples] for examples. The credential will be automatically created from the `APPLICATIONINSIGHTS_AUTHENTICATION_STRING` environment variable if not explicitly passed in. See [documentation][aad_env_var_docs] for more.
 
-## Environment Variables
-
-* Set `AZURE_MONITOR_DISABLE_CUSTOM_DIMENSIONS_LIMIT` to `True` to remove the 64kb truncation limit on custom dimensions. Defaults to `False`.
-
 ## Examples
 
 ### Logging (experimental)
