@@ -125,6 +125,10 @@ class TestCertificateClient(KeyVaultTestCase):
             assert set(a.san_emails) == set(b.san_emails)
         if a.san_user_principal_names:
             assert set(a.san_user_principal_names) == set(b.san_user_principal_names)
+        if a.san_uris:
+            assert set(a.san_uris) == set(b.san_uris)
+        if a.san_ip_addresses:
+            assert set(a.san_ip_addresses) == set(b.san_ip_addresses)
 
     def _validate_lifetime_actions(self, a, b):
         assert len(a) == len(b)

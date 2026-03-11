@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Added `uris` and `ip_addresses` properties to `SubjectAlternativeNames` model to support Uniform Resource 
+  Identifiers and IP addresses (IPv4 and IPv6) in certificate subject alternative names
+
 ### Breaking Changes
 
 ### Bugs Fixed

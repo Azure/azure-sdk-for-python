@@ -1442,30 +1442,42 @@ class SecretProperties(_Model):
 
 
 class SubjectAlternativeNames(_Model):
-    """The subject alternate names of a X509 object.
+    """The Subject Alternative Names of a X509 object.
 
     :ivar emails: Email addresses.
     :vartype emails: list[str]
-    :ivar dns_names: Domain names.
+    :ivar dns_names: Domain Names.
     :vartype dns_names: list[str]
-    :ivar upns: User principal names.
+    :ivar upns: User Principal Names.
     :vartype upns: list[str]
+    :ivar uris: Uniform Resource Identifiers.
+    :vartype uris: list[str]
+    :ivar ip_addresses: IP addresses; supports IPv4 and IPv6.
+    :vartype ip_addresses: list[str]
     """
 
-    emails: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    emails: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Email addresses."""
-    dns_names: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Domain names."""
-    upns: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """User principal names."""
+    dns_names: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Domain Names."""
+    upns: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """User Principal Names."""
+    uris: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Uniform Resource Identifiers."""
+    ip_addresses: Optional[list[str]] = rest_field(
+        name="ipAddresses", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """IP addresses; supports IPv4 and IPv6."""
 
     @overload
     def __init__(
         self,
         *,
-        emails: Optional[List[str]] = None,
-        dns_names: Optional[List[str]] = None,
-        upns: Optional[List[str]] = None,
+        emails: Optional[list[str]] = None,
+        dns_names: Optional[list[str]] = None,
+        upns: Optional[list[str]] = None,
+        uris: Optional[list[str]] = None,
+        ip_addresses: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
