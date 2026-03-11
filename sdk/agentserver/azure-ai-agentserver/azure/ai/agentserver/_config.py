@@ -16,7 +16,7 @@ misconfiguration is surfaced at startup rather than silently masked.
 import os
 from typing import Optional
 
-from .._constants import Constants
+from ._constants import Constants
 
 
 def _parse_int_env(var_name: str) -> Optional[int]:
@@ -29,7 +29,7 @@ def _parse_int_env(var_name: str) -> Optional[int]:
     :raises ValueError: If the variable is set but cannot be parsed as an integer.
     """
     raw = os.environ.get(var_name)
-    if not raw:
+    if raw is None:
         return None
     try:
         return int(raw)

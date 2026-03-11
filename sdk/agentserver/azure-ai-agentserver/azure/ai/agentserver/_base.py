@@ -13,11 +13,11 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 from starlette.routing import Route
 
-from .._constants import Constants
-from .._errors import error_response
-from .._logger import get_logger
-from .._tracing import TracingHelper, extract_w3c_carrier
-from ..validation._openapi_validator import OpenApiValidator
+from ._constants import Constants
+from ._errors import error_response
+from ._logger import get_logger
+from ._tracing import TracingHelper, extract_w3c_carrier
+from ._openapi_validator import OpenApiValidator
 from . import _config
 
 logger = get_logger()
@@ -216,10 +216,11 @@ class AgentServer:  # pylint: disable=too-many-instance-attributes
         :type request: Request
         :return: The response from the invoke handler.
         :rtype: Response
+        :raises NotImplementedError: If no invoke handler has been registered.
         """
         if self._invoke_fn is not None:
             return await self._invoke_fn(request)
-        raise RuntimeError(
+        raise NotImplementedError(
             "No invoke handler registered. Use the @server.invoke_handler decorator."
         )
 
@@ -442,6 +443,16 @@ class AgentServer:  # pylint: disable=too-many-instance-attributes
             invoke_awaitable = self._dispatch_invoke(request)
             timeout = self._request_timeout or None  # 0 → None (no limit)
             response = await asyncio.wait_for(invoke_awaitable, timeout=timeout)
+        except NotImplementedError as exc:
+            if self._tracing is not None:
+                self._tracing.end_span(otel_span, exc=exc)
+            logger.error("Invocation %s failed: %s", invocation_id, exc)
+            return error_response(
+                "not_implemented",
+                str(exc),
+                status_code=501,
+                headers={Constants.INVOCATION_ID_HEADER: invocation_id},
+            )
         except asyncio.TimeoutError:
             if self._tracing is not None:
                 self._tracing.end_span(otel_span)
@@ -514,7 +525,9 @@ class AgentServer:  # pylint: disable=too-many-instance-attributes
         )
         with span_cm as _otel_span:
             try:
-                return await dispatch(request)
+                response = await dispatch(request)
+                response.headers[Constants.INVOCATION_ID_HEADER] = invocation_id
+                return response
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 if self._tracing is not None:
                     self._tracing.record_error(_otel_span, exc)
@@ -524,6 +537,7 @@ class AgentServer:  # pylint: disable=too-many-instance-attributes
                     "internal_error",
                     message,
                     status_code=500,
+                    headers={Constants.INVOCATION_ID_HEADER: invocation_id},
                 )
 
     async def _get_invocation_endpoint(self, request: Request) -> Response:

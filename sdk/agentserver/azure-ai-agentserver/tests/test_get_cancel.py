@@ -16,6 +16,7 @@ async def test_get_invocation_after_invoke(async_storage_client):
 
     get_resp = await async_storage_client.get(f"/invocations/{invocation_id}")
     assert get_resp.status_code == 200
+    assert get_resp.headers.get("x-agent-invocation-id") == invocation_id
     data = json.loads(get_resp.content)
     assert "echo" in data
 
@@ -35,6 +36,7 @@ async def test_cancel_invocation_after_invoke(async_storage_client):
 
     cancel_resp = await async_storage_client.post(f"/invocations/{invocation_id}/cancel")
     assert cancel_resp.status_code == 200
+    assert cancel_resp.headers.get("x-agent-invocation-id") == invocation_id
     data = json.loads(cancel_resp.content)
     assert data["status"] == "cancelled"
 
@@ -82,6 +84,7 @@ async def test_get_invocation_error_returns_500():
         assert resp.status_code == 500
         assert resp.json()["error"]["code"] == "internal_error"
         assert resp.json()["error"]["message"] == "Internal server error"
+        assert resp.headers.get("x-agent-invocation-id") == "some-id"
 
 
 @pytest.mark.asyncio
@@ -109,3 +112,4 @@ async def test_cancel_invocation_error_returns_500():
         assert resp.status_code == 500
         assert resp.json()["error"]["code"] == "internal_error"
         assert resp.json()["error"]["message"] == "Internal server error"
+        assert resp.headers.get("x-agent-invocation-id") == "some-id"

@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from ._version import VERSION
-from .server._base import AgentServer
+from ._base import AgentServer
 
 __all__ = ["AgentServer"]
 __version__ = VERSION

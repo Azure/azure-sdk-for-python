@@ -130,16 +130,20 @@ class TestInvokeHandlerFlow:
 
 
 class TestMissingInvokeHandler:
-    """When no invoke handler is registered and invoke() is not overridden, 500."""
+    """When no invoke handler is registered and invoke() is not overridden, 501."""
 
     @pytest.mark.asyncio
-    async def test_no_handler_returns_500(self):
+    async def test_no_handler_returns_501(self):
         server = AgentServer()
         # No @invoke_handler registered
         transport = httpx.ASGITransport(app=server.app)
         async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
             resp = await client.post("/invocations", json={})
-            assert resp.status_code == 500
+            assert resp.status_code == 501
+            data = resp.json()
+            assert data["error"]["code"] == "not_implemented"
+            assert "invoke handler" in data["error"]["message"].lower()
+            assert "x-agent-invocation-id" in resp.headers
 
 
 # ---------------------------------------------------------------------------
@@ -162,6 +166,7 @@ class TestOptionalHandlerDefaults:
         async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
             resp = await client.get("/invocations/some-id")
             assert resp.status_code == 404
+            assert resp.headers.get("x-agent-invocation-id") == "some-id"
 
     @pytest.mark.asyncio
     async def test_cancel_invocation_returns_404_by_default(self):
@@ -175,6 +180,7 @@ class TestOptionalHandlerDefaults:
         async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
             resp = await client.post("/invocations/some-id/cancel")
             assert resp.status_code == 404
+            assert resp.headers.get("x-agent-invocation-id") == "some-id"
 
 
 # ---------------------------------------------------------------------------

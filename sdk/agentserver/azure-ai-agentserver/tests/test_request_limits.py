@@ -70,6 +70,11 @@ class TestRequestTimeoutResolution:
         agent = _make_fast_agent(request_timeout=0)
         assert agent._request_timeout == 0
 
+    def test_env_var_zero_disables(self):
+        with patch.dict(os.environ, {Constants.AGENT_REQUEST_TIMEOUT: "0"}):
+            agent = _make_fast_agent()
+            assert agent._request_timeout == 0
+
     def test_env_var_used_when_no_explicit(self):
         with patch.dict(os.environ, {Constants.AGENT_REQUEST_TIMEOUT: "120"}):
             agent = _make_fast_agent()
@@ -132,7 +137,7 @@ class TestInvokeTimeoutEnforcement:
     async def test_timeout_error_is_logged(self):
         agent = _make_slow_agent(request_timeout=1)
         transport = httpx.ASGITransport(app=agent.app)
-        with patch("azure.ai.agentserver.server._base.logger") as mock_logger:
+        with patch("azure.ai.agentserver._base.logger") as mock_logger:
             async with httpx.AsyncClient(
                 transport=transport, base_url="http://testserver"
             ) as client:

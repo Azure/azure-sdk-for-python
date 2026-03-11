@@ -44,15 +44,19 @@ async def test_get_openapi_spec_returns_spec(validated_client):
 @pytest.mark.asyncio
 async def test_get_invocation_returns_404_default(echo_client):
     """GET /invocations/{id} returns 404 when not overridden."""
-    resp = await echo_client.get(f"/invocations/{uuid.uuid4()}")
+    inv_id = str(uuid.uuid4())
+    resp = await echo_client.get(f"/invocations/{inv_id}")
     assert resp.status_code == 404
+    assert resp.headers.get("x-agent-invocation-id") == inv_id
 
 
 @pytest.mark.asyncio
 async def test_cancel_invocation_returns_404_default(echo_client):
     """POST /invocations/{id}/cancel returns 404 when not overridden."""
-    resp = await echo_client.post(f"/invocations/{uuid.uuid4()}/cancel")
+    inv_id = str(uuid.uuid4())
+    resp = await echo_client.post(f"/invocations/{inv_id}/cancel")
     assert resp.status_code == 404
+    assert resp.headers.get("x-agent-invocation-id") == inv_id
 
 
 @pytest.mark.asyncio
@@ -72,37 +76,37 @@ class TestResolvePort:
 
     def test_explicit_port_wins(self):
         """Explicit port argument takes precedence over everything."""
-        from azure.ai.agentserver.server._config import resolve_port
+        from azure.ai.agentserver._config import resolve_port
         assert resolve_port(9090) == 9090
 
     def test_env_var_used_when_no_explicit(self, monkeypatch):
         """AGENT_SERVER_PORT env var is used when no explicit port given."""
-        from azure.ai.agentserver.server._config import resolve_port
+        from azure.ai.agentserver._config import resolve_port
         monkeypatch.setenv("AGENT_SERVER_PORT", "7777")
         assert resolve_port(None) == 7777
 
     def test_default_port_when_nothing_set(self, monkeypatch):
         """Falls back to 8088 when no explicit port and no env var."""
-        from azure.ai.agentserver.server._config import resolve_port
+        from azure.ai.agentserver._config import resolve_port
         monkeypatch.delenv("AGENT_SERVER_PORT", raising=False)
         assert resolve_port(None) == 8088
 
     def test_invalid_env_var_raises(self, monkeypatch):
         """Non-numeric AGENT_SERVER_PORT env var raises ValueError."""
-        from azure.ai.agentserver.server._config import resolve_port
+        from azure.ai.agentserver._config import resolve_port
         monkeypatch.setenv("AGENT_SERVER_PORT", "not_a_number")
         with pytest.raises(ValueError, match="AGENT_SERVER_PORT"):
             resolve_port(None)
 
     def test_non_int_explicit_port_raises(self):
         """Passing a non-integer port raises ValueError."""
-        from azure.ai.agentserver.server._config import resolve_port
+        from azure.ai.agentserver._config import resolve_port
         with pytest.raises(ValueError, match="expected an integer"):
             resolve_port("sss")  # type: ignore[arg-type]
 
     def test_port_out_of_range_raises(self):
         """Port outside 1-65535 raises ValueError."""
-        from azure.ai.agentserver.server._config import resolve_port
+        from azure.ai.agentserver._config import resolve_port
         with pytest.raises(ValueError, match="1-65535"):
             resolve_port(0)
         with pytest.raises(ValueError, match="1-65535"):
@@ -110,7 +114,7 @@ class TestResolvePort:
 
     def test_env_var_port_out_of_range_raises(self, monkeypatch):
         """AGENT_SERVER_PORT outside 1-65535 raises ValueError."""
-        from azure.ai.agentserver.server._config import resolve_port
+        from azure.ai.agentserver._config import resolve_port
         monkeypatch.setenv("AGENT_SERVER_PORT", "0")
         with pytest.raises(ValueError, match="1-65535"):
             resolve_port(None)

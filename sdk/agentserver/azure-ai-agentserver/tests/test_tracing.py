@@ -402,7 +402,7 @@ class TestAppInsightsConnectionStringResolution:
 
     def test_explicit_param_takes_priority(self, monkeypatch):
         """Constructor param beats env var."""
-        from azure.ai.agentserver.server._config import resolve_appinsights_connection_string
+        from azure.ai.agentserver._config import resolve_appinsights_connection_string
 
         monkeypatch.setenv("APPLICATIONINSIGHTS_CONNECTION_STRING", "env-standard")
         result = resolve_appinsights_connection_string("explicit-value")
@@ -410,7 +410,7 @@ class TestAppInsightsConnectionStringResolution:
 
     def test_standard_env_var_fallback(self, monkeypatch):
         """Falls back to APPLICATIONINSIGHTS_CONNECTION_STRING."""
-        from azure.ai.agentserver.server._config import resolve_appinsights_connection_string
+        from azure.ai.agentserver._config import resolve_appinsights_connection_string
 
         monkeypatch.setenv("APPLICATIONINSIGHTS_CONNECTION_STRING", "env-standard")
         result = resolve_appinsights_connection_string(None)
@@ -418,7 +418,7 @@ class TestAppInsightsConnectionStringResolution:
 
     def test_no_connection_string_returns_none(self, monkeypatch):
         """Returns None when no source provides a connection string."""
-        from azure.ai.agentserver.server._config import resolve_appinsights_connection_string
+        from azure.ai.agentserver._config import resolve_appinsights_connection_string
 
         monkeypatch.delenv("APPLICATIONINSIGHTS_CONNECTION_STRING", raising=False)
         result = resolve_appinsights_connection_string(None)

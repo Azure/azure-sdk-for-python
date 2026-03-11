@@ -17,6 +17,6 @@ def test_log_level_preserved_across_imports():
     lib_logger.setLevel(logging.ERROR)
 
     # Re-importing the base module should not override the level.
-    from azure.ai.agentserver.server import _base  # noqa: F401
+    from azure.ai.agentserver import _base  # noqa: F401
 
     assert lib_logger.level == logging.ERROR

@@ -33,9 +33,10 @@ from collections.abc import Callable  # pylint: disable=import-error
 from typing import Any, Optional
 
 import jsonschema
+from jsonschema.exceptions import best_match
 from jsonschema import FormatChecker, ValidationError
 
-from .._logger import get_logger
+from ._logger import get_logger
 
 logger = get_logger()
 
@@ -491,7 +492,7 @@ def _collect_composition_errors(error: ValidationError) -> list[str]:
 
     if len(branch_groups) < 2:
         # Cannot do branch analysis — fallback
-        best = jsonschema.exceptions.best_match([error])
+        best = best_match([error])
         if best is not None and best is not error:
             return _collect_errors(best)
         return [_format_error(error)]
@@ -499,7 +500,7 @@ def _collect_composition_errors(error: ValidationError) -> list[str]:
     disc_path = _find_discriminator_path(branch_groups)
 
     if disc_path is None:
-        best = jsonschema.exceptions.best_match([error])
+        best = best_match([error])
         if best is not None and best is not error:
             return _collect_errors(best)
         return [_format_error(error)]

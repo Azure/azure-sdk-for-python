@@ -46,6 +46,11 @@ class TestResolveGracefulShutdownTimeout:
         agent = _make_stub_agent(graceful_shutdown_timeout=0)
         assert agent._graceful_shutdown_timeout == 0
 
+    def test_env_var_zero_disables_drain(self):
+        with patch.dict(os.environ, {Constants.AGENT_GRACEFUL_SHUTDOWN_TIMEOUT: "0"}):
+            agent = _make_stub_agent()
+            assert agent._graceful_shutdown_timeout == 0
+
     def test_env_var_used_when_no_explicit(self):
         with patch.dict(os.environ, {Constants.AGENT_GRACEFUL_SHUTDOWN_TIMEOUT: "45"}):
             agent = _make_stub_agent()
@@ -90,7 +95,7 @@ class TestRunPassesTimeout:
     """Ensure run() forwards the timeout to Hypercorn config."""
 
     @patch("hypercorn.asyncio.serve", new_callable=AsyncMock)
-    @patch("azure.ai.agentserver.server._base.asyncio")
+    @patch("azure.ai.agentserver._base.asyncio")
     def test_run_passes_timeout(self, mock_asyncio, _mock_serve):
         agent = _make_stub_agent(graceful_shutdown_timeout=15)
         agent.run()
@@ -100,7 +105,7 @@ class TestRunPassesTimeout:
         assert config.graceful_timeout == 15.0
 
     @patch("hypercorn.asyncio.serve", new_callable=AsyncMock)
-    @patch("azure.ai.agentserver.server._base.asyncio")
+    @patch("azure.ai.agentserver._base.asyncio")
     def test_run_passes_default_timeout(self, mock_asyncio, _mock_serve):
         agent = _make_stub_agent()
         agent.run()
@@ -167,7 +172,7 @@ class TestLifespanShutdown:
 
         agent = _make_stub_agent(graceful_shutdown_timeout=99)
 
-        with patch("azure.ai.agentserver.server._base.logger") as mock_logger:
+        with patch("azure.ai.agentserver._base.logger") as mock_logger:
             # Grab the lifespan from the Starlette app
             lifespan = agent.app.router.lifespan_context
             async with lifespan(agent.app):
@@ -268,7 +273,7 @@ class TestOnShutdownMethod:
     async def test_on_shutdown_exception_is_logged_not_raised(self):
         """A failing on_shutdown must not crash the shutdown sequence."""
         agent = _make_failing_shutdown_agent()
-        with patch("azure.ai.agentserver.server._base.logger") as mock_logger:
+        with patch("azure.ai.agentserver._base.logger") as mock_logger:
             lifespan = agent.app.router.lifespan_context
             async with lifespan(agent.app):
                 pass  # should NOT raise
@@ -295,7 +300,7 @@ class TestOnShutdownMethod:
         async def shutdown():
             order.append("callback")
 
-        with patch("azure.ai.agentserver.server._base.logger") as mock_logger:
+        with patch("azure.ai.agentserver._base.logger") as mock_logger:
 
             def tracking_info(*args, **kwargs):
                 if args and "shutting down" in str(args[0]).lower():
@@ -355,7 +360,7 @@ class TestOnShutdownTimeout:
         async def shutdown():
             await asyncio.sleep(999)  # way longer than the 1s timeout
 
-        with patch("azure.ai.agentserver.server._base.logger") as mock_logger:
+        with patch("azure.ai.agentserver._base.logger") as mock_logger:
             lifespan = server.app.router.lifespan_context
             async with lifespan(server.app):
                 pass  # should NOT hang
@@ -386,7 +391,7 @@ class TestOnShutdownTimeout:
             await asyncio.sleep(0)
             done = True
 
-        with patch("azure.ai.agentserver.server._base.logger") as mock_logger:
+        with patch("azure.ai.agentserver._base.logger") as mock_logger:
             lifespan = server.app.router.lifespan_context
             async with lifespan(server.app):
                 pass
@@ -425,7 +430,7 @@ class TestOnShutdownTimeout:
     async def test_timeout_does_not_suppress_exceptions(self):
         """Exceptions from on_shutdown are still logged even if within timeout."""
         agent = _make_failing_shutdown_agent(graceful_shutdown_timeout=5)
-        with patch("azure.ai.agentserver.server._base.logger") as mock_logger:
+        with patch("azure.ai.agentserver._base.logger") as mock_logger:
             lifespan = agent.app.router.lifespan_context
             async with lifespan(agent.app):
                 pass
