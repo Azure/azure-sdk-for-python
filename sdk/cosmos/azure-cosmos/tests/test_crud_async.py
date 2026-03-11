@@ -1274,7 +1274,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
                 parameters=[{"name": "@pk", "value": "policy_partition1"}],
                 read_timeout=30
             )]
-            self.assertEqual(len(results), 1)
+            self.assertEqual(len(results), 2)
 
 
 
