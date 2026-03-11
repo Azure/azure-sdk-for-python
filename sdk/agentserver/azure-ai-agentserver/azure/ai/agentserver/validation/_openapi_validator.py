@@ -26,16 +26,18 @@
 #
 import copy
 import json
-import logging
 import re
 from collections import Counter
 from datetime import datetime
+from collections.abc import Callable  # pylint: disable=import-error
 from typing import Any, Optional
 
 import jsonschema
 from jsonschema import FormatChecker, ValidationError
 
-logger = logging.getLogger("azure.ai.agentserver")
+from .._logger import get_logger
+
+logger = get_logger()
 
 # ---------------------------------------------------------------------------
 # Stdlib-only format checkers so we never depend on optional jsonschema extras
@@ -111,8 +113,6 @@ class OpenApiValidator:
     """
 
     def __init__(self, spec: dict[str, Any], path: str = "/invocations") -> None:
-        self._spec = spec
-        self._path = path
         self._request_body_required = self._is_request_body_required(spec, path)
         raw_request = self._extract_request_schema(spec, path)
         raw_response = self._extract_response_schema(spec, path)
@@ -296,6 +296,31 @@ class OpenApiValidator:
         return request_body.get("required", True)
 
     @staticmethod
+    def _walk_schema(schema: dict[str, Any], visitor: Callable[[dict[str, Any]], None]) -> None:
+        """Recursively apply *visitor* to every sub-schema in the tree.
+
+        *visitor* is called on each dict-typed sub-schema found in
+        ``items``, ``additionalProperties``, ``properties``, and
+        ``allOf``/``oneOf``/``anyOf``.
+
+        :param schema: Root schema dict.
+        :type schema: dict[str, Any]
+        :param visitor: Callable applied to each sub-schema dict.
+        :type visitor: Callable[[dict[str, Any]], None]
+        """
+        for key in ("items", "additionalProperties"):
+            child = schema.get(key)
+            if isinstance(child, dict):
+                visitor(child)
+        for prop in schema.get("properties", {}).values():
+            if isinstance(prop, dict):
+                visitor(prop)
+        for keyword in ("allOf", "oneOf", "anyOf"):
+            for sub in schema.get(keyword, []):
+                if isinstance(sub, dict):
+                    visitor(sub)
+
+    @staticmethod
     def _preprocess_schema(
         schema: dict[str, Any], context: str = "request"
     ) -> dict[str, Any]:
@@ -339,18 +364,7 @@ class OpenApiValidator:
                 schema["type"] = [original, "null"]
             elif isinstance(original, list) and "null" not in original:
                 schema["type"] = original + ["null"]
-        # Recurse into nested structures
-        for key in ("items", "additionalProperties"):
-            child = schema.get(key)
-            if isinstance(child, dict):
-                OpenApiValidator._apply_nullable(child)
-        for prop in schema.get("properties", {}).values():
-            if isinstance(prop, dict):
-                OpenApiValidator._apply_nullable(prop)
-        for keyword in ("allOf", "oneOf", "anyOf"):
-            for sub in schema.get(keyword, []):
-                if isinstance(sub, dict):
-                    OpenApiValidator._apply_nullable(sub)
+        OpenApiValidator._walk_schema(schema, OpenApiValidator._apply_nullable)
 
     @staticmethod
     def _strip_readonly_writeonly(
@@ -386,17 +400,11 @@ class OpenApiValidator:
             props.pop(name, None)
             if name in required:
                 required.remove(name)
-        # Recurse into nested objects
-        for prop in props.values():
-            if isinstance(prop, dict):
-                OpenApiValidator._strip_readonly_writeonly(prop, context)
-        child = schema.get("items")
-        if isinstance(child, dict):
+
+        def _recurse(child: dict[str, Any]) -> None:
             OpenApiValidator._strip_readonly_writeonly(child, context)
-        for keyword in ("allOf", "oneOf", "anyOf"):
-            for sub in schema.get(keyword, []):
-                if isinstance(sub, dict):
-                    OpenApiValidator._strip_readonly_writeonly(sub, context)
+
+        OpenApiValidator._walk_schema(schema, _recurse)
 
     @staticmethod
     def _strip_openapi_keywords(schema: dict[str, Any]) -> None:
@@ -412,17 +420,7 @@ class OpenApiValidator:
             return
         for kw in _OPENAPI_ONLY_KEYWORDS:
             schema.pop(kw, None)
-        for key in ("items", "additionalProperties"):
-            child = schema.get(key)
-            if isinstance(child, dict):
-                OpenApiValidator._strip_openapi_keywords(child)
-        for prop in schema.get("properties", {}).values():
-            if isinstance(prop, dict):
-                OpenApiValidator._strip_openapi_keywords(prop)
-        for keyword in ("allOf", "oneOf", "anyOf"):
-            for sub in schema.get(keyword, []):
-                if isinstance(sub, dict):
-                    OpenApiValidator._strip_openapi_keywords(sub)
+        OpenApiValidator._walk_schema(schema, OpenApiValidator._strip_openapi_keywords)
 
 
 # ------------------------------------------------------------------

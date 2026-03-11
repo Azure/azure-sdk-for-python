@@ -15,11 +15,16 @@ from starlette.routing import Route
 
 from .._constants import Constants
 from .._errors import error_response
+from .._logger import get_logger
 from .._tracing import TracingHelper, extract_w3c_carrier
 from ..validation._openapi_validator import OpenApiValidator
 from . import _config
 
-logger = logging.getLogger("azure.ai.agentserver")
+logger = get_logger()
+
+# Pre-built health-check responses to avoid per-request allocation.
+_LIVENESS_BODY = b'{"status":"alive"}'
+_READINESS_BODY = b'{"status":"ready"}'
 
 
 class AgentServer:  # pylint: disable=too-many-instance-attributes
@@ -475,20 +480,32 @@ class AgentServer:  # pylint: disable=too-many-instance-attributes
 
         return response
 
-    async def _get_invocation_endpoint(self, request: Request) -> Response:
-        """GET /invocations/{invocation_id} — retrieve an invocation result.
+    async def _traced_invocation_endpoint(
+        self,
+        request: Request,
+        span_name: str,
+        dispatch: Callable[[Request], Awaitable[Response]],
+    ) -> Response:
+        """Shared implementation for get/cancel invocation endpoints.
+
+        Extracts the invocation ID from path params, optionally creates a
+        tracing span, dispatches to the handler, and handles errors.
 
         :param request: The incoming Starlette request.
         :type request: Request
-        :return: The stored result or 404.
+        :param span_name: OTel span name (e.g. ``"AgentServer.get_invocation"``).
+        :type span_name: str
+        :param dispatch: The dispatch method to invoke.
+        :type dispatch: Callable[[Request], Awaitable[Response]]
+        :return: The handler response or an error response.
         :rtype: Response
         """
         invocation_id = request.path_params["invocation_id"]
         request.state.invocation_id = invocation_id
-        carrier = extract_w3c_carrier(request.headers)
+        carrier = extract_w3c_carrier(request.headers) if self._tracing is not None else {}
         span_cm = (
             self._tracing.span(
-                "AgentServer.get_invocation",
+                span_name,
                 attributes={"invocation.id": invocation_id},
                 carrier=carrier,
             )
@@ -497,17 +514,29 @@ class AgentServer:  # pylint: disable=too-many-instance-attributes
         )
         with span_cm as _otel_span:
             try:
-                return await self._dispatch_get_invocation(request)
+                return await dispatch(request)
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 if self._tracing is not None:
                     self._tracing.record_error(_otel_span, exc)
-                logger.error("Error in get_invocation %s: %s", invocation_id, exc, exc_info=True)
+                logger.error("Error in %s %s: %s", span_name, invocation_id, exc, exc_info=True)
                 message = str(exc) if self._debug_errors else "Internal server error"
                 return error_response(
                     "internal_error",
                     message,
                     status_code=500,
                 )
+
+    async def _get_invocation_endpoint(self, request: Request) -> Response:
+        """GET /invocations/{invocation_id} — retrieve an invocation result.
+
+        :param request: The incoming Starlette request.
+        :type request: Request
+        :return: The stored result or 404.
+        :rtype: Response
+        """
+        return await self._traced_invocation_endpoint(
+            request, "AgentServer.get_invocation", self._dispatch_get_invocation
+        )
 
     async def _cancel_invocation_endpoint(self, request: Request) -> Response:
         """POST /invocations/{invocation_id}/cancel — cancel an invocation.
@@ -517,31 +546,9 @@ class AgentServer:  # pylint: disable=too-many-instance-attributes
         :return: The cancellation result or 404.
         :rtype: Response
         """
-        invocation_id = request.path_params["invocation_id"]
-        request.state.invocation_id = invocation_id
-        carrier = extract_w3c_carrier(request.headers)
-        span_cm = (
-            self._tracing.span(
-                "AgentServer.cancel_invocation",
-                attributes={"invocation.id": invocation_id},
-                carrier=carrier,
-            )
-            if self._tracing is not None
-            else contextlib.nullcontext(None)
+        return await self._traced_invocation_endpoint(
+            request, "AgentServer.cancel_invocation", self._dispatch_cancel_invocation
         )
-        with span_cm as _otel_span:
-            try:
-                return await self._dispatch_cancel_invocation(request)
-            except Exception as exc:  # pylint: disable=broad-exception-caught
-                if self._tracing is not None:
-                    self._tracing.record_error(_otel_span, exc)
-                logger.error("Error in cancel_invocation %s: %s", invocation_id, exc, exc_info=True)
-                message = str(exc) if self._debug_errors else "Internal server error"
-                return error_response(
-                    "internal_error",
-                    message,
-                    status_code=500,
-                )
 
     async def _liveness_endpoint(self, request: Request) -> Response:  # pylint: disable=unused-argument
         """GET /liveness — health check.
@@ -551,7 +558,7 @@ class AgentServer:  # pylint: disable=too-many-instance-attributes
         :return: 200 OK response.
         :rtype: Response
         """
-        return JSONResponse({"status": "alive"})
+        return Response(_LIVENESS_BODY, media_type="application/json")
 
     async def _readiness_endpoint(self, request: Request) -> Response:  # pylint: disable=unused-argument
         """GET /readiness — readiness check.
@@ -561,4 +568,4 @@ class AgentServer:  # pylint: disable=too-many-instance-attributes
         :return: 200 OK response.
         :rtype: Response
         """
-        return JSONResponse({"status": "ready"})
+        return Response(_READINESS_BODY, media_type="application/json")

@@ -28,13 +28,15 @@ from contextlib import contextmanager
 from collections.abc import AsyncIterable, AsyncIterator, Mapping  # pylint: disable=import-error
 from typing import TYPE_CHECKING, Any, Iterator, Optional, Union
 
+from ._logger import get_logger
+
 #: Starlette's ``Content`` type — the element type for streaming bodies.
 _Content = Union[str, bytes, memoryview]
 
 #: W3C Trace Context header names used for distributed trace propagation.
-_W3C_HEADERS = frozenset(("traceparent", "tracestate"))
+_W3C_HEADERS = ("traceparent", "tracestate")
 
-logger = logging.getLogger("azure.ai.agentserver")
+logger = get_logger()
 
 _HAS_OTEL = False
 try:
@@ -64,6 +66,7 @@ class TracingHelper:
     def __init__(self, connection_string: Optional[str] = None) -> None:
         self._enabled = _HAS_OTEL
         self._tracer: Any = None
+        self._propagator: Any = None
 
         if not self._enabled:
             logger.warning(
@@ -76,10 +79,23 @@ class TracingHelper:
             self._setup_azure_monitor(connection_string)
 
         self._tracer = trace.get_tracer("azure.ai.agentserver")
+        self._propagator = TraceContextTextMapPropagator()
 
     # ------------------------------------------------------------------
     # Azure Monitor auto-configuration
     # ------------------------------------------------------------------
+
+    def _extract_context(self, carrier: Optional[dict[str, str]]) -> Any:
+        """Extract parent trace context from a W3C carrier dict.
+
+        :param carrier: W3C trace-context headers or None.
+        :type carrier: Optional[dict[str, str]]
+        :return: The extracted OTel context, or None.
+        :rtype: Any
+        """
+        if carrier and self._propagator is not None:
+            return self._propagator.extract(carrier=carrier)
+        return None
 
     @staticmethod
     def _setup_azure_monitor(connection_string: str) -> None:
@@ -176,10 +192,7 @@ class TracingHelper:
             yield None
             return
 
-        # Extract parent context from W3C traceparent header if present
-        ctx = None
-        if carrier:
-            ctx = TraceContextTextMapPropagator().extract(carrier=carrier)
+        ctx = self._extract_context(carrier)
 
         with self._tracer.start_as_current_span(
             name=name,
@@ -213,9 +226,7 @@ class TracingHelper:
         if not self._enabled or self._tracer is None:
             return None
 
-        ctx = None
-        if carrier:
-            ctx = TraceContextTextMapPropagator().extract(carrier=carrier)
+        ctx = self._extract_context(carrier)
 
         return self._tracer.start_span(
             name=name,
@@ -304,4 +315,9 @@ def extract_w3c_carrier(headers: Mapping[str, str]) -> dict[str, str]:
         in *headers*.
     :rtype: dict[str, str]
     """
-    return {k: v for k, v in headers.items() if k in _W3C_HEADERS}
+    result: dict[str, str] = {}
+    for key in _W3C_HEADERS:
+        val = headers.get(key)
+        if val is not None:
+            result[key] = val
+    return result

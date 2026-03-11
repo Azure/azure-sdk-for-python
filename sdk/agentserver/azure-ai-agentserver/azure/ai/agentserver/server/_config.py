@@ -57,6 +57,24 @@ def _require_int(name: str, value: object) -> int:
     return value
 
 
+def _validate_port(value: int, source: str) -> int:
+    """Validate that a port number is within the valid range.
+
+    :param value: The port number to validate.
+    :type value: int
+    :param source: Human-readable source name for the error message.
+    :type source: str
+    :return: The validated port number.
+    :rtype: int
+    :raises ValueError: If the port is outside 1-65535.
+    """
+    if not 1 <= value <= 65535:
+        raise ValueError(
+            f"Invalid value for {source}: {value} (expected 1-65535)"
+        )
+    return value
+
+
 def resolve_port(port: Optional[int]) -> int:
     """Resolve the server port from argument, env var, or default.
 
@@ -67,19 +85,10 @@ def resolve_port(port: Optional[int]) -> int:
     :raises ValueError: If the port value is not a valid integer or is outside 1-65535.
     """
     if port is not None:
-        result = _require_int("port", port)
-        if not 1 <= result <= 65535:
-            raise ValueError(
-                f"Invalid value for port: {result} (expected 1-65535)"
-            )
-        return result
+        return _validate_port(_require_int("port", port), "port")
     env_port = _parse_int_env(Constants.AGENT_SERVER_PORT)
     if env_port is not None:
-        if not 1 <= env_port <= 65535:
-            raise ValueError(
-                f"Invalid value for {Constants.AGENT_SERVER_PORT}: {env_port} (expected 1-65535)"
-            )
-        return env_port
+        return _validate_port(env_port, Constants.AGENT_SERVER_PORT)
     return Constants.DEFAULT_PORT
 
 
