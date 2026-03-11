@@ -69,9 +69,9 @@ with (
             elif event.type == "response.output_text.delta":
                 print(event.delta, end="", flush=True)
             elif event.type == "response.text.done":
-                print(f"\n\nResponse text done. Access final text in 'event.text'")
+                print("\n\nResponse text done. Access final text in 'event.text'")
             elif event.type == "response.completed":
-                print(f"\n\nResponse completed. Access final text in 'event.response.output_text'")
+                print("\n\nResponse completed. Access final text in 'event.response.output_text'")
 
     openai_client.conversations.delete(conversation_id=conversation.id)
     print("Conversation deleted")

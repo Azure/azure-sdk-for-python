@@ -27,19 +27,17 @@ USAGE:
 """
 
 import os
-
-from azure.identity import DefaultAzureCredential
-from azure.ai.projects import AIProjectClient
-
 import time
+from datetime import datetime
 from pprint import pprint
+from dotenv import load_dotenv
 from openai.types.evals.create_eval_jsonl_run_data_source_param import CreateEvalJSONLRunDataSourceParam, SourceFileID
 from openai.types.eval_create_params import DataSourceConfigCustom
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     DatasetVersion,
 )
-from dotenv import load_dotenv
-from datetime import datetime
 
 load_dotenv()
 
@@ -135,7 +133,7 @@ with (
 
     while True:
         run = client.evals.runs.retrieve(run_id=eval_run_response.id, eval_id=eval_object.id)
-        if run.status == "completed" or run.status == "failed":
+        if run.status in ("completed", "failed"):
             output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
             pprint(output_items)
             print(f"Eval Run Report URL: {run.report_url}")

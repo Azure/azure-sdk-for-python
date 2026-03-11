@@ -5,7 +5,6 @@
 # ------------------------------------
 # cSpell:disable
 
-import functools
 import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport

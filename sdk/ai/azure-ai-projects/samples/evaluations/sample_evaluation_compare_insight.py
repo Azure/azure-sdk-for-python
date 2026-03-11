@@ -31,6 +31,12 @@ import os
 import time
 from pprint import pprint
 from dotenv import load_dotenv
+from openai.types.eval_create_params import DataSourceConfigCustom, TestingCriterionLabelModel
+from openai.types.evals.create_eval_jsonl_run_data_source_param import (
+    CreateEvalJSONLRunDataSourceParam,
+    SourceFileContent,
+)
+from openai.types.evals.run_retrieve_response import RunRetrieveResponse
 from azure.ai.projects.models import (
     OperationState,
     EvaluationComparisonInsightRequest,
@@ -38,12 +44,6 @@ from azure.ai.projects.models import (
 )
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from openai.types.eval_create_params import DataSourceConfigCustom, TestingCriterionLabelModel
-from openai.types.evals.create_eval_jsonl_run_data_source_param import (
-    CreateEvalJSONLRunDataSourceParam,
-    SourceFileContent,
-)
-from openai.types.evals.run_retrieve_response import RunRetrieveResponse
 
 load_dotenv()
 

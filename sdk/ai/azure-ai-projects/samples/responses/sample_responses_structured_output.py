@@ -28,9 +28,9 @@ USAGE:
 
 import os
 from dotenv import load_dotenv
+from pydantic import BaseModel, Field
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from pydantic import BaseModel, Field
 
 load_dotenv()
 

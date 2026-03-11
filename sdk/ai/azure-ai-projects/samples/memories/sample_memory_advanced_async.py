@@ -35,6 +35,7 @@ USAGE:
 import asyncio
 import os
 from dotenv import load_dotenv
+from openai.types.responses import EasyInputMessageParam
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
@@ -43,7 +44,6 @@ from azure.ai.projects.models import (
     MemoryStoreDefaultOptions,
     MemorySearchOptions,
 )
-from openai.types.responses import EasyInputMessageParam
 
 load_dotenv()
 

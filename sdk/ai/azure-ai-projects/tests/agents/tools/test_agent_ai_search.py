@@ -52,7 +52,7 @@ class TestAgentAISearch(TestBase):
         condition=(not is_live_and_not_recording()),
         reason="Skipped because we cannot record network calls with OpenAI client",
     )
-    def test_agent_ai_search_question_answering(self, **kwargs):
+    def test_agent_ai_search_question_answering(self, **kwargs):  # pylint: disable=too-many-statements
         """
         Test agent with Azure AI Search capabilities for question answering.
 

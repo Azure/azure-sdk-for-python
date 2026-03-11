@@ -177,7 +177,7 @@ with project_client.get_openai_client() as openai_client:
         conversation_id=conversation.id,
         items=[{"type": "message", "role": "user", "content": "And what is the capital city?"}],
     )
-    print(f"Added a second user message to the conversation")
+    print("Added a second user message to the conversation")
 
     response = openai_client.responses.create(
         conversation=conversation.id,
@@ -229,7 +229,7 @@ the `code_interpreter_call` output item:
 
 ```python
 code = next((output.code for output in response.output if output.type == "code_interpreter_call"), "")
-print(f"Code Interpreter code:")
+print("Code Interpreter code:")
 print(code)
 ```
 
@@ -246,7 +246,9 @@ asset_file_path = os.path.abspath(
 )
 
 # Upload the CSV file for the code interpreter
-file = openai_client.files.create(purpose="assistants", file=open(asset_file_path, "rb"))
+with open(asset_file_path, "rb") as f:
+    file = openai_client.files.create(purpose="assistants", file=f)
+
 tool = CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[file.id]))
 ```
 
@@ -273,9 +275,10 @@ print(f"Vector store created (id: {vector_store.id})")
 asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/product_info.md"))
 
 # Upload file to vector store
-file = openai_client.vector_stores.files.upload_and_poll(
-    vector_store_id=vector_store.id, file=open(asset_file_path, "rb")
-)
+with open(asset_file_path, "rb") as f:
+    file = openai_client.vector_stores.files.upload_and_poll(
+        vector_store_id=vector_store.id, file=f
+    )
 print(f"File uploaded to vector store (id: {file.id})")
 
 tool = FileSearchTool(vector_store_ids=[vector_store.id])
@@ -415,7 +418,7 @@ Call external APIs defined by OpenAPI specifications without additional client-s
 <!-- SNIPPET:sample_agent_openapi.tool_declaration-->
 
 ```python
-with open(weather_asset_file_path, "r") as f:
+with open(weather_asset_file_path, "r", encoding="utf-8") as f:
     openapi_weather = cast(dict[str, Any], jsonref.loads(f.read()))
 
 tool = OpenApiTool(

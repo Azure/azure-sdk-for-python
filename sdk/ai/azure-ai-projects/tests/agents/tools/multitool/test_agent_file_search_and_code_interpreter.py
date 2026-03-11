@@ -5,8 +5,6 @@
 # ------------------------------------
 # cSpell:disable
 
-import pytest
-
 """
 Multi-Tool Tests: File Search + Code Interpreter
 

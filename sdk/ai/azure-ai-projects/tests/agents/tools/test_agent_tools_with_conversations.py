@@ -12,9 +12,9 @@ within the context of conversations, testing conversation state management with 
 """
 
 import json
-import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
+from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 from azure.ai.projects.models import (
     FunctionTool,
     FileSearchTool,
@@ -22,14 +22,13 @@ from azure.ai.projects.models import (
     AutoCodeInterpreterToolParam,
     PromptAgentDefinition,
 )
-from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 
 
 class TestAgentToolsWithConversations(TestBase):
 
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_function_tool_with_conversation(self, **kwargs):
+    def test_function_tool_with_conversation(self, **kwargs):  # pylint: disable=too-many-statements
         """
         Test using FunctionTool within a conversation.
 

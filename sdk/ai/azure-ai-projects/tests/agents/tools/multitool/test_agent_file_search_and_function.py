@@ -5,8 +5,6 @@
 # ------------------------------------
 # cSpell:disable
 
-import pytest
-
 """
 Multi-Tool Tests: File Search + Function Tool
 
@@ -18,8 +16,8 @@ import json
 from io import BytesIO
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
-from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool, FunctionTool
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
+from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool, FunctionTool
 
 
 class TestAgentFileSearchAndFunction(TestBase):
@@ -362,7 +360,7 @@ print(f"Sum: {result}")
 
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_multi_turn_search_and_save_workflow(self, **kwargs):
+    def test_multi_turn_search_and_save_workflow(self, **kwargs):  # pylint: disable=too-many-statements,too-many-locals
         """
         Test multi-turn workflow: search documents, ask follow-ups, save findings.
 

@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,docstring-missing-param,docstring-missing-return,docstring-missing-rtype
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -32,13 +32,12 @@ USAGE:
 """
 
 import os
-import time
 from dotenv import load_dotenv
+from fine_tuning_sample_helper import resolve_data_file_path  # pylint: disable=import-error
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
 from azure.mgmt.cognitiveservices.models import Deployment, DeploymentProperties, DeploymentModel, Sku
-from fine_tuning_sample_helper import resolve_data_file_path
 
 load_dotenv()
 

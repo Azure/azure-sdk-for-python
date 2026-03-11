@@ -27,9 +27,9 @@ USAGE:
 """
 
 import os
+from typing import Any, cast
 import jsonref
 from dotenv import load_dotenv
-from typing import Any, cast
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (

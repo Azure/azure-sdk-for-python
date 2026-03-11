@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,docstring-missing-param,docstring-missing-return,docstring-missing-rtype
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -34,11 +34,11 @@ USAGE:
 import asyncio
 import os
 from dotenv import load_dotenv
+from fine_tuning_sample_helper import resolve_data_file_path  # pylint: disable=import-error
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.mgmt.cognitiveservices.aio import CognitiveServicesManagementClient as CognitiveServicesManagementClientAsync
 from azure.mgmt.cognitiveservices.models import Deployment, DeploymentProperties, DeploymentModel, Sku
-from fine_tuning_sample_helper import resolve_data_file_path
 
 load_dotenv()
 
@@ -104,7 +104,7 @@ async def deploy_model(openai_client, credential, job_id):
             deployment=deployment_config,
         )
 
-        print(f"Waiting for deployment to complete...")
+        print("Waiting for deployment to complete...")
         await deployment.result()
 
     print(f"Model deployment completed: {deployment_name}")

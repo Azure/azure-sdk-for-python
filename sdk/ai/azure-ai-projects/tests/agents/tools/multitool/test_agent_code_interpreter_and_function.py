@@ -5,8 +5,6 @@
 # ------------------------------------
 # cSpell:disable
 
-import pytest
-
 """
 Multi-Tool Tests: Code Interpreter + Function Tool
 
@@ -14,7 +12,6 @@ Tests various scenarios using an agent with Code Interpreter and Function Tool.
 All tests use the same tool combination but different inputs and workflows.
 """
 
-import json
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import (
@@ -23,7 +20,6 @@ from azure.ai.projects.models import (
     AutoCodeInterpreterToolParam,
     FunctionTool,
 )
-from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 
 
 class TestAgentCodeInterpreterAndFunction(TestBase):

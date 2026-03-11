@@ -29,18 +29,19 @@ USAGE:
        the "Models + endpoints" tab in your Microsoft Foundry project.
 """
 
+# pylint: disable=pointless-string-statement
 import asyncio
 import os
 from dotenv import load_dotenv
-from azure.identity.aio import DefaultAzureCredential
-from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition, ComputerUsePreviewTool
-from computer_use_util import (
+from computer_use_util import (  # pylint: disable=import-error
     SearchState,
     load_screenshot_assets,
     handle_computer_action_and_take_screenshot,
     print_final_output,
 )
+from azure.identity.aio import DefaultAzureCredential
+from azure.ai.projects.aio import AIProjectClient
+from azure.ai.projects.models import PromptAgentDefinition, ComputerUsePreviewTool
 
 load_dotenv()
 
@@ -74,8 +75,8 @@ async def main():
             definition=PromptAgentDefinition(
                 model=os.environ.get("COMPUTER_USE_MODEL_DEPLOYMENT_NAME", "computer-use-preview"),
                 instructions="""
-                You are a computer automation assistant. 
-                
+                You are a computer automation assistant.
+
                 Be direct and efficient. When you reach the search results page, read and describe the actual search result titles and descriptions you can see.
                 """,
                 tools=[computer_use_tool],

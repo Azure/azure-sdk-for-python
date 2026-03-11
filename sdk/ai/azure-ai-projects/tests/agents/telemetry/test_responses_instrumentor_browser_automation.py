@@ -9,6 +9,13 @@ Tests for ResponsesInstrumentor with browser automation agents.
 
 import os
 import pytest
+from gen_ai_trace_verifier import GenAiTraceVerifier  # pylint: disable=import-error
+from devtools_testutils import recorded_by_proxy, RecordedTransport
+from test_base import servicePreparer
+from test_ai_instrumentor_base import (  # pylint: disable=import-error
+    TestAiAgentsInstrumentorBase,
+    CONTENT_TRACING_ENV_VARIABLE,
+)
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
 from azure.ai.projects.telemetry._utils import (
     OPERATION_NAME_INVOKE_AGENT,
@@ -16,19 +23,11 @@ from azure.ai.projects.telemetry._utils import (
     _set_use_message_events,
     RESPONSES_PROVIDER,
 )
-from azure.core.settings import settings
-from gen_ai_trace_verifier import GenAiTraceVerifier
-from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition
-
-from test_base import servicePreparer
-from test_ai_instrumentor_base import (
-    TestAiAgentsInstrumentorBase,
-    CONTENT_TRACING_ENV_VARIABLE,
-)
+from azure.core.settings import settings
 
 settings.tracing_implementation = "OpenTelemetry"
-_utils._span_impl_type = settings.tracing_implementation()
+_utils._span_impl_type = settings.tracing_implementation()  # pylint: disable=not-callable
 
 
 @pytest.mark.skip(
@@ -37,6 +36,8 @@ _utils._span_impl_type = settings.tracing_implementation()
 class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
     """Tests for ResponsesInstrumentor with browser automation agents."""
 
+    # pylint: disable=too-many-nested-blocks
+
     # ========================================
     # Sync Browser Automation Tests - Non-Streaming
     # ========================================
@@ -44,7 +45,9 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_sync_browser_automation_non_streaming_with_content_recording(self, **kwargs):
+    def test_sync_browser_automation_non_streaming_with_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-locals,too-many-statements,too-many-nested-blocks
         """Test synchronous browser automation agent with non-streaming and content recording enabled."""
         self.cleanup()
         _set_use_message_events(True)
@@ -180,7 +183,9 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_sync_browser_automation_non_streaming_without_content_recording(self, **kwargs):
+    def test_sync_browser_automation_non_streaming_without_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-locals,too-many-statements,too-many-nested-blocks
         """Test synchronous browser automation agent with non-streaming and content recording disabled."""
         self.cleanup()
         _set_use_message_events(True)
@@ -310,7 +315,9 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_sync_browser_automation_streaming_with_content_recording(self, **kwargs):
+    def test_sync_browser_automation_streaming_with_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-locals,too-many-statements,too-many-nested-blocks
         """Test synchronous browser automation agent with streaming and content recording enabled."""
         self.cleanup()
         _set_use_message_events(True)
@@ -438,7 +445,9 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_sync_browser_automation_streaming_without_content_recording(self, **kwargs):
+    def test_sync_browser_automation_streaming_without_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-locals,too-many-statements,too-many-nested-blocks
         """Test synchronous browser automation agent with streaming and content recording disabled."""
         self.cleanup()
         _set_use_message_events(True)

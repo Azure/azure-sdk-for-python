@@ -23,6 +23,8 @@ USAGE:
 """
 
 import os
+from pprint import pprint
+from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
@@ -35,9 +37,6 @@ from azure.ai.projects.models import (
     EvaluatorMetricDirection,
     EvaluatorMetricType,
 )
-
-from pprint import pprint
-from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -57,19 +56,19 @@ with (
         definition=PromptBasedEvaluatorDefinition(
             prompt_text="""You are an evaluator.
                 Rate the GROUNDEDNESS (factual correctness without unsupported claims) of the system response to the customer query.
-                
+
                 Scoring (1–5):
                 1 = Mostly fabricated/incorrect
                 2 = Many unsupported claims
                 3 = Mixed: some facts but notable errors/guesses
                 4 = Mostly factual; minor issues
                 5 = Fully factual; no unsupported claims
-                
+
                 Return ONLY a single integer 1–5 as score in valid json response e.g {\"score\": int}.
-                
+
                 Query:
                 {query}
-                
+
                 Response:
                 {response}
                 """,

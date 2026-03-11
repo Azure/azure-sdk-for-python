@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,wrong-import-order,ungrouped-imports,no-else-raise,raise-missing-from
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -57,7 +57,6 @@ from azure.ai.projects.models import (
 )
 import json
 import time
-from azure.ai.projects.models import EvaluationTaxonomy
 
 
 def main() -> None:
@@ -69,7 +68,7 @@ def main() -> None:
     schedule_redteam_evaluation()
 
 
-def assign_rbac():
+def assign_rbac():  # pylint: disable=too-many-statements
     """
     Assign the "Azure AI User" role to the Microsoft Foundry project's Managed Identity.
     """
@@ -97,7 +96,7 @@ def assign_rbac():
             return
         account_name = match.group(1)
         project_name = match.group(2)
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-exception-caught
         print(f"Error parsing endpoint: {e}")
         return
 
@@ -135,7 +134,7 @@ def assign_rbac():
                     print("Error: Project does not have a managed identity enabled")
                     return
 
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 print(f"Error retrieving project resource: {e}")
                 return
 
@@ -149,7 +148,7 @@ def assign_rbac():
             # Create role assignment
             role_assignment_name = str(uuid.uuid4())
 
-            print(f"Assigning 'Azure AI User' role to managed identity...")
+            print("Assigning 'Azure AI User' role to managed identity...")
 
             role_assignment = auth_client.role_assignments.create(
                 scope=scope,
@@ -161,10 +160,10 @@ def assign_rbac():
                 },
             )
 
-            print(f"Successfully assigned 'Azure AI User' role to project managed identity")
+            print("Successfully assigned 'Azure AI User' role to project managed identity")
             print(f"Role assignment ID: {role_assignment.name}")
 
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-exception-caught
             print(f"Error during role assignment: {e}")
 
             # Check for specific error types and provide helpful guidance
@@ -208,7 +207,7 @@ def assign_rbac():
                 print("This usually indicates a service availability issue.")
 
             else:
-                print(f"\n❌ UNEXPECTED ERROR:")
+                print("\n❌ UNEXPECTED ERROR:")
                 print("An unexpected error occurred. Please check the error details above.")
                 raise
 
@@ -275,7 +274,7 @@ def schedule_dataset_evaluation() -> None:
             data_source_config=data_source_config,  # type: ignore
             testing_criteria=testing_criteria,  # type: ignore
         )
-        print(f"Evaluation created")
+        print("Evaluation created")
 
         print("Get Evaluation by Id")
         eval_object_response = client.evals.retrieve(eval_object.id)
@@ -292,7 +291,7 @@ def schedule_dataset_evaluation() -> None:
             ),
         }
 
-        print(f"Eval Run:")
+        print("Eval Run:")
         pprint(eval_run_object)
         print("Creating Schedule for dataset evaluation")
         schedule = Schedule(
@@ -324,7 +323,7 @@ def schedule_dataset_evaluation() -> None:
         print("Dataset deleted")
 
 
-def schedule_redteam_evaluation() -> None:
+def schedule_redteam_evaluation() -> None:  # pylint: disable=too-many-locals
     load_dotenv()
     #
     endpoint = os.environ.get("FOUNDRY_PROJECT_ENDPOINT", "")
@@ -354,7 +353,7 @@ def schedule_redteam_evaluation() -> None:
         data_source_config = {"type": "azure_ai_source", "scenario": "red_team"}
 
         testing_criteria = _get_agent_safety_evaluation_criteria()
-        print(f"Defining testing criteria for red teaming for agent target")
+        print("Defining testing criteria for red teaming for agent target")
         pprint(testing_criteria)
 
         print("Creating Evaluation")
@@ -384,7 +383,7 @@ def schedule_redteam_evaluation() -> None:
         taxonomy_path = os.path.join(data_folder, f"taxonomy_{agent_name}.json")
         # Create the data folder if it doesn't exist
         os.makedirs(data_folder, exist_ok=True)
-        with open(taxonomy_path, "w") as f:
+        with open(taxonomy_path, "w", encoding="utf-8") as f:
             f.write(json.dumps(_to_json_primitive(taxonomy), indent=2))
         print(f"RedTeaming Taxonomy created for agent: {agent_name}. Taxonomy written to {taxonomy_path}")
         eval_run_object = {
@@ -510,7 +509,7 @@ def _to_json_primitive(obj):
         if hasattr(obj, method):
             try:
                 return _to_json_primitive(getattr(obj, method)())
-            except Exception:
+            except Exception:  # pylint: disable=broad-exception-caught
                 pass
     if hasattr(obj, "__dict__"):
         return _to_json_primitive({k: v for k, v in vars(obj).items() if not k.startswith("_")})

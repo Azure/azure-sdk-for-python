@@ -14,7 +14,6 @@ from azure.ai.projects.models import (
     TextResponseFormatJsonSchema,
     PromptAgentDefinitionTextOptions,
 )
-import pytest
 
 
 class TestAgentResponsesCrudAsync(TestBase):
@@ -76,7 +75,7 @@ class TestAgentResponsesCrudAsync(TestBase):
                 conversation_id=conversation.id,
                 items=[{"type": "message", "role": "user", "content": "And how many meters?"}],
             )
-            print(f"Added a second user message to the conversation")
+            print("Added a second user message to the conversation")
 
             response = await openai_client.responses.create(
                 conversation=conversation.id,

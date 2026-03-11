@@ -30,9 +30,9 @@ USAGE:
 
 import os
 from dotenv import load_dotenv
+from agent_retrieve_helper import create_and_retrieve_agent_and_conversation  # pylint: disable=import-error
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from agent_retrieve_helper import create_and_retrieve_agent_and_conversation
 
 load_dotenv()
 
@@ -64,7 +64,7 @@ with (
         conversation_id=conversation.id,
         items=[{"type": "message", "role": "user", "content": "How many feet are in a mile?"}],
     )
-    print(f"Added a user message to the conversation")
+    print("Added a user message to the conversation")
 
     response = openai_client.responses.create(
         conversation=conversation.id,

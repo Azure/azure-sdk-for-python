@@ -32,14 +32,6 @@ import time
 from typing import Union
 from pprint import pprint
 from dotenv import load_dotenv
-from azure.ai.projects.models import (
-    OperationState,
-    EvaluationRunClusterInsightRequest,
-    Insight,
-    InsightModelConfiguration,
-)
-from azure.identity import DefaultAzureCredential
-from azure.ai.projects import AIProjectClient
 from openai.types.eval_create_params import DataSourceConfigCustom, TestingCriterionLabelModel
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     CreateEvalJSONLRunDataSourceParam,
@@ -48,6 +40,14 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import (
 )
 from openai.types.evals.run_create_response import RunCreateResponse
 from openai.types.evals.run_retrieve_response import RunRetrieveResponse
+from azure.ai.projects.models import (
+    OperationState,
+    EvaluationRunClusterInsightRequest,
+    Insight,
+    InsightModelConfiguration,
+)
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
 
 load_dotenv()
 
@@ -135,7 +135,7 @@ with (
         print(f"Started insight generation (id: {clusterInsight.insight_id})")
 
         while clusterInsight.state not in [OperationState.SUCCEEDED, OperationState.FAILED]:
-            print(f"Waiting for insight to be generated...")
+            print("Waiting for insight to be generated...")
             clusterInsight = project_client.beta.insights.get(insight_id=clusterInsight.insight_id)
             print(f"Insight status: {clusterInsight.state}")
             time.sleep(5)

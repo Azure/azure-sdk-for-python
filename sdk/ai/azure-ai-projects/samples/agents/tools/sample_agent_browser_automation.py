@@ -61,8 +61,8 @@ with (
         agent_name="MyAgent",
         definition=PromptAgentDefinition(
             model=os.environ["FOUNDRY_MODEL_NAME"],
-            instructions="""You are an Agent helping with browser automation tasks. 
-            You can answer questions, provide information, and assist with various tasks 
+            instructions="""You are an Agent helping with browser automation tasks.
+            You can answer questions, provide information, and assist with various tasks
             related to web browsing using the Browser Automation tool available to you.""",
             tools=[tool],
         ),
@@ -88,7 +88,7 @@ with (
         elif event.type == "response.output_text.delta":
             print(f"Delta: {event.delta}")
         elif event.type == "response.text.done":
-            print(f"\nFollow-up response done!")
+            print("\nFollow-up response done!")
         elif event.type == "response.output_item.done":
             item = event.item
             if item.type == "browser_automation_preview_call":  # TODO: support browser_automation_preview_call schema
@@ -101,7 +101,7 @@ with (
                 print(f"Call ID: {getattr(item, 'call_id')}")
                 print(f"Query arguments: {query}")
         elif event.type == "response.completed":
-            print(f"\nFollow-up completed!")
+            print("\nFollow-up completed!")
             print(f"Full response: {event.response.output_text}")
 
     print("\nCleaning up...")

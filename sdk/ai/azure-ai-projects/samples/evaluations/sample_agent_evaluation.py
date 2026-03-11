@@ -31,12 +31,12 @@ import time
 from typing import Union
 from pprint import pprint
 from dotenv import load_dotenv
-from azure.identity import DefaultAzureCredential
-from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition
 from openai.types.eval_create_params import DataSourceConfigCustom
 from openai.types.evals.run_create_response import RunCreateResponse
 from openai.types.evals.run_retrieve_response import RunRetrieveResponse
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import PromptAgentDefinition
 
 load_dotenv()
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]

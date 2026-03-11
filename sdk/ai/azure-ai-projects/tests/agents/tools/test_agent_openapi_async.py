@@ -45,7 +45,7 @@ class TestAgentOpenApiAsync(TestBase):
             assert os.path.exists(weather_asset_file_path), f"OpenAPI spec file not found at: {weather_asset_file_path}"
             print(f"Using OpenAPI spec file: {weather_asset_file_path}")
 
-            with open(weather_asset_file_path, "r") as f:
+            with open(weather_asset_file_path, "r", encoding="utf-8") as f:
                 openapi_weather = jsonref.loads(f.read())
 
             # Create OpenAPI tool

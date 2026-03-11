@@ -3,54 +3,34 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# cSpell:disable# cSpell:disable
-import pytest
+# cSpell:disable
 import os
 from typing import Optional
-from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
-from azure.core.settings import settings
-from gen_ai_trace_verifier import GenAiTraceVerifier
-from azure.ai.projects.models import PromptAgentDefinition, PromptAgentDefinitionTextOptions
-
-from azure.ai.projects.models import (
-    Reasoning,
-    FunctionTool,
-    # ResponseTextFormatConfigurationText,
-)
+import pytest
+from gen_ai_trace_verifier import GenAiTraceVerifier  # pylint: disable=import-error
 from devtools_testutils import (
     recorded_by_proxy,
 )
-
 from test_base import servicePreparer
-from test_ai_instrumentor_base import (
+from test_ai_instrumentor_base import (  # pylint: disable=import-error
     TestAiAgentsInstrumentorBase,
-    MessageCreationMode,
     CONTENT_TRACING_ENV_VARIABLE,
 )
-
+from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
+from azure.core.settings import settings
+from azure.ai.projects.models import PromptAgentDefinition, PromptAgentDefinitionTextOptions
 from azure.ai.projects.telemetry._utils import (
-    AZ_NAMESPACE,
-    AZ_NAMESPACE_VALUE,
     GEN_AI_AGENT_ID,
     GEN_AI_AGENT_NAME,
     GEN_AI_AGENT_VERSION,
-    GEN_AI_CONVERSATION_ID,
     GEN_AI_EVENT_CONTENT,
     GEN_AI_OPERATION_NAME,
     GEN_AI_PROVIDER_NAME,
     GEN_AI_REQUEST_MODEL,
-    GEN_AI_RESPONSE_FINISH_REASONS,
-    GEN_AI_RESPONSE_ID,
-    GEN_AI_RESPONSE_MODEL,
-    GEN_AI_SYSTEM,
-    GEN_AI_USAGE_INPUT_TOKENS,
-    GEN_AI_USAGE_OUTPUT_TOKENS,
     SERVER_ADDRESS,
     GEN_AI_AGENT_TYPE,
     GEN_AI_SYSTEM_INSTRUCTION_EVENT,
     GEN_AI_AGENT_WORKFLOW_EVENT,
-    GEN_AI_CONVERSATION_ITEM_TYPE,
-    AZURE_AI_AGENTS_SYSTEM,
     AGENTS_PROVIDER,
     AGENT_TYPE_PROMPT,
     AGENT_TYPE_WORKFLOW,
@@ -58,10 +38,10 @@ from azure.ai.projects.telemetry._utils import (
 )
 
 settings.tracing_implementation = "OpenTelemetry"
-_utils._span_impl_type = settings.tracing_implementation()
+_utils._span_impl_type = settings.tracing_implementation()  # pylint: disable=not-callable
 
 
-class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
+class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disable=too-many-public-methods
     """Tests for AI agents instrumentor."""
 
     @pytest.fixture(scope="function")
@@ -78,7 +58,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         yield
         self.cleanup()
 
-    def test_instrumentation(self, **kwargs):
+    def test_instrumentation(self):
         # Make sure code is not instrumented due to a previous test exception
         AIProjectInstrumentor().uninstrument()
         os.environ["AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING"] = "true"
@@ -96,7 +76,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
             os.environ.pop("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", None)
         assert exception_caught == False
 
-    def test_instrumenting_twice_does_not_cause_exception(self, **kwargs):
+    def test_instrumenting_twice_does_not_cause_exception(self):
         # Make sure code is not instrumented due to a previous test exception
         AIProjectInstrumentor().uninstrument()
         os.environ["AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING"] = "true"
@@ -112,7 +92,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
             os.environ.pop("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", None)
         assert exception_caught == False
 
-    def test_uninstrumenting_uninstrumented_does_not_cause_exception(self, **kwargs):
+    def test_uninstrumenting_uninstrumented_does_not_cause_exception(self):
         # Make sure code is not instrumented due to a previous test exception
         AIProjectInstrumentor().uninstrument()
         exception_caught = False
@@ -123,7 +103,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
             print(e)
         assert exception_caught == False
 
-    def test_uninstrumenting_twice_does_not_cause_exception(self, **kwargs):
+    def test_uninstrumenting_twice_does_not_cause_exception(self):
         # Make sure code is not instrumented due to a previous test exception
         AIProjectInstrumentor().uninstrument()
         os.environ["AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING"] = "true"
@@ -178,7 +158,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
             from opentelemetry import trace
             from opentelemetry.sdk.trace import TracerProvider
             from opentelemetry.sdk.trace.export import SimpleSpanProcessor
-            from memory_trace_exporter import MemoryTraceExporter
+            from memory_trace_exporter import MemoryTraceExporter  # pylint: disable=import-error
 
             tracer_provider = TracerProvider()
             trace._TRACER_PROVIDER = tracer_provider
@@ -490,7 +470,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         from azure.ai.projects.models import WorkflowAgentDefinition
 
         operation_group = "tracing" if content_recording_enabled else "agents"
-        with self.create_client(operation_group=operation_group, **kwargs) as project_client:
+        with self.create_client(operation_group=operation_group, allow_preview=True, **kwargs) as project_client:
 
             workflow_yaml = """
 kind: workflow
@@ -588,7 +568,7 @@ trigger:
 
     def _test_agent_with_structured_output_with_instructions_impl(
         self, use_events: bool, content_recording_enabled: bool, **kwargs
-    ):
+    ):  # pylint: disable=too-many-locals,too-many-statements
         """Implementation for agent with structured output and instructions test.
 
         :param use_events: If True, use events for messages. If False, use attributes.
@@ -776,7 +756,7 @@ trigger:
 
     def _test_agent_with_structured_output_without_instructions_impl(
         self, use_events: bool, content_recording_enabled: bool, **kwargs
-    ):
+    ):  # pylint: disable=too-many-locals,too-many-statements
         """Implementation for agent with structured output but NO instructions test.
 
         :param use_events: If True, use events for messages. If False, use attributes.

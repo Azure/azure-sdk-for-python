@@ -24,13 +24,12 @@ USAGE:
 
 import os
 import base64
-from PIL import Image
-from io import BytesIO
-
-from azure.identity import DefaultAzureCredential
-from azure.ai.projects import AIProjectClient
 import time
+from io import BytesIO
 from pprint import pprint
+from PIL import Image
+
+from dotenv import load_dotenv
 from openai.types.evals.create_eval_completions_run_data_source_param import (
     CreateEvalCompletionsRunDataSourceParam,
     SourceFileContent,
@@ -41,7 +40,8 @@ from openai.types.evals.create_eval_completions_run_data_source_param import (
 )
 from openai.types.responses import EasyInputMessageParam
 from openai.types.eval_create_params import DataSourceConfigCustom
-from dotenv import load_dotenv
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
 
 load_dotenv()
 file_path = os.path.abspath(__file__)
@@ -51,7 +51,7 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_deployment_name = os.environ.get("FOUNDRY_MODEL_NAME", "")
 
 
-def image_to_data_uri(image_path: str) -> str:
+def image_to_data_uri(image_path: str) -> str:  # pylint: disable=redefined-outer-name
     with Image.open(image_path) as img:
         buffered = BytesIO()
         img.save(buffered, format=img.format or "PNG")
@@ -182,7 +182,7 @@ with (
 
     while True:
         run = client.evals.runs.retrieve(run_id=eval_run_response.id, eval_id=eval_object.id)
-        if run.status == "completed" or run.status == "failed":
+        if run.status in ("completed", "failed"):
             output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
             pprint(output_items)
             print(f"Eval Run Report URL: {run.report_url}")

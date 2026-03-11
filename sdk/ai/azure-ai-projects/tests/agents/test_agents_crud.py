@@ -9,7 +9,6 @@ import io
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy
 from azure.ai.projects.models import PromptAgentDefinition, AgentDetails, AgentVersionDetails
-import pytest
 
 
 class TestAgentCrud(TestBase):

@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,used-before-assignment,consider-using-with
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -48,11 +48,11 @@ import base64
 import os
 import logging
 from dotenv import load_dotenv
-from azure.ai.projects.aio import AIProjectClient
-from azure.identity.aio import DefaultAzureCredential
 from mcp import ClientSession
 from mcp.types import ImageContent
 from mcp.client.streamable_http import streamablehttp_client
+from azure.ai.projects.aio import AIProjectClient
+from azure.identity.aio import DefaultAzureCredential
 
 load_dotenv()
 

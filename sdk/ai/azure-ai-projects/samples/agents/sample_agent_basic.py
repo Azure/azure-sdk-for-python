@@ -67,7 +67,7 @@ with (
             conversation_id=conversation.id,
             items=[{"type": "message", "role": "user", "content": "And what is the capital city?"}],
         )
-        print(f"Added a second user message to the conversation")
+        print("Added a second user message to the conversation")
 
         response = openai_client.responses.create(
             conversation=conversation.id,

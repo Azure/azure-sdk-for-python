@@ -32,6 +32,7 @@ USAGE:
 
 import os
 from dotenv import load_dotenv
+from pydantic import BaseModel, Field
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
@@ -39,7 +40,6 @@ from azure.ai.projects.models import (
     PromptAgentDefinitionTextOptions,
     TextResponseFormatJsonSchema,
 )
-from pydantic import BaseModel, Field
 
 load_dotenv()
 

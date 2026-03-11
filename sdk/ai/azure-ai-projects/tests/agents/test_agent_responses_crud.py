@@ -13,7 +13,6 @@ from azure.ai.projects.models import (
     TextResponseFormatJsonSchema,
     PromptAgentDefinitionTextOptions,
 )
-import pytest
 
 
 class TestAgentResponsesCrud(TestBase):
@@ -75,7 +74,7 @@ class TestAgentResponsesCrud(TestBase):
         print(f"Response id: {response.id}, output text: {response.output_text}")
         assert "5280" in response.output_text or "5,280" in response.output_text
 
-        items = openai_client.conversations.items.create(
+        _ = openai_client.conversations.items.create(
             conversation.id,
             items=[{"type": "message", "role": "user", "content": "And how many meters?"}],
         )
