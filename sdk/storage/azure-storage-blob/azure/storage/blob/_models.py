@@ -1035,11 +1035,11 @@ class AccessPolicy(GenAccessPolicy):
         expiry: Optional[Union[str, "datetime"]] = None,
         start: Optional[Union[str, "datetime"]] = None
     ) -> None:
-        kwargs = {}
-        kwargs['start'] = start
-        kwargs['expiry'] = expiry
-        kwargs['permission'] = permission
-        super(AccessPolicy, self).__init__(**kwargs)
+        super(AccessPolicy, self).__init__(
+            start=start,  # type: ignore[arg-type]
+            expiry=expiry,  # type: ignore[arg-type]
+            permission=permission,  # type: ignore[arg-type]
+        )
 
 
 class BlobSasPermissions(object):
