@@ -1357,8 +1357,16 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         """
 
         version_id = get_version_id(self.version_id, kwargs)
-        return cast(Dict[str, Union[str, datetime, bool]], self._client.blob.set_legal_hold(
-            legal_hold=legal_hold, version_id=version_id, snapshot=self.snapshot, cls=return_response_headers, **kwargs))
+        return cast(
+            Dict[str, Union[str, datetime, bool]],
+            self._client.blob.set_legal_hold(
+                legal_hold=legal_hold,
+                version_id=version_id,
+                snapshot=self.snapshot,
+                cls=return_response_headers,
+                **kwargs,
+            ),
+        )
 
     @distributed_trace
     def create_page_blob(

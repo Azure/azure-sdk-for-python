@@ -1402,8 +1402,16 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         """
 
         version_id = get_version_id(self.version_id, kwargs)
-        return cast(Dict[str, Union[str, datetime, bool]], await self._client.blob.set_legal_hold(
-            legal_hold=legal_hold, version_id=version_id, snapshot=self.snapshot, cls=return_response_headers, **kwargs))
+        return cast(
+            Dict[str, Union[str, datetime, bool]],
+            await self._client.blob.set_legal_hold(
+                legal_hold=legal_hold,
+                version_id=version_id,
+                snapshot=self.snapshot,
+                cls=return_response_headers,
+                **kwargs,
+            ),
+        )
 
     @distributed_trace_async
     async def create_page_blob(
