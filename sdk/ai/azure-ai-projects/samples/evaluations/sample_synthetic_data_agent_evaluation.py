@@ -31,7 +31,7 @@ USAGE:
        Microsoft Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
     2) FOUNDRY_MODEL_NAME - Required. The name of the model deployment to use for generating
        synthetic data and for AI-assisted evaluators.
-    3) AZURE_AI_AGENT_NAME - Required. The name of the Foundry agent to evaluate.
+    3) FOUNDRY_AGENT_NAME - Required. The name of the Foundry agent to evaluate.
 """
 
 import os
@@ -49,7 +49,7 @@ load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["FOUNDRY_MODEL_NAME"]
-agent_name = os.environ["AZURE_AI_AGENT_NAME"]
+agent_name = os.environ["FOUNDRY_AGENT_NAME"]
 
 with (
     DefaultAzureCredential() as credential,
