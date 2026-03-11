@@ -167,24 +167,23 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
             self.cleanup()
 
     @pytest.mark.parametrize(
-        "env_value, expected_enabled, expected_instrumented",
+        "env_value, expected_enabled",
         [
-            (None, True, True),  # Default: enabled and instrumented
-            ("true", True, True),  # Explicitly enabled
-            ("True", True, True),  # Case insensitive
-            ("TRUE", True, True),  # Case insensitive
-            ("false", False, False),  # Explicitly disabled
-            ("False", False, False),  # Case insensitive
-            ("random", False, False),  # Invalid value treated as false
-            ("0", False, False),  # Numeric false
-            ("1", False, False),  # Numeric true but not "true"
+            (None, True),  # Default: enabled and instrumented
+            ("true", True),  # Explicitly enabled
+            ("True", True),  # Case insensitive
+            ("TRUE", True),  # Case insensitive
+            ("false", False),  # Explicitly disabled
+            ("False", False),  # Case insensitive
+            ("random", False),  # Invalid value treated as false
+            ("0", False),  # Numeric false
+            ("1", False),  # Numeric true but not "true"
         ],
     )
     def test_instrumentation_environment_variable(
         self,
         env_value: Optional[str],
         expected_enabled: bool,
-        expected_instrumented: bool, # Note: Why is this not used?
     ):
         def set_env_var(var_name, value):
             if value is None:
@@ -459,7 +458,9 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
         """Test synchronous non-streaming responses with content recording disabled (attribute mode)."""
         self._test_sync_non_streaming_without_content_recording_impl(False, **kwargs)
 
-    def _test_sync_streaming_with_content_recording_impl(self, use_events, **kwargs):  # pylint: disable=too-many-statements
+    def _test_sync_streaming_with_content_recording_impl(
+        self, use_events, **kwargs
+    ):  # pylint: disable=too-many-statements
         """Implementation for testing synchronous streaming responses with content recording enabled."""
         self.cleanup()
         _set_use_message_events(use_events)
@@ -4938,7 +4939,9 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_workflow_agent_non_streaming_with_content_recording(self, **kwargs):  # pylint: disable=too-many-locals,too-many-statements
+    def test_workflow_agent_non_streaming_with_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-locals,too-many-statements
         """Test workflow agent with non-streaming and content recording enabled."""
         from azure.ai.projects.models import (  # pylint: disable=reimported,redefined-outer-name
             WorkflowAgentDefinition,
@@ -5140,7 +5143,9 @@ trigger:
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_workflow_agent_non_streaming_without_content_recording(self, **kwargs):  # pylint: disable=too-many-statements
+    def test_workflow_agent_non_streaming_without_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-statements
         """Test workflow agent with non-streaming and content recording disabled."""
         from azure.ai.projects.models import WorkflowAgentDefinition
 
@@ -5156,7 +5161,7 @@ trigger:
 
         with (
             self.create_client(operation_group="tracing", **kwargs) as project_client,
-            project_client.get_openai_client() as openai_client
+            project_client.get_openai_client() as openai_client,
         ):
 
             workflow_yaml = """
@@ -5255,7 +5260,9 @@ trigger:
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_workflow_agent_streaming_with_content_recording(self, **kwargs):  # pylint: disable=too-many-locals,too-many-statements
+    def test_workflow_agent_streaming_with_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-locals,too-many-statements
         """Test workflow agent with streaming and content recording enabled."""
         from azure.ai.projects.models import (  # pylint: disable=reimported,redefined-outer-name
             WorkflowAgentDefinition,
@@ -5476,7 +5483,7 @@ trigger:
 
         with (
             self.create_client(operation_group="tracing", **kwargs) as project_client,
-            project_client.get_openai_client() as openai_client
+            project_client.get_openai_client() as openai_client,
         ):
 
             workflow_yaml = """

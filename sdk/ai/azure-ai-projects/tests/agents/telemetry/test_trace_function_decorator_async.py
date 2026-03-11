@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for the trace_function decorator with asynchronous functions."""
+
 # pylint: disable=unused-argument
 
 import pytest

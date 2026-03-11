@@ -188,7 +188,9 @@ trigger:
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_workflow_non_streaming_with_content_recording(self, **kwargs):  # pylint: disable=too-many-locals,too-many-statements
+    async def test_async_workflow_non_streaming_with_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-locals,too-many-statements
         """Test asynchronous workflow agent with non-streaming and content recording enabled."""
         self.cleanup()
         _set_use_message_events(True)
@@ -349,7 +351,9 @@ trigger:
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_workflow_non_streaming_without_content_recording(self, **kwargs):  # pylint: disable=too-many-locals,too-many-statements
+    async def test_async_workflow_non_streaming_without_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-locals,too-many-statements
         """Test asynchronous workflow agent with non-streaming and content recording disabled."""
         self.cleanup()
         _set_use_message_events(True)
@@ -514,7 +518,9 @@ trigger:
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_workflow_streaming_with_content_recording(self, **kwargs):  # pylint: disable=too-many-locals,too-many-statements
+    async def test_async_workflow_streaming_with_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-locals,too-many-statements
         """Test asynchronous workflow agent with streaming and content recording enabled."""
         self.cleanup()
         _set_use_message_events(True)
@@ -680,7 +686,9 @@ trigger:
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_workflow_streaming_without_content_recording(self, **kwargs):  # pylint: disable=too-many-locals,too-many-statements
+    async def test_async_workflow_streaming_without_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-locals,too-many-statements
         """Test asynchronous workflow agent with streaming and content recording disabled."""
         self.cleanup()
         _set_use_message_events(True)

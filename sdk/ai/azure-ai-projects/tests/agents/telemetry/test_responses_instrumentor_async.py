@@ -3199,7 +3199,9 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_workflow_agent_non_streaming_with_content_recording(self, **kwargs):  # pylint: disable=too-many-statements
+    async def test_async_workflow_agent_non_streaming_with_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-statements
         """Test async workflow agent with non-streaming and content recording enabled."""
         from azure.ai.projects.models import WorkflowAgentDefinition
 
@@ -3316,7 +3318,9 @@ trigger:
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_workflow_agent_non_streaming_without_content_recording(self, **kwargs):  # pylint: disable=too-many-statements
+    async def test_async_workflow_agent_non_streaming_without_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-statements
         """Test async workflow agent with non-streaming and content recording disabled."""
         from azure.ai.projects.models import WorkflowAgentDefinition
 
@@ -3439,7 +3443,9 @@ trigger:
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_workflow_agent_streaming_with_content_recording(self, **kwargs):  # pylint: disable=too-many-statements
+    async def test_async_workflow_agent_streaming_with_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-statements
         """Test async workflow agent with streaming and content recording enabled."""
         from azure.ai.projects.models import WorkflowAgentDefinition
 
@@ -3560,7 +3566,9 @@ trigger:
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_workflow_agent_streaming_without_content_recording(self, **kwargs):  # pylint: disable=too-many-statements
+    async def test_async_workflow_agent_streaming_without_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-statements
         """Test async workflow agent with streaming and content recording disabled."""
         from azure.ai.projects.models import WorkflowAgentDefinition
 

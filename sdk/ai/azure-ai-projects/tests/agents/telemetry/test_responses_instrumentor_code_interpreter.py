@@ -52,7 +52,9 @@ class TestResponsesInstrumentorCodeInterpreter(TestAiAgentsInstrumentorBase):
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_sync_code_interpreter_non_streaming_with_content_recording(self, **kwargs):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements,too-many-nested-blocks
+    def test_sync_code_interpreter_non_streaming_with_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements,too-many-nested-blocks
         """Test synchronous Code Interpreter agent with content recording enabled."""
         self.cleanup()
         _set_use_message_events(True)
@@ -240,7 +242,9 @@ TRANSPORTATION,Contoso air,1100000
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_sync_code_interpreter_non_streaming_without_content_recording(self, **kwargs):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements,too-many-nested-blocks
+    def test_sync_code_interpreter_non_streaming_without_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements,too-many-nested-blocks
         """Test synchronous Code Interpreter agent with content recording disabled."""
         self.cleanup()
         _set_use_message_events(True)
@@ -431,7 +435,9 @@ TRANSPORTATION,Contoso air,1100000
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_sync_code_interpreter_streaming_with_content_recording(self, **kwargs):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements,too-many-nested-blocks
+    def test_sync_code_interpreter_streaming_with_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements,too-many-nested-blocks
         """Test synchronous Code Interpreter agent with streaming and content recording enabled."""
         self.cleanup()
         _set_use_message_events(True)
@@ -622,7 +628,9 @@ TRANSPORTATION,Contoso air,1100000
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_sync_code_interpreter_streaming_without_content_recording(self, **kwargs):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements,too-many-nested-blocks
+    def test_sync_code_interpreter_streaming_without_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements,too-many-nested-blocks
         """Test synchronous Code Interpreter agent with streaming and content recording disabled."""
         self.cleanup()
         _set_use_message_events(True)

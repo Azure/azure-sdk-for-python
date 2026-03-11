@@ -31,6 +31,7 @@ USAGE:
 
 import os
 from dotenv import load_dotenv
+
 # Import shared helper functions
 from computer_use_util import (  # pylint: disable=import-error
     SearchState,

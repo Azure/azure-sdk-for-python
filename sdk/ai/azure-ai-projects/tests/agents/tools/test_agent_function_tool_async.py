@@ -149,7 +149,9 @@ class TestAgentFunctionToolAsync(TestBase):
 
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_agent_function_tool_multi_turn_with_multiple_calls_async(self, **kwargs):  # pylint: disable=too-many-statements
+    async def test_agent_function_tool_multi_turn_with_multiple_calls_async(
+        self, **kwargs
+    ):  # pylint: disable=too-many-statements
         """
         Test multi-turn conversation where agent calls functions multiple times (async version).
 

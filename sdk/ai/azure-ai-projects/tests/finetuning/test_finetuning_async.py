@@ -338,7 +338,13 @@ class TestFineTuningAsync(TestBase):
         return endpoint_clean.split(".services.ai.azure.com")[0]
 
     async def _test_deploy_and_infer_helper_async(
-        self, completed_job_id: str, deployment_format: str, deployment_capacity: int, test_prefix: str, inference_content: str, **kwargs
+        self,
+        completed_job_id: str,
+        deployment_format: str,
+        deployment_capacity: int,
+        test_prefix: str,
+        inference_content: str,
+        **kwargs,
     ):
         if not completed_job_id:
             pytest.skip(f"completed_job_id parameter not set - skipping {test_prefix} deploy and infer test")

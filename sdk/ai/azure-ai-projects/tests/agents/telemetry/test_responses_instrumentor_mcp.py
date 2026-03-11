@@ -40,7 +40,9 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
     # Sync MCP Agent Tests - Non-Streaming
     # ========================================
 
-    def _test_sync_mcp_non_streaming_with_content_recording_impl(self, use_events, **kwargs):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
+    def _test_sync_mcp_non_streaming_with_content_recording_impl(
+        self, use_events, **kwargs
+    ):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
         """Implementation for testing synchronous MCP agent with non-streaming and content recording enabled.
 
         Args:
@@ -370,7 +372,9 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
         """Test synchronous MCP agent with non-streaming and content recording enabled (attribute-based messages)."""
         self._test_sync_mcp_non_streaming_with_content_recording_impl(False, **kwargs)
 
-    def _test_sync_mcp_non_streaming_without_content_recording_impl(self, use_events, **kwargs):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
+    def _test_sync_mcp_non_streaming_without_content_recording_impl(
+        self, use_events, **kwargs
+    ):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
         """Implementation for testing synchronous MCP agent with non-streaming and content recording disabled.
 
         Args:
@@ -687,7 +691,9 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
     # Sync MCP Agent Tests - Streaming
     # ========================================
 
-    def _test_sync_mcp_streaming_with_content_recording_impl(self, use_events, **kwargs):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
+    def _test_sync_mcp_streaming_with_content_recording_impl(
+        self, use_events, **kwargs
+    ):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
         """Implementation for testing synchronous MCP agent with streaming and content recording enabled.
 
         Args:
@@ -963,7 +969,9 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
         """Test synchronous MCP agent with streaming and content recording enabled (attribute-based messages)."""
         self._test_sync_mcp_streaming_with_content_recording_impl(False, **kwargs)
 
-    def _test_sync_mcp_streaming_without_content_recording_impl(self, use_events, **kwargs):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
+    def _test_sync_mcp_streaming_without_content_recording_impl(
+        self, use_events, **kwargs
+    ):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
         """Implementation for testing synchronous MCP agent with streaming and content recording disabled.
 
         Args:
