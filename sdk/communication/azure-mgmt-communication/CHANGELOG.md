@@ -1,6 +1,6 @@
 # Release History
 
-## 3.0.0 (2026-03-10)
+## 3.0.0b1 (2026-03-10)
 
 ### Features Added
 
