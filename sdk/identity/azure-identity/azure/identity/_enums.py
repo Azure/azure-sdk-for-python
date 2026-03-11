@@ -70,7 +70,7 @@ class RegionalAuthority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class TokenRefreshStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents the refresh status of a token.
 
-    REQUIRED: The token is expired or otherwise unusable and must be refreshed.
+    REQUIRED: The token is nonexistent, expired or otherwise unusable and must be refreshed.
     RECOMMENDED: The token is still valid but is approaching expiration or past its
         recommended refresh time. A proactive refresh is desirable but not critical.
     NOT_NEEDED: The token is valid and does not need to be refreshed.
