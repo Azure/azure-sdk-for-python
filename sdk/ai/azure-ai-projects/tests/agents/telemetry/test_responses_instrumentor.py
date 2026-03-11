@@ -56,7 +56,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
     """Tests for ResponsesInstrumentor with real endpoints."""
 
     @pytest.fixture(scope="session", autouse=True)
-    def configure_playback_matcher(self, _test_proxy, _add_sanitizers):
+    def configure_playback_matcher(self, test_proxy, add_sanitizers):  # pylint: disable=unused-argument
         """Add body sanitizer and custom matchers for image_url in requests."""
         # Sanitize image_url in request body to a consistent placeholder
         add_body_key_sanitizer(json_path="$..image_url", value="SANITIZED_IMAGE_DATA")
