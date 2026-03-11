@@ -182,7 +182,7 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         # Get OpenAI client and deployment
-        client, _deployment_name = self._get_openai_client_and_deployment(**kwargs)
+        client, _ = self._get_openai_client_and_deployment(**kwargs)
 
         # Create a conversation
         conversation = client.conversations.create()

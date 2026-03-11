@@ -120,7 +120,7 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
 
                 # Explicitly call and iterate through conversation items
                 items = openai_client.conversations.items.list(conversation_id=conversation.id)
-                for _item in items:
+                for _ in items:
                     pass  # Iterate to consume items
 
                 # Check spans
@@ -452,7 +452,7 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
 
                 # Explicitly call and iterate through conversation items
                 items = openai_client.conversations.items.list(conversation_id=conversation.id)
-                for _item in items:
+                for _ in items:
                     pass  # Just iterate to consume items
 
                 # Check spans
@@ -776,7 +776,7 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
 
                 # Explicitly call and iterate through conversation items
                 items = openai_client.conversations.items.list(conversation_id=conversation.id)
-                for _item in items:
+                for _ in items:
                     pass
 
                 # Check spans
@@ -1054,7 +1054,7 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
 
                 # Explicitly call and iterate through conversation items
                 items = openai_client.conversations.items.list(conversation_id=conversation.id)
-                for _item in items:
+                for _ in items:
                     pass
 
                 # Check spans

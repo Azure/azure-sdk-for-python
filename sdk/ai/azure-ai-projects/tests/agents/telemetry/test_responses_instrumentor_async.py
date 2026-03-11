@@ -2592,7 +2592,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
                 input="Write a short haiku about testing",
             ) as stream:
                 # Iterate through events
-                async for _event in stream:
+                async for _ in stream:
                     pass  # Process events
 
                 # Get final response
@@ -2672,7 +2672,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
                 input="Write a short haiku about testing",
             ) as stream:
                 # Iterate through events
-                async for _event in stream:
+                async for _ in stream:
                     pass  # Process events
 
                 # Get final response
@@ -2779,7 +2779,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
                 input="What's the weather in Boston?",
                 tools=[function_tool],
             ) as stream:
-                async for _event in stream:
+                async for _ in stream:
                     pass  # Process events
 
                 final_response = await stream.get_final_response()
@@ -2810,7 +2810,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
                 input=input_list,
                 tools=[function_tool],
             ) as stream:
-                async for _event in stream:
+                async for _ in stream:
                     pass  # Process events
 
                 final_response = await stream.get_final_response()
@@ -3012,7 +3012,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
                 input="What\\'s the weather in Boston?",
                 tools=[function_tool],
             ) as stream:
-                async for _event in stream:
+                async for _ in stream:
                     pass  # Process events
 
                 final_response = await stream.get_final_response()
@@ -3043,7 +3043,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
                 input=input_list,
                 tools=[function_tool],
             ) as stream:
-                async for _event in stream:
+                async for _ in stream:
                     pass  # Process events
 
                 final_response = await stream.get_final_response()
@@ -3237,7 +3237,7 @@ trigger:
             openai_client = project_client.get_openai_client()
             conversation = await openai_client.conversations.create()
 
-            _response = await openai_client.responses.create(
+            _ = await openai_client.responses.create(
                 conversation=conversation.id,
                 extra_body={"agent_reference": {"name": workflow_agent.name, "type": "agent_reference"}},
                 input="Test workflow",
@@ -3354,7 +3354,7 @@ trigger:
             openai_client = project_client.get_openai_client()
             conversation = await openai_client.conversations.create()
 
-            _response2 = await openai_client.responses.create(
+            _ = await openai_client.responses.create(
                 conversation=conversation.id,
                 extra_body={"agent_reference": {"name": workflow_agent.name, "type": "agent_reference"}},
                 input="Test workflow",

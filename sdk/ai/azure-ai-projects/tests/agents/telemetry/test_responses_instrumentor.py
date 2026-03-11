@@ -4609,7 +4609,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
                 input="Write a short haiku about testing",
             ) as stream:
                 # Iterate through events
-                for _event in stream:
+                for _ in stream:
                     pass  # Process events
 
                 # Get final response
@@ -4662,7 +4662,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
                 input="Write a short haiku about testing",
             ) as stream:
                 # Iterate through events
-                for _event in stream:
+                for _ in stream:
                     pass  # Process events
 
                 # Get final response
@@ -4736,7 +4736,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
                 input="What's the weather in Boston?",
                 tools=[function_tool],
             ) as stream:
-                for _event in stream:
+                for _ in stream:
                     pass  # Process events
 
                 final_response = stream.get_final_response()
@@ -4767,7 +4767,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
                 input=input_list,
                 tools=[function_tool],
             ) as stream:
-                for _event in stream:
+                for _ in stream:
                     pass  # Process events
 
                 final_response = stream.get_final_response()
@@ -4850,7 +4850,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
                 input="What's the weather in Boston?",
                 tools=[function_tool],
             ) as stream:
-                for _event in stream:
+                for _ in stream:
                     pass  # Process events
 
                 final_response = stream.get_final_response()
@@ -4881,7 +4881,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
                 input=input_list,
                 tools=[function_tool],
             ) as stream:
-                for _event in stream:
+                for _ in stream:
                     pass  # Process events
 
                 final_response = stream.get_final_response()

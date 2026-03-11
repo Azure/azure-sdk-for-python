@@ -117,7 +117,7 @@ Return Policy: 30-day return policy with no questions asked
 
                 # Explicitly call and iterate through conversation items
                 items = await openai_client.conversations.items.list(conversation_id=conversation.id)
-                async for _item in items:
+                async for _ in items:
                     pass  # Just iterate to consume items
 
                 # Check spans
@@ -328,7 +328,7 @@ Return Policy: 30-day return policy with no questions asked
 
                 # Explicitly call and iterate through conversation items
                 items = await openai_client.conversations.items.list(conversation_id=conversation.id)
-                async for _item in items:
+                async for _ in items:
                     pass  # Just iterate to consume items
 
                 # Check spans
@@ -539,7 +539,7 @@ Return Policy: 30-day return policy with no questions asked
 
                 # Explicitly call and iterate through conversation items
                 items = await openai_client.conversations.items.list(conversation_id=conversation.id)
-                async for _item in items:
+                async for _ in items:
                     pass
 
                 # Check spans
@@ -746,7 +746,7 @@ Return Policy: 30-day return policy with no questions asked
 
                 # Explicitly call and iterate through conversation items
                 items = await openai_client.conversations.items.list(conversation_id=conversation.id)
-                async for _item in items:
+                async for _ in items:
                     pass
 
                 # Check spans
