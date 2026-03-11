@@ -1,4 +1,4 @@
-﻿# The MIT License (MIT)
+# The MIT License (MIT)
 # Copyright (c) 2014 Microsoft Corporation
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -248,6 +248,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         ]
         # after passing in the user_agent into the user agent policy the user_agent is no longer needed
         kwargs.pop("user_agent", None)
+        kwargs.pop("user_agent_overwrite", None)
 
         transport = kwargs.pop("transport", None)
         self.pipeline_client: PipelineClient[HttpRequest, HttpResponse] = PipelineClient(

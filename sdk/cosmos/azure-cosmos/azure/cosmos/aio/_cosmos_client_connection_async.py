@@ -245,6 +245,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         ]
         # after passing in the user_agent into the user agent policy the user_agent is no longer needed
         kwargs.pop("user_agent", None)
+        kwargs.pop("user_agent_overwrite", None)
 
         transport = kwargs.pop("transport", None)
         self.pipeline_client: AsyncPipelineClient[HttpRequest, AsyncHttpResponse] = AsyncPipelineClient(
