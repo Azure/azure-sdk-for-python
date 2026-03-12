@@ -2,4 +2,4 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-VERSION = "1.26.0b3"
+VERSION = "1.25.3"
