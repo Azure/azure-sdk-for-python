@@ -11,11 +11,11 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
 from ._shared.response_handlers import process_storage_error, return_context_and_deserialized
 from ._shared.models import DictMixin
-from ._generated.azure.storage.queues.models import AccessPolicy as GenAccessPolicy
-from ._generated.azure.storage.queues.models import CorsRule as GeneratedCorsRule
-from ._generated.azure.storage.queues.models import Logging as GeneratedLogging
-from ._generated.azure.storage.queues.models import Metrics as GeneratedMetrics
-from ._generated.azure.storage.queues.models import RetentionPolicy as GeneratedRetentionPolicy
+from _generated.models import AccessPolicy as GenAccessPolicy
+from _generated.models import CorsRule as GeneratedCorsRule
+from _generated.models import Logging as GeneratedLogging
+from _generated.models import Metrics as GeneratedMetrics
+from _generated.models import RetentionPolicy as GeneratedRetentionPolicy
 
 if sys.version_info >= (3, 11):
     from typing import Self

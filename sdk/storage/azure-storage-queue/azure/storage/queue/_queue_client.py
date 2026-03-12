@@ -16,7 +16,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._deserialize import deserialize_queue_creation, deserialize_queue_properties
 from ._encryption import modify_user_agent_for_encryption, StorageEncryptionMixin
 from ._generated.azure.storage.queues import QueuesClient as AzureQueueStorage
-from ._generated.azure.storage.queues.models import QueueMessage as GenQueueMessage, SignedIdentifier, SignedIdentifiers
+from _generated.models import QueueMessage as GenQueueMessage, SignedIdentifier, SignedIdentifiers
 from ._message_encoding import NoDecodePolicy, NoEncodePolicy
 from ._models import AccessPolicy, MessagesPaged, QueueMessage
 from ._queue_client_helpers import _format_url, _from_queue_url, _parse_url
