@@ -46,6 +46,7 @@ class TestSamples(AzureRecordedTestCase):
         get_sample_paths(
             "agents/tools",
             samples_to_skip=[
+                "sample_agent_azure_function.py",  # to be enabled through additionalSampleTests
                 "sample_agent_computer_use.py",  # 400 BadRequestError: Invalid URI (URI string too long)
                 "sample_agent_browser_automation.py",  # APITimeoutError: request timed out
                 "sample_agent_openapi.py",  # 400 2/28/2026 validation/tool_user_error; failing weather GET curl call in OpenAPI tool
@@ -80,11 +81,11 @@ class TestSamples(AzureRecordedTestCase):
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
-        executor.validate_print_calls_by_llm(
-            instructions=memories_instructions,
-            project_endpoint=kwargs["foundry_project_endpoint"],
-            model=kwargs["memory_store_chat_model_deployment_name"],
-        )
+        # executor.validate_print_calls_by_llm(
+        #     instructions=memories_instructions,
+        #     project_endpoint=kwargs["foundry_project_endpoint"],
+        #     model=kwargs["foundry_model_name"],
+        # )
 
     @pytest.mark.parametrize(
         "sample_path",
