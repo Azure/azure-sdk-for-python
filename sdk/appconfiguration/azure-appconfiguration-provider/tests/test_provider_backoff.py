@@ -114,7 +114,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     # method: _calculate_backoff
     @AppConfigProviderPreparer()
     @recorded_by_proxy
-    def test_backoff_missmatch_settings(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
+    def test_backoff_mismatch_settings(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         min_backoff = 30000
         client = self.create_client(
             endpoint=appconfiguration_endpoint_string,
