@@ -58,8 +58,7 @@ class TestSamplesAsync(AzureRecordedTestCase):
         "sample_path",
         get_async_sample_paths(
             "memories",
-            samples_to_skip=[
-            ],
+            samples_to_skip=[],
         ),
     )
     @servicePreparer()

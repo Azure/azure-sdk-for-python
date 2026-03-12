@@ -24,7 +24,13 @@ from ..models import (
     UpdateMemoriesLROPoller,
     UpdateMemoriesLROPollingMethod,
 )
-from ._operations import _SERIALIZER, JSON, _Unset, ClsType, BetaMemoryStoresOperations as GenerateBetaMemoryStoresOperations
+from ._operations import (
+    _SERIALIZER,
+    JSON,
+    _Unset,
+    ClsType,
+    BetaMemoryStoresOperations as GenerateBetaMemoryStoresOperations,
+)
 from .._validation import api_version_validation
 from .._utils.model_base import _deserialize, _serialize
 
@@ -332,7 +338,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         _incoming_headers = request_kwargs.pop("headers", {}) or {}
         _headers = case_insensitive_dict(dict(_incoming_headers))
         _headers["Foundry-Features"] = _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW.value
-        
+
         _params = request_kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = request_kwargs.pop("content_type", _headers.pop("Content-Type", None))

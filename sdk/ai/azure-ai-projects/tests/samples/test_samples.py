@@ -69,8 +69,7 @@ class TestSamples(AzureRecordedTestCase):
         "sample_path",
         get_sample_paths(
             "memories",
-            samples_to_skip=[
-            ],
+            samples_to_skip=[],
         ),
     )
     @servicePreparer()
@@ -91,7 +90,9 @@ class TestSamples(AzureRecordedTestCase):
         "sample_path",
         get_sample_paths(
             "agents",
-            samples_to_skip=["sample_workflow_multi_agent.py"], # I see in sample spew: "Event 10 type 'response.failed'" with error message in payload "The specified agent was not found. Please verify that the agent name and version are correct".
+            samples_to_skip=[
+                "sample_workflow_multi_agent.py"
+            ],  # I see in sample spew: "Event 10 type 'response.failed'" with error message in payload "The specified agent was not found. Please verify that the agent name and version are correct".
         ),
     )
     @servicePreparer()
