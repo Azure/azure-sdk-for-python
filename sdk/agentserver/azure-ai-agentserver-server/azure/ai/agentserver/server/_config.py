@@ -187,3 +187,21 @@ def resolve_log_level(level: Optional[str]) -> str:
             f"(expected one of {', '.join(_VALID_LOG_LEVELS)})"
         )
     return normalized
+
+
+def resolve_agent_name() -> str:
+    """Resolve the agent name from the ``AGENT_NAME`` environment variable.
+
+    :return: The agent name, or an empty string if not set.
+    :rtype: str
+    """
+    return os.environ.get(Constants.AGENT_NAME, "")
+
+
+def resolve_agent_version() -> str:
+    """Resolve the agent version from the ``AGENT_VERSION`` environment variable.
+
+    :return: The agent version, or an empty string if not set.
+    :rtype: str
+    """
+    return os.environ.get(Constants.AGENT_VERSION, "")

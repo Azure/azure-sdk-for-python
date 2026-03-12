@@ -1,0 +1,427 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+"""Invocation protocol for AgentServer.
+
+Encapsulates the ``/invocations`` REST endpoints, handler decorators,
+dispatch methods, and OpenAPI spec serving.  Designed as a standalone
+composed object so that ``AgentServer`` can compose multiple protocol
+heads (invocation, chat, etc.) without inheritance conflicts.
+
+Shared server state (tracing, error handling, timeouts) is received
+via a :class:`~._server_context._ServerContext` instance.
+"""
+import asyncio  # pylint: disable=do-not-import-asyncio
+import contextlib
+import uuid
+from collections.abc import Awaitable, Callable  # pylint: disable=import-error
+from typing import Any, Optional
+
+from starlette.requests import Request
+from starlette.responses import JSONResponse, Response, StreamingResponse
+from starlette.routing import Route
+
+from ._constants import Constants
+from ._errors import error_response
+from ._logger import get_logger
+from ._tracing import extract_baggage_header, extract_w3c_carrier
+from ._openapi_validator import OpenApiValidator
+from ._server_context import _ServerContext
+from . import _config
+
+logger = get_logger()
+
+
+class _InvocationProtocol:
+    """Invocation protocol implementation.
+
+    Receives shared server state via a :class:`_ServerContext` and manages
+    its own handler slots, agent identity, and endpoint handlers.
+
+    **Not intended for direct instantiation.**  Use via
+    :class:`~azure.ai.agentserver.server.AgentServer`, which creates and
+    delegates to this object.
+    """
+
+    def __init__(
+        self,
+        ctx: _ServerContext,
+        openapi_spec: Optional[dict[str, Any]],
+        validator: Optional[OpenApiValidator],
+    ) -> None:
+        """Initialise the invocation protocol.
+
+        :param ctx: Shared server context (tracing, debug_errors, request_timeout).
+        :type ctx: _ServerContext
+        :param openapi_spec: Optional OpenAPI spec dict for documentation.
+        :type openapi_spec: Optional[dict[str, Any]]
+        :param validator: Optional request validator built from the spec.
+        :type validator: Optional[OpenApiValidator]
+        """
+        self._ctx = ctx
+        self._invoke_fn: Optional[Callable] = None
+        self._get_invocation_fn: Optional[Callable] = None
+        self._cancel_invocation_fn: Optional[Callable] = None
+        self._openapi_spec = openapi_spec
+        self._validator = validator
+
+        # Agent identity — used for span naming and GenAI attributes.
+        self._agent_name = _config.resolve_agent_name()
+        self._agent_version = _config.resolve_agent_version()
+        self._agent_label = (
+            f"{self._agent_name}:{self._agent_version}"
+            if self._agent_name
+            else ""
+        )
+
+    # ------------------------------------------------------------------
+    # Route registration
+    # ------------------------------------------------------------------
+
+    @property
+    def routes(self) -> list[Route]:
+        """Starlette routes for the invocation protocol.
+
+        :return: A list of four Route objects for the invocation endpoints.
+        :rtype: list[Route]
+        """
+        return [
+            Route(
+                "/invocations/docs/openapi.json",
+                self._get_openapi_spec_endpoint,
+                methods=["GET"],
+                name="get_openapi_spec",
+            ),
+            Route(
+                "/invocations",
+                self._create_invocation_endpoint,
+                methods=["POST"],
+                name="create_invocation",
+            ),
+            Route(
+                "/invocations/{invocation_id}",
+                self._get_invocation_endpoint,
+                methods=["GET"],
+                name="get_invocation",
+            ),
+            Route(
+                "/invocations/{invocation_id}/cancel",
+                self._cancel_invocation_endpoint,
+                methods=["POST"],
+                name="cancel_invocation",
+            ),
+        ]
+
+    # ------------------------------------------------------------------
+    # Span name helper (protocol-specific)
+    # ------------------------------------------------------------------
+
+    def _span_name(self, operation: str) -> str:
+        """Build a span name using the operation and agent label.
+
+        :param operation: The operation name (e.g. ``"execute_agent"``).
+        :type operation: str
+        :return: ``"<operation> <name>:<version>"`` or just ``"<operation>"``.
+        :rtype: str
+        """
+        if self._agent_label:
+            return f"{operation} {self._agent_label}"
+        return operation
+
+    def _build_span_attrs(
+        self,
+        invocation_id: str,
+        session_id: str,
+        operation_name: Optional[str] = None,
+    ) -> dict[str, str]:
+        """Build GenAI semantic convention span attributes.
+
+        :param invocation_id: The invocation ID for this request.
+        :type invocation_id: str
+        :param session_id: The session ID header value (empty string if absent).
+        :type session_id: str
+        :param operation_name: Optional ``gen_ai.operation.name`` value
+            (e.g. ``"invoke_agent"``).  Omitted from the dict when *None*.
+        :type operation_name: Optional[str]
+        :return: Span attribute dict.
+        :rtype: dict[str, str]
+        """
+        attrs: dict[str, str] = {
+            "invocation.id": invocation_id,
+            "gen_ai.agent.id": self._agent_label,
+            "gen_ai.response.id": invocation_id,
+            "gen_ai.provider.name": "microsoft.foundry",
+        }
+        if operation_name:
+            attrs["gen_ai.operation.name"] = operation_name
+        if session_id:
+            attrs["gen_ai.conversation.id"] = session_id
+        return attrs
+
+    # ------------------------------------------------------------------
+    # Handler decorators
+    # ------------------------------------------------------------------
+
+    def invoke_handler(
+        self, fn: Callable[[Request], Awaitable[Response]]
+    ) -> Callable[[Request], Awaitable[Response]]:
+        """Store *fn* as the invoke handler.  See :meth:`AgentServer.invoke_handler`."""
+        self._invoke_fn = fn
+        return fn
+
+    def get_invocation_handler(
+        self, fn: Callable[[Request], Awaitable[Response]]
+    ) -> Callable[[Request], Awaitable[Response]]:
+        """Store *fn* as the get-invocation handler.  See :meth:`AgentServer.get_invocation_handler`."""
+        self._get_invocation_fn = fn
+        return fn
+
+    def cancel_invocation_handler(
+        self, fn: Callable[[Request], Awaitable[Response]]
+    ) -> Callable[[Request], Awaitable[Response]]:
+        """Store *fn* as the cancel-invocation handler.  See :meth:`AgentServer.cancel_invocation_handler`."""
+        self._cancel_invocation_fn = fn
+        return fn
+
+    # ------------------------------------------------------------------
+    # Dispatch methods (internal)
+    # ------------------------------------------------------------------
+
+    async def _dispatch_invoke(self, request: Request) -> Response:
+        """Dispatch to the registered invoke handler.
+
+        :param request: The incoming Starlette request.
+        :type request: Request
+        :return: The response from the invoke handler.
+        :rtype: Response
+        :raises NotImplementedError: If no invoke handler has been registered.
+        """
+        if self._invoke_fn is not None:
+            return await self._invoke_fn(request)
+        raise NotImplementedError(
+            "No invoke handler registered. Use the @server.invoke_handler decorator."
+        )
+
+    async def _dispatch_get_invocation(self, request: Request) -> Response:
+        """Dispatch to the registered get-invocation handler, or return 501.
+
+        :param request: The incoming Starlette request.
+        :type request: Request
+        :return: The response from the get-invocation handler.
+        :rtype: Response
+        """
+        if self._get_invocation_fn is not None:
+            return await self._get_invocation_fn(request)
+        return error_response("not_supported", "get_invocation not supported", status_code=501)
+
+    async def _dispatch_cancel_invocation(self, request: Request) -> Response:
+        """Dispatch to the registered cancel-invocation handler, or return 501.
+
+        :param request: The incoming Starlette request.
+        :type request: Request
+        :return: The response from the cancel-invocation handler.
+        :rtype: Response
+        """
+        if self._cancel_invocation_fn is not None:
+            return await self._cancel_invocation_fn(request)
+        return error_response("not_supported", "cancel_invocation not supported", status_code=501)
+
+    def get_openapi_spec(self) -> Optional[dict[str, Any]]:
+        """Return the stored OpenAPI spec.  See :meth:`AgentServer.get_openapi_spec`."""
+        return self._openapi_spec
+
+    # ------------------------------------------------------------------
+    # Endpoint handlers
+    # ------------------------------------------------------------------
+
+    async def _get_openapi_spec_endpoint(self, request: Request) -> Response:  # pylint: disable=unused-argument
+        """GET /invocations/docs/openapi.json — return registered spec or 404.
+
+        :param request: The incoming Starlette request.
+        :type request: Request
+        :return: JSON response with the spec or 404.
+        :rtype: Response
+        """
+        spec = self.get_openapi_spec()
+        if spec is None:
+            return error_response("not_found", "No OpenAPI spec registered", status_code=404)
+        return JSONResponse(spec)
+
+    async def _create_invocation_endpoint(self, request: Request) -> Response:
+        """POST /invocations — create and process an invocation.
+
+        :param request: The incoming Starlette request.
+        :type request: Request
+        :return: The invocation result or error response.
+        :rtype: Response
+        """
+        invocation_id = (
+            request.headers.get(Constants.INVOCATION_ID_HEADER)
+            or str(uuid.uuid4())
+        )
+        request.state.invocation_id = invocation_id
+
+        # Validate request body against OpenAPI spec
+        if self._validator is not None:
+            content_type = request.headers.get("content-type", "application/json")
+            body = await request.body()
+            errors = self._validator.validate_request(body, content_type)
+            if errors:
+                return error_response(
+                    "invalid_payload",
+                    "Request validation failed",
+                    status_code=400,
+                    details=[
+                        {"code": "validation_error", "message": e}
+                        for e in errors
+                    ],
+                )
+
+        carrier = extract_w3c_carrier(request.headers)
+        baggage = extract_baggage_header(request.headers)
+        session_id = request.headers.get(Constants.SESSION_ID_HEADER, "")
+        span_attrs = self._build_span_attrs(
+            invocation_id, session_id, operation_name="invoke_agent"
+        )
+
+        # Use manual span management so that streaming responses keep the
+        # span open until the last chunk is yielded (or an error occurs).
+        otel_span = (
+            self._ctx.tracing.start_span(
+                self._span_name("execute_agent"),
+                attributes=span_attrs,
+                carrier=carrier,
+                baggage_header=baggage,
+            )
+            if self._ctx.tracing is not None
+            else None
+        )
+        try:
+            invoke_awaitable = self._dispatch_invoke(request)
+            timeout = self._ctx.request_timeout or None  # 0 → None (no limit)
+            response = await asyncio.wait_for(invoke_awaitable, timeout=timeout)
+        except NotImplementedError as exc:
+            if self._ctx.tracing is not None:
+                self._ctx.tracing.end_span(otel_span, exc=exc)
+            logger.error("Invocation %s failed: %s", invocation_id, exc)
+            return error_response(
+                "not_implemented",
+                str(exc),
+                status_code=501,
+                headers={Constants.INVOCATION_ID_HEADER: invocation_id},
+            )
+        except asyncio.TimeoutError as exc:
+            if self._ctx.tracing is not None:
+                self._ctx.tracing.end_span(otel_span, exc=exc)
+            logger.error(
+                "Invocation %s timed out after %ss",
+                invocation_id,
+                self._ctx.request_timeout,
+            )
+            return error_response(
+                "request_timeout",
+                f"Invocation timed out after {self._ctx.request_timeout}s",
+                status_code=504,
+                headers={Constants.INVOCATION_ID_HEADER: invocation_id},
+            )
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            if self._ctx.tracing is not None:
+                self._ctx.tracing.end_span(otel_span, exc=exc)
+            logger.error("Error processing invocation %s: %s", invocation_id, exc, exc_info=True)
+            message = str(exc) if self._ctx.debug_errors else "Internal server error"
+            return error_response(
+                "internal_error",
+                message,
+                status_code=500,
+                headers={Constants.INVOCATION_ID_HEADER: invocation_id},
+            )
+
+        # For streaming responses, wrap the body iterator so the span stays
+        # open until all chunks are sent and captures any streaming errors.
+        if isinstance(response, StreamingResponse) and self._ctx.tracing is not None:
+            response.body_iterator = self._ctx.tracing.trace_stream(response.body_iterator, otel_span)
+        elif self._ctx.tracing is not None:
+            self._ctx.tracing.end_span(otel_span)
+
+        # Always set invocation_id header (overrides any handler-set value)
+        response.headers[Constants.INVOCATION_ID_HEADER] = invocation_id
+
+        return response
+
+    async def _traced_invocation_endpoint(
+        self,
+        request: Request,
+        span_name: str,
+        dispatch: Callable[[Request], Awaitable[Response]],
+    ) -> Response:
+        """Shared implementation for get/cancel invocation endpoints.
+
+        Extracts the invocation ID from path params, optionally creates a
+        tracing span, dispatches to the handler, and handles errors.
+
+        :param request: The incoming Starlette request.
+        :type request: Request
+        :param span_name: OTel span name (e.g. ``"get_invocation"``).
+        :type span_name: str
+        :param dispatch: The dispatch method to invoke.
+        :type dispatch: Callable[[Request], Awaitable[Response]]
+        :return: The handler response or an error response.
+        :rtype: Response
+        """
+        invocation_id = request.path_params["invocation_id"]
+        request.state.invocation_id = invocation_id
+        carrier = extract_w3c_carrier(request.headers) if self._ctx.tracing is not None else {}
+        baggage = extract_baggage_header(request.headers) if self._ctx.tracing is not None else None
+        session_id = request.headers.get(Constants.SESSION_ID_HEADER, "")
+        span_attrs = self._build_span_attrs(invocation_id, session_id)
+
+        span_cm = (
+            self._ctx.tracing.span(
+                span_name,
+                attributes=span_attrs,
+                carrier=carrier,
+                baggage_header=baggage,
+            )
+            if self._ctx.tracing is not None
+            else contextlib.nullcontext(None)
+        )
+        with span_cm as _otel_span:
+            try:
+                response = await dispatch(request)
+                response.headers[Constants.INVOCATION_ID_HEADER] = invocation_id
+                return response
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                if self._ctx.tracing is not None:
+                    self._ctx.tracing.record_error(_otel_span, exc)
+                logger.error("Error in %s %s: %s", span_name, invocation_id, exc, exc_info=True)
+                message = str(exc) if self._ctx.debug_errors else "Internal server error"
+                return error_response(
+                    "internal_error",
+                    message,
+                    status_code=500,
+                    headers={Constants.INVOCATION_ID_HEADER: invocation_id},
+                )
+
+    async def _get_invocation_endpoint(self, request: Request) -> Response:
+        """GET /invocations/{invocation_id} — retrieve an invocation result.
+
+        :param request: The incoming Starlette request.
+        :type request: Request
+        :return: The stored result or 501.
+        :rtype: Response
+        """
+        return await self._traced_invocation_endpoint(
+            request, self._span_name("get_invocation"), self._dispatch_get_invocation
+        )
+
+    async def _cancel_invocation_endpoint(self, request: Request) -> Response:
+        """POST /invocations/{invocation_id}/cancel — cancel an invocation.
+
+        :param request: The incoming Starlette request.
+        :type request: Request
+        :return: The cancellation result or 501.
+        :rtype: Response
+        """
+        return await self._traced_invocation_endpoint(
+            request, self._span_name("cancel_invocation"), self._dispatch_cancel_invocation
+        )

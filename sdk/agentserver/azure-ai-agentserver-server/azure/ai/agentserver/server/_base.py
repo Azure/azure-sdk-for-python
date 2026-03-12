@@ -4,20 +4,20 @@
 import asyncio  # pylint: disable=do-not-import-asyncio
 import contextlib
 import logging
-import uuid
 from collections.abc import AsyncGenerator, Awaitable, Callable  # pylint: disable=import-error
 from typing import Any, Optional
 
 from starlette.applications import Starlette
 from starlette.requests import Request
-from starlette.responses import JSONResponse, Response, StreamingResponse
+from starlette.responses import Response
 from starlette.routing import Route
 
 from ._constants import Constants
-from ._errors import error_response
 from ._logger import get_logger
-from ._tracing import TracingHelper, extract_w3c_carrier
+from ._tracing import TracingHelper
 from ._openapi_validator import OpenApiValidator
+from ._invocation import _InvocationProtocol
+from ._server_context import _ServerContext
 from . import _config
 
 logger = get_logger()
@@ -105,10 +105,7 @@ class AgentServer:  # pylint: disable=too-many-instance-attributes
         log_level: Optional[str] = None,
         debug_errors: Optional[bool] = None,
     ) -> None:
-        # Decorator handler slots ------------------------------------------
-        self._invoke_fn: Optional[Callable] = None
-        self._get_invocation_fn: Optional[Callable] = None
-        self._cancel_invocation_fn: Optional[Callable] = None
+        # Shutdown handler slot (server-level lifecycle) -------------------
         self._shutdown_fn: Optional[Callable] = None
 
         # Logging & debug -------------------------------------------------
@@ -122,15 +119,17 @@ class AgentServer:  # pylint: disable=too-many-instance-attributes
             debug_errors, Constants.AGENT_DEBUG_ERRORS
         )
 
-        self._openapi_spec = openapi_spec
+        # OpenAPI validation -----------------------------------------------
         _validation_on = _config.resolve_bool_feature(
             enable_request_validation, Constants.AGENT_ENABLE_REQUEST_VALIDATION
         )
-        self._validator: Optional[OpenApiValidator] = (
+        validator: Optional[OpenApiValidator] = (
             OpenApiValidator(openapi_spec)
             if openapi_spec and _validation_on
             else None
         )
+
+        # Tracing ----------------------------------------------------------
         _tracing_on = _config.resolve_bool_feature(enable_tracing, Constants.AGENT_ENABLE_TRACING)
         _conn_str = _config.resolve_appinsights_connection_string(
             application_insights_connection_string
@@ -138,15 +137,46 @@ class AgentServer:  # pylint: disable=too-many-instance-attributes
         self._tracing: Optional[TracingHelper] = (
             TracingHelper(connection_string=_conn_str) if _tracing_on else None
         )
+
+        # Timeouts ---------------------------------------------------------
         self._graceful_shutdown_timeout = _config.resolve_graceful_shutdown_timeout(
             graceful_shutdown_timeout
         )
         self._request_timeout = _config.resolve_request_timeout(request_timeout)
+
+        # Invocation protocol (composed) -------------------------------------
+        ctx = _ServerContext(
+            tracing=self._tracing,
+            debug_errors=self._debug_errors,
+            request_timeout=self._request_timeout,
+        )
+        self._invocation = _InvocationProtocol(ctx, openapi_spec, validator)
+
         self.app: Starlette
         self._build_app()
 
     # ------------------------------------------------------------------
-    # Handler decorators
+    # Shutdown handler (server-level lifecycle)
+    # ------------------------------------------------------------------
+
+    def shutdown_handler(self, fn: Callable[[], Awaitable[None]]) -> Callable[[], Awaitable[None]]:
+        """Register a function as the shutdown handler.
+
+        :param fn: Async function called during graceful shutdown.
+        :type fn: Callable[[], Awaitable[None]]
+        :return: The original function (unmodified).
+        :rtype: Callable[[], Awaitable[None]]
+        """
+        self._shutdown_fn = fn
+        return fn
+
+    async def _dispatch_shutdown(self) -> None:
+        """Dispatch to the registered shutdown handler, or no-op."""
+        if self._shutdown_fn is not None:
+            await self._shutdown_fn()
+
+    # ------------------------------------------------------------------
+    # Invocation protocol delegates
     # ------------------------------------------------------------------
 
     def invoke_handler(
@@ -165,8 +195,7 @@ class AgentServer:  # pylint: disable=too-many-instance-attributes
         :return: The original function (unmodified).
         :rtype: Callable[[Request], Awaitable[Response]]
         """
-        self._invoke_fn = fn
-        return fn
+        return self._invocation.invoke_handler(fn)
 
     def get_invocation_handler(
         self, fn: Callable[[Request], Awaitable[Response]]
@@ -178,8 +207,7 @@ class AgentServer:  # pylint: disable=too-many-instance-attributes
         :return: The original function (unmodified).
         :rtype: Callable[[Request], Awaitable[Response]]
         """
-        self._get_invocation_fn = fn
-        return fn
+        return self._invocation.get_invocation_handler(fn)
 
     def cancel_invocation_handler(
         self, fn: Callable[[Request], Awaitable[Response]]
@@ -191,67 +219,7 @@ class AgentServer:  # pylint: disable=too-many-instance-attributes
         :return: The original function (unmodified).
         :rtype: Callable[[Request], Awaitable[Response]]
         """
-        self._cancel_invocation_fn = fn
-        return fn
-
-    def shutdown_handler(self, fn: Callable[[], Awaitable[None]]) -> Callable[[], Awaitable[None]]:
-        """Register a function as the shutdown handler.
-
-        :param fn: Async function called during graceful shutdown.
-        :type fn: Callable[[], Awaitable[None]]
-        :return: The original function (unmodified).
-        :rtype: Callable[[], Awaitable[None]]
-        """
-        self._shutdown_fn = fn
-        return fn
-
-    # ------------------------------------------------------------------
-    # Dispatch methods (internal)
-    # ------------------------------------------------------------------
-
-    async def _dispatch_invoke(self, request: Request) -> Response:
-        """Dispatch to the registered invoke handler.
-
-        :param request: The incoming Starlette request.
-        :type request: Request
-        :return: The response from the invoke handler.
-        :rtype: Response
-        :raises NotImplementedError: If no invoke handler has been registered.
-        """
-        if self._invoke_fn is not None:
-            return await self._invoke_fn(request)
-        raise NotImplementedError(
-            "No invoke handler registered. Use the @server.invoke_handler decorator."
-        )
-
-    async def _dispatch_get_invocation(self, request: Request) -> Response:
-        """Dispatch to the registered get-invocation handler, or return 404.
-
-        :param request: The incoming Starlette request.
-        :type request: Request
-        :return: The response from the get-invocation handler.
-        :rtype: Response
-        """
-        if self._get_invocation_fn is not None:
-            return await self._get_invocation_fn(request)
-        return error_response("not_supported", "get_invocation not supported", status_code=501)
-
-    async def _dispatch_cancel_invocation(self, request: Request) -> Response:
-        """Dispatch to the registered cancel-invocation handler, or return 404.
-
-        :param request: The incoming Starlette request.
-        :type request: Request
-        :return: The response from the cancel-invocation handler.
-        :rtype: Response
-        """
-        if self._cancel_invocation_fn is not None:
-            return await self._cancel_invocation_fn(request)
-        return error_response("not_supported", "cancel_invocation not supported", status_code=501)
-
-    async def _dispatch_shutdown(self) -> None:
-        """Dispatch to the registered shutdown handler, or no-op."""
-        if self._shutdown_fn is not None:
-            await self._shutdown_fn()
+        return self._invocation.cancel_invocation_handler(fn)
 
     def get_openapi_spec(self) -> Optional[dict[str, Any]]:
         """Return the OpenAPI spec dict for this agent, or None.
@@ -259,7 +227,7 @@ class AgentServer:  # pylint: disable=too-many-instance-attributes
         :return: The registered OpenAPI spec or None.
         :rtype: Optional[dict[str, Any]]
         """
-        return self._openapi_spec
+        return self._invocation.get_openapi_spec()
 
     # ------------------------------------------------------------------
     # Run helpers
@@ -348,221 +316,17 @@ class AgentServer:  # pylint: disable=too-many-instance-attributes
             except Exception:  # pylint: disable=broad-exception-caught
                 logger.exception("Error in on_shutdown")
 
-        routes = [
-            Route(
-                "/invocations/docs/openapi.json",
-                self._get_openapi_spec_endpoint,
-                methods=["GET"],
-                name="get_openapi_spec",
-            ),
-            Route(
-                "/invocations",
-                self._create_invocation_endpoint,
-                methods=["POST"],
-                name="create_invocation",
-            ),
-            Route(
-                "/invocations/{invocation_id}",
-                self._get_invocation_endpoint,
-                methods=["GET"],
-                name="get_invocation",
-            ),
-            Route(
-                "/invocations/{invocation_id}/cancel",
-                self._cancel_invocation_endpoint,
-                methods=["POST"],
-                name="cancel_invocation",
-            ),
+        routes = list(self._invocation.routes)
+        routes.extend([
             Route("/liveness", self._liveness_endpoint, methods=["GET"], name="liveness"),
             Route("/readiness", self._readiness_endpoint, methods=["GET"], name="readiness"),
-        ]
+        ])
 
         self.app = Starlette(routes=routes, lifespan=_lifespan)
 
     # ------------------------------------------------------------------
-    # Private: endpoint handlers
+    # Health endpoints
     # ------------------------------------------------------------------
-
-    async def _get_openapi_spec_endpoint(self, request: Request) -> Response:  # pylint: disable=unused-argument
-        """GET /invocations/docs/openapi.json — return registered spec or 404.
-
-        :param request: The incoming Starlette request.
-        :type request: Request
-        :return: JSON response with the spec or 404.
-        :rtype: Response
-        """
-        spec = self.get_openapi_spec()
-        if spec is None:
-            return error_response("not_found", "No OpenAPI spec registered", status_code=404)
-        return JSONResponse(spec)
-
-    async def _create_invocation_endpoint(self, request: Request) -> Response:
-        """POST /invocations — create and process an invocation.
-
-        :param request: The incoming Starlette request.
-        :type request: Request
-        :return: The invocation result or error response.
-        :rtype: Response
-        """
-        invocation_id = (
-            request.headers.get(Constants.INVOCATION_ID_HEADER)
-            or str(uuid.uuid4())
-        )
-        request.state.invocation_id = invocation_id
-
-        # Validate request body against OpenAPI spec
-        if self._validator is not None:
-            content_type = request.headers.get("content-type", "application/json")
-            body = await request.body()
-            errors = self._validator.validate_request(body, content_type)
-            if errors:
-                return error_response(
-                    "invalid_payload",
-                    "Request validation failed",
-                    status_code=400,
-                    details=[
-                        {"code": "validation_error", "message": e}
-                        for e in errors
-                    ],
-                )
-
-        carrier = extract_w3c_carrier(request.headers)
-
-        # Use manual span management so that streaming responses keep the
-        # span open until the last chunk is yielded (or an error occurs).
-        otel_span = (
-            self._tracing.start_span(
-                "AgentServer.invoke",
-                attributes={"invocation.id": invocation_id},
-                carrier=carrier,
-            )
-            if self._tracing is not None
-            else None
-        )
-        try:
-            invoke_awaitable = self._dispatch_invoke(request)
-            timeout = self._request_timeout or None  # 0 → None (no limit)
-            response = await asyncio.wait_for(invoke_awaitable, timeout=timeout)
-        except NotImplementedError as exc:
-            if self._tracing is not None:
-                self._tracing.end_span(otel_span, exc=exc)
-            logger.error("Invocation %s failed: %s", invocation_id, exc)
-            return error_response(
-                "not_implemented",
-                str(exc),
-                status_code=501,
-                headers={Constants.INVOCATION_ID_HEADER: invocation_id},
-            )
-        except asyncio.TimeoutError as exc:
-            if self._tracing is not None:
-                self._tracing.end_span(otel_span, exc=exc)
-            logger.error(
-                "Invocation %s timed out after %ss",
-                invocation_id,
-                self._request_timeout,
-            )
-            return error_response(
-                "request_timeout",
-                f"Invocation timed out after {self._request_timeout}s",
-                status_code=504,
-                headers={Constants.INVOCATION_ID_HEADER: invocation_id},
-            )
-        except Exception as exc:  # pylint: disable=broad-exception-caught
-            if self._tracing is not None:
-                self._tracing.end_span(otel_span, exc=exc)
-            logger.error("Error processing invocation %s: %s", invocation_id, exc, exc_info=True)
-            message = str(exc) if self._debug_errors else "Internal server error"
-            return error_response(
-                "internal_error",
-                message,
-                status_code=500,
-                headers={Constants.INVOCATION_ID_HEADER: invocation_id},
-            )
-
-        # For streaming responses, wrap the body iterator so the span stays
-        # open until all chunks are sent and captures any streaming errors.
-        if isinstance(response, StreamingResponse) and self._tracing is not None:
-            response.body_iterator = self._tracing.trace_stream(response.body_iterator, otel_span)
-        elif self._tracing is not None:
-            self._tracing.end_span(otel_span)
-
-        # Always set invocation_id header (overrides any handler-set value)
-        response.headers[Constants.INVOCATION_ID_HEADER] = invocation_id
-
-        return response
-
-    async def _traced_invocation_endpoint(
-        self,
-        request: Request,
-        span_name: str,
-        dispatch: Callable[[Request], Awaitable[Response]],
-    ) -> Response:
-        """Shared implementation for get/cancel invocation endpoints.
-
-        Extracts the invocation ID from path params, optionally creates a
-        tracing span, dispatches to the handler, and handles errors.
-
-        :param request: The incoming Starlette request.
-        :type request: Request
-        :param span_name: OTel span name (e.g. ``"AgentServer.get_invocation"``).
-        :type span_name: str
-        :param dispatch: The dispatch method to invoke.
-        :type dispatch: Callable[[Request], Awaitable[Response]]
-        :return: The handler response or an error response.
-        :rtype: Response
-        """
-        invocation_id = request.path_params["invocation_id"]
-        request.state.invocation_id = invocation_id
-        carrier = extract_w3c_carrier(request.headers) if self._tracing is not None else {}
-        span_cm = (
-            self._tracing.span(
-                span_name,
-                attributes={"invocation.id": invocation_id},
-                carrier=carrier,
-            )
-            if self._tracing is not None
-            else contextlib.nullcontext(None)
-        )
-        with span_cm as _otel_span:
-            try:
-                response = await dispatch(request)
-                response.headers[Constants.INVOCATION_ID_HEADER] = invocation_id
-                return response
-            except Exception as exc:  # pylint: disable=broad-exception-caught
-                if self._tracing is not None:
-                    self._tracing.record_error(_otel_span, exc)
-                logger.error("Error in %s %s: %s", span_name, invocation_id, exc, exc_info=True)
-                message = str(exc) if self._debug_errors else "Internal server error"
-                return error_response(
-                    "internal_error",
-                    message,
-                    status_code=500,
-                    headers={Constants.INVOCATION_ID_HEADER: invocation_id},
-                )
-
-    async def _get_invocation_endpoint(self, request: Request) -> Response:
-        """GET /invocations/{invocation_id} — retrieve an invocation result.
-
-        :param request: The incoming Starlette request.
-        :type request: Request
-        :return: The stored result or 404.
-        :rtype: Response
-        """
-        return await self._traced_invocation_endpoint(
-            request, "AgentServer.get_invocation", self._dispatch_get_invocation
-        )
-
-    async def _cancel_invocation_endpoint(self, request: Request) -> Response:
-        """POST /invocations/{invocation_id}/cancel — cancel an invocation.
-
-        :param request: The incoming Starlette request.
-        :type request: Request
-        :return: The cancellation result or 404.
-        :rtype: Response
-        """
-        return await self._traced_invocation_endpoint(
-            request, "AgentServer.cancel_invocation", self._dispatch_cancel_invocation
-        )
 
     async def _liveness_endpoint(self, request: Request) -> Response:  # pylint: disable=unused-argument
         """GET /liveness — health check.

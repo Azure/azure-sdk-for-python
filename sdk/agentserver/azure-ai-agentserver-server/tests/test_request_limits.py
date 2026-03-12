@@ -137,7 +137,7 @@ class TestInvokeTimeoutEnforcement:
     async def test_timeout_error_is_logged(self):
         agent = _make_slow_agent(request_timeout=1)
         transport = httpx.ASGITransport(app=agent.app)
-        with patch("azure.ai.agentserver.server._base.logger") as mock_logger:
+        with patch("azure.ai.agentserver.server._invocation.logger") as mock_logger:
             async with httpx.AsyncClient(
                 transport=transport, base_url="http://testserver"
             ) as client:

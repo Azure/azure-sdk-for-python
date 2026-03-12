@@ -27,7 +27,7 @@ class TestDecoratorRegistration:
         async def handle(request: Request) -> Response:
             return JSONResponse({"ok": True})
 
-        assert server._invoke_fn is handle
+        assert server._invocation._invoke_fn is handle
 
     def test_invoke_handler_returns_original_function(self):
         server = AgentServer()
@@ -47,7 +47,7 @@ class TestDecoratorRegistration:
         async def handle(request: Request) -> Response:
             return JSONResponse({"found": True})
 
-        assert server._get_invocation_fn is handle
+        assert server._invocation._get_invocation_fn is handle
 
     def test_cancel_invocation_handler_stores_function(self):
         server = AgentServer()
@@ -56,7 +56,7 @@ class TestDecoratorRegistration:
         async def handle(request: Request) -> Response:
             return JSONResponse({"cancelled": True})
 
-        assert server._cancel_invocation_fn is handle
+        assert server._invocation._cancel_invocation_fn is handle
 
     def test_shutdown_handler_stores_function(self):
         server = AgentServer()

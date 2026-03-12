@@ -118,7 +118,7 @@ async def test_tracing_enabled_creates_invoke_span(span_exporter):
     assert resp.status_code == 200
 
     spans = span_exporter.get_finished_spans()
-    invoke_spans = [s for s in spans if s.name == "AgentServer.invoke"]
+    invoke_spans = [s for s in spans if s.name == "execute_agent"]
     assert len(invoke_spans) == 1
 
     span = invoke_spans[0]
@@ -136,7 +136,7 @@ async def test_tracing_invoke_error_records_exception(span_exporter):
     assert resp.status_code == 500
 
     spans = span_exporter.get_finished_spans()
-    invoke_spans = [s for s in spans if s.name == "AgentServer.invoke"]
+    invoke_spans = [s for s in spans if s.name == "execute_agent"]
     assert len(invoke_spans) == 1
 
     span = invoke_spans[0]
@@ -157,7 +157,7 @@ async def test_tracing_get_invocation_creates_span(span_exporter):
     assert resp.status_code == 501
 
     spans = span_exporter.get_finished_spans()
-    get_spans = [s for s in spans if s.name == "AgentServer.get_invocation"]
+    get_spans = [s for s in spans if s.name == "get_invocation"]
     assert len(get_spans) == 1
     assert dict(get_spans[0].attributes)["invocation.id"] == "test-id-123"
 
@@ -172,7 +172,7 @@ async def test_tracing_cancel_invocation_creates_span(span_exporter):
     assert resp.status_code == 501
 
     spans = span_exporter.get_finished_spans()
-    cancel_spans = [s for s in spans if s.name == "AgentServer.cancel_invocation"]
+    cancel_spans = [s for s in spans if s.name == "cancel_invocation"]
     assert len(cancel_spans) == 1
     assert dict(cancel_spans[0].attributes)["invocation.id"] == "test-cancel-456"
 
@@ -194,7 +194,7 @@ async def test_tracing_enabled_via_env_var(monkeypatch, span_exporter):
         await client.post("/invocations", content=b'{}')
 
     spans = span_exporter.get_finished_spans()
-    assert any(s.name == "AgentServer.invoke" for s in spans)
+    assert any(s.name == "execute_agent" for s in spans)
 
 
 @pytest.mark.asyncio
@@ -221,7 +221,7 @@ async def test_tracing_propagates_traceparent(span_exporter):
     assert resp.status_code == 200
 
     spans = span_exporter.get_finished_spans()
-    invoke_spans = [s for s in spans if s.name == "AgentServer.invoke"]
+    invoke_spans = [s for s in spans if s.name == "execute_agent"]
     assert len(invoke_spans) == 1
     span = invoke_spans[0]
     # The span's trace ID should match the traceparent's trace ID
@@ -290,7 +290,7 @@ async def test_streaming_response_creates_span(span_exporter):
     assert resp.status_code == 200
 
     spans = span_exporter.get_finished_spans()
-    invoke_spans = [s for s in spans if s.name == "AgentServer.invoke"]
+    invoke_spans = [s for s in spans if s.name == "execute_agent"]
     assert len(invoke_spans) == 1
     assert invoke_spans[0].status.status_code == trace.StatusCode.UNSET
 
@@ -309,7 +309,7 @@ async def test_streaming_span_covers_full_body(span_exporter):
     assert b"slow-2" in resp.content
 
     spans = span_exporter.get_finished_spans()
-    invoke_spans = [s for s in spans if s.name == "AgentServer.invoke"]
+    invoke_spans = [s for s in spans if s.name == "execute_agent"]
     assert len(invoke_spans) == 1
     span = invoke_spans[0]
 
@@ -347,7 +347,7 @@ async def test_streaming_error_recorded_in_span(span_exporter):
             pass  # connection reset / partial read is acceptable
 
     spans = span_exporter.get_finished_spans()
-    invoke_spans = [s for s in spans if s.name == "AgentServer.invoke"]
+    invoke_spans = [s for s in spans if s.name == "execute_agent"]
     assert len(invoke_spans) == 1
 
     span = invoke_spans[0]
@@ -386,7 +386,7 @@ async def test_streaming_propagates_traceparent(span_exporter):
     assert resp.status_code == 200
 
     spans = span_exporter.get_finished_spans()
-    invoke_spans = [s for s in spans if s.name == "AgentServer.invoke"]
+    invoke_spans = [s for s in spans if s.name == "execute_agent"]
     assert len(invoke_spans) == 1
     expected_trace_id = int("0af7651916cd43dd8448eb211c80319c", 16)
     assert invoke_spans[0].context.trace_id == expected_trace_id
@@ -521,3 +521,375 @@ class TestSetupAzureMonitor:
 
         agent = _make_echo_traced_agent(enable_tracing=False)
         assert agent._tracing is None  # noqa: SLF001
+
+
+# ---------------------------------------------------------------------------
+# Tests: span naming with agent name and version
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_span_name_includes_agent_label(monkeypatch, span_exporter):
+    """Span name includes agent_name:agent_version when env vars are set."""
+    monkeypatch.setenv("AGENT_NAME", "my-agent")
+    monkeypatch.setenv("AGENT_VERSION", "2.1")
+    agent = _make_echo_traced_agent(enable_tracing=True)
+    transport = httpx.ASGITransport(app=agent.app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+        await client.post("/invocations", content=b'{}')
+
+    spans = span_exporter.get_finished_spans()
+    invoke_spans = [s for s in spans if s.name == "execute_agent my-agent:2.1"]
+    assert len(invoke_spans) == 1
+
+
+@pytest.mark.asyncio
+async def test_span_name_without_agent_label(span_exporter, monkeypatch):
+    """Span name is just the operation when AGENT_NAME is not set."""
+    monkeypatch.delenv("AGENT_NAME", raising=False)
+    monkeypatch.delenv("AGENT_VERSION", raising=False)
+    agent = _make_echo_traced_agent(enable_tracing=True)
+    transport = httpx.ASGITransport(app=agent.app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+        await client.post("/invocations", content=b'{}')
+
+    spans = span_exporter.get_finished_spans()
+    invoke_spans = [s for s in spans if s.name == "execute_agent"]
+    assert len(invoke_spans) == 1
+
+
+@pytest.mark.asyncio
+async def test_get_invocation_span_name_with_label(monkeypatch, span_exporter):
+    """GET /invocations/{id} span includes agent label."""
+    monkeypatch.setenv("AGENT_NAME", "agent-x")
+    monkeypatch.setenv("AGENT_VERSION", "0.5")
+    agent = _make_echo_traced_agent(enable_tracing=True)
+    transport = httpx.ASGITransport(app=agent.app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+        await client.get("/invocations/test-id")
+
+    spans = span_exporter.get_finished_spans()
+    get_spans = [s for s in spans if s.name == "get_invocation agent-x:0.5"]
+    assert len(get_spans) == 1
+
+
+@pytest.mark.asyncio
+async def test_cancel_invocation_span_name_with_label(monkeypatch, span_exporter):
+    """POST /invocations/{id}/cancel span includes agent label."""
+    monkeypatch.setenv("AGENT_NAME", "agent-x")
+    monkeypatch.setenv("AGENT_VERSION", "0.5")
+    agent = _make_echo_traced_agent(enable_tracing=True)
+    transport = httpx.ASGITransport(app=agent.app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+        await client.post("/invocations/test-id/cancel")
+
+    spans = span_exporter.get_finished_spans()
+    cancel_spans = [s for s in spans if s.name == "cancel_invocation agent-x:0.5"]
+    assert len(cancel_spans) == 1
+
+
+# ---------------------------------------------------------------------------
+# Tests: GenAI semantic convention attributes
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_genai_attributes_on_invoke_span(span_exporter, monkeypatch):
+    """Invoke span has GenAI semantic convention attributes."""
+    monkeypatch.setenv("AGENT_NAME", "test-agent")
+    monkeypatch.setenv("AGENT_VERSION", "1.0")
+    agent = _make_echo_traced_agent(enable_tracing=True)
+    transport = httpx.ASGITransport(app=agent.app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+        await client.post("/invocations", content=b'{}')
+
+    spans = span_exporter.get_finished_spans()
+    invoke_spans = [s for s in spans if "execute_agent" in s.name]
+    assert len(invoke_spans) == 1
+
+    attrs = dict(invoke_spans[0].attributes)
+    assert attrs["gen_ai.operation.name"] == "invoke_agent"
+    assert attrs["gen_ai.agent.id"] == "test-agent:1.0"
+    assert attrs["gen_ai.provider.name"] == "microsoft.foundry"
+    assert "gen_ai.response.id" in attrs  # UUID invocation ID
+
+
+@pytest.mark.asyncio
+async def test_genai_conversation_id_from_session_header(span_exporter, monkeypatch):
+    """gen_ai.conversation.id is set from x-agent-session-id header."""
+    monkeypatch.delenv("AGENT_NAME", raising=False)
+    monkeypatch.delenv("AGENT_VERSION", raising=False)
+    agent = _make_echo_traced_agent(enable_tracing=True)
+    transport = httpx.ASGITransport(app=agent.app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+        await client.post(
+            "/invocations",
+            content=b'{}',
+            headers={"x-agent-session-id": "session-abc-123"},
+        )
+
+    spans = span_exporter.get_finished_spans()
+    invoke_spans = [s for s in spans if "execute_agent" in s.name]
+    assert len(invoke_spans) == 1
+
+    attrs = dict(invoke_spans[0].attributes)
+    assert attrs["gen_ai.conversation.id"] == "session-abc-123"
+
+
+@pytest.mark.asyncio
+async def test_genai_conversation_id_absent_when_no_header(span_exporter, monkeypatch):
+    """gen_ai.conversation.id is NOT set when x-agent-session-id header is absent."""
+    monkeypatch.delenv("AGENT_NAME", raising=False)
+    monkeypatch.delenv("AGENT_VERSION", raising=False)
+    agent = _make_echo_traced_agent(enable_tracing=True)
+    transport = httpx.ASGITransport(app=agent.app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+        await client.post("/invocations", content=b'{}')
+
+    spans = span_exporter.get_finished_spans()
+    invoke_spans = [s for s in spans if "execute_agent" in s.name]
+    assert len(invoke_spans) == 1
+
+    attrs = dict(invoke_spans[0].attributes)
+    assert "gen_ai.conversation.id" not in attrs
+
+
+@pytest.mark.asyncio
+async def test_genai_attributes_on_get_invocation_span(span_exporter, monkeypatch):
+    """GET /invocations/{id} span has GenAI attributes (minus operation.name)."""
+    monkeypatch.setenv("AGENT_NAME", "test-agent")
+    monkeypatch.setenv("AGENT_VERSION", "1.0")
+    agent = _make_echo_traced_agent(enable_tracing=True)
+    transport = httpx.ASGITransport(app=agent.app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+        await client.get(
+            "/invocations/inv-42",
+            headers={"x-agent-session-id": "sess-99"},
+        )
+
+    spans = span_exporter.get_finished_spans()
+    get_spans = [s for s in spans if "get_invocation" in s.name]
+    assert len(get_spans) == 1
+
+    attrs = dict(get_spans[0].attributes)
+    assert attrs["gen_ai.agent.id"] == "test-agent:1.0"
+    assert attrs["gen_ai.provider.name"] == "microsoft.foundry"
+    assert attrs["gen_ai.response.id"] == "inv-42"
+    assert attrs["gen_ai.conversation.id"] == "sess-99"
+    assert attrs["invocation.id"] == "inv-42"
+
+
+# ---------------------------------------------------------------------------
+# Tests: baggage extraction and leaf_customer_span_id
+# ---------------------------------------------------------------------------
+
+
+class TestBaggageParsing:
+    """Unit tests for _parse_baggage_key."""
+
+    def test_single_key(self):
+        from azure.ai.agentserver.server._tracing import _parse_baggage_key
+        assert _parse_baggage_key("leaf_customer_span_id=abc123", "leaf_customer_span_id") == "abc123"
+
+    def test_multiple_keys(self):
+        from azure.ai.agentserver.server._tracing import _parse_baggage_key
+        baggage = "foo=bar,leaf_customer_span_id=deadbeef01234567,baz=qux"
+        assert _parse_baggage_key(baggage, "leaf_customer_span_id") == "deadbeef01234567"
+
+    def test_key_not_present(self):
+        from azure.ai.agentserver.server._tracing import _parse_baggage_key
+        assert _parse_baggage_key("foo=bar,baz=qux", "leaf_customer_span_id") is None
+
+    def test_empty_baggage(self):
+        from azure.ai.agentserver.server._tracing import _parse_baggage_key
+        assert _parse_baggage_key("", "leaf_customer_span_id") is None
+
+    def test_key_with_properties(self):
+        from azure.ai.agentserver.server._tracing import _parse_baggage_key
+        baggage = "leaf_customer_span_id=abc123;property1=val1,other=2"
+        assert _parse_baggage_key(baggage, "leaf_customer_span_id") == "abc123"
+
+    def test_whitespace_handling(self):
+        from azure.ai.agentserver.server._tracing import _parse_baggage_key
+        baggage = " leaf_customer_span_id = abc123 , other = val "
+        assert _parse_baggage_key(baggage, "leaf_customer_span_id") == "abc123"
+
+
+class TestExtractBaggageHeader:
+    """Unit tests for extract_baggage_header."""
+
+    def test_present(self):
+        from azure.ai.agentserver.server._tracing import extract_baggage_header
+        headers = {"baggage": "key=val", "other": "x"}
+        assert extract_baggage_header(headers) == "key=val"
+
+    def test_absent(self):
+        from azure.ai.agentserver.server._tracing import extract_baggage_header
+        assert extract_baggage_header({"other": "x"}) is None
+
+
+@pytest.mark.asyncio
+async def test_baggage_leaf_customer_span_id_overrides_parent(span_exporter):
+    """When baggage contains leaf_customer_span_id, the span's parent span ID
+    is overridden to match, while the trace ID stays the same as traceparent."""
+    agent = _make_echo_traced_agent(enable_tracing=True)
+    transport = httpx.ASGITransport(app=agent.app)
+
+    trace_id_hex = "0af7651916cd43dd8448eb211c80319c"
+    original_parent_hex = "b7ad6b7169203331"
+    leaf_span_hex = "00f067aa0ba902b7"
+
+    traceparent = f"00-{trace_id_hex}-{original_parent_hex}-01"
+    baggage = f"leaf_customer_span_id={leaf_span_hex},other=val"
+
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+        resp = await client.post(
+            "/invocations",
+            content=b'{"data": 1}',
+            headers={"traceparent": traceparent, "baggage": baggage},
+        )
+    assert resp.status_code == 200
+
+    spans = span_exporter.get_finished_spans()
+    invoke_spans = [s for s in spans if "execute_agent" in s.name]
+    assert len(invoke_spans) == 1
+
+    span = invoke_spans[0]
+    # Trace ID should match traceparent
+    expected_trace_id = int(trace_id_hex, 16)
+    assert span.context.trace_id == expected_trace_id
+
+    # Parent span ID should be the leaf_customer_span_id, not the original
+    expected_parent_span_id = int(leaf_span_hex, 16)
+    assert span.parent.span_id == expected_parent_span_id
+
+
+@pytest.mark.asyncio
+async def test_baggage_without_leaf_uses_traceparent_parent(span_exporter):
+    """When baggage is present but does NOT contain leaf_customer_span_id,
+    the parent span ID comes from traceparent as usual."""
+    agent = _make_echo_traced_agent(enable_tracing=True)
+    transport = httpx.ASGITransport(app=agent.app)
+
+    trace_id_hex = "0af7651916cd43dd8448eb211c80319c"
+    parent_hex = "b7ad6b7169203331"
+    traceparent = f"00-{trace_id_hex}-{parent_hex}-01"
+    baggage = "some_other_key=value"
+
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+        resp = await client.post(
+            "/invocations",
+            content=b'{}',
+            headers={"traceparent": traceparent, "baggage": baggage},
+        )
+    assert resp.status_code == 200
+
+    spans = span_exporter.get_finished_spans()
+    invoke_spans = [s for s in spans if "execute_agent" in s.name]
+    assert len(invoke_spans) == 1
+
+    span = invoke_spans[0]
+    expected_parent_span_id = int(parent_hex, 16)
+    assert span.parent.span_id == expected_parent_span_id
+
+
+@pytest.mark.asyncio
+async def test_baggage_no_traceparent_no_crash(span_exporter):
+    """When baggage is present but no traceparent, no crash occurs."""
+    agent = _make_echo_traced_agent(enable_tracing=True)
+    transport = httpx.ASGITransport(app=agent.app)
+
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+        resp = await client.post(
+            "/invocations",
+            content=b'{}',
+            headers={"baggage": "leaf_customer_span_id=00f067aa0ba902b7"},
+        )
+    assert resp.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_baggage_invalid_leaf_span_id_falls_back(span_exporter):
+    """Invalid hex in leaf_customer_span_id falls back to traceparent parent."""
+    agent = _make_echo_traced_agent(enable_tracing=True)
+    transport = httpx.ASGITransport(app=agent.app)
+
+    trace_id_hex = "0af7651916cd43dd8448eb211c80319c"
+    parent_hex = "b7ad6b7169203331"
+    traceparent = f"00-{trace_id_hex}-{parent_hex}-01"
+    baggage = "leaf_customer_span_id=not_valid_hex"
+
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+        resp = await client.post(
+            "/invocations",
+            content=b'{}',
+            headers={"traceparent": traceparent, "baggage": baggage},
+        )
+    assert resp.status_code == 200
+
+    spans = span_exporter.get_finished_spans()
+    invoke_spans = [s for s in spans if "execute_agent" in s.name]
+    assert len(invoke_spans) == 1
+
+    span = invoke_spans[0]
+    # Should fall back to traceparent's parent span ID
+    expected_parent = int(parent_hex, 16)
+    assert span.parent.span_id == expected_parent
+
+
+@pytest.mark.asyncio
+async def test_baggage_leaf_on_get_invocation(span_exporter):
+    """Baggage leaf_customer_span_id also works on GET /invocations/{id}."""
+    agent = _make_echo_traced_agent(enable_tracing=True)
+    transport = httpx.ASGITransport(app=agent.app)
+
+    trace_id_hex = "0af7651916cd43dd8448eb211c80319c"
+    original_parent_hex = "b7ad6b7169203331"
+    leaf_span_hex = "00f067aa0ba902b7"
+
+    traceparent = f"00-{trace_id_hex}-{original_parent_hex}-01"
+    baggage = f"leaf_customer_span_id={leaf_span_hex}"
+
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+        await client.get(
+            "/invocations/test-id",
+            headers={"traceparent": traceparent, "baggage": baggage},
+        )
+
+    spans = span_exporter.get_finished_spans()
+    get_spans = [s for s in spans if "get_invocation" in s.name]
+    assert len(get_spans) == 1
+
+    expected_trace_id = int(trace_id_hex, 16)
+    expected_parent = int(leaf_span_hex, 16)
+    assert get_spans[0].context.trace_id == expected_trace_id
+    assert get_spans[0].parent.span_id == expected_parent
+
+
+# ---------------------------------------------------------------------------
+# Tests: agent name / version resolution
+# ---------------------------------------------------------------------------
+
+
+class TestAgentNameVersionResolution:
+    """Tests for resolve_agent_name and resolve_agent_version."""
+
+    def test_agent_name_from_env(self, monkeypatch):
+        from azure.ai.agentserver.server._config import resolve_agent_name
+        monkeypatch.setenv("AGENT_NAME", "my-agent")
+        assert resolve_agent_name() == "my-agent"
+
+    def test_agent_name_default_empty(self, monkeypatch):
+        from azure.ai.agentserver.server._config import resolve_agent_name
+        monkeypatch.delenv("AGENT_NAME", raising=False)
+        assert resolve_agent_name() == ""
+
+    def test_agent_version_from_env(self, monkeypatch):
+        from azure.ai.agentserver.server._config import resolve_agent_version
+        monkeypatch.setenv("AGENT_VERSION", "3.0.1")
+        assert resolve_agent_version() == "3.0.1"
+
+    def test_agent_version_default_empty(self, monkeypatch):
+        from azure.ai.agentserver.server._config import resolve_agent_version
+        monkeypatch.delenv("AGENT_VERSION", raising=False)
+        assert resolve_agent_version() == ""
