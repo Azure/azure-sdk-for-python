@@ -34,6 +34,7 @@ import os
 import pytest
 from devtools_testutils import recorded_by_proxy
 from testpreparer import ContentUnderstandingPreparer, ContentUnderstandingClientTestBase
+from azure.ai.contentunderstanding.models import ContentRange, DocumentContent
 
 
 class TestSampleAnalyzeBinary(ContentUnderstandingClientTestBase):
@@ -243,3 +244,136 @@ class TestSampleAnalyzeBinary(ContentUnderstandingClientTestBase):
                 )
             else:
                 print(f"[PASS] Table {i} validated: {table.row_count} rows x {table.column_count} columns")
+
+    @ContentUnderstandingPreparer()
+    @recorded_by_proxy
+    def test_sample_analyze_binary_with_content_range(self, contentunderstanding_endpoint: str) -> None:
+        """Test analyzing a document from binary data with ContentRange.
+
+        This test validates:
+        1. ContentRange.pages_from(3) — analyze pages 3 onward
+        2. ContentRange.combine() — analyze disjoint page ranges
+        3. ContentRange.page(2) — single page
+        4. ContentRange.pages(1, 3) — page range
+        5. ContentRange.combine(page(1), pages(3, 4)) — combined page ranges
+
+        01_AnalyzeBinary.AnalyzeBinaryWithPageContentRangesAsync()
+        """
+        client = self.create_client(endpoint=contentunderstanding_endpoint)
+
+        # Read the sample file (use multi-page document for ContentRange testing)
+        tests_dir = os.path.dirname(os.path.dirname(__file__))
+        file_path = os.path.join(tests_dir, "test_data", "mixed_financial_docs.pdf")
+        if not os.path.exists(file_path):
+            file_path = os.path.join(tests_dir, "test_data", "sample_invoice.pdf")
+
+        with open(file_path, "rb") as f:
+            file_bytes = f.read()
+
+        # Full analysis for comparison
+        full_poller = client.begin_analyze_binary(
+            analyzer_id="prebuilt-documentSearch", binary_input=file_bytes
+        )
+        full_result = full_poller.result()
+        assert full_result.contents is not None
+        full_doc = full_result.contents[0]
+        assert isinstance(full_doc, DocumentContent)
+        full_page_count = len(full_doc.pages) if full_doc.pages else 0
+        print(f"[PASS] Full document: {full_page_count} pages, {len(full_doc.markdown or '')} chars")
+
+        # ContentRange.pages_from(3) — pages 3 onward (wire format: "3-")
+        print("\nAnalyzing pages 3 onward with ContentRange.pages_from(3)...")
+        range_poller = client.begin_analyze_binary(
+            analyzer_id="prebuilt-documentSearch",
+            binary_input=file_bytes,
+            content_range=ContentRange.pages_from(3),
+        )
+        range_result = range_poller.result()
+        assert range_result.contents is not None
+        range_doc = range_result.contents[0]
+        assert isinstance(range_doc, DocumentContent)
+        range_page_count = len(range_doc.pages) if range_doc.pages else 0
+        assert range_page_count > 0, "PagesFrom(3) should return at least one page"
+        assert full_page_count >= range_page_count, (
+            f"Full document ({full_page_count} pages) should have >= pages than range-limited ({range_page_count})"
+        )
+        print(f"[PASS] PagesFrom(3): {range_page_count} pages (pages {range_doc.start_page_number}-{range_doc.end_page_number})")
+
+        # ContentRange.combine(pages(1, 3), page(5), pages_from(9)) — combined (wire format: "1-3,5,9-")
+        print("\nAnalyzing combined pages (1-3, 5, 9-) with ContentRange.combine()...")
+        combine_poller = client.begin_analyze_binary(
+            analyzer_id="prebuilt-documentSearch",
+            binary_input=file_bytes,
+            content_range=ContentRange.combine(
+                ContentRange.pages(1, 3),
+                ContentRange.page(5),
+                ContentRange.pages_from(9),
+            ),
+        )
+        combine_result = combine_poller.result()
+        assert combine_result.contents is not None
+        combine_doc = combine_result.contents[0]
+        assert isinstance(combine_doc, DocumentContent)
+        combine_page_count = len(combine_doc.pages) if combine_doc.pages else 0
+        assert combine_page_count > 0, "Combine should return at least one page"
+        assert len(full_doc.markdown or '') >= len(combine_doc.markdown or ''), (
+            f"Full document ({len(full_doc.markdown or '')} chars) should be >= Combine ({len(combine_doc.markdown or '')} chars)"
+        )
+        print(f"[PASS] Combine(Pages(1,3), Page(5), PagesFrom(9)): {combine_page_count} pages")
+
+        # ContentRange.page(2) — single page (wire format: "2")
+        print("\nAnalyzing page 2 only with ContentRange.page(2)...")
+        page2_poller = client.begin_analyze_binary(
+            analyzer_id="prebuilt-documentSearch",
+            binary_input=file_bytes,
+            content_range=ContentRange.page(2),
+        )
+        page2_result = page2_poller.result()
+        assert page2_result.contents is not None
+        page2_doc = page2_result.contents[0]
+        assert isinstance(page2_doc, DocumentContent)
+        page2_page_count = len(page2_doc.pages) if page2_doc.pages else 0
+        assert page2_page_count == 1, f"Page(2) should return exactly 1 page, got {page2_page_count}"
+        assert page2_doc.start_page_number == 2, f"Page(2) should start at page 2, got {page2_doc.start_page_number}"
+        assert page2_doc.end_page_number == 2, f"Page(2) should end at page 2, got {page2_doc.end_page_number}"
+        print(f"[PASS] Page(2): {page2_page_count} page, {len(page2_doc.markdown or '')} chars")
+
+        # ContentRange.pages(1, 3) — page range (wire format: "1-3")
+        print("\nAnalyzing pages 1-3 with ContentRange.pages(1, 3)...")
+        pages13_poller = client.begin_analyze_binary(
+            analyzer_id="prebuilt-documentSearch",
+            binary_input=file_bytes,
+            content_range=ContentRange.pages(1, 3),
+        )
+        pages13_result = pages13_poller.result()
+        assert pages13_result.contents is not None
+        pages13_doc = pages13_result.contents[0]
+        assert isinstance(pages13_doc, DocumentContent)
+        pages13_page_count = len(pages13_doc.pages) if pages13_doc.pages else 0
+        assert pages13_page_count == 3, f"Pages(1,3) should return exactly 3 pages, got {pages13_page_count}"
+        assert pages13_doc.start_page_number == 1, f"Pages(1,3) should start at page 1, got {pages13_doc.start_page_number}"
+        assert pages13_doc.end_page_number == 3, f"Pages(1,3) should end at page 3, got {pages13_doc.end_page_number}"
+        print(f"[PASS] Pages(1,3): {pages13_page_count} pages, {len(pages13_doc.markdown or '')} chars")
+
+        # ContentRange.combine(page(1), pages(3, 4)) — combined (wire format: "1,3-4")
+        print("\nAnalyzing combined pages (1, 3-4) with ContentRange.combine()...")
+        combine2_poller = client.begin_analyze_binary(
+            analyzer_id="prebuilt-documentSearch",
+            binary_input=file_bytes,
+            content_range=ContentRange.combine(
+                ContentRange.page(1),
+                ContentRange.pages(3, 4),
+            ),
+        )
+        combine2_result = combine2_poller.result()
+        assert combine2_result.contents is not None
+        combine2_doc = combine2_result.contents[0]
+        assert isinstance(combine2_doc, DocumentContent)
+        combine2_page_count = len(combine2_doc.pages) if combine2_doc.pages else 0
+        assert combine2_page_count >= 2, (
+            f"Combine(Page(1), Pages(3,4)) should return at least 2 pages, got {combine2_page_count}"
+        )
+        assert combine2_doc.start_page_number == 1, f"Combine should start at page 1, got {combine2_doc.start_page_number}"
+        print(f"[PASS] Combine(Page(1), Pages(3,4)): {combine2_page_count} pages, {len(combine2_doc.markdown or '')} chars")
+
+        print("\n[SUCCESS] All ContentRange binary test assertions passed")

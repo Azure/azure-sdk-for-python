@@ -236,7 +236,7 @@ class ContentUnderstandingClient(GeneratedClient):
         analyzer_id: str,
         binary_input: bytes,
         *,
-        content_range: Optional[str] = None,
+        content_range: Optional[Union[str, _models.ContentRange]] = None,
         content_type: str = "application/octet-stream",
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         **kwargs: Any,
@@ -247,9 +247,11 @@ class ContentUnderstandingClient(GeneratedClient):
         :type analyzer_id: str
         :param binary_input: The binary content of the document to analyze. Required.
         :type binary_input: bytes
-        :keyword content_range: Range of the input to analyze (ex. ``1-3,5,9-``). Document content uses
-         1-based page numbers, while audio visual content uses integer milliseconds. Default value is None.
-        :paramtype content_range: str
+        :keyword content_range: Range of the input to analyze. Accepts a
+         :class:`~azure.ai.contentunderstanding.models.ContentRange` or a raw string
+         (ex. ``"1-3,5,9-"``). Document content uses 1-based page numbers,
+         while audio visual content uses integer milliseconds. Default value is None.
+        :paramtype content_range: str or ~azure.ai.contentunderstanding.models.ContentRange
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/octet-stream".
         :paramtype content_type: str
@@ -266,13 +268,16 @@ class ContentUnderstandingClient(GeneratedClient):
            matches Python's native string indexing behavior (len() and str[i] use code points).
            This ensures ContentSpan offsets work correctly with Python string slicing.
         """
+        # Convert ContentRange to string if needed
+        content_range_str = str(content_range) if content_range is not None else None
+
         # Call parent implementation with string_encoding set to "codePoint"
         # (matches Python's string indexing)
         poller = super().begin_analyze_binary(
             analyzer_id=analyzer_id,
             binary_input=binary_input,
             string_encoding="codePoint",
-            content_range=content_range,
+            content_range=content_range_str,
             content_type=content_type,
             processing_location=processing_location,
             **kwargs,

@@ -42,6 +42,7 @@ USAGE:
 
 import asyncio
 import os
+from datetime import timedelta
 from typing import cast
 
 from dotenv import load_dotenv
@@ -50,6 +51,7 @@ from azure.ai.contentunderstanding.models import (
     AnalysisInput,
     AnalysisResult,
     AudioVisualContent,
+    ContentRange,
     DocumentContent,
     AnalysisContent,
 )
@@ -72,7 +74,7 @@ async def main() -> None:
         print("DOCUMENT ANALYSIS FROM URL")
         print("=" * 60)
         # You can replace this URL with your own publicly accessible document URL.
-        document_url = "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/document/invoice.pdf"
+        document_url = "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/document/mixed_financial_docs.pdf"
 
         print(f"Analyzing document from URL with prebuilt-documentSearch...")
         print(f"  URL: {document_url}")
@@ -103,6 +105,23 @@ async def main() -> None:
                 unit = document_content.unit or "units"
                 print(f"  Page {page.page_number}: {page.width} x {page.height} {unit}")
         # [END analyze_document_from_url]
+
+        # [START analyze_document_url_with_content_range]
+        # Restrict to specific pages with ContentRange
+        # Extract only page 1 of the document.
+        print("\nAnalyzing page 1 only with ContentRange...")
+        range_poller = await client.begin_analyze(
+            analyzer_id="prebuilt-documentSearch",
+            inputs=[AnalysisInput(url=document_url, content_range=str(ContentRange.page(1)))],
+        )
+        range_result: AnalysisResult = await range_poller.result()
+
+        range_doc_content = cast(DocumentContent, range_result.contents[0])
+        print(
+            f"ContentRange analysis returned pages"
+            f" {range_doc_content.start_page_number} - {range_doc_content.end_page_number}"
+        )
+        # [END analyze_document_url_with_content_range]
 
         # [START analyze_video_from_url]
         print("\n" + "=" * 60)
@@ -145,6 +164,103 @@ async def main() -> None:
             segment_index += 1
         # [END analyze_video_from_url]
 
+        # [START analyze_video_url_with_content_range]
+        # Restrict to a time window with ContentRange
+        # Analyze only the first 5 seconds of the video.
+        print("\nAnalyzing first 5 seconds of video with ContentRange...")
+        video_range_poller = await client.begin_analyze(
+            analyzer_id="prebuilt-videoSearch",
+            inputs=[
+                AnalysisInput(
+                    url=video_url,
+                    content_range=str(
+                        ContentRange.time_range(timedelta(0), timedelta(seconds=5))
+                    ),
+                )
+            ],
+        )
+        video_range_result = await video_range_poller.result()
+
+        for range_media in video_range_result.contents:
+            range_video_content = cast(AudioVisualContent, range_media)
+            print(
+                f"ContentRange segment:"
+                f" {range_video_content.start_time_ms} ms - {range_video_content.end_time_ms} ms"
+            )
+        # [END analyze_video_url_with_content_range]
+
+        # [START analyze_video_url_with_additional_content_ranges]
+        # Additional ContentRange examples for video:
+
+        # TimeRangeFrom — analyze from 10 seconds onward (wire format: "10000-")
+        print("\nAnalyzing video from 10 seconds onward with ContentRange...")
+        video_from_poller = await client.begin_analyze(
+            analyzer_id="prebuilt-videoSearch",
+            inputs=[
+                AnalysisInput(
+                    url=video_url,
+                    content_range=str(
+                        ContentRange.time_range_from(timedelta(seconds=10))
+                    ),
+                )
+            ],
+        )
+        video_from_result = await video_from_poller.result()
+        for from_media in video_from_result.contents:
+            from_video = cast(AudioVisualContent, from_media)
+            print(
+                f"TimeRangeFrom(10s) segment:"
+                f" {from_video.start_time_ms} ms - {from_video.end_time_ms} ms"
+            )
+
+        # Sub-second precision — analyze from 1.2s to 3.651s (wire format: "1200-3651")
+        print("\nAnalyzing video with sub-second precision (1.2s to 3.651s)...")
+        video_subsec_poller = await client.begin_analyze(
+            analyzer_id="prebuilt-videoSearch",
+            inputs=[
+                AnalysisInput(
+                    url=video_url,
+                    content_range=str(
+                        ContentRange.time_range(
+                            timedelta(milliseconds=1200), timedelta(milliseconds=3651)
+                        )
+                    ),
+                )
+            ],
+        )
+        video_subsec_result = await video_subsec_poller.result()
+        for subsec_media in video_subsec_result.contents:
+            subsec_video = cast(AudioVisualContent, subsec_media)
+            print(
+                f"TimeRange(1.2s, 3.651s) segment:"
+                f" {subsec_video.start_time_ms} ms - {subsec_video.end_time_ms} ms"
+            )
+
+        # Combine — multiple disjoint time ranges (wire format: "0-3000,30000-")
+        print("\nAnalyzing video with combined time ranges (0-3s and 30s onward)...")
+        video_combine_poller = await client.begin_analyze(
+            analyzer_id="prebuilt-videoSearch",
+            inputs=[
+                AnalysisInput(
+                    url=video_url,
+                    content_range=str(
+                        ContentRange.combine(
+                            ContentRange.time_range(timedelta(0), timedelta(seconds=3)),
+                            ContentRange.time_range_from(timedelta(seconds=30)),
+                        )
+                    ),
+                )
+            ],
+        )
+        video_combine_result = await video_combine_poller.result()
+        for combine_media in video_combine_result.contents:
+            combine_video = cast(AudioVisualContent, combine_media)
+            print(
+                f"Combine(0-3s, 30s-) segment:"
+                f" {combine_video.start_time_ms} ms - {combine_video.end_time_ms} ms"
+            )
+        # [END analyze_video_url_with_additional_content_ranges]
+
         # [START analyze_audio_from_url]
         print("\n" + "=" * 60)
         print("AUDIO ANALYSIS FROM URL")
@@ -180,6 +296,80 @@ async def main() -> None:
             for phrase in audio_content.transcript_phrases[:2]:
                 print(f"  [{phrase.speaker}] {phrase.start_time_ms} ms: {phrase.text}")
         # [END analyze_audio_from_url]
+
+        # [START analyze_audio_url_with_content_range]
+        # Restrict to a time range with ContentRange
+        # Analyze audio from 5 seconds onward.
+        print("\nAnalyzing audio from 5 seconds onward with ContentRange...")
+        audio_range_poller = await client.begin_analyze(
+            analyzer_id="prebuilt-audioSearch",
+            inputs=[
+                AnalysisInput(
+                    url=audio_url,
+                    content_range=str(
+                        ContentRange.time_range_from(timedelta(seconds=5))
+                    ),
+                )
+            ],
+        )
+        audio_range_result = await audio_range_poller.result()
+
+        range_audio_content = cast(AudioVisualContent, audio_range_result.contents[0])
+        print(f"ContentRange audio analysis: {range_audio_content.start_time_ms} ms onward")
+        range_summary = (
+            range_audio_content.fields.get("Summary") if range_audio_content.fields else None
+        )
+        if range_summary and hasattr(range_summary, "value"):
+            print(f"Summary: {range_summary.value}")
+        # [END analyze_audio_url_with_content_range]
+
+        # [START analyze_audio_url_with_additional_content_ranges]
+        # Additional ContentRange examples for audio:
+
+        # TimeRange — analyze a specific time window from 2s to 8s (wire format: "2000-8000")
+        print("\nAnalyzing audio from 2s to 8s with ContentRange...")
+        audio_window_poller = await client.begin_analyze(
+            analyzer_id="prebuilt-audioSearch",
+            inputs=[
+                AnalysisInput(
+                    url=audio_url,
+                    content_range=str(
+                        ContentRange.time_range(
+                            timedelta(seconds=2), timedelta(seconds=8)
+                        )
+                    ),
+                )
+            ],
+        )
+        audio_window_result = await audio_window_poller.result()
+        audio_window_content = cast(AudioVisualContent, audio_window_result.contents[0])
+        print(
+            f"TimeRange(2s, 8s):"
+            f" {audio_window_content.start_time_ms} ms - {audio_window_content.end_time_ms} ms"
+        )
+
+        # Sub-second precision — analyze from 1.2s to 3.651s (wire format: "1200-3651")
+        print("\nAnalyzing audio with sub-second precision (1.2s to 3.651s)...")
+        audio_subsec_poller = await client.begin_analyze(
+            analyzer_id="prebuilt-audioSearch",
+            inputs=[
+                AnalysisInput(
+                    url=audio_url,
+                    content_range=str(
+                        ContentRange.time_range(
+                            timedelta(milliseconds=1200), timedelta(milliseconds=3651)
+                        )
+                    ),
+                )
+            ],
+        )
+        audio_subsec_result = await audio_subsec_poller.result()
+        audio_subsec_content = cast(AudioVisualContent, audio_subsec_result.contents[0])
+        print(
+            f"TimeRange(1.2s, 3.651s):"
+            f" {audio_subsec_content.start_time_ms} ms - {audio_subsec_content.end_time_ms} ms"
+        )
+        # [END analyze_audio_url_with_additional_content_ranges]
 
         # [START analyze_image_from_url]
         print("\n" + "=" * 60)

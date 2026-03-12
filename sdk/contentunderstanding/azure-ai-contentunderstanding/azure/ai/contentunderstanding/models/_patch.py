@@ -14,6 +14,7 @@ from enum import Enum
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, TypeVar
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.polling import LROPoller, PollingMethod
+from ._content_range import ContentRange
 from ._models import (
     StringField,
     IntegerField,
@@ -76,6 +77,7 @@ if TYPE_CHECKING:
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
 __all__ = [
+    "ContentRange",
     "RecordMergePatchUpdate",
     "AnalyzeLROPoller",
     "ProcessingLocation",

@@ -58,6 +58,7 @@ from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import (
     AnalysisResult,
+    ContentRange,
     DocumentContent,
 )
 from azure.core.credentials import AzureKeyCredential
@@ -88,6 +89,46 @@ async def main() -> None:
         )
         result: AnalysisResult = await poller.result()
         # [END analyze_document_from_binary]
+
+        # [START analyze_binary_with_content_range]
+        # Analyze only pages 3 onward.
+        print("\nAnalyzing pages 3 onward with ContentRange...")
+        range_poller = await client.begin_analyze_binary(
+            analyzer_id="prebuilt-documentSearch",
+            binary_input=file_bytes,
+            content_range=ContentRange.pages_from(3),
+        )
+        range_result: AnalysisResult = await range_poller.result()
+
+        if isinstance(range_result.contents[0], DocumentContent):
+            range_doc = range_result.contents[0]
+            print(
+                f"ContentRange analysis returned pages"
+                f" {range_doc.start_page_number} - {range_doc.end_page_number}"
+            )
+        # [END analyze_binary_with_content_range]
+
+        # [START analyze_binary_with_combined_content_range]
+        # Analyze pages 1-3, page 5, and pages 9 onward.
+        print("\nAnalyzing combined pages (1-3, 5, 9-) with ContentRange...")
+        combine_range_poller = await client.begin_analyze_binary(
+            analyzer_id="prebuilt-documentSearch",
+            binary_input=file_bytes,
+            content_range=ContentRange.combine(
+                ContentRange.pages(1, 3),
+                ContentRange.page(5),
+                ContentRange.pages_from(9),
+            ),
+        )
+        combine_range_result: AnalysisResult = await combine_range_poller.result()
+
+        if isinstance(combine_range_result.contents[0], DocumentContent):
+            combine_doc = combine_range_result.contents[0]
+            print(
+                f"Combined ContentRange analysis returned pages"
+                f" {combine_doc.start_page_number} - {combine_doc.end_page_number}"
+            )
+        # [END analyze_binary_with_combined_content_range]
 
         # [START extract_markdown]
         print("\nMarkdown Content:")
