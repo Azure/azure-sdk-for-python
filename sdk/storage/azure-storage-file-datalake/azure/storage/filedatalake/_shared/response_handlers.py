@@ -202,8 +202,16 @@ def parse_to_internal_user_delegation_key(service_user_delegation_key):
     internal_user_delegation_key.signed_oid = service_user_delegation_key.signed_oid
     internal_user_delegation_key.signed_tid = service_user_delegation_key.signed_tid
     internal_user_delegation_key.signed_delegated_user_tid = service_user_delegation_key.signed_delegated_user_tid
-    internal_user_delegation_key.signed_start = _to_utc_datetime(service_user_delegation_key.signed_start)
-    internal_user_delegation_key.signed_expiry = _to_utc_datetime(service_user_delegation_key.signed_expiry)
+    internal_user_delegation_key.signed_start = (
+        service_user_delegation_key.signed_start
+        if isinstance(service_user_delegation_key.signed_start, str)
+        else _to_utc_datetime(service_user_delegation_key.signed_start)
+    )
+    internal_user_delegation_key.signed_expiry = (
+        service_user_delegation_key.signed_expiry
+        if isinstance(service_user_delegation_key.signed_expiry, str)
+        else _to_utc_datetime(service_user_delegation_key.signed_expiry)
+    )
     internal_user_delegation_key.signed_service = service_user_delegation_key.signed_service
     internal_user_delegation_key.signed_version = service_user_delegation_key.signed_version
     internal_user_delegation_key.value = service_user_delegation_key.value

@@ -437,7 +437,7 @@ class AccountSasPermissions(object):
         :param str permission: Specify permissions in
             the string with the first letter of the word.
         :return: An AccountSasPermissions object
-        :rtype: ~azure.storage.filedatalake.AccountSasPermissions
+        :rtype: ~azure.storage.blob.AccountSasPermissions
         """
         p_read = "r" in permission
         p_write = "w" in permission
