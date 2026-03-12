@@ -1,4 +1,4 @@
-{
+﻿{
     "CrossLanguagePackageId": "KeyVault",
     "CrossLanguageDefinitionId": {
         "azure.keyvault.certificates._generated.models.Action": "KeyVault.Action",

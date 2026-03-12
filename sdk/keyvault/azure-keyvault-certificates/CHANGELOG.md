@@ -1,10 +1,10 @@
-# Release History
+﻿# Release History
 
-## 4.11.0 (2026-03-11)
+## 4.11.0 (Unreleased)
 
 ### Features Added
 
-- Added `uris` and `ip_addresses` properties to `SubjectAlternativeNames` model to support Uniform Resource 
+- Added `uris` and `ip_addresses` properties to `SubjectAlternativeNames` model to support Uniform Resource
   Identifiers and IP addresses (IPv4 and IPv6) in certificate subject alternative names
 
 ### Breaking Changes
