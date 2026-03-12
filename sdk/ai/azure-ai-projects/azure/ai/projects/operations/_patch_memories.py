@@ -363,7 +363,6 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
             response_headers["Operation-Location"] = self._deserialize(
                 "str", response.headers.get("Operation-Location")
             )
-            # response.headers["Foundry-Features"] = _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW.value
 
             deserialized = _deserialize(MemoryStoreUpdateCompletedResult, response.json().get("result", None))
             if deserialized is None:

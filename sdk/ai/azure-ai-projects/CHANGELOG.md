@@ -5,7 +5,7 @@
 ### Bugs Fixed
 
 * Fix custom Memory Stores LRO poller operation to add the missing
-required `"Foundry-Features": "MemoryStores=V1Preview"` HTTP request header.
+  required `"Foundry-Features": "MemoryStores=V1Preview"` HTTP request header.
 
 ## 2.0.0 (2026-03-06)
 
