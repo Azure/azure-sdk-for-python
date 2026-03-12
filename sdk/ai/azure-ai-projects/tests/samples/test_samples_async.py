@@ -71,7 +71,7 @@ class TestSamplesAsync(AzureRecordedTestCase):
         await executor.execute_async()
         await executor.validate_print_calls_by_llm_async(
             instructions=memories_instructions,
-            project_endpoint=kwargs["foundry_project_endpoint"],
+            project_endpoint=kwargs["memory_store_chat_model_deployment_name"],
             model=kwargs["foundry_model_name"],
         )
 

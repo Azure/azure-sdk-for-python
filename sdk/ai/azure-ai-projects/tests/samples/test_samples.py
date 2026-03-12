@@ -83,7 +83,7 @@ class TestSamples(AzureRecordedTestCase):
         executor.validate_print_calls_by_llm(
             instructions=memories_instructions,
             project_endpoint=kwargs["foundry_project_endpoint"],
-            model=kwargs["foundry_model_name"],
+            model=kwargs["memory_store_chat_model_deployment_name"],
         )
 
     @pytest.mark.parametrize(
