@@ -12,7 +12,7 @@
 
 ### Bugs Fixed
 
-* Placeholder
+* Fixed `.beta.memory_stores.begin_update_memories()` in asynchronous client path to send the required `Foundry-Features` preview header and propagate request headers to LRO polling requests, matching synchronous behavior.
 
 ### Sample updates
 

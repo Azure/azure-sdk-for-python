@@ -10,6 +10,8 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 from typing import Union, Optional, Any, List, overload, IO, cast
 from openai.types.responses import ResponseInputParam
+from pyparsing import Literal
+from azure.ai.projects.models._enums import _FoundryFeaturesOptInKeys
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import NoPolling
 from azure.core.utils import case_insensitive_dict
@@ -22,7 +24,7 @@ from ..models import (
     UpdateMemoriesLROPoller,
     UpdateMemoriesLROPollingMethod,
 )
-from ._operations import JSON, _Unset, ClsType, BetaMemoryStoresOperations as GenerateBetaMemoryStoresOperations
+from ._operations import _SERIALIZER, JSON, _Unset, ClsType, BetaMemoryStoresOperations as GenerateBetaMemoryStoresOperations
 from .._validation import api_version_validation
 from .._utils.model_base import _deserialize, _serialize
 
@@ -326,6 +328,8 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers["Foundry-Features"] = _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW.value
+        
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -355,6 +359,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
             )
 
         kwargs.pop("error_map", None)
+        kwargs["headers"] = _headers
 
         def get_long_running_output(pipeline_response):
             response_headers = {}
