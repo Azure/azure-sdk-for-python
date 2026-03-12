@@ -139,7 +139,7 @@ def validate_and_format_range_headers(
             raise ValueError("Both start and end range required for MD5 content validation.")
         if end_range - start_range > 4 * 1024 * 1024:
             raise ValueError("Getting content MD5 for a range greater than 4MB is not supported.")
-        range_validation = "true"
+        range_validation = True
 
     return range_header, range_validation
 
