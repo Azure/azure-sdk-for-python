@@ -21,7 +21,7 @@ from langgraph.checkpoint.base import (
 
 from azure.core.credentials import TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.ai.agentserver.core.checkpoints.client import (
+from azure.ai.agentserver.core.checkpoints import (
     CheckpointItem,
     CheckpointItemId,
     CheckpointSession,

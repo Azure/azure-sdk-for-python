@@ -5,7 +5,7 @@
 
 from typing import Any, Dict, List, Optional
 
-from azure.ai.agentserver.core.checkpoints.client import (
+from azure.ai.agentserver.core.checkpoints import (
     CheckpointItem,
     CheckpointItemId,
     CheckpointSession,

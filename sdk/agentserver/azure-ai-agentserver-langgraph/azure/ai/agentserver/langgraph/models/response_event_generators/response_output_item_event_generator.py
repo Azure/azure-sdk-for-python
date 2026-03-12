@@ -9,7 +9,7 @@ from langchain_core import messages as langgraph_messages
 from langchain_core.messages import AnyMessage
 from langgraph.types import Interrupt
 
-from azure.ai.agentserver.core.models import projects as project_models
+from azure.ai.agentserver.core.models import _projects as project_models
 from azure.ai.agentserver.core.server.common.id_generator.id_generator import IdGenerator
 from . import ResponseEventGenerator, StreamEventState, item_resource_helpers
 from .response_content_part_event_generator import ResponseContentPartEventGenerator

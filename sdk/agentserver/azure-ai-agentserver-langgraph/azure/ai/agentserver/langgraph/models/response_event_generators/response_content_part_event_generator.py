@@ -7,7 +7,7 @@ from typing import List
 
 from langchain_core import messages as langgraph_messages
 
-from azure.ai.agentserver.core.models import projects as project_models
+from azure.ai.agentserver.core.models import _projects as project_models
 
 from . import item_content_helpers
 from .response_event_generator import ResponseEventGenerator, StreamEventState

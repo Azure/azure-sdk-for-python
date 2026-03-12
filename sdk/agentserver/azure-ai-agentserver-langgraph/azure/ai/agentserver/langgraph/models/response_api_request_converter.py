@@ -17,7 +17,9 @@ from langchain_core.messages import (
 from langchain_core.messages.tool import ToolCall
 
 from azure.ai.agentserver.core.logger import get_logger
-from azure.ai.agentserver.core.models import CreateResponse, openai as openai_models, projects as project_models
+from azure.ai.agentserver.core.models import (
+    CreateResponse, _openai as openai_models, _projects as project_models
+)
 
 logger = get_logger()
 

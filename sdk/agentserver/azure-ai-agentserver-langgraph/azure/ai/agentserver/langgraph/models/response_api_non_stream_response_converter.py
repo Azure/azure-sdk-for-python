@@ -11,7 +11,7 @@ from langchain_core import messages
 from langchain_core.messages import AnyMessage
 
 from azure.ai.agentserver.core.logger import get_logger
-from azure.ai.agentserver.core.models import projects as project_models
+from azure.ai.agentserver.core.models import _projects as project_models
 from .human_in_the_loop_helper import (
     HumanInTheLoopHelper,
     INTERRUPT_NODE_NAME,

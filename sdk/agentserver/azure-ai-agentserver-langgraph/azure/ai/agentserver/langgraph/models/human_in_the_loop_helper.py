@@ -11,8 +11,8 @@ from langgraph.types import (
 )
 
 from azure.ai.agentserver.core.logger import get_logger
-from azure.ai.agentserver.core.models import projects as project_models
-from azure.ai.agentserver.core.models.openai import (ResponseInputItemParam, ResponseInputParam)
+from azure.ai.agentserver.core.models import _projects as project_models
+from azure.ai.agentserver.core.models._openai import (ResponseInputItemParam, ResponseInputParam)
 from .._context import LanggraphRunContext
 
 INTERRUPT_NODE_NAME = "__interrupt__"

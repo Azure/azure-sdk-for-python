@@ -11,8 +11,8 @@ from langgraph.types import (
 )
 
 from azure.ai.agentserver.core.logger import get_logger
-from azure.ai.agentserver.core.models import projects as project_models
-from azure.ai.agentserver.core.models.openai import (
+from azure.ai.agentserver.core.models import _projects as project_models
+from azure.ai.agentserver.core.models._openai import (
     ResponseInputItemParam,
 )
 from azure.ai.agentserver.core.server.common.constants import HUMAN_IN_THE_LOOP_FUNCTION_NAME

@@ -5,7 +5,7 @@
 # mypy: disable-error-code="return-value,assignment"
 from typing import List
 
-from azure.ai.agentserver.core.models import projects as project_models
+from azure.ai.agentserver.core.models import _projects as project_models
 from .response_event_generator import (
     ResponseEventGenerator,
     StreamEventState,

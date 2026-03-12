@@ -2,7 +2,7 @@ import pytest
 from langchain_core import messages as langgraph_messages
 
 from azure.ai.agentserver.core import models
-from azure.ai.agentserver.core.models import projects as project_models
+from azure.ai.agentserver.core.models import _projects as project_models
 from azure.ai.agentserver.langgraph.models.response_api_request_converter import ResponseAPIMessageRequestConverter
 
 
