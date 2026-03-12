@@ -36,12 +36,12 @@ from .models import StorageConfiguration
 from .parser import DEVSTORE_ACCOUNT_KEY, _get_development_storage_endpoint
 from .policies import (
     QueueMessagePolicy,
+    RangeHeaderPolicy,
     StorageContentValidation,
     StorageHeadersPolicy,
     StorageHosts,
     StorageRequestHook,
 )
-from .._generated.azure.storage.blobs._patch import RangeHeaderPolicy
 from .policies_async import AsyncStorageBearerTokenCredentialPolicy, AsyncStorageResponseHook
 from .response_handlers import PartialBatchErrorException, process_storage_error
 from .._shared_access_signature import _is_credential_sastoken

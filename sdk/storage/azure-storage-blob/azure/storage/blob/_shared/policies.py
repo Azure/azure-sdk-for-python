@@ -118,6 +118,15 @@ def urljoin(base_url, stub_url):
     return parsed.geturl()
 
 
+class RangeHeaderPolicy(SansIOHTTPPolicy):
+    """Policy that converts the 'Range' header to 'x-ms-range'."""
+
+    def on_request(self, request: "PipelineRequest") -> None:
+        range_value = request.http_request.headers.pop("Range", None)
+        if range_value is not None:
+            request.http_request.headers["x-ms-range"] = range_value
+
+
 class QueueMessagePolicy(SansIOHTTPPolicy):
 
     def on_request(self, request):

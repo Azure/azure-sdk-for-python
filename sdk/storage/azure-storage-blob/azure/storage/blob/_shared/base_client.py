@@ -45,10 +45,10 @@ from .constants import (
 )
 from .models import LocationMode, StorageConfiguration
 from .parser import DEVSTORE_ACCOUNT_KEY, _get_development_storage_endpoint
-from .._generated.azure.storage.blobs._patch import RangeHeaderPolicy
 from .policies import (
     ExponentialRetry,
     QueueMessagePolicy,
+    RangeHeaderPolicy,
     StorageBearerTokenCredentialPolicy,
     StorageContentValidation,
     StorageHeadersPolicy,
