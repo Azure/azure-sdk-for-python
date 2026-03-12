@@ -20,8 +20,8 @@ from ...models import (
     ResponseUsageOutputTokensDetails,
     MemoryStoreUpdateCompletedResult,
     AsyncUpdateMemoriesLROPoller,
-    AsyncUpdateMemoriesLROPollingMethod,
 )
+from ...models._patch import _AsyncUpdateMemoriesLROPollingMethod
 from ...models._enums import _FoundryFeaturesOptInKeys
 from ._operations import JSON, _Unset, ClsType, BetaMemoryStoresOperations as GenerateBetaMemoryStoresOperations
 from ...operations._patch_memories import _serialize_memory_input_items
@@ -296,7 +296,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.MemoryStoreUpdateCompletedResult] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncUpdateMemoriesLROPollingMethod] = kwargs.pop("polling", True)
+        polling: Union[bool, AsyncLROBasePolling] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
@@ -349,14 +349,14 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         }
 
         if polling is True:
-            polling_method: AsyncUpdateMemoriesLROPollingMethod = AsyncUpdateMemoriesLROPollingMethod(
+            polling_method = _AsyncUpdateMemoriesLROPollingMethod(
                 lro_delay,
                 path_format_arguments=path_format_arguments,
                 headers={"Foundry-Features": _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW.value},
                 **kwargs,
             )
         elif polling is False:
-            polling_method = cast(AsyncUpdateMemoriesLROPollingMethod, AsyncNoPolling())
+            polling_method = cast(_AsyncUpdateMemoriesLROPollingMethod, AsyncNoPolling())
         else:
             polling_method = polling
         if cont_token:
