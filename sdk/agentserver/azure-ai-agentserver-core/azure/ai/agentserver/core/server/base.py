@@ -1,9 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=broad-exception-caught,unused-argument,logging-fstring-interpolation,too-many-statements,too-many-return-statements
-# mypy: ignore-errors
-import asyncio  # pylint: disable=C4763
+import asyncio  # pylint: disable=C4763  # azure-sdk: async-client-bad-name (false positive on module)
 import contextlib
 import inspect
 import json
@@ -13,6 +11,7 @@ from abc import abstractmethod
 from typing import Any, AsyncGenerator, Generator, Optional, Union
 
 import uvicorn
+from openai import AsyncOpenAI
 from opentelemetry import context as otel_context, trace
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 from starlette.applications import Starlette
@@ -40,7 +39,11 @@ from ._response_metadata import (
 from .common.agent_run_context import AgentRunContext
 from ..constants import Constants
 from ..logger import APPINSIGHT_CONNSTR_ENV_NAME, get_logger, get_project_endpoint, request_context
-from ..models import Response as OpenAIResponse, ResponseStreamEvent, projects as project_models
+from ..models import (
+    Response as OpenAIResponse,
+    ResponseStreamEvent,
+    _projects as project_models
+)
 from ..tools import UserInfoContextMiddleware, create_tool_runtime
 from ..utils._credential import AsyncTokenCredentialAdapter
 
@@ -53,19 +56,19 @@ class AgentRunContextMiddleware(BaseHTTPMiddleware):
         super().__init__(app)
         self.agent = agent
 
-    async def dispatch(self, request: Request, call_next):
+    async def dispatch(self, request: Request, call_next):  # type: ignore[override]
         if request.url.path in ("/runs", "/responses"):
             try:
                 self.set_request_id_to_context_var(request)
                 payload = await request.json()
-            except Exception as e:
-                logger.error(f"Invalid JSON payload: {e}")
+            except Exception as e:  # pylint: disable=broad-exception-caught  # middleware catch-all for bad payload
+                logger.error("Invalid JSON payload: %s", e)
                 return JSONResponse({"error": f"Invalid JSON payload: {e}"}, status_code=400)
             try:
                 request.state.agent_run_context = AgentRunContext(payload)
                 self.set_run_context_to_context_var(request.state.agent_run_context)
-            except Exception as e:
-                logger.error(f"Context build failed: {e}.", exc_info=True)
+            except Exception as e:  # pylint: disable=broad-exception-caught  # middleware catch-all for context build
+                logger.error("Context build failed: %s.", e, exc_info=True)
                 return JSONResponse({"error": f"Context build failed: {e}"}, status_code=500)
         return await call_next(request)
 
@@ -99,7 +102,8 @@ class AgentRunContextMiddleware(BaseHTTPMiddleware):
 
 
 class FoundryCBAgent:
-    def __init__(self,
+    def __init__(  # pylint: disable=too-many-statements  # Starlette app setup requires sequential route/middleware wiring
+                 self,
                  credentials: Optional[Union[AsyncTokenCredential, TokenCredential]] = None,
                  project_endpoint: Optional[str] = None) -> None:
         self.credentials = AsyncTokenCredentialAdapter(credentials) if credentials else AsyncDefaultTokenCredential()
@@ -129,9 +133,9 @@ class FoundryCBAgent:
 
                     ex = None
                     resp = await self.agent_run(context)
-                except Exception as e:
+                except Exception as e:  # pylint: disable=broad-exception-caught  # top-level agent_run catch-all
                     # TODO: extract status code from exception
-                    logger.error(f"Error processing CreateResponse request: {e}", exc_info=True)
+                    logger.error("Error processing CreateResponse request: %s", e, exc_info=True)
                     ex = e
 
                 if not context.stream:
@@ -172,7 +176,7 @@ class FoundryCBAgent:
                         if self._should_store(context):
                             logger.debug("Storing output to conversation.")
                             await self._save_output_events_to_conversation(context, output_events)
-                    except Exception as e:  # noqa: BLE001
+                    except Exception as e:  # noqa: BLE001  # pylint: disable=broad-exception-caught
                         logger.error("Error in async generator: %s", e, exc_info=True)
                         ex = e
                     finally:
@@ -207,12 +211,12 @@ class FoundryCBAgent:
         ]
 
         @contextlib.asynccontextmanager
-        async def _lifespan(app):
+        async def _lifespan(app):  # pylint: disable=unused-argument
             import logging
 
             # Log server started successfully
             port = getattr(self, '_port', 'unknown')
-            logger.info(f"FoundryCBAgent server started successfully on port {port}")
+            logger.info("FoundryCBAgent server started successfully on port %s", port)
 
             # Attach App Insights handler to uvicorn loggers
             for handler in logger.handlers:
@@ -234,9 +238,9 @@ class FoundryCBAgent:
             allow_methods=["*"],
             allow_headers=["*"],
         )
-        self.app.add_middleware(AgentRunContextMiddleware, agent=self)
+        self.app.add_middleware(AgentRunContextMiddleware, agent=self)  # type: ignore[arg-type]
 
-        self.tracer = None
+        self.tracer: trace.Tracer = trace.get_tracer(__name__)
 
     def _should_store(self, context: AgentRunContext) -> bool:
         """Determine whether conversation artifacts should be persisted.
@@ -246,7 +250,7 @@ class FoundryCBAgent:
         :return: ``True`` when storage is requested and the conversation is scoped to a project.
         :rtype: bool
         """
-        return context.request.get("store", False) and context.conversation_id and self._project_endpoint
+        return bool(context.request.get("store", False) and context.conversation_id and self._project_endpoint)
 
     def _items_are_equal(self, item1: dict, item2: dict) -> bool:
         """Compare two conversation items for equality based on type and content.
@@ -274,7 +278,7 @@ class FoundryCBAgent:
             return text1 == text2
         return content1 == content2
 
-    async def _create_openai_client(self) -> "AsyncOpenAI":
+    async def _create_openai_client(self) -> AsyncOpenAI:
         """Create an AsyncOpenAI client for conversation operations.
 
         :return: Configured AsyncOpenAI client scoped to the Foundry project endpoint.
@@ -303,7 +307,7 @@ class FoundryCBAgent:
         try:
             conversation_id = context.conversation_id
             input_items = context.request.get("input", [])
-            if not input_items:
+            if not input_items or not conversation_id:
                 return
 
             # Handle string input as a single item
@@ -349,19 +353,22 @@ class FoundryCBAgent:
                             all_match = False
                             break
                     if all_match:
-                        logger.debug(f"All {n} input items already exist in " +
-                                     f"conversation {conversation_id}, skipping save")
+                        logger.debug(
+                            "All %d input items already exist in conversation %s, skipping save",
+                            n,
+                            conversation_id,
+                        )
                         return
-            except Exception as e:
-                logger.debug(f"Could not check for duplicates: {e}")
+            except Exception as e:  # pylint: disable=broad-exception-caught  # best-effort duplicate check
+                logger.debug("Could not check for duplicates: %s", e)
 
             await openai_client.conversations.items.create(
                 conversation_id=conversation_id,
                 items=items_to_save,
             )
-            logger.debug(f"Saved {len(items_to_save)} input items to conversation {conversation_id}")
-        except Exception as e:
-            logger.warning(f"Failed to save input items to conversation: {e}", exc_info=True)
+            logger.debug("Saved %d input items to conversation %s", len(items_to_save), conversation_id)
+        except Exception as e:  # pylint: disable=broad-exception-caught  # best-effort conversation persistence
+            logger.warning("Failed to save input items to conversation: %s", e, exc_info=True)
 
     async def _save_output_to_conversation(
             self, context: AgentRunContext, response: project_models.Response) -> None:
@@ -396,9 +403,9 @@ class FoundryCBAgent:
                 conversation_id=conversation_id,
                 items=items_to_save,
             )
-            logger.debug(f"Saved {len(items_to_save)} output items to conversation {conversation_id}")
-        except Exception as e:
-            logger.warning(f"Failed to save output items to conversation: {e}", exc_info=True)
+            logger.debug("Saved %d output items to conversation %s", len(items_to_save), conversation_id)
+        except Exception as e:  # pylint: disable=broad-exception-caught  # best-effort conversation persistence
+            logger.warning("Failed to save output items to conversation: %s", e, exc_info=True)
 
     async def _save_output_events_to_conversation(self, context: AgentRunContext, events: list) -> None:
         """Persist streaming output events for later retrieval.
@@ -433,9 +440,9 @@ class FoundryCBAgent:
                 conversation_id=conversation_id,
                 items=items_to_save,
             )
-            logger.debug(f"Saved {len(items_to_save)} output items to conversation {conversation_id}")
-        except Exception as e:
-            logger.warning(f"Failed to save output items to conversation: {e}", exc_info=True)
+            logger.debug("Saved %d output items to conversation %s", len(items_to_save), conversation_id)
+        except Exception as e:  # pylint: disable=broad-exception-caught  # best-effort conversation persistence
+            logger.warning("Failed to save output items to conversation: %s", e, exc_info=True)
 
     @abstractmethod
     async def agent_run(
@@ -557,10 +564,10 @@ class FoundryCBAgent:
         })
         yield project_models.ResponseCompletedEvent(sequence_number=sequence_number, response=response)
 
-    async def agent_liveness(self, request) -> Union[Response, dict]:
+    async def agent_liveness(self, request) -> Union[Response, dict]:  # pylint: disable=unused-argument
         return Response(status_code=200)
 
-    async def agent_readiness(self, request) -> Union[Response, dict]:
+    async def agent_readiness(self, request) -> Union[Response, dict]:  # pylint: disable=unused-argument
         return {"status": "ready"}
 
     async def run_async(
@@ -577,7 +584,7 @@ class FoundryCBAgent:
         config = uvicorn.Config(self.app, host="0.0.0.0", port=port, loop="asyncio")
         server = uvicorn.Server(config)
         self._port = port
-        logger.info(f"Starting FoundryCBAgent server async on port {port}")
+        logger.info("Starting FoundryCBAgent server async on port %s", port)
         await server.serve()
 
     def run(self, port: int = int(os.environ.get("DEFAULT_AD_PORT", 8088))) -> None:
@@ -593,7 +600,7 @@ class FoundryCBAgent:
         """
         self.init_tracing()
         self._port = port
-        logger.info(f"Starting FoundryCBAgent server on port {port}")
+        logger.info("Starting FoundryCBAgent server on port %s", port)
         uvicorn.run(self.app, host="0.0.0.0", port=port)
 
     def init_tracing(self):
@@ -618,7 +625,9 @@ class FoundryCBAgent:
             "service.name": "azure.ai.agentserver",
         }
 
-    def init_tracing_internal(self, exporter_endpoint=None, app_insights_conn_str=None):
+    def init_tracing_internal(  # pylint: disable=unused-argument  # base class hook, params used by subclasses
+        self, exporter_endpoint=None, app_insights_conn_str=None
+    ):
         pass
 
     def setup_application_insights_exporter(self, connection_string, provider):
@@ -638,7 +647,7 @@ class FoundryCBAgent:
         exporter_instance = OTLPSpanExporter(endpoint=endpoint)
         processor = BatchSpanProcessor(exporter_instance)
         provider.add_span_processor(processor)
-        logger.info(f"Tracing setup with OTLP exporter: {endpoint}")
+        logger.info("Tracing setup with OTLP exporter: %s", endpoint)
 
     def create_response_headers(self) -> dict[str, str]:
         headers = {}

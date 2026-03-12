@@ -1,4 +1,3 @@
-# pylint: disable=broad-exception-caught,dangerous-default-value
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
@@ -12,13 +11,12 @@ from ._version import VERSION
 from .constants import Constants
 
 def _get_default_log_config() -> dict[str, Any]:
-    """
-    Build default log config with level from environment.
-    
+    """Build default log config with level from environment.
+
     :return: A dictionary containing logging configuration.
-    :rtype: dict
+    :rtype: dict[str, Any]
     """
-    log_level = get_log_level()
+    log_level = _get_log_level()
     return {
         "version": 1,
         "disable_existing_loggers": False,
@@ -40,7 +38,14 @@ def _get_default_log_config() -> dict[str, Any]:
     }
 
 
-def get_log_level():
+def _get_log_level() -> str:
+    """Read log level from the ``AGENT_LOG_LEVEL`` environment variable.
+
+    Falls back to ``"INFO"`` if the variable is unset or contains an invalid value.
+
+    :return: A valid Python logging level name.
+    :rtype: str
+    """
     log_level = os.getenv(Constants.AGENT_LOG_LEVEL, "INFO").upper()
     valid_levels = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     if log_level not in valid_levels:
@@ -54,7 +59,12 @@ request_context = contextvars.ContextVar("request_context", default=None)
 APPINSIGHT_CONNSTR_ENV_NAME = "APPLICATIONINSIGHTS_CONNECTION_STRING"
 
 
-def get_dimensions():
+def _get_dimensions() -> dict[str, str]:
+    """Collect environment-based dimensions for structured logging.
+
+    :return: A mapping of dimension keys to their runtime values.
+    :rtype: dict[str, str]
+    """
     env_values = {name: value for name, value in vars(Constants).items() if not name.startswith("_")}
     res = {"azure.ai.agentserver.version": VERSION}
     for name, env_name in env_values.items():
@@ -65,11 +75,25 @@ def get_dimensions():
     return res
 
 
-def get_project_endpoint(logger=None):
+def get_project_endpoint(logger: Optional[logging.Logger] = None) -> Optional[str]:
+    """Resolve the project endpoint from environment variables.
+
+    Checks ``AZURE_AI_PROJECT_ENDPOINT`` first, then falls back to deriving
+    an endpoint from ``AGENT_PROJECT_NAME``.
+
+    :param logger: Optional logger for diagnostic messages.
+    :type logger: Optional[logging.Logger]
+    :return: The resolved project endpoint URL, or ``None`` if unavailable.
+    :rtype: Optional[str]
+    """
     project_endpoint = os.environ.get(Constants.AZURE_AI_PROJECT_ENDPOINT)
     if project_endpoint:
         if logger:
-            logger.info(f"Using project endpoint from {Constants.AZURE_AI_PROJECT_ENDPOINT}: {project_endpoint}")
+            logger.info(
+                "Using project endpoint from %s: %s",
+                Constants.AZURE_AI_PROJECT_ENDPOINT,
+                project_endpoint,
+            )
         return project_endpoint
     project_resource_id = os.environ.get(Constants.AGENT_PROJECT_RESOURCE_ID)
     if project_resource_id:
@@ -78,18 +102,32 @@ def get_project_endpoint(logger=None):
         parts = last_part.split("@")
         if len(parts) < 2:
             if logger:
-                logger.warning(f"Invalid project resource id format: {project_resource_id}")
+                logger.warning("Invalid project resource id format: %s", project_resource_id)
             return None
         account = parts[0]
         project = parts[1]
         endpoint = f"https://{account}.services.ai.azure.com/api/projects/{project}"
         if logger:
-            logger.info(f"Using project endpoint derived from {Constants.AGENT_PROJECT_RESOURCE_ID}: {endpoint}")
+            logger.info(
+                "Using project endpoint derived from %s: %s",
+                Constants.AGENT_PROJECT_RESOURCE_ID,
+                endpoint,
+            )
         return endpoint
     return None
 
 
-def get_application_insights_connstr(logger=None):
+def _get_application_insights_connstr(logger: Optional[logging.Logger] = None) -> Optional[str]:
+    """Retrieve or derive the Application Insights connection string.
+
+    Looks in the ``APPLICATIONINSIGHTS_CONNECTION_STRING`` environment variable first,
+    then attempts to fetch it from the project endpoint.
+
+    :param logger: Optional logger for diagnostic messages.
+    :type logger: Optional[logging.Logger]
+    :return: The connection string, or ``None`` if unavailable.
+    :rtype: Optional[str]
+    """
     try:
         conn_str = os.environ.get(APPINSIGHT_CONNSTR_ENV_NAME)
         if not conn_str:
@@ -101,22 +139,36 @@ def get_application_insights_connstr(logger=None):
                 project_client = AIProjectClient(credential=DefaultAzureCredential(), endpoint=project_endpoint)
                 conn_str = project_client.telemetry.get_application_insights_connection_string()
                 if not conn_str and logger:
-                    logger.info(f"No Application Insights connection found for project: {project_endpoint}")
+                    logger.info(
+                        "No Application Insights connection found for project: %s",
+                        project_endpoint,
+                    )
                 elif conn_str:
                     os.environ[APPINSIGHT_CONNSTR_ENV_NAME] = conn_str
             elif logger:
                 logger.info("Application Insights not configured, telemetry export disabled.")
         return conn_str
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-exception-caught  # bootstrap: many failure modes possible
         if logger:
-            logger.warning(f"Failed to get Application Insights connection string, telemetry export disabled: {e}")
+            logger.warning(
+                "Failed to get Application Insights connection string, telemetry export disabled: %s",
+                e,
+            )
         return None
 
 
 class CustomDimensionsFilter(logging.Filter):
-    def filter(self, record):
-        # Add custom dimensions to every log record
-        dimensions = get_dimensions()
+    """Logging filter that attaches environment dimensions and request context to log records."""
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        """Inject custom dimensions into *record* and allow it through.
+
+        :param record: The log record to enrich.
+        :type record: logging.LogRecord
+        :return: Always ``True`` so the record is never discarded.
+        :rtype: bool
+        """
+        dimensions = _get_dimensions()
         for key, value in dimensions.items():
             setattr(record, key, value)
         cur_request_context = request_context.get()
@@ -140,7 +192,7 @@ def configure(log_config: Optional[dict[str, Any]] = None):
         config.dictConfig(log_config)
         app_logger = logging.getLogger("azure.ai.agentserver")
 
-        application_insights_connection_string = get_application_insights_connstr(logger=app_logger)
+        application_insights_connection_string = _get_application_insights_connstr(logger=app_logger)
         enable_application_insights_logger = (
             os.environ.get(Constants.ENABLE_APPLICATION_INSIGHTS_LOGGER, "true").lower() == "true"
         )
@@ -169,10 +221,10 @@ def configure(log_config: Optional[dict[str, Any]] = None):
             handler.addFilter(custom_filter)
 
             # Only add to azure.ai.agentserver namespace to avoid infrastructure logs
-            app_logger.setLevel(get_log_level())
+            app_logger.setLevel(_get_log_level())
             app_logger.addHandler(handler)
 
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-exception-caught
         print(f"Failed to configure logging: {e}")
 
 

@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import asyncio  # pylint: disable=C4763
+import asyncio  # pylint: disable=C4763  # azure-sdk: async-client-bad-name
 import itertools
 from collections import defaultdict
 from typing import (
@@ -37,7 +37,7 @@ from .operations._foundry_hosted_mcp_tools import FoundryMcpToolsOperations
 from .._exceptions import ToolInvocationError
 
 
-class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):  # pylint: disable=C4748
+class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):  # pylint: disable=C4748  # azure-sdk: client-paging-methods-use-list
     """Asynchronous client for aggregating tools from Azure AI MCP and Tools APIs.
 
     This client provides access to tools from both MCP (Model Context Protocol) servers
@@ -55,7 +55,7 @@ class FoundryToolClient(AsyncContextManager["FoundryToolClient"]):  # pylint: di
     :type api_version: str or None
     """
 
-    def __init__(  # pylint: disable=C4718
+    def __init__(  # pylint: disable=C4718  # azure-sdk: client-method-name-no-double-underscore
         self,
         endpoint: str,
         credential: "AsyncTokenCredential",
