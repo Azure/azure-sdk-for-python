@@ -327,16 +327,19 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
          ~azure.ai.projects.models.UpdateMemoriesLROPoller
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        request_kwargs = kwargs.copy()
+
+        _incoming_headers = request_kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(dict(_incoming_headers))
         _headers["Foundry-Features"] = _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW.value
         
-        _params = kwargs.pop("params", {}) or {}
+        _params = request_kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[MemoryStoreUpdateCompletedResult] = kwargs.pop("cls", None)
-        polling: Union[bool, UpdateMemoriesLROPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        content_type: Optional[str] = request_kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[MemoryStoreUpdateCompletedResult] = request_kwargs.pop("cls", None)
+        polling: Union[bool, UpdateMemoriesLROPollingMethod] = request_kwargs.pop("polling", True)
+        lro_delay = request_kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = request_kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._update_memories_initial(
                 name=name,
@@ -349,7 +352,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
-                **kwargs,
+                **request_kwargs,
             )
             raw_result.http_response.read()  # type: ignore
 
@@ -358,8 +361,9 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
                 f"{self._config.endpoint}/memory_stores/{name}/updates/{raw_result.http_response.json().get('update_id')}?api-version=v1"  # type: ignore
             )
 
-        kwargs.pop("error_map", None)
-        kwargs["headers"] = _headers
+        polling_kwargs = request_kwargs.copy()
+        polling_kwargs.pop("error_map", None)
+        polling_kwargs["headers"] = _headers
 
         def get_long_running_output(pipeline_response):
             response_headers = {}
@@ -389,7 +393,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
 
         if polling is True:
             polling_method: UpdateMemoriesLROPollingMethod = UpdateMemoriesLROPollingMethod(
-                lro_delay, path_format_arguments=path_format_arguments, **kwargs
+                lro_delay, path_format_arguments=path_format_arguments, **polling_kwargs
             )
         elif polling is False:
             polling_method = cast(UpdateMemoriesLROPollingMethod, NoPolling())
