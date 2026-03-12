@@ -46,7 +46,6 @@ class TestSamples(AzureRecordedTestCase):
         get_sample_paths(
             "agents/tools",
             samples_to_skip=[
-                "sample_agent_azure_function.py",  # In the list of additional sample tests above due to more parameters needed
                 "sample_agent_computer_use.py",  # 400 BadRequestError: Invalid URI (URI string too long)
                 "sample_agent_browser_automation.py",  # APITimeoutError: request timed out
                 "sample_agent_openapi.py",  # 400 2/28/2026 validation/tool_user_error; failing weather GET curl call in OpenAPI tool
@@ -70,11 +69,7 @@ class TestSamples(AzureRecordedTestCase):
         "sample_path",
         get_sample_paths(
             "memories",
-            samples_to_skip=[
-                "sample_memory_advanced.py",
-                "sample_memory_basic.py",
-                "sample_memory_crud.py", # Sample works fine. But AI thinks something is wrong.
-            ],
+            samples_to_skip=[],
         ),
     )
     @servicePreparer()
@@ -88,14 +83,16 @@ class TestSamples(AzureRecordedTestCase):
         executor.validate_print_calls_by_llm(
             instructions=memories_instructions,
             project_endpoint=kwargs["foundry_project_endpoint"],
-            model=kwargs["foundry_model_name"],
+            model=kwargs["memory_store_chat_model_deployment_name"],
         )
 
     @pytest.mark.parametrize(
         "sample_path",
         get_sample_paths(
             "agents",
-            samples_to_skip=["sample_workflow_multi_agent.py"], # I see in sample spew: "Event 10 type 'response.failed'" with error message in payload "The specified agent was not found. Please verify that the agent name and version are correct".
+            samples_to_skip=[
+                "sample_workflow_multi_agent.py"
+            ],  # I see in sample spew: "Event 10 type 'response.failed'" with error message in payload "The specified agent was not found. Please verify that the agent name and version are correct".
         ),
     )
     @servicePreparer()

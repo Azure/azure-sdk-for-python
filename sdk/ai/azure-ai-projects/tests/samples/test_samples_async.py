@@ -58,11 +58,7 @@ class TestSamplesAsync(AzureRecordedTestCase):
         "sample_path",
         get_async_sample_paths(
             "memories",
-            samples_to_skip=[
-                "sample_memory_advanced_async.py",
-                "sample_memory_basic_async.py",
-                "sample_memory_crud_async.py",  # Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema
-            ],
+            samples_to_skip=[],
         ),
     )
     @servicePreparer()
@@ -75,7 +71,7 @@ class TestSamplesAsync(AzureRecordedTestCase):
         await executor.execute_async()
         await executor.validate_print_calls_by_llm_async(
             instructions=memories_instructions,
-            project_endpoint=kwargs["foundry_project_endpoint"],
+            project_endpoint=kwargs["memory_store_chat_model_deployment_name"],
             model=kwargs["foundry_model_name"],
         )
 
