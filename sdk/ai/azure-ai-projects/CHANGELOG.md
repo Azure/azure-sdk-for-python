@@ -1,6 +1,6 @@
 # Release History
 
-## 2.0.1b1 (Unreleased)
+## 2.0.2 (Unreleased)
 
 ### Features Added
 
@@ -25,6 +25,13 @@
 ### Other Changes
 
 * Placeholder
+
+## 2.0.1 (2026-03-12)
+
+### Bugs Fixed
+
+* Fix custom Memory Stores LRO poller operation to add the missing
+  required `"Foundry-Features": "MemoryStores=V1Preview"` HTTP request header.
 
 ## 2.0.0 (2026-03-06)
 
