@@ -55,4 +55,4 @@ REM Add:
 REM _SERIALIZER = Serializer()
 REM _SERIALIZER.client_side_validation = False
 REM just before the definition of the class BetaOperations (the first class defined in the file)
-    
+

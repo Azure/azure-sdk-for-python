@@ -49,9 +49,7 @@ with (
 
     # Upload file to vector store
     with open(asset_file_path, "rb") as f:
-        file = openai_client.vector_stores.files.upload_and_poll(
-            vector_store_id=vector_store.id, file=f
-        )
+        file = openai_client.vector_stores.files.upload_and_poll(vector_store_id=vector_store.id, file=f)
     print(f"File uploaded to vector store (id: {file.id})")
 
     tool = FileSearchTool(vector_store_ids=[vector_store.id])
