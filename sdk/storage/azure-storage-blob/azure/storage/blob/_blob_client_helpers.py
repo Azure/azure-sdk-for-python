@@ -48,6 +48,7 @@ from ._serialize import (
 )
 from ._shared import encode_base64
 from ._shared.base_client import parse_query
+from ._shared.constants import DEFAULT_MAX_CONCURRENCY
 from ._shared.request_handlers import (
     add_metadata_headers,
     get_length,
@@ -137,7 +138,9 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
     validate_content = kwargs.pop('validate_content', False)
     content_settings = kwargs.pop('content_settings', None)
     overwrite = kwargs.pop('overwrite', False)
-    max_concurrency = kwargs.pop('max_concurrency', 1)
+    max_concurrency = kwargs.pop('max_concurrency', None)
+    if max_concurrency is None:
+        max_concurrency = DEFAULT_MAX_CONCURRENCY
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
@@ -323,7 +326,7 @@ def _download_blob_options(
         'modified_access_conditions': mod_conditions,
         'cpk_info': cpk_info,
         'download_cls': kwargs.pop('cls', None) or deserialize_blob_stream,
-        'max_concurrency':kwargs.pop('max_concurrency', 1),
+        'max_concurrency': kwargs.pop('max_concurrency', None) or DEFAULT_MAX_CONCURRENCY,
         'encoding': encoding,
         'timeout': kwargs.pop('timeout', None),
         'name': blob_name,

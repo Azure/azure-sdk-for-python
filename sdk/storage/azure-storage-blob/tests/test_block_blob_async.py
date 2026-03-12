@@ -2102,4 +2102,21 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         finally:
             await self.bsc.delete_container(self.container_name)
 
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_put_block_blob_with_none_concurrency(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        data = b'a' * 5 * 1024
+
+        # max_concurrency=None should not raise TypeError
+        await blob.upload_blob(data, max_concurrency=None, overwrite=True)
+
+        content = await (await blob.download_blob()).readall()
+        assert data == content
+
 # ------------------------------------------------------------------------------
