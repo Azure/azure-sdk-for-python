@@ -47,15 +47,7 @@ version = {attr = "azure.storage.blob._generated._version.VERSION"}
 readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
 
 [tool.setuptools.packages.find]
-exclude = [
-    "tests*",
-    "generated_tests*",
-    "samples*",
-    "generated_samples*",
-    "doc*",
-    "azure",
-    "azure.storage",
-]
+include = [azure.storage.blob*]
 
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
