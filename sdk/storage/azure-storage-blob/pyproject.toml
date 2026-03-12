@@ -55,7 +55,6 @@ exclude = [
     "doc*",
     "azure",
     "azure.storage",
-    "azure.storage.blob",
 ]
 
 [tool.setuptools.package-data]
