@@ -124,16 +124,18 @@ class GetTokenMixin(abc.ABC):
             )
             refresh_status = get_refresh_status(token, self._last_request_time)
             if refresh_status == TokenRefreshStatus.REQUIRED:
+                self._last_request_time = int(time.time())
                 token = await self._request_token(
                     *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
                 )
             elif refresh_status == TokenRefreshStatus.RECOMMENDED:
                 try:
+                    self._last_request_time = int(time.time())
                     token = await self._request_token(
                         *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
                     )
                 except Exception:  # pylint:disable=broad-except
-                    self._last_request_time = int(time.time())
+                    pass
             _LOGGER.log(
                 logging.DEBUG if within_credential_chain.get() else logging.INFO,
                 "%s.%s succeeded",

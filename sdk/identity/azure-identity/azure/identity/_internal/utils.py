@@ -38,7 +38,7 @@ def get_refresh_status(token: Optional[AccessTokenInfo], last_request_time: int)
 
     :param ~azure.core.credentials.AccessTokenInfo or None token: The token to evaluate.
         If None, a refresh is required.
-    :param int last_request_time: The time of the last failed proactive refresh attempt.
+    :param int last_request_time: The time of the last token request, as seconds since the epoch.
     :return: The refresh status of the token.
     :rtype: TokenRefreshStatus
     """
@@ -51,7 +51,7 @@ def get_refresh_status(token: Optional[AccessTokenInfo], last_request_time: int)
     if now >= token.expires_on:
         return TokenRefreshStatus.REQUIRED
 
-    # A recent proactive refresh failed - back off to avoid hammering the token endpoint.
+    # A recent token request occurred - if the token is still valid, avoid making another request so soon.
     if now - last_request_time < DEFAULT_TOKEN_REFRESH_RETRY_DELAY:
         return TokenRefreshStatus.NOT_NEEDED
 
