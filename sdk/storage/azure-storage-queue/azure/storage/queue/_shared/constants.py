@@ -18,3 +18,5 @@ DEFAULT_OAUTH_SCOPE = "/.default"
 STORAGE_OAUTH_SCOPE = "https://storage.azure.com/.default"
 
 SERVICE_HOST_BASE = "core.windows.net"
+
+DEFAULT_MAX_CONCURRENCY = 1
