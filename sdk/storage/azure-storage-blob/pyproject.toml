@@ -47,7 +47,7 @@ version = {attr = "azure.storage.blob._generated._version.VERSION"}
 readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
 
 [tool.setuptools.packages.find]
-include = [azure.storage.blob*]
+include = ["azure.storage.blob*"]
 
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
