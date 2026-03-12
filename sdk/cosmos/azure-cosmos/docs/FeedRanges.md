@@ -1,20 +1,47 @@
 # Feed Ranges in the Python SDK for Azure Cosmos DB
 
-Feed ranges represent a scope within a container, defined by a range of partition key hash values. They enable sub-container-level operations such as parallel query processing, scoped change feed consumption, and workload distribution across multiple workers.
+## What Are Feed Ranges?
+
+A feed range is an opaque representation of a scope within a container, defined by a contiguous range of partition key hash values. Feed ranges are a flexible way to represent partitioning at different levels of granularity:
+
+- **Entire container** – A single feed range can span the full hash range, covering all data in the container.
+- **Physical partition** – Each feed range returned by `read_feed_ranges()` corresponds to one physical partition. The full set covers the entire container without overlap, and every item belongs to exactly one feed range.
+- **Specific partition key value** – A feed range can represent the narrow hash range for a single partition key, obtained via `feed_range_from_partition_key()`.
+
+In all cases, a feed range is just another way to express a scope within a container's partition key hash space.
 
 For general information about partitioning, see:
 - [Partitioning overview](https://learn.microsoft.com/azure/cosmos-db/partitioning-overview)
 - [Partition Keys in the Python SDK](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md)
 
----
-
-## What Are Feed Ranges?
-
-A feed range is an opaque representation of a subset of data within a container.  Each feed range corresponds to a contiguous range of partition key hash values.  The set of all feed ranges returned by `read_feed_ranges()` covers the entire container without overlap, and every item belongs to exactly one feed range.
-
 > **Important:** Feed ranges are returned as `dict[str, Any]` values and must be treated as opaque.  
 > Do **not** manually construct, parse, or depend on the internal structure of a feed range dictionary.  
 > Use only the container methods described below to create, compare, and consume feed ranges.
+
+---
+
+## Feed Ranges vs. Partition Keys
+
+Feed ranges and partition keys both define a scope within a container, but they operate at different levels:
+
+| | Partition Key | Feed Range |
+|---|---|---|
+| **Granularity** | A single logical partition (one partition key value) | Zero, one, or many logical partitions (a hash range) |
+| **Source** | Defined by your data model; you supply the value | Returned by `read_feed_ranges()` or derived from a partition key |
+| **Relationship** | A partition key maps to exactly one feed range | A feed range can contain multiple partition keys |
+| **Use case** | Point reads, single-partition queries | Parallel processing, scoped change feed, workload distribution |
+
+You can convert between them:
+```python
+# Partition key → Feed range
+feed_range = container.feed_range_from_partition_key("my_partition_key")
+
+# Check which container feed range contains a partition key's feed range
+for container_fr in container.read_feed_ranges():
+    if container.is_feed_range_subset(container_fr, feed_range):
+        print("Partition key belongs to this feed range")
+        break
+```
 
 ---
 
@@ -72,7 +99,11 @@ feed_range = await container.feed_range_from_partition_key("Seattle")
 
 ### `is_feed_range_subset()`
 
-Checks whether one feed range is fully contained within another.
+Checks whether one feed range is fully contained within another. Common use cases include:
+
+- **Partition key → worker routing**: After converting a partition key to a feed range with `feed_range_from_partition_key()`, determine which container-level feed range (and therefore which worker) owns that partition key.
+- **Validating feed range assignments**: In fan-out architectures, verify that a previously stored feed range is still covered by one of the container's current feed ranges after a partition split.
+- **Merging or grouping work**: When redistributing workload, check whether a smaller feed range falls within a larger one to decide if they can be handled together.
 
 ```python
 # Sync
@@ -166,31 +197,6 @@ session_token = await container.get_latest_session_token(
 > **Note:** In the async client, `get_latest_session_token()` is a coroutine and **must be awaited**.
 
 See the [session_token_management.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/session_token_management.py) (sync) and [session_token_management_async.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/session_token_management_async.py) (async) samples for complete examples.
-
----
-
-## Feed Ranges vs. Partition Keys
-
-Feed ranges and partition keys both define a scope within a container, but they operate at different levels:
-
-| | Partition Key | Feed Range |
-|---|---|---|
-| **Granularity** | A single logical partition (one partition key value) | Zero, one, or many logical partitions (a hash range) |
-| **Source** | Defined by your data model; you supply the value | Returned by `read_feed_ranges()` or derived from a partition key |
-| **Relationship** | A partition key maps to exactly one feed range | A feed range can contain multiple partition keys |
-| **Use case** | Point reads, single-partition queries | Parallel processing, scoped change feed, workload distribution |
-
-You can convert between them:
-```python
-# Partition key → Feed range
-feed_range = container.feed_range_from_partition_key("my_partition_key")
-
-# Check which container feed range contains a partition key's feed range
-for container_fr in container.read_feed_ranges():
-    if container.is_feed_range_subset(container_fr, feed_range):
-        print("Partition key belongs to this feed range")
-        break
-```
 
 ---
 
