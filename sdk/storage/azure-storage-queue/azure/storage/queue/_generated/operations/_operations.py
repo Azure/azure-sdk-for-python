@@ -169,7 +169,7 @@ def build_queue_create_request(
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = ""
+    _url = "/"
 
     # Construct parameters
     if timeout is not None:
@@ -207,7 +207,7 @@ def build_queue_delete_request(*, timeout: Optional[int] = None, **kwargs: Any) 
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = ""
+    _url = "/"
 
     # Construct parameters
     if timeout is not None:
@@ -293,7 +293,7 @@ def build_queue_receive_messages_request(
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = "messages"
+    _url = "/messages"
 
     # Construct parameters
     if number_of_messages is not None:
@@ -316,7 +316,7 @@ def build_queue_clear_request(*, timeout: Optional[int] = None, **kwargs: Any) -
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "messages"
+    _url = "/messages"
 
     # Construct parameters
     if timeout is not None:
@@ -343,7 +343,7 @@ def build_queue_send_message_request(
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = "messages"
+    _url = "/messages"
 
     # Construct parameters
     if visibility_timeout is not None:
@@ -371,7 +371,7 @@ def build_queue_peek_messages_request(
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = "messages?peekonly=true"
+    _url = "/messages?peekonly=true"
 
     # Construct parameters
     if number_of_messages is not None:
@@ -395,7 +395,7 @@ def build_queue_update_request(
     content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "messages/{messageId}"
+    _url = "/messages/{messageId}"
     path_format_arguments = {
         "messageId": _SERIALIZER.url("message_id", message_id, "str"),
     }
@@ -423,7 +423,7 @@ def build_queue_delete_message_request(
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "messages/{messageId}"
+    _url = "/messages/{messageId}"
     path_format_arguments = {
         "messageId": _SERIALIZER.url("message_id", message_id, "str"),
     }
@@ -447,7 +447,7 @@ class ServiceOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.storage.queues.QueuesClient`'s
+        :class:`~azure.storage.queue._generated.QueuesClient`'s
         :attr:`service` attribute.
     """
 
@@ -466,7 +466,7 @@ class ServiceOperations:
         Storage Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
         :param queue_service_properties: The storage service properties to set. Required.
-        :type queue_service_properties: ~azure.storage.queues.models.QueueServiceProperties
+        :type queue_service_properties: ~azure.storage.queue._generated.models.QueueServiceProperties
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
          href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
          Timeouts for Queue Service Operations.</a>. Default value is None.
@@ -540,7 +540,7 @@ class ServiceOperations:
          Timeouts for Queue Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :return: QueueServiceProperties. The QueueServiceProperties is compatible with MutableMapping
-        :rtype: ~azure.storage.queues.models.QueueServiceProperties
+        :rtype: ~azure.storage.queue._generated.models.QueueServiceProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -618,7 +618,7 @@ class ServiceOperations:
          Timeouts for Queue Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :return: QueueServiceStats. The QueueServiceStats is compatible with MutableMapping
-        :rtype: ~azure.storage.queues.models.QueueServiceStats
+        :rtype: ~azure.storage.queue._generated.models.QueueServiceStats
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -693,13 +693,13 @@ class ServiceOperations:
         using bearer token authentication.
 
         :param key_info: Key information. Required.
-        :type key_info: ~azure.storage.queues.models.KeyInfo
+        :type key_info: ~azure.storage.queue._generated.models.KeyInfo
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
          href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
          Timeouts for Queue Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :return: UserDelegationKey. The UserDelegationKey is compatible with MutableMapping
-        :rtype: ~azure.storage.queues.models.UserDelegationKey
+        :rtype: ~azure.storage.queue._generated.models.UserDelegationKey
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -804,9 +804,9 @@ class ServiceOperations:
         :paramtype timeout: int
         :keyword include: Include this parameter to specify that the queue's metadata be returned as
          part of the response body. Default value is None.
-        :paramtype include: list[str or ~azure.storage.queues.models.ListQueuesIncludeType]
+        :paramtype include: list[str or ~azure.storage.queue._generated.models.ListQueuesIncludeType]
         :return: ListQueuesResponse. The ListQueuesResponse is compatible with MutableMapping
-        :rtype: ~azure.storage.queues.models.ListQueuesResponse
+        :rtype: ~azure.storage.queue._generated.models.ListQueuesResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -884,7 +884,7 @@ class QueueOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.storage.queues.QueuesClient`'s
+        :class:`~azure.storage.queue._generated.QueuesClient`'s
         :attr:`queue` attribute.
     """
 
@@ -1172,7 +1172,7 @@ class QueueOperations:
          Timeouts for Queue Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :return: SignedIdentifiers. The SignedIdentifiers is compatible with MutableMapping
-        :rtype: ~azure.storage.queues.models.SignedIdentifiers
+        :rtype: ~azure.storage.queue._generated.models.SignedIdentifiers
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1246,7 +1246,7 @@ class QueueOperations:
         """sets the permissions for the specified queue.
 
         :param queue_acl: The access control list for the queue. Required.
-        :type queue_acl: ~azure.storage.queues.models.SignedIdentifiers
+        :type queue_acl: ~azure.storage.queue._generated.models.SignedIdentifiers
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
          href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
          Timeouts for Queue Service Operations.</a>. Default value is None.
@@ -1338,7 +1338,7 @@ class QueueOperations:
          Timeouts for Queue Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :return: ListOfReceivedMessage. The ListOfReceivedMessage is compatible with MutableMapping
-        :rtype: ~azure.storage.queues.models.ListOfReceivedMessage
+        :rtype: ~azure.storage.queue._generated.models.ListOfReceivedMessage
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1488,7 +1488,7 @@ class QueueOperations:
         for previous versions.
 
         :param queue_message: A Message object which can be stored in a Queue. Required.
-        :type queue_message: ~azure.storage.queues.models.QueueMessage
+        :type queue_message: ~azure.storage.queue._generated.models.QueueMessage
         :keyword visibility_timeout: Specifies the new visibility timeout value, in seconds, relative
          to server time. The default value is 30 seconds. A specified value must be larger than or equal
          to 1 second, and cannot be larger than 7 days, or larger than 2 hours on REST protocol versions
@@ -1507,7 +1507,7 @@ class QueueOperations:
          Timeouts for Queue Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :return: ListOfSentMessage. The ListOfSentMessage is compatible with MutableMapping
-        :rtype: ~azure.storage.queues.models.ListOfSentMessage
+        :rtype: ~azure.storage.queue._generated.models.ListOfSentMessage
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1599,7 +1599,7 @@ class QueueOperations:
          Timeouts for Queue Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :return: ListOfPeekedMessage. The ListOfPeekedMessage is compatible with MutableMapping
-        :rtype: ~azure.storage.queues.models.ListOfPeekedMessage
+        :rtype: ~azure.storage.queue._generated.models.ListOfPeekedMessage
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1687,7 +1687,7 @@ class QueueOperations:
         :param message_id: The id of the queue message. Required.
         :type message_id: str
         :param queue_message: A Message object which can be stored in a Queue. Default value is None.
-        :type queue_message: ~azure.storage.queues.models.QueueMessage
+        :type queue_message: ~azure.storage.queue._generated.models.QueueMessage
         :keyword pop_receipt: Required. Specifies the valid pop receipt value returned from an earlier
          call to the Get Messages or Update Message operation. Required.
         :paramtype pop_receipt: str

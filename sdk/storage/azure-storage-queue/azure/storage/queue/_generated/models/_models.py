@@ -164,7 +164,7 @@ class Error(_Model):
      "AuthorizationProtocolMismatch", "AuthorizationPermissionMismatch",
      "AuthorizationServiceMismatch", "AuthorizationResourceTypeMismatch", and
      "FeatureVersionMismatch".
-    :vartype code: str or ~azure.storage.queues.models.StorageErrorCode
+    :vartype code: str or ~azure.storage.queue._generated.models.StorageErrorCode
     :ivar message: The error message.
     :vartype message: str
     """
@@ -224,7 +224,7 @@ class GeoReplication(_Model):
 
     :ivar status: The status of the secondary location. Required. Known values are: "live",
      "bootstrap", and "unavailable".
-    :vartype status: str or ~azure.storage.queues.models.GeoReplicationStatusType
+    :vartype status: str or ~azure.storage.queue._generated.models.GeoReplicationStatusType
     :ivar last_sync_time: A GMT date/time value, to the second. All primary writes preceding this
      value are guaranteed to be available for read operations at the secondary. Primary writes after
      this point in time may or may not be available for reads. Required.
@@ -324,7 +324,7 @@ class ListOfPeekedMessage(_Model):
     """List wrapper for PeekedMessageItem array.
 
     :ivar items_property: The list of peeked messages. Required.
-    :vartype items_property: ~azure.storage.queues.models.PeekedMessage
+    :vartype items_property: ~azure.storage.queue._generated.models.PeekedMessage
     """
 
     items_property: list["_models.PeekedMessage"] = rest_field(
@@ -359,7 +359,7 @@ class ListOfReceivedMessage(_Model):
     """List wrapper for DequeuedMessageItem array.
 
     :ivar items_property: The list of dequeued messages. Required.
-    :vartype items_property: ~azure.storage.queues.models.ReceivedMessage
+    :vartype items_property: ~azure.storage.queue._generated.models.ReceivedMessage
     """
 
     items_property: list["_models.ReceivedMessage"] = rest_field(
@@ -394,7 +394,7 @@ class ListOfSentMessage(_Model):
     """List wrapper for EnqueuedMessage array.
 
     :ivar items_property: The list of enqueued messages. Required.
-    :vartype items_property: ~azure.storage.queues.models.SentMessage
+    :vartype items_property: ~azure.storage.queue._generated.models.SentMessage
     """
 
     items_property: list["_models.SentMessage"] = rest_field(
@@ -437,7 +437,7 @@ class ListQueuesResponse(_Model):
     :ivar max_results: The max results of the queues. Required.
     :vartype max_results: int
     :ivar queue_items: The queue segment.
-    :vartype queue_items: ~azure.storage.queues.models.QueueItem
+    :vartype queue_items: ~azure.storage.queue._generated.models.QueueItem
     :ivar next_marker: The next marker of the queues. Required.
     :vartype next_marker: str
     """
@@ -514,7 +514,7 @@ class Logging(_Model):
     :ivar write: Whether write operation is logged. Required.
     :vartype write: bool
     :ivar retention_policy: The retention policy of the logs. Required.
-    :vartype retention_policy: ~azure.storage.queues.models.RetentionPolicy
+    :vartype retention_policy: ~azure.storage.queue._generated.models.RetentionPolicy
     """
 
     version: str = rest_field(
@@ -578,7 +578,7 @@ class Metrics(_Model):
     :ivar include_apis: Whether to include API in the metrics.
     :vartype include_apis: bool
     :ivar retention_policy: The retention policy of the metrics.
-    :vartype retention_policy: ~azure.storage.queues.models.RetentionPolicy
+    :vartype retention_policy: ~azure.storage.queue._generated.models.RetentionPolicy
     """
 
     version: Optional[str] = rest_field(
@@ -779,13 +779,13 @@ class QueueServiceProperties(_Model):
     """The service properties.
 
     :ivar logging: The logging properties.
-    :vartype logging: ~azure.storage.queues.models.Logging
+    :vartype logging: ~azure.storage.queue._generated.models.Logging
     :ivar hour_metrics: The hour metrics properties.
-    :vartype hour_metrics: ~azure.storage.queues.models.Metrics
+    :vartype hour_metrics: ~azure.storage.queue._generated.models.Metrics
     :ivar minute_metrics: The minute metrics properties.
-    :vartype minute_metrics: ~azure.storage.queues.models.Metrics
+    :vartype minute_metrics: ~azure.storage.queue._generated.models.Metrics
     :ivar cors: The CORS properties.
-    :vartype cors: ~azure.storage.queues.models.CorsRule
+    :vartype cors: ~azure.storage.queue._generated.models.CorsRule
     """
 
     logging: Optional["_models.Logging"] = rest_field(
@@ -838,7 +838,7 @@ class QueueServiceStats(_Model):
     """Stats for the storage service.
 
     :ivar geo_replication: The geo replication stats.
-    :vartype geo_replication: ~azure.storage.queues.models.GeoReplication
+    :vartype geo_replication: ~azure.storage.queue._generated.models.GeoReplication
     """
 
     geo_replication: Optional["_models.GeoReplication"] = rest_field(
@@ -1087,7 +1087,7 @@ class SignedIdentifier(_Model):
     :ivar id: The unique ID for the signed identifier. Required.
     :vartype id: str
     :ivar access_policy: The access policy for the signed identifier. Required.
-    :vartype access_policy: ~azure.storage.queues.models.AccessPolicy
+    :vartype access_policy: ~azure.storage.queue._generated.models.AccessPolicy
     """
 
     id: str = rest_field(
@@ -1127,7 +1127,7 @@ class SignedIdentifiers(_Model):
     """Represents an array of signed identifiers.
 
     :ivar items_property: The list of signed identifiers. Required.
-    :vartype items_property: ~azure.storage.queues.models.SignedIdentifier
+    :vartype items_property: ~azure.storage.queue._generated.models.SignedIdentifier
     """
 
     items_property: list["_models.SignedIdentifier"] = rest_field(
