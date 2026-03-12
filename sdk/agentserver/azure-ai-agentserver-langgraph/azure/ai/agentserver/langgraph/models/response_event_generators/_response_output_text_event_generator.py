@@ -6,7 +6,7 @@
 from typing import List
 
 from azure.ai.agentserver.core.models import _projects as project_models
-from .response_event_generator import (
+from ._response_event_generator import (
     ResponseEventGenerator,
     StreamEventState,
 )

@@ -10,7 +10,7 @@ from langchain_core.messages import AnyMessage
 
 from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.models import ResponseStreamEvent
-from .human_in_the_loop_helper import HumanInTheLoopHelper
+from ._human_in_the_loop_helper import HumanInTheLoopHelper
 from .response_event_generators import (
     ResponseEventGenerator,
     ResponseStreamEventGenerator,

@@ -12,8 +12,7 @@ from openai import OpenAI, OpenAIError
 
 from azure.ai.agentserver.core.models import Response, ResponseStreamEvent
 from azure.ai.agentserver.langgraph import LanggraphRunContext, from_langgraph
-from azure.ai.agentserver.langgraph.models.response_api_default_converter import ResponseAPIDefaultConverter
-from azure.ai.agentserver.langgraph.models.response_api_request_converter import ResponseAPIRequestConverter
+from azure.ai.agentserver.langgraph.models import ResponseAPIDefaultConverter, ResponseAPIRequestConverter
 
 load_dotenv()
 

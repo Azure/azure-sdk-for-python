@@ -18,10 +18,10 @@ Subpackages
 Submodules
 ----------
 
-azure.ai.agentserver.langgraph.langgraph module
------------------------------------------------
+azure.ai.agentserver.langgraph._langgraph module
+------------------------------------------------
 
-.. automodule:: azure.ai.agentserver.langgraph.langgraph
+.. automodule:: azure.ai.agentserver.langgraph._langgraph
    :inherited-members:
    :members:
    :undoc-members:

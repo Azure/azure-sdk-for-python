@@ -9,9 +9,9 @@ from langchain_core import messages as langgraph_messages
 
 from azure.ai.agentserver.core.models import _projects as project_models
 
-from . import item_content_helpers
-from .response_event_generator import ResponseEventGenerator, StreamEventState
-from .response_output_text_event_generator import ResponseOutputTextEventGenerator
+from . import _item_content_helpers as item_content_helpers
+from ._response_event_generator import ResponseEventGenerator, StreamEventState
+from ._response_output_text_event_generator import ResponseOutputTextEventGenerator
 
 
 class ResponseContentPartEventGenerator(ResponseEventGenerator):

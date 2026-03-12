@@ -17,7 +17,7 @@ from azure.ai.agentserver.core.models._openai import (
 )
 from azure.ai.agentserver.core.server.common._constants import HUMAN_IN_THE_LOOP_FUNCTION_NAME
 
-from .human_in_the_loop_helper import HumanInTheLoopHelper
+from ._human_in_the_loop_helper import HumanInTheLoopHelper
 
 logger = get_logger()
 

@@ -15,9 +15,9 @@ from azure.ai.agentserver.core.server._base import FoundryCBAgent
 from azure.ai.agentserver.core import AgentRunContext
 from azure.ai.agentserver.core.tools import OAuthConsentRequiredError  # pylint:disable=import-error,no-name-in-module
 from ._context import LanggraphRunContext
-from .models.response_api_converter import GraphInputArguments, ResponseAPIConverter
-from .models.response_api_default_converter import ResponseAPIDefaultConverter
-from .models.utils import is_state_schema_valid
+from .models._response_api_converter import GraphInputArguments, ResponseAPIConverter
+from .models._response_api_default_converter import ResponseAPIDefaultConverter
+from .models._utils import is_state_schema_valid
 from .tools._context import FoundryToolContext
 from .tools._resolver import FoundryLangChainToolResolver
 
