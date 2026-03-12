@@ -6,7 +6,7 @@
 # pylint: disable=c-extension-no-member
 
 from enum import Enum
-from typing import cast
+from typing import cast, Literal, Union
 
 from azure.core import CaseInsensitiveEnumMeta
 
@@ -17,6 +17,12 @@ class ChecksumAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AUTO = "auto"
     MD5 = "md5"
     CRC64 = "crc64"
+
+
+def is_md5_validation(validate_content: Union[bool, Literal["md5", "crc64"]]) -> bool:
+    if isinstance(validate_content, bool):
+        return validate_content
+    return validate_content == ChecksumAlgorithm.MD5
 
 
 def calculate_crc64(data: bytes, initial_crc: int) -> int:
