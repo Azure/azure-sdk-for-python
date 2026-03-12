@@ -1,4 +1,5 @@
 -e ../../../eng/tools/azure-sdk-tools
 ../../core/azure-core
 ../../identity/azure-identity
-aiohttp
+azure-mgmt-storage==20.1.0
+aiohttp>=3.0
