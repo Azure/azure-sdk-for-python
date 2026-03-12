@@ -16,7 +16,7 @@ from azure.identity.aio import DefaultAzureCredential
 # 2. azure-keyvault-administration and azure-identity libraries (pip install these)
 #
 # 3. Set environment variable MANAGED_HSM_URL with the URL of your managed HSM
-#
+#    
 # 4. Set up your environment to use azure-identity's DefaultAzureCredential. For more information about how to configure
 #    the DefaultAzureCredential, refer to https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
 #
@@ -41,7 +41,7 @@ async def run_sample():
     # Here we use the DefaultAzureCredential, but any azure-identity credential can be used.
     credential = DefaultAzureCredential()
     client = KeyVaultAccessControlClient(vault_url=MANAGED_HSM_URL, credential=credential)
-
+    
     # Let's first create a custom role definition. This role permits creating keys in a Managed HSM.
     # We'll provide a friendly role name, and let a unique role definition name (a GUID) be generated for us.
     print("\n.. Create a role definition")
@@ -58,12 +58,12 @@ async def run_sample():
     new_permissions = [
         KeyVaultPermission(
             data_actions=[KeyVaultDataAction.READ_HSM_KEY],
-            not_data_actions=[KeyVaultDataAction.CREATE_HSM_KEY],
+            not_data_actions=[KeyVaultDataAction.CREATE_HSM_KEY]
         )
     ]
     unique_definition_name = role_definition.name
     updated_definition = await client.set_role_definition(
-        scope=scope, name=unique_definition_name, role_name=role_name, permissions=new_permissions,
+        scope=scope, name=unique_definition_name, role_name=role_name, permissions=new_permissions
     )
     print(f"Role definition '{updated_definition.role_name}' updated successfully.")
 
@@ -75,7 +75,7 @@ async def run_sample():
     definition_id = updated_definition.id
     assert definition_id
     role_assignment = await client.create_role_assignment(
-        scope=scope, definition_id=definition_id, principal_id=principal_id,
+        scope=scope, definition_id=definition_id, principal_id=principal_id
     )
     assert role_assignment.name
     print(f"Role assignment {role_assignment.name} created successfully.")
