@@ -140,7 +140,7 @@ class GetTokenMixin(abc.ABC):
                 self.__class__.__name__,
                 base_method_name,
             )
-            return token
+            return token  # type: ignore[return-value]
 
         except Exception as ex:
             _LOGGER.log(
