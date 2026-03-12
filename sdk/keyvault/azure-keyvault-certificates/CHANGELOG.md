@@ -1,4 +1,4 @@
-﻿# Release History
+# Release History
 
 ## 4.11.0 (Unreleased)
 
