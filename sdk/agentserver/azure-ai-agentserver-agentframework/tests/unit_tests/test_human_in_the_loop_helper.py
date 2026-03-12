@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 import pytest
 from agent_framework import Content, Message, WorkflowEvent
-from azure.ai.agentserver.core.server.common.constants import (
+from azure.ai.agentserver.core.server.common._constants import (
     HUMAN_IN_THE_LOOP_FUNCTION_NAME,
 )
 

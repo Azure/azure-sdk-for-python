@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from azure.ai.agentserver.core.server.common.id_generator.foundry_id_generator import FoundryIdGenerator
+from azure.ai.agentserver.core.server.common.id_generator._foundry_id_generator import FoundryIdGenerator
 
 
 def test_conversation_id_none_uses_response_partition():

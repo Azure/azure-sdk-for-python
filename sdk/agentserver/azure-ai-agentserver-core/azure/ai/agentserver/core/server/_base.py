@@ -36,7 +36,7 @@ from ._response_metadata import (
     build_foundry_agents_metadata_headers,
     try_attach_foundry_metadata_to_event,
 )
-from .common.agent_run_context import AgentRunContext
+from .common._agent_run_context import AgentRunContext
 from ..constants import Constants
 from ..logger import APPINSIGHT_CONNSTR_ENV_NAME, get_logger, get_project_endpoint, request_context
 from ..models import (

@@ -8,7 +8,7 @@ import os
 import re
 from typing import Optional
 
-from .id_generator import IdGenerator
+from ._id_generator import IdGenerator
 
 _WATERMARK_RE = re.compile(r"^[A-Za-z0-9]*$")
 

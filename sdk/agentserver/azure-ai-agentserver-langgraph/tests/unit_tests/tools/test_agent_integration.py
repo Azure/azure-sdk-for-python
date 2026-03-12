@@ -23,7 +23,7 @@ from azure.ai.agentserver.core.tools import (
     SchemaProperty,
     SchemaType,
 )
-from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
+from azure.ai.agentserver.core.server.common._agent_run_context import AgentRunContext
 from azure.ai.agentserver.langgraph._context import LanggraphRunContext
 from azure.ai.agentserver.langgraph.tools import use_foundry_tools
 from azure.ai.agentserver.langgraph.tools._context import FoundryToolContext

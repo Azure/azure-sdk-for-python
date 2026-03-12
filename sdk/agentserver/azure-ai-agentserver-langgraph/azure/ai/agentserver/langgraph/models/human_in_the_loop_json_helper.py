@@ -15,7 +15,7 @@ from azure.ai.agentserver.core.models import _projects as project_models
 from azure.ai.agentserver.core.models._openai import (
     ResponseInputItemParam,
 )
-from azure.ai.agentserver.core.server.common.constants import HUMAN_IN_THE_LOOP_FUNCTION_NAME
+from azure.ai.agentserver.core.server.common._constants import HUMAN_IN_THE_LOOP_FUNCTION_NAME
 
 from .human_in_the_loop_helper import HumanInTheLoopHelper
 
@@ -43,7 +43,7 @@ class HumanInTheLoopJsonHelper(HumanInTheLoopHelper):
             status="in_progress",
         )
 
-    def interrupt_to_function_call(self, interrupt: Interrupt) :
+    def interrupt_to_function_call(self, interrupt: Interrupt) -> tuple[Optional[str], Optional[str], Optional[str]]:
         """
         Convert an Interrupt to a function call tuple.
 
@@ -51,7 +51,7 @@ class HumanInTheLoopJsonHelper(HumanInTheLoopHelper):
         :type interrupt: Interrupt
 
         :return: A tuple of (name, call_id, argument).
-        :rtype: tuple[str | None, str | None, str | None]
+        :rtype: tuple[Optional[str], Optional[str], Optional[str]]
         """
         if isinstance(interrupt.value, str):
             arguments = interrupt.value
@@ -63,7 +63,7 @@ class HumanInTheLoopJsonHelper(HumanInTheLoopHelper):
                 arguments = str(interrupt.value)
         return HUMAN_IN_THE_LOOP_FUNCTION_NAME, interrupt.id, arguments
 
-    def convert_input_item_to_command(self, input_item: ResponseInputItemParam) -> Union[Command, None]:
+    def convert_input_item_to_command(self, input_item: ResponseInputItemParam) -> Optional[Command]:
         output_str = input_item.get("output")
         if not isinstance(output_str, str):
             logger.error("Invalid output type in function call output: %s", input_item)

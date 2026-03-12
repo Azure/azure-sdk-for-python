@@ -3,8 +3,8 @@
 # ---------------------------------------------------------
 from typing import Optional
 
-from .id_generator.foundry_id_generator import FoundryIdGenerator
-from .id_generator.id_generator import IdGenerator
+from .id_generator._foundry_id_generator import FoundryIdGenerator
+from .id_generator._id_generator import IdGenerator
 from ...logger import get_logger
 from ...models import CreateResponse
 from ...models._projects import AgentId, AgentReference, ResponseConversation1

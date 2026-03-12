@@ -10,7 +10,7 @@ from langchain_core.messages import AnyMessage
 from langgraph.types import Interrupt
 
 from azure.ai.agentserver.core.models import _projects as project_models
-from azure.ai.agentserver.core.server.common.id_generator.id_generator import IdGenerator
+from azure.ai.agentserver.core.server.common.id_generator._id_generator import IdGenerator
 from . import ResponseEventGenerator, StreamEventState, item_resource_helpers
 from .response_content_part_event_generator import ResponseContentPartEventGenerator
 from .response_function_call_argument_event_generator import ResponseFunctionCallArgumentEventGenerator

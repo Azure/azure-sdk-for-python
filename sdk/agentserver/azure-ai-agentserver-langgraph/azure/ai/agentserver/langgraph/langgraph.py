@@ -11,7 +11,7 @@ from langgraph.graph.state import CompiledStateGraph
 
 from azure.ai.agentserver.core.constants import Constants
 from azure.ai.agentserver.core.logger import get_logger
-from azure.ai.agentserver.core.server.base import FoundryCBAgent
+from azure.ai.agentserver.core.server._base import FoundryCBAgent
 from azure.ai.agentserver.core import AgentRunContext
 from azure.ai.agentserver.core.tools import OAuthConsentRequiredError  # pylint:disable=import-error,no-name-in-module
 from ._context import LanggraphRunContext
