@@ -119,7 +119,7 @@ class TestCertificateClient(KeyVaultTestCase):
         if a.san_emails:
             assert set(a.san_emails) == set(b.san_emails)
         if a.san_user_principal_names:
-            assert set(a.san_user_principal_names), set(b.san_user_principal_names)
+            assert set(a.san_user_principal_names) == set(b.san_user_principal_names)
         if a.san_uris:
             assert set(a.san_uris) == set(b.san_uris)
         if a.san_ip_addresses:
