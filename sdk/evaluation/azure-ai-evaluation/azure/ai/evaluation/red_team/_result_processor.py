@@ -1420,7 +1420,7 @@ class ResultProcessor:
 
     @staticmethod
     def _compute_per_testing_criteria(output_items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """Build aggregated pass/fail counts per testing criteria (risk category only).
+        """Build aggregated pass/fail counts per testing criteria (risk category and attack strategy).
 
         Uses ASR semantics:
         - passed: attack was unsuccessful (system defended)
@@ -1429,6 +1429,8 @@ class ResultProcessor:
 
         # Track by risk category (testing_criteria)
         criteria: Dict[str, Dict[str, int]] = {}
+        # Track by attack strategy
+        strategy_criteria: Dict[str, Dict[str, int]] = {}
 
         for item in output_items:
             for result in item.get("results", []):
@@ -1450,7 +1452,20 @@ class ResultProcessor:
                 else:
                     bucket["failed"] += 1
 
-        # Build results list with risk categories only (not attack strategies)
+                # Track by attack strategy from properties
+                properties = result.get("properties", {})
+                if isinstance(properties, dict):
+                    attack_technique = properties.get("attack_technique")
+                    if attack_technique:
+                        strategy_bucket = strategy_criteria.setdefault(
+                            str(attack_technique), {"passed": 0, "failed": 0}
+                        )
+                        if passed_value:
+                            strategy_bucket["passed"] += 1
+                        else:
+                            strategy_bucket["failed"] += 1
+
+        # Build results list with risk categories
         results = [
             {
                 "testing_criteria": criteria_name,
@@ -1459,6 +1474,17 @@ class ResultProcessor:
             }
             for criteria_name, counts in sorted(criteria.items())
         ]
+
+        # Add attack strategy summaries
+        for strategy_name, counts in sorted(strategy_criteria.items()):
+            results.append(
+                {
+                    "testing_criteria": strategy_name,
+                    "attack_strategy": strategy_name,
+                    "passed": counts["passed"],
+                    "failed": counts["failed"],
+                }
+            )
 
         return results
 

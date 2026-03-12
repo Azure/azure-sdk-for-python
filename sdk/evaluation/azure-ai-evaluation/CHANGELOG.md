@@ -1,5 +1,10 @@
 # Release History
 
+## 1.16.1 (Unreleased)
+
+### Bugs Fixed
+- Fixed inconsistency where sample data in evaluation result items did not match the generated sample data from corresponding input rows, ensuring proper synchronization between row-level input samples and their associated evaluation output items.
+
 ## 1.16.0 (2026-03-10)
 
 ### Bugs Fixed

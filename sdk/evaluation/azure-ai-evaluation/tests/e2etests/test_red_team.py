@@ -98,6 +98,23 @@ class TestRedTeam:
             assert "attack_technique" in attack
             assert attack["risk_category"] == "violence"
 
+        # Validate per_testing_criteria_results contains both risk categories and attack strategies
+        if result.scan_result:
+            summary = result.scan_result.get("AOAI_Compatible_Summary", result.scan_result)
+            per_testing = summary.get("per_testing_criteria_results", [])
+            if per_testing:
+                # Should have at least one risk category entry and one attack strategy entry
+                risk_entries = [r for r in per_testing if "attack_strategy" not in r]
+                strategy_entries = [r for r in per_testing if "attack_strategy" in r]
+                assert len(risk_entries) > 0, "per_testing_criteria_results should contain risk category entries"
+                assert len(strategy_entries) > 0, "per_testing_criteria_results should contain attack strategy entries"
+                for entry in per_testing:
+                    assert "testing_criteria" in entry
+                    assert "passed" in entry
+                    assert "failed" in entry
+                    assert isinstance(entry["passed"], int)
+                    assert isinstance(entry["failed"], int)
+
     @pytest.mark.azuretest
     @pytest.mark.parametrize(
         ("proj_scope", "cred"), (("project_scope", "azure_cred"), ("project_scope_onedp", "azure_cred_onedp"))

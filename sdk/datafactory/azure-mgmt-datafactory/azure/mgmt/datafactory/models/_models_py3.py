@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,20 +7,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from collections.abc import MutableMapping
 import datetime
-import sys
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
-
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]
 
 
 class AccessPolicyResponse(_serialization.Model):
@@ -120,12 +115,12 @@ class Activity(_serialization.Model):
         self,
         *,
         name: str,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -188,8 +183,8 @@ class ActivityDependency(_serialization.Model):
         self,
         *,
         activity: str,
-        dependency_conditions: List[Union[str, "_models.DependencyCondition"]],
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        dependency_conditions: list[Union[str, "_models.DependencyCondition"]],
+        additional_properties: Optional[dict[str, JSON]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -248,7 +243,7 @@ class ActivityPolicy(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         timeout: Optional[JSON] = None,
         retry: Optional[JSON] = None,
         retry_interval_in_seconds: Optional[int] = None,
@@ -355,7 +350,7 @@ class ActivityRun(_serialization.Model):
         "error": {"key": "error", "type": "object"},
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, additional_properties: Optional[dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -363,19 +358,19 @@ class ActivityRun(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.pipeline_name = None
-        self.pipeline_run_id = None
-        self.activity_name = None
-        self.activity_type = None
-        self.activity_run_id = None
-        self.linked_service_name = None
-        self.status = None
-        self.activity_run_start = None
-        self.activity_run_end = None
-        self.duration_in_ms = None
-        self.input = None
-        self.output = None
-        self.error = None
+        self.pipeline_name: Optional[str] = None
+        self.pipeline_run_id: Optional[str] = None
+        self.activity_name: Optional[str] = None
+        self.activity_type: Optional[str] = None
+        self.activity_run_id: Optional[str] = None
+        self.linked_service_name: Optional[str] = None
+        self.status: Optional[str] = None
+        self.activity_run_start: Optional[datetime.datetime] = None
+        self.activity_run_end: Optional[datetime.datetime] = None
+        self.duration_in_ms: Optional[int] = None
+        self.input: Optional[JSON] = None
+        self.output: Optional[JSON] = None
+        self.error: Optional[JSON] = None
 
 
 class ActivityRunsQueryResponse(_serialization.Model):
@@ -400,7 +395,7 @@ class ActivityRunsQueryResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.ActivityRun"], continuation_token: Optional[str] = None, **kwargs: Any
+        self, *, value: list["_models.ActivityRun"], continuation_token: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: List of activity runs. Required.
@@ -665,12 +660,12 @@ class LinkedService(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -782,12 +777,12 @@ class AmazonMWSLinkedService(LinkedService):
         marketplace_id: JSON,
         seller_id: JSON,
         access_key_id: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         mws_auth_token: Optional["_models.SecretBase"] = None,
         secret_key: Optional["_models.SecretBase"] = None,
         use_encrypted_endpoints: Optional[JSON] = None,
@@ -1054,12 +1049,12 @@ class Dataset(_serialization.Model):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         **kwargs: Any
     ) -> None:
@@ -1150,12 +1145,12 @@ class AmazonMWSObjectDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         **kwargs: Any
@@ -1295,7 +1290,7 @@ class CopySource(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -1460,7 +1455,7 @@ class TabularSource(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -1557,7 +1552,7 @@ class AmazonMWSSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -1608,7 +1603,9 @@ class AmazonMWSSource(TabularSource):
 
 
 class AmazonRdsForOracleLinkedService(LinkedService):
-    """AmazonRdsForOracle database.
+    """AmazonRdsForOracle database. This linked service has supported version property. The Version
+    1.0 is scheduled for deprecation while your pipeline will continue to run after EOL but without
+    any bug fix or new features.
 
     All required parameters must be populated in order to send to server.
 
@@ -1628,10 +1625,61 @@ class AmazonRdsForOracleLinkedService(LinkedService):
     :ivar annotations: List of tags that can be used for describing the linked service.
     :vartype annotations: list[JSON]
     :ivar connection_string: The connection string. Type: string, SecureString or
-     AzureKeyVaultSecretReference. Required.
+     AzureKeyVaultSecretReference. Only used for Version 1.0.
     :vartype connection_string: JSON
+    :ivar server: The location of AmazonRdsForOracle database you want to connect to, the supported
+     forms include connector descriptor, Easy Connect (Plus) Naming and Oracle Net Services Name
+     (Only self-hosted IR). Type: string. Only used for Version 2.0.
+    :vartype server: JSON
+    :ivar authentication_type: Authentication type for connecting to the AmazonRdsForOracle
+     database. Only used for Version 2.0. "Basic"
+    :vartype authentication_type: str or
+     ~azure.mgmt.datafactory.models.AmazonRdsForOracleAuthenticationType
+    :ivar username: The AmazonRdsForOracle database username. Type: string. Only used for Version
+     2.0.
+    :vartype username: JSON
     :ivar password: The Azure key vault secret reference of password in connection string.
     :vartype password: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar encryption_client: Specifies the encryption client behavior. Supported values are
+     accepted, rejected, requested or required, default value is required. Type: string. Only used
+     for Version 2.0.
+    :vartype encryption_client: JSON
+    :ivar encryption_types_client: Specifies the encryption algorithms that client can use.
+     Supported values are AES128, AES192, AES256, 3DES112, 3DES168, default value is (AES256). Type:
+     string. Only used for Version 2.0.
+    :vartype encryption_types_client: JSON
+    :ivar crypto_checksum_client: Specifies the desired data integrity behavior when this client
+     connects to a server. Supported values are accepted, rejected, requested or required, default
+     value is required. Type: string. Only used for Version 2.0.
+    :vartype crypto_checksum_client: JSON
+    :ivar crypto_checksum_types_client: Specifies the crypto-checksum algorithms that client can
+     use. Supported values are SHA1, SHA256, SHA384, SHA512, default value is (SHA512). Type:
+     string. Only used for Version 2.0.
+    :vartype crypto_checksum_types_client: JSON
+    :ivar initial_lob_fetch_size: Specifies the amount that the source initially fetches for LOB
+     columns, default value is 0. Type: integer. Only used for Version 2.0.
+    :vartype initial_lob_fetch_size: JSON
+    :ivar fetch_size: Specifies the number of bytes that the driver allocates to fetch the data in
+     one database round-trip, default value is 10485760. Type: integer. Only used for Version 2.0.
+    :vartype fetch_size: JSON
+    :ivar statement_cache_size: Specifies the number of cursors or statements to be cached for each
+     database connection, default value is 0. Type: integer. Only used for Version 2.0.
+    :vartype statement_cache_size: JSON
+    :ivar initialization_string: Specifies a command that is issued immediately after connecting to
+     the database to manage session settings. Type: string. Only used for Version 2.0.
+    :vartype initialization_string: JSON
+    :ivar enable_bulk_load: Specifies whether to use bulk copy or batch insert when loading data
+     into the database, default value is true. Type: boolean. Only used for Version 2.0.
+    :vartype enable_bulk_load: JSON
+    :ivar support_v1_data_types: Specifies whether to use the Version 1.0 data type mappings. Do
+     not set this to true unless you want to keep backward compatibility with Version 1.0's data
+     type mappings, default value is false. Type: boolean. Only used for Version 2.0.
+    :vartype support_v1_data_types: JSON
+    :ivar fetch_tswtz_as_timestamp: Specifies whether the driver returns column value with the
+     TIMESTAMP WITH TIME ZONE data type as DateTime or string. This setting is ignored if
+     supportV1DataTypes is not true, default value is true. Type: boolean. Only used for Version
+     2.0.
+    :vartype fetch_tswtz_as_timestamp: JSON
     :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string.
     :vartype encrypted_credential: str
@@ -1639,7 +1687,6 @@ class AmazonRdsForOracleLinkedService(LinkedService):
 
     _validation = {
         "type": {"required": True},
-        "connection_string": {"required": True},
     }
 
     _attribute_map = {
@@ -1651,21 +1698,49 @@ class AmazonRdsForOracleLinkedService(LinkedService):
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
         "annotations": {"key": "annotations", "type": "[object]"},
         "connection_string": {"key": "typeProperties.connectionString", "type": "object"},
+        "server": {"key": "typeProperties.server", "type": "object"},
+        "authentication_type": {"key": "typeProperties.authenticationType", "type": "str"},
+        "username": {"key": "typeProperties.username", "type": "object"},
         "password": {"key": "typeProperties.password", "type": "SecretBase"},
+        "encryption_client": {"key": "typeProperties.encryptionClient", "type": "object"},
+        "encryption_types_client": {"key": "typeProperties.encryptionTypesClient", "type": "object"},
+        "crypto_checksum_client": {"key": "typeProperties.cryptoChecksumClient", "type": "object"},
+        "crypto_checksum_types_client": {"key": "typeProperties.cryptoChecksumTypesClient", "type": "object"},
+        "initial_lob_fetch_size": {"key": "typeProperties.initialLobFetchSize", "type": "object"},
+        "fetch_size": {"key": "typeProperties.fetchSize", "type": "object"},
+        "statement_cache_size": {"key": "typeProperties.statementCacheSize", "type": "object"},
+        "initialization_string": {"key": "typeProperties.initializationString", "type": "object"},
+        "enable_bulk_load": {"key": "typeProperties.enableBulkLoad", "type": "object"},
+        "support_v1_data_types": {"key": "typeProperties.supportV1DataTypes", "type": "object"},
+        "fetch_tswtz_as_timestamp": {"key": "typeProperties.fetchTswtzAsTimestamp", "type": "object"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        connection_string: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
+        connection_string: Optional[JSON] = None,
+        server: Optional[JSON] = None,
+        authentication_type: Optional[Union[str, "_models.AmazonRdsForOracleAuthenticationType"]] = None,
+        username: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
+        encryption_client: Optional[JSON] = None,
+        encryption_types_client: Optional[JSON] = None,
+        crypto_checksum_client: Optional[JSON] = None,
+        crypto_checksum_types_client: Optional[JSON] = None,
+        initial_lob_fetch_size: Optional[JSON] = None,
+        fetch_size: Optional[JSON] = None,
+        statement_cache_size: Optional[JSON] = None,
+        initialization_string: Optional[JSON] = None,
+        enable_bulk_load: Optional[JSON] = None,
+        support_v1_data_types: Optional[JSON] = None,
+        fetch_tswtz_as_timestamp: Optional[JSON] = None,
         encrypted_credential: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -1684,10 +1759,62 @@ class AmazonRdsForOracleLinkedService(LinkedService):
         :keyword annotations: List of tags that can be used for describing the linked service.
         :paramtype annotations: list[JSON]
         :keyword connection_string: The connection string. Type: string, SecureString or
-         AzureKeyVaultSecretReference. Required.
+         AzureKeyVaultSecretReference. Only used for Version 1.0.
         :paramtype connection_string: JSON
+        :keyword server: The location of AmazonRdsForOracle database you want to connect to, the
+         supported forms include connector descriptor, Easy Connect (Plus) Naming and Oracle Net
+         Services Name (Only self-hosted IR). Type: string. Only used for Version 2.0.
+        :paramtype server: JSON
+        :keyword authentication_type: Authentication type for connecting to the AmazonRdsForOracle
+         database. Only used for Version 2.0. "Basic"
+        :paramtype authentication_type: str or
+         ~azure.mgmt.datafactory.models.AmazonRdsForOracleAuthenticationType
+        :keyword username: The AmazonRdsForOracle database username. Type: string. Only used for
+         Version 2.0.
+        :paramtype username: JSON
         :keyword password: The Azure key vault secret reference of password in connection string.
         :paramtype password: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword encryption_client: Specifies the encryption client behavior. Supported values are
+         accepted, rejected, requested or required, default value is required. Type: string. Only used
+         for Version 2.0.
+        :paramtype encryption_client: JSON
+        :keyword encryption_types_client: Specifies the encryption algorithms that client can use.
+         Supported values are AES128, AES192, AES256, 3DES112, 3DES168, default value is (AES256). Type:
+         string. Only used for Version 2.0.
+        :paramtype encryption_types_client: JSON
+        :keyword crypto_checksum_client: Specifies the desired data integrity behavior when this client
+         connects to a server. Supported values are accepted, rejected, requested or required, default
+         value is required. Type: string. Only used for Version 2.0.
+        :paramtype crypto_checksum_client: JSON
+        :keyword crypto_checksum_types_client: Specifies the crypto-checksum algorithms that client can
+         use. Supported values are SHA1, SHA256, SHA384, SHA512, default value is (SHA512). Type:
+         string. Only used for Version 2.0.
+        :paramtype crypto_checksum_types_client: JSON
+        :keyword initial_lob_fetch_size: Specifies the amount that the source initially fetches for LOB
+         columns, default value is 0. Type: integer. Only used for Version 2.0.
+        :paramtype initial_lob_fetch_size: JSON
+        :keyword fetch_size: Specifies the number of bytes that the driver allocates to fetch the data
+         in one database round-trip, default value is 10485760. Type: integer. Only used for Version
+         2.0.
+        :paramtype fetch_size: JSON
+        :keyword statement_cache_size: Specifies the number of cursors or statements to be cached for
+         each database connection, default value is 0. Type: integer. Only used for Version 2.0.
+        :paramtype statement_cache_size: JSON
+        :keyword initialization_string: Specifies a command that is issued immediately after connecting
+         to the database to manage session settings. Type: string. Only used for Version 2.0.
+        :paramtype initialization_string: JSON
+        :keyword enable_bulk_load: Specifies whether to use bulk copy or batch insert when loading data
+         into the database, default value is true. Type: boolean. Only used for Version 2.0.
+        :paramtype enable_bulk_load: JSON
+        :keyword support_v1_data_types: Specifies whether to use the Version 1.0 data type mappings. Do
+         not set this to true unless you want to keep backward compatibility with Version 1.0's data
+         type mappings, default value is false. Type: boolean. Only used for Version 2.0.
+        :paramtype support_v1_data_types: JSON
+        :keyword fetch_tswtz_as_timestamp: Specifies whether the driver returns column value with the
+         TIMESTAMP WITH TIME ZONE data type as DateTime or string. This setting is ignored if
+         supportV1DataTypes is not true, default value is true. Type: boolean. Only used for Version
+         2.0.
+        :paramtype fetch_tswtz_as_timestamp: JSON
         :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
          are encrypted using the integration runtime credential manager. Type: string.
         :paramtype encrypted_credential: str
@@ -1703,7 +1830,21 @@ class AmazonRdsForOracleLinkedService(LinkedService):
         )
         self.type: str = "AmazonRdsForOracle"
         self.connection_string = connection_string
+        self.server = server
+        self.authentication_type = authentication_type
+        self.username = username
         self.password = password
+        self.encryption_client = encryption_client
+        self.encryption_types_client = encryption_types_client
+        self.crypto_checksum_client = crypto_checksum_client
+        self.crypto_checksum_types_client = crypto_checksum_types_client
+        self.initial_lob_fetch_size = initial_lob_fetch_size
+        self.fetch_size = fetch_size
+        self.statement_cache_size = statement_cache_size
+        self.initialization_string = initialization_string
+        self.enable_bulk_load = enable_bulk_load
+        self.support_v1_data_types = support_v1_data_types
+        self.fetch_tswtz_as_timestamp = fetch_tswtz_as_timestamp
         self.encrypted_credential = encrypted_credential
 
 
@@ -1800,6 +1941,14 @@ class AmazonRdsForOracleSource(CopySource):
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
     :vartype additional_columns: JSON
+    :ivar number_precision: The decimal precision used to represent Oracle NUMBER type without
+     precision and scale. The range is 1 to 256 and default value is 256 if not specified. Type:
+     integer (or Expression with resultType integer). Only used for Version 2.0.
+    :vartype number_precision: JSON
+    :ivar number_scale: The decimal scale used to represent Oracle NUMBER type without precision
+     and scale. The range is 0 to 130 and default value is 130 if not specified. Type: integer (or
+     Expression with resultType integer). Only used for Version 2.0.
+    :vartype number_scale: JSON
     """
 
     _validation = {
@@ -1818,12 +1967,14 @@ class AmazonRdsForOracleSource(CopySource):
         "partition_option": {"key": "partitionOption", "type": "object"},
         "partition_settings": {"key": "partitionSettings", "type": "AmazonRdsForOraclePartitionSettings"},
         "additional_columns": {"key": "additionalColumns", "type": "object"},
+        "number_precision": {"key": "numberPrecision", "type": "object"},
+        "number_scale": {"key": "numberScale", "type": "object"},
     }
 
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -1833,6 +1984,8 @@ class AmazonRdsForOracleSource(CopySource):
         partition_option: Optional[JSON] = None,
         partition_settings: Optional["_models.AmazonRdsForOraclePartitionSettings"] = None,
         additional_columns: Optional[JSON] = None,
+        number_precision: Optional[JSON] = None,
+        number_scale: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1867,6 +2020,14 @@ class AmazonRdsForOracleSource(CopySource):
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
         :paramtype additional_columns: JSON
+        :keyword number_precision: The decimal precision used to represent Oracle NUMBER type without
+         precision and scale. The range is 1 to 256 and default value is 256 if not specified. Type:
+         integer (or Expression with resultType integer). Only used for Version 2.0.
+        :paramtype number_precision: JSON
+        :keyword number_scale: The decimal scale used to represent Oracle NUMBER type without precision
+         and scale. The range is 0 to 130 and default value is 130 if not specified. Type: integer (or
+         Expression with resultType integer). Only used for Version 2.0.
+        :paramtype number_scale: JSON
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -1882,6 +2043,8 @@ class AmazonRdsForOracleSource(CopySource):
         self.partition_option = partition_option
         self.partition_settings = partition_settings
         self.additional_columns = additional_columns
+        self.number_precision = number_precision
+        self.number_scale = number_scale
 
 
 class AmazonRdsForOracleTableDataset(Dataset):
@@ -1942,12 +2105,12 @@ class AmazonRdsForOracleTableDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         schema_type_properties_schema: Optional[JSON] = None,
         table: Optional[JSON] = None,
@@ -2160,12 +2323,12 @@ class AmazonRdsForSqlServerLinkedService(LinkedService):
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         server: Optional[JSON] = None,
         database: Optional[JSON] = None,
         encrypt: Optional[JSON] = None,
@@ -2706,7 +2869,7 @@ class AmazonRdsForSqlServerLinkedServiceTypeProperties(
         "always_encrypted_settings": {"key": "alwaysEncryptedSettings", "type": "SqlAlwaysEncryptedProperties"},
     }
 
-    def __init__(  # pylint: disable=too-many-locals
+    def __init__(
         self,
         *,
         server: Optional[JSON] = None,
@@ -2940,7 +3103,7 @@ class AmazonRdsForSqlServerSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -3078,12 +3241,12 @@ class AmazonRdsForSqlServerTableDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         schema_type_properties_schema: Optional[JSON] = None,
         table: Optional[JSON] = None,
@@ -3199,12 +3362,12 @@ class AmazonRedshiftLinkedService(LinkedService):
         *,
         server: JSON,
         database: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         username: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
         port: Optional[JSON] = None,
@@ -3317,7 +3480,7 @@ class AmazonRedshiftSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -3434,12 +3597,12 @@ class AmazonRedshiftTableDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         table: Optional[JSON] = None,
@@ -3555,12 +3718,12 @@ class AmazonS3CompatibleLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         access_key_id: Optional[JSON] = None,
         secret_access_key: Optional["_models.SecretBase"] = None,
         service_url: Optional[JSON] = None,
@@ -3674,7 +3837,7 @@ class DatasetLocation(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         folder_path: Optional[JSON] = None,
         file_name: Optional[JSON] = None,
         **kwargs: Any
@@ -3737,7 +3900,7 @@ class AmazonS3CompatibleLocation(DatasetLocation):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         folder_path: Optional[JSON] = None,
         file_name: Optional[JSON] = None,
         bucket_name: Optional[JSON] = None,
@@ -3826,7 +3989,7 @@ class StoreReadSettings(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         **kwargs: Any
@@ -3922,7 +4085,7 @@ class AmazonS3CompatibleReadSettings(StoreReadSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         recursive: Optional[JSON] = None,
@@ -4080,12 +4243,12 @@ class AmazonS3Dataset(Dataset):
         *,
         linked_service_name: "_models.LinkedServiceReference",
         bucket_name: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         key: Optional[JSON] = None,
         prefix: Optional[JSON] = None,
@@ -4225,12 +4388,12 @@ class AmazonS3LinkedService(LinkedService):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         authentication_type: Optional[JSON] = None,
         access_key_id: Optional[JSON] = None,
         secret_access_key: Optional["_models.SecretBase"] = None,
@@ -4330,7 +4493,7 @@ class AmazonS3Location(DatasetLocation):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         folder_path: Optional[JSON] = None,
         file_name: Optional[JSON] = None,
         bucket_name: Optional[JSON] = None,
@@ -4435,7 +4598,7 @@ class AmazonS3ReadSettings(StoreReadSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         recursive: Optional[JSON] = None,
@@ -4580,12 +4743,12 @@ class ControlActivity(Activity):
         self,
         *,
         name: str,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4675,12 +4838,12 @@ class AppendVariableActivity(ControlActivity):
         self,
         *,
         name: str,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         variable_name: Optional[str] = None,
         value: Optional[JSON] = None,
         **kwargs: Any
@@ -4780,12 +4943,12 @@ class AppFiguresLinkedService(LinkedService):
         user_name: JSON,
         password: "_models.SecretBase",
         client_key: "_models.SecretBase",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4845,7 +5008,7 @@ class ArmIdWrapper(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
+        self.id: Optional[str] = None
 
 
 class AsanaLinkedService(LinkedService):
@@ -4896,12 +5059,12 @@ class AsanaLinkedService(LinkedService):
         self,
         *,
         api_token: "_models.SecretBase",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         encrypted_credential: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -5000,12 +5163,12 @@ class AvroDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         location: Optional["_models.DatasetLocation"] = None,
         avro_compression_codec: Optional[JSON] = None,
@@ -5101,7 +5264,7 @@ class DatasetStorageFormat(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         serializer: Optional[JSON] = None,
         deserializer: Optional[JSON] = None,
         **kwargs: Any
@@ -5152,7 +5315,7 @@ class AvroFormat(DatasetStorageFormat):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         serializer: Optional[JSON] = None,
         deserializer: Optional[JSON] = None,
         **kwargs: Any
@@ -5283,7 +5446,7 @@ class CopySink(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -5380,7 +5543,7 @@ class AvroSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -5480,7 +5643,7 @@ class AvroSource(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -5560,7 +5723,7 @@ class FormatWriteSettings(_serialization.Model):
         }
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, additional_properties: Optional[dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -5610,7 +5773,7 @@ class AvroWriteSettings(FormatWriteSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         record_name: Optional[str] = None,
         record_namespace: Optional[str] = None,
         max_rows_per_file: Optional[JSON] = None,
@@ -5779,12 +5942,12 @@ class AzureBatchLinkedService(LinkedService):
         batch_uri: JSON,
         pool_name: JSON,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         access_key: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[str] = None,
         credential: Optional["_models.CredentialReference"] = None,
@@ -5918,12 +6081,12 @@ class AzureBlobDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         folder_path: Optional[JSON] = None,
         table_root_location: Optional[JSON] = None,
@@ -6060,12 +6223,12 @@ class AzureBlobFSDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         folder_path: Optional[JSON] = None,
         file_name: Optional[JSON] = None,
@@ -6213,12 +6376,12 @@ class AzureBlobFSLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         url: Optional[JSON] = None,
         account_key: Optional[JSON] = None,
         service_principal_id: Optional[JSON] = None,
@@ -6347,7 +6510,7 @@ class AzureBlobFSLocation(DatasetLocation):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         folder_path: Optional[JSON] = None,
         file_name: Optional[JSON] = None,
         file_system: Optional[JSON] = None,
@@ -6443,7 +6606,7 @@ class AzureBlobFSReadSettings(StoreReadSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         recursive: Optional[JSON] = None,
@@ -6570,7 +6733,7 @@ class AzureBlobFSSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -6578,7 +6741,7 @@ class AzureBlobFSSink(CopySink):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
-        metadata: Optional[List["_models.MetadataItem"]] = None,
+        metadata: Optional[list["_models.MetadataItem"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6677,7 +6840,7 @@ class AzureBlobFSSource(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -6783,11 +6946,11 @@ class StoreWriteSettings(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
-        metadata: Optional[List["_models.MetadataItem"]] = None,
+        metadata: Optional[list["_models.MetadataItem"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6858,11 +7021,11 @@ class AzureBlobFSWriteSettings(StoreWriteSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
-        metadata: Optional[List["_models.MetadataItem"]] = None,
+        metadata: Optional[list["_models.MetadataItem"]] = None,
         block_size_in_mb: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
@@ -6993,12 +7156,12 @@ class AzureBlobStorageLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         connection_string: Optional[JSON] = None,
         account_key: Optional["_models.AzureKeyVaultSecretReference"] = None,
         sas_uri: Optional[JSON] = None,
@@ -7135,7 +7298,7 @@ class AzureBlobStorageLocation(DatasetLocation):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         folder_path: Optional[JSON] = None,
         file_name: Optional[JSON] = None,
         container: Optional[JSON] = None,
@@ -7235,7 +7398,7 @@ class AzureBlobStorageReadSettings(StoreReadSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         recursive: Optional[JSON] = None,
@@ -7354,11 +7517,11 @@ class AzureBlobStorageWriteSettings(StoreWriteSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
-        metadata: Optional[List["_models.MetadataItem"]] = None,
+        metadata: Optional[list["_models.MetadataItem"]] = None,
         block_size_in_mb: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
@@ -7450,12 +7613,12 @@ class AzureDatabricksDeltaLakeDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table: Optional[JSON] = None,
         database: Optional[JSON] = None,
@@ -7535,7 +7698,7 @@ class ExportSettings(_serialization.Model):
         }
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, additional_properties: Optional[dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -7578,7 +7741,7 @@ class AzureDatabricksDeltaLakeExportCommand(ExportSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         date_format: Optional[JSON] = None,
         timestamp_format: Optional[JSON] = None,
         **kwargs: Any
@@ -7632,7 +7795,7 @@ class ImportSettings(_serialization.Model):
         }
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, additional_properties: Optional[dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -7675,7 +7838,7 @@ class AzureDatabricksDeltaLakeImportCommand(ImportSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         date_format: Optional[JSON] = None,
         timestamp_format: Optional[JSON] = None,
         **kwargs: Any
@@ -7762,12 +7925,12 @@ class AzureDatabricksDeltaLakeLinkedService(LinkedService):
         self,
         *,
         domain: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         access_token: Optional["_models.SecretBase"] = None,
         cluster_id: Optional[JSON] = None,
         encrypted_credential: Optional[str] = None,
@@ -7881,7 +8044,7 @@ class AzureDatabricksDeltaLakeSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -7983,7 +8146,7 @@ class AzureDatabricksDeltaLakeSource(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -8114,6 +8277,9 @@ class AzureDatabricksLinkedService(LinkedService):
     :vartype policy_id: JSON
     :ivar credential: The credential reference containing authentication information.
     :vartype credential: ~azure.mgmt.datafactory.models.CredentialReference
+    :ivar data_security_mode: The data security mode for the Databricks Cluster. Type: string (or
+     Expression with resultType string).
+    :vartype data_security_mode: JSON
     """
 
     _validation = {
@@ -8148,18 +8314,19 @@ class AzureDatabricksLinkedService(LinkedService):
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
         "policy_id": {"key": "typeProperties.policyId", "type": "object"},
         "credential": {"key": "typeProperties.credential", "type": "CredentialReference"},
+        "data_security_mode": {"key": "typeProperties.dataSecurityMode", "type": "object"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         domain: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         access_token: Optional["_models.SecretBase"] = None,
         authentication: Optional[JSON] = None,
         workspace_resource_id: Optional[JSON] = None,
@@ -8168,9 +8335,9 @@ class AzureDatabricksLinkedService(LinkedService):
         new_cluster_version: Optional[JSON] = None,
         new_cluster_num_of_worker: Optional[JSON] = None,
         new_cluster_node_type: Optional[JSON] = None,
-        new_cluster_spark_conf: Optional[Dict[str, JSON]] = None,
-        new_cluster_spark_env_vars: Optional[Dict[str, JSON]] = None,
-        new_cluster_custom_tags: Optional[Dict[str, JSON]] = None,
+        new_cluster_spark_conf: Optional[dict[str, JSON]] = None,
+        new_cluster_spark_env_vars: Optional[dict[str, JSON]] = None,
+        new_cluster_custom_tags: Optional[dict[str, JSON]] = None,
         new_cluster_log_destination: Optional[JSON] = None,
         new_cluster_driver_node_type: Optional[JSON] = None,
         new_cluster_init_scripts: Optional[JSON] = None,
@@ -8178,6 +8345,7 @@ class AzureDatabricksLinkedService(LinkedService):
         encrypted_credential: Optional[str] = None,
         policy_id: Optional[JSON] = None,
         credential: Optional["_models.CredentialReference"] = None,
+        data_security_mode: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8260,6 +8428,9 @@ class AzureDatabricksLinkedService(LinkedService):
         :paramtype policy_id: JSON
         :keyword credential: The credential reference containing authentication information.
         :paramtype credential: ~azure.mgmt.datafactory.models.CredentialReference
+        :keyword data_security_mode: The data security mode for the Databricks Cluster. Type: string
+         (or Expression with resultType string).
+        :paramtype data_security_mode: JSON
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -8290,6 +8461,7 @@ class AzureDatabricksLinkedService(LinkedService):
         self.encrypted_credential = encrypted_credential
         self.policy_id = policy_id
         self.credential = credential
+        self.data_security_mode = data_security_mode
 
 
 class ExecutionActivity(Activity):
@@ -8298,12 +8470,13 @@ class ExecutionActivity(Activity):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureDataExplorerCommandActivity, AzureFunctionActivity, AzureMLBatchExecutionActivity,
     AzureMLExecutePipelineActivity, AzureMLUpdateResourceActivity, CopyActivity, CustomActivity,
-    DataLakeAnalyticsUSQLActivity, DatabricksNotebookActivity, DatabricksSparkJarActivity,
-    DatabricksSparkPythonActivity, DeleteActivity, ExecuteDataFlowActivity,
-    ExecuteSSISPackageActivity, GetMetadataActivity, HDInsightHiveActivity,
-    HDInsightMapReduceActivity, HDInsightPigActivity, HDInsightSparkActivity,
-    HDInsightStreamingActivity, LookupActivity, ScriptActivity, SynapseSparkJobDefinitionActivity,
-    SqlServerStoredProcedureActivity, SynapseNotebookActivity, WebActivity
+    DataLakeAnalyticsUSQLActivity, DatabricksJobActivity, DatabricksNotebookActivity,
+    DatabricksSparkJarActivity, DatabricksSparkPythonActivity, DeleteActivity,
+    ExecuteDataFlowActivity, ExecuteSSISPackageActivity, GetMetadataActivity,
+    HDInsightHiveActivity, HDInsightMapReduceActivity, HDInsightPigActivity,
+    HDInsightSparkActivity, HDInsightStreamingActivity, LookupActivity, ScriptActivity,
+    SynapseSparkJobDefinitionActivity, SqlServerStoredProcedureActivity, SynapseNotebookActivity,
+    WebActivity
 
     All required parameters must be populated in order to send to server.
 
@@ -8361,6 +8534,7 @@ class ExecutionActivity(Activity):
             "Copy": "CopyActivity",
             "Custom": "CustomActivity",
             "DataLakeAnalyticsU-SQL": "DataLakeAnalyticsUSQLActivity",
+            "DatabricksJob": "DatabricksJobActivity",
             "DatabricksNotebook": "DatabricksNotebookActivity",
             "DatabricksSparkJar": "DatabricksSparkJarActivity",
             "DatabricksSparkPython": "DatabricksSparkPythonActivity",
@@ -8386,12 +8560,12 @@ class ExecutionActivity(Activity):
         self,
         *,
         name: str,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
         **kwargs: Any
@@ -8498,12 +8672,12 @@ class AzureDataExplorerCommandActivity(ExecutionActivity):
         *,
         name: str,
         command: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
         command_timeout: Optional[JSON] = None,
@@ -8623,12 +8797,12 @@ class AzureDataExplorerLinkedService(LinkedService):
         *,
         endpoint: JSON,
         database: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         service_principal_id: Optional[JSON] = None,
         service_principal_key: Optional["_models.SecretBase"] = None,
         tenant: Optional[JSON] = None,
@@ -8746,7 +8920,7 @@ class AzureDataExplorerSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -8864,7 +9038,7 @@ class AzureDataExplorerSource(CopySource):
         self,
         *,
         query: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -8972,12 +9146,12 @@ class AzureDataExplorerTableDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table: Optional[JSON] = None,
         **kwargs: Any
@@ -9097,12 +9271,12 @@ class AzureDataLakeAnalyticsLinkedService(LinkedService):
         *,
         account_name: JSON,
         tenant: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         service_principal_id: Optional[JSON] = None,
         service_principal_key: Optional["_models.SecretBase"] = None,
         subscription_id: Optional[JSON] = None,
@@ -9235,12 +9409,12 @@ class AzureDataLakeStoreDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         folder_path: Optional[JSON] = None,
         file_name: Optional[JSON] = None,
@@ -9380,12 +9554,12 @@ class AzureDataLakeStoreLinkedService(LinkedService):
         self,
         *,
         data_lake_store_uri: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         service_principal_id: Optional[JSON] = None,
         service_principal_key: Optional["_models.SecretBase"] = None,
         tenant: Optional[JSON] = None,
@@ -9496,7 +9670,7 @@ class AzureDataLakeStoreLocation(DatasetLocation):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         folder_path: Optional[JSON] = None,
         file_name: Optional[JSON] = None,
         **kwargs: Any
@@ -9597,7 +9771,7 @@ class AzureDataLakeStoreReadSettings(StoreReadSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         recursive: Optional[JSON] = None,
@@ -9735,7 +9909,7 @@ class AzureDataLakeStoreSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -9833,7 +10007,7 @@ class AzureDataLakeStoreSource(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -9917,11 +10091,11 @@ class AzureDataLakeStoreWriteSettings(StoreWriteSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
-        metadata: Optional[List["_models.MetadataItem"]] = None,
+        metadata: Optional[list["_models.MetadataItem"]] = None,
         expiry_date_time: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
@@ -10039,12 +10213,12 @@ class AzureFileStorageLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         host: Optional[JSON] = None,
         user_id: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
@@ -10161,7 +10335,7 @@ class AzureFileStorageLocation(DatasetLocation):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         folder_path: Optional[JSON] = None,
         file_name: Optional[JSON] = None,
         **kwargs: Any
@@ -10256,7 +10430,7 @@ class AzureFileStorageReadSettings(StoreReadSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         recursive: Optional[JSON] = None,
@@ -10371,11 +10545,11 @@ class AzureFileStorageWriteSettings(StoreWriteSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
-        metadata: Optional[List["_models.MetadataItem"]] = None,
+        metadata: Optional[list["_models.MetadataItem"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -10479,15 +10653,15 @@ class AzureFunctionActivity(ExecutionActivity):
         name: str,
         method: Union[str, "_models.AzureFunctionActivityMethod"],
         function_name: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
-        headers: Optional[Dict[str, JSON]] = None,
+        headers: Optional[dict[str, JSON]] = None,
         body: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
@@ -10611,12 +10785,12 @@ class AzureFunctionLinkedService(LinkedService):
         self,
         *,
         function_app_url: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         function_key: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[str] = None,
         credential: Optional["_models.CredentialReference"] = None,
@@ -10722,12 +10896,12 @@ class AzureKeyVaultLinkedService(LinkedService):
         self,
         *,
         base_url: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         credential: Optional["_models.CredentialReference"] = None,
         **kwargs: Any
     ) -> None:
@@ -10898,12 +11072,12 @@ class AzureMariaDBLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         connection_string: Optional[JSON] = None,
         pwd: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[str] = None,
@@ -10999,7 +11173,7 @@ class AzureMariaDBSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -11102,12 +11276,12 @@ class AzureMariaDBTableDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         **kwargs: Any
@@ -11221,17 +11395,17 @@ class AzureMLBatchExecutionActivity(ExecutionActivity):
         self,
         *,
         name: str,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
-        global_parameters: Optional[Dict[str, JSON]] = None,
-        web_service_outputs: Optional[Dict[str, "_models.AzureMLWebServiceFile"]] = None,
-        web_service_inputs: Optional[Dict[str, "_models.AzureMLWebServiceFile"]] = None,
+        global_parameters: Optional[dict[str, JSON]] = None,
+        web_service_outputs: Optional[dict[str, "_models.AzureMLWebServiceFile"]] = None,
+        web_service_inputs: Optional[dict[str, "_models.AzureMLWebServiceFile"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -11382,12 +11556,12 @@ class AzureMLExecutePipelineActivity(ExecutionActivity):
         self,
         *,
         name: str,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
         ml_pipeline_id: Optional[JSON] = None,
@@ -11553,12 +11727,12 @@ class AzureMLLinkedService(LinkedService):
         *,
         ml_endpoint: JSON,
         api_key: "_models.SecretBase",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         update_resource_endpoint: Optional[JSON] = None,
         service_principal_id: Optional[JSON] = None,
         service_principal_key: Optional["_models.SecretBase"] = None,
@@ -11704,12 +11878,12 @@ class AzureMLServiceLinkedService(LinkedService):
         subscription_id: JSON,
         resource_group_name: JSON,
         ml_workspace_name: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         authentication: Optional[JSON] = None,
         service_principal_id: Optional[JSON] = None,
         service_principal_key: Optional["_models.SecretBase"] = None,
@@ -11853,12 +12027,12 @@ class AzureMLUpdateResourceActivity(ExecutionActivity):
         trained_model_name: JSON,
         trained_model_linked_service_name: "_models.LinkedServiceReference",
         trained_model_file_path: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
         **kwargs: Any
@@ -12007,12 +12181,12 @@ class AzureMySqlLinkedService(LinkedService):
         self,
         *,
         connection_string: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         password: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[str] = None,
         **kwargs: Any
@@ -12107,7 +12281,7 @@ class AzureMySqlSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -12208,7 +12382,7 @@ class AzureMySqlSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -12315,12 +12489,12 @@ class AzureMySqlTableDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         table: Optional[JSON] = None,
@@ -12498,12 +12672,12 @@ class AzurePostgreSqlLinkedService(LinkedService):
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         connection_string: Optional[JSON] = None,
         server: Optional[JSON] = None,
         port: Optional[JSON] = None,
@@ -12702,7 +12876,7 @@ class AzurePostgreSqlSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -12835,7 +13009,7 @@ class AzurePostgreSqlSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -12947,12 +13121,12 @@ class AzurePostgreSqlTableDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         table: Optional[JSON] = None,
@@ -13055,7 +13229,7 @@ class AzureQueueSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -13156,12 +13330,12 @@ class AzureSearchIndexDataset(Dataset):
         *,
         linked_service_name: "_models.LinkedServiceReference",
         index_name: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         **kwargs: Any
     ) -> None:
@@ -13258,7 +13432,7 @@ class AzureSearchIndexSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -13361,12 +13535,12 @@ class AzureSearchLinkedService(LinkedService):
         self,
         *,
         url: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         key: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[str] = None,
         **kwargs: Any
@@ -13604,12 +13778,12 @@ class AzureSqlDatabaseLinkedService(LinkedService):
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         server: Optional[JSON] = None,
         database: Optional[JSON] = None,
         encrypt: Optional[JSON] = None,
@@ -14375,12 +14549,12 @@ class AzureSqlDWLinkedService(LinkedService):
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         server: Optional[JSON] = None,
         database: Optional[JSON] = None,
         encrypt: Optional[JSON] = None,
@@ -15004,12 +15178,12 @@ class AzureSqlDWTableDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         schema_type_properties_schema: Optional[JSON] = None,
@@ -15259,12 +15433,12 @@ class AzureSqlMILinkedService(LinkedService):
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         server: Optional[JSON] = None,
         database: Optional[JSON] = None,
         encrypt: Optional[JSON] = None,
@@ -15901,12 +16075,12 @@ class AzureSqlMITableDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         schema_type_properties_schema: Optional[JSON] = None,
@@ -16046,7 +16220,7 @@ class AzureSqlSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -16210,7 +16384,7 @@ class AzureSqlSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -16353,12 +16527,12 @@ class AzureSqlTableDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         schema_type_properties_schema: Optional[JSON] = None,
@@ -16470,12 +16644,12 @@ class AzureStorageLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         connection_string: Optional[JSON] = None,
         account_key: Optional["_models.AzureKeyVaultSecretReference"] = None,
         sas_uri: Optional[JSON] = None,
@@ -16614,7 +16788,7 @@ class AzureSynapseArtifactsLinkedService(LinkedService):
      authentication method. Type: string (or Expression with resultType string).
     :vartype authentication: JSON
     :ivar workspace_resource_id: The resource ID of the Synapse workspace. The format should be:
-     /subscriptions/{subscriptionID}/resourceGroups/{resourceGroup}/providers/Microsoft.Synapse/workspaces/{workspaceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionID}/resourceGroups/{resourceGroup}/providers/Microsoft.Synapse/workspaces/{workspaceName}.
      Type: string (or Expression with resultType string).
     :vartype workspace_resource_id: JSON
     """
@@ -16641,12 +16815,12 @@ class AzureSynapseArtifactsLinkedService(LinkedService):
         self,
         *,
         endpoint: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         authentication: Optional[JSON] = None,
         workspace_resource_id: Optional[JSON] = None,
         **kwargs: Any
@@ -16672,7 +16846,7 @@ class AzureSynapseArtifactsLinkedService(LinkedService):
          authentication method. Type: string (or Expression with resultType string).
         :paramtype authentication: JSON
         :keyword workspace_resource_id: The resource ID of the Synapse workspace. The format should be:
-         /subscriptions/{subscriptionID}/resourceGroups/{resourceGroup}/providers/Microsoft.Synapse/workspaces/{workspaceName}.  # pylint: disable=line-too-long
+         /subscriptions/{subscriptionID}/resourceGroups/{resourceGroup}/providers/Microsoft.Synapse/workspaces/{workspaceName}.
          Type: string (or Expression with resultType string).
         :paramtype workspace_resource_id: JSON
         """
@@ -16747,12 +16921,12 @@ class AzureTableDataset(Dataset):
         *,
         linked_service_name: "_models.LinkedServiceReference",
         table_name: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         **kwargs: Any
     ) -> None:
@@ -16860,7 +17034,7 @@ class AzureTableSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -16981,7 +17155,7 @@ class AzureTableSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -17100,12 +17274,12 @@ class AzureTableStorageLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         connection_string: Optional[JSON] = None,
         account_key: Optional["_models.AzureKeyVaultSecretReference"] = None,
         sas_uri: Optional[JSON] = None,
@@ -17339,12 +17513,12 @@ class BinaryDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         location: Optional["_models.DatasetLocation"] = None,
         compression: Optional["_models.DatasetCompression"] = None,
@@ -17427,7 +17601,7 @@ class FormatReadSettings(_serialization.Model):
         }
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, additional_properties: Optional[dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -17465,7 +17639,7 @@ class BinaryReadSettings(FormatReadSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         compression_properties: Optional["_models.CompressionReadSettings"] = None,
         **kwargs: Any
     ) -> None:
@@ -17532,7 +17706,7 @@ class BinarySink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -17627,7 +17801,7 @@ class BinarySource(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -17719,9 +17893,9 @@ class Trigger(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
-        annotations: Optional[List[JSON]] = None,
+        annotations: Optional[list[JSON]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -17737,7 +17911,7 @@ class Trigger(_serialization.Model):
         self.additional_properties = additional_properties
         self.type: Optional[str] = None
         self.description = description
-        self.runtime_state = None
+        self.runtime_state: Optional[Union[str, "_models.TriggerRuntimeState"]] = None
         self.annotations = annotations
 
 
@@ -17793,10 +17967,10 @@ class MultiplePipelineTrigger(Trigger):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
-        annotations: Optional[List[JSON]] = None,
-        pipelines: Optional[List["_models.TriggerPipelineReference"]] = None,
+        annotations: Optional[list[JSON]] = None,
+        pipelines: Optional[list["_models.TriggerPipelineReference"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -17879,12 +18053,12 @@ class BlobEventsTrigger(MultiplePipelineTrigger):
     def __init__(
         self,
         *,
-        events: List[Union[str, "_models.BlobEventTypes"]],
+        events: list[Union[str, "_models.BlobEventTypes"]],
         scope: str,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
-        annotations: Optional[List[JSON]] = None,
-        pipelines: Optional[List["_models.TriggerPipelineReference"]] = None,
+        annotations: Optional[list[JSON]] = None,
+        pipelines: Optional[list["_models.TriggerPipelineReference"]] = None,
         blob_path_begins_with: Optional[str] = None,
         blob_path_ends_with: Optional[str] = None,
         ignore_empty_blobs: Optional[bool] = None,
@@ -17998,7 +18172,7 @@ class BlobSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -18009,7 +18183,7 @@ class BlobSink(CopySink):
         blob_writer_date_time_format: Optional[JSON] = None,
         blob_writer_add_header: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
-        metadata: Optional[List["_models.MetadataItem"]] = None,
+        metadata: Optional[list["_models.MetadataItem"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -18119,7 +18293,7 @@ class BlobSource(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -18225,10 +18399,10 @@ class BlobTrigger(MultiplePipelineTrigger):
         folder_path: str,
         max_concurrency: int,
         linked_service: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
-        annotations: Optional[List[JSON]] = None,
-        pipelines: Optional[List["_models.TriggerPipelineReference"]] = None,
+        annotations: Optional[list[JSON]] = None,
+        pipelines: Optional[list["_models.TriggerPipelineReference"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -18326,12 +18500,12 @@ class CassandraLinkedService(LinkedService):
         self,
         *,
         host: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         authentication_type: Optional[JSON] = None,
         port: Optional[JSON] = None,
         username: Optional[JSON] = None,
@@ -18450,7 +18624,7 @@ class CassandraSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -18568,12 +18742,12 @@ class CassandraTableDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         keyspace: Optional[JSON] = None,
@@ -18678,11 +18852,11 @@ class ChainingTrigger(Trigger):
         self,
         *,
         pipeline: "_models.TriggerPipelineReference",
-        depends_on: List["_models.PipelineReference"],
+        depends_on: list["_models.PipelineReference"],
         run_dimension: str,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
-        annotations: Optional[List[JSON]] = None,
+        annotations: Optional[list[JSON]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -18752,7 +18926,7 @@ class ChangeDataCaptureListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.ChangeDataCaptureResource"], next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: list["_models.ChangeDataCaptureResource"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: Lists all resources of type change data capture. Required.
@@ -18797,10 +18971,10 @@ class SubResource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.etag = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.etag: Optional[str] = None
 
 
 class ChangeDataCaptureResource(SubResource):
@@ -18871,10 +19045,10 @@ class ChangeDataCaptureResource(SubResource):
     def __init__(
         self,
         *,
-        source_connections_info: List["_models.MapperSourceConnectionsInfo"],
-        target_connections_info: List["_models.MapperTargetConnectionsInfo"],
+        source_connections_info: list["_models.MapperSourceConnectionsInfo"],
+        target_connections_info: list["_models.MapperTargetConnectionsInfo"],
         policy: "_models.MapperPolicy",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         folder: Optional["_models.ChangeDataCaptureFolder"] = None,
         description: Optional[str] = None,
         allow_v_net_override: Optional[bool] = None,
@@ -18950,7 +19124,7 @@ class CloudError(_serialization.Model):
         code: str,
         message: str,
         target: Optional[str] = None,
-        details: Optional[List["_models.CloudError"]] = None,
+        details: Optional[list["_models.CloudError"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -19091,12 +19265,12 @@ class CommonDataServiceForAppsEntityDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         entity_name: Optional[JSON] = None,
         **kwargs: Any
@@ -19249,12 +19423,12 @@ class CommonDataServiceForAppsLinkedService(LinkedService):
         *,
         deployment_type: JSON,
         authentication_type: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         host_name: Optional[JSON] = None,
         port: Optional[JSON] = None,
         service_uri: Optional[JSON] = None,
@@ -19431,7 +19605,7 @@ class CommonDataServiceForAppsSink(CopySink):
         self,
         *,
         write_behavior: Union[str, "_models.DynamicsSinkWriteBehavior"],
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -19549,7 +19723,7 @@ class CommonDataServiceForAppsSource(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -19665,7 +19839,7 @@ class CompressionReadSettings(_serialization.Model):
         }
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, additional_properties: Optional[dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -19750,12 +19924,12 @@ class ConcurLinkedService(LinkedService):
         *,
         client_id: JSON,
         username: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         connection_properties: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
         use_encrypted_endpoints: Optional[JSON] = None,
@@ -19875,12 +20049,12 @@ class ConcurObjectDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         **kwargs: Any
@@ -19976,7 +20150,7 @@ class ConcurSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -20054,9 +20228,9 @@ class ConnectionStateProperties(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.actions_required = None
-        self.description = None
-        self.status = None
+        self.actions_required: Optional[str] = None
+        self.description: Optional[str] = None
+        self.status: Optional[str] = None
 
 
 class ContinuationSettingsReference(_serialization.Model):
@@ -20218,16 +20392,16 @@ class CopyActivity(ExecutionActivity):
         name: str,
         source: "_models.CopySource",
         sink: "_models.CopySink",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
-        inputs: Optional[List["_models.DatasetReference"]] = None,
-        outputs: Optional[List["_models.DatasetReference"]] = None,
+        inputs: Optional[list["_models.DatasetReference"]] = None,
+        outputs: Optional[list["_models.DatasetReference"]] = None,
         translator: Optional[JSON] = None,
         enable_staging: Optional[JSON] = None,
         staging_settings: Optional["_models.StagingSettings"] = None,
@@ -20237,8 +20411,8 @@ class CopyActivity(ExecutionActivity):
         redirect_incompatible_row_settings: Optional["_models.RedirectIncompatibleRowSettings"] = None,
         log_storage_settings: Optional["_models.LogStorageSettings"] = None,
         log_settings: Optional["_models.LogSettings"] = None,
-        preserve_rules: Optional[List[JSON]] = None,
-        preserve: Optional[List[JSON]] = None,
+        preserve_rules: Optional[list[JSON]] = None,
+        preserve: Optional[list[JSON]] = None,
         validate_data_consistency: Optional[JSON] = None,
         skip_error_file: Optional["_models.SkipErrorFile"] = None,
         **kwargs: Any
@@ -20402,7 +20576,7 @@ class CopyComputeScaleProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         data_integration_unit: Optional[int] = None,
         time_to_live: Optional[int] = None,
         **kwargs: Any
@@ -20450,7 +20624,7 @@ class CopyTranslator(_serialization.Model):
 
     _subtype_map = {"type": {"TabularTranslator": "TabularTranslator"}}
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, additional_properties: Optional[dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -20551,12 +20725,12 @@ class CosmosDbLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         connection_string: Optional[JSON] = None,
         account_endpoint: Optional[JSON] = None,
         database: Optional[JSON] = None,
@@ -20706,12 +20880,12 @@ class CosmosDbMongoDbApiCollectionDataset(Dataset):
         *,
         linked_service_name: "_models.LinkedServiceReference",
         collection: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         **kwargs: Any
     ) -> None:
@@ -20811,12 +20985,12 @@ class CosmosDbMongoDbApiLinkedService(LinkedService):
         *,
         connection_string: JSON,
         database: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         is_server_version_above32: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
@@ -20913,7 +21087,7 @@ class CosmosDbMongoDbApiSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -21026,7 +21200,7 @@ class CosmosDbMongoDbApiSource(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -21144,12 +21318,12 @@ class CosmosDbSqlApiCollectionDataset(Dataset):
         *,
         linked_service_name: "_models.LinkedServiceReference",
         collection_name: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         **kwargs: Any
     ) -> None:
@@ -21245,7 +21419,7 @@ class CosmosDbSqlApiSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -21354,7 +21528,7 @@ class CosmosDbSqlApiSource(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -21463,12 +21637,12 @@ class CouchbaseLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         connection_string: Optional[JSON] = None,
         cred_string: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[str] = None,
@@ -21564,7 +21738,7 @@ class CouchbaseSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -21667,12 +21841,12 @@ class CouchbaseTableDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         **kwargs: Any
@@ -21909,9 +22083,9 @@ class Credential(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
-        annotations: Optional[List[JSON]] = None,
+        annotations: Optional[list[JSON]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -21951,7 +22125,7 @@ class CredentialListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.CredentialResource"], next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: list["_models.CredentialResource"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: List of credentials. Required.
@@ -21994,7 +22168,7 @@ class CredentialReference(_serialization.Model):
         *,
         type: Union[str, "_models.CredentialReferenceType"],
         reference_name: str,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -22138,18 +22312,18 @@ class CustomActivity(ExecutionActivity):
         *,
         name: str,
         command: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
         resource_linked_service: Optional["_models.LinkedServiceReference"] = None,
         folder_path: Optional[JSON] = None,
         reference_objects: Optional["_models.CustomActivityReferenceObject"] = None,
-        extended_properties: Optional[Dict[str, JSON]] = None,
+        extended_properties: Optional[dict[str, JSON]] = None,
         retention_time_in_days: Optional[JSON] = None,
         auto_user_specification: Optional[JSON] = None,
         **kwargs: Any
@@ -22237,8 +22411,8 @@ class CustomActivityReferenceObject(_serialization.Model):
     def __init__(
         self,
         *,
-        linked_services: Optional[List["_models.LinkedServiceReference"]] = None,
-        datasets: Optional[List["_models.DatasetReference"]] = None,
+        linked_services: Optional[list["_models.LinkedServiceReference"]] = None,
+        datasets: Optional[list["_models.DatasetReference"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -22305,12 +22479,12 @@ class CustomDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         type_properties: Optional[JSON] = None,
         **kwargs: Any
@@ -22398,12 +22572,12 @@ class CustomDataSourceLinkedService(LinkedService):
         self,
         *,
         type_properties: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -22492,12 +22666,12 @@ class CustomEventsTrigger(MultiplePipelineTrigger):
     def __init__(
         self,
         *,
-        events: List[JSON],
+        events: list[JSON],
         scope: str,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
-        annotations: Optional[List[JSON]] = None,
-        pipelines: Optional[List["_models.TriggerPipelineReference"]] = None,
+        annotations: Optional[list[JSON]] = None,
+        pipelines: Optional[list["_models.TriggerPipelineReference"]] = None,
         subject_begins_with: Optional[str] = None,
         subject_ends_with: Optional[str] = None,
         **kwargs: Any
@@ -22535,6 +22709,127 @@ class CustomEventsTrigger(MultiplePipelineTrigger):
         self.subject_ends_with = subject_ends_with
         self.events = events
         self.scope = scope
+
+
+class DatabricksJobActivity(ExecutionActivity):
+    """Databricks Job activity.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, JSON]
+    :ivar name: Activity name. Required.
+    :vartype name: str
+    :ivar type: Type of activity. Required.
+    :vartype type: str
+    :ivar description: Activity description.
+    :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.mgmt.datafactory.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.mgmt.datafactory.models.ActivityOnInactiveMarkAs
+    :ivar depends_on: Activity depends on condition.
+    :vartype depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :ivar user_properties: Activity user properties.
+    :vartype user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
+    :ivar linked_service_name: Linked service reference.
+    :vartype linked_service_name: ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :ivar policy: Activity policy.
+    :vartype policy: ~azure.mgmt.datafactory.models.ActivityPolicy
+    :ivar job_id: The Id of the Databricks Job to be executed. Type: string (or Expression with
+     resultType string). Required.
+    :vartype job_id: JSON
+    :ivar job_parameters: Job parameters to be used for each run of this job. If the job takes a
+     parameter that is not specified, the default value from the job will be used.
+    :vartype job_parameters: dict[str, JSON]
+    """
+
+    _validation = {
+        "name": {"required": True},
+        "type": {"required": True},
+        "job_id": {"required": True},
+    }
+
+    _attribute_map = {
+        "additional_properties": {"key": "", "type": "{object}"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
+        "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
+        "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
+        "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
+        "policy": {"key": "policy", "type": "ActivityPolicy"},
+        "job_id": {"key": "typeProperties.jobId", "type": "object"},
+        "job_parameters": {"key": "typeProperties.jobParameters", "type": "{object}"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        job_id: JSON,
+        additional_properties: Optional[dict[str, JSON]] = None,
+        description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
+        linked_service_name: Optional["_models.LinkedServiceReference"] = None,
+        policy: Optional["_models.ActivityPolicy"] = None,
+        job_parameters: Optional[dict[str, JSON]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, JSON]
+        :keyword name: Activity name. Required.
+        :paramtype name: str
+        :keyword description: Activity description.
+        :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.mgmt.datafactory.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.mgmt.datafactory.models.ActivityOnInactiveMarkAs
+        :keyword depends_on: Activity depends on condition.
+        :paramtype depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+        :keyword user_properties: Activity user properties.
+        :paramtype user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
+        :keyword linked_service_name: Linked service reference.
+        :paramtype linked_service_name: ~azure.mgmt.datafactory.models.LinkedServiceReference
+        :keyword policy: Activity policy.
+        :paramtype policy: ~azure.mgmt.datafactory.models.ActivityPolicy
+        :keyword job_id: The Id of the Databricks Job to be executed. Type: string (or Expression with
+         resultType string). Required.
+        :paramtype job_id: JSON
+        :keyword job_parameters: Job parameters to be used for each run of this job. If the job takes a
+         parameter that is not specified, the default value from the job will be used.
+        :paramtype job_parameters: dict[str, JSON]
+        """
+        super().__init__(
+            additional_properties=additional_properties,
+            name=name,
+            description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
+            depends_on=depends_on,
+            user_properties=user_properties,
+            linked_service_name=linked_service_name,
+            policy=policy,
+            **kwargs
+        )
+        self.type: str = "DatabricksJob"
+        self.job_id = job_id
+        self.job_parameters = job_parameters
 
 
 class DatabricksNotebookActivity(ExecutionActivity):
@@ -22604,16 +22899,16 @@ class DatabricksNotebookActivity(ExecutionActivity):
         *,
         name: str,
         notebook_path: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
-        base_parameters: Optional[Dict[str, JSON]] = None,
-        libraries: Optional[List[Dict[str, JSON]]] = None,
+        base_parameters: Optional[dict[str, JSON]] = None,
+        libraries: Optional[list[dict[str, JSON]]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -22734,16 +23029,16 @@ class DatabricksSparkJarActivity(ExecutionActivity):
         *,
         name: str,
         main_class_name: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
-        parameters: Optional[List[JSON]] = None,
-        libraries: Optional[List[Dict[str, JSON]]] = None,
+        parameters: Optional[list[JSON]] = None,
+        libraries: Optional[list[dict[str, JSON]]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -22862,16 +23157,16 @@ class DatabricksSparkPythonActivity(ExecutionActivity):
         *,
         name: str,
         python_file: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
-        parameters: Optional[List[JSON]] = None,
-        libraries: Optional[List[Dict[str, JSON]]] = None,
+        parameters: Optional[list[JSON]] = None,
+        libraries: Optional[list[dict[str, JSON]]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -22962,7 +23257,7 @@ class DataFlow(_serialization.Model):
         self,
         *,
         description: Optional[str] = None,
-        annotations: Optional[List[JSON]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DataFlowFolder"] = None,
         **kwargs: Any
     ) -> None:
@@ -23013,7 +23308,7 @@ class DataFlowDebugCommandPayload(_serialization.Model):
         *,
         stream_name: str,
         row_limits: Optional[int] = None,
-        columns: Optional[List[str]] = None,
+        columns: Optional[list[str]] = None,
         expression: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -23137,12 +23432,12 @@ class DataFlowDebugPackage(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         session_id: Optional[str] = None,
         data_flow: Optional["_models.DataFlowDebugResource"] = None,
-        data_flows: Optional[List["_models.DataFlowDebugResource"]] = None,
-        datasets: Optional[List["_models.DatasetDebugResource"]] = None,
-        linked_services: Optional[List["_models.LinkedServiceDebugResource"]] = None,
+        data_flows: Optional[list["_models.DataFlowDebugResource"]] = None,
+        datasets: Optional[list["_models.DatasetDebugResource"]] = None,
+        linked_services: Optional[list["_models.LinkedServiceDebugResource"]] = None,
         staging: Optional["_models.DataFlowStagingInfo"] = None,
         debug_settings: Optional["_models.DataFlowDebugPackageDebugSettings"] = None,
         **kwargs: Any
@@ -23197,8 +23492,8 @@ class DataFlowDebugPackageDebugSettings(_serialization.Model):
     def __init__(
         self,
         *,
-        source_settings: Optional[List["_models.DataFlowSourceSetting"]] = None,
-        parameters: Optional[Dict[str, JSON]] = None,
+        source_settings: Optional[list["_models.DataFlowSourceSetting"]] = None,
+        parameters: Optional[dict[str, JSON]] = None,
         dataset_parameters: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
@@ -23309,7 +23604,7 @@ class DataFlowDebugSessionInfo(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         data_flow_name: Optional[str] = None,
         compute_type: Optional[str] = None,
         core_count: Optional[int] = None,
@@ -23400,7 +23695,7 @@ class DataFlowListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.DataFlowResource"], next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: list["_models.DataFlowResource"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: List of data flows. Required.
@@ -23449,9 +23744,9 @@ class DataFlowReference(_serialization.Model):
         *,
         type: Union[str, "_models.DataFlowReferenceType"],
         reference_name: str,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         dataset_parameters: Optional[JSON] = None,
-        parameters: Optional[Dict[str, JSON]] = None,
+        parameters: Optional[dict[str, JSON]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -23742,7 +24037,7 @@ class DataFlowSourceSetting(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_name: Optional[str] = None,
         row_limit: Optional[int] = None,
         **kwargs: Any
@@ -23880,17 +24175,17 @@ class DataLakeAnalyticsUSQLActivity(ExecutionActivity):
         name: str,
         script_path: JSON,
         script_linked_service: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
         degree_of_parallelism: Optional[JSON] = None,
         priority: Optional[JSON] = None,
-        parameters: Optional[Dict[str, JSON]] = None,
+        parameters: Optional[dict[str, JSON]] = None,
         runtime_version: Optional[JSON] = None,
         compilation_mode: Optional[JSON] = None,
         **kwargs: Any
@@ -24047,7 +24342,7 @@ class DatasetCompression(_serialization.Model):
         self,
         *,
         type: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         level: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
@@ -24166,7 +24461,7 @@ class DatasetListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.DatasetResource"], next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: list["_models.DatasetResource"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: List of datasets. Required.
@@ -24208,7 +24503,7 @@ class DatasetReference(_serialization.Model):
         *,
         type: Union[str, "_models.DatasetReferenceType"],
         reference_name: str,
-        parameters: Optional[Dict[str, JSON]] = None,
+        parameters: Optional[dict[str, JSON]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -24290,7 +24585,7 @@ class DatasetSchemaDataElement(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         name: Optional[JSON] = None,
         type: Optional[JSON] = None,
         **kwargs: Any
@@ -24358,12 +24653,12 @@ class DataworldLinkedService(LinkedService):
         self,
         *,
         api_token: "_models.SecretBase",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         encrypted_credential: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -24478,12 +24773,12 @@ class Db2LinkedService(LinkedService):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         connection_string: Optional[JSON] = None,
         server: Optional[JSON] = None,
         database: Optional[JSON] = None,
@@ -24611,7 +24906,7 @@ class Db2Source(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -24721,12 +25016,12 @@ class Db2TableDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         schema_type_properties_schema: Optional[JSON] = None,
@@ -24858,12 +25153,12 @@ class DeleteActivity(ExecutionActivity):
         *,
         name: str,
         dataset: "_models.DatasetReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
         recursive: Optional[JSON] = None,
@@ -25042,12 +25337,12 @@ class DelimitedTextDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         location: Optional["_models.DatasetLocation"] = None,
         column_delimiter: Optional[JSON] = None,
@@ -25168,7 +25463,7 @@ class DelimitedTextReadSettings(FormatReadSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         skip_line_count: Optional[JSON] = None,
         compression_properties: Optional["_models.CompressionReadSettings"] = None,
         **kwargs: Any
@@ -25243,7 +25538,7 @@ class DelimitedTextSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -25346,7 +25641,7 @@ class DelimitedTextSource(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -25437,7 +25732,7 @@ class DelimitedTextWriteSettings(FormatWriteSettings):
         self,
         *,
         file_extension: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         quote_all_text: Optional[JSON] = None,
         max_rows_per_file: Optional[JSON] = None,
         file_name_prefix: Optional[JSON] = None,
@@ -25612,12 +25907,12 @@ class DocumentDbCollectionDataset(Dataset):
         *,
         linked_service_name: "_models.LinkedServiceReference",
         collection_name: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         **kwargs: Any
     ) -> None:
@@ -25717,7 +26012,7 @@ class DocumentDbCollectionSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -25827,7 +26122,7 @@ class DocumentDbCollectionSource(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -25931,12 +26226,12 @@ class DrillLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         connection_string: Optional[JSON] = None,
         pwd: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[str] = None,
@@ -26032,7 +26327,7 @@ class DrillSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -26143,12 +26438,12 @@ class DrillTableDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         table: Optional[JSON] = None,
@@ -26255,8 +26550,8 @@ class DWCopyCommandSettings(_serialization.Model):
     def __init__(
         self,
         *,
-        default_values: Optional[List["_models.DWCopyCommandDefaultValue"]] = None,
-        additional_options: Optional[Dict[str, str]] = None,
+        default_values: Optional[list["_models.DWCopyCommandDefaultValue"]] = None,
+        additional_options: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -26350,12 +26645,12 @@ class DynamicsAXLinkedService(LinkedService):
         service_principal_key: "_models.SecretBase",
         tenant: JSON,
         aad_resource_id: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         encrypted_credential: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -26468,12 +26763,12 @@ class DynamicsAXResourceDataset(Dataset):
         *,
         linked_service_name: "_models.LinkedServiceReference",
         path: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         **kwargs: Any
     ) -> None:
@@ -26575,7 +26870,7 @@ class DynamicsAXSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -26686,12 +26981,12 @@ class DynamicsCrmEntityDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         entity_name: Optional[JSON] = None,
         **kwargs: Any
@@ -26842,12 +27137,12 @@ class DynamicsCrmLinkedService(LinkedService):
         *,
         deployment_type: JSON,
         authentication_type: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         host_name: Optional[JSON] = None,
         port: Optional[JSON] = None,
         service_uri: Optional[JSON] = None,
@@ -27024,7 +27319,7 @@ class DynamicsCrmSink(CopySink):
         self,
         *,
         write_behavior: Union[str, "_models.DynamicsSinkWriteBehavior"],
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -27142,7 +27437,7 @@ class DynamicsCrmSource(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -27241,12 +27536,12 @@ class DynamicsEntityDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         entity_name: Optional[JSON] = None,
         **kwargs: Any
@@ -27397,12 +27692,12 @@ class DynamicsLinkedService(LinkedService):
         *,
         deployment_type: JSON,
         authentication_type: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         host_name: Optional[JSON] = None,
         port: Optional[JSON] = None,
         service_uri: Optional[JSON] = None,
@@ -27578,7 +27873,7 @@ class DynamicsSink(CopySink):
         self,
         *,
         write_behavior: Union[str, "_models.DynamicsSinkWriteBehavior"],
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -27696,7 +27991,7 @@ class DynamicsSource(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -27811,12 +28106,12 @@ class EloquaLinkedService(LinkedService):
         *,
         endpoint: JSON,
         username: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         password: Optional["_models.SecretBase"] = None,
         use_encrypted_endpoints: Optional[JSON] = None,
         use_host_verification: Optional[JSON] = None,
@@ -27931,12 +28226,12 @@ class EloquaObjectDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         **kwargs: Any
@@ -28032,7 +28327,7 @@ class EloquaSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -28080,6 +28375,26 @@ class EloquaSource(TabularSource):
         )
         self.type: str = "EloquaSource"
         self.query = query
+
+
+class EnableInteractiveQueryRequest(_serialization.Model):
+    """The enable the interactive authoring information.
+
+    :ivar auto_termination_minutes: The allowed idle time for interactive authoring.
+    :vartype auto_termination_minutes: int
+    """
+
+    _attribute_map = {
+        "auto_termination_minutes": {"key": "autoTerminationMinutes", "type": "int"},
+    }
+
+    def __init__(self, *, auto_termination_minutes: Optional[int] = None, **kwargs: Any) -> None:
+        """
+        :keyword auto_termination_minutes: The allowed idle time for interactive authoring.
+        :paramtype auto_termination_minutes: int
+        """
+        super().__init__(**kwargs)
+        self.auto_termination_minutes = auto_termination_minutes
 
 
 class EncryptionConfiguration(_serialization.Model):
@@ -28213,6 +28528,98 @@ class EnvironmentVariableSetup(CustomSetupBase):
         self.variable_value = variable_value
 
 
+class ErrorAdditionalInfo(_serialization.Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: JSON
+    """
+
+    _validation = {
+        "type": {"readonly": True},
+        "info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
+
+
+class ErrorDetail(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.datafactory.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.datafactory.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class ErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.datafactory.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetail"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.datafactory.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
+        self.error = error
+
+
 class ExcelDataset(Dataset):
     """Excel dataset.
 
@@ -28289,12 +28696,12 @@ class ExcelDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         location: Optional["_models.DatasetLocation"] = None,
         sheet_name: Optional[JSON] = None,
@@ -28415,7 +28822,7 @@ class ExcelSource(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -28549,12 +28956,12 @@ class ExecuteDataFlowActivity(ExecutionActivity):
         *,
         name: str,
         data_flow: "_models.DataFlowReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
         staging: Optional["_models.DataFlowStagingInfo"] = None,
@@ -28832,14 +29239,14 @@ class ExecutePipelineActivity(ControlActivity):
         *,
         name: str,
         pipeline: "_models.PipelineReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         policy: Optional["_models.ExecutePipelineActivityPolicy"] = None,
-        parameters: Optional[Dict[str, JSON]] = None,
+        parameters: Optional[dict[str, JSON]] = None,
         wait_on_completion: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
@@ -28908,7 +29315,7 @@ class ExecutePipelineActivityPolicy(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         secure_input: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
@@ -28990,8 +29397,8 @@ class ExecutePowerQueryActivityTypeProperties(ExecuteDataFlowActivityTypePropert
         continue_on_error: Optional[JSON] = None,
         run_concurrently: Optional[JSON] = None,
         source_staging_concurrency: Optional[JSON] = None,
-        sinks: Optional[Dict[str, "_models.PowerQuerySink"]] = None,
-        queries: Optional[List["_models.PowerQuerySinkMapping"]] = None,
+        sinks: Optional[dict[str, "_models.PowerQuerySink"]] = None,
+        queries: Optional[list["_models.PowerQuerySinkMapping"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -29146,23 +29553,23 @@ class ExecuteSSISPackageActivity(ExecutionActivity):
         name: str,
         package_location: "_models.SSISPackageLocation",
         connect_via: "_models.IntegrationRuntimeReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
         runtime: Optional[JSON] = None,
         logging_level: Optional[JSON] = None,
         environment_path: Optional[JSON] = None,
         execution_credential: Optional["_models.SSISExecutionCredential"] = None,
-        project_parameters: Optional[Dict[str, "_models.SSISExecutionParameter"]] = None,
-        package_parameters: Optional[Dict[str, "_models.SSISExecutionParameter"]] = None,
-        project_connection_managers: Optional[Dict[str, Dict[str, "_models.SSISExecutionParameter"]]] = None,
-        package_connection_managers: Optional[Dict[str, Dict[str, "_models.SSISExecutionParameter"]]] = None,
-        property_overrides: Optional[Dict[str, "_models.SSISPropertyOverride"]] = None,
+        project_parameters: Optional[dict[str, "_models.SSISExecutionParameter"]] = None,
+        package_parameters: Optional[dict[str, "_models.SSISExecutionParameter"]] = None,
+        project_connection_managers: Optional[dict[str, dict[str, "_models.SSISExecutionParameter"]]] = None,
+        package_connection_managers: Optional[dict[str, dict[str, "_models.SSISExecutionParameter"]]] = None,
+        property_overrides: Optional[dict[str, "_models.SSISPropertyOverride"]] = None,
         log_location: Optional["_models.SSISLogLocation"] = None,
         **kwargs: Any
     ) -> None:
@@ -29342,12 +29749,12 @@ class ExecuteWranglingDataflowActivity(Activity):
         *,
         name: str,
         data_flow: "_models.DataFlowReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
         staging: Optional["_models.DataFlowStagingInfo"] = None,
         integration_runtime: Optional["_models.IntegrationRuntimeReference"] = None,
@@ -29357,8 +29764,8 @@ class ExecuteWranglingDataflowActivity(Activity):
         continue_on_error: Optional[JSON] = None,
         run_concurrently: Optional[JSON] = None,
         source_staging_concurrency: Optional[JSON] = None,
-        sinks: Optional[Dict[str, "_models.PowerQuerySink"]] = None,
-        queries: Optional[List["_models.PowerQuerySinkMapping"]] = None,
+        sinks: Optional[dict[str, "_models.PowerQuerySink"]] = None,
+        queries: Optional[list["_models.PowerQuerySinkMapping"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -29453,7 +29860,7 @@ class ExposureControlBatchRequest(_serialization.Model):
         "exposure_control_requests": {"key": "exposureControlRequests", "type": "[ExposureControlRequest]"},
     }
 
-    def __init__(self, *, exposure_control_requests: List["_models.ExposureControlRequest"], **kwargs: Any) -> None:
+    def __init__(self, *, exposure_control_requests: list["_models.ExposureControlRequest"], **kwargs: Any) -> None:
         """
         :keyword exposure_control_requests: List of exposure control features. Required.
         :paramtype exposure_control_requests:
@@ -29481,7 +29888,7 @@ class ExposureControlBatchResponse(_serialization.Model):
         "exposure_control_responses": {"key": "exposureControlResponses", "type": "[ExposureControlResponse]"},
     }
 
-    def __init__(self, *, exposure_control_responses: List["_models.ExposureControlResponse"], **kwargs: Any) -> None:
+    def __init__(self, *, exposure_control_responses: list["_models.ExposureControlResponse"], **kwargs: Any) -> None:
         """
         :keyword exposure_control_responses: List of exposure control feature values. Required.
         :paramtype exposure_control_responses:
@@ -29543,8 +29950,8 @@ class ExposureControlResponse(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.feature_name = None
-        self.value = None
+        self.feature_name: Optional[str] = None
+        self.value: Optional[str] = None
 
 
 class Expression(_serialization.Model):
@@ -29586,8 +29993,8 @@ class ExpressionV2(_serialization.Model):
     :ivar type: Type of expressions supported by the system. Type: string. Known values are:
      "Constant", "Field", "Unary", "Binary", and "NAry".
     :vartype type: str or ~azure.mgmt.datafactory.models.ExpressionV2Type
-    :ivar value: Value for Constant/Field Type: string.
-    :vartype value: str
+    :ivar value: Value for Constant/Field Type: object.
+    :vartype value: JSON
     :ivar operators: Expression operator value Type: list of strings.
     :vartype operators: list[str]
     :ivar operands: List of nested expressions.
@@ -29596,7 +30003,7 @@ class ExpressionV2(_serialization.Model):
 
     _attribute_map = {
         "type": {"key": "type", "type": "str"},
-        "value": {"key": "value", "type": "str"},
+        "value": {"key": "value", "type": "object"},
         "operators": {"key": "operators", "type": "[str]"},
         "operands": {"key": "operands", "type": "[ExpressionV2]"},
     }
@@ -29605,17 +30012,17 @@ class ExpressionV2(_serialization.Model):
         self,
         *,
         type: Optional[Union[str, "_models.ExpressionV2Type"]] = None,
-        value: Optional[str] = None,
-        operators: Optional[List[str]] = None,
-        operands: Optional[List["_models.ExpressionV2"]] = None,
+        value: Optional[JSON] = None,
+        operators: Optional[list[str]] = None,
+        operands: Optional[list["_models.ExpressionV2"]] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword type: Type of expressions supported by the system. Type: string. Known values are:
          "Constant", "Field", "Unary", "Binary", and "NAry".
         :paramtype type: str or ~azure.mgmt.datafactory.models.ExpressionV2Type
-        :keyword value: Value for Constant/Field Type: string.
-        :paramtype value: str
+        :keyword value: Value for Constant/Field Type: object.
+        :paramtype value: JSON
         :keyword operators: Expression operator value Type: list of strings.
         :paramtype operators: list[str]
         :keyword operands: List of nested expressions.
@@ -29663,7 +30070,7 @@ class Resource(_serialization.Model):
         "e_tag": {"key": "eTag", "type": "str"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: The resource location.
         :paramtype location: str
@@ -29671,12 +30078,12 @@ class Resource(_serialization.Model):
         :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.location = location
         self.tags = tags
-        self.e_tag = None
+        self.e_tag: Optional[str] = None
 
 
 class Factory(Resource):
@@ -29754,12 +30161,12 @@ class Factory(Resource):
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        tags: Optional[dict[str, str]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         identity: Optional["_models.FactoryIdentity"] = None,
         purview_configuration: Optional["_models.PurviewConfiguration"] = None,
         repo_configuration: Optional["_models.FactoryRepoConfiguration"] = None,
-        global_parameters: Optional[Dict[str, "_models.GlobalParameterSpecification"]] = None,
+        global_parameters: Optional[dict[str, "_models.GlobalParameterSpecification"]] = None,
         encryption: Optional["_models.EncryptionConfiguration"] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         **kwargs: Any
@@ -29790,9 +30197,9 @@ class Factory(Resource):
         super().__init__(location=location, tags=tags, **kwargs)
         self.additional_properties = additional_properties
         self.identity = identity
-        self.provisioning_state = None
-        self.create_time = None
-        self.version = None
+        self.provisioning_state: Optional[str] = None
+        self.create_time: Optional[datetime.datetime] = None
+        self.version: Optional[str] = None
         self.purview_configuration = purview_configuration
         self.repo_configuration = repo_configuration
         self.global_parameters = global_parameters
@@ -30020,7 +30427,7 @@ class FactoryIdentity(_serialization.Model):
         self,
         *,
         type: Union[str, "_models.FactoryIdentityType"],
-        user_assigned_identities: Optional[Dict[str, JSON]] = None,
+        user_assigned_identities: Optional[dict[str, JSON]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -30032,8 +30439,8 @@ class FactoryIdentity(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.type = type
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
         self.user_assigned_identities = user_assigned_identities
 
 
@@ -30057,7 +30464,7 @@ class FactoryListResponse(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.Factory"], next_link: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.Factory"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of factories. Required.
         :paramtype value: list[~azure.mgmt.datafactory.models.Factory]
@@ -30122,7 +30529,7 @@ class FactoryUpdateParameters(_serialization.Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.FactoryIdentity"] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         **kwargs: Any
@@ -30299,12 +30706,12 @@ class FailActivity(ControlActivity):
         name: str,
         message: JSON,
         error_code: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -30406,12 +30813,12 @@ class FileServerLinkedService(LinkedService):
         self,
         *,
         host: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         user_id: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[str] = None,
@@ -30491,7 +30898,7 @@ class FileServerLocation(DatasetLocation):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         folder_path: Optional[JSON] = None,
         file_name: Optional[JSON] = None,
         **kwargs: Any
@@ -30586,7 +30993,7 @@ class FileServerReadSettings(StoreReadSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         recursive: Optional[JSON] = None,
@@ -30701,11 +31108,11 @@ class FileServerWriteSettings(StoreWriteSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
-        metadata: Optional[List["_models.MetadataItem"]] = None,
+        metadata: Optional[list["_models.MetadataItem"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -30811,12 +31218,12 @@ class FileShareDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         folder_path: Optional[JSON] = None,
         file_name: Optional[JSON] = None,
@@ -30940,7 +31347,7 @@ class FileSystemSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -31037,7 +31444,7 @@ class FileSystemSource(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -31139,12 +31546,12 @@ class FilterActivity(ControlActivity):
         name: str,
         items: "_models.Expression",
         condition: "_models.Expression",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -31232,13 +31639,13 @@ class Flowlet(DataFlow):
         self,
         *,
         description: Optional[str] = None,
-        annotations: Optional[List[JSON]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DataFlowFolder"] = None,
-        sources: Optional[List["_models.DataFlowSource"]] = None,
-        sinks: Optional[List["_models.DataFlowSink"]] = None,
-        transformations: Optional[List["_models.Transformation"]] = None,
+        sources: Optional[list["_models.DataFlowSource"]] = None,
+        sinks: Optional[list["_models.DataFlowSink"]] = None,
+        transformations: Optional[list["_models.Transformation"]] = None,
         script: Optional[str] = None,
-        script_lines: Optional[List[str]] = None,
+        script_lines: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -31333,13 +31740,13 @@ class ForEachActivity(ControlActivity):
         *,
         name: str,
         items: "_models.Expression",
-        activities: List["_models.Activity"],
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        activities: list["_models.Activity"],
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         is_sequential: Optional[bool] = None,
         batch_count: Optional[int] = None,
         **kwargs: Any
@@ -31459,7 +31866,7 @@ class FtpReadSettings(StoreReadSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         recursive: Optional[JSON] = None,
@@ -31606,12 +32013,12 @@ class FtpServerLinkedService(LinkedService):
         self,
         *,
         host: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         port: Optional[JSON] = None,
         authentication_type: Optional[Union[str, "_models.FtpAuthenticationType"]] = None,
         user_name: Optional[JSON] = None,
@@ -31712,7 +32119,7 @@ class FtpServerLocation(DatasetLocation):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         folder_path: Optional[JSON] = None,
         file_name: Optional[JSON] = None,
         **kwargs: Any
@@ -31750,7 +32157,7 @@ class GetDataFactoryOperationStatusResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, additional_properties: Optional[Dict[str, JSON]] = None, status: Optional[str] = None, **kwargs: Any
+        self, *, additional_properties: Optional[dict[str, JSON]] = None, status: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
@@ -31831,15 +32238,15 @@ class GetMetadataActivity(ExecutionActivity):
         *,
         name: str,
         dataset: "_models.DatasetReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
-        field_list: Optional[List[JSON]] = None,
+        field_list: Optional[list[JSON]] = None,
         store_settings: Optional["_models.StoreReadSettings"] = None,
         format_settings: Optional["_models.FormatReadSettings"] = None,
         **kwargs: Any
@@ -32037,7 +32444,7 @@ class GlobalParameterListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.GlobalParameterResource"], next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: list["_models.GlobalParameterResource"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: List of global parameters. Required.
@@ -32085,7 +32492,7 @@ class GlobalParameterResource(SubResource):
         "properties": {"key": "properties", "type": "{GlobalParameterSpecification}"},
     }
 
-    def __init__(self, *, properties: Dict[str, "_models.GlobalParameterSpecification"], **kwargs: Any) -> None:
+    def __init__(self, *, properties: dict[str, "_models.GlobalParameterSpecification"], **kwargs: Any) -> None:
         """
         :keyword properties: Properties of the global parameter. Required.
         :paramtype properties: dict[str, ~azure.mgmt.datafactory.models.GlobalParameterSpecification]
@@ -32242,12 +32649,12 @@ class GoogleAdWordsLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         connection_properties: Optional[JSON] = None,
         client_customer_id: Optional[JSON] = None,
         developer_token: Optional["_models.SecretBase"] = None,
@@ -32421,12 +32828,12 @@ class GoogleAdWordsObjectDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         **kwargs: Any
@@ -32522,7 +32929,7 @@ class GoogleAdWordsSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -32670,12 +33077,12 @@ class GoogleBigQueryLinkedService(LinkedService):
         *,
         project: JSON,
         authentication_type: Union[str, "_models.GoogleBigQueryAuthenticationType"],
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         additional_projects: Optional[JSON] = None,
         request_google_drive_scope: Optional[JSON] = None,
         refresh_token: Optional["_models.SecretBase"] = None,
@@ -32832,12 +33239,12 @@ class GoogleBigQueryObjectDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         table: Optional[JSON] = None,
@@ -32944,7 +33351,7 @@ class GoogleBigQuerySource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -33066,12 +33473,12 @@ class GoogleBigQueryV2LinkedService(LinkedService):
         *,
         project_id: JSON,
         authentication_type: Union[str, "_models.GoogleBigQueryV2AuthenticationType"],
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         client_id: Optional[JSON] = None,
         client_secret: Optional["_models.SecretBase"] = None,
         refresh_token: Optional["_models.SecretBase"] = None,
@@ -33193,12 +33600,12 @@ class GoogleBigQueryV2ObjectDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table: Optional[JSON] = None,
         dataset: Optional[JSON] = None,
@@ -33300,7 +33707,7 @@ class GoogleBigQueryV2Source(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -33407,12 +33814,12 @@ class GoogleCloudStorageLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         access_key_id: Optional[JSON] = None,
         secret_access_key: Optional["_models.SecretBase"] = None,
         service_url: Optional[JSON] = None,
@@ -33504,7 +33911,7 @@ class GoogleCloudStorageLocation(DatasetLocation):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         folder_path: Optional[JSON] = None,
         file_name: Optional[JSON] = None,
         bucket_name: Optional[JSON] = None,
@@ -33609,7 +34016,7 @@ class GoogleCloudStorageReadSettings(StoreReadSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         recursive: Optional[JSON] = None,
@@ -33733,12 +34140,12 @@ class GoogleSheetsLinkedService(LinkedService):
         self,
         *,
         api_token: "_models.SecretBase",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         encrypted_credential: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -33855,12 +34262,12 @@ class GreenplumLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         connection_string: Optional[JSON] = None,
         pwd: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[str] = None,
@@ -33995,7 +34402,7 @@ class GreenplumSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -34106,12 +34513,12 @@ class GreenplumTableDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         table: Optional[JSON] = None,
@@ -34251,12 +34658,12 @@ class HBaseLinkedService(LinkedService):
         *,
         host: JSON,
         authentication_type: Union[str, "_models.HBaseAuthenticationType"],
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         port: Optional[JSON] = None,
         http_path: Optional[JSON] = None,
         username: Optional[JSON] = None,
@@ -34391,12 +34798,12 @@ class HBaseObjectDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         **kwargs: Any
@@ -34492,7 +34899,7 @@ class HBaseSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -34602,12 +35009,12 @@ class HdfsLinkedService(LinkedService):
         self,
         *,
         url: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         authentication_type: Optional[JSON] = None,
         encrypted_credential: Optional[str] = None,
         user_name: Optional[JSON] = None,
@@ -34692,7 +35099,7 @@ class HdfsLocation(DatasetLocation):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         folder_path: Optional[JSON] = None,
         file_name: Optional[JSON] = None,
         **kwargs: Any
@@ -34786,7 +35193,7 @@ class HdfsReadSettings(StoreReadSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         recursive: Optional[JSON] = None,
@@ -34908,7 +35315,7 @@ class HdfsSource(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -35030,21 +35437,21 @@ class HDInsightHiveActivity(ExecutionActivity):
         self,
         *,
         name: str,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
-        storage_linked_services: Optional[List["_models.LinkedServiceReference"]] = None,
-        arguments: Optional[List[JSON]] = None,
+        storage_linked_services: Optional[list["_models.LinkedServiceReference"]] = None,
+        arguments: Optional[list[JSON]] = None,
         get_debug_info: Optional[Union[str, "_models.HDInsightActivityDebugInfoOption"]] = None,
         script_path: Optional[JSON] = None,
         script_linked_service: Optional["_models.LinkedServiceReference"] = None,
-        defines: Optional[Dict[str, JSON]] = None,
-        variables: Optional[Dict[str, JSON]] = None,
+        defines: Optional[dict[str, JSON]] = None,
+        variables: Optional[dict[str, JSON]] = None,
         query_timeout: Optional[int] = None,
         **kwargs: Any
     ) -> None:
@@ -35136,6 +35543,10 @@ class HDInsightLinkedService(LinkedService):
     :ivar cluster_uri: HDInsight cluster URI. Type: string (or Expression with resultType string).
      Required.
     :vartype cluster_uri: JSON
+    :ivar cluster_auth_type: HDInsight cluster authentication type. Known values are: "BasicAuth",
+     "SystemAssignedManagedIdentity", and "UserAssignedManagedIdentity".
+    :vartype cluster_auth_type: str or
+     ~azure.mgmt.datafactory.models.HDInsightClusterAuthenticationType
     :ivar user_name: HDInsight cluster user name. Type: string (or Expression with resultType
      string).
     :vartype user_name: JSON
@@ -35155,6 +35566,9 @@ class HDInsightLinkedService(LinkedService):
     :ivar file_system: Specify the FileSystem if the main storage for the HDInsight is ADLS Gen2.
      Type: string (or Expression with resultType string).
     :vartype file_system: JSON
+    :ivar credential: The credential reference containing MI authentication information for the
+     HDInsight cluster.
+    :vartype credential: ~azure.mgmt.datafactory.models.CredentialReference
     """
 
     _validation = {
@@ -35171,6 +35585,7 @@ class HDInsightLinkedService(LinkedService):
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
         "annotations": {"key": "annotations", "type": "[object]"},
         "cluster_uri": {"key": "typeProperties.clusterUri", "type": "object"},
+        "cluster_auth_type": {"key": "typeProperties.clusterAuthType", "type": "str"},
         "user_name": {"key": "typeProperties.userName", "type": "object"},
         "password": {"key": "typeProperties.password", "type": "SecretBase"},
         "linked_service_name": {"key": "typeProperties.linkedServiceName", "type": "LinkedServiceReference"},
@@ -35181,18 +35596,20 @@ class HDInsightLinkedService(LinkedService):
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
         "is_esp_enabled": {"key": "typeProperties.isEspEnabled", "type": "object"},
         "file_system": {"key": "typeProperties.fileSystem", "type": "object"},
+        "credential": {"key": "typeProperties.credential", "type": "CredentialReference"},
     }
 
     def __init__(
         self,
         *,
         cluster_uri: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
+        cluster_auth_type: Optional[Union[str, "_models.HDInsightClusterAuthenticationType"]] = None,
         user_name: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
@@ -35200,6 +35617,7 @@ class HDInsightLinkedService(LinkedService):
         encrypted_credential: Optional[str] = None,
         is_esp_enabled: Optional[JSON] = None,
         file_system: Optional[JSON] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -35219,6 +35637,10 @@ class HDInsightLinkedService(LinkedService):
         :keyword cluster_uri: HDInsight cluster URI. Type: string (or Expression with resultType
          string). Required.
         :paramtype cluster_uri: JSON
+        :keyword cluster_auth_type: HDInsight cluster authentication type. Known values are:
+         "BasicAuth", "SystemAssignedManagedIdentity", and "UserAssignedManagedIdentity".
+        :paramtype cluster_auth_type: str or
+         ~azure.mgmt.datafactory.models.HDInsightClusterAuthenticationType
         :keyword user_name: HDInsight cluster user name. Type: string (or Expression with resultType
          string).
         :paramtype user_name: JSON
@@ -35238,6 +35660,9 @@ class HDInsightLinkedService(LinkedService):
         :keyword file_system: Specify the FileSystem if the main storage for the HDInsight is ADLS
          Gen2. Type: string (or Expression with resultType string).
         :paramtype file_system: JSON
+        :keyword credential: The credential reference containing MI authentication information for the
+         HDInsight cluster.
+        :paramtype credential: ~azure.mgmt.datafactory.models.CredentialReference
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -35250,6 +35675,7 @@ class HDInsightLinkedService(LinkedService):
         )
         self.type: str = "HDInsight"
         self.cluster_uri = cluster_uri
+        self.cluster_auth_type = cluster_auth_type
         self.user_name = user_name
         self.password = password
         self.linked_service_name = linked_service_name
@@ -35257,6 +35683,7 @@ class HDInsightLinkedService(LinkedService):
         self.encrypted_credential = encrypted_credential
         self.is_esp_enabled = is_esp_enabled
         self.file_system = file_system
+        self.credential = credential
 
 
 class HDInsightMapReduceActivity(ExecutionActivity):
@@ -35340,20 +35767,20 @@ class HDInsightMapReduceActivity(ExecutionActivity):
         name: str,
         class_name: JSON,
         jar_file_path: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
-        storage_linked_services: Optional[List["_models.LinkedServiceReference"]] = None,
-        arguments: Optional[List[JSON]] = None,
+        storage_linked_services: Optional[list["_models.LinkedServiceReference"]] = None,
+        arguments: Optional[list[JSON]] = None,
         get_debug_info: Optional[Union[str, "_models.HDInsightActivityDebugInfoOption"]] = None,
         jar_linked_service: Optional["_models.LinkedServiceReference"] = None,
-        jar_libs: Optional[List[JSON]] = None,
-        defines: Optional[Dict[str, JSON]] = None,
+        jar_libs: Optional[list[JSON]] = None,
+        defines: Optional[dict[str, JSON]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -35469,6 +35896,11 @@ class HDInsightOnDemandLinkedService(LinkedService):
     :ivar cluster_resource_group: The resource group where the cluster belongs. Type: string (or
      Expression with resultType string). Required.
     :vartype cluster_resource_group: JSON
+    :ivar cluster_resource_group_auth_type: HDInsight On-demand cluster resource group
+     authentication type. Known values are: "ServicePrincipalKey", "SystemAssignedManagedIdentity",
+     and "UserAssignedManagedIdentity".
+    :vartype cluster_resource_group_auth_type: str or
+     ~azure.mgmt.datafactory.models.HDInsightOndemandClusterResourceGroupAuthenticationType
     :ivar cluster_name_prefix: The prefix of cluster name, postfix will be distinct with timestamp.
      Type: string (or Expression with resultType string).
     :vartype cluster_name_prefix: JSON
@@ -35530,7 +35962,7 @@ class HDInsightOnDemandLinkedService(LinkedService):
     :vartype zookeeper_node_size: JSON
     :ivar script_actions: Custom script actions to run on HDI ondemand cluster once it's up. Please
      refer to
-     https://docs.microsoft.com/en-us/azure/hdinsight/hdinsight-hadoop-customize-cluster-linux?toc=%2Fen-us%2Fazure%2Fhdinsight%2Fr-server%2FTOC.json&bc=%2Fen-us%2Fazure%2Fbread%2Ftoc.json#understanding-script-actions.  # pylint: disable=line-too-long
+     https://docs.microsoft.com/en-us/azure/hdinsight/hdinsight-hadoop-customize-cluster-linux?toc=%2Fen-us%2Fazure%2Fhdinsight%2Fr-server%2FTOC.json&bc=%2Fen-us%2Fazure%2Fbread%2Ftoc.json#understanding-script-actions.
     :vartype script_actions: list[~azure.mgmt.datafactory.models.ScriptAction]
     :ivar virtual_network_id: The ARM resource ID for the vNet to which the cluster should be
      joined after creation. Type: string (or Expression with resultType string).
@@ -35570,6 +36002,7 @@ class HDInsightOnDemandLinkedService(LinkedService):
         "service_principal_key": {"key": "typeProperties.servicePrincipalKey", "type": "SecretBase"},
         "tenant": {"key": "typeProperties.tenant", "type": "object"},
         "cluster_resource_group": {"key": "typeProperties.clusterResourceGroup", "type": "object"},
+        "cluster_resource_group_auth_type": {"key": "typeProperties.clusterResourceGroupAuthType", "type": "str"},
         "cluster_name_prefix": {"key": "typeProperties.clusterNamePrefix", "type": "object"},
         "cluster_user_name": {"key": "typeProperties.clusterUserName", "type": "object"},
         "cluster_password": {"key": "typeProperties.clusterPassword", "type": "SecretBase"},
@@ -35613,20 +36046,23 @@ class HDInsightOnDemandLinkedService(LinkedService):
         host_subscription_id: JSON,
         tenant: JSON,
         cluster_resource_group: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         service_principal_id: Optional[JSON] = None,
         service_principal_key: Optional["_models.SecretBase"] = None,
+        cluster_resource_group_auth_type: Optional[
+            Union[str, "_models.HDInsightOndemandClusterResourceGroupAuthenticationType"]
+        ] = None,
         cluster_name_prefix: Optional[JSON] = None,
         cluster_user_name: Optional[JSON] = None,
         cluster_password: Optional["_models.SecretBase"] = None,
         cluster_ssh_user_name: Optional[JSON] = None,
         cluster_ssh_password: Optional["_models.SecretBase"] = None,
-        additional_linked_service_names: Optional[List["_models.LinkedServiceReference"]] = None,
+        additional_linked_service_names: Optional[list["_models.LinkedServiceReference"]] = None,
         hcatalog_linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         cluster_type: Optional[JSON] = None,
         spark_version: Optional[JSON] = None,
@@ -35642,7 +36078,7 @@ class HDInsightOnDemandLinkedService(LinkedService):
         head_node_size: Optional[JSON] = None,
         data_node_size: Optional[JSON] = None,
         zookeeper_node_size: Optional[JSON] = None,
-        script_actions: Optional[List["_models.ScriptAction"]] = None,
+        script_actions: Optional[list["_models.ScriptAction"]] = None,
         virtual_network_id: Optional[JSON] = None,
         subnet_name: Optional[JSON] = None,
         credential: Optional["_models.CredentialReference"] = None,
@@ -35690,6 +36126,11 @@ class HDInsightOnDemandLinkedService(LinkedService):
         :keyword cluster_resource_group: The resource group where the cluster belongs. Type: string (or
          Expression with resultType string). Required.
         :paramtype cluster_resource_group: JSON
+        :keyword cluster_resource_group_auth_type: HDInsight On-demand cluster resource group
+         authentication type. Known values are: "ServicePrincipalKey", "SystemAssignedManagedIdentity",
+         and "UserAssignedManagedIdentity".
+        :paramtype cluster_resource_group_auth_type: str or
+         ~azure.mgmt.datafactory.models.HDInsightOndemandClusterResourceGroupAuthenticationType
         :keyword cluster_name_prefix: The prefix of cluster name, postfix will be distinct with
          timestamp. Type: string (or Expression with resultType string).
         :paramtype cluster_name_prefix: JSON
@@ -35752,7 +36193,7 @@ class HDInsightOnDemandLinkedService(LinkedService):
         :paramtype zookeeper_node_size: JSON
         :keyword script_actions: Custom script actions to run on HDI ondemand cluster once it's up.
          Please refer to
-         https://docs.microsoft.com/en-us/azure/hdinsight/hdinsight-hadoop-customize-cluster-linux?toc=%2Fen-us%2Fazure%2Fhdinsight%2Fr-server%2FTOC.json&bc=%2Fen-us%2Fazure%2Fbread%2Ftoc.json#understanding-script-actions.  # pylint: disable=line-too-long
+         https://docs.microsoft.com/en-us/azure/hdinsight/hdinsight-hadoop-customize-cluster-linux?toc=%2Fen-us%2Fazure%2Fhdinsight%2Fr-server%2FTOC.json&bc=%2Fen-us%2Fazure%2Fbread%2Ftoc.json#understanding-script-actions.
         :paramtype script_actions: list[~azure.mgmt.datafactory.models.ScriptAction]
         :keyword virtual_network_id: The ARM resource ID for the vNet to which the cluster should be
          joined after creation. Type: string (or Expression with resultType string).
@@ -35782,6 +36223,7 @@ class HDInsightOnDemandLinkedService(LinkedService):
         self.service_principal_key = service_principal_key
         self.tenant = tenant
         self.cluster_resource_group = cluster_resource_group
+        self.cluster_resource_group_auth_type = cluster_resource_group_auth_type
         self.cluster_name_prefix = cluster_name_prefix
         self.cluster_user_name = cluster_user_name
         self.cluster_password = cluster_password
@@ -35881,20 +36323,20 @@ class HDInsightPigActivity(ExecutionActivity):
         self,
         *,
         name: str,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
-        storage_linked_services: Optional[List["_models.LinkedServiceReference"]] = None,
+        storage_linked_services: Optional[list["_models.LinkedServiceReference"]] = None,
         arguments: Optional[JSON] = None,
         get_debug_info: Optional[Union[str, "_models.HDInsightActivityDebugInfoOption"]] = None,
         script_path: Optional[JSON] = None,
         script_linked_service: Optional["_models.LinkedServiceReference"] = None,
-        defines: Optional[Dict[str, JSON]] = None,
+        defines: Optional[dict[str, JSON]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -36041,20 +36483,20 @@ class HDInsightSparkActivity(ExecutionActivity):
         name: str,
         root_path: JSON,
         entry_file_path: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
-        arguments: Optional[List[JSON]] = None,
+        arguments: Optional[list[JSON]] = None,
         get_debug_info: Optional[Union[str, "_models.HDInsightActivityDebugInfoOption"]] = None,
         spark_job_linked_service: Optional["_models.LinkedServiceReference"] = None,
         class_name: Optional[str] = None,
         proxy_user: Optional[JSON] = None,
-        spark_config: Optional[Dict[str, JSON]] = None,
+        spark_config: Optional[dict[str, JSON]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -36225,22 +36667,22 @@ class HDInsightStreamingActivity(ExecutionActivity):
         reducer: JSON,
         input: JSON,
         output: JSON,
-        file_paths: List[JSON],
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        file_paths: list[JSON],
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
-        storage_linked_services: Optional[List["_models.LinkedServiceReference"]] = None,
-        arguments: Optional[List[JSON]] = None,
+        storage_linked_services: Optional[list["_models.LinkedServiceReference"]] = None,
+        arguments: Optional[list[JSON]] = None,
         get_debug_info: Optional[Union[str, "_models.HDInsightActivityDebugInfoOption"]] = None,
         file_linked_service: Optional["_models.LinkedServiceReference"] = None,
         combiner: Optional[JSON] = None,
-        command_environment: Optional[List[JSON]] = None,
-        defines: Optional[Dict[str, JSON]] = None,
+        command_environment: Optional[list[JSON]] = None,
+        defines: Optional[dict[str, JSON]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -36377,6 +36819,9 @@ class HiveLinkedService(LinkedService):
     :ivar enable_ssl: Specifies whether the connections to the server are encrypted using SSL. The
      default value is false.
     :vartype enable_ssl: JSON
+    :ivar enable_server_certificate_validation: Specifies whether the connections to the server
+     will validate server certificate, the default value is True. Only used for Version 2.0.
+    :vartype enable_server_certificate_validation: JSON
     :ivar trusted_cert_path: The full path of the .pem file containing trusted CA certificates for
      verifying the server when connecting over SSL. This property can only be set when using SSL on
      self-hosted IR. The default value is the cacerts.pem file installed with the IR.
@@ -36421,6 +36866,10 @@ class HiveLinkedService(LinkedService):
         "password": {"key": "typeProperties.password", "type": "SecretBase"},
         "http_path": {"key": "typeProperties.httpPath", "type": "object"},
         "enable_ssl": {"key": "typeProperties.enableSsl", "type": "object"},
+        "enable_server_certificate_validation": {
+            "key": "typeProperties.enableServerCertificateValidation",
+            "type": "object",
+        },
         "trusted_cert_path": {"key": "typeProperties.trustedCertPath", "type": "object"},
         "use_system_trust_store": {"key": "typeProperties.useSystemTrustStore", "type": "object"},
         "allow_host_name_cn_mismatch": {"key": "typeProperties.allowHostNameCNMismatch", "type": "object"},
@@ -36428,17 +36877,17 @@ class HiveLinkedService(LinkedService):
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
     }
 
-    def __init__(  # pylint: disable=too-many-locals
+    def __init__(
         self,
         *,
         host: JSON,
         authentication_type: Union[str, "_models.HiveAuthenticationType"],
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         port: Optional[JSON] = None,
         server_type: Optional[Union[str, "_models.HiveServerType"]] = None,
         thrift_transport_protocol: Optional[Union[str, "_models.HiveThriftTransportProtocol"]] = None,
@@ -36449,6 +36898,7 @@ class HiveLinkedService(LinkedService):
         password: Optional["_models.SecretBase"] = None,
         http_path: Optional[JSON] = None,
         enable_ssl: Optional[JSON] = None,
+        enable_server_certificate_validation: Optional[JSON] = None,
         trusted_cert_path: Optional[JSON] = None,
         use_system_trust_store: Optional[JSON] = None,
         allow_host_name_cn_mismatch: Optional[JSON] = None,
@@ -36504,6 +36954,9 @@ class HiveLinkedService(LinkedService):
         :keyword enable_ssl: Specifies whether the connections to the server are encrypted using SSL.
          The default value is false.
         :paramtype enable_ssl: JSON
+        :keyword enable_server_certificate_validation: Specifies whether the connections to the server
+         will validate server certificate, the default value is True. Only used for Version 2.0.
+        :paramtype enable_server_certificate_validation: JSON
         :keyword trusted_cert_path: The full path of the .pem file containing trusted CA certificates
          for verifying the server when connecting over SSL. This property can only be set when using SSL
          on self-hosted IR. The default value is the cacerts.pem file installed with the IR.
@@ -36543,6 +36996,7 @@ class HiveLinkedService(LinkedService):
         self.password = password
         self.http_path = http_path
         self.enable_ssl = enable_ssl
+        self.enable_server_certificate_validation = enable_server_certificate_validation
         self.trusted_cert_path = trusted_cert_path
         self.use_system_trust_store = use_system_trust_store
         self.allow_host_name_cn_mismatch = allow_host_name_cn_mismatch
@@ -36611,12 +37065,12 @@ class HiveObjectDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         table: Optional[JSON] = None,
@@ -36723,7 +37177,7 @@ class HiveSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -36848,12 +37302,12 @@ class HttpDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         relative_url: Optional[JSON] = None,
         request_method: Optional[JSON] = None,
@@ -37008,12 +37462,12 @@ class HttpLinkedService(LinkedService):
         self,
         *,
         url: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         authentication_type: Optional[Union[str, "_models.HttpAuthenticationType"]] = None,
         user_name: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
@@ -37143,7 +37597,7 @@ class HttpReadSettings(StoreReadSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         request_method: Optional[JSON] = None,
@@ -37229,7 +37683,7 @@ class HttpServerLocation(DatasetLocation):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         folder_path: Optional[JSON] = None,
         file_name: Optional[JSON] = None,
         relative_url: Optional[JSON] = None,
@@ -37302,7 +37756,7 @@ class HttpSource(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -37416,12 +37870,12 @@ class HubspotLinkedService(LinkedService):
         self,
         *,
         client_id: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         client_secret: Optional["_models.SecretBase"] = None,
         access_token: Optional["_models.SecretBase"] = None,
         refresh_token: Optional["_models.SecretBase"] = None,
@@ -37542,12 +37996,12 @@ class HubspotObjectDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         **kwargs: Any
@@ -37643,7 +38097,7 @@ class HubspotSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -37747,12 +38201,12 @@ class IcebergDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         location: Optional["_models.DatasetLocation"] = None,
         **kwargs: Any
@@ -37851,7 +38305,7 @@ class IcebergSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -37925,7 +38379,7 @@ class IcebergWriteSettings(FormatWriteSettings):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, additional_properties: Optional[dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -37998,14 +38452,14 @@ class IfConditionActivity(ControlActivity):
         *,
         name: str,
         expression: "_models.Expression",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
-        if_true_activities: Optional[List["_models.Activity"]] = None,
-        if_false_activities: Optional[List["_models.Activity"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
+        if_true_activities: Optional[list["_models.Activity"]] = None,
+        if_false_activities: Optional[list["_models.Activity"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -38088,9 +38542,17 @@ class ImpalaLinkedService(LinkedService):
     :vartype username: JSON
     :ivar password: The password corresponding to the user name when using UsernameAndPassword.
     :vartype password: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar thrift_transport_protocol: The transport protocol to use in the Thrift layer (for V2
+     only). Default value is Binary. Known values are: "Binary" and "HTTP".
+    :vartype thrift_transport_protocol: str or
+     ~azure.mgmt.datafactory.models.ImpalaThriftTransportProtocol
     :ivar enable_ssl: Specifies whether the connections to the server are encrypted using SSL. The
      default value is false.
     :vartype enable_ssl: JSON
+    :ivar enable_server_certificate_validation: Specify whether to enable server SSL certificate
+     validation when you connect.Always use System Trust Store (for V2 only). The default value is
+     true.
+    :vartype enable_server_certificate_validation: JSON
     :ivar trusted_cert_path: The full path of the .pem file containing trusted CA certificates for
      verifying the server when connecting over SSL. This property can only be set when using SSL on
      self-hosted IR. The default value is the cacerts.pem file installed with the IR.
@@ -38128,7 +38590,12 @@ class ImpalaLinkedService(LinkedService):
         "authentication_type": {"key": "typeProperties.authenticationType", "type": "str"},
         "username": {"key": "typeProperties.username", "type": "object"},
         "password": {"key": "typeProperties.password", "type": "SecretBase"},
+        "thrift_transport_protocol": {"key": "typeProperties.thriftTransportProtocol", "type": "str"},
         "enable_ssl": {"key": "typeProperties.enableSsl", "type": "object"},
+        "enable_server_certificate_validation": {
+            "key": "typeProperties.enableServerCertificateValidation",
+            "type": "object",
+        },
         "trusted_cert_path": {"key": "typeProperties.trustedCertPath", "type": "object"},
         "use_system_trust_store": {"key": "typeProperties.useSystemTrustStore", "type": "object"},
         "allow_host_name_cn_mismatch": {"key": "typeProperties.allowHostNameCNMismatch", "type": "object"},
@@ -38141,16 +38608,18 @@ class ImpalaLinkedService(LinkedService):
         *,
         host: JSON,
         authentication_type: Union[str, "_models.ImpalaAuthenticationType"],
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         port: Optional[JSON] = None,
         username: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
+        thrift_transport_protocol: Optional[Union[str, "_models.ImpalaThriftTransportProtocol"]] = None,
         enable_ssl: Optional[JSON] = None,
+        enable_server_certificate_validation: Optional[JSON] = None,
         trusted_cert_path: Optional[JSON] = None,
         use_system_trust_store: Optional[JSON] = None,
         allow_host_name_cn_mismatch: Optional[JSON] = None,
@@ -38186,9 +38655,17 @@ class ImpalaLinkedService(LinkedService):
         :paramtype username: JSON
         :keyword password: The password corresponding to the user name when using UsernameAndPassword.
         :paramtype password: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword thrift_transport_protocol: The transport protocol to use in the Thrift layer (for V2
+         only). Default value is Binary. Known values are: "Binary" and "HTTP".
+        :paramtype thrift_transport_protocol: str or
+         ~azure.mgmt.datafactory.models.ImpalaThriftTransportProtocol
         :keyword enable_ssl: Specifies whether the connections to the server are encrypted using SSL.
          The default value is false.
         :paramtype enable_ssl: JSON
+        :keyword enable_server_certificate_validation: Specify whether to enable server SSL certificate
+         validation when you connect.Always use System Trust Store (for V2 only). The default value is
+         true.
+        :paramtype enable_server_certificate_validation: JSON
         :keyword trusted_cert_path: The full path of the .pem file containing trusted CA certificates
          for verifying the server when connecting over SSL. This property can only be set when using SSL
          on self-hosted IR. The default value is the cacerts.pem file installed with the IR.
@@ -38221,7 +38698,9 @@ class ImpalaLinkedService(LinkedService):
         self.authentication_type = authentication_type
         self.username = username
         self.password = password
+        self.thrift_transport_protocol = thrift_transport_protocol
         self.enable_ssl = enable_ssl
+        self.enable_server_certificate_validation = enable_server_certificate_validation
         self.trusted_cert_path = trusted_cert_path
         self.use_system_trust_store = use_system_trust_store
         self.allow_host_name_cn_mismatch = allow_host_name_cn_mismatch
@@ -38290,12 +38769,12 @@ class ImpalaObjectDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         table: Optional[JSON] = None,
@@ -38402,7 +38881,7 @@ class ImpalaSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -38518,12 +38997,12 @@ class InformixLinkedService(LinkedService):
         self,
         *,
         connection_string: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         authentication_type: Optional[JSON] = None,
         credential: Optional["_models.SecretBase"] = None,
         user_name: Optional[JSON] = None,
@@ -38635,7 +39114,7 @@ class InformixSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -38736,7 +39215,7 @@ class InformixSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -38838,12 +39317,12 @@ class InformixTableDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         **kwargs: Any
@@ -38921,7 +39400,7 @@ class IntegrationRuntime(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -39019,7 +39498,7 @@ class IntegrationRuntimeComputeProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         location: Optional[str] = None,
         node_size: Optional[str] = None,
         number_of_nodes: Optional[int] = None,
@@ -39115,7 +39594,7 @@ class IntegrationRuntimeConnectionInfo(_serialization.Model):
         "is_identity_cert_exprired": {"key": "isIdentityCertExprired", "type": "bool"},
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, additional_properties: Optional[dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -39123,12 +39602,12 @@ class IntegrationRuntimeConnectionInfo(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.service_token = None
-        self.identity_cert_thumbprint = None
-        self.host_service_uri = None
-        self.version = None
-        self.public_key = None
-        self.is_identity_cert_exprired = None
+        self.service_token: Optional[str] = None
+        self.identity_cert_thumbprint: Optional[str] = None
+        self.host_service_uri: Optional[str] = None
+        self.version: Optional[str] = None
+        self.public_key: Optional[str] = None
+        self.is_identity_cert_exprired: Optional[bool] = None
 
 
 class IntegrationRuntimeCustomerVirtualNetwork(_serialization.Model):
@@ -39228,12 +39707,12 @@ class IntegrationRuntimeDataFlowProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         compute_type: Optional[Union[str, "_models.DataFlowComputeType"]] = None,
         core_count: Optional[int] = None,
         time_to_live: Optional[int] = None,
         cleanup: Optional[bool] = None,
-        custom_properties: Optional[List["_models.IntegrationRuntimeDataFlowPropertiesCustomPropertiesItem"]] = None,
+        custom_properties: Optional[list["_models.IntegrationRuntimeDataFlowPropertiesCustomPropertiesItem"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -39383,7 +39862,7 @@ class IntegrationRuntimeListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.IntegrationRuntimeResource"], next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: list["_models.IntegrationRuntimeResource"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: List of integration runtimes. Required.
@@ -39414,7 +39893,7 @@ class IntegrationRuntimeMonitoringData(_serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        nodes: Optional[List["_models.IntegrationRuntimeNodeMonitoringData"]] = None,
+        nodes: Optional[list["_models.IntegrationRuntimeNodeMonitoringData"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -39448,7 +39927,7 @@ class IntegrationRuntimeNodeIpAddress(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.ip_address = None
+        self.ip_address: Optional[str] = None
 
 
 class IntegrationRuntimeNodeMonitoringData(_serialization.Model):
@@ -39501,7 +39980,7 @@ class IntegrationRuntimeNodeMonitoringData(_serialization.Model):
         "received_bytes": {"key": "receivedBytes", "type": "float"},
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, additional_properties: Optional[dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -39509,14 +39988,14 @@ class IntegrationRuntimeNodeMonitoringData(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.node_name = None
-        self.available_memory_in_mb = None
-        self.cpu_utilization = None
-        self.concurrent_jobs_limit = None
-        self.concurrent_jobs_running = None
-        self.max_concurrent_jobs = None
-        self.sent_bytes = None
-        self.received_bytes = None
+        self.node_name: Optional[str] = None
+        self.available_memory_in_mb: Optional[int] = None
+        self.cpu_utilization: Optional[int] = None
+        self.concurrent_jobs_limit: Optional[int] = None
+        self.concurrent_jobs_running: Optional[int] = None
+        self.max_concurrent_jobs: Optional[int] = None
+        self.sent_bytes: Optional[float] = None
+        self.received_bytes: Optional[float] = None
 
 
 class IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint(
@@ -39540,7 +40019,7 @@ class IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint(
         self,
         *,
         category: Optional[str] = None,
-        endpoints: Optional[List["_models.IntegrationRuntimeOutboundNetworkDependenciesEndpoint"]] = None,
+        endpoints: Optional[list["_models.IntegrationRuntimeOutboundNetworkDependenciesEndpoint"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -39577,7 +40056,7 @@ class IntegrationRuntimeOutboundNetworkDependenciesEndpoint(_serialization.Model
         self,
         *,
         domain_name: Optional[str] = None,
-        endpoint_details: Optional[List["_models.IntegrationRuntimeOutboundNetworkDependenciesEndpointDetails"]] = None,
+        endpoint_details: Optional[list["_models.IntegrationRuntimeOutboundNetworkDependenciesEndpointDetails"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -39631,7 +40110,7 @@ class IntegrationRuntimeOutboundNetworkDependenciesEndpointsResponse(
     def __init__(
         self,
         *,
-        value: Optional[List["_models.IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint"]] = None,
+        value: Optional[list["_models.IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -39672,7 +40151,7 @@ class IntegrationRuntimeReference(_serialization.Model):
         *,
         type: Union[str, "_models.IntegrationRuntimeReferenceType"],
         reference_name: str,
-        parameters: Optional[Dict[str, JSON]] = None,
+        parameters: Optional[dict[str, JSON]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -39796,7 +40275,7 @@ class IntegrationRuntimeSsisCatalogInfo(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         catalog_server_endpoint: Optional[str] = None,
         catalog_admin_user_name: Optional[str] = None,
         catalog_admin_password: Optional["_models.SecureString"] = None,
@@ -39881,14 +40360,14 @@ class IntegrationRuntimeSsisProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         catalog_info: Optional["_models.IntegrationRuntimeSsisCatalogInfo"] = None,
         license_type: Optional[Union[str, "_models.IntegrationRuntimeLicenseType"]] = None,
         custom_setup_script_properties: Optional["_models.IntegrationRuntimeCustomSetupScriptProperties"] = None,
         data_proxy_properties: Optional["_models.IntegrationRuntimeDataProxyProperties"] = None,
         edition: Optional[Union[str, "_models.IntegrationRuntimeEdition"]] = None,
-        express_custom_setup_properties: Optional[List["_models.CustomSetupBase"]] = None,
-        package_stores: Optional[List["_models.PackageStore"]] = None,
+        express_custom_setup_properties: Optional[list["_models.CustomSetupBase"]] = None,
+        package_stores: Optional[list["_models.PackageStore"]] = None,
         credential: Optional["_models.CredentialReference"] = None,
         **kwargs: Any
     ) -> None:
@@ -39974,7 +40453,7 @@ class IntegrationRuntimeStatus(_serialization.Model):
         "type": {"Managed": "ManagedIntegrationRuntimeStatus", "SelfHosted": "SelfHostedIntegrationRuntimeStatus"}
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, additional_properties: Optional[dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -39983,8 +40462,8 @@ class IntegrationRuntimeStatus(_serialization.Model):
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
         self.type: Optional[str] = None
-        self.data_factory_name = None
-        self.state = None
+        self.data_factory_name: Optional[str] = None
+        self.state: Optional[Union[str, "_models.IntegrationRuntimeState"]] = None
 
 
 class IntegrationRuntimeStatusListResponse(_serialization.Model):
@@ -40008,7 +40487,7 @@ class IntegrationRuntimeStatusListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.IntegrationRuntimeStatusResponse"], next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: list["_models.IntegrationRuntimeStatusResponse"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: List of integration runtime status. Required.
@@ -40050,7 +40529,7 @@ class IntegrationRuntimeStatusResponse(_serialization.Model):
         :paramtype properties: ~azure.mgmt.datafactory.models.IntegrationRuntimeStatus
         """
         super().__init__(**kwargs)
-        self.name = None
+        self.name: Optional[str] = None
         self.properties = properties
 
 
@@ -40082,10 +40561,10 @@ class IntegrationRuntimeVNetProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         v_net_id: Optional[str] = None,
         subnet: Optional[str] = None,
-        public_i_ps: Optional[List[str]] = None,
+        public_i_ps: Optional[list[str]] = None,
         subnet_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -40110,6 +40589,36 @@ class IntegrationRuntimeVNetProperties(_serialization.Model):
         self.subnet = subnet
         self.public_i_ps = public_i_ps
         self.subnet_id = subnet_id
+
+
+class InteractiveQueryProperties(_serialization.Model):
+    """Interactive authoring capability type properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar status: The interactive authoring capability status. Must be one of
+     InteractiveCapabilityStatus. The default value is 'Enabling'. Known values are: "Enabling",
+     "Enabled", "Disabling", and "Disabled".
+    :vartype status: str or ~azure.mgmt.datafactory.models.InteractiveCapabilityStatus
+    :ivar auto_termination_minutes: The allowed idle time for interactive authoring.
+    :vartype auto_termination_minutes: int
+    """
+
+    _validation = {
+        "status": {"readonly": True},
+        "auto_termination_minutes": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "status": {"key": "status", "type": "str"},
+        "auto_termination_minutes": {"key": "autoTerminationMinutes", "type": "int"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.status: Optional[Union[str, "_models.InteractiveCapabilityStatus"]] = None
+        self.auto_termination_minutes: Optional[int] = None
 
 
 class JiraLinkedService(LinkedService):
@@ -40186,12 +40695,12 @@ class JiraLinkedService(LinkedService):
         *,
         host: JSON,
         username: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         port: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
         use_encrypted_endpoints: Optional[JSON] = None,
@@ -40286,8 +40795,15 @@ class JiraObjectDataset(Dataset):
     :ivar folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
      root level.
     :vartype folder: ~azure.mgmt.datafactory.models.DatasetFolder
-    :ivar table_name: The table name. Type: string (or Expression with resultType string).
+    :ivar table_name: This property is only supported in Jira V1 Dataset, please consider upgrading
+     to V2 dataset.
     :vartype table_name: JSON
+    :ivar schema_type_properties_schema: The schema name of the Jira, applies only for Jira V2
+     dataset. Type: string (or Expression with resultType string).
+    :vartype schema_type_properties_schema: JSON
+    :ivar table: The table name of the Jira, applies only for Jira V2 dataset. Type: string (or
+     Expression with resultType string).
+    :vartype table: JSON
     """
 
     _validation = {
@@ -40306,20 +40822,24 @@ class JiraObjectDataset(Dataset):
         "annotations": {"key": "annotations", "type": "[object]"},
         "folder": {"key": "folder", "type": "DatasetFolder"},
         "table_name": {"key": "typeProperties.tableName", "type": "object"},
+        "schema_type_properties_schema": {"key": "typeProperties.schema", "type": "object"},
+        "table": {"key": "typeProperties.table", "type": "object"},
     }
 
     def __init__(
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
+        schema_type_properties_schema: Optional[JSON] = None,
+        table: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -40343,8 +40863,15 @@ class JiraObjectDataset(Dataset):
         :keyword folder: The folder that this Dataset is in. If not specified, Dataset will appear at
          the root level.
         :paramtype folder: ~azure.mgmt.datafactory.models.DatasetFolder
-        :keyword table_name: The table name. Type: string (or Expression with resultType string).
+        :keyword table_name: This property is only supported in Jira V1 Dataset, please consider
+         upgrading to V2 dataset.
         :paramtype table_name: JSON
+        :keyword schema_type_properties_schema: The schema name of the Jira, applies only for Jira V2
+         dataset. Type: string (or Expression with resultType string).
+        :paramtype schema_type_properties_schema: JSON
+        :keyword table: The table name of the Jira, applies only for Jira V2 dataset. Type: string (or
+         Expression with resultType string).
+        :paramtype table: JSON
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -40359,6 +40886,8 @@ class JiraObjectDataset(Dataset):
         )
         self.type: str = "JiraObject"
         self.table_name = table_name
+        self.schema_type_properties_schema = schema_type_properties_schema
+        self.table = table
 
 
 class JiraSource(TabularSource):
@@ -40413,7 +40942,7 @@ class JiraSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -40526,12 +41055,12 @@ class JsonDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         location: Optional["_models.DatasetLocation"] = None,
         encoding_name: Optional[JSON] = None,
@@ -40643,7 +41172,7 @@ class JsonFormat(DatasetStorageFormat):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         serializer: Optional[JSON] = None,
         deserializer: Optional[JSON] = None,
         file_pattern: Optional[JSON] = None,
@@ -40721,7 +41250,7 @@ class JsonReadSettings(FormatReadSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         compression_properties: Optional["_models.CompressionReadSettings"] = None,
         **kwargs: Any
     ) -> None:
@@ -40791,7 +41320,7 @@ class JsonSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -40894,7 +41423,7 @@ class JsonSource(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -40970,7 +41499,7 @@ class JsonWriteSettings(FormatWriteSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         file_pattern: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
@@ -41013,6 +41542,9 @@ class LakeHouseLinkedService(LinkedService):
     :ivar artifact_id: The ID of Microsoft Fabric Lakehouse artifact. Type: string (or Expression
      with resultType string).
     :vartype artifact_id: JSON
+    :ivar authentication_type: The authentication type to use. Known values are:
+     "ServicePrincipal", "SystemAssignedManagedIdentity", and "UserAssignedManagedIdentity".
+    :vartype authentication_type: str or ~azure.mgmt.datafactory.models.LakehouseAuthenticationType
     :ivar service_principal_id: The ID of the application used to authenticate against Microsoft
      Fabric Lakehouse. Type: string (or Expression with resultType string).
     :vartype service_principal_id: JSON
@@ -41035,6 +41567,8 @@ class LakeHouseLinkedService(LinkedService):
      servicePrincipalCredentialType is 'ServicePrincipalCert', servicePrincipalCredential can only
      be AzureKeyVaultSecretReference.
     :vartype service_principal_credential: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar credential: The credential reference containing authentication information.
+    :vartype credential: ~azure.mgmt.datafactory.models.CredentialReference
     """
 
     _validation = {
@@ -41051,31 +41585,35 @@ class LakeHouseLinkedService(LinkedService):
         "annotations": {"key": "annotations", "type": "[object]"},
         "workspace_id": {"key": "typeProperties.workspaceId", "type": "object"},
         "artifact_id": {"key": "typeProperties.artifactId", "type": "object"},
+        "authentication_type": {"key": "typeProperties.authenticationType", "type": "str"},
         "service_principal_id": {"key": "typeProperties.servicePrincipalId", "type": "object"},
         "service_principal_key": {"key": "typeProperties.servicePrincipalKey", "type": "SecretBase"},
         "tenant": {"key": "typeProperties.tenant", "type": "object"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
         "service_principal_credential_type": {"key": "typeProperties.servicePrincipalCredentialType", "type": "object"},
         "service_principal_credential": {"key": "typeProperties.servicePrincipalCredential", "type": "SecretBase"},
+        "credential": {"key": "typeProperties.credential", "type": "CredentialReference"},
     }
 
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         workspace_id: Optional[JSON] = None,
         artifact_id: Optional[JSON] = None,
+        authentication_type: Optional[Union[str, "_models.LakehouseAuthenticationType"]] = None,
         service_principal_id: Optional[JSON] = None,
         service_principal_key: Optional["_models.SecretBase"] = None,
         tenant: Optional[JSON] = None,
         encrypted_credential: Optional[str] = None,
         service_principal_credential_type: Optional[JSON] = None,
         service_principal_credential: Optional["_models.SecretBase"] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -41098,6 +41636,10 @@ class LakeHouseLinkedService(LinkedService):
         :keyword artifact_id: The ID of Microsoft Fabric Lakehouse artifact. Type: string (or
          Expression with resultType string).
         :paramtype artifact_id: JSON
+        :keyword authentication_type: The authentication type to use. Known values are:
+         "ServicePrincipal", "SystemAssignedManagedIdentity", and "UserAssignedManagedIdentity".
+        :paramtype authentication_type: str or
+         ~azure.mgmt.datafactory.models.LakehouseAuthenticationType
         :keyword service_principal_id: The ID of the application used to authenticate against Microsoft
          Fabric Lakehouse. Type: string (or Expression with resultType string).
         :paramtype service_principal_id: JSON
@@ -41120,6 +41662,8 @@ class LakeHouseLinkedService(LinkedService):
          servicePrincipalCredentialType is 'ServicePrincipalCert', servicePrincipalCredential can only
          be AzureKeyVaultSecretReference.
         :paramtype service_principal_credential: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword credential: The credential reference containing authentication information.
+        :paramtype credential: ~azure.mgmt.datafactory.models.CredentialReference
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -41133,12 +41677,14 @@ class LakeHouseLinkedService(LinkedService):
         self.type: str = "Lakehouse"
         self.workspace_id = workspace_id
         self.artifact_id = artifact_id
+        self.authentication_type = authentication_type
         self.service_principal_id = service_principal_id
         self.service_principal_key = service_principal_key
         self.tenant = tenant
         self.encrypted_credential = encrypted_credential
         self.service_principal_credential_type = service_principal_credential_type
         self.service_principal_credential = service_principal_credential
+        self.credential = credential
 
 
 class LakeHouseLocation(DatasetLocation):
@@ -41173,7 +41719,7 @@ class LakeHouseLocation(DatasetLocation):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         folder_path: Optional[JSON] = None,
         file_name: Optional[JSON] = None,
         **kwargs: Any
@@ -41264,7 +41810,7 @@ class LakeHouseReadSettings(StoreReadSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         recursive: Optional[JSON] = None,
@@ -41393,12 +41939,12 @@ class LakeHouseTableDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         schema_type_properties_schema: Optional[JSON] = None,
         table: Optional[JSON] = None,
@@ -41509,7 +42055,7 @@ class LakeHouseTableSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -41622,7 +42168,7 @@ class LakeHouseTableSource(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -41711,11 +42257,11 @@ class LakeHouseWriteSettings(StoreWriteSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
-        metadata: Optional[List["_models.MetadataItem"]] = None,
+        metadata: Optional[list["_models.MetadataItem"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -41783,11 +42329,11 @@ class LinkedIntegrationRuntime(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.subscription_id = None
-        self.data_factory_name = None
-        self.data_factory_location = None
-        self.create_time = None
+        self.name: Optional[str] = None
+        self.subscription_id: Optional[str] = None
+        self.data_factory_name: Optional[str] = None
+        self.data_factory_location: Optional[str] = None
+        self.create_time: Optional[datetime.datetime] = None
 
 
 class LinkedIntegrationRuntimeType(_serialization.Model):
@@ -41972,7 +42518,7 @@ class LinkedServiceListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.LinkedServiceResource"], next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: list["_models.LinkedServiceResource"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: List of linked services. Required.
@@ -42014,7 +42560,7 @@ class LinkedServiceReference(_serialization.Model):
         *,
         type: Union[str, "_models.Type"],
         reference_name: str,
-        parameters: Optional[Dict[str, JSON]] = None,
+        parameters: Optional[dict[str, JSON]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -42197,7 +42743,7 @@ class LogStorageSettings(_serialization.Model):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         path: Optional[JSON] = None,
         log_level: Optional[JSON] = None,
         enable_reliable_logging: Optional[JSON] = None,
@@ -42263,6 +42809,10 @@ class LookupActivity(ExecutionActivity):
     :ivar first_row_only: Whether to return first row or all rows. Default value is true. Type:
      boolean (or Expression with resultType boolean).
     :vartype first_row_only: JSON
+    :ivar treat_decimal_as_string: Indicates whether to treat decimal values as strings to avoid
+     value overflow issue. This option is enabled for SnowflakeV2 connector only. Type: boolean (or
+     Expression with resultType boolean).
+    :vartype treat_decimal_as_string: JSON
     """
 
     _validation = {
@@ -42286,6 +42836,7 @@ class LookupActivity(ExecutionActivity):
         "source": {"key": "typeProperties.source", "type": "CopySource"},
         "dataset": {"key": "typeProperties.dataset", "type": "DatasetReference"},
         "first_row_only": {"key": "typeProperties.firstRowOnly", "type": "object"},
+        "treat_decimal_as_string": {"key": "typeProperties.treatDecimalAsString", "type": "object"},
     }
 
     def __init__(
@@ -42294,15 +42845,16 @@ class LookupActivity(ExecutionActivity):
         name: str,
         source: "_models.CopySource",
         dataset: "_models.DatasetReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
         first_row_only: Optional[JSON] = None,
+        treat_decimal_as_string: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -42335,6 +42887,10 @@ class LookupActivity(ExecutionActivity):
         :keyword first_row_only: Whether to return first row or all rows. Default value is true. Type:
          boolean (or Expression with resultType boolean).
         :paramtype first_row_only: JSON
+        :keyword treat_decimal_as_string: Indicates whether to treat decimal values as strings to avoid
+         value overflow issue. This option is enabled for SnowflakeV2 connector only. Type: boolean (or
+         Expression with resultType boolean).
+        :paramtype treat_decimal_as_string: JSON
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -42352,6 +42908,7 @@ class LookupActivity(ExecutionActivity):
         self.source = source
         self.dataset = dataset
         self.first_row_only = first_row_only
+        self.treat_decimal_as_string = treat_decimal_as_string
 
 
 class MagentoLinkedService(LinkedService):
@@ -42418,12 +42975,12 @@ class MagentoLinkedService(LinkedService):
         self,
         *,
         host: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         access_token: Optional["_models.SecretBase"] = None,
         use_encrypted_endpoints: Optional[JSON] = None,
         use_host_verification: Optional[JSON] = None,
@@ -42534,12 +43091,12 @@ class MagentoObjectDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         **kwargs: Any
@@ -42635,7 +43192,7 @@ class MagentoSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -42718,9 +43275,9 @@ class ManagedIdentityCredential(Credential):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
-        annotations: Optional[List[JSON]] = None,
+        annotations: Optional[list[JSON]] = None,
         resource_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -42772,6 +43329,8 @@ class ManagedIntegrationRuntime(IntegrationRuntime):
      runtime will join.
     :vartype customer_virtual_network:
      ~azure.mgmt.datafactory.models.IntegrationRuntimeCustomerVirtualNetwork
+    :ivar interactive_query: Interactive authoring capability reference.
+    :vartype interactive_query: ~azure.mgmt.datafactory.models.InteractiveQueryProperties
     """
 
     _validation = {
@@ -42794,17 +43353,19 @@ class ManagedIntegrationRuntime(IntegrationRuntime):
             "key": "typeProperties.customerVirtualNetwork",
             "type": "IntegrationRuntimeCustomerVirtualNetwork",
         },
+        "interactive_query": {"key": "typeProperties.interactiveQuery", "type": "InteractiveQueryProperties"},
     }
 
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         managed_virtual_network: Optional["_models.ManagedVirtualNetworkReference"] = None,
         compute_properties: Optional["_models.IntegrationRuntimeComputeProperties"] = None,
         ssis_properties: Optional["_models.IntegrationRuntimeSsisProperties"] = None,
         customer_virtual_network: Optional["_models.IntegrationRuntimeCustomerVirtualNetwork"] = None,
+        interactive_query: Optional["_models.InteractiveQueryProperties"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -42825,14 +43386,17 @@ class ManagedIntegrationRuntime(IntegrationRuntime):
          runtime will join.
         :paramtype customer_virtual_network:
          ~azure.mgmt.datafactory.models.IntegrationRuntimeCustomerVirtualNetwork
+        :keyword interactive_query: Interactive authoring capability reference.
+        :paramtype interactive_query: ~azure.mgmt.datafactory.models.InteractiveQueryProperties
         """
         super().__init__(additional_properties=additional_properties, description=description, **kwargs)
         self.type: str = "Managed"
-        self.state = None
+        self.state: Optional[Union[str, "_models.IntegrationRuntimeState"]] = None
         self.managed_virtual_network = managed_virtual_network
         self.compute_properties = compute_properties
         self.ssis_properties = ssis_properties
         self.customer_virtual_network = customer_virtual_network
+        self.interactive_query = interactive_query
 
 
 class ManagedIntegrationRuntimeError(_serialization.Model):
@@ -42868,7 +43432,7 @@ class ManagedIntegrationRuntimeError(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, additional_properties: Optional[dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -42876,10 +43440,10 @@ class ManagedIntegrationRuntimeError(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.time = None
-        self.code = None
-        self.parameters = None
-        self.message = None
+        self.time: Optional[datetime.datetime] = None
+        self.code: Optional[str] = None
+        self.parameters: Optional[list[str]] = None
+        self.message: Optional[str] = None
 
 
 class ManagedIntegrationRuntimeNode(_serialization.Model):
@@ -42914,8 +43478,8 @@ class ManagedIntegrationRuntimeNode(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
-        errors: Optional[List["_models.ManagedIntegrationRuntimeError"]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
+        errors: Optional[list["_models.ManagedIntegrationRuntimeError"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -42927,8 +43491,8 @@ class ManagedIntegrationRuntimeNode(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.node_id = None
-        self.status = None
+        self.node_id: Optional[str] = None
+        self.status: Optional[Union[str, "_models.ManagedIntegrationRuntimeNodeStatus"]] = None
         self.errors = errors
 
 
@@ -42973,7 +43537,7 @@ class ManagedIntegrationRuntimeOperationResult(_serialization.Model):
         "activity_id": {"key": "activityId", "type": "str"},
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, additional_properties: Optional[dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -42981,12 +43545,12 @@ class ManagedIntegrationRuntimeOperationResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.type = None
-        self.start_time = None
-        self.result = None
-        self.error_code = None
-        self.parameters = None
-        self.activity_id = None
+        self.type: Optional[str] = None
+        self.start_time: Optional[datetime.datetime] = None
+        self.result: Optional[str] = None
+        self.error_code: Optional[str] = None
+        self.parameters: Optional[list[str]] = None
+        self.activity_id: Optional[str] = None
 
 
 class ManagedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
@@ -43040,7 +43604,7 @@ class ManagedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         "last_operation": {"key": "typeProperties.lastOperation", "type": "ManagedIntegrationRuntimeOperationResult"},
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, additional_properties: Optional[dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -43048,10 +43612,10 @@ class ManagedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
         self.type: str = "Managed"
-        self.create_time = None
-        self.nodes = None
-        self.other_errors = None
-        self.last_operation = None
+        self.create_time: Optional[datetime.datetime] = None
+        self.nodes: Optional[list["_models.ManagedIntegrationRuntimeNode"]] = None
+        self.other_errors: Optional[list["_models.ManagedIntegrationRuntimeError"]] = None
+        self.last_operation: Optional["_models.ManagedIntegrationRuntimeOperationResult"] = None
 
 
 class ManagedPrivateEndpoint(_serialization.Model):
@@ -43095,9 +43659,9 @@ class ManagedPrivateEndpoint(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         connection_state: Optional["_models.ConnectionStateProperties"] = None,
-        fqdns: Optional[List[str]] = None,
+        fqdns: Optional[list[str]] = None,
         group_id: Optional[str] = None,
         private_link_resource_id: Optional[str] = None,
         **kwargs: Any
@@ -43121,9 +43685,9 @@ class ManagedPrivateEndpoint(_serialization.Model):
         self.connection_state = connection_state
         self.fqdns = fqdns
         self.group_id = group_id
-        self.is_reserved = None
+        self.is_reserved: Optional[bool] = None
         self.private_link_resource_id = private_link_resource_id
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
 
 
 class ManagedPrivateEndpointListResponse(_serialization.Model):
@@ -43147,7 +43711,7 @@ class ManagedPrivateEndpointListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.ManagedPrivateEndpointResource"], next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: list["_models.ManagedPrivateEndpointResource"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: List of managed private endpoints. Required.
@@ -43229,7 +43793,7 @@ class ManagedVirtualNetwork(_serialization.Model):
         "alias": {"key": "alias", "type": "str"},
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, additional_properties: Optional[dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -43237,8 +43801,8 @@ class ManagedVirtualNetwork(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.v_net_id = None
-        self.alias = None
+        self.v_net_id: Optional[str] = None
+        self.alias: Optional[str] = None
 
 
 class ManagedVirtualNetworkListResponse(_serialization.Model):
@@ -43262,7 +43826,7 @@ class ManagedVirtualNetworkListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.ManagedVirtualNetworkResource"], next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: list["_models.ManagedVirtualNetworkResource"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: List of managed Virtual Networks. Required.
@@ -43393,7 +43957,7 @@ class MapperAttributeMapping(_serialization.Model):
         function_name: Optional[str] = None,
         expression: Optional[str] = None,
         attribute_reference: Optional["_models.MapperAttributeReference"] = None,
-        attribute_references: Optional[List["_models.MapperAttributeReference"]] = None,
+        attribute_references: Optional[list["_models.MapperAttributeReference"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -43435,7 +43999,7 @@ class MapperAttributeMappings(_serialization.Model):
     }
 
     def __init__(
-        self, *, attribute_mappings: Optional[List["_models.MapperAttributeMapping"]] = None, **kwargs: Any
+        self, *, attribute_mappings: Optional[list["_models.MapperAttributeMapping"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword attribute_mappings: List of attribute mappings.
@@ -43526,7 +44090,7 @@ class MapperConnection(_serialization.Model):
         linked_service: Optional["_models.LinkedServiceReference"] = None,
         linked_service_type: Optional[str] = None,
         is_inline_dataset: Optional[bool] = None,
-        common_dsl_connector_properties: Optional[List["_models.MapperDslConnectorProperties"]] = None,
+        common_dsl_connector_properties: Optional[list["_models.MapperDslConnectorProperties"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -43692,7 +44256,7 @@ class MapperSourceConnectionsInfo(_serialization.Model):
     def __init__(
         self,
         *,
-        source_entities: Optional[List["_models.MapperTable"]] = None,
+        source_entities: Optional[list["_models.MapperTable"]] = None,
         connection: Optional["_models.MapperConnection"] = None,
         **kwargs: Any
     ) -> None:
@@ -43732,8 +44296,8 @@ class MapperTable(_serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        schema: Optional[List["_models.MapperTableSchema"]] = None,
-        dsl_connector_properties: Optional[List["_models.MapperDslConnectorProperties"]] = None,
+        schema: Optional[list["_models.MapperTableSchema"]] = None,
+        dsl_connector_properties: Optional[list["_models.MapperDslConnectorProperties"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -43800,10 +44364,10 @@ class MapperTargetConnectionsInfo(_serialization.Model):
     def __init__(
         self,
         *,
-        target_entities: Optional[List["_models.MapperTable"]] = None,
+        target_entities: Optional[list["_models.MapperTable"]] = None,
         connection: Optional["_models.MapperConnection"] = None,
-        data_mapper_mappings: Optional[List["_models.DataMapperMapping"]] = None,
-        relationships: Optional[List[JSON]] = None,
+        data_mapper_mappings: Optional[list["_models.DataMapperMapping"]] = None,
+        relationships: Optional[list[JSON]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -43869,13 +44433,13 @@ class MappingDataFlow(DataFlow):
         self,
         *,
         description: Optional[str] = None,
-        annotations: Optional[List[JSON]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DataFlowFolder"] = None,
-        sources: Optional[List["_models.DataFlowSource"]] = None,
-        sinks: Optional[List["_models.DataFlowSink"]] = None,
-        transformations: Optional[List["_models.Transformation"]] = None,
+        sources: Optional[list["_models.DataFlowSource"]] = None,
+        sinks: Optional[list["_models.DataFlowSink"]] = None,
+        transformations: Optional[list["_models.Transformation"]] = None,
         script: Optional[str] = None,
-        script_lines: Optional[List[str]] = None,
+        script_lines: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -43984,12 +44548,12 @@ class MariaDBLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         driver_version: Optional[JSON] = None,
         connection_string: Optional[JSON] = None,
         server: Optional[JSON] = None,
@@ -44120,7 +44684,7 @@ class MariaDBSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -44223,12 +44787,12 @@ class MariaDBTableDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         **kwargs: Any
@@ -44341,12 +44905,12 @@ class MarketoLinkedService(LinkedService):
         *,
         endpoint: JSON,
         client_id: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         client_secret: Optional["_models.SecretBase"] = None,
         use_encrypted_endpoints: Optional[JSON] = None,
         use_host_verification: Optional[JSON] = None,
@@ -44461,12 +45025,12 @@ class MarketoObjectDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         **kwargs: Any
@@ -44562,7 +45126,7 @@ class MarketoSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -44704,12 +45268,12 @@ class MicrosoftAccessLinkedService(LinkedService):
         self,
         *,
         connection_string: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         authentication_type: Optional[JSON] = None,
         credential: Optional["_models.SecretBase"] = None,
         user_name: Optional[JSON] = None,
@@ -44821,7 +45385,7 @@ class MicrosoftAccessSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -44918,7 +45482,7 @@ class MicrosoftAccessSource(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -45016,12 +45580,12 @@ class MicrosoftAccessTableDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         **kwargs: Any
@@ -45122,12 +45686,12 @@ class MongoDbAtlasCollectionDataset(Dataset):
         *,
         linked_service_name: "_models.LinkedServiceReference",
         collection: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         **kwargs: Any
     ) -> None:
@@ -45227,12 +45791,12 @@ class MongoDbAtlasLinkedService(LinkedService):
         *,
         connection_string: JSON,
         database: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         driver_version: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
@@ -45329,7 +45893,7 @@ class MongoDbAtlasSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -45442,7 +46006,7 @@ class MongoDbAtlasSource(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -45560,12 +46124,12 @@ class MongoDbCollectionDataset(Dataset):
         *,
         linked_service_name: "_models.LinkedServiceReference",
         collection_name: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         **kwargs: Any
     ) -> None:
@@ -45643,7 +46207,7 @@ class MongoDbCursorMethodsProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         project: Optional[JSON] = None,
         sort: Optional[JSON] = None,
         skip: Optional[JSON] = None,
@@ -45760,12 +46324,12 @@ class MongoDbLinkedService(LinkedService):
         *,
         server: JSON,
         database_name: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         authentication_type: Optional[Union[str, "_models.MongoDbAuthenticationType"]] = None,
         username: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
@@ -45892,7 +46456,7 @@ class MongoDbSource(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -45993,12 +46557,12 @@ class MongoDbV2CollectionDataset(Dataset):
         *,
         linked_service_name: "_models.LinkedServiceReference",
         collection: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         **kwargs: Any
     ) -> None:
@@ -46094,12 +46658,12 @@ class MongoDbV2LinkedService(LinkedService):
         *,
         connection_string: JSON,
         database: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -46191,7 +46755,7 @@ class MongoDbV2Sink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -46304,7 +46868,7 @@ class MongoDbV2Source(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -46467,15 +47031,15 @@ class MySqlLinkedService(LinkedService):
         "treat_tiny_as_boolean": {"key": "typeProperties.treatTinyAsBoolean", "type": "object"},
     }
 
-    def __init__(  # pylint: disable=too-many-locals
+    def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         driver_version: Optional[JSON] = None,
         connection_string: Optional[JSON] = None,
         server: Optional[JSON] = None,
@@ -46638,7 +47202,7 @@ class MySqlSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -46740,12 +47304,12 @@ class MySqlTableDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         **kwargs: Any
@@ -46812,6 +47376,19 @@ class NetezzaLinkedService(LinkedService):
     :ivar connection_string: An ODBC connection string. Type: string, SecureString or
      AzureKeyVaultSecretReference.
     :vartype connection_string: JSON
+    :ivar server: Server name for connection. Type: string.
+    :vartype server: JSON
+    :ivar port: The port for the connection. Type: integer.
+    :vartype port: JSON
+    :ivar uid: Username for authentication. Type: string.
+    :vartype uid: JSON
+    :ivar database: Database name for connection. Type: string.
+    :vartype database: JSON
+    :ivar security_level: Specifies the security level for the driver connection to the data store.
+     PreferredUnSecured : prefer unsecured, allow fallback to secured connection if required.
+     OnlyUnSecured : strictly unsecured, no fallback. Known values are: "PreferredUnSecured" and
+     "OnlyUnSecured".
+    :vartype security_level: str or ~azure.mgmt.datafactory.models.NetezzaSecurityLevelType
     :ivar pwd: The Azure key vault secret reference of password in connection string.
     :vartype pwd: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
     :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
@@ -46832,6 +47409,11 @@ class NetezzaLinkedService(LinkedService):
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
         "annotations": {"key": "annotations", "type": "[object]"},
         "connection_string": {"key": "typeProperties.connectionString", "type": "object"},
+        "server": {"key": "typeProperties.server", "type": "object"},
+        "port": {"key": "typeProperties.port", "type": "object"},
+        "uid": {"key": "typeProperties.uid", "type": "object"},
+        "database": {"key": "typeProperties.database", "type": "object"},
+        "security_level": {"key": "typeProperties.securityLevel", "type": "str"},
         "pwd": {"key": "typeProperties.pwd", "type": "AzureKeyVaultSecretReference"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
     }
@@ -46839,13 +47421,18 @@ class NetezzaLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         connection_string: Optional[JSON] = None,
+        server: Optional[JSON] = None,
+        port: Optional[JSON] = None,
+        uid: Optional[JSON] = None,
+        database: Optional[JSON] = None,
+        security_level: Optional[Union[str, "_models.NetezzaSecurityLevelType"]] = None,
         pwd: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[str] = None,
         **kwargs: Any
@@ -46867,6 +47454,19 @@ class NetezzaLinkedService(LinkedService):
         :keyword connection_string: An ODBC connection string. Type: string, SecureString or
          AzureKeyVaultSecretReference.
         :paramtype connection_string: JSON
+        :keyword server: Server name for connection. Type: string.
+        :paramtype server: JSON
+        :keyword port: The port for the connection. Type: integer.
+        :paramtype port: JSON
+        :keyword uid: Username for authentication. Type: string.
+        :paramtype uid: JSON
+        :keyword database: Database name for connection. Type: string.
+        :paramtype database: JSON
+        :keyword security_level: Specifies the security level for the driver connection to the data
+         store. PreferredUnSecured : prefer unsecured, allow fallback to secured connection if required.
+         OnlyUnSecured : strictly unsecured, no fallback. Known values are: "PreferredUnSecured" and
+         "OnlyUnSecured".
+        :paramtype security_level: str or ~azure.mgmt.datafactory.models.NetezzaSecurityLevelType
         :keyword pwd: The Azure key vault secret reference of password in connection string.
         :paramtype pwd: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
         :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
@@ -46884,6 +47484,11 @@ class NetezzaLinkedService(LinkedService):
         )
         self.type: str = "Netezza"
         self.connection_string = connection_string
+        self.server = server
+        self.port = port
+        self.uid = uid
+        self.database = database
+        self.security_level = security_level
         self.pwd = pwd
         self.encrypted_credential = encrypted_credential
 
@@ -46996,7 +47601,7 @@ class NetezzaSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -47118,12 +47723,12 @@ class NetezzaTableDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         table: Optional[JSON] = None,
@@ -47319,12 +47924,12 @@ class ODataLinkedService(LinkedService):
         self,
         *,
         url: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         authentication_type: Optional[Union[str, "_models.ODataAuthenticationType"]] = None,
         user_name: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
@@ -47482,12 +48087,12 @@ class ODataResourceDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         path: Optional[JSON] = None,
         **kwargs: Any
@@ -47585,7 +48190,7 @@ class ODataSource(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -47702,12 +48307,12 @@ class OdbcLinkedService(LinkedService):
         self,
         *,
         connection_string: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         authentication_type: Optional[JSON] = None,
         credential: Optional["_models.SecretBase"] = None,
         user_name: Optional[JSON] = None,
@@ -47818,7 +48423,7 @@ class OdbcSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -47919,7 +48524,7 @@ class OdbcSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -48021,12 +48626,12 @@ class OdbcTableDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         **kwargs: Any
@@ -48130,12 +48735,12 @@ class Office365Dataset(Dataset):
         *,
         linked_service_name: "_models.LinkedServiceReference",
         table_name: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         predicate: Optional[JSON] = None,
         **kwargs: Any
@@ -48215,6 +48820,19 @@ class Office365LinkedService(LinkedService):
     :vartype service_principal_id: JSON
     :ivar service_principal_key: Specify the application's key. Required.
     :vartype service_principal_key: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar service_principal_credential_type: The service principal credential type for
+     authentication.'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert' for certificate. If
+     not specified, 'ServicePrincipalKey' is in use. Type: string (or Expression with resultType
+     string).
+    :vartype service_principal_credential_type: JSON
+    :ivar service_principal_embedded_cert: Specify the base64 encoded certificate of your
+     application registered in Azure Active Directory. Type: string (or Expression with resultType
+     string).
+    :vartype service_principal_embedded_cert: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar service_principal_embedded_cert_password: Specify the password of your certificate if
+     your certificate has a password and you are using AadServicePrincipal authentication. Type:
+     string (or Expression with resultType string).
+    :vartype service_principal_embedded_cert_password: ~azure.mgmt.datafactory.models.SecretBase
     :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string.
     :vartype encrypted_credential: str
@@ -48240,6 +48858,12 @@ class Office365LinkedService(LinkedService):
         "service_principal_tenant_id": {"key": "typeProperties.servicePrincipalTenantId", "type": "object"},
         "service_principal_id": {"key": "typeProperties.servicePrincipalId", "type": "object"},
         "service_principal_key": {"key": "typeProperties.servicePrincipalKey", "type": "SecretBase"},
+        "service_principal_credential_type": {"key": "typeProperties.servicePrincipalCredentialType", "type": "object"},
+        "service_principal_embedded_cert": {"key": "typeProperties.servicePrincipalEmbeddedCert", "type": "SecretBase"},
+        "service_principal_embedded_cert_password": {
+            "key": "typeProperties.servicePrincipalEmbeddedCertPassword",
+            "type": "SecretBase",
+        },
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
     }
 
@@ -48250,12 +48874,15 @@ class Office365LinkedService(LinkedService):
         service_principal_tenant_id: JSON,
         service_principal_id: JSON,
         service_principal_key: "_models.SecretBase",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
+        service_principal_credential_type: Optional[JSON] = None,
+        service_principal_embedded_cert: Optional["_models.SecretBase"] = None,
+        service_principal_embedded_cert_password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -48284,6 +48911,19 @@ class Office365LinkedService(LinkedService):
         :paramtype service_principal_id: JSON
         :keyword service_principal_key: Specify the application's key. Required.
         :paramtype service_principal_key: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword service_principal_credential_type: The service principal credential type for
+         authentication.'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert' for certificate. If
+         not specified, 'ServicePrincipalKey' is in use. Type: string (or Expression with resultType
+         string).
+        :paramtype service_principal_credential_type: JSON
+        :keyword service_principal_embedded_cert: Specify the base64 encoded certificate of your
+         application registered in Azure Active Directory. Type: string (or Expression with resultType
+         string).
+        :paramtype service_principal_embedded_cert: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword service_principal_embedded_cert_password: Specify the password of your certificate if
+         your certificate has a password and you are using AadServicePrincipal authentication. Type:
+         string (or Expression with resultType string).
+        :paramtype service_principal_embedded_cert_password: ~azure.mgmt.datafactory.models.SecretBase
         :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
          are encrypted using the integration runtime credential manager. Type: string.
         :paramtype encrypted_credential: str
@@ -48302,6 +48942,9 @@ class Office365LinkedService(LinkedService):
         self.service_principal_tenant_id = service_principal_tenant_id
         self.service_principal_id = service_principal_id
         self.service_principal_key = service_principal_key
+        self.service_principal_credential_type = service_principal_credential_type
+        self.service_principal_embedded_cert = service_principal_embedded_cert
+        self.service_principal_embedded_cert_password = service_principal_embedded_cert_password
         self.encrypted_credential = encrypted_credential
 
 
@@ -48370,7 +49013,7 @@ class Office365Source(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -48543,7 +49186,7 @@ class OperationListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: List of Data Factory operations supported by the Data Factory resource
@@ -48710,8 +49353,8 @@ class OperationMetricSpecification(_serialization.Model):
         enable_regional_mdm_account: Optional[str] = None,
         source_mdm_account: Optional[str] = None,
         source_mdm_namespace: Optional[str] = None,
-        availabilities: Optional[List["_models.OperationMetricAvailability"]] = None,
-        dimensions: Optional[List["_models.OperationMetricDimension"]] = None,
+        availabilities: Optional[list["_models.OperationMetricAvailability"]] = None,
+        dimensions: Optional[list["_models.OperationMetricDimension"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -48768,8 +49411,8 @@ class OperationServiceSpecification(_serialization.Model):
     def __init__(
         self,
         *,
-        log_specifications: Optional[List["_models.OperationLogSpecification"]] = None,
-        metric_specifications: Optional[List["_models.OperationMetricSpecification"]] = None,
+        log_specifications: Optional[list["_models.OperationLogSpecification"]] = None,
+        metric_specifications: Optional[list["_models.OperationMetricSpecification"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -48841,12 +49484,12 @@ class OracleCloudStorageLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         access_key_id: Optional[JSON] = None,
         secret_access_key: Optional["_models.SecretBase"] = None,
         service_url: Optional[JSON] = None,
@@ -48938,7 +49581,7 @@ class OracleCloudStorageLocation(DatasetLocation):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         folder_path: Optional[JSON] = None,
         file_name: Optional[JSON] = None,
         bucket_name: Optional[JSON] = None,
@@ -49043,7 +49686,7 @@ class OracleCloudStorageReadSettings(StoreReadSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         recursive: Optional[JSON] = None,
@@ -49231,15 +49874,15 @@ class OracleLinkedService(LinkedService):
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
     }
 
-    def __init__(  # pylint: disable=too-many-locals
+    def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         connection_string: Optional[JSON] = None,
         server: Optional[JSON] = None,
         authentication_type: Optional[Union[str, "_models.OracleAuthenticationType"]] = None,
@@ -49490,12 +50133,12 @@ class OracleServiceCloudLinkedService(LinkedService):
         host: JSON,
         username: JSON,
         password: "_models.SecretBase",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         use_encrypted_endpoints: Optional[JSON] = None,
         use_host_verification: Optional[JSON] = None,
         use_peer_verification: Optional[JSON] = None,
@@ -49610,12 +50253,12 @@ class OracleServiceCloudObjectDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         **kwargs: Any
@@ -49711,7 +50354,7 @@ class OracleServiceCloudSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -49813,7 +50456,7 @@ class OracleSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -49899,6 +50542,14 @@ class OracleSource(CopySource):
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
     :vartype additional_columns: JSON
+    :ivar number_precision: The decimal precision used to represent Oracle NUMBER type without
+     precision and scale. The range is 1 to 256 and default value is 256 if not specified. Type:
+     integer (or Expression with resultType integer). Only used for Version 2.0.
+    :vartype number_precision: JSON
+    :ivar number_scale: The decimal scale used to represent Oracle NUMBER type without precision
+     and scale. The range is 0 to 130 and default value is 130 if not specified. Type: integer (or
+     Expression with resultType integer). Only used for Version 2.0.
+    :vartype number_scale: JSON
     """
 
     _validation = {
@@ -49917,12 +50568,14 @@ class OracleSource(CopySource):
         "partition_option": {"key": "partitionOption", "type": "object"},
         "partition_settings": {"key": "partitionSettings", "type": "OraclePartitionSettings"},
         "additional_columns": {"key": "additionalColumns", "type": "object"},
+        "number_precision": {"key": "numberPrecision", "type": "object"},
+        "number_scale": {"key": "numberScale", "type": "object"},
     }
 
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -49932,6 +50585,8 @@ class OracleSource(CopySource):
         partition_option: Optional[JSON] = None,
         partition_settings: Optional["_models.OraclePartitionSettings"] = None,
         additional_columns: Optional[JSON] = None,
+        number_precision: Optional[JSON] = None,
+        number_scale: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -49965,6 +50620,14 @@ class OracleSource(CopySource):
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
         :paramtype additional_columns: JSON
+        :keyword number_precision: The decimal precision used to represent Oracle NUMBER type without
+         precision and scale. The range is 1 to 256 and default value is 256 if not specified. Type:
+         integer (or Expression with resultType integer). Only used for Version 2.0.
+        :paramtype number_precision: JSON
+        :keyword number_scale: The decimal scale used to represent Oracle NUMBER type without precision
+         and scale. The range is 0 to 130 and default value is 130 if not specified. Type: integer (or
+         Expression with resultType integer). Only used for Version 2.0.
+        :paramtype number_scale: JSON
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -49980,6 +50643,8 @@ class OracleSource(CopySource):
         self.partition_option = partition_option
         self.partition_settings = partition_settings
         self.additional_columns = additional_columns
+        self.number_precision = number_precision
+        self.number_scale = number_scale
 
 
 class OracleTableDataset(Dataset):
@@ -50044,12 +50709,12 @@ class OracleTableDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         schema_type_properties_schema: Optional[JSON] = None,
@@ -50161,12 +50826,12 @@ class OrcDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         location: Optional["_models.DatasetLocation"] = None,
         orc_compression_codec: Optional[JSON] = None,
@@ -50245,7 +50910,7 @@ class OrcFormat(DatasetStorageFormat):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         serializer: Optional[JSON] = None,
         deserializer: Optional[JSON] = None,
         **kwargs: Any
@@ -50319,7 +50984,7 @@ class OrcSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -50419,7 +51084,7 @@ class OrcSource(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -50496,7 +51161,7 @@ class OrcWriteSettings(FormatWriteSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         max_rows_per_file: Optional[JSON] = None,
         file_name_prefix: Optional[JSON] = None,
         **kwargs: Any
@@ -50665,12 +51330,12 @@ class ParquetDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         location: Optional["_models.DatasetLocation"] = None,
         compression_codec: Optional[JSON] = None,
@@ -50749,7 +51414,7 @@ class ParquetFormat(DatasetStorageFormat):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         serializer: Optional[JSON] = None,
         deserializer: Optional[JSON] = None,
         **kwargs: Any
@@ -50796,7 +51461,7 @@ class ParquetReadSettings(FormatReadSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         compression_properties: Optional["_models.CompressionReadSettings"] = None,
         **kwargs: Any
     ) -> None:
@@ -50866,7 +51531,7 @@ class ParquetSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -50969,7 +51634,7 @@ class ParquetSource(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -51050,7 +51715,7 @@ class ParquetWriteSettings(FormatWriteSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         max_rows_per_file: Optional[JSON] = None,
         file_name_prefix: Optional[JSON] = None,
         **kwargs: Any
@@ -51142,12 +51807,12 @@ class PaypalLinkedService(LinkedService):
         *,
         host: JSON,
         client_id: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         client_secret: Optional["_models.SecretBase"] = None,
         use_encrypted_endpoints: Optional[JSON] = None,
         use_host_verification: Optional[JSON] = None,
@@ -51261,12 +51926,12 @@ class PaypalObjectDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         **kwargs: Any
@@ -51362,7 +52027,7 @@ class PaypalSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -51504,12 +52169,12 @@ class PhoenixLinkedService(LinkedService):
         *,
         host: JSON,
         authentication_type: Union[str, "_models.PhoenixAuthenticationType"],
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         port: Optional[JSON] = None,
         http_path: Optional[JSON] = None,
         username: Optional[JSON] = None,
@@ -51660,12 +52325,12 @@ class PhoenixObjectDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         table: Optional[JSON] = None,
@@ -51772,7 +52437,7 @@ class PhoenixSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -51875,7 +52540,7 @@ class PipelineExternalComputeScaleProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         time_to_live: Optional[int] = None,
         number_of_pipeline_nodes: Optional[int] = None,
         number_of_external_nodes: Optional[int] = None,
@@ -51943,7 +52608,7 @@ class PipelineListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.PipelineResource"], next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: list["_models.PipelineResource"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: List of pipelines. Required.
@@ -52089,14 +52754,14 @@ class PipelineResource(SubResource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
-        activities: Optional[List["_models.Activity"]] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        variables: Optional[Dict[str, "_models.VariableSpecification"]] = None,
+        activities: Optional[list["_models.Activity"]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        variables: Optional[dict[str, "_models.VariableSpecification"]] = None,
         concurrency: Optional[int] = None,
-        annotations: Optional[List[JSON]] = None,
-        run_dimensions: Optional[Dict[str, JSON]] = None,
+        annotations: Optional[list[JSON]] = None,
+        run_dimensions: Optional[dict[str, JSON]] = None,
         folder: Optional["_models.PipelineFolder"] = None,
         policy: Optional["_models.PipelinePolicy"] = None,
         **kwargs: Any
@@ -52209,7 +52874,7 @@ class PipelineRun(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, additional_properties: Optional[dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -52217,19 +52882,19 @@ class PipelineRun(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.run_id = None
-        self.run_group_id = None
-        self.is_latest = None
-        self.pipeline_name = None
-        self.parameters = None
-        self.run_dimensions = None
-        self.invoked_by = None
-        self.last_updated = None
-        self.run_start = None
-        self.run_end = None
-        self.duration_in_ms = None
-        self.status = None
-        self.message = None
+        self.run_id: Optional[str] = None
+        self.run_group_id: Optional[str] = None
+        self.is_latest: Optional[bool] = None
+        self.pipeline_name: Optional[str] = None
+        self.parameters: Optional[dict[str, str]] = None
+        self.run_dimensions: Optional[dict[str, str]] = None
+        self.invoked_by: Optional["_models.PipelineRunInvokedBy"] = None
+        self.last_updated: Optional[datetime.datetime] = None
+        self.run_start: Optional[datetime.datetime] = None
+        self.run_end: Optional[datetime.datetime] = None
+        self.duration_in_ms: Optional[int] = None
+        self.status: Optional[str] = None
+        self.message: Optional[str] = None
 
 
 class PipelineRunInvokedBy(_serialization.Model):
@@ -52268,11 +52933,11 @@ class PipelineRunInvokedBy(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.id = None
-        self.invoked_by_type = None
-        self.pipeline_name = None
-        self.pipeline_run_id = None
+        self.name: Optional[str] = None
+        self.id: Optional[str] = None
+        self.invoked_by_type: Optional[str] = None
+        self.pipeline_name: Optional[str] = None
+        self.pipeline_run_id: Optional[str] = None
 
 
 class PipelineRunsQueryResponse(_serialization.Model):
@@ -52297,7 +52962,7 @@ class PipelineRunsQueryResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.PipelineRun"], continuation_token: Optional[str] = None, **kwargs: Any
+        self, *, value: list["_models.PipelineRun"], continuation_token: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: List of pipeline runs. Required.
@@ -52343,7 +53008,7 @@ class PolybaseSettings(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         reject_type: Optional[Union[str, "_models.PolybaseSettingsRejectType"]] = None,
         reject_value: Optional[JSON] = None,
         reject_sample_value: Optional[JSON] = None,
@@ -52428,12 +53093,12 @@ class PostgreSqlLinkedService(LinkedService):
         self,
         *,
         connection_string: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         password: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[str] = None,
         **kwargs: Any
@@ -52527,7 +53192,7 @@ class PostgreSqlSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -52637,12 +53302,12 @@ class PostgreSqlTableDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         table: Optional[JSON] = None,
@@ -52816,12 +53481,12 @@ class PostgreSqlV2LinkedService(LinkedService):
         database: JSON,
         authentication_type: JSON,
         ssl_mode: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         port: Optional[JSON] = None,
         schema: Optional[JSON] = None,
         pooling: Optional[JSON] = None,
@@ -52990,7 +53655,7 @@ class PostgreSqlV2Source(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -53096,12 +53761,12 @@ class PostgreSqlV2TableDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table: Optional[JSON] = None,
         schema_type_properties_schema: Optional[JSON] = None,
@@ -53250,7 +53915,7 @@ class PowerQuerySinkMapping(_serialization.Model):
         self,
         *,
         query_name: Optional[str] = None,
-        dataflow_sinks: Optional[List["_models.PowerQuerySink"]] = None,
+        dataflow_sinks: Optional[list["_models.PowerQuerySink"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -53449,12 +54114,12 @@ class PrestoLinkedService(LinkedService):
         host: JSON,
         catalog: JSON,
         authentication_type: Union[str, "_models.PrestoAuthenticationType"],
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         server_version: Optional[JSON] = None,
         port: Optional[JSON] = None,
         username: Optional[JSON] = None,
@@ -53619,12 +54284,12 @@ class PrestoObjectDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         table: Optional[JSON] = None,
@@ -53731,7 +54396,7 @@ class PrestoSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -53824,7 +54489,7 @@ class PrivateEndpointConnectionListResponse(_serialization.Model):
     def __init__(
         self,
         *,
-        value: List["_models.PrivateEndpointConnectionResource"],
+        value: list["_models.PrivateEndpointConnectionResource"],
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -54070,9 +54735,9 @@ class PrivateLinkResourceProperties(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.group_id = None
-        self.required_members = None
-        self.required_zone_names = None
+        self.group_id: Optional[str] = None
+        self.required_members: Optional[list[str]] = None
+        self.required_zone_names: Optional[list[str]] = None
 
 
 class PrivateLinkResourcesWrapper(_serialization.Model):
@@ -54092,7 +54757,7 @@ class PrivateLinkResourcesWrapper(_serialization.Model):
         "value": {"key": "value", "type": "[PrivateLinkResource]"},
     }
 
-    def __init__(self, *, value: List["_models.PrivateLinkResource"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.PrivateLinkResource"], **kwargs: Any) -> None:
         """
         :keyword value: Required.
         :paramtype value: list[~azure.mgmt.datafactory.models.PrivateLinkResource]
@@ -54138,7 +54803,7 @@ class QueryDataFlowDebugSessionsResponse(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.DataFlowDebugSessionInfo"]] = None,
+        value: Optional[list["_models.DataFlowDebugSessionInfo"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -54207,12 +54872,12 @@ class QuickbaseLinkedService(LinkedService):
         *,
         url: JSON,
         user_token: "_models.SecretBase",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         encrypted_credential: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -54255,7 +54920,9 @@ class QuickbaseLinkedService(LinkedService):
 
 
 class QuickBooksLinkedService(LinkedService):
-    """QuickBooks server linked service.
+    """QuickBooks server linked service. This linked service has supported version property. The
+    Version 1.0 is scheduled for deprecation while your pipeline will continue to run after EOL but
+    without any bug fix or new features.
 
     All required parameters must be populated in order to send to server.
 
@@ -54281,16 +54948,19 @@ class QuickBooksLinkedService(LinkedService):
     :vartype endpoint: JSON
     :ivar company_id: The company ID of the QuickBooks company to authorize.
     :vartype company_id: JSON
-    :ivar consumer_key: The consumer key for OAuth 1.0 authentication.
+    :ivar consumer_key: The consumer key for OAuth 2.0 authentication.
     :vartype consumer_key: JSON
-    :ivar consumer_secret: The consumer secret for OAuth 1.0 authentication.
+    :ivar consumer_secret: The consumer secret for OAuth 2.0 authentication.
     :vartype consumer_secret: ~azure.mgmt.datafactory.models.SecretBase
-    :ivar access_token: The access token for OAuth 1.0 authentication.
+    :ivar access_token: The access token for OAuth 2.0 authentication.
     :vartype access_token: ~azure.mgmt.datafactory.models.SecretBase
-    :ivar access_token_secret: The access token secret for OAuth 1.0 authentication.
+    :ivar access_token_secret: The access token secret is deprecated for OAuth 1.0 authentication.
+     Only used for version 1.0.
     :vartype access_token_secret: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar refresh_token: The refresh token for OAuth 2.0 authentication.
+    :vartype refresh_token: ~azure.mgmt.datafactory.models.SecretBase
     :ivar use_encrypted_endpoints: Specifies whether the data source endpoints are encrypted using
-     HTTPS. The default value is true.
+     HTTPS. The default value is true. Only used for version 1.0.
     :vartype use_encrypted_endpoints: JSON
     :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string.
@@ -54316,6 +54986,7 @@ class QuickBooksLinkedService(LinkedService):
         "consumer_secret": {"key": "typeProperties.consumerSecret", "type": "SecretBase"},
         "access_token": {"key": "typeProperties.accessToken", "type": "SecretBase"},
         "access_token_secret": {"key": "typeProperties.accessTokenSecret", "type": "SecretBase"},
+        "refresh_token": {"key": "typeProperties.refreshToken", "type": "SecretBase"},
         "use_encrypted_endpoints": {"key": "typeProperties.useEncryptedEndpoints", "type": "object"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
     }
@@ -54323,12 +54994,12 @@ class QuickBooksLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         connection_properties: Optional[JSON] = None,
         endpoint: Optional[JSON] = None,
         company_id: Optional[JSON] = None,
@@ -54336,6 +55007,7 @@ class QuickBooksLinkedService(LinkedService):
         consumer_secret: Optional["_models.SecretBase"] = None,
         access_token: Optional["_models.SecretBase"] = None,
         access_token_secret: Optional["_models.SecretBase"] = None,
+        refresh_token: Optional["_models.SecretBase"] = None,
         use_encrypted_endpoints: Optional[JSON] = None,
         encrypted_credential: Optional[str] = None,
         **kwargs: Any
@@ -54361,16 +55033,19 @@ class QuickBooksLinkedService(LinkedService):
         :paramtype endpoint: JSON
         :keyword company_id: The company ID of the QuickBooks company to authorize.
         :paramtype company_id: JSON
-        :keyword consumer_key: The consumer key for OAuth 1.0 authentication.
+        :keyword consumer_key: The consumer key for OAuth 2.0 authentication.
         :paramtype consumer_key: JSON
-        :keyword consumer_secret: The consumer secret for OAuth 1.0 authentication.
+        :keyword consumer_secret: The consumer secret for OAuth 2.0 authentication.
         :paramtype consumer_secret: ~azure.mgmt.datafactory.models.SecretBase
-        :keyword access_token: The access token for OAuth 1.0 authentication.
+        :keyword access_token: The access token for OAuth 2.0 authentication.
         :paramtype access_token: ~azure.mgmt.datafactory.models.SecretBase
-        :keyword access_token_secret: The access token secret for OAuth 1.0 authentication.
+        :keyword access_token_secret: The access token secret is deprecated for OAuth 1.0
+         authentication. Only used for version 1.0.
         :paramtype access_token_secret: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword refresh_token: The refresh token for OAuth 2.0 authentication.
+        :paramtype refresh_token: ~azure.mgmt.datafactory.models.SecretBase
         :keyword use_encrypted_endpoints: Specifies whether the data source endpoints are encrypted
-         using HTTPS. The default value is true.
+         using HTTPS. The default value is true. Only used for version 1.0.
         :paramtype use_encrypted_endpoints: JSON
         :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
          are encrypted using the integration runtime credential manager. Type: string.
@@ -54393,6 +55068,7 @@ class QuickBooksLinkedService(LinkedService):
         self.consumer_secret = consumer_secret
         self.access_token = access_token
         self.access_token_secret = access_token_secret
+        self.refresh_token = refresh_token
         self.use_encrypted_endpoints = use_encrypted_endpoints
         self.encrypted_credential = encrypted_credential
 
@@ -54450,12 +55126,12 @@ class QuickBooksObjectDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         **kwargs: Any
@@ -54551,7 +55227,7 @@ class QuickBooksSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -54631,12 +55307,12 @@ class RecurrenceSchedule(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
-        minutes: Optional[List[int]] = None,
-        hours: Optional[List[int]] = None,
-        week_days: Optional[List[Union[str, "_models.DaysOfWeek"]]] = None,
-        month_days: Optional[List[int]] = None,
-        monthly_occurrences: Optional[List["_models.RecurrenceScheduleOccurrence"]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
+        minutes: Optional[list[int]] = None,
+        hours: Optional[list[int]] = None,
+        week_days: Optional[list[Union[str, "_models.DaysOfWeek"]]] = None,
+        month_days: Optional[list[int]] = None,
+        monthly_occurrences: Optional[list["_models.RecurrenceScheduleOccurrence"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -54686,7 +55362,7 @@ class RecurrenceScheduleOccurrence(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         day: Optional[Union[str, "_models.DayOfWeek"]] = None,
         occurrence: Optional[int] = None,
         **kwargs: Any
@@ -54739,7 +55415,7 @@ class RedirectIncompatibleRowSettings(_serialization.Model):
         self,
         *,
         linked_service_name: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         path: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
@@ -54852,7 +55528,7 @@ class RelationalSource(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -54950,12 +55626,12 @@ class RelationalTableDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         **kwargs: Any
@@ -55042,7 +55718,7 @@ class RemotePrivateEndpointConnection(_serialization.Model):
          ~azure.mgmt.datafactory.models.PrivateLinkConnectionState
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
 
@@ -55108,9 +55784,9 @@ class RerunTumblingWindowTrigger(Trigger):
         requested_start_time: datetime.datetime,
         requested_end_time: datetime.datetime,
         rerun_concurrency: int,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
-        annotations: Optional[List[JSON]] = None,
+        annotations: Optional[list[JSON]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -55215,12 +55891,12 @@ class ResponsysLinkedService(LinkedService):
         *,
         endpoint: JSON,
         client_id: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         client_secret: Optional["_models.SecretBase"] = None,
         use_encrypted_endpoints: Optional[JSON] = None,
         use_host_verification: Optional[JSON] = None,
@@ -55337,12 +56013,12 @@ class ResponsysObjectDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         **kwargs: Any
@@ -55438,7 +56114,7 @@ class ResponsysSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -55556,18 +56232,18 @@ class RestResourceDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         relative_url: Optional[JSON] = None,
         request_method: Optional[JSON] = None,
         request_body: Optional[JSON] = None,
-        additional_headers: Optional[Dict[str, JSON]] = None,
-        pagination_rules: Optional[Dict[str, JSON]] = None,
+        additional_headers: Optional[dict[str, JSON]] = None,
+        pagination_rules: Optional[dict[str, JSON]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -55762,12 +56438,12 @@ class RestServiceLinkedService(LinkedService):
         *,
         url: JSON,
         authentication_type: Union[str, "_models.RestServiceAuthenticationType"],
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         enable_server_certificate_validation: Optional[JSON] = None,
         user_name: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
@@ -55975,7 +56651,7 @@ class RestSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -56116,7 +56792,7 @@ class RestSource(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -56260,8 +56936,8 @@ class RunFilterParameters(_serialization.Model):
         last_updated_after: datetime.datetime,
         last_updated_before: datetime.datetime,
         continuation_token: Optional[str] = None,
-        filters: Optional[List["_models.RunQueryFilter"]] = None,
-        order_by: Optional[List["_models.RunQueryOrderBy"]] = None,
+        filters: Optional[list["_models.RunQueryFilter"]] = None,
+        order_by: Optional[list["_models.RunQueryOrderBy"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -56323,7 +56999,7 @@ class RunQueryFilter(_serialization.Model):
         *,
         operand: Union[str, "_models.RunQueryFilterOperand"],
         operator: Union[str, "_models.RunQueryFilterOperator"],
-        values: List[str],
+        values: list[str],
         **kwargs: Any
     ) -> None:
         """
@@ -56458,12 +57134,12 @@ class SalesforceLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         environment_url: Optional[JSON] = None,
         username: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
@@ -56592,12 +57268,12 @@ class SalesforceMarketingCloudLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         connection_properties: Optional[JSON] = None,
         client_id: Optional[JSON] = None,
         client_secret: Optional["_models.SecretBase"] = None,
@@ -56717,12 +57393,12 @@ class SalesforceMarketingCloudObjectDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         **kwargs: Any
@@ -56818,7 +57494,7 @@ class SalesforceMarketingCloudSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -56922,12 +57598,12 @@ class SalesforceObjectDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         object_api_name: Optional[JSON] = None,
         **kwargs: Any
@@ -57039,12 +57715,12 @@ class SalesforceServiceCloudLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         environment_url: Optional[JSON] = None,
         username: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
@@ -57163,12 +57839,12 @@ class SalesforceServiceCloudObjectDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         object_api_name: Optional[JSON] = None,
         **kwargs: Any
@@ -57277,7 +57953,7 @@ class SalesforceServiceCloudSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -57393,7 +58069,7 @@ class SalesforceServiceCloudSource(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -57506,12 +58182,12 @@ class SalesforceServiceCloudV2LinkedService(LinkedService):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         environment_url: Optional[JSON] = None,
         authentication_type: Optional[JSON] = None,
         client_id: Optional[JSON] = None,
@@ -57630,12 +58306,12 @@ class SalesforceServiceCloudV2ObjectDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         object_api_name: Optional[JSON] = None,
         report_id: Optional[JSON] = None,
@@ -57749,7 +58425,7 @@ class SalesforceServiceCloudV2Sink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -57874,7 +58550,7 @@ class SalesforceServiceCloudV2Source(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -57997,7 +58673,7 @@ class SalesforceSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -58117,7 +58793,7 @@ class SalesforceSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -58235,12 +58911,12 @@ class SalesforceV2LinkedService(LinkedService):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         environment_url: Optional[JSON] = None,
         authentication_type: Optional[JSON] = None,
         client_id: Optional[JSON] = None,
@@ -58359,12 +59035,12 @@ class SalesforceV2ObjectDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         object_api_name: Optional[JSON] = None,
         report_id: Optional[JSON] = None,
@@ -58478,7 +59154,7 @@ class SalesforceV2Sink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -58587,6 +59263,9 @@ class SalesforceV2Source(TabularSource):
     :ivar page_size: Page size for each http request, too large pageSize will caused timeout,
      default 300,000. Type: integer (or Expression with resultType integer).
     :vartype page_size: JSON
+    :ivar partition_option: Partition option for the SalesforceV2 connector in copy activity,
+     AutoDetect or None. Type: string (or Expression with resultType string).
+    :vartype partition_option: JSON
     """
 
     _validation = {
@@ -58606,12 +59285,13 @@ class SalesforceV2Source(TabularSource):
         "query": {"key": "query", "type": "object"},
         "include_deleted_objects": {"key": "includeDeletedObjects", "type": "object"},
         "page_size": {"key": "pageSize", "type": "object"},
+        "partition_option": {"key": "partitionOption", "type": "object"},
     }
 
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -58622,6 +59302,7 @@ class SalesforceV2Source(TabularSource):
         query: Optional[JSON] = None,
         include_deleted_objects: Optional[JSON] = None,
         page_size: Optional[JSON] = None,
+        partition_option: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -58662,6 +59343,9 @@ class SalesforceV2Source(TabularSource):
         :keyword page_size: Page size for each http request, too large pageSize will caused timeout,
          default 300,000. Type: integer (or Expression with resultType integer).
         :paramtype page_size: JSON
+        :keyword partition_option: Partition option for the SalesforceV2 connector in copy activity,
+         AutoDetect or None. Type: string (or Expression with resultType string).
+        :paramtype partition_option: JSON
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -58678,6 +59362,7 @@ class SalesforceV2Source(TabularSource):
         self.query = query
         self.include_deleted_objects = include_deleted_objects
         self.page_size = page_size
+        self.partition_option = partition_option
 
 
 class SapBwCubeDataset(Dataset):
@@ -58730,12 +59415,12 @@ class SapBwCubeDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         **kwargs: Any
     ) -> None:
@@ -58843,12 +59528,12 @@ class SapBWLinkedService(LinkedService):
         server: JSON,
         system_number: JSON,
         client_id: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         user_name: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[str] = None,
@@ -58955,7 +59640,7 @@ class SapBwSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -59062,12 +59747,12 @@ class SapCloudForCustomerLinkedService(LinkedService):
         self,
         *,
         url: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         username: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[str] = None,
@@ -59173,12 +59858,12 @@ class SapCloudForCustomerResourceDataset(Dataset):
         *,
         linked_service_name: "_models.LinkedServiceReference",
         path: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         **kwargs: Any
     ) -> None:
@@ -59281,7 +59966,7 @@ class SapCloudForCustomerSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -59397,7 +60082,7 @@ class SapCloudForCustomerSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -59512,12 +60197,12 @@ class SapEccLinkedService(LinkedService):
         self,
         *,
         url: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         username: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[str] = None,
@@ -59623,12 +60308,12 @@ class SapEccResourceDataset(Dataset):
         *,
         linked_service_name: "_models.LinkedServiceReference",
         path: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         **kwargs: Any
     ) -> None:
@@ -59730,7 +60415,7 @@ class SapEccSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -59849,12 +60534,12 @@ class SapHanaLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         connection_string: Optional[JSON] = None,
         server: Optional[JSON] = None,
         authentication_type: Optional[Union[str, "_models.SapHanaAuthenticationType"]] = None,
@@ -59997,7 +60682,7 @@ class SapHanaSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -60118,12 +60803,12 @@ class SapHanaTableDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         schema_type_properties_schema: Optional[JSON] = None,
         table: Optional[JSON] = None,
@@ -60282,15 +60967,15 @@ class SapOdpLinkedService(LinkedService):
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
     }
 
-    def __init__(  # pylint: disable=too-many-locals
+    def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         server: Optional[JSON] = None,
         system_number: Optional[JSON] = None,
         client_id: Optional[JSON] = None,
@@ -60473,12 +61158,12 @@ class SapOdpResourceDataset(Dataset):
         linked_service_name: "_models.LinkedServiceReference",
         context: JSON,
         object_name: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         **kwargs: Any
     ) -> None:
@@ -60590,7 +61275,7 @@ class SapOdpSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -60739,12 +61424,12 @@ class SapOpenHubLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         server: Optional[JSON] = None,
         system_number: Optional[JSON] = None,
         client_id: Optional[JSON] = None,
@@ -60897,7 +61582,7 @@ class SapOpenHubSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -61029,12 +61714,12 @@ class SapOpenHubTableDataset(Dataset):
         *,
         linked_service_name: "_models.LinkedServiceReference",
         open_hub_destination_name: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         exclude_last_request: Optional[JSON] = None,
         base_request_id: Optional[JSON] = None,
@@ -61193,12 +61878,12 @@ class SapTableLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         server: Optional[JSON] = None,
         system_number: Optional[JSON] = None,
         client_id: Optional[JSON] = None,
@@ -61423,12 +62108,12 @@ class SapTableResourceDataset(Dataset):
         *,
         linked_service_name: "_models.LinkedServiceReference",
         table_name: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         **kwargs: Any
     ) -> None:
@@ -61558,7 +62243,7 @@ class SapTableSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -61695,10 +62380,10 @@ class ScheduleTrigger(MultiplePipelineTrigger):
         self,
         *,
         recurrence: "_models.ScheduleTriggerRecurrence",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
-        annotations: Optional[List[JSON]] = None,
-        pipelines: Optional[List["_models.TriggerPipelineReference"]] = None,
+        annotations: Optional[list[JSON]] = None,
+        pipelines: Optional[list["_models.TriggerPipelineReference"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -61759,7 +62444,7 @@ class ScheduleTriggerRecurrence(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         frequency: Optional[Union[str, "_models.RecurrenceFrequency"]] = None,
         interval: Optional[int] = None,
         start_time: Optional[datetime.datetime] = None,
@@ -61883,6 +62568,10 @@ class ScriptActivity(ExecutionActivity):
      and the number of rows affected by the DML statement. Supported connector: SnowflakeV2. Type:
      boolean (or Expression with resultType boolean).
     :vartype return_multistatement_result: JSON
+    :ivar treat_decimal_as_string: Indicates whether to treat decimal values as strings to avoid
+     value overflow issue. This option is enabled for SnowflakeV2 connector only. Type: boolean (or
+     Expression with resultType boolean).
+    :vartype treat_decimal_as_string: JSON
     """
 
     _validation = {
@@ -61905,24 +62594,26 @@ class ScriptActivity(ExecutionActivity):
         "scripts": {"key": "typeProperties.scripts", "type": "[ScriptActivityScriptBlock]"},
         "log_settings": {"key": "typeProperties.logSettings", "type": "ScriptActivityTypePropertiesLogSettings"},
         "return_multistatement_result": {"key": "typeProperties.returnMultistatementResult", "type": "object"},
+        "treat_decimal_as_string": {"key": "typeProperties.treatDecimalAsString", "type": "object"},
     }
 
     def __init__(
         self,
         *,
         name: str,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
         script_block_execution_timeout: Optional[JSON] = None,
-        scripts: Optional[List["_models.ScriptActivityScriptBlock"]] = None,
+        scripts: Optional[list["_models.ScriptActivityScriptBlock"]] = None,
         log_settings: Optional["_models.ScriptActivityTypePropertiesLogSettings"] = None,
         return_multistatement_result: Optional[JSON] = None,
+        treat_decimal_as_string: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -61960,6 +62651,10 @@ class ScriptActivity(ExecutionActivity):
          statements and the number of rows affected by the DML statement. Supported connector:
          SnowflakeV2. Type: boolean (or Expression with resultType boolean).
         :paramtype return_multistatement_result: JSON
+        :keyword treat_decimal_as_string: Indicates whether to treat decimal values as strings to avoid
+         value overflow issue. This option is enabled for SnowflakeV2 connector only. Type: boolean (or
+         Expression with resultType boolean).
+        :paramtype treat_decimal_as_string: JSON
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -61978,6 +62673,7 @@ class ScriptActivity(ExecutionActivity):
         self.scripts = scripts
         self.log_settings = log_settings
         self.return_multistatement_result = return_multistatement_result
+        self.treat_decimal_as_string = treat_decimal_as_string
 
 
 class ScriptActivityParameter(_serialization.Model):
@@ -62070,7 +62766,7 @@ class ScriptActivityScriptBlock(_serialization.Model):
         *,
         text: JSON,
         type: JSON,
-        parameters: Optional[List["_models.ScriptActivityParameter"]] = None,
+        parameters: Optional[list["_models.ScriptActivityParameter"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -62279,7 +62975,7 @@ class SelfHostedIntegrationRuntime(IntegrationRuntime):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         linked_info: Optional["_models.LinkedIntegrationRuntimeType"] = None,
         self_contained_interactive_authoring_enabled: Optional[bool] = None,
@@ -62399,7 +63095,7 @@ class SelfHostedIntegrationRuntimeNode(_serialization.Model):
         "max_concurrent_jobs": {"key": "maxConcurrentJobs", "type": "int"},
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, additional_properties: Optional[dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -62407,24 +63103,24 @@ class SelfHostedIntegrationRuntimeNode(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.node_name = None
-        self.machine_name = None
-        self.host_service_uri = None
-        self.status = None
-        self.capabilities = None
-        self.version_status = None
-        self.version = None
-        self.register_time = None
-        self.last_connect_time = None
-        self.expiry_time = None
-        self.last_start_time = None
-        self.last_stop_time = None
-        self.last_update_result = None
-        self.last_start_update_time = None
-        self.last_end_update_time = None
-        self.is_active_dispatcher = None
-        self.concurrent_jobs_limit = None
-        self.max_concurrent_jobs = None
+        self.node_name: Optional[str] = None
+        self.machine_name: Optional[str] = None
+        self.host_service_uri: Optional[str] = None
+        self.status: Optional[Union[str, "_models.SelfHostedIntegrationRuntimeNodeStatus"]] = None
+        self.capabilities: Optional[dict[str, str]] = None
+        self.version_status: Optional[str] = None
+        self.version: Optional[str] = None
+        self.register_time: Optional[datetime.datetime] = None
+        self.last_connect_time: Optional[datetime.datetime] = None
+        self.expiry_time: Optional[datetime.datetime] = None
+        self.last_start_time: Optional[datetime.datetime] = None
+        self.last_stop_time: Optional[datetime.datetime] = None
+        self.last_update_result: Optional[Union[str, "_models.IntegrationRuntimeUpdateResult"]] = None
+        self.last_start_update_time: Optional[datetime.datetime] = None
+        self.last_end_update_time: Optional[datetime.datetime] = None
+        self.is_active_dispatcher: Optional[bool] = None
+        self.concurrent_jobs_limit: Optional[int] = None
+        self.max_concurrent_jobs: Optional[int] = None
 
 
 class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
@@ -62543,9 +63239,9 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
-        nodes: Optional[List["_models.SelfHostedIntegrationRuntimeNode"]] = None,
-        links: Optional[List["_models.LinkedIntegrationRuntime"]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
+        nodes: Optional[list["_models.SelfHostedIntegrationRuntimeNode"]] = None,
+        links: Optional[list["_models.LinkedIntegrationRuntime"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -62560,23 +63256,25 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
         self.type: str = "SelfHosted"
-        self.create_time = None
-        self.task_queue_id = None
-        self.internal_channel_encryption = None
-        self.version = None
+        self.create_time: Optional[datetime.datetime] = None
+        self.task_queue_id: Optional[str] = None
+        self.internal_channel_encryption: Optional[
+            Union[str, "_models.IntegrationRuntimeInternalChannelEncryptionMode"]
+        ] = None
+        self.version: Optional[str] = None
         self.nodes = nodes
-        self.scheduled_update_date = None
-        self.update_delay_offset = None
-        self.local_time_zone_offset = None
-        self.capabilities = None
-        self.service_urls = None
-        self.auto_update = None
-        self.version_status = None
+        self.scheduled_update_date: Optional[datetime.datetime] = None
+        self.update_delay_offset: Optional[str] = None
+        self.local_time_zone_offset: Optional[str] = None
+        self.capabilities: Optional[dict[str, str]] = None
+        self.service_urls: Optional[list[str]] = None
+        self.auto_update: Optional[Union[str, "_models.IntegrationRuntimeAutoUpdate"]] = None
+        self.version_status: Optional[str] = None
         self.links = links
-        self.pushed_version = None
-        self.latest_version = None
-        self.auto_update_eta = None
-        self.self_contained_interactive_authoring_enabled = None
+        self.pushed_version: Optional[str] = None
+        self.latest_version: Optional[str] = None
+        self.auto_update_eta: Optional[datetime.datetime] = None
+        self.self_contained_interactive_authoring_enabled: Optional[bool] = None
 
 
 class ServiceNowLinkedService(LinkedService):
@@ -62662,12 +63360,12 @@ class ServiceNowLinkedService(LinkedService):
         *,
         endpoint: JSON,
         authentication_type: Union[str, "_models.ServiceNowAuthenticationType"],
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         username: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
         client_id: Optional[JSON] = None,
@@ -62798,12 +63496,12 @@ class ServiceNowObjectDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         **kwargs: Any
@@ -62899,7 +63597,7 @@ class ServiceNowSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -63022,12 +63720,12 @@ class ServiceNowV2LinkedService(LinkedService):
         *,
         endpoint: JSON,
         authentication_type: Union[str, "_models.ServiceNowV2AuthenticationType"],
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         username: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
         client_id: Optional[JSON] = None,
@@ -63149,12 +63847,12 @@ class ServiceNowV2ObjectDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         value_type: Optional[Union[str, "_models.ValueType"]] = None,
@@ -63258,7 +63956,7 @@ class ServiceNowV2Source(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -63351,9 +64049,9 @@ class ServicePrincipalCredential(Credential):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
-        annotations: Optional[List[JSON]] = None,
+        annotations: Optional[list[JSON]] = None,
         service_principal_id: Optional[JSON] = None,
         service_principal_key: Optional["_models.AzureKeyVaultSecretReference"] = None,
         tenant: Optional[JSON] = None,
@@ -63442,12 +64140,12 @@ class SetVariableActivity(ControlActivity):
         self,
         *,
         name: str,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         policy: Optional["_models.SecureInputOutputPolicy"] = None,
         variable_name: Optional[str] = None,
         value: Optional[JSON] = None,
@@ -63531,7 +64229,7 @@ class SftpLocation(DatasetLocation):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         folder_path: Optional[JSON] = None,
         file_name: Optional[JSON] = None,
         **kwargs: Any
@@ -63626,7 +64324,7 @@ class SftpReadSettings(StoreReadSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         recursive: Optional[JSON] = None,
@@ -63790,12 +64488,12 @@ class SftpServerLinkedService(LinkedService):
         self,
         *,
         host: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         port: Optional[JSON] = None,
         authentication_type: Optional[Union[str, "_models.SftpAuthenticationType"]] = None,
         user_name: Optional[JSON] = None,
@@ -63930,11 +64628,11 @@ class SftpWriteSettings(StoreWriteSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
-        metadata: Optional[List["_models.MetadataItem"]] = None,
+        metadata: Optional[list["_models.MetadataItem"]] = None,
         operation_timeout: Optional[JSON] = None,
         use_temp_file_rename: Optional[JSON] = None,
         **kwargs: Any
@@ -64061,12 +64759,12 @@ class SharePointOnlineListLinkedService(LinkedService):
         site_url: JSON,
         tenant_id: JSON,
         service_principal_id: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         service_principal_key: Optional["_models.SecretBase"] = None,
         service_principal_credential_type: Optional[JSON] = None,
         service_principal_embedded_cert: Optional["_models.SecretBase"] = None,
@@ -64193,12 +64891,12 @@ class SharePointOnlineListResourceDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         list_name: Optional[JSON] = None,
         **kwargs: Any
@@ -64292,7 +64990,7 @@ class SharePointOnlineListSource(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -64403,12 +65101,12 @@ class ShopifyLinkedService(LinkedService):
         self,
         *,
         host: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         access_token: Optional["_models.SecretBase"] = None,
         use_encrypted_endpoints: Optional[JSON] = None,
         use_host_verification: Optional[JSON] = None,
@@ -64520,12 +65218,12 @@ class ShopifyObjectDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         **kwargs: Any
@@ -64621,7 +65319,7 @@ class ShopifySource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -64751,12 +65449,12 @@ class SmartsheetLinkedService(LinkedService):
         self,
         *,
         api_token: "_models.SecretBase",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         encrypted_credential: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -64852,12 +65550,12 @@ class SnowflakeDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         schema_type_properties_schema: Optional[JSON] = None,
         table: Optional[JSON] = None,
@@ -64947,9 +65645,9 @@ class SnowflakeExportCopyCommand(ExportSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
-        additional_copy_options: Optional[Dict[str, JSON]] = None,
-        additional_format_options: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
+        additional_copy_options: Optional[dict[str, JSON]] = None,
+        additional_format_options: Optional[dict[str, JSON]] = None,
         storage_integration: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
@@ -65018,9 +65716,9 @@ class SnowflakeImportCopyCommand(ImportSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
-        additional_copy_options: Optional[Dict[str, JSON]] = None,
-        additional_format_options: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
+        additional_copy_options: Optional[dict[str, JSON]] = None,
+        additional_format_options: Optional[dict[str, JSON]] = None,
         storage_integration: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
@@ -65101,12 +65799,12 @@ class SnowflakeLinkedService(LinkedService):
         self,
         *,
         connection_string: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         password: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[str] = None,
         **kwargs: Any
@@ -65204,7 +65902,7 @@ class SnowflakeSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -65306,7 +66004,7 @@ class SnowflakeSource(CopySource):
         self,
         *,
         export_settings: "_models.SnowflakeExportCopyCommand",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -65406,12 +66104,12 @@ class SnowflakeV2Dataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         schema_type_properties_schema: Optional[JSON] = None,
         table: Optional[JSON] = None,
@@ -65512,11 +66210,20 @@ class SnowflakeV2LinkedService(LinkedService):
     :ivar private_key_passphrase: The Azure key vault secret reference of private key password for
      KeyPair auth with encrypted private key.
     :vartype private_key_passphrase: ~azure.mgmt.datafactory.models.SecretBase
-    :ivar host: The host name of the Snowflake account.
+    :ivar role: The default access control role to use in the Snowflake session. Type: string (or
+     Expression with resultType string).
+    :vartype role: JSON
+    :ivar host: The host name of the Snowflake account. Type: string (or Expression with resultType
+     string).
     :vartype host: JSON
+    :ivar schema: Schema name for connection. Type: string (or Expression with resultType string).
+    :vartype schema: JSON
     :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string.
     :vartype encrypted_credential: str
+    :ivar use_utc_timestamps: Indicates whether to use UTC timezone for timestamp data types. Type:
+     boolean.
+    :vartype use_utc_timestamps: JSON
     """
 
     _validation = {
@@ -65546,8 +66253,11 @@ class SnowflakeV2LinkedService(LinkedService):
         "scope": {"key": "typeProperties.scope", "type": "object"},
         "private_key": {"key": "typeProperties.privateKey", "type": "SecretBase"},
         "private_key_passphrase": {"key": "typeProperties.privateKeyPassphrase", "type": "SecretBase"},
+        "role": {"key": "typeProperties.role", "type": "object"},
         "host": {"key": "typeProperties.host", "type": "object"},
+        "schema": {"key": "typeProperties.schema", "type": "object"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
+        "use_utc_timestamps": {"key": "typeProperties.useUtcTimestamps", "type": "object"},
     }
 
     def __init__(
@@ -65556,12 +66266,12 @@ class SnowflakeV2LinkedService(LinkedService):
         account_identifier: JSON,
         database: JSON,
         warehouse: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         user: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
         authentication_type: Union[str, "_models.SnowflakeAuthenticationType"] = "Basic",
@@ -65571,8 +66281,11 @@ class SnowflakeV2LinkedService(LinkedService):
         scope: Optional[JSON] = None,
         private_key: Optional["_models.SecretBase"] = None,
         private_key_passphrase: Optional["_models.SecretBase"] = None,
+        role: Optional[JSON] = None,
         host: Optional[JSON] = None,
+        schema: Optional[JSON] = None,
         encrypted_credential: Optional[str] = None,
+        use_utc_timestamps: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -65621,11 +66334,21 @@ class SnowflakeV2LinkedService(LinkedService):
         :keyword private_key_passphrase: The Azure key vault secret reference of private key password
          for KeyPair auth with encrypted private key.
         :paramtype private_key_passphrase: ~azure.mgmt.datafactory.models.SecretBase
-        :keyword host: The host name of the Snowflake account.
+        :keyword role: The default access control role to use in the Snowflake session. Type: string
+         (or Expression with resultType string).
+        :paramtype role: JSON
+        :keyword host: The host name of the Snowflake account. Type: string (or Expression with
+         resultType string).
         :paramtype host: JSON
+        :keyword schema: Schema name for connection. Type: string (or Expression with resultType
+         string).
+        :paramtype schema: JSON
         :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
          are encrypted using the integration runtime credential manager. Type: string.
         :paramtype encrypted_credential: str
+        :keyword use_utc_timestamps: Indicates whether to use UTC timezone for timestamp data types.
+         Type: boolean.
+        :paramtype use_utc_timestamps: JSON
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -65649,8 +66372,11 @@ class SnowflakeV2LinkedService(LinkedService):
         self.scope = scope
         self.private_key = private_key
         self.private_key_passphrase = private_key_passphrase
+        self.role = role
         self.host = host
+        self.schema = schema
         self.encrypted_credential = encrypted_credential
+        self.use_utc_timestamps = use_utc_timestamps
 
 
 class SnowflakeV2Sink(CopySink):
@@ -65708,7 +66434,7 @@ class SnowflakeV2Sink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -65810,7 +66536,7 @@ class SnowflakeV2Source(CopySource):
         self,
         *,
         export_settings: "_models.SnowflakeExportCopyCommand",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -65934,6 +66660,9 @@ class SparkLinkedService(LinkedService):
     :ivar enable_ssl: Specifies whether the connections to the server are encrypted using SSL. The
      default value is false.
     :vartype enable_ssl: JSON
+    :ivar enable_server_certificate_validation: Specifies whether the connections to the server
+     will validate server certificate, the default value is True. Only used for Version 2.0.
+    :vartype enable_server_certificate_validation: JSON
     :ivar trusted_cert_path: The full path of the .pem file containing trusted CA certificates for
      verifying the server when connecting over SSL. This property can only be set when using SSL on
      self-hosted IR. The default value is the cacerts.pem file installed with the IR.
@@ -65976,6 +66705,10 @@ class SparkLinkedService(LinkedService):
         "password": {"key": "typeProperties.password", "type": "SecretBase"},
         "http_path": {"key": "typeProperties.httpPath", "type": "object"},
         "enable_ssl": {"key": "typeProperties.enableSsl", "type": "object"},
+        "enable_server_certificate_validation": {
+            "key": "typeProperties.enableServerCertificateValidation",
+            "type": "object",
+        },
         "trusted_cert_path": {"key": "typeProperties.trustedCertPath", "type": "object"},
         "use_system_trust_store": {"key": "typeProperties.useSystemTrustStore", "type": "object"},
         "allow_host_name_cn_mismatch": {"key": "typeProperties.allowHostNameCNMismatch", "type": "object"},
@@ -65989,18 +66722,19 @@ class SparkLinkedService(LinkedService):
         host: JSON,
         port: JSON,
         authentication_type: Union[str, "_models.SparkAuthenticationType"],
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         server_type: Optional[Union[str, "_models.SparkServerType"]] = None,
         thrift_transport_protocol: Optional[Union[str, "_models.SparkThriftTransportProtocol"]] = None,
         username: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
         http_path: Optional[JSON] = None,
         enable_ssl: Optional[JSON] = None,
+        enable_server_certificate_validation: Optional[JSON] = None,
         trusted_cert_path: Optional[JSON] = None,
         use_system_trust_store: Optional[JSON] = None,
         allow_host_name_cn_mismatch: Optional[JSON] = None,
@@ -66048,6 +66782,9 @@ class SparkLinkedService(LinkedService):
         :keyword enable_ssl: Specifies whether the connections to the server are encrypted using SSL.
          The default value is false.
         :paramtype enable_ssl: JSON
+        :keyword enable_server_certificate_validation: Specifies whether the connections to the server
+         will validate server certificate, the default value is True. Only used for Version 2.0.
+        :paramtype enable_server_certificate_validation: JSON
         :keyword trusted_cert_path: The full path of the .pem file containing trusted CA certificates
          for verifying the server when connecting over SSL. This property can only be set when using SSL
          on self-hosted IR. The default value is the cacerts.pem file installed with the IR.
@@ -66084,6 +66821,7 @@ class SparkLinkedService(LinkedService):
         self.password = password
         self.http_path = http_path
         self.enable_ssl = enable_ssl
+        self.enable_server_certificate_validation = enable_server_certificate_validation
         self.trusted_cert_path = trusted_cert_path
         self.use_system_trust_store = use_system_trust_store
         self.allow_host_name_cn_mismatch = allow_host_name_cn_mismatch
@@ -66152,12 +66890,12 @@ class SparkObjectDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         table: Optional[JSON] = None,
@@ -66264,7 +67002,7 @@ class SparkSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -66458,7 +67196,7 @@ class SqlDWSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -66621,7 +67359,7 @@ class SqlDWSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -66816,7 +67554,7 @@ class SqlMISink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -66980,7 +67718,7 @@ class SqlMISource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -67283,12 +68021,12 @@ class SqlServerLinkedService(LinkedService):
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         server: Optional[JSON] = None,
         database: Optional[JSON] = None,
         encrypt: Optional[JSON] = None,
@@ -67848,7 +68586,7 @@ class SqlServerSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -68012,7 +68750,7 @@ class SqlServerSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -68156,12 +68894,12 @@ class SqlServerStoredProcedureActivity(ExecutionActivity):
         *,
         name: str,
         stored_procedure_name: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
         stored_procedure_parameters: Optional[JSON] = None,
@@ -68276,12 +69014,12 @@ class SqlServerTableDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         schema_type_properties_schema: Optional[JSON] = None,
@@ -68421,7 +69159,7 @@ class SqlSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -68582,7 +69320,7 @@ class SqlSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -68777,12 +69515,12 @@ class SquareLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         connection_properties: Optional[JSON] = None,
         host: Optional[JSON] = None,
         client_id: Optional[JSON] = None,
@@ -68908,12 +69646,12 @@ class SquareObjectDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         **kwargs: Any
@@ -69009,7 +69747,7 @@ class SquareSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -69262,7 +70000,7 @@ class SsisEnvironment(SsisObjectMetadata):
         name: Optional[str] = None,
         description: Optional[str] = None,
         folder_id: Optional[int] = None,
-        variables: Optional[List["_models.SsisVariable"]] = None,
+        variables: Optional[list["_models.SsisVariable"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -69524,7 +70262,7 @@ class SsisObjectMetadataListResponse(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.SsisObjectMetadata"]] = None,
+        value: Optional[list["_models.SsisObjectMetadata"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -69633,7 +70371,7 @@ class SsisPackage(SsisObjectMetadata):
         folder_id: Optional[int] = None,
         project_version: Optional[int] = None,
         project_id: Optional[int] = None,
-        parameters: Optional[List["_models.SsisParameter"]] = None,
+        parameters: Optional[list["_models.SsisParameter"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -69716,7 +70454,7 @@ class SSISPackageLocation(_serialization.Model):
         package_name: Optional[str] = None,
         package_content: Optional[JSON] = None,
         package_last_modified_date: Optional[str] = None,
-        child_packages: Optional[List["_models.SSISChildPackage"]] = None,
+        child_packages: Optional[list["_models.SSISChildPackage"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -69907,8 +70645,8 @@ class SsisProject(SsisObjectMetadata):
         description: Optional[str] = None,
         folder_id: Optional[int] = None,
         version: Optional[int] = None,
-        environment_refs: Optional[List["_models.SsisEnvironmentReference"]] = None,
-        parameters: Optional[List["_models.SsisParameter"]] = None,
+        environment_refs: Optional[list["_models.SsisEnvironmentReference"]] = None,
+        parameters: Optional[list["_models.SsisParameter"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -70071,7 +70809,7 @@ class StagingSettings(_serialization.Model):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         path: Optional[JSON] = None,
         enable_compression: Optional[JSON] = None,
         **kwargs: Any
@@ -70195,14 +70933,14 @@ class SwitchActivity(ControlActivity):
         *,
         name: str,
         on: "_models.Expression",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
-        cases: Optional[List["_models.SwitchCase"]] = None,
-        default_activities: Optional[List["_models.Activity"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
+        cases: Optional[list["_models.SwitchCase"]] = None,
+        default_activities: Optional[list["_models.Activity"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -70266,7 +71004,7 @@ class SwitchCase(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[str] = None, activities: Optional[List["_models.Activity"]] = None, **kwargs: Any
+        self, *, value: Optional[str] = None, activities: Optional[list["_models.Activity"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: Expected value that satisfies the expression result of the 'on' property.
@@ -70348,12 +71086,12 @@ class SybaseLinkedService(LinkedService):
         *,
         server: JSON,
         database: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         schema: Optional[JSON] = None,
         authentication_type: Optional[Union[str, "_models.SybaseAuthenticationType"]] = None,
         username: Optional[JSON] = None,
@@ -70466,7 +71204,7 @@ class SybaseSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -70568,12 +71306,12 @@ class SybaseTableDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         **kwargs: Any
@@ -70716,23 +71454,23 @@ class SynapseNotebookActivity(ExecutionActivity):
         *,
         name: str,
         notebook: "_models.SynapseNotebookReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
         spark_pool: Optional["_models.BigDataPoolParametrizationReference"] = None,
-        parameters: Optional[Dict[str, "_models.NotebookParameter"]] = None,
+        parameters: Optional[dict[str, "_models.NotebookParameter"]] = None,
         executor_size: Optional[JSON] = None,
         conf: Optional[JSON] = None,
         driver_size: Optional[JSON] = None,
         num_executors: Optional[JSON] = None,
         configuration_type: Optional[Union[str, "_models.ConfigurationType"]] = None,
         target_spark_configuration: Optional["_models.SparkConfigurationParametrizationReference"] = None,
-        spark_config: Optional[Dict[str, JSON]] = None,
+        spark_config: Optional[dict[str, JSON]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -70984,21 +71722,21 @@ class SynapseSparkJobDefinitionActivity(ExecutionActivity):
         *,
         name: str,
         spark_job: "_models.SynapseSparkJobReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
-        arguments: Optional[List[Any]] = None,
+        arguments: Optional[list[Any]] = None,
         file: Optional[JSON] = None,
         scan_folder: Optional[JSON] = None,
         class_name: Optional[JSON] = None,
-        files: Optional[List[JSON]] = None,
-        python_code_reference: Optional[List[JSON]] = None,
-        files_v2: Optional[List[JSON]] = None,
+        files: Optional[list[JSON]] = None,
+        python_code_reference: Optional[list[JSON]] = None,
+        files_v2: Optional[list[JSON]] = None,
         target_big_data_pool: Optional["_models.BigDataPoolParametrizationReference"] = None,
         executor_size: Optional[JSON] = None,
         conf: Optional[JSON] = None,
@@ -71006,7 +71744,7 @@ class SynapseSparkJobDefinitionActivity(ExecutionActivity):
         num_executors: Optional[JSON] = None,
         configuration_type: Optional[Union[str, "_models.ConfigurationType"]] = None,
         target_spark_configuration: Optional["_models.SparkConfigurationParametrizationReference"] = None,
-        spark_config: Optional[Dict[str, JSON]] = None,
+        spark_config: Optional[dict[str, JSON]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -71181,9 +71919,9 @@ class TabularTranslator(CopyTranslator):
      strings in json format. Type: boolean (or Expression with resultType boolean).
     :vartype map_complex_values_to_string: JSON
     :ivar mappings: Column mappings with logical types. Tabular->tabular example:
-     [{"source":{"name":"CustomerName","type":"String"},"sink":{"name":"ClientName","type":"String"}},{"source":{"name":"CustomerAddress","type":"String"},"sink":{"name":"ClientAddress","type":"String"}}].  # pylint: disable=line-too-long
+     [{"source":{"name":"CustomerName","type":"String"},"sink":{"name":"ClientName","type":"String"}},{"source":{"name":"CustomerAddress","type":"String"},"sink":{"name":"ClientAddress","type":"String"}}].
      Hierarchical->tabular example:
-     [{"source":{"path":"$.CustomerName","type":"String"},"sink":{"name":"ClientName","type":"String"}},{"source":{"path":"$.CustomerAddress","type":"String"},"sink":{"name":"ClientAddress","type":"String"}}].  # pylint: disable=line-too-long
+     [{"source":{"path":"$.CustomerName","type":"String"},"sink":{"name":"ClientName","type":"String"}},{"source":{"path":"$.CustomerAddress","type":"String"},"sink":{"name":"ClientAddress","type":"String"}}].
      Type: object (or Expression with resultType object).
     :vartype mappings: JSON
     :ivar type_conversion: Whether to enable the advanced type conversion feature in the Copy
@@ -71212,7 +71950,7 @@ class TabularTranslator(CopyTranslator):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         column_mappings: Optional[JSON] = None,
         schema_mapping: Optional[JSON] = None,
         collection_reference: Optional[JSON] = None,
@@ -71242,9 +71980,9 @@ class TabularTranslator(CopyTranslator):
          simple strings in json format. Type: boolean (or Expression with resultType boolean).
         :paramtype map_complex_values_to_string: JSON
         :keyword mappings: Column mappings with logical types. Tabular->tabular example:
-         [{"source":{"name":"CustomerName","type":"String"},"sink":{"name":"ClientName","type":"String"}},{"source":{"name":"CustomerAddress","type":"String"},"sink":{"name":"ClientAddress","type":"String"}}].  # pylint: disable=line-too-long
+         [{"source":{"name":"CustomerName","type":"String"},"sink":{"name":"ClientName","type":"String"}},{"source":{"name":"CustomerAddress","type":"String"},"sink":{"name":"ClientAddress","type":"String"}}].
          Hierarchical->tabular example:
-         [{"source":{"path":"$.CustomerName","type":"String"},"sink":{"name":"ClientName","type":"String"}},{"source":{"path":"$.CustomerAddress","type":"String"},"sink":{"name":"ClientAddress","type":"String"}}].  # pylint: disable=line-too-long
+         [{"source":{"path":"$.CustomerName","type":"String"},"sink":{"name":"ClientName","type":"String"}},{"source":{"path":"$.CustomerAddress","type":"String"},"sink":{"name":"ClientAddress","type":"String"}}].
          Type: object (or Expression with resultType object).
         :paramtype mappings: JSON
         :keyword type_conversion: Whether to enable the advanced type conversion feature in the Copy
@@ -71292,7 +72030,7 @@ class TarGZipReadSettings(CompressionReadSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         preserve_compression_file_name_as_folder: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
@@ -71337,7 +72075,7 @@ class TarReadSettings(CompressionReadSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         preserve_compression_file_name_as_folder: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
@@ -71419,12 +72157,12 @@ class TeamDeskLinkedService(LinkedService):
         *,
         authentication_type: Union[str, "_models.TeamDeskAuthenticationType"],
         url: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         user_name: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
         api_token: Optional["_models.SecretBase"] = None,
@@ -71511,7 +72249,7 @@ class TeradataImportCommand(ImportSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         additional_format_options: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
@@ -71619,12 +72357,12 @@ class TeradataLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         connection_string: Optional[JSON] = None,
         server: Optional[JSON] = None,
         authentication_type: Optional[Union[str, "_models.TeradataAuthenticationType"]] = None,
@@ -71818,7 +72556,7 @@ class TeradataSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -71925,7 +72663,7 @@ class TeradataSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -72041,12 +72779,12 @@ class TeradataTableDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         database: Optional[JSON] = None,
         table: Optional[JSON] = None,
@@ -72162,7 +72900,7 @@ class TextFormat(DatasetStorageFormat):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         serializer: Optional[JSON] = None,
         deserializer: Optional[JSON] = None,
         column_delimiter: Optional[JSON] = None,
@@ -72318,7 +73056,7 @@ class TriggerListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.TriggerResource"], next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: list["_models.TriggerResource"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: List of triggers. Required.
@@ -72349,7 +73087,7 @@ class TriggerPipelineReference(_serialization.Model):
         self,
         *,
         pipeline_reference: Optional["_models.PipelineReference"] = None,
-        parameters: Optional[Dict[str, JSON]] = None,
+        parameters: Optional[dict[str, JSON]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -72385,7 +73123,7 @@ class TriggerQueryResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.TriggerResource"], continuation_token: Optional[str] = None, **kwargs: Any
+        self, *, value: list["_models.TriggerResource"], continuation_token: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: List of triggers. Required.
@@ -72534,7 +73272,7 @@ class TriggerRun(_serialization.Model):
         "dependency_status": {"key": "dependencyStatus", "type": "{object}"},
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, additional_properties: Optional[dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -72542,16 +73280,16 @@ class TriggerRun(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.trigger_run_id = None
-        self.trigger_name = None
-        self.trigger_type = None
-        self.trigger_run_timestamp = None
-        self.status = None
-        self.message = None
-        self.properties = None
-        self.triggered_pipelines = None
-        self.run_dimension = None
-        self.dependency_status = None
+        self.trigger_run_id: Optional[str] = None
+        self.trigger_name: Optional[str] = None
+        self.trigger_type: Optional[str] = None
+        self.trigger_run_timestamp: Optional[datetime.datetime] = None
+        self.status: Optional[Union[str, "_models.TriggerRunStatus"]] = None
+        self.message: Optional[str] = None
+        self.properties: Optional[dict[str, str]] = None
+        self.triggered_pipelines: Optional[dict[str, str]] = None
+        self.run_dimension: Optional[dict[str, str]] = None
+        self.dependency_status: Optional[dict[str, JSON]] = None
 
 
 class TriggerRunsQueryResponse(_serialization.Model):
@@ -72576,7 +73314,7 @@ class TriggerRunsQueryResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.TriggerRun"], continuation_token: Optional[str] = None, **kwargs: Any
+        self, *, value: list["_models.TriggerRun"], continuation_token: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: List of trigger runs. Required.
@@ -72615,8 +73353,8 @@ class TriggerSubscriptionOperationStatus(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.trigger_name = None
-        self.status = None
+        self.trigger_name: Optional[str] = None
+        self.status: Optional[Union[str, "_models.EventSubscriptionStatus"]] = None
 
 
 class TumblingWindowTrigger(Trigger):
@@ -72703,13 +73441,13 @@ class TumblingWindowTrigger(Trigger):
         interval: int,
         start_time: datetime.datetime,
         max_concurrency: int,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
-        annotations: Optional[List[JSON]] = None,
+        annotations: Optional[list[JSON]] = None,
         end_time: Optional[datetime.datetime] = None,
         delay: Optional[JSON] = None,
         retry_policy: Optional["_models.RetryPolicy"] = None,
-        depends_on: Optional[List["_models.DependencyReference"]] = None,
+        depends_on: Optional[list["_models.DependencyReference"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -72872,12 +73610,12 @@ class TwilioLinkedService(LinkedService):
         *,
         user_name: JSON,
         password: "_models.SecretBase",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -73068,13 +73806,13 @@ class UntilActivity(ControlActivity):
         *,
         name: str,
         expression: "_models.Expression",
-        activities: List["_models.Activity"],
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        activities: list["_models.Activity"],
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         timeout: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
@@ -73354,12 +74092,12 @@ class ValidationActivity(ControlActivity):
         *,
         name: str,
         dataset: "_models.DatasetReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         timeout: Optional[JSON] = None,
         sleep: Optional[JSON] = None,
         minimum_size: Optional[JSON] = None,
@@ -73517,12 +74255,12 @@ class VerticaLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         connection_string: Optional[JSON] = None,
         server: Optional[JSON] = None,
         port: Optional[JSON] = None,
@@ -73634,7 +74372,7 @@ class VerticaSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -73746,12 +74484,12 @@ class VerticaTableDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         table: Optional[JSON] = None,
@@ -73859,12 +74597,12 @@ class WaitActivity(ControlActivity):
         *,
         name: str,
         wait_time_in_seconds: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -73933,6 +74671,9 @@ class WarehouseLinkedService(LinkedService):
     :ivar workspace_id: The ID of Microsoft Fabric workspace. Type: string (or Expression with
      resultType string).
     :vartype workspace_id: JSON
+    :ivar authentication_type: The authentication type to use. Known values are:
+     "ServicePrincipal", "SystemAssignedManagedIdentity", and "UserAssignedManagedIdentity".
+    :vartype authentication_type: str or ~azure.mgmt.datafactory.models.WarehouseAuthenticationType
     :ivar service_principal_id: The ID of the application used to authenticate against Microsoft
      Fabric Warehouse. Type: string (or Expression with resultType string).
     :vartype service_principal_id: JSON
@@ -73955,6 +74696,8 @@ class WarehouseLinkedService(LinkedService):
      servicePrincipalCredentialType is 'ServicePrincipalCert', servicePrincipalCredential can only
      be AzureKeyVaultSecretReference.
     :vartype service_principal_credential: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar credential: The credential reference containing authentication information.
+    :vartype credential: ~azure.mgmt.datafactory.models.CredentialReference
     """
 
     _validation = {
@@ -73974,12 +74717,14 @@ class WarehouseLinkedService(LinkedService):
         "artifact_id": {"key": "typeProperties.artifactId", "type": "object"},
         "endpoint": {"key": "typeProperties.endpoint", "type": "object"},
         "workspace_id": {"key": "typeProperties.workspaceId", "type": "object"},
+        "authentication_type": {"key": "typeProperties.authenticationType", "type": "str"},
         "service_principal_id": {"key": "typeProperties.servicePrincipalId", "type": "object"},
         "service_principal_key": {"key": "typeProperties.servicePrincipalKey", "type": "SecretBase"},
         "tenant": {"key": "typeProperties.tenant", "type": "object"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
         "service_principal_credential_type": {"key": "typeProperties.servicePrincipalCredentialType", "type": "object"},
         "service_principal_credential": {"key": "typeProperties.servicePrincipalCredential", "type": "SecretBase"},
+        "credential": {"key": "typeProperties.credential", "type": "CredentialReference"},
     }
 
     def __init__(
@@ -73987,19 +74732,21 @@ class WarehouseLinkedService(LinkedService):
         *,
         artifact_id: JSON,
         endpoint: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         workspace_id: Optional[JSON] = None,
+        authentication_type: Optional[Union[str, "_models.WarehouseAuthenticationType"]] = None,
         service_principal_id: Optional[JSON] = None,
         service_principal_key: Optional["_models.SecretBase"] = None,
         tenant: Optional[JSON] = None,
         encrypted_credential: Optional[str] = None,
         service_principal_credential_type: Optional[JSON] = None,
         service_principal_credential: Optional["_models.SecretBase"] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -74025,6 +74772,10 @@ class WarehouseLinkedService(LinkedService):
         :keyword workspace_id: The ID of Microsoft Fabric workspace. Type: string (or Expression with
          resultType string).
         :paramtype workspace_id: JSON
+        :keyword authentication_type: The authentication type to use. Known values are:
+         "ServicePrincipal", "SystemAssignedManagedIdentity", and "UserAssignedManagedIdentity".
+        :paramtype authentication_type: str or
+         ~azure.mgmt.datafactory.models.WarehouseAuthenticationType
         :keyword service_principal_id: The ID of the application used to authenticate against Microsoft
          Fabric Warehouse. Type: string (or Expression with resultType string).
         :paramtype service_principal_id: JSON
@@ -74047,6 +74798,8 @@ class WarehouseLinkedService(LinkedService):
          servicePrincipalCredentialType is 'ServicePrincipalCert', servicePrincipalCredential can only
          be AzureKeyVaultSecretReference.
         :paramtype service_principal_credential: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword credential: The credential reference containing authentication information.
+        :paramtype credential: ~azure.mgmt.datafactory.models.CredentialReference
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -74061,12 +74814,14 @@ class WarehouseLinkedService(LinkedService):
         self.artifact_id = artifact_id
         self.endpoint = endpoint
         self.workspace_id = workspace_id
+        self.authentication_type = authentication_type
         self.service_principal_id = service_principal_id
         self.service_principal_key = service_principal_key
         self.tenant = tenant
         self.encrypted_credential = encrypted_credential
         self.service_principal_credential_type = service_principal_credential_type
         self.service_principal_credential = service_principal_credential
+        self.credential = credential
 
 
 class WarehouseSink(CopySink):
@@ -74137,7 +74892,7 @@ class WarehouseSink(CopySink):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         write_batch_size: Optional[JSON] = None,
         write_batch_timeout: Optional[JSON] = None,
         sink_retry_count: Optional[JSON] = None,
@@ -74282,7 +75037,7 @@ class WarehouseSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -74418,12 +75173,12 @@ class WarehouseTableDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         schema_type_properties_schema: Optional[JSON] = None,
         table: Optional[JSON] = None,
@@ -74573,22 +75328,22 @@ class WebActivity(ExecutionActivity):
         name: str,
         method: Union[str, "_models.WebActivityMethod"],
         url: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
-        headers: Optional[Dict[str, JSON]] = None,
+        headers: Optional[dict[str, JSON]] = None,
         body: Optional[JSON] = None,
         authentication: Optional["_models.WebActivityAuthentication"] = None,
         disable_cert_validation: Optional[bool] = None,
         http_request_timeout: Optional[JSON] = None,
         turn_off_async: Optional[bool] = None,
-        datasets: Optional[List["_models.DatasetReference"]] = None,
-        linked_services: Optional[List["_models.LinkedServiceReference"]] = None,
+        datasets: Optional[list["_models.DatasetReference"]] = None,
+        linked_services: Optional[list["_models.LinkedServiceReference"]] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         **kwargs: Any
     ) -> None:
@@ -75011,15 +75766,15 @@ class WebHookActivity(ControlActivity):
         name: str,
         method: Union[str, "_models.WebHookActivityMethod"],
         url: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         state: Optional[Union[str, "_models.ActivityState"]] = None,
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
-        depends_on: Optional[List["_models.ActivityDependency"]] = None,
-        user_properties: Optional[List["_models.UserProperty"]] = None,
+        depends_on: Optional[list["_models.ActivityDependency"]] = None,
+        user_properties: Optional[list["_models.UserProperty"]] = None,
         policy: Optional["_models.SecureInputOutputPolicy"] = None,
         timeout: Optional[str] = None,
-        headers: Optional[Dict[str, JSON]] = None,
+        headers: Optional[dict[str, JSON]] = None,
         body: Optional[JSON] = None,
         authentication: Optional["_models.WebActivityAuthentication"] = None,
         report_status_on_call_back: Optional[JSON] = None,
@@ -75135,12 +75890,12 @@ class WebLinkedService(LinkedService):
         self,
         *,
         type_properties: "_models.WebLinkedServiceTypeProperties",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -75217,7 +75972,7 @@ class WebSource(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -75317,12 +76072,12 @@ class WebTableDataset(Dataset):
         *,
         linked_service_name: "_models.LinkedServiceReference",
         index: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         path: Optional[JSON] = None,
         **kwargs: Any
@@ -75411,9 +76166,9 @@ class WranglingDataFlow(DataFlow):
         self,
         *,
         description: Optional[str] = None,
-        annotations: Optional[List[JSON]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DataFlowFolder"] = None,
-        sources: Optional[List["_models.PowerQuerySource"]] = None,
+        sources: Optional[list["_models.PowerQuerySource"]] = None,
         script: Optional[str] = None,
         document_locale: Optional[str] = None,
         **kwargs: Any
@@ -75511,12 +76266,12 @@ class XeroLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         connection_properties: Optional[JSON] = None,
         host: Optional[JSON] = None,
         consumer_key: Optional["_models.SecretBase"] = None,
@@ -75640,12 +76395,12 @@ class XeroObjectDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         **kwargs: Any
@@ -75741,7 +76496,7 @@ class XeroSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -75857,12 +76612,12 @@ class XmlDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         location: Optional["_models.DatasetLocation"] = None,
         encoding_name: Optional[JSON] = None,
@@ -75968,7 +76723,7 @@ class XmlReadSettings(FormatReadSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         compression_properties: Optional["_models.CompressionReadSettings"] = None,
         validation_mode: Optional[JSON] = None,
         detect_data_type: Optional[JSON] = None,
@@ -76056,7 +76811,7 @@ class XmlSource(CopySource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
@@ -76169,12 +76924,12 @@ class ZendeskLinkedService(LinkedService):
         *,
         authentication_type: Union[str, "_models.ZendeskAuthenticationType"],
         url: JSON,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         user_name: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
         api_token: Optional["_models.SecretBase"] = None,
@@ -76258,7 +77013,7 @@ class ZipDeflateReadSettings(CompressionReadSettings):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         preserve_zip_file_name_as_folder: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
@@ -76341,12 +77096,12 @@ class ZohoLinkedService(LinkedService):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         version: Optional[str] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         connection_properties: Optional[JSON] = None,
         endpoint: Optional[JSON] = None,
         access_token: Optional["_models.SecretBase"] = None,
@@ -76463,12 +77218,12 @@ class ZohoObjectDataset(Dataset):
         self,
         *,
         linked_service_name: "_models.LinkedServiceReference",
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         description: Optional[str] = None,
         structure: Optional[JSON] = None,
         schema: Optional[JSON] = None,
-        parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
-        annotations: Optional[List[JSON]] = None,
+        parameters: Optional[dict[str, "_models.ParameterSpecification"]] = None,
+        annotations: Optional[list[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         **kwargs: Any
@@ -76564,7 +77319,7 @@ class ZohoSource(TabularSource):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, JSON]] = None,
+        additional_properties: Optional[dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
