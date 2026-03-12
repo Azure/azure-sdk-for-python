@@ -8,7 +8,7 @@ from __future__ import annotations
 from typing import Optional
 
 from azure.ai.agentserver.core import AgentRunContext
-from azure.ai.agentserver.core.models import projects
+from azure.ai.agentserver.core.models import _projects as projects
 
 
 def generate_agent_id(context: AgentRunContext) -> Optional[projects.AgentId]:

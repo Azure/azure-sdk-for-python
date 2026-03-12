@@ -12,7 +12,7 @@ from agent_framework import AgentResponse, Content
 from azure.ai.agentserver.core import AgentRunContext
 from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.models import Response as OpenAIResponse
-from azure.ai.agentserver.core.models.projects import (
+from azure.ai.agentserver.core.models._projects import (
     ItemContentOutputText,
     ResponsesAssistantMessageItemResource,
 )

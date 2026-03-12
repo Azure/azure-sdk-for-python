@@ -8,7 +8,7 @@ from typing import MutableMapping, Optional, Union
 
 from agent_framework import CheckpointStorage
 
-from azure.ai.agentserver.core.checkpoints.client import (
+from azure.ai.agentserver.core.checkpoints import (
     CheckpointSession,
     FoundryCheckpointClient,
 )
