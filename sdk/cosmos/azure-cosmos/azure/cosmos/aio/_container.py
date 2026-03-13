@@ -542,12 +542,12 @@ class ContainerProxy:
             *,
             continuation_token_limit: Optional[int] = None,
             enable_scan_in_query: Optional[bool] = None,
+            full_text_score_scope: Optional[Literal["Local", "Global"]] = None,
             initial_headers: Optional[dict[str, str]] = None,
             max_integrated_cache_staleness_in_ms: Optional[int] = None,
             max_item_count: Optional[int] = None,
             parameters: Optional[list[dict[str, object]]] = None,
             partition_key: PartitionKeyType,
-            full_text_score_scope: Optional[Literal["Local", "Global"]] = None,
             populate_index_metrics: Optional[bool] = None,
             populate_query_metrics: Optional[bool] = None,
             populate_query_advice: Optional[bool] = None,
@@ -575,6 +575,10 @@ class ContainerProxy:
             in this list are specified as the names of the Azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
+        :keyword Literal["Local", "Global"] full_text_score_scope: Sets the scope for computing BM25 statistics used
+            by FullTextScore in hybrid search queries. When set to "Global" (default), BM25 statistics are computed
+            across all documents in the container. When set to "Local", statistics are computed only over the subset
+            of documents within the partition key values specified in the query.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
@@ -588,10 +592,6 @@ class ContainerProxy:
             None, it will perform a cross partition query. To learn more about using partition keys, see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
         :paramtype partition_key: ~azure.cosmos.partition_key.PartitionKeyType
-        :keyword Literal["Local", "Global"] full_text_score_scope: Sets the scope for computing BM25 statistics used
-            by FullTextScore in hybrid search queries. When set to "Global" (default), BM25 statistics are computed
-            across all documents in the container. When set to "Local", statistics are computed only over the subset
-            of documents within the partition key values specified in the query.
         :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
             existing indexes and how it could use potential new indexes. Please note that this option will incur
             overhead, so it should be enabled only when debugging slow queries.
@@ -640,10 +640,10 @@ class ContainerProxy:
             continuation_token_limit: Optional[int] = None,
             enable_scan_in_query: Optional[bool] = None,
             feed_range: dict[str, Any],
+            full_text_score_scope: Optional[Literal["Local", "Global"]] = None,
             initial_headers: Optional[dict[str, str]] = None,
             max_integrated_cache_staleness_in_ms: Optional[int] = None,
             max_item_count: Optional[int] = None,
-            full_text_score_scope: Optional[Literal["Local", "Global"]] = None,
             parameters: Optional[list[dict[str, object]]] = None,
             populate_index_metrics: Optional[bool] = None,
             populate_query_metrics: Optional[bool] = None,
@@ -673,15 +673,15 @@ class ContainerProxy:
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword dict[str, Any] feed_range: The feed range that is used to define the scope.
+        :keyword Literal["Local", "Global"] full_text_score_scope: Sets the scope for computing BM25 statistics used
+            by FullTextScore in hybrid search queries. When set to "Global" (default), BM25 statistics are computed
+            across all documents in the container. When set to "Local", statistics are computed only over the subset
+            of documents within the partition key values specified in the query.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
-        :keyword Literal["Local", "Global"] full_text_score_scope: Sets the scope for computing BM25 statistics used
-            by FullTextScore in hybrid search queries. When set to "Global" (default), BM25 statistics are computed
-            across all documents in the container. When set to "Local", statistics are computed only over the subset
-            of documents within the partition key values specified in the query.
         :keyword parameters: Optional array of parameters to the query.
             Each parameter is a dict() with 'name' and 'value' keys.
             Ignored if no query is provided.
@@ -733,11 +733,11 @@ class ContainerProxy:
             *,
             continuation_token_limit: Optional[int] = None,
             enable_scan_in_query: Optional[bool] = None,
+            full_text_score_scope: Optional[Literal["Local", "Global"]] = None,
             initial_headers: Optional[dict[str, str]] = None,
             max_integrated_cache_staleness_in_ms: Optional[int] = None,
             max_item_count: Optional[int] = None,
             parameters: Optional[list[dict[str, object]]] = None,
-            full_text_score_scope: Optional[Literal["Local", "Global"]] = None,
             populate_index_metrics: Optional[bool] = None,
             populate_query_metrics: Optional[bool] = None,
             populate_query_advice: Optional[bool] = None,
@@ -765,6 +765,10 @@ class ContainerProxy:
             in this list are specified as the names of the Azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
+        :keyword Literal["Local", "Global"] full_text_score_scope: Sets the scope for computing BM25 statistics used
+            by FullTextScore in hybrid search queries. When set to "Global" (default), BM25 statistics are computed
+            across all documents in the container. When set to "Local", statistics are computed only over the subset
+            of documents within the partition key values specified in the query.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
@@ -774,10 +778,6 @@ class ContainerProxy:
             Each parameter is a dict() with 'name' and 'value' keys.
             Ignored if no query is provided.
         :paramtype parameters: [List[Dict[str, object]]]
-        :keyword Literal["Local", "Global"] full_text_score_scope: Sets the scope for computing BM25 statistics used
-            by FullTextScore in hybrid search queries. When set to "Global" (default), BM25 statistics are computed
-            across all documents in the container. When set to "Local", statistics are computed only over the subset
-            of documents within the partition key values specified in the query.
         :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
             existing indexes and how it could use potential new indexes. Please note that this option will incur
             overhead, so it should be enabled only when debugging slow queries.
@@ -922,7 +922,10 @@ class ContainerProxy:
         if utils.valid_key_value_exist(kwargs, "continuation_token_limit"):
             feed_options["responseContinuationTokenLimitInKb"] = kwargs.pop("continuation_token_limit")
         if utils.valid_key_value_exist(kwargs, "full_text_score_scope"):
-            feed_options["fullTextScoreScope"] = kwargs.pop("full_text_score_scope")
+            scope = kwargs.pop("full_text_score_scope")
+            if scope not in ("Local", "Global"):
+                raise ValueError(f"full_text_score_scope must be 'Local' or 'Global', got '{scope}'")
+            feed_options["fullTextScoreScope"] = scope
 
         # populate availability_strategy
         if (Constants.Kwargs.AVAILABILITY_STRATEGY in feed_options

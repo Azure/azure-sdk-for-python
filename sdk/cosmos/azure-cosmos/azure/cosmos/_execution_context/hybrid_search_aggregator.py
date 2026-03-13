@@ -11,6 +11,9 @@ from azure.cosmos import exceptions
 
 # pylint: disable=protected-access
 RRF_CONSTANT = 60
+_FULL_TEXT_SCORE_SCOPE_KEY = "fullTextScoreScope"
+_FULL_TEXT_SCORE_SCOPE_LOCAL = "Local"
+_FULL_TEXT_SCORE_SCOPE_DEFAULT = "Global"
 
 
 class _Placeholders:
@@ -208,8 +211,8 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         if self._hybrid_search_query_info['requiresGlobalStatistics']:
             # When FullTextScoreScope is "Local", use only target ranges for statistics.
             # When "Global" (default), use all ranges.
-            full_text_score_scope = self._options.get("fullTextScoreScope", "Global")
-            use_all_ranges = full_text_score_scope != "Local"
+            full_text_score_scope = self._options.get(_FULL_TEXT_SCORE_SCOPE_KEY, _FULL_TEXT_SCORE_SCOPE_DEFAULT)
+            use_all_ranges = full_text_score_scope != _FULL_TEXT_SCORE_SCOPE_LOCAL
             target_partition_key_ranges = self._get_target_partition_key_range(target_all_ranges=use_all_ranges)
             global_statistics_doc_producers = []
             global_statistics_query = self._attach_parameters(self._hybrid_search_query_info['globalStatisticsQuery'])
