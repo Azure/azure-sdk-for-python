@@ -14,7 +14,7 @@ from asynctestcase import (
 )
 from devtools_testutils import EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
-from test_constants import APPCONFIGURATION_CONNECTION_STRING
+from test_constants import APPCONFIGURATION_ENDPOINT_STRING
 from azure.appconfiguration.provider._models import SettingSelector
 from azure.appconfiguration.provider._constants import NULL_CHAR, FEATURE_MANAGEMENT_KEY, FEATURE_FLAG_KEY
 from azure.appconfiguration.provider import WatchKey
@@ -26,7 +26,7 @@ from azure.appconfiguration import (
 AppConfigProviderPreparer = functools.partial(
     EnvironmentVariableLoader,
     "appconfiguration",
-    appconfiguration_connection_string=APPCONFIGURATION_CONNECTION_STRING,
+    appconfiguration_endpoint_string=APPCONFIGURATION_ENDPOINT_STRING,
 )
 
 
@@ -128,22 +128,22 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
 
     @AppConfigProviderPreparer()
     @recorded_by_proxy_async
-    async def test_load_provider_with_snapshot_not_found(self, appconfiguration_connection_string):
+    async def test_load_provider_with_snapshot_not_found(self, appconfiguration_endpoint_string):
         """Test loading provider with a non-existent snapshot returns error."""
         # Try to load from a non-existent snapshot
         provider = await self.create_client(
-            connection_string=appconfiguration_connection_string,
+            endpoint=appconfiguration_endpoint_string,
             selects=[SettingSelector(snapshot_name="non-existent-snapshot")],
         )
         assert len(provider._dict) == 0, "Provider should have no settings when snapshot is not found"
 
     @AppConfigProviderPreparer()
     @recorded_by_proxy_async
-    async def test_load_provider_with_regular_selectors(self, appconfiguration_connection_string):
+    async def test_load_provider_with_regular_selectors(self, appconfiguration_endpoint_string):
         """Test loading provider with regular selectors works (baseline test)."""
         # This should work - regular selector loading
         async with await self.create_client(
-            connection_string=appconfiguration_connection_string,
+            endpoint=appconfiguration_endpoint_string,
             selects=[SettingSelector(key_filter="message")],  # Regular selector
         ) as provider:
             # Verify we can access the configuration (message is set up by setup_configs)
@@ -152,10 +152,10 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
     @pytest.mark.live_test_only  # Needed to fix an azure core dependency compatibility issue
     @AppConfigProviderPreparer()
     @recorded_by_proxy_async
-    async def test_create_snapshot_and_load_provider(self, appconfiguration_connection_string, **kwargs):
+    async def test_create_snapshot_and_load_provider(self, appconfiguration_endpoint_string, **kwargs):
         """Test creating a snapshot and loading provider from it."""
         # Create SDK client for setup
-        sdk_client = self.create_sdk_client(appconfiguration_connection_string)
+        sdk_client = self.create_appconfig_client(appconfiguration_endpoint_string)
 
         # Create unique test configuration settings for the snapshot
         test_settings = [
@@ -204,7 +204,7 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
 
             # Load provider using the snapshot with refresh enabled and feature flags enabled
             async with await self.create_client(
-                connection_string=appconfiguration_connection_string,
+                endpoint=appconfiguration_endpoint_string,
                 selects=[
                     SettingSelector(snapshot_name=snapshot_name),  # Snapshot data (includes feature flags)
                     SettingSelector(key_filter="refresh_test_key"),  # Non-snapshot key for refresh testing
@@ -271,7 +271,7 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
 
             # Verify that loading without snapshot gets the modified values
             async with await self.create_client(
-                connection_string=appconfiguration_connection_string,
+                endpoint=appconfiguration_endpoint_string,
                 selects=[SettingSelector(key_filter="snapshot_test_*")],
             ) as provider_current:
 
@@ -298,11 +298,11 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
     @AppConfigProviderPreparer()
     @recorded_by_proxy_async
     async def test_create_snapshot_and_load_provider_with_feature_flags(
-        self, appconfiguration_connection_string, **kwargs
+        self, appconfiguration_endpoint_string, **kwargs
     ):
         """Test creating a snapshot and loading provider with feature flags from non-snapshot selectors."""
         # Create SDK client for setup
-        sdk_client = self.create_sdk_client(appconfiguration_connection_string)
+        sdk_client = self.create_appconfig_client(appconfiguration_endpoint_string)
 
         # Create unique test configuration settings for the snapshot
         test_settings = [
@@ -353,7 +353,7 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
 
             # Load provider using snapshot for config settings and regular selectors for feature flags
             async with await self.create_client(
-                connection_string=appconfiguration_connection_string,
+                endpoint=appconfiguration_endpoint_string,
                 feature_flag_enabled=True,  # Enable feature flags
                 feature_flag_selectors=[
                     SettingSelector(snapshot_name=snapshot_name),  # Load feature flags from snapshot
@@ -395,7 +395,7 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
 
             # Load a fresh provider without snapshot to verify current feature flag values
             async with await self.create_client(
-                connection_string=appconfiguration_connection_string,
+                endpoint=appconfiguration_endpoint_string,
                 feature_flag_enabled=True,
                 feature_flag_selectors=[
                     SettingSelector(snapshot_name=snapshot_name),  # Load feature flags from snapshot
