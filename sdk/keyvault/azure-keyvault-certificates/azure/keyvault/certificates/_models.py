@@ -1406,9 +1406,9 @@ class CertificateIssuer(object):
                     AdministratorContact._from_admin_detail(admin_detail)
                 )
         return cls(
-            provider=IssuerProperties._from_issuer_item(
+            provider=IssuerProperties._from_issuer_item(  # pylint: disable=protected-access
                 issuer_bundle
-            ).provider,  # pylint: disable=protected-access
+            ).provider,
             attributes=issuer_bundle.attributes,
             account_id=(
                 issuer_bundle.credentials.account_id
