@@ -32,6 +32,11 @@ extends:
     - stage: Publish
       displayName: 'Publish Name Reservation Package'
       dependsOn: Build
+      condition: >-
+        and(
+          succeeded(),
+          ne(dependencies.Build.outputs['generate_namereserve_package.generatePackages.HasPackages'], 'false')
+        )
       jobs:
         - deployment: PublishPackage
           displayName: "Publish to PyPI"

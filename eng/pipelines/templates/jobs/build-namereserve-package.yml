@@ -23,7 +23,9 @@ jobs:
         displayName: Install Dependencies
 
       - ${{ if eq(parameters.NameForReservation, 'auto') }}:
-        - pwsh: |
+        - name: generatePackages
+          pwsh: |
+            Write-Host "##vso[task.setvariable variable=HasPackages;isOutput=true]false"
             $ErrorActionPreference = 'Stop'
 
             # Step 1: Find azure-mgmt-* packages with version 1.0.0b1
@@ -53,7 +55,7 @@ jobs:
 
             if ($candidatePackages.Count -eq 0) {
                 Write-Host "No packages to process."
-                Write-Host "##vso[task.setvariable variable=HasPackages]false"
+                Write-Host "##vso[task.setvariable variable=HasPackages;isOutput=true]false"
                 return
             }
 
@@ -94,11 +96,11 @@ jobs:
 
             if ($unregisteredPackages.Count -eq 0) {
                 Write-Host "All packages are already registered on PyPI."
-                Write-Host "##vso[task.setvariable variable=HasPackages]false"
+                Write-Host "##vso[task.setvariable variable=HasPackages;isOutput=true]false"
                 return
             }
 
-            Write-Host "##vso[task.setvariable variable=HasPackages]true"
+            Write-Host "##vso[task.setvariable variable=HasPackages;isOutput=true]true"
 
             # Step 3: Generate reservation packages
             Write-Host "`n=== Step 3: Generating name reservation packages ==="
@@ -115,7 +117,9 @@ jobs:
           displayName: Discover and Generate Name Reservation Packages
 
       - ${{ else }}:
-        - pwsh: |
+        - name: generatePackages
+          pwsh: |
+            Write-Host "##vso[task.setvariable variable=HasPackages;isOutput=true]true"
             $ErrorActionPreference = 'Stop'
             $PSNativeCommandUseErrorActionPreference = $true
 
