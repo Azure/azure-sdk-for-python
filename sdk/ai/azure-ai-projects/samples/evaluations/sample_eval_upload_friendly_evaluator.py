@@ -67,7 +67,7 @@ with (
     evaluator_version = EvaluatorVersion(
         evaluator_type=EvaluatorType.CUSTOM,
         categories=[EvaluatorCategory.QUALITY],
-        display_name="Friendliness Evaluator 3",
+        display_name="Friendliness Evaluator",
         description="LLM-based evaluator that scores how friendly a response is (1-5)",
         definition=CodeBasedEvaluatorDefinition(
             entry_point="friendly_evaluator:FriendlyEvaluator",
@@ -109,7 +109,7 @@ with (
 
     print("Uploading FriendlyEvaluator (with nested common_util folder)...")
     friendly_evaluator = project_client.beta.evaluators.upload(
-        name="friendly_evaluator_3",
+        name="friendly_evaluator",
         evaluator_version=evaluator_version,
         folder=local_upload_folder,
         overwrite=True,

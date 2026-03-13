@@ -61,7 +61,7 @@ with (
     evaluator_version = EvaluatorVersion(
         evaluator_type=EvaluatorType.CUSTOM,
         categories=[EvaluatorCategory.QUALITY],
-        display_name="Answer Length Evaluator 2",
+        display_name="Answer Length Evaluator",
         description="Custom evaluator to calculate length of content",
         definition=CodeBasedEvaluatorDefinition(
             entry_point="answer_length_evaluator:AnswerLengthEvaluator",
@@ -91,7 +91,7 @@ with (
 
     print("Uploading custom evaluator code and creating evaluator version...")
     code_evaluator = project_client.beta.evaluators.upload(
-        name="answer_length_evaluator_2",
+        name="answer_length_evaluator",
         evaluator_version=evaluator_version,
         folder=local_upload_folder,
         overwrite=True,
