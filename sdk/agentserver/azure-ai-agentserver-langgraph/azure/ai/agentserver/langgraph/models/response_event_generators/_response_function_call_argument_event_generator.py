@@ -1,8 +1,6 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=unused-argument,name-too-long
-# mypy: ignore-errors
 from typing import List, Union
 
 from langchain_core import messages as langgraph_messages
@@ -16,7 +14,7 @@ from .._utils import extract_function_call
 from ..._context import LanggraphRunContext
 
 
-class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):
+class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):  # pylint: disable=C4751
     def __init__(
         self,
         logger,
@@ -45,7 +43,7 @@ class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):
 
         is_processed, next_processor, processed_events = self.process(message, context, stream_state)
         if not is_processed:
-            self.logger.warning(f"FunctionCallArgumentEventGenerator did not process message: {message}")
+            self.logger.warning("FunctionCallArgumentEventGenerator did not process message: %s", message)
         events.extend(processed_events)
 
         if self.should_end(message):
@@ -58,7 +56,7 @@ class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):
         return is_processed, next_processor, events
 
     def on_start(
-        self, event: AnyMessage, run_details, stream_state: StreamEventState
+        self, _event: AnyMessage, _run_details, _stream_state: StreamEventState
     ) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
         if self.started:
             return True, []
@@ -66,7 +64,10 @@ class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):
         return True, []
 
     def process(
-        self, message: Union[langgraph_messages.AnyMessage, Interrupt], run_details, stream_state: StreamEventState
+        self,
+        message: Union[langgraph_messages.AnyMessage, Interrupt],
+        _run_details,
+        stream_state: StreamEventState,
     ) -> tuple[bool, ResponseEventGenerator, List[project_models.ResponseStreamEvent]]:
         if self.should_end(message):
             return False, self, []
@@ -115,7 +116,7 @@ class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):
         return False
 
     def on_end(
-        self, message: AnyMessage, context: LanggraphRunContext, stream_state: StreamEventState
+        self, message: AnyMessage, context: LanggraphRunContext, stream_state: StreamEventState  # pylint: disable=unused-argument
     ) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
         done_event = project_models.ResponseFunctionCallArgumentsDoneEvent(
             item_id=self.item_id,
@@ -132,16 +133,16 @@ class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):
             if message.tool_call_chunks:
                 if len(message.tool_call_chunks) > 1:
                     self.logger.warning(
-                        f"There are {len(message.tool_call_chunks)} tool calls found. "
-                        + "Only the first one will be processed."
+                        "There are %s tool calls found. Only the first one will be processed.",
+                        len(message.tool_call_chunks),
                     )
                 return message.tool_call_chunks[0]
         elif isinstance(message, langgraph_messages.AIMessage):
             if message.tool_calls:
                 if len(message.tool_calls) > 1:
                     self.logger.warning(
-                        f"There are {len(message.tool_calls)} tool calls found. "
-                        + "Only the first one will be processed."
+                        "There are %s tool calls found. Only the first one will be processed.",
+                        len(message.tool_calls),
                     )
                 return message.tool_calls[0]
         return None

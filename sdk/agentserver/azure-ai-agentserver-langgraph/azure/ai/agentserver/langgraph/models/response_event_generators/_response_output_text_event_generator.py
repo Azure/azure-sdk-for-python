@@ -1,9 +1,9 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=unused-argument
-# mypy: disable-error-code="return-value,assignment"
 from typing import List
+
+from langchain_core.messages import AnyMessage
 
 from azure.ai.agentserver.core.models import _projects as project_models
 from ._response_event_generator import (
@@ -31,7 +31,7 @@ class ResponseOutputTextEventGenerator(ResponseEventGenerator):
         self.aggregated_content = ""
 
     def try_process_message(
-        self, message, context, stream_state: StreamEventState
+        self, message: AnyMessage, _context, stream_state: StreamEventState
     ) -> tuple[bool, ResponseEventGenerator, List[project_models.ResponseStreamEvent]]:
         is_processed = False
         events = []
@@ -40,27 +40,27 @@ class ResponseOutputTextEventGenerator(ResponseEventGenerator):
             self.started = True
 
         if message:
-            is_processed, next_processor, processed_events = self.process(message, context, stream_state)
+            is_processed, next_processor, processed_events = self.process(message, stream_state)
             if not is_processed:
-                self.logger.warning(f"OutputTextEventGenerator did not process message: {message}")
+                self.logger.warning("OutputTextEventGenerator did not process message: %s", message)
             events.extend(processed_events)
 
         if self.should_end(message):
-            is_processed, complete_events = self.on_end(message, context, stream_state)
+            is_processed, complete_events = self.on_end(message, _context, stream_state)
             events.extend(complete_events)
             next_processor = self.parent
 
         return is_processed, next_processor, events
 
     def process(
-        self, message, run_details, stream_state: StreamEventState
+        self, message: AnyMessage, stream_state: StreamEventState
     ) -> tuple[bool, ResponseEventGenerator, List[project_models.ResponseStreamEvent]]:
         if message and message.content:
             content = [message.content] if isinstance(message.content, str) else message.content
             res = []
             for item in content:
                 if not isinstance(item, str):
-                    self.logger.warning(f"Skipping non-string content item: {item}")
+                    self.logger.warning("Skipping non-string content item: %s", item)
                     continue
                 # create an event for each content item
                 chunk_event = project_models.ResponseTextDeltaEvent(
@@ -73,7 +73,7 @@ class ResponseOutputTextEventGenerator(ResponseEventGenerator):
                 self.aggregated_content += item
                 stream_state.sequence_number += 1
                 res.append(chunk_event)
-            return True, self, res  # mypy: ignore[return-value]
+            return True, self, res
         return False, self, []
 
     def has_finish_reason(self, message) -> bool:
@@ -91,8 +91,8 @@ class ResponseOutputTextEventGenerator(ResponseEventGenerator):
             return True
         return False
 
-    def on_end(  # mypy: ignore[override]
-        self, message, context: LanggraphRunContext, stream_state: StreamEventState
+    def on_end(
+        self, message, context: LanggraphRunContext, stream_state: StreamEventState  # pylint: disable=unused-argument
     ) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
         if not self.started:
             return False, []

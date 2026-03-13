@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import json
-from typing import Optional, Union
+from typing import Optional
 
 from langgraph.types import (
     Command,
@@ -58,8 +58,8 @@ class HumanInTheLoopJsonHelper(HumanInTheLoopHelper):
         else:
             try:
                 arguments = json.dumps(interrupt.value)
-            except Exception as e:  # pragma: no cover - fallback # pylint: disable=broad-exception-caught
-                logger.error("Failed to serialize interrupt value to JSON: %s, error: %s", interrupt.value, e)
+            except (TypeError, ValueError) as error:  # pragma: no cover - fallback
+                logger.error("Failed to serialize interrupt value to JSON: %s, error: %s", interrupt.value, error)
                 arguments = str(interrupt.value)
         return HUMAN_IN_THE_LOOP_FUNCTION_NAME, interrupt.id, arguments
 

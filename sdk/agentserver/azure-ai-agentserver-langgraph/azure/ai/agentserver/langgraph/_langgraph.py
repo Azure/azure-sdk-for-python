@@ -1,11 +1,9 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=logging-fstring-interpolation,broad-exception-caught,no-member
-# mypy: disable-error-code="assignment,arg-type"
 import os
 import re
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, List, Optional, cast
 
 from langgraph.graph.state import CompiledStateGraph
 
@@ -49,7 +47,7 @@ class LangGraphAdapter(FoundryCBAgent):
         :param converter: custom response converter.
         :type converter: Optional[ResponseAPIConverter]
         """
-        super().__init__(credentials=credentials) # pylint: disable=unexpected-keyword-arg
+        super().__init__(credentials=credentials)  # pylint: disable=unexpected-keyword-arg
         self._graph = graph
         self._tool_resolver = FoundryLangChainToolResolver()
         self.azure_ai_tracer = None
@@ -103,8 +101,8 @@ class LangGraphAdapter(FoundryCBAgent):
                     name=self.get_agent_identifier(),
                 )
                 logger.info("AzureAIOpenTelemetryTracer initialized successfully.")
-            except Exception as e:
-                logger.error(f"Failed to import AzureAIOpenTelemetryTracer, ignore: {e}")
+            except Exception as error:  # pylint: disable=broad-except
+                logger.error("Failed to initialize AzureAIOpenTelemetryTracer, ignore: %s", error)
 
     def setup_otlp_exporter(self, endpoint, provider):
         endpoint = self.format_otlp_endpoint(endpoint)
@@ -129,8 +127,8 @@ class LangGraphAdapter(FoundryCBAgent):
             result = await self._graph.ainvoke(**input_arguments)
             output = await self.converter.convert_response_non_stream(result, input_arguments["context"])
             return output
-        except Exception as e:
-            logger.error(f"Error during agent run: {e}", exc_info=True)
+        except Exception as e:  # pylint: disable=broad-except
+            logger.error("Error during agent run: %s", e, exc_info=True)
             raise e
 
     async def agent_run_astream(self,
@@ -145,14 +143,15 @@ class LangGraphAdapter(FoundryCBAgent):
         :rtype: AsyncGenerator[dict]
         """
         try:
-            logger.info(f"Starting streaming agent run {input_arguments['context'].agent_run.response_id}")
+            logger.info("Starting streaming agent run %s", input_arguments["context"].agent_run.response_id)
             stream = self._graph.astream(**input_arguments)
             async for output_event in self.converter.convert_response_stream(
-                    stream,
-                    input_arguments["context"]):
+                stream,
+                input_arguments["context"],
+            ):
                 yield output_event
-        except Exception as e:
-            logger.error(f"Error during streaming agent run: {e}", exc_info=True)
+        except Exception as e:  # pylint: disable=broad-except
+            logger.error("Error during streaming agent run: %s", e, exc_info=True)
             raise e
 
     def ensure_runnable_config(self, input_arguments: GraphInputArguments, context: LanggraphRunContext):
@@ -171,11 +170,11 @@ class LangGraphAdapter(FoundryCBAgent):
             configurable["thread_id"] = thread_id
         else:
             configurable["thread_id"] = f"langgraph-{input_arguments['context'].agent_run.response_id}"
-            logger.debug(f"Conversation ID not provided, generate one: thread_id={configurable['thread_id']}")
+            logger.debug("Conversation ID not provided, generate one: thread_id=%s", configurable["thread_id"])
         config["configurable"] = configurable
         context.attach_to_config(config)
 
-        callbacks = config.get("callbacks", [])  # mypy: ignore-errors
+        callbacks = cast(List[object], config.get("callbacks") or [])
         if self.azure_ai_tracer and self.azure_ai_tracer not in callbacks:
             callbacks.append(self.azure_ai_tracer)
             config["callbacks"] = callbacks

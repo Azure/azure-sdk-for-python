@@ -1,10 +1,9 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=logging-fstring-interpolation,C4751
-# mypy: disable-error-code="assignment,valid-type"
+# pylint: disable=C4751
 from abc import ABC, abstractmethod
-from typing import Any, List, Union
+from typing import Any, List, Optional, Union
 
 from langchain_core.messages import AnyMessage
 
@@ -57,20 +56,20 @@ class ResponseAPIMessagesStreamResponseConverter(ResponseAPIStreamResponseConver
         self.hitl_helper = hitl_helper
 
         self.stream_state = StreamEventState()
-        self.current_generator: ResponseEventGenerator = None
+        self.current_generator: Optional[ResponseEventGenerator] = None
 
     def convert(self, event: Union[AnyMessage, dict, Any, None]):
         try:
             if self.current_generator is None:
                 self.current_generator = ResponseStreamEventGenerator(logger, None, hitl_helper=self.hitl_helper)
-            if event is None or not hasattr(event, '__getitem__'):
+            if event is None or not hasattr(event, "__getitem__"):
                 raise ValueError(f"Event is not indexable: {event}")
             message = event[0]  # expect a tuple
             converted = self.try_process_message(message, self.context)
             return converted
-        except Exception as e:
-            logger.error(f"Error converting message {event}: {e}")
-            raise ValueError(f"Error converting message {event}") from e
+        except (IndexError, KeyError, TypeError, ValueError) as error:
+            logger.error("Error converting message %s: %s", event, error)
+            raise ValueError(f"Error converting message {event}") from error
 
     def finalize(self, graph_state=None):
         logger.info("Stream ended, finalizing response.")
@@ -91,6 +90,9 @@ class ResponseAPIMessagesStreamResponseConverter(ResponseAPIStreamResponseConver
         if event and not self.current_generator:
             self.current_generator = ResponseStreamEventGenerator(logger, None, hitl_helper=self.hitl_helper)
 
+        if self.current_generator is None:
+            return []
+
         is_processed = False
         next_processor = self.current_generator
         returned_events = []
@@ -101,14 +103,17 @@ class ResponseAPIMessagesStreamResponseConverter(ResponseAPIStreamResponseConver
             returned_events.extend(processed_events)
             if not is_processed and next_processor == self.current_generator:
                 logger.warning(
-                    f"Message can not be processed by current generator {type(self.current_generator).__name__}:"
-                    + f" {type(event)}: {event}"
+                    "Message can not be processed by current generator %s: %s: %s",
+                    type(self.current_generator).__name__,
+                    type(event),
+                    event,
                 )
                 break
             if next_processor != self.current_generator:
                 logger.info(
-                    f"Switching processor from {type(self.current_generator).__name__} "
-                    + f"to {type(next_processor).__name__}"
+                    "Switching processor from %s to %s",
+                    type(self.current_generator).__name__,
+                    type(next_processor).__name__ if next_processor is not None else "NoneType",
                 )
                 self.current_generator = next_processor
         return returned_events

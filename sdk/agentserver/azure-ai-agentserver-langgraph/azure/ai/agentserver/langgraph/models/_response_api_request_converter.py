@@ -1,11 +1,9 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=logging-fstring-interpolation
-# mypy: ignore-errors
 from abc import ABC, abstractmethod
 import json
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from langchain_core.messages import (
     AIMessage,
@@ -40,7 +38,7 @@ item_content_type_mapping = {
 }
 
 
-def convert_item_resource_to_message(item: Dict) -> AnyMessage:
+def convert_item_resource_to_message(item: Dict) -> Optional[AnyMessage]:
     """
     Convert an ItemResource (from AIProjectClient conversation items) to a LangGraph message.
 
@@ -69,13 +67,11 @@ def convert_item_resource_to_message(item: Dict) -> AnyMessage:
                 # Fallback: try to get any text field
                 text_content = content[0].get("text", "")
             content = text_content
-        elif isinstance(content, str):
-            pass  # content is already a string
-        else:
+        elif not isinstance(content, str):
             content = str(content) if content else ""
 
         if role not in role_mapping:
-            logger.warning(f"Unknown role '{role}' in item resource, defaulting to USER")
+            logger.warning("Unknown role '%s' in item resource, defaulting to USER", role)
             role = project_models.ResponsesMessageRole.USER
 
         return role_mapping[role](content=content)
@@ -102,8 +98,8 @@ def convert_item_resource_to_message(item: Dict) -> AnyMessage:
             output = " ".join(text_parts)
         return ToolMessage(content=output, tool_call_id=call_id)
 
-    logger.warning(f"Unsupported item type '{item_type}' in item resource, skipping")
-    return None  # type: ignore
+    logger.warning("Unsupported item type '%s' in item resource, skipping", item_type)
+    return None
 
 
 class ResponseAPIRequestConverter(ABC):
@@ -189,17 +185,19 @@ class ResponseAPIMessageRequestConverter(ResponseAPIRequestConverter):
             item = openai_models.ResponseFunctionToolCallParam(**item)
             argument = item.get("arguments", None)
             args = json.loads(argument) if argument else {}
-        except json.JSONDecodeError as e:
-            raise ValueError(f"Invalid JSON in function call arguments: {item}") from e
-        except Exception as e:
-            raise ValueError(f"Invalid function call item: {item}") from e
+        except json.JSONDecodeError as error:
+            raise ValueError(f"Invalid JSON in function call arguments: {item}") from error
+        except (TypeError, ValueError) as error:
+            raise ValueError(f"Invalid function call item: {item}") from error
         return AIMessage(tool_calls=[ToolCall(id=item.get("call_id"), name=item.get("name"), args=args)], content="")
 
     def convert_function_call_output(self, item: dict) -> ToolMessage:
         try:
-            item = openai_models.response_input_item_param.FunctionCallOutput(**item)  # pylint: disable=no-member
-        except Exception as e:
-            raise ValueError(f"Invalid function call output item: {item}") from e
+            item_namespace = getattr(openai_models, "response_input_item_param")
+            function_call_output = getattr(item_namespace, "FunctionCallOutput")
+            item = function_call_output(**item)
+        except (AttributeError, TypeError, ValueError) as error:
+            raise ValueError(f"Invalid function call output item: {item}") from error
 
         output = item.get("output", None)
         if isinstance(output, str):

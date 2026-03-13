@@ -1,8 +1,6 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=unused-argument
-# mypy: ignore-errors
 from typing import List, Union
 
 from langchain_core import messages as langgraph_messages
@@ -37,14 +35,14 @@ class ResponseOutputItemEventGenerator(ResponseEventGenerator):
         if self.item_resource_helper is None:
             if not self.try_create_item_resource_helper(message, context.agent_run.id_generator):
                 # cannot create item resource, skip this message
-                self.logger.warning(f"Cannot create item resource helper for message: {message}, skipping.")
+                self.logger.warning("Cannot create item resource helper for message: %s, skipping.", message)
                 return True, self, []
 
         if self.item_resource_helper and not self.started:
             self.started, start_events = self.on_start(message, context, stream_state)
             if not self.started:
                 # could not start processing, skip this message
-                self.logger.warning(f"Cannot create start events for message: {message}, skipping.")
+                self.logger.warning("Cannot create start events for message: %s, skipping.", message)
                 return True, self, []
             events.extend(start_events)
 
@@ -58,7 +56,7 @@ class ResponseOutputItemEventGenerator(ResponseEventGenerator):
 
         child_processor = self.create_child_processor(message)
         if child_processor:
-            self.logger.info(f"Created child processor: {child_processor}")
+            self.logger.info("Created child processor: %s", child_processor)
             return False, child_processor, events
 
         if message:
@@ -69,7 +67,7 @@ class ResponseOutputItemEventGenerator(ResponseEventGenerator):
         return is_processed, next_processor, events
 
     def on_start(
-        self, event: Union[AnyMessage, Interrupt], context: LanggraphRunContext, stream_state: StreamEventState
+        self, _event: Union[AnyMessage, Interrupt], _context: LanggraphRunContext, stream_state: StreamEventState
     ) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
         if self.started:
             return True, []
@@ -77,7 +75,7 @@ class ResponseOutputItemEventGenerator(ResponseEventGenerator):
         item_resource = self.item_resource_helper.create_item_resource(is_done=False)
         if item_resource is None:
             # cannot know what item resource to create
-            return False, None
+            return False, []
         item_added_event = project_models.ResponseOutputItemAddedEvent(
             output_index=self.output_index,
             sequence_number=stream_state.sequence_number,
@@ -96,8 +94,8 @@ class ResponseOutputItemEventGenerator(ResponseEventGenerator):
         return False
 
     def on_end(
-        self, message: Union[AnyMessage, Interrupt], context: LanggraphRunContext, stream_state: StreamEventState
-    ) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
+        self, message: Union[AnyMessage, Interrupt], context: LanggraphRunContext, stream_state: StreamEventState  # pylint: disable=unused-argument
+    ) -> List[project_models.ResponseStreamEvent]:
         if not self.started:  # should not happen
             return []
 
@@ -112,7 +110,7 @@ class ResponseOutputItemEventGenerator(ResponseEventGenerator):
         self.parent.aggregate_content(item_resource)  # pass aggregated content to parent
         return [done_event]
 
-    def aggregate_content(self, content):
+    def aggregate_content(self, content) -> None:
         # aggregate content from child processor
         self.item_resource_helper.add_aggregate_content(content)
 

@@ -1,7 +1,6 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=logging-fstring-interpolation
 from __future__ import annotations
 
 import time
@@ -180,7 +179,7 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
                 prev_state, context.agent_run.request.get("input")
             )
             if command is not None:
-                logger.info(f"HITL command detected for conversation {conversation_id}")
+                logger.info("HITL command detected for conversation %s", conversation_id)
                 return command
 
         # Convert current request input
@@ -190,7 +189,7 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
         # Check if checkpoint exists
         has_checkpoint = prev_state is not None and prev_state.values is not None and len(prev_state.values) > 0
         if has_checkpoint:
-            logger.info(f"Checkpoint found for conversation {conversation_id}, using existing state")
+            logger.info("Checkpoint found for conversation %s, using existing state", conversation_id)
             return current_input
 
         # No checkpoint - try to fetch historical items from AIProjectClient
@@ -198,11 +197,11 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
             logger.debug("No conversation_id provided, skipping historical items fetch")
             return current_input
 
-        logger.info(f"No checkpoint found for conversation {conversation_id}, fetching historical items")
+        logger.info("No checkpoint found for conversation %s, fetching historical items", conversation_id)
         historical_messages = await self._fetch_historical_items(conversation_id)
 
         if not historical_messages:
-            logger.info(f"No historical items found for conversation {conversation_id}")
+            logger.info("No historical items found for conversation %s", conversation_id)
             return current_input
 
         # Merge historical messages with current input, avoiding duplicates
@@ -238,7 +237,7 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
             from openai import AsyncOpenAI
             from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
 
-            logger.debug(f"Creating AsyncOpenAI client for endpoint: {endpoint}/openai")
+            logger.debug("Creating AsyncOpenAI client for endpoint: %s/openai", endpoint)
 
             credential = DefaultAzureCredential()
             token_provider = get_bearer_token_provider(credential, "https://ai.azure.com/.default")
@@ -252,7 +251,7 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
                 items.append(item)
             items.reverse()
 
-            logger.info(f"Fetched {len(items)} historical items from conversation {conversation_id}")
+            logger.info("Fetched %s historical items from conversation %s", len(items), conversation_id)
 
             # Convert items to LangGraph messages
             messages = []
@@ -267,11 +266,20 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
 
             return messages
 
-        except ImportError as e:
-            logger.warning(f"OpenAI or Azure Identity not available, cannot fetch historical items: {e}", exc_info=True)
+        except ImportError as error:
+            logger.warning(
+                "OpenAI or Azure Identity not available, cannot fetch historical items: %s",
+                error,
+                exc_info=True,
+            )
             return []
-        except Exception as e:  # pylint: disable=broad-except
-            logger.warning(f"Failed to fetch historical items for conversation {conversation_id}: {e}", exc_info=True)
+        except Exception as error:  # pylint: disable=broad-except
+            logger.warning(
+                "Failed to fetch historical items for conversation %s: %s",
+                conversation_id,
+                error,
+                exc_info=True,
+            )
             return []
 
     def _merge_messages_without_duplicates(
@@ -298,8 +306,10 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
         if not current_messages or not historical_messages:
             merged = list(historical_messages) + list(current_messages)
             logger.info(
-                f"Merged {len(historical_messages)} historical items with {len(current_messages)} "
-                f"current items for conversation {conversation_id}"
+                "Merged %s historical items with %s current items for conversation %s",
+                len(historical_messages),
+                len(current_messages),
+                conversation_id,
             )
             return merged
 
@@ -322,31 +332,37 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
                 curr_content = self._normalize_content(curr_msg.content if hasattr(curr_msg, 'content') else "")
 
                 logger.debug(
-                    f"Comparing message {i}: historical({hist_type}, '{hist_content}') "
-                    f"vs current({curr_type}, '{curr_content}')"
+                    "Comparing message %s: historical(%s, '%s') vs current(%s, '%s')",
+                    i,
+                    hist_type,
+                    hist_content,
+                    curr_type,
+                    curr_content,
                 )
 
                 # Compare type and content
                 if hist_type != curr_type:
-                    logger.debug(f"Message {i} type mismatch: {hist_type} != {curr_type}")
+                    logger.debug("Message %s type mismatch: %s != %s", i, hist_type, curr_type)
                     all_match = False
                     break
 
                 if hist_content != curr_content:
-                    logger.debug(f"Message {i} content mismatch")
+                    logger.debug("Message %s content mismatch", i)
                     all_match = False
                     break
 
             if all_match:
                 # Remove the last N historical messages (they're duplicates)
                 filtered_historical = filtered_historical[:-n]
-                logger.info(f"Filtered {n} duplicate items from end of historical items")
+                logger.info("Filtered %s duplicate items from end of historical items", n)
 
         # Prepend historical messages to current messages
         merged = filtered_historical + list(current_messages)
         logger.info(
-            f"Merged {len(filtered_historical)} historical items with {len(current_messages)} "
-            f"current items for conversation {conversation_id}"
+            "Merged %s historical items with %s current items for conversation %s",
+            len(filtered_historical),
+            len(current_messages),
+            conversation_id,
         )
 
         return merged
@@ -360,12 +376,12 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
             configurable={"thread_id": thread_id},
         )
         if self._graph.checkpointer:
-            logger.debug(f"Checking for existing checkpoint for conversation {thread_id}")
+            logger.debug("Checking for existing checkpoint for conversation %s", thread_id)
             state = await self._graph.aget_state(config=config)
             if state and state.values:
-                logger.debug(f"Checkpoint state retrieved for conversation {thread_id}")
+                logger.debug("Checkpoint state retrieved for conversation %s", thread_id)
             else:
-                logger.debug(f"No checkpoint state found for conversation {thread_id}")
+                logger.debug("No checkpoint state found for conversation %s", thread_id)
             return state
         logger.debug("No checkpointer configured for graph, skipping checkpoint lookup")
         return None
@@ -420,7 +436,7 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
                 result.append(msg)
 
         if removed_count > 0:
-            logger.info(f"Filtered {removed_count} messages with incomplete tool call sequences")
+            logger.info("Filtered %s messages with incomplete tool call sequences", removed_count)
 
         return result
 

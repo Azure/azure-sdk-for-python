@@ -1,10 +1,8 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=unused-argument
-# mypy: ignore-errors
 import time
-from typing import List
+from typing import List, Optional, Union
 
 from langchain_core import messages as langgraph_messages
 
@@ -76,8 +74,11 @@ class ResponseStreamEventGenerator(ResponseEventGenerator):
         return False
 
     def try_process_message(
-        self, message: langgraph_messages.AnyMessage, context: LanggraphRunContext, stream_state: StreamEventState
-    ) -> tuple[bool, ResponseEventGenerator, List[project_models.ResponseStreamEvent]]:
+        self,
+        message: Optional[langgraph_messages.AnyMessage],
+        context: LanggraphRunContext,
+        stream_state: StreamEventState,
+    ) -> tuple[bool, Optional[ResponseEventGenerator], List[project_models.ResponseStreamEvent]]:
         is_processed = False
         next_processor = self
         events = []
@@ -108,8 +109,12 @@ class ResponseStreamEventGenerator(ResponseEventGenerator):
             return True
         return False
 
-    def on_end(self, message: langgraph_messages.AnyMessage, context: LanggraphRunContext,
-               stream_state: StreamEventState):
+    def on_end(
+        self,
+        _message: Optional[langgraph_messages.AnyMessage],
+        context: LanggraphRunContext,
+        stream_state: StreamEventState,
+    ) -> List[project_models.ResponseStreamEvent]:
         agent_id = context.agent_run.get_agent_id_object()
         conversation = context.agent_run.get_conversation_object()
         response_dict = {
@@ -130,11 +135,12 @@ class ResponseStreamEventGenerator(ResponseEventGenerator):
             self.parent.aggregate_content(self.aggregated_contents)
         return [done_event]
 
-    def aggregate_content(self, content):
+    def aggregate_content(self, content: Union[List[project_models.ItemResource], project_models.ItemResource]) -> None:
         # aggregate content from children
         if isinstance(content, list):
             for c in content:
                 self.aggregate_content(c)
+            return
         if isinstance(content, project_models.ItemResource):
             self.aggregated_contents.append(content)
         else:

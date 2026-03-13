@@ -1,8 +1,6 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=unused-argument,consider-using-in,consider-merging-isinstance
-# mypy: ignore-errors
 from typing import List
 
 from langchain_core import messages as langgraph_messages
@@ -41,7 +39,7 @@ class ResponseContentPartEventGenerator(ResponseEventGenerator):
         if not self.item_content_helper:
             if not self.try_create_item_content_helper(message):
                 # cannot create item content, skip this message
-                self.logger.warning(f"Cannot create item content helper for message: {message}")
+                self.logger.warning("Cannot create item content helper for message: %s", message)
                 return True, self, []
         if self.item_content_helper and not self.started:
             self.started, start_events = self.on_start(message, context, stream_state)
@@ -63,8 +61,8 @@ class ResponseContentPartEventGenerator(ResponseEventGenerator):
 
         return is_processed, next_processor, events
 
-    def on_start(  # mypy: ignore[override]
-        self, event, run_details, stream_state: StreamEventState
+    def on_start(
+        self, _event, _run_details, stream_state: StreamEventState
     ) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
         if self.started:
             return False, []
@@ -82,8 +80,8 @@ class ResponseContentPartEventGenerator(ResponseEventGenerator):
         return True, [start_event]
 
     def on_end(
-        self, message, context, stream_state: StreamEventState
-    ) -> List[project_models.ResponseStreamEvent]:  # mypy: ignore[override]
+        self, _message, _context, stream_state: StreamEventState
+    ) -> List[project_models.ResponseStreamEvent]:
         aggregated_content = self.item_content_helper.create_item_content()
         done_event = project_models.ResponseContentPartDoneEvent(
             item_id=self.item_id,
@@ -98,13 +96,11 @@ class ResponseContentPartEventGenerator(ResponseEventGenerator):
         return [done_event]
 
     def try_create_item_content_helper(self, message):
-        if isinstance(message, langgraph_messages.AIMessage) or isinstance(message, langgraph_messages.ToolMessage):
+        if isinstance(message, (langgraph_messages.AIMessage, langgraph_messages.ToolMessage)):
             if self.is_text_content(message.content):
                 self.item_content_helper = item_content_helpers.OutputTextItemContentHelper()
                 return True
-        if isinstance(message, langgraph_messages.HumanMessage) or isinstance(
-            message, langgraph_messages.SystemMessage
-        ):
+        if isinstance(message, (langgraph_messages.HumanMessage, langgraph_messages.SystemMessage)):
             if self.is_text_content(message.content):
                 self.item_content_helper = item_content_helpers.InputTextItemContentHelper()
                 return True
@@ -120,10 +116,10 @@ class ResponseContentPartEventGenerator(ResponseEventGenerator):
             return True
         return False
 
-    def create_child_processor(self, message) -> ResponseEventGenerator:
-        if (
-            self.item_content_helper.content_type == project_models.ItemContentType.INPUT_TEXT
-            or self.item_content_helper.content_type == project_models.ItemContentType.OUTPUT_TEXT
+    def create_child_processor(self, _message) -> ResponseEventGenerator:
+        if self.item_content_helper.content_type in (
+            project_models.ItemContentType.INPUT_TEXT,
+            project_models.ItemContentType.OUTPUT_TEXT,
         ):
             return ResponseOutputTextEventGenerator(
                 logger=self.logger,

@@ -1,8 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=unused-argument,unnecessary-pass
-# mypy: disable-error-code="valid-type"
+from abc import ABC, abstractmethod
 from typing import List
 
 from langchain_core.messages import AnyMessage
@@ -20,7 +19,7 @@ class StreamEventState:
     sequence_number: int = 0
 
 
-class ResponseEventGenerator:
+class ResponseEventGenerator(ABC):
     """
     :meta private:
     Abstract base class for response event generators.
@@ -32,12 +31,13 @@ class ResponseEventGenerator:
         self.logger = logger
         self.parent = parent  # parent generator
 
+    @abstractmethod
     def try_process_message(
         self,
-        message: AnyMessage,  # mypy: ignore[valid-type]
+        message: AnyMessage,
         context: LanggraphRunContext,
         stream_state: StreamEventState,
-    ):  # mypy: ignore[empty-body]
+    ) -> tuple[bool, "ResponseEventGenerator | None", List[project_models.ResponseStreamEvent]]:
         """
         Try to process the incoming message.
 
@@ -51,11 +51,23 @@ class ResponseEventGenerator:
         :return: tuple of (is_processed, next_processor, events)
         :rtype: tuple[bool, ResponseEventGenerator, List[ResponseStreamEvent]]
         """
-        pass
+        raise NotImplementedError
 
-    def on_start(self) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
+    def on_start(
+        self,
+        _message: AnyMessage,
+        _context: LanggraphRunContext,
+        _stream_state: StreamEventState,
+    ) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
         """
         Generate the starting events for this layer.
+
+        :param _message: The incoming message to process.
+        :type _message: AnyMessage
+        :param _context: The agent run context.
+        :type _context: LanggraphRunContext
+        :param _stream_state: The current stream event state.
+        :type _stream_state: StreamEventState
 
         :return: tuple of (started, events)
         :rtype: tuple[bool, List[ResponseStreamEvent]]
@@ -63,18 +75,18 @@ class ResponseEventGenerator:
         return False, []
 
     def on_end(
-        self, message: AnyMessage, context: LanggraphRunContext, stream_state: StreamEventState
+        self, _message: AnyMessage, _context: LanggraphRunContext, _stream_state: StreamEventState
     ) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
         """
         Generate the ending events for this layer.
         TODO: handle different end conditions, e.g. normal end, error end, etc.
 
-        :param message: The incoming message to process.
-        :type message: AnyMessage
-        :param context: The agent run context.
-        :type context: LanggraphRunContext
-        :param stream_state: The current stream event state.
-        :type stream_state: StreamEventState
+        :param _message: The incoming message to process.
+        :type _message: AnyMessage
+        :param _context: The agent run context.
+        :type _context: LanggraphRunContext
+        :param _stream_state: The current stream event state.
+        :type _stream_state: StreamEventState
 
         :return: tuple of (started, events)
         :rtype: tuple[bool, List[ResponseStreamEvent]]
@@ -89,4 +101,4 @@ class ResponseEventGenerator:
         :return: content from child processor
         :rtype: str | dict
         """
-        pass
+        return None

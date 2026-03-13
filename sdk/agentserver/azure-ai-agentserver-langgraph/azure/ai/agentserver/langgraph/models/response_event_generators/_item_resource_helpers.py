@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# mypy: disable-error-code="assignment"
+from abc import ABC, abstractmethod
 from typing import Optional
 
 from langgraph.types import Interrupt
@@ -12,19 +12,22 @@ from .._human_in_the_loop_helper import HumanInTheLoopHelper
 from .._utils import extract_function_call
 
 
-class ItemResourceHelper:
+class ItemResourceHelper(ABC):
     def __init__(self, item_type: str, item_id: Optional[str] = None):
         self.item_type = item_type
         self.item_id = item_id
 
+    @abstractmethod
     def create_item_resource(self, is_done: bool):
-        pass
+        raise NotImplementedError
 
+    @abstractmethod
     def add_aggregate_content(self, item):
-        pass
+        raise NotImplementedError
 
+    @abstractmethod
     def get_aggregated_content(self):
-        pass
+        raise NotImplementedError
 
 
 class FunctionCallItemResourceHelper(ItemResourceHelper):
@@ -77,12 +80,12 @@ class FunctionCallInterruptItemResourceHelper(ItemResourceHelper):
             return None
         item_resource = self.hitl_helper.convert_interrupt(self.interrupt)
         if item_resource is not None and not is_done:
-            if hasattr(item_resource, 'arguments'):
-                item_resource.arguments = ""  # type: ignore[union-attr]
+            if getattr(item_resource, "arguments", None) is not None:
+                item_resource.arguments = ""
         return item_resource
 
     def add_aggregate_content(self, item):
-        pass
+        return None
 
     def get_aggregated_content(self):
         return self.create_item_resource(is_done=True)
