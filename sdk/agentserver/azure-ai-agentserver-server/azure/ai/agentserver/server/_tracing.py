@@ -29,7 +29,6 @@ from collections.abc import AsyncIterable, AsyncIterator, Mapping  # pylint: dis
 from typing import TYPE_CHECKING, Any, Iterator, Optional, Union
 
 from . import _config
-from ._constants import Constants
 from ._logger import get_logger
 
 #: Starlette's ``Content`` type — the element type for streaming bodies.
@@ -309,6 +308,7 @@ class _TracingHelper:
         invocation_id: str,
         span_operation: str,
         operation_name: Optional[str] = None,
+        session_id: str = "",
     ) -> tuple[str, dict[str, str], dict[str, str], Optional[str]]:
         """Extract headers and build span arguments for a request.
 
@@ -324,13 +324,15 @@ class _TracingHelper:
         :type span_operation: str
         :param operation_name: Optional ``gen_ai.operation.name`` value.
         :type operation_name: Optional[str]
+        :param session_id: Session ID from the ``agent_session_id`` query
+            parameter.  Defaults to ``""`` (no session).
+        :type session_id: str
         :return: ``(name, attributes, carrier, baggage)`` ready for
             :meth:`span` or :meth:`start_span`.
         :rtype: tuple[str, dict[str, str], dict[str, str], Optional[str]]
         """
         carrier = _extract_w3c_carrier(headers)
         baggage = headers.get("baggage")
-        session_id = headers.get(Constants.SESSION_ID_HEADER, "")
         span_attrs = self.build_span_attrs(
             invocation_id, session_id, operation_name=operation_name
         )
@@ -342,6 +344,7 @@ class _TracingHelper:
         invocation_id: str,
         span_operation: str,
         operation_name: Optional[str] = None,
+        session_id: str = "",
     ) -> Any:
         """Start a request-scoped span, extracting context from HTTP headers.
 
@@ -362,11 +365,15 @@ class _TracingHelper:
         :param operation_name: Optional ``gen_ai.operation.name`` attribute
             value (e.g. ``"invoke_agent"``).  Omitted when *None*.
         :type operation_name: Optional[str]
+        :param session_id: Session ID from the ``agent_session_id`` query
+            parameter.  Defaults to ``""`` (no session).
+        :type session_id: str
         :return: The OTel span, or *None* when tracing is disabled.
         :rtype: Any
         """
         name, attrs, carrier, baggage = self._prepare_request_span_args(
-            headers, invocation_id, span_operation, operation_name
+            headers, invocation_id, span_operation, operation_name,
+            session_id=session_id,
         )
         return self.start_span(name, attributes=attrs, carrier=carrier, baggage_header=baggage)
 
@@ -377,6 +384,7 @@ class _TracingHelper:
         invocation_id: str,
         span_operation: str,
         operation_name: Optional[str] = None,
+        session_id: str = "",
     ) -> Iterator[Any]:
         """Create a request-scoped span as a context manager.
 
@@ -396,11 +404,15 @@ class _TracingHelper:
         :param operation_name: Optional ``gen_ai.operation.name`` attribute
             value.  Omitted when *None*.
         :type operation_name: Optional[str]
+        :param session_id: Session ID from the ``agent_session_id`` query
+            parameter.  Defaults to ``""`` (no session).
+        :type session_id: str
         :return: Context manager that yields the OTel span or *None*.
         :rtype: Iterator[Any]
         """
         name, attrs, carrier, baggage = self._prepare_request_span_args(
-            headers, invocation_id, span_operation, operation_name
+            headers, invocation_id, span_operation, operation_name,
+            session_id=session_id,
         )
         otel_span = self.start_span(name, attributes=attrs, carrier=carrier, baggage_header=baggage)
         try:

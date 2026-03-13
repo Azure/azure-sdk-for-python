@@ -1,0 +1,5 @@
+azure-ai-agentserver-server
+microsoft-agents-activity>=0.8.0
+openai>=1.60.0
+openai-agents>=0.1.0
+python-dotenv>=1.0.0

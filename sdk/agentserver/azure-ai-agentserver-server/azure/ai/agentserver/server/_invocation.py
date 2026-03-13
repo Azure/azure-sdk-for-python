@@ -251,6 +251,7 @@ class _InvocationProtocol:
                 invocation_id,
                 span_operation="execute_agent",
                 operation_name="invoke_agent",
+                session_id=request.query_params.get("agent_session_id", ""),
             )
         try:
             invoke_awaitable = self._dispatch_invoke(request)
@@ -331,7 +332,8 @@ class _InvocationProtocol:
         span_cm: Any = contextlib.nullcontext(None)
         if self._ctx.tracing is not None:
             span_cm = self._ctx.tracing.request_span(
-                request.headers, invocation_id, span_operation
+                request.headers, invocation_id, span_operation,
+                session_id=request.query_params.get("agent_session_id", ""),
             )
         with span_cm as _otel_span:
             try:

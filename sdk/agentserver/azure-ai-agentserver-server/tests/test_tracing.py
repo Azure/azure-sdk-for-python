@@ -624,7 +624,7 @@ async def test_genai_attributes_on_invoke_span(span_exporter, monkeypatch):
 
 @pytest.mark.asyncio
 async def test_genai_conversation_id_from_session_header(span_exporter, monkeypatch):
-    """gen_ai.conversation.id is set from x-agent-session-id header."""
+    """gen_ai.conversation.id is set from agent_session_id query parameter."""
     monkeypatch.delenv("AGENT_NAME", raising=False)
     monkeypatch.delenv("AGENT_VERSION", raising=False)
     agent = _make_echo_traced_agent(enable_tracing=True)
@@ -633,7 +633,7 @@ async def test_genai_conversation_id_from_session_header(span_exporter, monkeypa
         await client.post(
             "/invocations",
             content=b'{}',
-            headers={"x-agent-session-id": "session-abc-123"},
+            params={"agent_session_id": "session-abc-123"},
         )
 
     spans = span_exporter.get_finished_spans()
@@ -646,7 +646,7 @@ async def test_genai_conversation_id_from_session_header(span_exporter, monkeypa
 
 @pytest.mark.asyncio
 async def test_genai_conversation_id_absent_when_no_header(span_exporter, monkeypatch):
-    """gen_ai.conversation.id is NOT set when x-agent-session-id header is absent."""
+    """gen_ai.conversation.id is NOT set when agent_session_id query parameter is absent."""
     monkeypatch.delenv("AGENT_NAME", raising=False)
     monkeypatch.delenv("AGENT_VERSION", raising=False)
     agent = _make_echo_traced_agent(enable_tracing=True)
@@ -672,7 +672,7 @@ async def test_genai_attributes_on_get_invocation_span(span_exporter, monkeypatc
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
         await client.get(
             "/invocations/inv-42",
-            headers={"x-agent-session-id": "sess-99"},
+            params={"agent_session_id": "sess-99"},
         )
 
     spans = span_exporter.get_finished_spans()

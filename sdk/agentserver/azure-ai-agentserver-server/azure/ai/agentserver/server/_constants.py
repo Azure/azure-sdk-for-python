@@ -21,4 +21,3 @@ class Constants:
     DEFAULT_GRACEFUL_SHUTDOWN_TIMEOUT = 30
     DEFAULT_REQUEST_TIMEOUT = 300  # 5 minutes
     INVOCATION_ID_HEADER = "x-agent-invocation-id"
-    SESSION_ID_HEADER = "x-agent-session-id"
