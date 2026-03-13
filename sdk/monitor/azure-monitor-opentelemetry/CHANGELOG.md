@@ -36,6 +36,7 @@
 
 ### Other Changes
 - Add missing copyright headers and ensure consistent formatting across files.
+  ([#44908](https://github.com/Azure/azure-sdk-for-python/pull/44908))
 
 ## 1.8.5 (2026-01-28)
 
