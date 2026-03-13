@@ -45,8 +45,8 @@ load_dotenv()
 
 endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
-# The folder containing the custom evaluator code, relative to this sample file.
-local_upload_folder = str(Path(__file__).parent / "custom_evaluator")
+# The folder containing the AnswerLength evaluator code, relative to this sample file.
+local_upload_folder = str(Path(__file__).parent / "custom_evaluator" / "answer_length_evaluator")
 
 with (
     DefaultAzureCredential() as credential,

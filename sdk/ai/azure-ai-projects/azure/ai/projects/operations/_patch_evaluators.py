@@ -45,21 +45,11 @@ class EvaluatorsOperations(EvaluatorsOperationsGenerated):
         if connection_name:
             request_body["connectionName"] = connection_name
 
-        try:
-            pending_upload_response = self.pending_upload(
-                name=name,
-                version=version,
-                pending_upload_request=request_body,
-            )
-        except HttpResponseError as e:
-            if e.message and "409" in e.message:
-                raise ValueError(
-                    f"Evaluator '{name}' version '{version}' already exists. "
-                    f"Use a different version, delete the existing version with "
-                    f"'client.beta.evaluators.delete_version(name=\"{name}\", version=\"{version}\")' "
-                    f"before uploading, or set 'overwrite=True' in the upload call."
-                ) from e
-            raise
+        pending_upload_response = self.pending_upload(
+            name=name,
+            version=version,
+            pending_upload_request=request_body,
+        )
 
         # The service returns blobReferenceForConsumption
         blob_ref = pending_upload_response.get("blobReferenceForConsumption")
