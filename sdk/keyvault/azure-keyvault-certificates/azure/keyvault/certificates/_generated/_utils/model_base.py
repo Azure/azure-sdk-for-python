@@ -956,14 +956,6 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-retur
                 value_deserializer,
                 module,
             )
-    except (AttributeError, IndexError):
-        pass
-    try:
-        annotation_name = (
-            annotation.__name__
-            if hasattr(annotation, "__name__")
-            else annotation._name  # pyright: ignore
-        )
         if annotation_name.lower() in ["list", "set", "tuple", "sequence"]:
             if len(annotation.__args__) > 1:  # pyright: ignore
                 entry_deserializers = [
