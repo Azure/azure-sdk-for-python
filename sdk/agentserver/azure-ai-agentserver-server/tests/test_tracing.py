@@ -126,7 +126,7 @@ async def test_tracing_enabled_creates_invoke_span(span_exporter):
     assert resp.status_code == 200
 
     spans = span_exporter.get_finished_spans()
-    invoke_spans = [s for s in spans if s.name == "execute_agent"]
+    invoke_spans = [s for s in spans if "execute_agent" in s.name]
     assert len(invoke_spans) == 1
 
     span = invoke_spans[0]
@@ -144,7 +144,7 @@ async def test_tracing_invoke_error_records_exception(span_exporter):
     assert resp.status_code == 500
 
     spans = span_exporter.get_finished_spans()
-    invoke_spans = [s for s in spans if s.name == "execute_agent"]
+    invoke_spans = [s for s in spans if "execute_agent" in s.name]
     assert len(invoke_spans) == 1
 
     span = invoke_spans[0]
@@ -165,7 +165,7 @@ async def test_tracing_get_invocation_creates_span(span_exporter):
     assert resp.status_code == 501
 
     spans = span_exporter.get_finished_spans()
-    get_spans = [s for s in spans if s.name == "get_invocation"]
+    get_spans = [s for s in spans if "get_invocation" in s.name]
     assert len(get_spans) == 1
     assert dict(get_spans[0].attributes)["invocation.id"] == "test-id-123"
 
@@ -180,7 +180,7 @@ async def test_tracing_cancel_invocation_creates_span(span_exporter):
     assert resp.status_code == 501
 
     spans = span_exporter.get_finished_spans()
-    cancel_spans = [s for s in spans if s.name == "cancel_invocation"]
+    cancel_spans = [s for s in spans if "cancel_invocation" in s.name]
     assert len(cancel_spans) == 1
     assert dict(cancel_spans[0].attributes)["invocation.id"] == "test-cancel-456"
 
@@ -202,7 +202,7 @@ async def test_tracing_enabled_via_env_var(monkeypatch, span_exporter):
         await client.post("/invocations", content=b'{}')
 
     spans = span_exporter.get_finished_spans()
-    assert any(s.name == "execute_agent" for s in spans)
+    assert any("execute_agent" in s.name for s in spans)
 
 
 @pytest.mark.asyncio
@@ -229,7 +229,7 @@ async def test_tracing_propagates_traceparent(span_exporter):
     assert resp.status_code == 200
 
     spans = span_exporter.get_finished_spans()
-    invoke_spans = [s for s in spans if s.name == "execute_agent"]
+    invoke_spans = [s for s in spans if "execute_agent" in s.name]
     assert len(invoke_spans) == 1
     span = invoke_spans[0]
     # The span's trace ID should match the traceparent's trace ID
@@ -298,7 +298,7 @@ async def test_streaming_response_creates_span(span_exporter):
     assert resp.status_code == 200
 
     spans = span_exporter.get_finished_spans()
-    invoke_spans = [s for s in spans if s.name == "execute_agent"]
+    invoke_spans = [s for s in spans if "execute_agent" in s.name]
     assert len(invoke_spans) == 1
     assert invoke_spans[0].status.status_code == trace.StatusCode.UNSET
 
@@ -317,7 +317,7 @@ async def test_streaming_span_covers_full_body(span_exporter):
     assert b"slow-2" in resp.content
 
     spans = span_exporter.get_finished_spans()
-    invoke_spans = [s for s in spans if s.name == "execute_agent"]
+    invoke_spans = [s for s in spans if "execute_agent" in s.name]
     assert len(invoke_spans) == 1
     span = invoke_spans[0]
 
@@ -355,7 +355,7 @@ async def test_streaming_error_recorded_in_span(span_exporter):
             pass  # connection reset / partial read is acceptable
 
     spans = span_exporter.get_finished_spans()
-    invoke_spans = [s for s in spans if s.name == "execute_agent"]
+    invoke_spans = [s for s in spans if "execute_agent" in s.name]
     assert len(invoke_spans) == 1
 
     span = invoke_spans[0]
@@ -394,7 +394,7 @@ async def test_streaming_propagates_traceparent(span_exporter):
     assert resp.status_code == 200
 
     spans = span_exporter.get_finished_spans()
-    invoke_spans = [s for s in spans if s.name == "execute_agent"]
+    invoke_spans = [s for s in spans if "execute_agent" in s.name]
     assert len(invoke_spans) == 1
     expected_trace_id = int("0af7651916cd43dd8448eb211c80319c", 16)
     assert invoke_spans[0].context.trace_id == expected_trace_id

@@ -402,10 +402,13 @@ class _TracingHelper:
         name, attrs, carrier, baggage = self._prepare_request_span_args(
             headers, invocation_id, span_operation, operation_name
         )
-        with self.span(
-            name, attributes=attrs, carrier=carrier, baggage_header=baggage
-        ) as otel_span:
+        otel_span = self.start_span(name, attributes=attrs, carrier=carrier, baggage_header=baggage)
+        try:
             yield otel_span
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            self.end_span(otel_span, exc=exc)
+            raise
+        self.end_span(otel_span)
 
     # ------------------------------------------------------------------
     # Span lifecycle helpers
