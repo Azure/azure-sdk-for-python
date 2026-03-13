@@ -54,7 +54,7 @@ try:
                 assert FEATURE_MANAGEMENT_KEY in client
                 assert has_feature_flag(client, "Alpha")
 
-                appconfig_client = self.create_entra_id_sdk_client(appconfiguration_endpoint_string)
+                appconfig_client = self.create_appconfig_entra_id_client(appconfiguration_endpoint_string)
 
                 setting = await appconfig_client.get_configuration_setting(key="refresh_message")
                 setting.value = "updated value"
@@ -172,7 +172,7 @@ try:
                 assert FEATURE_MANAGEMENT_KEY in client
                 assert has_feature_flag(client, "Alpha")
 
-                appconfig_client = self.create_entra_id_sdk_client(appconfiguration_endpoint_string)
+                appconfig_client = self.create_appconfig_entra_id_client(appconfiguration_endpoint_string)
 
                 setting = await appconfig_client.get_configuration_setting(key="refresh_message")
                 setting.value = "updated value"
