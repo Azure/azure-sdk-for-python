@@ -6,4 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "12.8.0b1"
+from typing import Union
+
+EntityValueType = Union[str, int, float, bool]

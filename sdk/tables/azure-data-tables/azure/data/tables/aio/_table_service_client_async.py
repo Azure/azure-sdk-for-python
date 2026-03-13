@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import functools
 from typing import Optional, Any, Dict, List
 
 from azure.core.async_paging import AsyncItemPaged
@@ -27,7 +26,26 @@ from .._error import _process_table_error, _reprocess_error
 from .._serialize import _parameter_filter_substitution
 from ._table_client_async import TableClient
 from ._base_client_async import AsyncTablesBaseClient, AsyncTransportWrapper
-from ._models import TablePropertiesPaged
+
+
+class _AsyncTableItemPaged:
+    """Wrapper around AsyncItemPaged that re-processes table-specific errors."""
+
+    def __init__(self, paged):
+        self._paged = paged
+
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        try:
+            return await self._paged.__anext__()
+        except HttpResponseError as error:
+            _process_table_error(error)
+            raise  # _process_table_error always raises, but this satisfies pylint/mypy
+
+    def by_page(self, *args, **kwargs):
+        return self._paged.by_page(*args, **kwargs)
 
 
 class TableServiceClient(AsyncTablesBaseClient):
@@ -259,12 +277,13 @@ class TableServiceClient(AsyncTablesBaseClient):
                 :dedent: 16
                 :caption: Listing all tables in an account
         """
-        command = functools.partial(self._client.table.query, **kwargs)
-        return AsyncItemPaged(
-            command,
-            results_per_page=results_per_page,
-            page_iterator_class=TablePropertiesPaged,
-        )
+        return _AsyncTableItemPaged(
+            self._client.table.query(
+                top=results_per_page,
+                cls=lambda items: [TableItem(i.table_name) for i in items],
+                **kwargs,
+            )
+        )  # type: ignore[return-value]
 
     @distributed_trace
     def query_tables(
@@ -295,13 +314,14 @@ class TableServiceClient(AsyncTablesBaseClient):
                 :caption: Querying tables in an account given specific parameters
         """
         query_filter = _parameter_filter_substitution(parameters, query_filter)
-        command = functools.partial(self._client.table.query, **kwargs)
-        return AsyncItemPaged(
-            command,
-            results_per_page=results_per_page,
-            filter=query_filter,
-            page_iterator_class=TablePropertiesPaged,
-        )
+        return _AsyncTableItemPaged(
+            self._client.table.query(
+                top=results_per_page,
+                filter=query_filter,
+                cls=lambda items: [TableItem(i.table_name) for i in items],
+                **kwargs,
+            )
+        )  # type: ignore[return-value]
 
     def get_table_client(self, table_name: str, **kwargs: Any) -> TableClient:
         """Get a client to interact with the specified table.

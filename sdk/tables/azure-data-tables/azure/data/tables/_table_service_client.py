@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import functools
 from typing import Optional, Any, Dict, List
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.paging import ItemPaged
@@ -18,7 +17,6 @@ from ._models import (
     TableCorsRule,
     TableMetrics,
     TableAnalyticsLogging,
-    TablePropertiesPaged,
     service_stats_deserialize,
     service_properties_deserialize,
 )
@@ -26,6 +24,26 @@ from ._base_client import parse_connection_str, TablesBaseClient, TransportWrapp
 from ._error import _process_table_error, _reprocess_error
 from ._table_client import TableClient
 from ._serialize import _parameter_filter_substitution
+
+
+class _TableItemPaged:
+    """Wrapper around ItemPaged that re-processes table-specific errors."""
+
+    def __init__(self, paged):
+        self._paged = paged
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        try:
+            return next(self._paged)
+        except HttpResponseError as error:
+            _process_table_error(error)
+            raise  # _process_table_error always raises, but this satisfies pylint/mypy
+
+    def by_page(self, *args, **kwargs):
+        return self._paged.by_page(*args, **kwargs)
 
 
 class TableServiceClient(TablesBaseClient):
@@ -269,13 +287,14 @@ class TableServiceClient(TablesBaseClient):
         """
         query_filter = _parameter_filter_substitution(parameters, query_filter)
 
-        command = functools.partial(self._client.table.query, **kwargs)
-        return ItemPaged(
-            command,
-            results_per_page=results_per_page,
-            filter=query_filter,
-            page_iterator_class=TablePropertiesPaged,
-        )
+        return _TableItemPaged(
+            self._client.table.query(
+                top=results_per_page,
+                filter=query_filter,
+                cls=lambda items: [TableItem(i.table_name) for i in items],
+                **kwargs,
+            )
+        )  # type: ignore[return-value]
 
     @distributed_trace
     def list_tables(self, *, results_per_page: Optional[int] = None, **kwargs) -> ItemPaged[TableItem]:
@@ -295,12 +314,13 @@ class TableServiceClient(TablesBaseClient):
                 :dedent: 16
                 :caption: Listing all tables in a storage account
         """
-        command = functools.partial(self._client.table.query, **kwargs)
-        return ItemPaged(
-            command,
-            results_per_page=results_per_page,
-            page_iterator_class=TablePropertiesPaged,
-        )
+        return _TableItemPaged(
+            self._client.table.query(
+                top=results_per_page,
+                cls=lambda items: [TableItem(i.table_name) for i in items],
+                **kwargs,
+            )
+        )  # type: ignore[return-value]
 
     def get_table_client(self, table_name: str, **kwargs: Any) -> TableClient:
         """Get a client to interact with the specified table.

@@ -77,6 +77,7 @@ class TableAccessPolicy(GenAccessPolicy):
             be UTC.
         :paramtype start: ~datetime.datetime or str
         """
+        self._data = {}
         self.start = kwargs.get("start")
         self.expiry = kwargs.get("expiry")
         self.permission = kwargs.get("permission")
@@ -99,6 +100,7 @@ class TableRetentionPolicy(GeneratedRetentionPolicy):
             soft-deleted data should be retained. All data older than this value will
             be deleted. Must be specified if policy is enabled.
         """
+        self._data = {}
         self.enabled = kwargs.get("enabled", False)
         self.days = kwargs.get("days")
         if self.enabled and (self.days is None):
@@ -135,6 +137,7 @@ class TableAnalyticsLogging(GeneratedLogging):
         :keyword ~azure.data.tables.TableRetentionPolicy retention_policy: The retention policy for the metrics.
             Default value is a TableRetentionPolicy object with default settings.
         """
+        self._data = {}
         self.version = kwargs.get("version", "1.0")
         self.delete = kwargs.get("delete", False)
         self.read = kwargs.get("read", False)
@@ -179,6 +182,7 @@ class TableMetrics(GeneratedMetrics):
         :keyword ~azure.data.tables.TableRetentionPolicy retention_policy: The retention policy for the metrics.
             Default value is a TableRetentionPolicy object with default settings.
         """
+        self._data = {}
         self.version = kwargs.get("version", "1.0")
         self.enabled = kwargs.get("enabled", False)
         self.include_apis = kwargs.get("include_apis")
@@ -312,8 +316,8 @@ class TablePropertiesPaged(PageIterator):
 
     def _extract_data_cb(self, get_next_return):
         self._location_mode, self._response, self._headers = get_next_return
-        props_list = [TableItem(t.table_name) for t in self._response.value]
-        return self._headers[NEXT_TABLE_NAME] or None, props_list
+        props_list = [TableItem(t.get("TableName", "")) for t in self._response.get("value", [])]
+        return self._headers.get(NEXT_TABLE_NAME) or None, props_list
 
 
 def _extract_continuation_token(continuation_token):

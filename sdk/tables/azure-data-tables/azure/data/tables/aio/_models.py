@@ -50,8 +50,8 @@ class TablePropertiesPaged(AsyncPageIterator):
 
     async def _extract_data_cb(self, get_next_return):
         self._location_mode, self._response, self._headers = get_next_return
-        props_list = [TableItem(t.table_name) for t in self._response.value]
-        return self._headers[NEXT_TABLE_NAME] or None, props_list
+        props_list = [TableItem(t.get("TableName", "")) for t in self._response.get("value", [])]
+        return self._headers.get(NEXT_TABLE_NAME) or None, props_list
 
 
 class TableEntityPropertiesPaged(AsyncPageIterator):

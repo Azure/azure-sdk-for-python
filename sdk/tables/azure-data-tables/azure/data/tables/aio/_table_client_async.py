@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -21,7 +22,12 @@ from .._base_client import parse_connection_str, AudienceType
 from .._encoder import TableEntityEncoder, EncoderMapType
 from .._entity import TableEntity
 from .._decoder import TableEntityDecoder, deserialize_iso, DecoderMapType
-from .._generated.models import SignedIdentifier, TableProperties
+from .._generated.models import (
+    AccessPolicy as _AccessPolicy,
+    SignedIdentifier,
+    SignedIdentifiers as _SignedIdentifiers,
+    TableProperties,
+)
 from .._models import TableAccessPolicy, TableItem, UpdateMode
 from .._serialize import (
     serialize_iso,
@@ -205,7 +211,7 @@ class TableClient(AsyncTablesBaseClient):
         except HttpResponseError as error:
             _process_table_error(error, table_name=self.table_name)
         output = {}  # type: Dict[str, Optional[TableAccessPolicy]]
-        for identifier in cast(List[SignedIdentifier], identifiers):
+        for identifier in identifiers.identifiers or []:
             if identifier.access_policy:
                 output[identifier.id] = TableAccessPolicy(
                     start=deserialize_iso(identifier.access_policy.start),
@@ -229,16 +235,35 @@ class TableClient(AsyncTablesBaseClient):
         """
         identifiers = []
         for key, value in signed_identifiers.items():
-            payload = None
-            if value:
-                payload = TableAccessPolicy(
-                    start=serialize_iso(value.start),
-                    expiry=serialize_iso(value.expiry),
-                    permission=value.permission,
+            if value is not None:
+                payload = _AccessPolicy(
+                    start=serialize_iso(value.start),  # type: ignore[arg-type]
+                    expiry=serialize_iso(value.expiry),  # type: ignore[arg-type]
+                    permission=value.permission,  # type: ignore[arg-type]
                 )
+            else:
+                payload = None
             identifiers.append(SignedIdentifier(id=key, access_policy=payload))
         try:
-            await self._client.table.set_access_policy(table=self.table_name, table_acl=identifiers or None, **kwargs)
+            if identifiers:
+                await self._client.table.set_access_policy(
+                    table=self.table_name,
+                    table_acl=_SignedIdentifiers(identifiers=identifiers),
+                    **kwargs,
+                )
+            else:
+                from .._generated.operations._operations import build_table_set_access_policy_request
+
+                _request = build_table_set_access_policy_request(
+                    table=self.table_name,
+                    content_type="application/xml",
+                    api_version=self._client._config.api_version,  # pylint: disable=protected-access
+                )
+                _request.url = self._client._config.url + _request.url  # pylint: disable=protected-access
+                pipeline_response = await self._client.table._client.send_request(  # pylint: disable=protected-access
+                    _request, stream=False, **kwargs
+                )
+                pipeline_response.raise_for_status()
         except HttpResponseError as error:
             try:
                 _process_table_error(error, table_name=self.table_name)
