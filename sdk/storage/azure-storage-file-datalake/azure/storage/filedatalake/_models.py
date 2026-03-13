@@ -53,9 +53,9 @@ class RetentionPolicy(GenRetentionPolicy):
         All data older than this value will be deleted.
     """
 
-    enabled: bool
+    enabled: bool = False
     """Indicates whether a retention policy is enabled for the storage service."""
-    days: Optional[int]
+    days: Optional[int] = None
     """Indicates the number of days that metrics or logging or soft-deleted data should be retained.
         All data older than this value will be deleted."""
 
@@ -91,22 +91,20 @@ class Metrics(GenMetrics):
         policy will be disabled by default.
     """
 
-    version: str
+    version: str = '1.0'
     """The version of Storage Analytics to configure."""
-    enabled: bool
+    enabled: bool = False
     """Indicates whether metrics are enabled for the Datalake service."""
-    include_apis: Optional[bool]
+    include_apis: Optional[bool] = None
     """Indicates whether metrics should generate summary statistics for called API operations."""
-    retention_policy: RetentionPolicy
+    retention_policy: RetentionPolicy = RetentionPolicy()
     """Determines how long the associated data should persist."""
 
     def __init__(self, **kwargs: Any) -> None:
-        super(Metrics, self).__init__(
-            version=kwargs.get('version', '1.0'),
-            enabled=kwargs.get('enabled', False),
-            include_apis=kwargs.get('include_apis'),
-            retention_policy=kwargs.get('retention_policy') or RetentionPolicy()
-        )
+        self.version = kwargs.get('version', '1.0')
+        self.enabled = kwargs.get('enabled', False)
+        self.include_apis = kwargs.get('include_apis')
+        self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
 
     @classmethod
     def _from_generated(cls, generated):
@@ -166,13 +164,11 @@ class CorsRule(GenCorsRule):
     """The number of seconds that the client/browser should cache a pre-flight response."""
 
     def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
-        super(CorsRule, self).__init__(
-            allowed_origins=','.join(allowed_origins),
-            allowed_methods=','.join(allowed_methods),
-            allowed_headers=','.join(kwargs.get('allowed_headers', [])),
-            exposed_headers=','.join(kwargs.get('exposed_headers', [])),
-            max_age_in_seconds=kwargs.get('max_age_in_seconds', 0)
-        )
+        self.allowed_origins = ','.join(allowed_origins)
+        self.allowed_methods = ','.join(allowed_methods)
+        self.allowed_headers = ','.join(kwargs.get('allowed_headers', []))
+        self.exposed_headers = ','.join(kwargs.get('exposed_headers', []))
+        self.max_age_in_seconds = kwargs.get('max_age_in_seconds', 0)
 
     @staticmethod
     def _to_generated(rules: Optional[List["CorsRule"]]) -> Optional[List[GenCorsRule]]:
@@ -1262,18 +1258,16 @@ class AnalyticsLogging(GenLogging):
     """Indicates whether all read requests should be logged. The default value is `False`."""
     write: bool
     """Indicates whether all write requests should be logged. The default value is `False`."""
-    retention_policy: RetentionPolicy
+    retention_policy: RetentionPolicy = RetentionPolicy()
     """Determines how long the associated data should persist. If not specified the retention
         policy will be disabled by default."""
 
     def __init__(self, **kwargs: Any) -> None:
-        super(AnalyticsLogging, self).__init__(
-            version=kwargs.get('version', '1.0'),
-            delete=kwargs.get('delete', False),
-            read=kwargs.get('read', False),
-            write=kwargs.get('write', False),
-            retention_policy=kwargs.get('retention_policy') or RetentionPolicy()
-        )
+        self.version = kwargs.get('version', '1.0')
+        self.delete = kwargs.get('delete', False)
+        self.read = kwargs.get('read', False)
+        self.write = kwargs.get('write', False)
+        self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
 
     @classmethod
     def _from_generated(cls, generated):
@@ -1312,21 +1306,15 @@ class StaticWebsite(GenStaticWebsite):
     """Absolute path of the default index page."""
 
     def __init__(self, **kwargs: Any) -> None:
-        enabled = kwargs.get('enabled', False)
-        if enabled:
-            index_document = kwargs.get('index_document')
-            error_document404_path = kwargs.get('error_document404_path')
-            default_index_document_path = kwargs.get('default_index_document_path')
+        self.enabled = kwargs.get('enabled', False)
+        if self.enabled:
+            self.index_document = kwargs.get('index_document')
+            self.error_document404_path = kwargs.get('error_document404_path')
+            self.default_index_document_path = kwargs.get('default_index_document_path')
         else:
-            index_document = None
-            error_document404_path = None
-            default_index_document_path = None
-        super(StaticWebsite, self).__init__(
-            enabled=enabled,
-            index_document=index_document,
-            error_document404_path=error_document404_path,
-            default_index_document_path=default_index_document_path
-        )
+            self.index_document = None
+            self.error_document404_path = None
+            self.default_index_document_path = None
 
     @classmethod
     def _from_generated(cls, generated):
