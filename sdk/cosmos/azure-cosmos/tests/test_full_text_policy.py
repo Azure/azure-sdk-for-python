@@ -165,9 +165,9 @@ class TestFullTextPolicy(unittest.TestCase):
             indexing_policy=indexing_policy
         )
         created_container_properties = created_container.read()
-        assert properties["fullTextPolicy"]["defaultLanguage"] == full_text_policy["defaultLanguage"]
-        assert properties["fullTextPolicy"]["fullTextPaths"] == full_text_policy["fullTextPaths"]
-        assert properties["indexingPolicy"]['fullTextIndexes'] == indexing_policy['fullTextIndexes']
+        assert created_container_properties["fullTextPolicy"]["defaultLanguage"] == full_text_policy["defaultLanguage"]
+        assert created_container_properties["fullTextPolicy"]["fullTextPaths"] == full_text_policy["fullTextPaths"]
+        assert created_container_properties["indexingPolicy"]['fullTextIndexes'] == indexing_policy['fullTextIndexes']
 
         # Replace the container with new policies
         full_text_policy['fullTextPaths'][0]['path'] = "/new_path"
