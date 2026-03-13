@@ -57,8 +57,8 @@ load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_deployment_name = os.environ.get("FOUNDRY_MODEL_NAME")
-suffix = "".join(random.choices(string.ascii_lowercase, k=5))
-evaluator_name = f"friendly_evaluator_{suffix}"
+azure_openai_endpoint = os.environ["AZURE_OPENAI_ENDPOINT"]
+azure_openai_api_key = os.environ["AZURE_OPENAI_API_KEY"]
 
 # The folder containing the FriendlyEvaluator code, including common_util/ subfolder
 local_upload_folder = str(Path(__file__).parent / "custom_evaluators" / "friendly_evaluator")
@@ -77,6 +77,9 @@ with (
     #          __init__.py
     #          util.py                      <- helper functions
     # ---------------------------------------------------------------
+    suffix = "".join(random.choices(string.ascii_lowercase, k=5))
+    evaluator_name = f"friendly_evaluator_{suffix}"
+
     evaluator_version = EvaluatorVersion(
         evaluator_type=EvaluatorType.CUSTOM,
         categories=[EvaluatorCategory.QUALITY],
@@ -92,11 +95,10 @@ with (
                         "description": "Azure OpenAI configuration for the LLM judge",
                         "properties": {
                             "azure_endpoint": {"type": "string"},
-                            "azure_deployment": {"type": "string"},
                             "api_version": {"type": "string"},
                             "api_key": {"type": "string"},
                         },
-                        "required": ["azure_endpoint", "azure_deployment"],
+                        "required": ["azure_endpoint", "api_key"],
                     }
                 },
                 "required": ["model_config"],
@@ -157,8 +159,9 @@ with (
             "evaluator_name": evaluator_name,
             "initialization_parameters": {
                 "model_config": {
-                    "azure_endpoint": endpoint,
-                    "azure_deployment": f"{model_deployment_name}",
+                    "azure_endpoint": azure_openai_endpoint,
+                    "api_key": f"{azure_openai_api_key}",
+                    "api_version": "2024-06-01",
                 },
             },
         }

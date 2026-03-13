@@ -55,8 +55,6 @@ load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_deployment_name = os.environ.get("FOUNDRY_MODEL_NAME")
-suffix = "".join(random.choices(string.ascii_lowercase, k=5))
-evaluator_name = f"answer_length_evaluator_{suffix}"
 
 # The folder containing the AnswerLength evaluator code, relative to this sample file.
 local_upload_folder = str(Path(__file__).parent / "custom_evaluators" / "answer_length_evaluator")
@@ -72,6 +70,8 @@ with (
     #    uploads the folder contents to blob storage, then creates the
     #    evaluator version with the blob URI.
     # ---------------------------------------------------------------
+    suffix = "".join(random.choices(string.ascii_lowercase, k=5))
+    evaluator_name = f"answer_length_evaluator_{suffix}"
     evaluator_version = EvaluatorVersion(
         evaluator_type=EvaluatorType.CUSTOM,
         categories=[EvaluatorCategory.QUALITY],
