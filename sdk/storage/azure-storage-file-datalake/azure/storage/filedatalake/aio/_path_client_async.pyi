@@ -239,7 +239,7 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
         **kwargs: Any
     ) -> DataLakeLeaseClient: ...
     @distributed_trace_async
-    def set_blob_tags(
+    async def set_blob_tags(
         self,
         tags: Optional[Dict[str, str]] = None,
         *,
