@@ -70,6 +70,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         user_delegation_oid: Optional[str] = None,
         request_headers: Optional[Dict[str, str]] = None,
         request_query_params: Optional[Dict[str, str]] = None,
+        is_directory: Optional[bool] = None,
         sts_hook: Optional[Callable[[str], None]] = None,
         **kwargs: Any
     ) -> str:
@@ -149,6 +150,10 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         :param Dict[str, str] request_query_params:
             Specifies a set of query parameters and their corresponding values that
             must be present in the request when using this SAS.
+        :keyword Optional[bool] is_directory:
+            Specifies whether the `blob_name` is a virtual directory. If set, the `blob_name` is treated
+            to be a virtual directory name for a Directory SAS. When set, do not prefix or suffix the `blob_name`
+            with `/`. If not set, the `blob_name` is assumed to be a blob name for a Blob SAS.
         :param sts_hook:
             For debugging purposes only. If provided, the hook is called with the string to sign
             that was used to generate the SAS.
@@ -650,6 +655,7 @@ def generate_blob_sas(
     user_delegation_oid: Optional[str] = None,
     request_headers: Optional[Dict[str, str]] = None,
     request_query_params: Optional[Dict[str, str]] = None,
+    is_directory: Optional[bool] = None,
     sts_hook: Optional[Callable[[str], None]] = None,
     **kwargs: Any
 ) -> str:
@@ -746,6 +752,10 @@ def generate_blob_sas(
     :keyword Dict[str, str] request_query_params:
         If specified, both the correct query parameter(s) and corresponding values must be present,
         or the request will fail.
+    :keyword Optional[bool] is_directory:
+        Specifies whether the `blob_name` is a virtual directory. If set, the `blob_name` is treated
+        to be a virtual directory name for a Directory SAS. When set, do not prefix or suffix the `blob_name`
+        with `/`. If not set, the `blob_name` is assumed to be a blob name for a Blob SAS.
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
