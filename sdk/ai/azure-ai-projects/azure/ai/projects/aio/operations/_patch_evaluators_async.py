@@ -11,9 +11,10 @@ import os
 import logging
 from typing import Any, IO, Tuple, Optional, Union
 from pathlib import Path
+from urllib.parse import urlsplit
 from azure.storage.blob.aio import ContainerClient
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from ._operations import BetaEvaluatorsOperations as EvaluatorsOperationsGenerated, JSON
 from ...models._models import (
     EvaluatorVersion,
@@ -98,7 +99,6 @@ class EvaluatorsOperations(EvaluatorsOperationsGenerated):
         evaluator_version: Union[EvaluatorVersion, JSON, IO[bytes]],
         *,
         folder: str,
-        version: Optional[str] = None,
         connection_name: Optional[str] = None,
         **kwargs: Any,
     ) -> EvaluatorVersion:
@@ -108,7 +108,7 @@ class EvaluatorsOperations(EvaluatorsOperationsGenerated):
         This method calls startPendingUpload to get a SAS URI, uploads files from the folder
         to blob storage, then creates an evaluator version referencing the uploaded blob.
 
-        If no version is provided, the method will auto-increment based on existing versions.
+        The version is automatically determined by incrementing the latest existing version.
 
         :param name: The name of the evaluator. Required.
         :type name: str
@@ -118,9 +118,6 @@ class EvaluatorsOperations(EvaluatorsOperationsGenerated):
         :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion or JSON or IO[bytes]
         :keyword folder: Path to the folder containing the evaluator Python code. Required.
         :paramtype folder: str
-        :keyword version: The version identifier for the evaluator. If not provided, will
-         auto-increment from the latest existing version. Optional.
-        :paramtype version: str
         :keyword connection_name: The name of an Azure Storage Account connection where the files
          should be uploaded. If not specified, the default Azure Storage Account connection will be
          used. Optional.
@@ -135,10 +132,8 @@ class EvaluatorsOperations(EvaluatorsOperationsGenerated):
         if path_folder.is_file():
             raise ValueError("The provided path is a file, not a folder.")
 
-        # Determine version
-        if not version:
-            version = await self._get_next_version(name)
-            logger.info("[upload] Auto-resolved version to '%s'.", version)
+        version = await self._get_next_version(name)
+        logger.info("[upload] Auto-resolved version to '%s'.", version)
 
         # Get SAS URI via startPendingUpload
         container_client, output_version, blob_uri = await self._start_pending_upload_and_get_container_client(
@@ -148,10 +143,16 @@ class EvaluatorsOperations(EvaluatorsOperationsGenerated):
         )
 
         async with container_client:
-            # Upload all files from the folder
+            # Upload all files from the folder (including nested subdirectories)
+            skip_dirs = {"__pycache__", ".git", ".venv", "venv", "node_modules"}
+            skip_extensions = {".pyc", ".pyo"}
             files_uploaded: bool = False
-            for root, _, files in os.walk(folder):
+            for root, dirs, files in os.walk(folder):
+                # Prune directories we don't want to traverse
+                dirs[:] = [d for d in dirs if d not in skip_dirs]
                 for file in files:
+                    if any(file.endswith(ext) for ext in skip_extensions):
+                        continue
                     file_path = os.path.join(root, file)
                     blob_name = os.path.relpath(file_path, folder).replace("\\", "/")
                     logger.debug(
@@ -160,7 +161,22 @@ class EvaluatorsOperations(EvaluatorsOperationsGenerated):
                         blob_name,
                     )
                     with open(file=file_path, mode="rb") as data:
-                        await container_client.upload_blob(name=str(blob_name), data=data, **kwargs)
+                        try:
+                            await container_client.upload_blob(name=str(blob_name), data=data, **kwargs)
+                        except HttpResponseError as e:
+                            if e.error_code == "AuthorizationPermissionMismatch":
+                                storage_account = urlsplit(container_client.url).hostname
+                                raise HttpResponseError(
+                                    message=(
+                                        f"Failed to upload file '{blob_name}' to blob storage: "
+                                        f"permission denied. Ensure the identity that signed the SAS token "
+                                        f"has the 'Storage Blob Data Contributor' role on the storage account "
+                                        f"'{storage_account}'. "
+                                        f"Original error: {e.message}"
+                                    ),
+                                    response=e.response,
+                                ) from e
+                            raise
                     logger.debug("[upload] Done uploading file")
                     files_uploaded = True
             logger.debug("[upload] Done uploading all files.")
