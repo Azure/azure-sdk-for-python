@@ -7,8 +7,6 @@
 - Added `uris` and `ip_addresses` properties to `SubjectAlternativeNames` model to support Uniform Resource
   Identifiers and IP addresses (IPv4 and IPv6) in certificate subject alternative names
 
-### Breaking Changes
-
 ### Bugs Fixed
 
 - When creating a certificate with an unknown issuer, `CertificateClient.(begin_)create_certificate` now returns a
@@ -17,7 +15,6 @@
   serialized instead of raising an exception
   ([Azure/azure-cli #31764](https://github.com/Azure/azure-cli/issues/31764))
 
-### Other Changes
 
 ## 4.10.0 (2025-06-16)
 
