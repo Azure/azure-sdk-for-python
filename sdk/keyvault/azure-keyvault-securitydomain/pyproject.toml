@@ -53,7 +53,7 @@ azure-sdk-tools = { path = "../../../eng/tools/azure-sdk-tools" }
 
 [dependency-groups]
 dev = [
-    "aiohttp",
+    "aiohttp>=3.0",
     "azure-core",
     "azure-identity",
     "azure-sdk-tools",
