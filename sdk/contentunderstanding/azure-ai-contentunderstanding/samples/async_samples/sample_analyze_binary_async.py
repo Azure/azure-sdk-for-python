@@ -14,9 +14,9 @@ DESCRIPTION:
     ## About analyzing documents from binary data
 
     One of the key values of Content Understanding is taking a content file and extracting the content
-    for you in one call. The service returns an AnalyzeResult that contains an array of MediaContent
-    items in AnalyzeResult.contents. This sample starts with a document file, so each item is a
-    DocumentContent (a subtype of MediaContent) that exposes markdown plus detailed structure such
+    for you in one call. The service returns an AnalysisResult that contains an array of AnalysisContent
+    items in AnalysisResult.contents. This sample starts with a document file, so each item is a
+    DocumentContent (a subtype of AnalysisContent) that exposes markdown plus detailed structure such
     as pages, tables, figures, and paragraphs.
 
     This sample focuses on document analysis. For prebuilt RAG analyzers covering images, audio, and
@@ -57,7 +57,7 @@ import os
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import (
-    AnalyzeResult,
+    AnalysisResult,
     DocumentContent,
 )
 from azure.core.credentials import AzureKeyCredential
@@ -71,7 +71,9 @@ async def main() -> None:
     key = os.getenv("CONTENTUNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client:
         # [START analyze_document_from_binary]
         # Replace with the path to your local document file.
         file_path = "sample_files/sample_invoice.pdf"
@@ -84,7 +86,7 @@ async def main() -> None:
             analyzer_id="prebuilt-documentSearch",
             binary_input=file_bytes,
         )
-        result: AnalyzeResult = await poller.result()
+        result: AnalysisResult = await poller.result()
         # [END analyze_document_from_binary]
 
         # [START extract_markdown]
@@ -110,14 +112,18 @@ async def main() -> None:
                 print(f"\nNumber of pages: {len(content.pages)}")
                 for page in content.pages:
                     unit = content.unit or "units"
-                    print(f"  Page {page.page_number}: {page.width} x {page.height} {unit}")
+                    print(
+                        f"  Page {page.page_number}: {page.width} x {page.height} {unit}"
+                    )
 
             # Check for tables
             if content.tables and len(content.tables) > 0:
                 print(f"\nNumber of tables: {len(content.tables)}")
                 table_counter = 1
                 for table in content.tables:
-                    print(f"  Table {table_counter}: {table.row_count} rows x {table.column_count} columns")
+                    print(
+                        f"  Table {table_counter}: {table.row_count} rows x {table.column_count} columns"
+                    )
                     table_counter += 1
         # [END access_document_properties]
 

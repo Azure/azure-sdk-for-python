@@ -5,7 +5,11 @@ import os, logging
 from typing import Dict, List, Optional, Union, Any, Tuple
 
 from typing_extensions import overload, override
-from azure.ai.evaluation._legacy.prompty import AsyncPrompty
+
+if os.getenv("AI_EVALS_USE_PF_PROMPTY", "false").lower() == "true":
+    from promptflow.core._flow import AsyncPrompty
+else:
+    from azure.ai.evaluation._legacy.prompty import AsyncPrompty
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._evaluators._common._validators import ConversationValidator, ValidatorInterface
@@ -114,10 +118,13 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         self._validator = ConversationValidator(
             error_target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
             requires_query=False,
+            check_for_unsupported_tools=True,
         )
 
         self._validator_with_query = ConversationValidator(
-            error_target=ErrorTarget.GROUNDEDNESS_EVALUATOR, requires_query=True
+            error_target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
+            requires_query=True,
+            check_for_unsupported_tools=True,
         )
 
         super().__init__(
@@ -161,7 +168,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         *,
         query: str,
         response: List[dict],
-        tool_definitions: List[dict],
+        tool_definitions: Optional[List[dict]] = None,
     ) -> Dict[str, Union[str, float]]:
         """Evaluate groundedness for agent response with tool calls. Only file_search tool is supported.
 
@@ -169,8 +176,8 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :paramtype query: str
         :keyword response: The response from the agent to be evaluated.
         :paramtype response: List[dict]
-        :keyword tool_definitions: The tool definitions used by the agent.
-        :paramtype tool_definitions: List[dict]
+        :keyword tool_definitions: Optional tool definitions used by the agent.
+        :paramtype tool_definitions: Optional[List[dict]]
         :return: The groundedness score.
         :rtype: Dict[str, Union[str, float]]
         """
@@ -247,6 +254,17 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         Treats None, empty strings, empty lists, and lists of empty strings as no context.
         """
         context = eval_input.get("context", None)
+        return self._validate_context(context)
+
+    def _validate_context(self, context) -> bool:
+        """
+        Validate if the provided context is non-empty and meaningful.
+        Treats None, empty strings, empty lists, and lists of empty strings as no context.
+        :param context: The context to validate
+        :type context: Union[str, List, None]
+        :return: True if context is valid and non-empty, False otherwise
+        :rtype: bool
+        """
         if not context:
             return False
         if context == "<>":  # Special marker for no context
@@ -259,6 +277,24 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:
+        # Import helper functions from base class module
+        from azure.ai.evaluation._evaluators._common._base_prompty_eval import (
+            _is_intermediate_response,
+            _preprocess_messages,
+        )
+
+        if _is_intermediate_response(eval_input.get("response")):
+            return self._not_applicable_result(
+                "Intermediate response. Please provide the agent's final response for evaluation.",
+                self._threshold,
+            )
+
+        # Preprocess messages if they are lists
+        if isinstance(eval_input.get("response"), list):
+            eval_input["response"] = _preprocess_messages(eval_input["response"])
+        if isinstance(eval_input.get("query"), list):
+            eval_input["query"] = _preprocess_messages(eval_input["query"])
+
         if eval_input.get("query", None) is None:
             return await super()._do_eval(eval_input)
 
@@ -285,24 +321,41 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: The evaluation result.
         :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
         """
+        # Validate input before processing
+        if kwargs.get("query"):
+            self._validator_with_query.validate_eval_input(kwargs)
+        else:
+            self._validator.validate_eval_input(kwargs)
+
         # Convert inputs into list of evaluable inputs.
         try:
-            # Validate input before processing
-            if kwargs.get("context") or kwargs.get("conversation"):
-                self._validator.validate_eval_input(kwargs)
-            else:
-                self._validator_with_query.validate_eval_input(kwargs)
             return await super()._real_call(**kwargs)
         except EvaluationException as ex:
             if ex.category == ErrorCategory.NOT_APPLICABLE:
                 return {
-                    self._result_key: self._NOT_APPLICABLE_RESULT,
+                    self._result_key: self.threshold,
                     f"{self._result_key}_result": "pass",
                     f"{self._result_key}_threshold": self.threshold,
-                    f"{self._result_key}_reason": f"Supported tools were not called. Supported tools for groundedness are {self._SUPPORTED_TOOLS}.",
+                    f"{self._result_key}_reason": f"Not applicable: {ex.message}",
+                    f"{self._result_key}_details": {},
+                    f"{self._result_key}_prompt_tokens": 0,
+                    f"{self._result_key}_completion_tokens": 0,
+                    f"{self._result_key}_total_tokens": 0,
+                    f"{self._result_key}_finish_reason": "",
+                    f"{self._result_key}_model": "",
+                    f"{self._result_key}_sample_input": "",
+                    f"{self._result_key}_sample_output": "",
                 }
             else:
                 raise ex
+
+    def _is_single_entry(self, value):
+        """Determine if the input value represents a single entry, unsure is returned as False."""
+        if isinstance(value, str):
+            return True
+        if isinstance(value, list) and len(value) == 1:
+            return True
+        return False
 
     def _convert_kwargs_to_eval_input(self, **kwargs):
         if kwargs.get("context") or kwargs.get("conversation"):
@@ -324,7 +377,20 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             )
         context = self._get_context_from_agent_response(response, tool_definitions)
 
-        filtered_response = self._filter_file_search_results(response)
+        if not self._validate_context(context) and self._is_single_entry(response) and self._is_single_entry(query):
+            msg = (
+                f"{type(self).__name__}: No valid context provided or could be extracted from the query or response. "
+                "Please either provide valid context or pass the full items list for 'response' and 'query' "
+                "to extract context from tool calls."
+            )
+            raise EvaluationException(
+                message=msg,
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.NOT_APPLICABLE,
+                target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
+            )
+
+        filtered_response = self._filter_file_search_results(response) if self._validate_context(context) else response
         return super()._convert_kwargs_to_eval_input(response=filtered_response, context=context, query=query)
 
     def _filter_file_search_results(self, messages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:

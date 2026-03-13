@@ -44,13 +44,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
 
         return load(**kwargs)
 
-    @staticmethod
-    def create_sdk_client(appconfiguration_connection_string):
-        return AzureAppConfigurationClient.from_connection_string(
-            appconfiguration_connection_string, user_agent="SDK/Integration"
-        )
-
-    def create_aad_sdk_client(self, appconfiguration_endpoint_string):
+    def create_appconfig_client(self, appconfiguration_endpoint_string):
         cred = self.get_credential(AzureAppConfigurationClient)
         return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred, user_agent="SDK/Integration")
 
@@ -157,7 +151,7 @@ def cleanup_test_resources(
         for snapshot_name in snapshot_names:
             try:
                 client.archive_snapshot(snapshot_name)
-            except Exception:
+            except Exception:  # pylint: disable=broad-except
                 pass
 
     # Delete configuration settings and feature flags
@@ -165,7 +159,7 @@ def cleanup_test_resources(
         for setting in settings:
             try:
                 client.delete_configuration_setting(key=setting.key, label=setting.label)
-            except Exception:
+            except Exception:  # pylint: disable=broad-except
                 pass
 
 

@@ -1,7 +1,7 @@
 # Microsoft Azure SDK for Python
 
 This is the Microsoft Azure Management Groups Client Library.
-This package has been tested with Python 3.8+.
+This package has been tested with Python 3.9+.
 For a more complete view of Azure libraries, see the [azure sdk python release](https://aka.ms/azsdk/python/all).
 
 ## _Disclaimer_
@@ -12,7 +12,7 @@ _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For
 
 ### Prerequisites
 
-- Python 3.8+ is required to use this package.
+- Python 3.9+ is required to use this package.
 - [Azure subscription](https://azure.microsoft.com/free/)
 
 ### Install the package
@@ -24,23 +24,19 @@ pip install azure-identity
 
 ### Authentication
 
-By default, [Azure Active Directory](https://aka.ms/awps/aad) token authentication depends on correct configure of following environment variables.
+By default, [Azure Active Directory](https://aka.ms/awps/aad) token authentication depends on correct configuration of the following environment variables.
 
 - `AZURE_CLIENT_ID` for Azure client ID.
 - `AZURE_TENANT_ID` for Azure tenant ID.
 - `AZURE_CLIENT_SECRET` for Azure client secret.
-
-In addition, Azure subscription ID can be configured via environment variable `AZURE_SUBSCRIPTION_ID`.
 
 With above configuration, client can be authenticated by following code:
 
 ```python
 from azure.identity import DefaultAzureCredential
 from azure.mgmt.managementgroups import ManagementGroupsAPI
-import os
 
-sub_id = os.getenv("AZURE_SUBSCRIPTION_ID")
-client = ManagementGroupsAPI(credential=DefaultAzureCredential(), subscription_id=sub_id)
+client = ManagementGroupsAPI(credential=DefaultAzureCredential())
 ```
 
 ## Examples

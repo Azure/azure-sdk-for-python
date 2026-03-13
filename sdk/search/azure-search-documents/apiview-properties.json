@@ -396,8 +396,6 @@
         "azure.search.documents.aio.SearchIndexClient.create_synonym_map": "Customizations.SearchIndexClient.SynonymMaps.create",
         "azure.search.documents.SearchIndexClient.get_index": "Customizations.SearchIndexClient.Indexes.get",
         "azure.search.documents.aio.SearchIndexClient.get_index": "Customizations.SearchIndexClient.Indexes.get",
-        "azure.search.documents.SearchIndexClient.list_indexes": "Customizations.SearchIndexClient.Indexes.list",
-        "azure.search.documents.aio.SearchIndexClient.list_indexes": "Customizations.SearchIndexClient.Indexes.list",
         "azure.search.documents.SearchIndexClient.create_index": "Customizations.SearchIndexClient.Indexes.create",
         "azure.search.documents.aio.SearchIndexClient.create_index": "Customizations.SearchIndexClient.Indexes.create",
         "azure.search.documents.SearchIndexClient.get_alias": "Customizations.SearchIndexClient.Aliases.get",

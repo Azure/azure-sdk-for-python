@@ -472,5 +472,88 @@ class TestLocationCache:
         final_endpoint = lc.resolve_service_endpoint(write_request)
         assert final_endpoint == location1_endpoint
 
+    def test_unavailable_endpoints_not_dropped_from_routing_list(self):
+        """
+        Unavailable endpoints should be appended to the end of the routing list,
+        not dropped entirely.
+
+        Scenario:
+        - Customer has preferred_locations = ["East US", "West US 2"]
+        - East US is marked unavailable for writes
+        - Customer makes a request with excluded_locations = ["West US 2"]
+        - Expected: East US should still be available as fallback (unavailable but in the list)
+        """
+        # Setup: Two preferred locations, multi-write enabled
+        preferred_locations = [location1_name, location2_name]
+        lc = refresh_location_cache(preferred_locations, use_multiple_write_locations=True)
+        db_acc = create_database_account(enable_multiple_writable_locations=True)
+        lc.perform_on_database_account_read(db_acc)
+
+        # Verify initial state: Both locations are in write_regional_routing_contexts
+        write_contexts = lc.get_write_regional_routing_contexts()
+        assert len(write_contexts) == 2
+        assert write_contexts[0].get_primary() == location1_endpoint
+        assert write_contexts[1].get_primary() == location2_endpoint
+
+        # Mark location1 (East US) as unavailable for writes
+        lc.mark_endpoint_unavailable_for_write(location1_endpoint, refresh_cache=True, context="test")
+
+        # After marking unavailable, the routing list should still contain
+        # both endpoints - healthy ones first, unavailable ones at the end
+        write_contexts_after = lc.get_write_regional_routing_contexts()
+        assert len(write_contexts_after) == 2, \
+            f"Expected 2 endpoints in routing list, got {len(write_contexts_after)}. " \
+            "Unavailable endpoint was incorrectly dropped!"
+        # location2 (healthy) should be first
+        assert write_contexts_after[0].get_primary() == location2_endpoint
+        # location1 (unavailable) should be at the end as fallback
+        assert write_contexts_after[1].get_primary() == location1_endpoint
+
+        # Now simulate the customer request with excluded_locations = ["location2"]
+        write_request = RequestObject(ResourceType.Document, _OperationType.Create, None)
+        write_request.excluded_locations = [location2_name]
+
+        # Resolve endpoint - should get location1 (unavailable) as the only remaining option
+        # NOT the global default endpoint!
+        resolved_endpoint = lc.resolve_service_endpoint(write_request)
+
+        # Should fall back to location1 (unavailable regional endpoint)
+        # NOT the global endpoint
+        assert resolved_endpoint == location1_endpoint, \
+            f"Expected {location1_endpoint} but got {resolved_endpoint}. " \
+            f"Bug: Unavailable endpoint was dropped and SDK fell back to global endpoint!"
+
+    def test_unavailable_endpoints_ordering_in_routing_list(self):
+        """
+        Test that healthy endpoints come before unavailable endpoints in the routing list.
+        This ensures the SDK tries healthy regions first, but has unavailable ones as fallback.
+        """
+        # Setup: Three preferred locations
+        preferred_locations = [location1_name, location2_name, location3_name]
+        lc = refresh_location_cache(preferred_locations, use_multiple_write_locations=True)
+        db_acc = create_database_account(enable_multiple_writable_locations=True)
+        lc.perform_on_database_account_read(db_acc)
+
+        # Mark location1 as unavailable
+        lc.mark_endpoint_unavailable_for_write(location1_endpoint, refresh_cache=True, context="test")
+
+        # Check ordering: location2, location3 (healthy) should come before location1 (unavailable)
+        write_contexts = lc.get_write_regional_routing_contexts()
+        assert len(write_contexts) == 3
+        assert write_contexts[0].get_primary() == location2_endpoint  # First healthy
+        assert write_contexts[1].get_primary() == location3_endpoint  # Second healthy
+        assert write_contexts[2].get_primary() == location1_endpoint  # Unavailable at end
+
+        # Mark location2 as unavailable too
+        lc.mark_endpoint_unavailable_for_write(location2_endpoint, refresh_cache=True, context="test")
+
+        # Check ordering: location3 (healthy) should come before location1, location2 (unavailable)
+        write_contexts = lc.get_write_regional_routing_contexts()
+        assert len(write_contexts) == 3
+        assert write_contexts[0].get_primary() == location3_endpoint  # Only healthy
+        # Unavailable ones at end, in original preferred order
+        assert write_contexts[1].get_primary() == location1_endpoint
+        assert write_contexts[2].get_primary() == location2_endpoint
+
 if __name__ == "__main__":
     unittest.main()

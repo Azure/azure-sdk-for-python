@@ -25,10 +25,17 @@ steps:
       artifactFeeds: $(DevFeedName)
       onlyAddExtraIndex: false
 
-  # disabled until completion of python part of azure/azure-sdk-tools#9101
-  # - pwsh: |
-  #     if ($env:PIP_INDEX_URL) {
-  #       Write-Host "PIP Index URL detected: $env:PIP_INDEX_URL"
-  #       Write-Host "##vso[task.setvariable variable=UV_DEFAULT_INDEX]$($env:PIP_INDEX_URL)"
-  #     }
-  #   displayName: 'Mirror PIP Index URL to UV Index URL'
+  # Disabled UV authentication step - for future enablement when UV fully supports Azure Artifacts
+  # To enable: uncomment this step and ensure UV_INDEX_URL is properly configured
+  # The PipAuthenticate task above creates a .pypirc file in the home directory that UV can use
+  - pwsh: |
+      # This step configures UV to use the same authentication as pip
+      # UV will read credentials from ~/.pypirc created by PipAuthenticate task
+      if ($env:PIP_INDEX_URL) {
+        Write-Host "PIP Index URL detected: $env:PIP_INDEX_URL"
+        # Uncomment the next line to enable UV authentication
+        # Write-Host "##vso[task.setvariable variable=UV_INDEX_URL]$($env:PIP_INDEX_URL)"
+        Write-Host "UV authentication is currently disabled. To enable, uncomment the variable assignment above."
+      }
+    displayName: 'Configure UV Authentication (Disabled)'
+    condition: false  # Explicitly disabled - change to 'true' or remove to enable

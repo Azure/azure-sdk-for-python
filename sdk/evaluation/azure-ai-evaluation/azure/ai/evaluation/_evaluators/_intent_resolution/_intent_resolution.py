@@ -155,6 +155,12 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: The evaluation result.
         :rtype: Dict
         """
+        # Import helper functions from base class module
+        from azure.ai.evaluation._evaluators._common._base_prompty_eval import (
+            _is_intermediate_response,
+            _preprocess_messages,
+        )
+
         # we override the _do_eval method as we want the output to be a dictionary, which is a different schema than _base_prompty_eval.py
         if "query" not in eval_input and "response" not in eval_input:
             raise EvaluationException(
@@ -164,13 +170,26 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 category=ErrorCategory.MISSING_FIELD,
                 target=ErrorTarget.INTENT_RESOLUTION_EVALUATOR,
             )
+
+        # Check for intermediate response
+        if _is_intermediate_response(eval_input.get("response")):
+            return self._not_applicable_result(
+                "Intermediate response. Please provide the agent's final response for evaluation.",
+                self._threshold,
+            )
+
+        # Preprocess messages if they are lists
+        if isinstance(eval_input.get("response"), list):
+            eval_input["response"] = _preprocess_messages(eval_input["response"])
+        if isinstance(eval_input.get("query"), list):
+            eval_input["query"] = _preprocess_messages(eval_input["query"])
+
         # reformat query and response to the format expected by the prompty flow
         eval_input["query"] = reformat_conversation_history(eval_input["query"], logger)
         eval_input["response"] = reformat_agent_response(eval_input["response"], logger)
 
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
-        llm_output = prompty_output_dict["llm_output"]
-        # llm_output should always be a dictionary because the response_format of prompty is set to json_object, but checking anyway
+        llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)
         score = math.nan
         if isinstance(llm_output, dict):
             score = llm_output.get("score", math.nan)
@@ -204,14 +223,10 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 f"{self._result_key}_sample_output": prompty_output_dict.get("sample_output", ""),
             }
             return response_dict
-        # If llm_output is not a dictionary, return NaN for the score. This should never happen
-        if logger:
-            logger.warning("LLM output is not a dictionary, returning NaN for the score.")
-
-        binary_result = self._get_binary_result(score)
-        return {
-            self._result_key: float(score),
-            f"gpt_{self._result_key}": float(score),
-            f"{self._result_key}_result": binary_result,
-            f"{self._result_key}_threshold": self._threshold,
-        }
+        # If llm_output is not a dictionary, raise exception
+        raise EvaluationException(
+            message="Evaluator returned invalid output.",
+            blame=ErrorBlame.SYSTEM_ERROR,
+            category=ErrorCategory.FAILED_EXECUTION,
+            target=ErrorTarget.EVALUATE,
+        )

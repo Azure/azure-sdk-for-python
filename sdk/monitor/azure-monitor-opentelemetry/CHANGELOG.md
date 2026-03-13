@@ -3,12 +3,15 @@
 ## 1.8.7 (Unreleased)
 
 ### Features Added
+- Add Browser SDK loader feature ([#42904](https://github.com/Azure/azure-sdk-for-python/pull/44162))
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+- Remove internal import from sample file
+  ([#45619](https://github.com/Azure/azure-sdk-for-python/pull/45619))
 
 ## 1.8.6 (2026-02-05)
 

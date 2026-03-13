@@ -1,6 +1,19 @@
 ## Release History
 
-### 4.15.0 (2026-02-11)
+### 4.15.1 (Unreleased)
+
+#### Features Added
+* Added support for Query Advisor feature - See [PR 45331](https://github.com/Azure/azure-sdk-for-python/pull/45331)
+* Added `get_response_headers()` and `get_last_response_headers()` methods to the `CosmosItemPaged` and `CosmosAsyncItemPaged` objects returned by `query_items()`, allowing access to response headers from query operations. See [PR 44593](https://github.com/Azure/azure-sdk-for-python/pull/44593)
+* Added InferenceRequestTimeout property for HttpTimeout Policy to Reranking API. See [45469](https://github.com/Azure/azure-sdk-for-python/pull/45469)
+
+#### Breaking Changes
+
+#### Bugs Fixed
+
+#### Other Changes
+
+### 4.15.0 (2026-02-19)
 
 #### Features Added
 * GA support of Per Partition Automatic Failover and AvailabilityStrategy features.
@@ -8,10 +21,12 @@
 #### Bugs Fixed
 * Fixed bug where sdk was encountering a timeout issue caused by infinite recursion during the 410 (Gone) error. See [PR 44770](https://github.com/Azure/azure-sdk-for-python/pull/44770)
 * Fixed crash in sync and async clients when `force_refresh_on_startup` was set to `None`, which could surface as `AttributeError: 'NoneType' object has no attribute '_WritableLocations'` during region discovery when `database_account` was `None`. See [PR 44987](https://github.com/Azure/azure-sdk-for-python/pull/44987)
+* Fixed bug where unavailable regional endpoints were dropped from the routing list instead of being kept as fallback options. See [PR 45200](https://github.com/Azure/azure-sdk-for-python/pull/45200)
 
 #### Other Changes
 * Added tests for multi-language support for full text search. See [PR 44254](https://github.com/Azure/azure-sdk-for-python/pull/44254)
 * Renamed `availability_strategy_config` introduced in 4.15.0b1 to `availability_strategy` for both sync and async clients. See [PR 45086](https://github.com/Azure/azure-sdk-for-python/pull/45086).
+* Request-level `availability_strategy` needs to be set to `False` in order to disable availability strategy for that request, as opposed to setting it to `None`. See [PR 45141](https://github.com/Azure/azure-sdk-for-python/pull/45141).
 
 ### 4.14.6 (2026-02-02)
 

@@ -222,7 +222,12 @@ stages:
           - ${{if ne(artifact.skipPublishDocGithubIo, 'true')}}:
             - job: PublishGitHubIODocs
               displayName: Publish Docs to GitHubIO Blob Storage
-              condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
+              condition: >-
+                and(
+                  succeeded(), 
+                  ne(variables['Skip.PublishDocs'], 'true'), 
+                  ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr')
+                )
               dependsOn: PublishPackage
 
               pool:
@@ -260,7 +265,12 @@ stages:
           - ${{if ne(artifact.skipPublishDocMs, 'true')}}:
             - job: PublishDocs
               displayName: Docs.MS Release
-              condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
+              condition: >-
+                and(
+                  succeeded(), 
+                  ne(variables['Skip.PublishDocs'], 'true'), 
+                  ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr')
+                )
               dependsOn: PublishPackage
 
               pool:
@@ -383,7 +393,18 @@ stages:
 
       - job: PublishDocsToNightlyBranch
         dependsOn: PublishPackages
-        condition: and(succeeded(), or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal'))))
+        condition: >-
+          and(
+            succeeded(), 
+            or(
+              eq(variables['SetDevVersion'], 'true'), 
+              and(
+                eq(variables['Build.Reason'],'Schedule'), 
+                eq(variables['System.TeamProject'], 'internal')
+              )
+            ), 
+            ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr')
+          )
         pool:
           image: ubuntu-24.04
           name: azsdk-pool
