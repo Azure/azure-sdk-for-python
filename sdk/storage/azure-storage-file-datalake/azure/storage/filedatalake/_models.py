@@ -252,6 +252,8 @@ class FileSystemSasPermissions:
         Append data to a file in the directory.
     :keyword bool create:
         Write a new file, snapshot a file, or copy a file to a new file.
+    :keyword bool tags:
+        Indicates that reading and writing Tags are permitted.
     :keyword bool move:
         Move any file in the directory to a new location. Note the move operation can optionally be restricted to the
         child file or directory owner or the parent directory owner if the said parameter is included in the token
@@ -278,6 +280,8 @@ class FileSystemSasPermissions:
     """Append data to a file in the directory."""
     create: Optional[bool] = None
     """Write a new file, snapshot a file, or copy a file to a new file."""
+    tags: Optional[bool] = None
+    """Indicates that reading and writing Tags are permitted."""
     move: Optional[bool] = None
     """Move any file in the directory to a new location. Note the move operation can optionally be restricted to the
         child file or directory owner or the parent directory owner if the said parameter is included in the token
@@ -304,6 +308,7 @@ class FileSystemSasPermissions:
         self.list = list
         self.add = kwargs.pop('add', None)
         self.create = kwargs.pop('create', None)
+        self.tags = kwargs.pop('tags', None)
         self.move = kwargs.pop('move', None)
         self.execute = kwargs.pop('execute', None)
         self.manage_ownership = kwargs.pop('manage_ownership', None)
@@ -314,6 +319,7 @@ class FileSystemSasPermissions:
                      ('w' if self.write else '') +
                      ('d' if self.delete else '') +
                      ('l' if self.list else '') +
+                     ('t' if self.tags else '') +
                      ('m' if self.move else '') +
                      ('e' if self.execute else '') +
                      ('o' if self.manage_ownership else '') +
@@ -341,13 +347,14 @@ class FileSystemSasPermissions:
         p_write = 'w' in permission
         p_delete = 'd' in permission
         p_list = 'l' in permission
+        p_tags = 't' in permission
         p_move = 'm' in permission
         p_execute = 'e' in permission
         p_manage_ownership = 'o' in permission
         p_manage_access_control = 'p' in permission
 
-        parsed = cls(read=p_read, write=p_write, delete=p_delete,
-                     list=p_list, add=p_add, create=p_create, move=p_move,
+        parsed = cls(read=p_read, write=p_write, delete=p_delete, list=p_list,
+                     tags=p_tags, add=p_add, create=p_create, move=p_move,
                      execute=p_execute, manage_ownership=p_manage_ownership,
                      manage_access_control=p_manage_access_control)
         return parsed
@@ -369,6 +376,8 @@ class DirectorySasPermissions:
         Append data to a file in the directory.
     :keyword bool list:
         List any files in the directory. Implies Execute.
+    :keyword bool tags:
+        Indicates that reading and writing Tags are permitted.
     :keyword bool move:
         Move any file in the directory to a new location. Note the move operation can optionally be restricted to the
         child file or directory owner or the parent directory owner if the said parameter is included in the token
@@ -395,6 +404,8 @@ class DirectorySasPermissions:
     """Append data to a file in the directory."""
     list: Optional[bool] = False
     """List any files in the directory. Implies Execute."""
+    tags: Optional[bool] = None
+    """Indicates that reading and writing Tags are permitted."""
     move: Optional[bool] = False
     """Move any file in the directory to a new location. Note the move operation can optionally be restricted to the
         child file or directory owner or the parent directory owner if the said parameter is included in the token
@@ -421,6 +432,7 @@ class DirectorySasPermissions:
         self.delete = delete
         self.add = kwargs.pop('add', None)
         self.list = kwargs.pop('list', None)
+        self.tags = kwargs.pop('tags', None)
         self.move = kwargs.pop('move', None)
         self.execute = kwargs.pop('execute', None)
         self.manage_ownership = kwargs.pop('manage_ownership', None)
@@ -431,6 +443,7 @@ class DirectorySasPermissions:
                      ('w' if self.write else '') +
                      ('d' if self.delete else '') +
                      ('l' if self.list else '') +
+                     ('t' if self.tags else '') +
                      ('m' if self.move else '') +
                      ('e' if self.execute else '') +
                      ('o' if self.manage_ownership else '') +
@@ -458,13 +471,14 @@ class DirectorySasPermissions:
         p_write = 'w' in permission
         p_delete = 'd' in permission
         p_list = 'l' in permission
+        p_tags = 't' in permission
         p_move = 'm' in permission
         p_execute = 'e' in permission
         p_manage_ownership = 'o' in permission
         p_manage_access_control = 'p' in permission
 
-        parsed = cls(read=p_read, create=p_create, write=p_write, delete=p_delete, add=p_add,
-                     list=p_list, move=p_move, execute=p_execute, manage_ownership=p_manage_ownership,
+        parsed = cls(read=p_read, create=p_create, write=p_write, delete=p_delete, add=p_add, list=p_list,
+                     tags=p_tags, move=p_move, execute=p_execute, manage_ownership=p_manage_ownership,
                      manage_access_control=p_manage_access_control)
         return parsed
 
@@ -483,6 +497,8 @@ class FileSasPermissions:
         Delete the file.
     :keyword bool add:
         Append data to the file.
+    :keyword bool tags:
+        Indicates that reading and writing Tags are permitted.
     :keyword bool move:
         Move any file in the directory to a new location. Note the move operation can optionally be restricted to the
         child file or directory owner or the parent directory owner if the said parameter is included in the token
@@ -507,6 +523,8 @@ class FileSasPermissions:
     """Delete the file."""
     add: Optional[bool] = None
     """Append data to the file."""
+    tags: Optional[bool] = None
+    """Indicates that reading and writing Tags are permitted."""
     move: Optional[bool] = None
     """Move any file in the directory to a new location. Note the move operation can optionally be restricted to the
         child file or directory owner or the parent directory owner if the said parameter is included in the token
@@ -532,6 +550,7 @@ class FileSasPermissions:
         self.write = write
         self.delete = delete
         self.add = kwargs.pop('add', None)
+        self.tags = kwargs.pop('tags', None)
         self.move = kwargs.pop('move', None)
         self.execute = kwargs.pop('execute', None)
         self.manage_ownership = kwargs.pop('manage_ownership', None)
@@ -541,6 +560,7 @@ class FileSasPermissions:
                      ('c' if self.create else '') +
                      ('w' if self.write else '') +
                      ('d' if self.delete else '') +
+                     ('t' if self.tags else '') +
                      ('m' if self.move else '') +
                      ('e' if self.execute else '') +
                      ('o' if self.manage_ownership else '') +
@@ -567,13 +587,14 @@ class FileSasPermissions:
         p_create = 'c' in permission
         p_write = 'w' in permission
         p_delete = 'd' in permission
+        p_tags = 't' in permission
         p_move = 'm' in permission
         p_execute = 'e' in permission
         p_manage_ownership = 'o' in permission
         p_manage_access_control = 'p' in permission
 
         parsed = cls(read=p_read, create=p_create, write=p_write, delete=p_delete, add=p_add,
-                     move=p_move, execute=p_execute, manage_ownership=p_manage_ownership,
+                     tags=p_tags, move=p_move, execute=p_execute, manage_ownership=p_manage_ownership,
                      manage_access_control=p_manage_access_control)
         return parsed
 
