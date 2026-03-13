@@ -20,8 +20,8 @@ from ...models import (
     ResponseUsageOutputTokensDetails,
     MemoryStoreUpdateCompletedResult,
     AsyncUpdateMemoriesLROPoller,
-    AsyncUpdateMemoriesLROPollingMethod,
 )
+from ...models._patch import _AsyncUpdateMemoriesLROPollingMethod
 from ...models._enums import _FoundryFeaturesOptInKeys
 from ._operations import JSON, _Unset, ClsType, BetaMemoryStoresOperations as GenerateBetaMemoryStoresOperations
 from ...operations._patch_memories import _serialize_memory_input_items
@@ -296,7 +296,9 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.MemoryStoreUpdateCompletedResult] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncUpdateMemoriesLROPollingMethod] = kwargs.pop("polling", True)
+        polling = kwargs.pop("polling", True)
+        if not isinstance(polling, bool):
+            raise TypeError("polling must be of type bool.")
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
@@ -348,17 +350,16 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
-        if polling is True:
-            polling_method: AsyncUpdateMemoriesLROPollingMethod = AsyncUpdateMemoriesLROPollingMethod(
+        if polling:
+            polling_method: _AsyncUpdateMemoriesLROPollingMethod = _AsyncUpdateMemoriesLROPollingMethod(
                 lro_delay,
                 path_format_arguments=path_format_arguments,
                 headers={"Foundry-Features": _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW.value},
                 **kwargs,
             )
-        elif polling is False:
-            polling_method = cast(AsyncUpdateMemoriesLROPollingMethod, AsyncNoPolling())
         else:
-            polling_method = polling
+            polling_method = cast(_AsyncUpdateMemoriesLROPollingMethod, AsyncNoPolling())
+
         if cont_token:
             return AsyncUpdateMemoriesLROPoller.from_continuation_token(
                 polling_method=polling_method,
@@ -366,6 +367,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
+
         return AsyncUpdateMemoriesLROPoller(
             self._client,
             raw_result,  # type: ignore[possibly-undefined]

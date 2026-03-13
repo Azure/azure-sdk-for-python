@@ -68,7 +68,7 @@ _FINISHED = frozenset(["completed", "superseded", "failed"])
 _FAILED = frozenset(["failed"])
 
 
-class UpdateMemoriesLROPollingMethod(LROBasePolling):
+class _UpdateMemoriesLROPollingMethod(LROBasePolling):
     """A custom polling method implementation for Memory Store updates."""
 
     @property
@@ -139,7 +139,7 @@ class UpdateMemoriesLROPollingMethod(LROBasePolling):
             _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
 
 
-class AsyncUpdateMemoriesLROPollingMethod(AsyncLROBasePolling):
+class _AsyncUpdateMemoriesLROPollingMethod(AsyncLROBasePolling):
     """A custom polling method implementation for Memory Store updates."""
 
     @property
@@ -213,7 +213,7 @@ class AsyncUpdateMemoriesLROPollingMethod(AsyncLROBasePolling):
 class UpdateMemoriesLROPoller(LROPoller[MemoryStoreUpdateCompletedResult]):
     """Custom LROPoller for Memory Store update operations."""
 
-    _polling_method: "UpdateMemoriesLROPollingMethod"
+    _polling_method: "_UpdateMemoriesLROPollingMethod"
 
     @property
     def update_id(self) -> str:
@@ -263,7 +263,7 @@ class UpdateMemoriesLROPoller(LROPoller[MemoryStoreUpdateCompletedResult]):
 class AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResult]):
     """Custom AsyncLROPoller for Memory Store update operations."""
 
-    _polling_method: "AsyncUpdateMemoriesLROPollingMethod"
+    _polling_method: "_AsyncUpdateMemoriesLROPollingMethod"
 
     @property
     def update_id(self) -> str:
@@ -315,8 +315,6 @@ class AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResu
 
 __all__: List[str] = [
     "CustomCredential",
-    "UpdateMemoriesLROPollingMethod",
-    "AsyncUpdateMemoriesLROPollingMethod",
     "UpdateMemoriesLROPoller",
     "AsyncUpdateMemoriesLROPoller",
 ]  # Add all objects you want publicly available to users at this package level
