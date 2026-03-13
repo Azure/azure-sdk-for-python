@@ -48,9 +48,8 @@ async def get_entra_token_async(credential: AsyncTokenCredential, scope: str) ->
     :return: The acquired authentication token to be used as the database password.
     :rtype: str
     """
-    async with credential:
-        cred = await credential.get_token(scope)
-        return cred.token
+    cred = await credential.get_token(scope)
+    return cred.token
 
 
 def decode_jwt(token: str) -> dict[str, Any]:
