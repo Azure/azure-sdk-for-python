@@ -1,7 +1,8 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=docstring-should-be-keyword
+"""Public entry points for the Azure AI Agent Server LangGraph adapter."""
+
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 from typing import Optional, Union, TYPE_CHECKING
@@ -19,7 +20,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from azure.core.credentials import TokenCredential
 
 
-def from_langgraph(
+def from_langgraph(    # pylint: disable=docstring-should-be-keyword
     agent: "CompiledStateGraph",
     /,
     credentials: Optional[Union["AsyncTokenCredential", "TokenCredential"]] = None,

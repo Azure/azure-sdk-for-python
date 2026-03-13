@@ -47,6 +47,21 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
                                                       ResponseAPINonStreamResponseConverter
                                                   ] | None = None,
             create_human_in_the_loop_helper: Callable[[LanggraphRunContext], HumanInTheLoopHelper] | None = None):
+        """Initialize the default LangGraph response converter.
+
+        :param graph: The compiled LangGraph state graph.
+        :type graph: CompiledStateGraph
+        :param create_request_converter: Optional factory for request converters.
+        :type create_request_converter: Optional[Callable[[LanggraphRunContext], ResponseAPIRequestConverter]]
+        :param create_stream_response_converter: Optional factory for streaming converters.
+        :type create_stream_response_converter: 
+                Optional[Callable[[LanggraphRunContext], ResponseAPIMessagesStreamResponseConverter]]
+        :param create_non_stream_response_converter: Optional factory for non-stream converters.
+        :type create_non_stream_response_converter: 
+                Optional[Callable[[LanggraphRunContext], ResponseAPINonStreamResponseConverter]]
+        :param create_human_in_the_loop_helper: Optional factory for HITL helpers.
+        :type create_human_in_the_loop_helper: Optional[Callable[[LanggraphRunContext], HumanInTheLoopHelper]]
+        """
         self._graph = graph
         self._custom_request_converter_factory = create_request_converter
         self._custom_stream_response_converter_factory = create_stream_response_converter
@@ -54,6 +69,14 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
         self._custom_human_in_the_loop_helper_factory = create_human_in_the_loop_helper
 
     async def convert_request(self, context: LanggraphRunContext) -> GraphInputArguments:
+        """Convert the incoming request into graph input arguments.
+
+        :param context: The run context for the current request.
+        :type context: LanggraphRunContext
+
+        :return: The graph invocation arguments.
+        :rtype: GraphInputArguments
+        """
         prev_state = await self._aget_state(context)
         input_data = await self._convert_request_input_with_history(context, prev_state)
         stream_mode = self.get_stream_mode(context)
@@ -66,6 +89,16 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
 
     async def convert_response_non_stream(
             self, output: Union[dict[str, Any], Any], context: LanggraphRunContext) -> Response:
+        """Convert non-stream graph output into a final response object.
+
+        :param output: The graph output to convert.
+        :type output: Union[dict[str, Any], Any]
+        :param context: The run context for the current request.
+        :type context: LanggraphRunContext
+
+        :return: The final response object.
+        :rtype: Response
+        """
         agent_run_context = context.agent_run
         converter = self._create_non_stream_response_converter(context)
         converted_output = converter.convert(output)
@@ -100,11 +133,27 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
             yield event
 
     def get_stream_mode(self, context: LanggraphRunContext) -> StreamMode:
+        """Select the graph stream mode for the current request.
+
+        :param context: The run context for the current request.
+        :type context: LanggraphRunContext
+
+        :return: The stream mode to use for execution.
+        :rtype: StreamMode
+        """
         if context.agent_run.stream:
             return "messages"
         return "updates"
 
     def _create_request_converter(self, context: LanggraphRunContext) -> ResponseAPIRequestConverter:
+        """Create the request converter for the current run.
+
+        :param context: The run context for the current request.
+        :type context: LanggraphRunContext
+
+        :return: The request converter.
+        :rtype: ResponseAPIRequestConverter
+        """
         if self._custom_request_converter_factory:
             return self._custom_request_converter_factory(context)
         data = context.agent_run.request
@@ -113,6 +162,14 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
     def _create_stream_response_converter(
         self, context: LanggraphRunContext
     ) -> ResponseAPIMessagesStreamResponseConverter:
+        """Create the stream response converter for the current run.
+
+        :param context: The run context for the current request.
+        :type context: LanggraphRunContext
+
+        :return: The stream response converter.
+        :rtype: ResponseAPIMessagesStreamResponseConverter
+        """
         if self._custom_stream_response_converter_factory:
             return self._custom_stream_response_converter_factory(context)
         hitl_helper = self._create_human_in_the_loop_helper(context)
@@ -121,12 +178,28 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
     def _create_non_stream_response_converter(
         self, context: LanggraphRunContext
     ) -> ResponseAPINonStreamResponseConverter:
+        """Create the non-stream response converter for the current run.
+
+        :param context: The run context for the current request.
+        :type context: LanggraphRunContext
+
+        :return: The non-stream response converter.
+        :rtype: ResponseAPINonStreamResponseConverter
+        """
         if self._custom_non_stream_response_converter_factory:
             return self._custom_non_stream_response_converter_factory(context)
         hitl_helper = self._create_human_in_the_loop_helper(context)
         return ResponseAPIMessagesNonStreamResponseConverter(context, hitl_helper)
 
     def _create_human_in_the_loop_helper(self, context: LanggraphRunContext) -> HumanInTheLoopHelper:
+        """Create the human-in-the-loop helper for the current run.
+
+        :param context: The run context for the current request.
+        :type context: LanggraphRunContext
+
+        :return: The human-in-the-loop helper.
+        :rtype: HumanInTheLoopHelper
+        """
         if self._custom_human_in_the_loop_helper_factory:
             return self._custom_human_in_the_loop_helper_factory(context)
         return HumanInTheLoopJsonHelper(context)
@@ -368,6 +441,14 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
         return merged
 
     async def _aget_state(self, context: LanggraphRunContext) -> Optional[StateSnapshot]:
+        """Fetch the persisted checkpoint state for the current conversation.
+
+        :param context: The run context for the current request.
+        :type context: LanggraphRunContext
+
+        :return: The persisted state snapshot, if available.
+        :rtype: Optional[StateSnapshot]
+        """
         thread_id = context.agent_run.conversation_id
         if not thread_id:
             logger.debug("No conversation_id provided, skipping checkpoint lookup")

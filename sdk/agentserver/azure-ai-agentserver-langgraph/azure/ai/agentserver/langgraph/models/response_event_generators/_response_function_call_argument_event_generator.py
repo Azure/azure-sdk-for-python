@@ -15,6 +15,8 @@ from ..._context import LanggraphRunContext
 
 
 class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):  # pylint: disable=C4751
+    """Generate function-call-argument delta and done events."""
+
     def __init__(
         self,
         logger,
@@ -25,6 +27,21 @@ class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):  # pyl
         *,
         hitl_helper: HumanInTheLoopHelper = None,
     ):
+        """Initialize the function-call-argument generator.
+
+        :param logger: The logger used for diagnostics.
+        :type logger: logging.Logger
+        :param parent: The parent generator in the event chain.
+        :type parent: ResponseEventGenerator
+        :param item_id: The response item identifier.
+        :type item_id: str
+        :param message_id: The originating message identifier.
+        :type message_id: str
+        :param output_index: The output item index.
+        :type output_index: int
+        :param hitl_helper: Optional helper for interrupt conversion.
+        :type hitl_helper: HumanInTheLoopHelper
+        """
         super().__init__(logger, parent)
         self.item_id = item_id
         self.output_index = output_index
@@ -35,6 +52,18 @@ class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):  # pyl
     def try_process_message(
         self, message, context: LanggraphRunContext, stream_state: StreamEventState
     ) -> tuple[bool, ResponseEventGenerator, List[project_models.ResponseStreamEvent]]:
+        """Process one message into function-call argument events.
+
+        :param message: The message or interrupt to process.
+        :type message: Union[langgraph_messages.AnyMessage, Interrupt]
+        :param context: The run context for the current request.
+        :type context: LanggraphRunContext
+        :param stream_state: The mutable stream state.
+        :type stream_state: StreamEventState
+
+        :return: Processing status, next generator, and emitted events.
+        :rtype: tuple[bool, ResponseEventGenerator, List[project_models.ResponseStreamEvent]]
+        """
         is_processed = False
         events = []
         next_processor = self
@@ -48,7 +77,7 @@ class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):  # pyl
 
         if self.should_end(message):
             has_finish_reason = self.has_finish_reason(message)
-            complete_events = self.on_end(message, context, stream_state)
+            is_processed, complete_events = self.on_end(message, context, stream_state)
             events.extend(complete_events)
             next_processor = self.parent
             is_processed = has_finish_reason  # if has finish reason, mark as processed and stop further processing
@@ -58,6 +87,18 @@ class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):  # pyl
     def on_start(
         self, _event: AnyMessage, _run_details, _stream_state: StreamEventState
     ) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
+        """Start argument generation for the current function call.
+
+        :param _event: The current message.
+        :type _event: AnyMessage
+        :param _run_details: The run context, unused by this generator.
+        :type _run_details: LanggraphRunContext
+        :param _stream_state: The mutable stream state, unused on start.
+        :type _stream_state: StreamEventState
+
+        :return: Start status and emitted events.
+        :rtype: tuple[bool, List[project_models.ResponseStreamEvent]]
+        """
         if self.started:
             return True, []
         self.started = True
@@ -69,6 +110,18 @@ class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):  # pyl
         _run_details,
         stream_state: StreamEventState,
     ) -> tuple[bool, ResponseEventGenerator, List[project_models.ResponseStreamEvent]]:
+        """Convert one message into function-call argument delta events.
+
+        :param message: The message or interrupt to process.
+        :type message: Union[langgraph_messages.AnyMessage, Interrupt]
+        :param _run_details: The run context, unused by this generator.
+        :type _run_details: LanggraphRunContext
+        :param stream_state: The mutable stream state.
+        :type stream_state: StreamEventState
+
+        :return: Processing status, current generator, and emitted events.
+        :rtype: tuple[bool, ResponseEventGenerator, List[project_models.ResponseStreamEvent]]
+        """
         if self.should_end(message):
             return False, self, []
 
@@ -95,6 +148,14 @@ class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):  # pyl
         return False, self, []
 
     def has_finish_reason(self, message: AnyMessage) -> bool:
+        """Check whether the message marks completion for this argument stream.
+
+        :param message: The message to inspect.
+        :type message: AnyMessage
+
+        :return: True when the argument stream should finish.
+        :rtype: bool
+        """
         if not message or message.id != self.message_id:
             return False
         if isinstance(message, langgraph_messages.AIMessageChunk):
@@ -109,6 +170,14 @@ class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):  # pyl
         return False
 
     def should_end(self, event: AnyMessage) -> bool:
+        """Determine whether this generator should stop processing.
+
+        :param event: The current event.
+        :type event: AnyMessage
+
+        :return: True when processing should stop.
+        :rtype: bool
+        """
         if event is None:
             return True
         if event.id != self.message_id:
@@ -116,8 +185,20 @@ class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):  # pyl
         return False
 
     def on_end(
-        self, message: AnyMessage, context: LanggraphRunContext, stream_state: StreamEventState  # pylint: disable=unused-argument
+        self, _message: AnyMessage, _context: LanggraphRunContext, stream_state: StreamEventState
     ) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
+        """Emit the final function-call-arguments-done event.
+
+        :param _message: The terminal message for the argument stream.
+        :type _message: AnyMessage
+        :param _context: The run context, unused by this generator.
+        :type _context: LanggraphRunContext
+        :param stream_state: The mutable stream state.
+        :type stream_state: StreamEventState
+
+        :return: Completion status and final events.
+        :rtype: tuple[bool, List[project_models.ResponseStreamEvent]]
+        """
         done_event = project_models.ResponseFunctionCallArgumentsDoneEvent(
             item_id=self.item_id,
             output_index=self.output_index,
@@ -126,9 +207,17 @@ class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):  # pyl
         )
         stream_state.sequence_number += 1
         self.parent.aggregate_content(self.aggregated_content)  # pass aggregated content to parent
-        return [done_event]
+        return True, [done_event]
 
     def get_tool_call_info(self, message: Union[langgraph_messages.AnyMessage, Interrupt]):
+        """Extract the first tool call from a message when present.
+
+        :param message: The message to inspect.
+        :type message: Union[langgraph_messages.AnyMessage, Interrupt]
+
+        :return: The first tool call payload, if any.
+        :rtype: Optional[dict]
+        """
         if isinstance(message, langgraph_messages.AIMessageChunk):
             if message.tool_call_chunks:
                 if len(message.tool_call_chunks) > 1:

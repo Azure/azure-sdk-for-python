@@ -118,10 +118,22 @@ class ResponseAPIRequestConverter(ABC):
 
 
 class ResponseAPIMessageRequestConverter(ResponseAPIRequestConverter):
+    """Convert Response API input items into LangGraph message inputs."""
+
     def __init__(self, data: CreateResponse):
+        """Initialize the request converter.
+
+        :param data: The incoming create-response payload.
+        :type data: CreateResponse
+        """
         self.data: CreateResponse = data
 
     def convert(self) -> dict:
+        """Convert the request payload into LangGraph message input.
+
+        :return: A LangGraph-compatible input dictionary.
+        :rtype: dict
+        """
         # Convert the CreateRunRequest input to a format suitable for LangGraph
         langgraph_input = {"messages": []}
 
@@ -181,6 +193,14 @@ class ResponseAPIMessageRequestConverter(ResponseAPIRequestConverter):
         raise ValueError(f"Unsupported ResponseMessagesItemParam content type: {type(content)}, {content}")
 
     def convert_function_call(self, item: dict) -> AnyMessage:
+        """Convert a function call input item into an AI message.
+
+        :param item: The function call item payload.
+        :type item: dict
+
+        :return: The converted AI message.
+        :rtype: AnyMessage
+        """
         try:
             item = openai_models.ResponseFunctionToolCallParam(**item)
             argument = item.get("arguments", None)
@@ -192,6 +212,14 @@ class ResponseAPIMessageRequestConverter(ResponseAPIRequestConverter):
         return AIMessage(tool_calls=[ToolCall(id=item.get("call_id"), name=item.get("name"), args=args)], content="")
 
     def convert_function_call_output(self, item: dict) -> ToolMessage:
+        """Convert a function call output item into a tool message.
+
+        :param item: The function call output payload.
+        :type item: dict
+
+        :return: The converted tool message.
+        :rtype: ToolMessage
+        """
         try:
             item_namespace = getattr(openai_models, "response_input_item_param")
             function_call_output = getattr(item_namespace, "FunctionCallOutput")

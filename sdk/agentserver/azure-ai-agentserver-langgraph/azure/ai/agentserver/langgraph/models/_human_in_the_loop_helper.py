@@ -21,7 +21,13 @@ logger = get_logger()
 
 class HumanInTheLoopHelper:
     """Helper class for managing human-in-the-loop interactions in LangGraph."""
+
     def __init__(self, context: LanggraphRunContext):
+        """Initialize the helper with the current LangGraph run context.
+
+        :param context: The current run context.
+        :type context: LanggraphRunContext
+        """
         self.context = context
 
     def has_interrupt(self, state: Optional[StateSnapshot]) -> bool:
@@ -104,6 +110,16 @@ class HumanInTheLoopHelper:
     def _validate_input_format(
         self, input_data: Union[str, ResponseInputParam], interrupt_obj: Interrupt
     ) -> Optional[ResponseInputItemParam]:
+        """Validate the interrupt feedback payload format.
+
+        :param input_data: The request input payload to validate.
+        :type input_data: Union[str, ResponseInputParam]
+        :param interrupt_obj: The interrupt that the feedback must match.
+        :type interrupt_obj: Interrupt
+
+        :return: The validated function call output item, if valid.
+        :rtype: Optional[ResponseInputItemParam]
+        """
         if isinstance(input_data, str):
             logger.warning("Expecting function call output item, got string: %s", input_data)
             return None

@@ -50,7 +50,16 @@ class ResponseAPIStreamResponseConverter(ABC):
 
 
 class ResponseAPIMessagesStreamResponseConverter(ResponseAPIStreamResponseConverter):
+    """Convert LangGraph streaming message events into Responses API stream events."""
+
     def __init__(self, context: LanggraphRunContext, *, hitl_helper: HumanInTheLoopHelper):
+        """Initialize the stream response converter.
+
+        :param context: The run context for the current request.
+        :type context: LanggraphRunContext
+        :keyword hitl_helper: The helper used for interrupt conversion.
+        :type hitl_helper: HumanInTheLoopHelper
+        """
         # self.stream = stream
         self.context = context
         self.hitl_helper = hitl_helper
@@ -59,6 +68,14 @@ class ResponseAPIMessagesStreamResponseConverter(ResponseAPIStreamResponseConver
         self.current_generator: Optional[ResponseEventGenerator] = None
 
     def convert(self, event: Union[AnyMessage, dict, Any, None]):
+        """Convert a single streamed LangGraph event.
+
+        :param event: The event to convert.
+        :type event: Union[AnyMessage, dict, Any, None]
+
+        :return: The converted response stream events.
+        :rtype: List[ResponseStreamEvent]
+        """
         try:
             if self.current_generator is None:
                 self.current_generator = ResponseStreamEventGenerator(logger, None, hitl_helper=self.hitl_helper)
@@ -72,6 +89,14 @@ class ResponseAPIMessagesStreamResponseConverter(ResponseAPIStreamResponseConver
             raise ValueError(f"Error converting message {event}") from error
 
     def finalize(self, graph_state=None):
+        """Emit final stream events after graph execution completes.
+
+        :param graph_state: The final graph state snapshot.
+        :type graph_state: Any
+
+        :return: The final response stream events.
+        :rtype: List[ResponseStreamEvent]
+        """
         logger.info("Stream ended, finalizing response.")
         res = []
         # check and convert interrupts
@@ -87,6 +112,16 @@ class ResponseAPIMessagesStreamResponseConverter(ResponseAPIStreamResponseConver
     def try_process_message(
         self, event: Union[AnyMessage, Any, None], context: LanggraphRunContext
     ) -> List[ResponseStreamEvent]:
+        """Process one message through the current event-generator chain.
+
+        :param event: The message or interrupt to process.
+        :type event: Union[AnyMessage, Any, None]
+        :param context: The run context for the current request.
+        :type context: LanggraphRunContext
+
+        :return: The generated response stream events.
+        :rtype: List[ResponseStreamEvent]
+        """
         if event and not self.current_generator:
             self.current_generator = ResponseStreamEventGenerator(logger, None, hitl_helper=self.hitl_helper)
 

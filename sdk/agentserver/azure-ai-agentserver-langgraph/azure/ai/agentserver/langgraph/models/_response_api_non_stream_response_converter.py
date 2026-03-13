@@ -46,10 +46,25 @@ class ResponseAPIMessagesNonStreamResponseConverter(ResponseAPINonStreamResponse
     def __init__(self,
             context: LanggraphRunContext,
             hitl_helper: HumanInTheLoopHelper):
+        """Initialize the non-stream response converter.
+
+        :param context: The run context for the current request.
+        :type context: LanggraphRunContext
+        :param hitl_helper: The helper used for interrupt conversion.
+        :type hitl_helper: HumanInTheLoopHelper
+        """
         self.context = context
         self.hitl_helper = hitl_helper
 
     def convert(self, output: Union[dict[str, Any], Any]) -> list[project_models.ItemResource]:
+        """Convert graph output into response item resources.
+
+        :param output: The graph output to convert.
+        :type output: Union[dict[str, Any], Any]
+
+        :return: The converted response item resources.
+        :rtype: list[project_models.ItemResource]
+        """
         res: list[project_models.ItemResource] = []
         if not isinstance(output, list):
             logger.error("Expected output to be a list, got %s: %s", type(output), output)
@@ -63,6 +78,16 @@ class ResponseAPIMessagesNonStreamResponseConverter(ResponseAPINonStreamResponse
     def _convert_node_output(
         self, node_name: str, node_output: Any
     ) -> Iterable[project_models.ItemResource]:
+        """Convert a single node update into response item resources.
+
+        :param node_name: The name of the node that produced the output.
+        :type node_name: str
+        :param node_output: The node output payload.
+        :type node_output: Any
+
+        :return: An iterable of converted item resources.
+        :rtype: Iterable[project_models.ItemResource]
+        """
         if node_name == INTERRUPT_NODE_NAME:
             yield from self.hitl_helper.convert_interrupts(node_output)
         else:
@@ -80,7 +105,14 @@ class ResponseAPIMessagesNonStreamResponseConverter(ResponseAPINonStreamResponse
                     logger.error("Error converting message %s: %s", message, error)
 
     def convert_output_message(self, output_message: AnyMessage) -> Optional[project_models.ItemResource]:
-        # Implement the conversion logic for inner inputs
+        """Convert a single LangChain message into a response item resource.
+
+        :param output_message: The message to convert.
+        :type output_message: AnyMessage
+
+        :return: The converted item resource, if supported.
+        :rtype: Optional[project_models.ItemResource]
+        """
         if isinstance(output_message, messages.HumanMessage):
             return project_models.ResponsesUserMessageItemResource(
                 content=self.convert_MessageContent(
@@ -133,6 +165,16 @@ class ResponseAPIMessagesNonStreamResponseConverter(ResponseAPINonStreamResponse
     def convert_MessageContent(
         self, content, role: project_models.ResponsesMessageRole
     ) -> List[project_models.ItemContent]:
+        """Convert message content into response item content objects.
+
+        :param content: The content payload to convert.
+        :type content: Any
+        :param role: The role associated with the content.
+        :type role: project_models.ResponsesMessageRole
+
+        :return: The converted item content list.
+        :rtype: List[project_models.ItemContent]
+        """
         if isinstance(content, str):
             return [self.convert_MessageContentItem(content, role)]
         return [self.convert_MessageContentItem(item, role) for item in content]
@@ -140,6 +182,16 @@ class ResponseAPIMessagesNonStreamResponseConverter(ResponseAPINonStreamResponse
     def convert_MessageContentItem(
         self, content, role: project_models.ResponsesMessageRole
     ) -> project_models.ItemContent:
+        """Convert one content item into a response item content model.
+
+        :param content: The content item to convert.
+        :type content: Any
+        :param role: The role associated with the content item.
+        :type role: project_models.ResponsesMessageRole
+
+        :return: The converted content model.
+        :rtype: project_models.ItemContent
+        """
         content_dict = copy.deepcopy(content) if isinstance(content, dict) else {"text": content}
 
         content_type = None

@@ -61,6 +61,14 @@ class LangGraphAdapter(FoundryCBAgent):
             self.converter = converter
 
     async def agent_run(self, context: AgentRunContext):
+        """Execute a LangGraph-backed agent run.
+
+        :param context: The agent run context supplied by Agent Server.
+        :type context: AgentRunContext
+
+        :return: A response object or an async response stream.
+        :rtype: Any
+        """
         # Resolve graph - always resolve if it's a factory function to get fresh graph each time
         # For factories, get a new graph instance per request to avoid concurrency issues
         try:
@@ -80,12 +88,27 @@ class LangGraphAdapter(FoundryCBAgent):
             return self.respond_with_oauth_consent_astream(context, e)
 
     async def setup_lg_run_context(self, agent_run_context: AgentRunContext) -> LanggraphRunContext:
+        """Build the LangGraph run context for the current request.
+
+        :param agent_run_context: The agent run context from the server layer.
+        :type agent_run_context: AgentRunContext
+
+        :return: The run context used by the adapter and tools.
+        :rtype: LanggraphRunContext
+        """
         resolved = await self._tool_resolver.resolve_from_registry()
         return LanggraphRunContext(
             agent_run_context,
             FoundryToolContext(resolved))
 
     def init_tracing_internal(self, exporter_endpoint=None, app_insights_conn_str=None):
+        """Initialize LangSmith and Azure AI tracing hooks for the adapter.
+
+        :param exporter_endpoint: Optional OTLP exporter endpoint.
+        :type exporter_endpoint: Optional[str]
+        :param app_insights_conn_str: Optional Application Insights connection string.
+        :type app_insights_conn_str: Optional[str]
+        """
         # set env vars for langsmith
         os.environ["LANGSMITH_OTEL_ENABLED"] = "true"
         os.environ["LANGSMITH_TRACING"] = "true"
@@ -105,10 +128,25 @@ class LangGraphAdapter(FoundryCBAgent):
                 logger.error("Failed to initialize AzureAIOpenTelemetryTracer, ignore: %s", error)
 
     def setup_otlp_exporter(self, endpoint, provider):
+        """Normalize the OTLP endpoint before delegating exporter setup.
+
+        :param endpoint: The configured exporter endpoint.
+        :type endpoint: str
+        :param provider: The tracer provider receiving the exporter.
+        :type provider: Any
+
+        :return: The configured exporter registration result.
+        :rtype: Any
+        """
         endpoint = self.format_otlp_endpoint(endpoint)
         return super().setup_otlp_exporter(endpoint, provider)
 
     def get_trace_attributes(self):
+        """Return base tracing attributes for LangGraph spans.
+
+        :return: The trace attributes for this adapter.
+        :rtype: dict
+        """
         attrs = super().get_trace_attributes()
         attrs["service.namespace"] = "azure.ai.agentserver.langgraph"
         return attrs
@@ -181,12 +219,25 @@ class LangGraphAdapter(FoundryCBAgent):
         input_arguments["config"] = config
 
     def format_otlp_endpoint(self, endpoint: str) -> str:
+        """Ensure the OTLP endpoint includes the traces ingestion path.
+
+        :param endpoint: The configured exporter endpoint.
+        :type endpoint: str
+
+        :return: The normalized traces endpoint.
+        :rtype: str
+        """
         m = re.match(r"^(https?://[^/]+)", endpoint)
         if m:
             return f"{m.group(1)}/v1/traces"
         return endpoint
 
     def get_agent_identifier(self) -> str:
+        """Resolve the agent identifier used by tracing integrations.
+
+        :return: The configured agent name or identifier.
+        :rtype: str
+        """
         agent_name = os.getenv(Constants.AGENT_NAME)
         if agent_name:
             return agent_name

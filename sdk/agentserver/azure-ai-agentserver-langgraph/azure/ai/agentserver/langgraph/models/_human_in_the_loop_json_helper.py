@@ -31,6 +31,14 @@ class HumanInTheLoopJsonHelper(HumanInTheLoopHelper):
     """
 
     def convert_interrupt(self, interrupt_info: Interrupt) -> Optional[project_models.ItemResource]:
+        """Convert an interrupt into an in-progress function-call item resource.
+
+        :param interrupt_info: The interrupt emitted by LangGraph.
+        :type interrupt_info: Interrupt
+
+        :return: The corresponding function-call item resource, if conversion succeeds.
+        :rtype: Optional[project_models.ItemResource]
+        """
         if not isinstance(interrupt_info, Interrupt):
             logger.warning("Interrupt is not of type Interrupt: %s", interrupt_info)
             return None
@@ -64,6 +72,14 @@ class HumanInTheLoopJsonHelper(HumanInTheLoopHelper):
         return HUMAN_IN_THE_LOOP_FUNCTION_NAME, interrupt.id, arguments
 
     def convert_input_item_to_command(self, input_item: ResponseInputItemParam) -> Optional[Command]:
+        """Convert a function-call-output item into a LangGraph resume command.
+
+        :param input_item: The function call output item supplied by the client.
+        :type input_item: ResponseInputItemParam
+
+        :return: The parsed LangGraph command, if valid.
+        :rtype: Optional[Command]
+        """
         output_str = input_item.get("output")
         if not isinstance(output_str, str):
             logger.error("Invalid output type in function call output: %s", input_item)

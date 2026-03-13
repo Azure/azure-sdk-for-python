@@ -28,6 +28,13 @@ class ResponseEventGenerator(ABC):
     started: bool = False
 
     def __init__(self, logger, parent):
+        """Initialize the response event generator.
+
+        :param logger: The logger used for diagnostics.
+        :type logger: logging.Logger
+        :param parent: The parent generator in the event chain.
+        :type parent: ResponseEventGenerator | None
+        """
         self.logger = logger
         self.parent = parent  # parent generator
 

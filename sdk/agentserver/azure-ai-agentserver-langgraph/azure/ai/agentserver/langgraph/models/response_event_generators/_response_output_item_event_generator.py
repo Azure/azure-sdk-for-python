@@ -17,9 +17,24 @@ from ..._context import LanggraphRunContext
 
 
 class ResponseOutputItemEventGenerator(ResponseEventGenerator):
+    """Generate output-item added and done events for one streamed message."""
+
     def __init__(self, logger, parent: ResponseEventGenerator,
                  output_index: int, message_id: str = None,
                  *, hitl_helper: HumanInTheLoopHelper = None):
+        """Initialize the output-item event generator.
+
+        :param logger: The logger used for diagnostics.
+        :type logger: logging.Logger
+        :param parent: The parent generator in the event chain.
+        :type parent: ResponseEventGenerator
+        :param output_index: The output item index.
+        :type output_index: int
+        :param message_id: The originating message identifier.
+        :type message_id: str
+        :param hitl_helper: Optional helper for human-in-the-loop interrupts.
+        :type hitl_helper: HumanInTheLoopHelper
+        """
         super().__init__(logger, parent)
         self.output_index = output_index
         self.message_id = message_id
@@ -29,6 +44,18 @@ class ResponseOutputItemEventGenerator(ResponseEventGenerator):
     def try_process_message(
         self, message: Union[AnyMessage, Interrupt, None], context: LanggraphRunContext, stream_state: StreamEventState
     ) -> tuple[bool, ResponseEventGenerator, List[project_models.ResponseStreamEvent]]:
+        """Process one streamed message into output-item events.
+
+        :param message: The message or interrupt to process.
+        :type message: Union[AnyMessage, Interrupt, None]
+        :param context: The run context for the current request.
+        :type context: LanggraphRunContext
+        :param stream_state: The mutable stream state.
+        :type stream_state: StreamEventState
+
+        :return: Processing status, next generator, and emitted events.
+        :rtype: tuple[bool, ResponseEventGenerator, List[project_models.ResponseStreamEvent]]
+        """
         is_processed = False
         next_processor = self
         events = []
@@ -69,6 +96,18 @@ class ResponseOutputItemEventGenerator(ResponseEventGenerator):
     def on_start(
         self, _event: Union[AnyMessage, Interrupt], _context: LanggraphRunContext, stream_state: StreamEventState
     ) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
+        """Emit the output-item-added event for this message.
+
+        :param _event: The current message or interrupt.
+        :type _event: Union[AnyMessage, Interrupt]
+        :param _context: The run context, unused by this generator.
+        :type _context: LanggraphRunContext
+        :param stream_state: The mutable stream state.
+        :type stream_state: StreamEventState
+
+        :return: Start status and emitted events.
+        :rtype: tuple[bool, List[project_models.ResponseStreamEvent]]
+        """
         if self.started:
             return True, []
 
@@ -86,6 +125,14 @@ class ResponseOutputItemEventGenerator(ResponseEventGenerator):
         return True, [item_added_event]
 
     def should_end(self, event: Union[AnyMessage, Interrupt]) -> bool:
+        """Determine whether this output-item generator should end.
+
+        :param event: The current message or interrupt.
+        :type event: Union[AnyMessage, Interrupt]
+
+        :return: True when the generator should end.
+        :rtype: bool
+        """
         if event is None:
             self.logger.info("Received None event, ending processor.")
             return True
@@ -94,8 +141,20 @@ class ResponseOutputItemEventGenerator(ResponseEventGenerator):
         return False
 
     def on_end(
-        self, message: Union[AnyMessage, Interrupt], context: LanggraphRunContext, stream_state: StreamEventState  # pylint: disable=unused-argument
+        self, _message: Union[AnyMessage, Interrupt], _context: LanggraphRunContext, stream_state: StreamEventState
     ) -> List[project_models.ResponseStreamEvent]:
+        """Emit the output-item-done event for this generator.
+
+        :param _message: The terminal message or interrupt.
+        :type _message: Union[AnyMessage, Interrupt]
+        :param _context: The run context, unused by this generator.
+        :type _context: LanggraphRunContext
+        :param stream_state: The mutable stream state.
+        :type stream_state: StreamEventState
+
+        :return: The emitted completion events.
+        :rtype: List[project_models.ResponseStreamEvent]
+        """
         if not self.started:  # should not happen
             return []
 
@@ -111,50 +170,71 @@ class ResponseOutputItemEventGenerator(ResponseEventGenerator):
         return [done_event]
 
     def aggregate_content(self, content) -> None:
-        # aggregate content from child processor
+        """Aggregate child content into the current item resource helper.
+
+        :param content: The child content to aggregate.
+        :type content: Any
+        """
         self.item_resource_helper.add_aggregate_content(content)
 
-    def try_create_item_resource_helper(self, event: Union[AnyMessage, Interrupt], id_generator: IdGenerator):  # pylint: disable=too-many-return-statements
+    def try_create_item_resource_helper(self, event: Union[AnyMessage, Interrupt], id_generator: IdGenerator):
+        """Create the item-resource helper for the current message type.
+
+        :param event: The message or interrupt to inspect.
+        :type event: Union[AnyMessage, Interrupt]
+        :param id_generator: The identifier generator for new item ids.
+        :type id_generator: IdGenerator
+
+        :return: True when a helper was created.
+        :rtype: bool
+        """
+        helper = None
         if isinstance(event, langgraph_messages.AIMessageChunk) and event.tool_call_chunks:
-            self.item_resource_helper = item_resource_helpers.FunctionCallItemResourceHelper(
+            helper = item_resource_helpers.FunctionCallItemResourceHelper(
                 item_id=id_generator.generate_function_call_id(), tool_call=event.tool_call_chunks[0]
             )
-            return True
-        if isinstance(event, langgraph_messages.AIMessage) and event.tool_calls:
-            self.item_resource_helper = item_resource_helpers.FunctionCallItemResourceHelper(
+        elif isinstance(event, langgraph_messages.AIMessage) and event.tool_calls:
+            helper = item_resource_helpers.FunctionCallItemResourceHelper(
                 item_id=id_generator.generate_function_call_id(), tool_call=event.tool_calls[0]
             )
-            return True
-        if isinstance(event, langgraph_messages.AIMessage) and event.content:
-            self.item_resource_helper = item_resource_helpers.MessageItemResourceHelper(
+        elif isinstance(event, langgraph_messages.AIMessage) and event.content:
+            helper = item_resource_helpers.MessageItemResourceHelper(
                 item_id=id_generator.generate_message_id(), role=project_models.ResponsesMessageRole.ASSISTANT
             )
-            return True
-        if isinstance(event, langgraph_messages.HumanMessage) and event.content:
-            self.item_resource_helper = item_resource_helpers.MessageItemResourceHelper(
+        elif isinstance(event, langgraph_messages.HumanMessage) and event.content:
+            helper = item_resource_helpers.MessageItemResourceHelper(
                 item_id=id_generator.generate_message_id(), role=project_models.ResponsesMessageRole.USER
             )
-            return True
-        if isinstance(event, langgraph_messages.SystemMessage) and event.content:
-            self.item_resource_helper = item_resource_helpers.MessageItemResourceHelper(
+        elif isinstance(event, langgraph_messages.SystemMessage) and event.content:
+            helper = item_resource_helpers.MessageItemResourceHelper(
                 item_id=id_generator.generate_message_id(), role=project_models.ResponsesMessageRole.SYSTEM
             )
-            return True
-        if isinstance(event, langgraph_messages.ToolMessage):
-            self.item_resource_helper = item_resource_helpers.FunctionCallOutputItemResourceHelper(
+        elif isinstance(event, langgraph_messages.ToolMessage):
+            helper = item_resource_helpers.FunctionCallOutputItemResourceHelper(
                 item_id=id_generator.generate_function_output_id(), call_id=event.tool_call_id
             )
-            return True
-        if isinstance(event, Interrupt):
-            self.item_resource_helper = item_resource_helpers.FunctionCallInterruptItemResourceHelper(
+        elif isinstance(event, Interrupt):
+            helper = item_resource_helpers.FunctionCallInterruptItemResourceHelper(
                 item_id=id_generator.generate_function_output_id(),
                 hitl_helper=self.hitl_helper,
                 interrupt=event,
             )
-            return True
-        return False
+
+        if helper is None:
+            return False
+
+        self.item_resource_helper = helper
+        return True
 
     def create_child_processor(self, message: Union[AnyMessage, Interrupt]):
+        """Create the child generator for the current item resource type.
+
+        :param message: The originating message or interrupt.
+        :type message: Union[AnyMessage, Interrupt]
+
+        :return: The child generator, if one is required.
+        :rtype: Optional[ResponseEventGenerator]
+        """
         if self.item_resource_helper is None:
             return None
         if self.item_resource_helper.item_type == project_models.ItemType.FUNCTION_CALL:
