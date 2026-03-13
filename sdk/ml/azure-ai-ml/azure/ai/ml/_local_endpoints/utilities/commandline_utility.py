@@ -29,34 +29,33 @@ def run_cli_command(
 
     # We do this join to construct a command because "shell=True" flag, used below, doesn't work with the vector
     # argv form on a mac OS.
-    command_to_execute = " ".join(cmd_arguments)
+    # command_to_execute = " ".join(cmd_arguments)
 
     if not do_not_print:  # Avoid printing the az login service principal password, for example
-        print("Preparing to run CLI command: \n{}\n".format(command_to_execute))
+        print("Preparing to run CLI command: \n{}\n".format(" ".join(cmd_arguments)))
         print("Current directory: {}".format(os.getcwd()))
 
     start_time = time.time()
     try:
         # We redirect stderr to stdout, so that in the case of an error, especially in negative tests,
         # we get the error reply back to check if the error is expected or not.
-        # We need "shell=True" flag so that the "az" wrapper works.
 
         # We also pass the environment variables, because for some tests we modify
         # the environment variables.
 
         subprocess_args = {
-            "shell": True,
+            "shell": False,
             "stderr": subprocess.STDOUT,
             "env": custom_environment,
         }
 
         if not stderr_to_stdout:
-            subprocess_args = {"shell": True, "env": custom_environment}
+            subprocess_args = {"shell": False, "env": custom_environment}
 
         if sys.version_info[0] != 2:
             subprocess_args["timeout"] = timeout
 
-        output = subprocess.check_output(command_to_execute, **subprocess_args).decode(encoding="UTF-8")
+        output = subprocess.check_output(cmd_arguments, **subprocess_args).decode(encoding="UTF-8")
 
         time_taken = time.time() - start_time
         if not do_not_print:
