@@ -1,6 +1,18 @@
+trigger: none
+pr: none
+
+schedules:
+  - cron: "0 22 * * *"
+    displayName: Daily Package Name Registration
+    branches:
+      include:
+        - main
+    always: true
+
 parameters:
   - name: NameForReservation
     type: string
+    default: 'auto'
   - name: VersionForReservation
     type: string
     default: '0.0.0'
@@ -45,14 +57,32 @@ extends:
             runOnce:
               deploy:
                 steps:
-                  - pwsh: |
-                      New-Item -ItemType Directory -Force -Path "$(PUBLISHDIRECTORY)"
+                  - ${{ if eq(parameters.NameForReservation, 'auto') }}:
+                    - pwsh: |
+                        New-Item -ItemType Directory -Force -Path "$(PUBLISHDIRECTORY)"
 
-                      Get-ChildItem -Path "$(Pipeline.Workspace)/NameReservePackage/${{parameters.NameForReservation}}" `
-                        | Where-Object { ($_.Name -like "*.tar.gz" -or $_.Name -like "*.whl") } `
-                        | Copy-Item -Destination "$(PUBLISHDIRECTORY)"
-                      Get-ChildItem "$(PUBLISHDIRECTORY)"
-                    displayName: Isolate files for ESRP Publish
+                        # Auto mode: collect all .tar.gz and .whl from all package subdirectories
+                        $files = Get-ChildItem -Path "$(Pipeline.Workspace)/NameReservePackage" -Recurse `
+                          | Where-Object { ($_.Name -like "*.tar.gz" -or $_.Name -like "*.whl") }
+
+                        if ($files.Count -eq 0) {
+                          Write-Host "No packages found to publish. Skipping."
+                          return
+                        }
+
+                        $files | Copy-Item -Destination "$(PUBLISHDIRECTORY)"
+                        Get-ChildItem "$(PUBLISHDIRECTORY)"
+                      displayName: Isolate files for ESRP Publish
+
+                  - ${{ else }}:
+                    - pwsh: |
+                        New-Item -ItemType Directory -Force -Path "$(PUBLISHDIRECTORY)"
+
+                        Get-ChildItem -Path "$(Pipeline.Workspace)/NameReservePackage/${{parameters.NameForReservation}}" `
+                          | Where-Object { ($_.Name -like "*.tar.gz" -or $_.Name -like "*.whl") } `
+                          | Copy-Item -Destination "$(PUBLISHDIRECTORY)"
+                        Get-ChildItem "$(PUBLISHDIRECTORY)"
+                      displayName: Isolate files for ESRP Publish
 
                   - task: EsrpRelease@9
                     displayName: 'Publish to ESRP'
