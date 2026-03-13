@@ -3,16 +3,16 @@ requires = ["setuptools>=61.0.0", "wheel"]  # Requires 61.0.0 for dynamic versio
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "azure-keyvault-secrets"
+name = "azure-keyvault-securitydomain"
 authors = [
     {name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com"},
 ]
-description = "Microsoft Corporation Key Vault Secrets Client Library for Python"
+description = "Microsoft Corporation Azure Keyvault Securitydomain Client Library for Python"
 keywords = ["azure", "azure sdk"]
 requires-python = ">=3.9"
 license = {text = "MIT License"}
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
+    "Development Status :: 4 - Beta",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
@@ -34,7 +34,7 @@ dynamic = ["version", "readme"]
 repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk"
 
 [tool.setuptools.dynamic]
-version = {attr = "azure.keyvault.secrets._version.VERSION"}
+version = {attr = "azure.keyvault.securitydomain._version.VERSION"}
 readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
 
 [tool.setuptools.packages.find]
@@ -44,11 +44,11 @@ exclude = ["samples*", "tests*", "azure", "azure.keyvault"]
 pytyped = ["py.typed"]
 
 [tool.azure-sdk-build]
+pyright = false
 
 [tool.uv.sources]
 azure-core = { path = "../../core/azure-core" }
 azure-identity = { path = "../../identity/azure-identity" }
-azure-keyvault-nspkg = { path = "../../nspkg/azure-keyvault-nspkg" }
 azure-sdk-tools = { path = "../../../eng/tools/azure-sdk-tools" }
 
 [dependency-groups]
@@ -56,12 +56,5 @@ dev = [
     "aiohttp>=3.0",
     "azure-core",
     "azure-identity",
-    "azure-keyvault-nspkg",
     "azure-sdk-tools",
-    "parameterized>=0.7.3",
-    "python-dateutil>=2.8.0",
 ]
-
-[tool.azure-sdk-conda]
-in_bundle = true
-bundle_name = "azure-keyvault"
