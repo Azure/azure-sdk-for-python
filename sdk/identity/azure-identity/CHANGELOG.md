@@ -1,5 +1,15 @@
 # Release History
 
+## 1.25.4 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.25.3 (2026-03-12)
 
 ### Bugs Fixed
