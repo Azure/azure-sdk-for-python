@@ -41,7 +41,15 @@ module_logger = logging.getLogger(__name__)
 def unzip_to_temporary_file(job_definition: JobBaseData, zip_content: Any) -> Path:
     temp_dir = Path(tempfile.gettempdir(), AZUREML_RUNS_DIR, job_definition.name)
     temp_dir.mkdir(parents=True, exist_ok=True)
+    resolved_temp_dir = temp_dir.resolve()
     with zipfile.ZipFile(io.BytesIO(zip_content)) as zip_ref:
+        for member in zip_ref.namelist():
+            member_path = (resolved_temp_dir / member).resolve()
+            # Ensure the member extracts within temp_dir (allow temp_dir itself for directory entries)
+            if member_path != resolved_temp_dir and not str(member_path).startswith(
+                str(resolved_temp_dir) + os.sep
+            ):
+                raise ValueError(f"Zip archive contains a path traversal entry and cannot be extracted safely: {member}")
         zip_ref.extractall(temp_dir)
     return temp_dir
 
@@ -166,6 +174,38 @@ def is_local_run(job_definition: JobBaseData) -> bool:
     local = job_definition.properties.services.get("Local", None)
     return local is not None and EXECUTION_SERVICE_URL_KEY in local.endpoint
 
+def _safe_tar_extractall(tar: tarfile.TarFile, dest_dir: str) -> None:
+    """Extract tar archive members safely, preventing path traversal (TarSlip).
+
+    On Python 3.12+, uses the built-in 'data' filter. On older versions,
+    manually validates each member to ensure no path traversal, symlinks,
+    or hard links that could write outside the destination directory.
+
+    :param tar: An opened tarfile.TarFile object.
+    :type tar: tarfile.TarFile
+    :param dest_dir: The destination directory for extraction.
+    :type dest_dir: str
+    :raises ValueError: If a tar member would escape the destination directory
+        or contains a symlink/hard link.
+    """
+    resolved_dest = os.path.realpath(dest_dir)
+
+    # Python 3.12+ has built-in data_filter for safe extraction
+    if hasattr(tarfile, "data_filter"):
+        tar.extractall(resolved_dest, filter="data")
+    else:
+        for member in tar.getmembers():
+            if member.issym() or member.islnk():
+                raise ValueError(
+                    f"Tar archive contains a symbolic or hard link and cannot be extracted safely: {member.name}"
+                )
+            member_path = os.path.realpath(os.path.join(resolved_dest, member.name))
+            if member_path != resolved_dest and not member_path.startswith(resolved_dest + os.sep):
+                raise ValueError(
+                    f"Tar archive contains a path traversal entry and cannot be extracted safely: {member.name}"
+                )
+        # All members validated; safe to extract
+        tar.extractall(resolved_dest)
 
 class CommonRuntimeHelper:
     COMMON_RUNTIME_BOOTSTRAPPER_INFO = "common_runtime_bootstrapper_info.json"
@@ -266,8 +306,7 @@ class CommonRuntimeHelper:
                 for chunk in data_stream:
                     f.write(chunk)
             with tarfile.open(tar_file, mode="r") as tar:
-                for file_name in tar.getnames():
-                    tar.extract(file_name, os.path.dirname(path_in_host))
+                _safe_tar_extractall(tar, os.path.dirname(path_in_host))
             os.remove(tar_file)
         except docker.errors.APIError as e:
             msg = f"Copying {path_in_container} from container has failed. Detailed message: {e}"
