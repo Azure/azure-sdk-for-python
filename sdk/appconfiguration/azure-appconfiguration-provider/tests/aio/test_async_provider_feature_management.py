@@ -38,7 +38,7 @@ class TestAppConfigurationProviderFeatureManagement(AppConfigTestCase):
     @AppConfigProviderPreparer()
     @recorded_by_proxy_async
     async def test_select_feature_flags(self, appconfiguration_endpoint_string):
-        client = self.create_aad_sdk_client(appconfiguration_endpoint_string)
+        client = self.create_appconfig_client(appconfiguration_endpoint_string)
         await setup_configs(client, None, None)
 
         credential = self.get_credential(AzureAppConfigurationClient, is_async=True)
