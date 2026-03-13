@@ -6,13 +6,14 @@
 
 """
 DESCRIPTION:
-    Given an AIProjectClient, this sample demonstrates how to upload a custom
-    LLM-based evaluator (FriendlyEvaluator) that uses the common_util helper
-    module.  The evaluator calls Azure OpenAI to judge the friendliness of a
-    response and returns score, label, reason, and explanation.
+    Given an AIProjectClient, this sample demonstrates how to:
+      1. Upload a custom LLM-based evaluator (FriendlyEvaluator) with nested
+         folder structure (common_util/) using `evaluators.upload()`.
+      2. Create an evaluation (eval) that references the uploaded evaluator.
+      3. Run the evaluation with inline data and poll for results.
 
-    This proves that the upload() API can handle nested folder structures
-    (common_util/util.py is uploaded alongside friendly_evaluator.py).
+    The FriendlyEvaluator calls Azure OpenAI to judge the friendliness of a
+    response and returns score, label, reason, and explanation.
 
 USAGE:
     python sample_eval_upload_friendly_evaluator.py
@@ -22,18 +23,29 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0b4" azure-storage-blob python-dotenv azure-identity openai
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint.
+    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint.
+    2) FOUNDRY_MODEL_NAME - Optional. The name of the model deployment to use for evaluation.
 """
 
 import os
+import time
+import random
+import string
 from pathlib import Path
 from pprint import pprint
+
+from dotenv import load_dotenv
+from openai.types.evals.create_eval_jsonl_run_data_source_param import (
+    CreateEvalJSONLRunDataSourceParam,
+    SourceFileContent,
+    SourceFileContentContent,
+)
+from openai.types.eval_create_params import DataSourceConfigCustom
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     CodeBasedEvaluatorDefinition,
     EvaluatorCategory,
-    EvaluatorCredentialRequest,
     EvaluatorMetric,
     EvaluatorMetricType,
     EvaluatorMetricDirection,
@@ -41,11 +53,12 @@ from azure.ai.projects.models import (
     EvaluatorVersion,
 )
 
-from dotenv import load_dotenv
-
 load_dotenv()
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+model_deployment_name = os.environ.get("FOUNDRY_MODEL_NAME")
+suffix = "".join(random.choices(string.ascii_lowercase, k=5))
+evaluator_name = f"friendly_evaluator_{suffix}"
 
 # The folder containing the FriendlyEvaluator code, including common_util/ subfolder
 local_upload_folder = str(Path(__file__).parent / "custom_evaluators" / "friendly_evaluator")
@@ -53,6 +66,7 @@ local_upload_folder = str(Path(__file__).parent / "custom_evaluators" / "friendl
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as client,
 ):
     # ---------------------------------------------------------------
     # 1. Upload evaluator code and create evaluator version
@@ -108,7 +122,7 @@ with (
 
     print("Uploading FriendlyEvaluator (with nested common_util folder)...")
     friendly_evaluator = project_client.beta.evaluators.upload(
-        name="friendly_evaluator",
+        name=evaluator_name,
         evaluator_version=evaluator_version,
         folder=local_upload_folder,
         overwrite=True,
@@ -119,26 +133,112 @@ with (
     pprint(friendly_evaluator)
 
     # ---------------------------------------------------------------
-    # 2. Call getCredentials to verify blob storage access
+    # 2. Create an evaluation referencing the uploaded evaluator
     # ---------------------------------------------------------------
-    blob_uri = friendly_evaluator["definition"]["blob_uri"]
-    print(f"\nCalling getCredentials with blob_uri: {blob_uri}")
-
-    credential_response = project_client.beta.evaluators.get_credentials(
-        name=friendly_evaluator.name,
-        version=friendly_evaluator.version,
-        credential_request=EvaluatorCredentialRequest(blob_uri=blob_uri),
+    data_source_config = DataSourceConfigCustom(
+        {
+            "type": "custom",
+            "item_schema": {
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string"},
+                    "response": {"type": "string"},
+                },
+                "required": ["query", "response"],
+            },
+            "include_sample_schema": True,
+        }
     )
 
-    print("GetCredentials response:")
-    pprint(credential_response)
+    testing_criteria = [
+        {
+            "type": "azure_ai_evaluator",
+            "name": evaluator_name,
+            "evaluator_name": evaluator_name,
+            "initialization_parameters": {
+                "model_config": {
+                    "azure_endpoint": endpoint,
+                    "azure_deployment": f"{model_deployment_name}",
+                },
+            },
+        }
+    ]
+
+    print("\nCreating evaluation...")
+    eval_object = client.evals.create(
+        name=f"Friendliness Evaluation - {suffix}",
+        data_source_config=data_source_config,
+        testing_criteria=testing_criteria,  # type: ignore
+    )
+    print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 
     # ---------------------------------------------------------------
-    # 3. Cleanup: delete the evaluator version
+    # 3. Run the evaluation with inline data
     # ---------------------------------------------------------------
-    print("\nCleaning up - deleting the created evaluator version...")
+    print("\nCreating evaluation run with inline data...")
+    eval_run_object = client.evals.runs.create(
+        eval_id=eval_object.id,
+        name=f"Friendliness Eval Run - {suffix}",
+        metadata={"team": "eval-exp", "scenario": "friendliness-v1"},
+        data_source=CreateEvalJSONLRunDataSourceParam(
+            type="jsonl",
+            source=SourceFileContent(
+                type="file_content",
+                content=[
+                    SourceFileContentContent(
+                        item={
+                            "query": "How do I reset my password?",
+                            "response": "Go to settings and click reset. That's it.",
+                        }
+                    ),
+                    SourceFileContentContent(
+                        item={
+                            "query": "I'm having trouble with my account",
+                            "response": "I'm really sorry to hear you're having trouble! I'd love to help you get this sorted out. Could you tell me a bit more about what's happening so I can assist you better?",
+                        }
+                    ),
+                    SourceFileContentContent(
+                        item={
+                            "query": "Can you help me?",
+                            "response": "Read the docs.",
+                        }
+                    ),
+                    SourceFileContentContent(
+                        item={
+                            "query": "What's the weather like today?",
+                            "response": "Great question! While I'm not a weather service, I'd be happy to suggest some wonderful weather apps that can give you accurate forecasts. Would you like some recommendations? 😊",
+                        }
+                    ),
+                ],
+            ),
+        ),
+    )
+
+    print(f"Evaluation run created (id: {eval_run_object.id})")
+    pprint(eval_run_object)
+
+    # ---------------------------------------------------------------
+    # 4. Poll for evaluation run completion
+    # ---------------------------------------------------------------
+    while True:
+        run = client.evals.runs.retrieve(run_id=eval_run_object.id, eval_id=eval_object.id)
+        if run.status in ("completed", "failed"):
+            print(f"\nEvaluation run finished with status: {run.status}")
+            output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
+            pprint(output_items)
+            print(f"\nEvaluation run Report URL: {run.report_url}")
+            break
+        time.sleep(5)
+        print("Waiting for evaluation run to complete...")
+
+    # ---------------------------------------------------------------
+    # 5. Cleanup (uncomment to delete)
+    # ---------------------------------------------------------------
+    # print("\nCleaning up...")
     # project_client.beta.evaluators.delete_version(
     #     name=friendly_evaluator.name,
     #     version=friendly_evaluator.version,
     # )
-    print("Done - FriendlyEvaluator upload with nested folders verified successfully.")
+    # client.evals.delete(eval_id=eval_object.id)
+    # print("Cleanup done.")
+    print("\nDone - FriendlyEvaluator upload, eval creation, and eval run verified successfully.")

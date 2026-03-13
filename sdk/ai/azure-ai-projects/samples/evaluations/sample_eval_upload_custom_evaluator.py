@@ -6,32 +6,44 @@
 
 """
 DESCRIPTION:
-    Given an AIProjectClient, this sample demonstrates how to upload a local
-    folder containing custom evaluator Python code and register it as a
-    code-based evaluator version using the `evaluators.upload()` method.
-    It then calls getCredentials to verify access to the uploaded blob storage.
+    Given an AIProjectClient, this sample demonstrates how to:
+      1. Upload a local folder containing custom evaluator Python code and
+         register it as a code-based evaluator version using `evaluators.upload()`.
+      2. Create an evaluation (eval) that references the uploaded evaluator.
+      3. Run the evaluation with inline data and poll for results.
 
 USAGE:
     python sample_eval_upload_custom_evaluator.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b4" azure-storage-blob python-dotenv azure-identity
+    pip install "azure-ai-projects>=2.0.0b4" azure-storage-blob python-dotenv azure-identity openai
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
+    2) FOUNDRY_MODEL_NAME - Optional. The name of the model deployment to use for evaluation.
 """
 
 import os
+import time
+import random
+import string
 from pathlib import Path
 from pprint import pprint
+
+from dotenv import load_dotenv
+from openai.types.evals.create_eval_jsonl_run_data_source_param import (
+    CreateEvalJSONLRunDataSourceParam,
+    SourceFileContent,
+    SourceFileContentContent,
+)
+from openai.types.eval_create_params import DataSourceConfigCustom
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     CodeBasedEvaluatorDefinition,
     EvaluatorCategory,
-    EvaluatorCredentialRequest,
     EvaluatorMetric,
     EvaluatorMetricType,
     EvaluatorMetricDirection,
@@ -39,11 +51,12 @@ from azure.ai.projects.models import (
     EvaluatorVersion,
 )
 
-from dotenv import load_dotenv
-
 load_dotenv()
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+model_deployment_name = os.environ.get("FOUNDRY_MODEL_NAME")
+suffix = "".join(random.choices(string.ascii_lowercase, k=5))
+evaluator_name = f"answer_length_evaluator_{suffix}"
 
 # The folder containing the AnswerLength evaluator code, relative to this sample file.
 local_upload_folder = str(Path(__file__).parent / "custom_evaluators" / "answer_length_evaluator")
@@ -51,6 +64,7 @@ local_upload_folder = str(Path(__file__).parent / "custom_evaluators" / "answer_
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as client,
 ):
     # ---------------------------------------------------------------
     # 1. Upload evaluator code and create evaluator version
@@ -91,7 +105,7 @@ with (
 
     print("Uploading custom evaluator code and creating evaluator version...")
     code_evaluator = project_client.beta.evaluators.upload(
-        name="answer_length_evaluator",
+        name=evaluator_name,
         evaluator_version=evaluator_version,
         folder=local_upload_folder,
         overwrite=True,
@@ -102,26 +116,109 @@ with (
     pprint(code_evaluator)
 
     # ---------------------------------------------------------------
-    # 2. Call getCredentials to verify access to the uploaded blob
+    # 2. Create an evaluation referencing the uploaded evaluator
     # ---------------------------------------------------------------
-    blob_uri = code_evaluator["definition"]["blob_uri"]
-    print(f"\nCalling getCredentials with blob_uri: {blob_uri}")
-
-    credential_response = project_client.beta.evaluators.get_credentials(
-        name=code_evaluator.name,
-        version=code_evaluator.version,
-        credential_request=EvaluatorCredentialRequest(blob_uri=blob_uri),
+    data_source_config = DataSourceConfigCustom(
+        {
+            "type": "custom",
+            "item_schema": {
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string"},
+                    "response": {"type": "string"},
+                },
+                "required": ["query", "response"],
+            },
+            "include_sample_schema": True,
+        }
     )
 
-    print("GetCredentials response:")
-    pprint(credential_response)
+    testing_criteria = [
+        {
+            "type": "azure_ai_evaluator",
+            "name": evaluator_name,
+            "evaluator_name": evaluator_name,
+            "initialization_parameters": {
+                "model_config": f"{model_deployment_name}",
+            },
+        }
+    ]
+
+    print("\nCreating evaluation...")
+    eval_object = client.evals.create(
+        name=f"Answer Length Evaluation - {suffix}",
+        data_source_config=data_source_config,
+        testing_criteria=testing_criteria,  # type: ignore
+    )
+    print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 
     # ---------------------------------------------------------------
-    # 3. Cleanup: delete the evaluator version
+    # 3. Run the evaluation with inline data
     # ---------------------------------------------------------------
-    print("\nCleaning up - deleting the created evaluator version...")
+    print("\nCreating evaluation run with inline data...")
+    eval_run_object = client.evals.runs.create(
+        eval_id=eval_object.id,
+        name=f"Answer Length Eval Run - {suffix}",
+        metadata={"team": "eval-exp", "scenario": "answer-length-v1"},
+        data_source=CreateEvalJSONLRunDataSourceParam(
+            type="jsonl",
+            source=SourceFileContent(
+                type="file_content",
+                content=[
+                    SourceFileContentContent(
+                        item={
+                            "query": "What is the capital of France?",
+                            "response": "Paris",
+                        }
+                    ),
+                    SourceFileContentContent(
+                        item={
+                            "query": "Explain quantum computing",
+                            "response": "Quantum computing leverages quantum mechanical phenomena like superposition and entanglement to process information in fundamentally different ways than classical computers.",
+                        }
+                    ),
+                    SourceFileContentContent(
+                        item={
+                            "query": "What is AI?",
+                            "response": "AI stands for Artificial Intelligence. It is a branch of computer science that aims to create intelligent machines that can perform tasks that typically require human intelligence, such as visual perception, speech recognition, decision-making, and language translation.",
+                        }
+                    ),
+                    SourceFileContentContent(
+                        item={
+                            "query": "Say hello",
+                            "response": "Hi!",
+                        }
+                    ),
+                ],
+            ),
+        ),
+    )
+
+    print(f"Evaluation run created (id: {eval_run_object.id})")
+    pprint(eval_run_object)
+
+    # ---------------------------------------------------------------
+    # 4. Poll for evaluation run completion
+    # ---------------------------------------------------------------
+    while True:
+        run = client.evals.runs.retrieve(run_id=eval_run_object.id, eval_id=eval_object.id)
+        if run.status in ("completed", "failed"):
+            print(f"\nEvaluation run finished with status: {run.status}")
+            output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
+            pprint(output_items)
+            print(f"\nEvaluation run Report URL: {run.report_url}")
+            break
+        time.sleep(5)
+        print("Waiting for evaluation run to complete...")
+
+    # ---------------------------------------------------------------
+    # 5. Cleanup (uncomment to delete)
+    # ---------------------------------------------------------------
+    # print("\nCleaning up...")
     # project_client.beta.evaluators.delete_version(
     #     name=code_evaluator.name,
     #     version=code_evaluator.version,
     # )
-    print("Done - upload and getCredentials verified successfully.")
+    # client.evals.delete(eval_id=eval_object.id)
+    # print("Cleanup done.")
+    print("\nDone - upload, eval creation, and eval run verified successfully.")
