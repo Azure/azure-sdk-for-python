@@ -71,7 +71,11 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
     async def _run_hybrid_search(self):  # pylint: disable=too-many-branches, too-many-statements
         # Check if we need to run global statistics queries, and if so do for every partition in the container
         if self._hybrid_search_query_info['requiresGlobalStatistics']:
-            target_partition_key_ranges = await self._get_target_partition_key_range(target_all_ranges=True)
+            # When FullTextScoreScope is "Local", use only target ranges for statistics.
+            # When "Global" (default), use all ranges.
+            full_text_score_scope = self._options.get("fullTextScoreScope", "Global")
+            use_all_ranges = full_text_score_scope != "Local"
+            target_partition_key_ranges = await self._get_target_partition_key_range(target_all_ranges=use_all_ranges)
             global_statistics_doc_producers = []
             global_statistics_query = self._attach_parameters(self._hybrid_search_query_info['globalStatisticsQuery'])
 
@@ -100,7 +104,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
                     if exceptions._partition_range_is_gone(e):
                         # repairing document producer context on partition split
                         global_statistics_doc_producers = await self._repair_document_producer(global_statistics_query,
-                                                                                               target_all_ranges=True)
+                                                                                               target_all_ranges=use_all_ranges)
                     else:
                         raise
                 except StopAsyncIteration:

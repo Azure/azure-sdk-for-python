@@ -746,6 +746,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             enable_cross_partition_query: Optional[bool] = None,
             max_item_count: Optional[int] = None,
             enable_scan_in_query: Optional[bool] = None,
+            full_text_score_scope: Optional[Literal["Local", "Global"]] = None,
             populate_query_metrics: Optional[bool] = None,
             *,
             continuation_token_limit: Optional[int] = None,
@@ -782,6 +783,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :param bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
+        :param Literal["Local", "Global"] full_text_score_scope: Sets the scope for computing BM25 statistics used
+            by FullTextScore in hybrid search queries. When set to "Global" (default), BM25 statistics are computed
+            across all documents in the container. When set to "Local", statistics are computed only over the subset
+            of documents within the partition key values specified in the query.
         :param bool populate_query_metrics: Enable returning query metrics in response headers.
         :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
             existing indexes and how it could use potential new indexes. Please note that this option will incur
@@ -846,6 +851,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             initial_headers: Optional[dict[str, str]] = None,
             max_integrated_cache_staleness_in_ms: Optional[int] = None,
             max_item_count: Optional[int] = None,
+            full_text_score_scope: Optional[Literal["Local", "Global"]] = None,
             parameters: Optional[list[dict[str, object]]] = None,
             populate_index_metrics: Optional[bool] = None,
             populate_query_metrics: Optional[bool] = None,
@@ -883,6 +889,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword Literal["Local", "Global"] full_text_score_scope: Sets the scope for computing BM25 statistics used
+            by FullTextScore in hybrid search queries. When set to "Global" (default), BM25 statistics are computed
+            across all documents in the container. When set to "Local", statistics are computed only over the subset
+            of documents within the partition key values specified in the query.
         :keyword parameters: Optional array of parameters to the query.
             Each parameter is a dict() with 'name' and 'value' keys.
             Ignored if no query is provided.
@@ -968,6 +978,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             None, it will perform a cross partition query. To learn more about using partition keys, see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
         :paramtype partition_key: ~azure.cosmos.partition_key.PartitionKeyType
+        :keyword Literal["Local", "Global"] full_text_score_scope: Sets the scope for computing BM25 statistics used
+            by FullTextScore in hybrid search queries. When set to "Global" (default), BM25 statistics are computed
+            across all documents in the container. When set to "Local", statistics are computed only over the subset
+            of documents within the partition key values specified in the query.
         :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
             existing indexes and how it could use potential new indexes. Please note that this option will incur
             overhead, so it should be enabled only when debugging slow queries.
@@ -1035,6 +1049,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
         if utils.valid_key_value_exist(kwargs, "continuation_token_limit"):
             feed_options["responseContinuationTokenLimitInKb"] = kwargs.pop("continuation_token_limit")
+        if utils.valid_key_value_exist(kwargs, "full_text_score_scope"):
+            feed_options["fullTextScoreScope"] = kwargs.pop("full_text_score_scope")
 
         # populate availability_strategy
         if (Constants.Kwargs.AVAILABILITY_STRATEGY in feed_options
