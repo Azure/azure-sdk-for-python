@@ -16,7 +16,10 @@ from .._red_team_result import RedTeamResult
 
 
 def message_to_dict(
-    message: ChatMessage, context: str = None, tool_calls: List[Any] = None, token_usage: Dict[str, Any] = None
+    message: ChatMessage,
+    context: str = None,
+    tool_calls: List[Any] = None,
+    token_usage: Dict[str, Any] = None,
 ) -> Dict[str, Any]:
     """Convert a ChatMessage and context to dictionary format.
 
@@ -31,7 +34,12 @@ def message_to_dict(
     :return: Dictionary representation with role and content
     :rtype: Dict[str, Any]
     """
-    msg_dict = {"role": message.role, "content": message.content, "context": context, "tool_calls": tool_calls}
+    msg_dict = {
+        "role": message.role,
+        "content": message.content,
+        "context": context,
+        "tool_calls": tool_calls,
+    }
     if token_usage:
         msg_dict["token_usage"] = token_usage
     return msg_dict
@@ -295,7 +303,7 @@ def write_pyrit_outputs_to_file(
     if os.path.exists(output_path):
         existing_line_count = 0
         try:
-            with open(output_path, "r") as existing_file:
+            with open(output_path, "r", encoding="utf-8") as existing_file:
                 existing_line_count = sum(1 for _ in existing_file)
 
             if len(conversations) > existing_line_count:
@@ -312,7 +320,10 @@ def write_pyrit_outputs_to_file(
                         "conversation": {
                             "messages": [
                                 message_to_dict(
-                                    message[0], message[1], message[2], message[4] if len(message) > 4 else None
+                                    message[0],
+                                    message[1],
+                                    message[2],
+                                    message[4] if len(message) > 4 else None,
                                 )
                                 for message in conversation
                             ]
@@ -324,7 +335,7 @@ def write_pyrit_outputs_to_file(
                         if risk_sub_type:
                             conv_dict["risk_sub_type"] = risk_sub_type
                     json_lines += json.dumps(conv_dict) + "\n"
-                with Path(output_path).open("w") as f:
+                with Path(output_path).open("w", encoding="utf-8") as f:
                     f.writelines(json_lines)
                 logger.debug(
                     f"Successfully wrote {len(conversations)-existing_line_count} new conversation(s) to {output_path}"
@@ -348,7 +359,12 @@ def write_pyrit_outputs_to_file(
             conv_dict = {
                 "conversation": {
                     "messages": [
-                        message_to_dict(message[0], message[1], message[2], message[4] if len(message) > 4 else None)
+                        message_to_dict(
+                            message[0],
+                            message[1],
+                            message[2],
+                            message[4] if len(message) > 4 else None,
+                        )
                         for message in conversation
                     ]
                 }
@@ -359,7 +375,7 @@ def write_pyrit_outputs_to_file(
                 if risk_sub_type:
                     conv_dict["risk_sub_type"] = risk_sub_type
             json_lines += json.dumps(conv_dict) + "\n"
-        with Path(output_path).open("w") as f:
+        with Path(output_path).open("w", encoding="utf-8") as f:
             f.writelines(json_lines)
         logger.debug(f"Successfully wrote {len(conversations)} conversations to {output_path}")
     return str(output_path)

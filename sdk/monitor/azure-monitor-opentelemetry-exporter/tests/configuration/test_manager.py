@@ -13,13 +13,12 @@ from azure.monitor.opentelemetry.exporter._configuration._utils import OneSettin
 from azure.monitor.opentelemetry.exporter._constants import (
     _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
     _ONE_SETTINGS_MAX_REFRESH_INTERVAL_SECONDS,
-    _ONE_SETTINGS_PYTHON_KEY,
     _ONE_SETTINGS_CHANGE_URL,
     _ONE_SETTINGS_CONFIG_URL,
-    _RETRYABLE_STATUS_CODES,
 )
 
 
+# pylint: disable=unused-argument, too-many-public-methods
 class TestConfigurationState(unittest.TestCase):
     """Test cases for _ConfigurationState immutable data class."""
 
@@ -207,7 +206,7 @@ class TestConfigurationManager(unittest.TestCase):
         def mock_request_side_effect(url, query_dict, headers=None):
             if url == _ONE_SETTINGS_CHANGE_URL:
                 return change_response
-            elif url == _ONE_SETTINGS_CONFIG_URL:
+            if url == _ONE_SETTINGS_CONFIG_URL:
                 return config_response
             return OneSettingsResponse()
 
@@ -308,7 +307,7 @@ class TestConfigurationManager(unittest.TestCase):
         def first_call_side_effect(url, query_dict, headers=None):
             if url == _ONE_SETTINGS_CHANGE_URL:
                 return first_response
-            elif url == _ONE_SETTINGS_CONFIG_URL:
+            if url == _ONE_SETTINGS_CONFIG_URL:
                 return config_response
             return OneSettingsResponse()
 

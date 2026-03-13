@@ -45,7 +45,7 @@ from azure.ai.language.conversations.models import (
 )
 
 
-def sample_conversation_prediction_with_options():
+def sample_conv_prediction_options():
     # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     project_name = os.environ["AZURE_CONVERSATIONS_PROJECT_NAME"]
@@ -111,7 +111,7 @@ def sample_conversation_prediction_with_options():
 
 
 def main():
-    sample_conversation_prediction_with_options()
+    sample_conv_prediction_options()
 
 
 if __name__ == "__main__":

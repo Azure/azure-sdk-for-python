@@ -18,6 +18,6 @@ class ProfanityFilterMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     REMOVED = "Removed"
     """Remove profanity."""
     TAGS = "Tags"
-    """Add "profanity" XML tags</Profanity>"""
+    """Add "profanity" XML tags</Profanity>."""
     MASKED = "Masked"
-    """Mask the profanity with * except of the first letter, e.g., f***"""
+    """Mask the profanity with * except of the first letter, e.g., f***."""

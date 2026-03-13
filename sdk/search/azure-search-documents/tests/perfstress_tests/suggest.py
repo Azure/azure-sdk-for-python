@@ -18,12 +18,8 @@ class SuggestTest(PerfStressTest):
         service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
         index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
         key = os.getenv("AZURE_SEARCH_API_KEY")
-        self.service_client = SyncClient(
-            service_endpoint, index_name, AzureKeyCredential(api_key)
-        )
-        self.async_service_client = AsyncClient(
-            service_endpoint, index_name, AzureKeyCredential(api_key)
-        )
+        self.service_client = SyncClient(service_endpoint, index_name, AzureKeyCredential(api_key))
+        self.async_service_client = AsyncClient(service_endpoint, index_name, AzureKeyCredential(api_key))
 
     async def close(self):
         await self.async_service_client.close()
@@ -42,23 +38,15 @@ class SuggestTest(PerfStressTest):
 
     def run_sync(self):
         if self.args.num_documents == -1:
-            results = len(
-                self.service_client.suggest(search_text="mot", suggester_name="sg")
-            )
+            results = len(self.service_client.suggest(search_text="mot", suggester_name="sg"))
         else:
             results = len(
-                self.service_client.suggest(
-                    search_text="mot", suggester_name="sg", top=self.args.num_documents
-                )
+                self.service_client.suggest(search_text="mot", suggester_name="sg", top=self.args.num_documents)
             )
 
     async def run_async(self):
         if self.args.num_documents == -1:
-            results = len(
-                await self.async_service_client.suggest(
-                    search_text="mot", suggester_name="sg"
-                )
-            )
+            results = len(await self.async_service_client.suggest(search_text="mot", suggester_name="sg"))
         else:
             results = len(
                 await self.async_service_client.suggest(

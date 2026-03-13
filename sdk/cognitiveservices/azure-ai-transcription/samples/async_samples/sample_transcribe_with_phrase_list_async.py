@@ -9,9 +9,17 @@
 FILE: sample_transcribe_with_phrase_list_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to asynchronously transcribe an audio file with a
-    custom phrase list to improve recognition accuracy for domain-specific terminology
-    using the Azure AI Transcription client.
+    This sample demonstrates how to use custom phrase lists to improve transcription
+    accuracy with the asynchronous Azure AI Transcription client.
+
+    A phrase list allows you to provide domain-specific terms, product names,
+    technical jargon, or other words that may not be well-recognized by the
+    default speech model. This improves accuracy for specialized content.
+
+    For example, without a phrase list:
+    - "Jessie" might be recognized as "Jesse"
+    - "Rehaan" might be recognized as "everyone"
+    - "Contoso" might be recognized as "can't do so"
 
 USAGE:
     python sample_transcribe_with_phrase_list_async.py
@@ -23,9 +31,11 @@ USAGE:
 
 import asyncio
 import os
+import pathlib
 
 
 async def sample_transcribe_with_phrase_list_async():
+    """Transcribe audio with a custom phrase list to improve recognition accuracy."""
     # [START transcribe_with_phrase_list_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.transcription.aio import TranscriptionClient
@@ -37,33 +47,31 @@ async def sample_transcribe_with_phrase_list_async():
 
     # Get configuration from environment variables
     endpoint = os.environ["AZURE_SPEECH_ENDPOINT"]
-    api_key = os.environ["AZURE_SPEECH_API_KEY"]
+
+    # We recommend using role-based access control (RBAC) for production scenarios
+    api_key = os.environ.get("AZURE_SPEECH_API_KEY")
+    if api_key:
+        credential = AzureKeyCredential(api_key)
+    else:
+        from azure.identity.aio import DefaultAzureCredential
+
+        credential = DefaultAzureCredential()
 
     # Create the transcription client
-    async with TranscriptionClient(endpoint=endpoint, credential=AzureKeyCredential(api_key)) as client:
+    async with TranscriptionClient(endpoint=endpoint, credential=credential) as client:
         # Path to your audio file with domain-specific terminology
-        import pathlib
-
         audio_file_path = pathlib.Path(__file__).parent.parent / "assets" / "audio.wav"
 
         # Open and read the audio file
         with open(audio_file_path, "rb") as audio_file:
-            # Create a phrase list with custom terminology
-            # This helps improve recognition accuracy for specific words
+            # Add custom phrases to improve recognition of names and domain-specific terms
+            # For example, "Jessie" might be recognized as "Jesse", or "Contoso" as "can't do so"
             phrase_list = PhraseListProperties(
-                phrases=[
-                    "Azure",
-                    "Cognitive Services",
-                    "Speech SDK",
-                    "TranscriptionClient",
-                    "Kubernetes",
-                    "microservices",
-                ],
-                biasing_weight=5.0,  # Weight between 1.0 and 20.0 (higher = more bias)
+                phrases=["Contoso", "Jessie", "Rehaan"]
             )
 
             # Create transcription options with phrase list
-            options = TranscriptionOptions(locales=["en-US"], phrase_list=phrase_list)
+            options = TranscriptionOptions(phrase_list=phrase_list)
 
             # Create the request content
             request_content = TranscriptionContent(definition=options, audio=audio_file)
@@ -73,13 +81,7 @@ async def sample_transcribe_with_phrase_list_async():
 
             # Print the transcription result
             print("Transcription with custom phrase list:")
-            print(f"{result.combined_phrases[0].text}")
-
-            # Print individual phrases if available
-            if result.phrases:
-                print("\nDetailed phrases:")
-                for phrase in result.phrases:
-                    print(f"  [{phrase.offset_milliseconds}ms]: {phrase.text}")
+            print(result.combined_phrases[0].text)
     # [END transcribe_with_phrase_list_async]
 
 

@@ -10,7 +10,7 @@ from azure.core.credentials import TokenCredential
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
-from ._generated import ContainerRegistry
+from ._generated import ContainerRegistryClient as ContainerRegistry
 from ._generated.models import PostContentSchemaGrantType
 from ._generated.operations._patch import AuthenticationOperations
 from ._helpers import _parse_challenge, _parse_exp_time
@@ -46,8 +46,8 @@ class ACRExchangeClient(object):
         self._endpoint = endpoint
         self.credential_scopes = kwargs.get("credential_scopes", ["https://management.core.windows.net/.default"])
         self._client = ContainerRegistry(
+            endpoint=endpoint,
             credential=credential,
-            url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=ExchangeClientAuthenticationPolicy(),
             **kwargs

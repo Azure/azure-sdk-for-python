@@ -110,12 +110,11 @@ class _TranscriptionClientOperationsMixin(
         _body = body.as_dict() if isinstance(body, _Model) else body
         _file_fields: list[str] = ["audio"]
         _data_fields: list[str] = ["definition"]
-        _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
+        _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
         _request = build_transcription_transcribe_request(
             api_version=self._config.api_version,
             files=_files,
-            data=_data,
             headers=_headers,
             params=_params,
         )

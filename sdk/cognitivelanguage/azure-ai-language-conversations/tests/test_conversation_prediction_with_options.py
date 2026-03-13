@@ -1,23 +1,18 @@
 import functools
-import pytest
+from typing import cast
 
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 from azure.ai.language.conversations import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
-    AnalyzeConversationOperationInput,
     ConversationActionContent,
     ConversationAnalysisInput,
     TextConversationItem,
     ConversationActionResult,
     ConversationPrediction,
-    ConversationIntent,
-    ConversationEntity,
     StringIndexType,
-    ResolutionBase,
     DateTimeResolution,
     ConversationLanguageUnderstandingInput,
 )
-from typing import cast
 
 from azure.core.credentials import AzureKeyCredential
 

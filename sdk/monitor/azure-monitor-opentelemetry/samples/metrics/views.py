@@ -4,10 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from azure.monitor.opentelemetry import configure_azure_monitor
 from opentelemetry import metrics
 from opentelemetry.sdk.metrics import Counter
 from opentelemetry.sdk.metrics.view import View
+from azure.monitor.opentelemetry import configure_azure_monitor
 
 # Create a view matching the counter instrument `my.counter`
 # and configure the new name `my.counter.total` for the result metrics stream

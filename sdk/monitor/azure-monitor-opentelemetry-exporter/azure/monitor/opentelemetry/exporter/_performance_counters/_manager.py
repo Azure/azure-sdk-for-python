@@ -9,7 +9,7 @@ import psutil
 
 from opentelemetry import metrics
 from opentelemetry.metrics import CallbackOptions, Observation
-from opentelemetry.sdk._logs import ReadableLogRecord
+from opentelemetry.sdk._logs import ReadWriteLogRecord
 from opentelemetry.sdk.trace import ReadableSpan
 from opentelemetry.semconv.attributes.exception_attributes import (
     EXCEPTION_MESSAGE,
@@ -49,8 +49,22 @@ NUM_CPUS = psutil.cpu_count()
 _IO_AVAILABLE = hasattr(_PROCESS, "io_counters")
 _IO_LAST_COUNT = 0
 if _IO_AVAILABLE:
-    _io_counters_initial = _PROCESS.io_counters()
-    _IO_LAST_COUNT = _io_counters_initial.read_bytes + _io_counters_initial.write_bytes
+    try:
+        _io_counters_initial = _PROCESS.io_counters()
+        _IO_LAST_COUNT = _io_counters_initial.read_bytes + _io_counters_initial.write_bytes
+    except (  # pylint: disable=broad-exception-caught
+        psutil.NoSuchProcess,
+        psutil.AccessDenied,
+        AttributeError,
+        Exception,
+    ) as e:
+        _logger.exception(
+            "Performance counter %s is unavailable due to an error while initializing process I/O counters: %s",
+            _PROCESS_IO_RATE[0],
+            e,
+        )
+        _IO_AVAILABLE = False
+        _IO_LAST_COUNT = 0
 _IO_LAST_TIME = datetime.now()
 # Processor Time %
 _LAST_CPU_TIMES = psutil.cpu_times()
@@ -62,7 +76,7 @@ _LAST_EXCEPTION_RATE_TIME = datetime.now()
 _EXCEPTIONS_COUNT = 0
 
 
-#  pylint: disable=unused-argument
+#  pylint: disable=unused-argument, do-not-use-logging-exception, do-not-log-exceptions-if-not-debug
 def _get_process_cpu(options: CallbackOptions) -> Iterable[Observation]:
     """Get process CPU usage as a percentage.
 
@@ -630,13 +644,13 @@ class _PerformanceCountersManager(metaclass=Singleton):
         except Exception:  # pylint: disable=broad-except
             _logger.exception("Exception occurred while recording span.")  # pylint: disable=C4769
 
-    def _record_log_record(self, readable_log_record: ReadableLogRecord) -> None:
+    def _record_log_record(self, read_write_log_record: ReadWriteLogRecord) -> None:
         try:
             # pylint: disable=global-statement
             global _EXCEPTIONS_COUNT
-            if readable_log_record.log_record:
+            if read_write_log_record.log_record:
                 exc_type = None
-                log_record = readable_log_record.log_record
+                log_record = read_write_log_record.log_record
                 if log_record.attributes:
                     exc_type = log_record.attributes.get(EXCEPTION_TYPE)
                     exc_message = log_record.attributes.get(EXCEPTION_MESSAGE)

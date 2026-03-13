@@ -4,13 +4,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from typing import List
+from testcase import AppConfigTestCase
 from azure.appconfiguration.aio import AzureAppConfigurationClient
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import ResourceExistsError
-from testcase import AppConfigTestCase
-from typing import List
 
 
+# pylint: disable=invalid-overridden-method
 class AsyncAppConfigTestCase(AppConfigTestCase):
     def create_aad_client(self, appconfiguration_endpoint_string, audience=None):
         cred = self.get_credential(AzureAppConfigurationClient, is_async=True)
@@ -46,7 +47,7 @@ class AsyncAppConfigTestCase(AppConfigTestCase):
             async for snapshot in snapshots:
                 try:
                     await self.client.archive_snapshot(name=snapshot.name)
-                except Exception:
+                except Exception:  # pylint:disable=broad-except
                     pass
 
             # Delete all configuration settings

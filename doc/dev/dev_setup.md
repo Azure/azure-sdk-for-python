@@ -33,11 +33,10 @@ or execute the various commands available in the toolbox.
 
 4. Setup your development environment
 
-    Install the development requirements for a specific library (located in the `dev_requirements.txt` file at the root of the library), [Tox][tox] and an editable install of your library. For example, to install requirements for `azure-ai-formrecognizer`:
+    Install the development requirements for a specific library (located in the `dev_requirements.txt` file at the root of the library) and an editable install of your library. This will also install `azure-sdk-tools` which provides the `azpysdk` CLI for running checks. For example, to install requirements for `azure-ai-formrecognizer`:
     ```
     azure-sdk-for-python> cd sdk/formrecognizer/azure-ai-formrecognizer
     azure-sdk-for-python/sdk/formrecognizer/azure-ai-formrecognizer> pip install -r dev_requirements.txt
-    azure-sdk-for-python/sdk/formrecognizer/azure-ai-formrecognizer> pip install "tox<5"
     azure-sdk-for-python/sdk/formrecognizer/azure-ai-formrecognizer> pip install -e .
     ```
 
@@ -54,5 +53,4 @@ After following the steps above, you'll be able to run recorded SDK tests with `
 [python_website]: https://www.python.org/downloads/
 [python_312]: https://apps.microsoft.com/detail/9ncvdn91xzqp
 [tests]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md
-[tox]: https://tox.wiki/en/latest/
 [virtual_environment]: https://docs.python.org/3/tutorial/venv.html
