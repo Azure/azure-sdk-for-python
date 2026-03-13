@@ -506,17 +506,18 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_hybrid_search_with_full_text_score_scope_local_partition_key_async(self):
         """Test that full_text_score_scope='Local' works with a specific partition key."""
-        query = "SELECT TOP 10 c.index, c.title FROM c WHERE FullTextContains(c.title, 'John') OR " \
+        query = "SELECT TOP 10 c.index, c.title, c.pk FROM c WHERE FullTextContains(c.title, 'John') OR " \
                 "FullTextContains(c.text, 'John') ORDER BY RANK FullTextScore(c.title, 'John')"
 
         # With Local scope and partition key, statistics are scoped to just that partition
-        results_local = self.test_container.query_items(query, partition_key='1',
+        results_local = self.test_container.query_items(query, partition_key='2',
                                                         full_text_score_scope="Local")
         result_list_local = [res async for res in results_local]
-        # Should return results only from partition key '1'
-        assert len(result_list_local) > 0
+        # Only index=2 has pk='1' among the 'John' matches (57 and 85 have pk='2')
+        assert len(result_list_local) == 1
         for res in result_list_local:
-            assert res['index'] in [2, 85, 57]
+            assert res['pk'] == '2'
+            assert res['index'] == 2
 
     async def test_hybrid_search_rrf_with_full_text_score_scope_local_async(self):
         """Test RRF hybrid search with Local scope returns valid results."""

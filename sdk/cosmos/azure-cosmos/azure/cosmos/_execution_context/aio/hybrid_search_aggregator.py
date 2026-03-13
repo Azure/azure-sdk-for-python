@@ -103,8 +103,10 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
                 except exceptions.CosmosHttpResponseError as e:
                     if exceptions._partition_range_is_gone(e):
                         # repairing document producer context on partition split
-                        global_statistics_doc_producers = await self._repair_document_producer(global_statistics_query,
-                                                                                               target_all_ranges=use_all_ranges)
+                        global_statistics_doc_producers = await self._repair_document_producer(
+                            global_statistics_query,
+                            target_all_ranges=use_all_ranges
+                        )
                     else:
                         raise
                 except StopAsyncIteration:

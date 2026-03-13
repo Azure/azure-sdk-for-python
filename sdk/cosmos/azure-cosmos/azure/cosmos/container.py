@@ -939,7 +939,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         ...
 
     @distributed_trace
-    def query_items(  # pylint:disable=docstring-missing-param
+    def query_items(  # pylint:disable=docstring-missing-param,too-many-statements
         self,
         *args: Any,
         **kwargs: Any
