@@ -15,7 +15,7 @@ from azure.mgmt.durabletask import DurableTaskMgmtClient
     pip install azure-identity
     pip install azure-mgmt-durabletask
 # USAGE
-    python task_hubs_get.py
+    python private_endpoint_connections_list_maximum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.task_hubs.get(
-        resource_group_name="rgopenapi",
+    response = client.schedulers.list_private_endpoint_connections(
+        resource_group_name="rgdurabletask",
         scheduler_name="testscheduler",
-        task_hub_name="testtaskhub",
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2026-02-01/TaskHubs_Get.json
+# x-ms-original-file: 2026-02-01/PrivateEndpointConnections_List_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
