@@ -1,6 +1,7 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
+import re
 import unittest
 import uuid
 
@@ -220,7 +221,9 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
             pytest.fail("Container creation should have failed for invalid path.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "The Full Text Policy contains an invalid Path: abstract" in e.http_error_message
+            assert re.search(
+                    r"the full.text policy contains an invalid path.*abstract",
+                    e.http_error_message, re.IGNORECASE)
 
         # Pass a full text policy with an unsupported default language
         full_text_policy_wrong_default = {
@@ -293,8 +296,9 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
             # pytest.fail("Container creation should have failed for lack of embedding policy.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "The path of the Full Text Index /path does not match the path specified in the Full Text Policy" \
-                   in e.http_error_message
+            assert re.search(
+                    r"the path of the full.text index.*does not match the path specified in the full.text policy",
+                    e.http_error_message, re.IGNORECASE)
 
         # Pass a full text indexing policy with a wrongly formatted path
         indexing_policy_wrong_path = {
