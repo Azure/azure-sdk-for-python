@@ -41,6 +41,7 @@ from ._serialize import (
     get_source_access_conditions
 )
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from ._shared.constants import DEFAULT_MAX_CONCURRENCY
 from ._shared.request_handlers import add_metadata_headers, get_length
 from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._shared.uploads import IterStreamer, FileChunkUploader, upload_data_chunks
@@ -594,7 +595,9 @@ class ShareFileClient(StorageAccountHostsMixin):
         """
         metadata = kwargs.pop('metadata', None)
         content_settings = kwargs.pop('content_settings', None)
-        max_concurrency = kwargs.pop('max_concurrency', 1)
+        max_concurrency = kwargs.pop('max_concurrency', None)
+        if max_concurrency is None:
+            max_concurrency = DEFAULT_MAX_CONCURRENCY
         validate_content = kwargs.pop('validate_content', False)
         progress_hook = kwargs.pop('progress_hook', None)
         timeout = kwargs.pop('timeout', None)
