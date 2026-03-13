@@ -14,8 +14,8 @@ from starlette.routing import Route
 
 from ._constants import Constants
 from ._logger import get_logger
-from ._tracing import TracingHelper
-from ._openapi_validator import OpenApiValidator
+from ._tracing import _TracingHelper
+from ._openapi_validator import _OpenApiValidator
 from ._invocation import _InvocationProtocol
 from ._server_context import _ServerContext
 from . import _config
@@ -123,8 +123,8 @@ class AgentServer:  # pylint: disable=too-many-instance-attributes
         _validation_on = _config.resolve_bool_feature(
             enable_request_validation, Constants.AGENT_ENABLE_REQUEST_VALIDATION
         )
-        validator: Optional[OpenApiValidator] = (
-            OpenApiValidator(openapi_spec)
+        validator: Optional[_OpenApiValidator] = (
+            _OpenApiValidator(openapi_spec)
             if openapi_spec and _validation_on
             else None
         )
@@ -134,8 +134,8 @@ class AgentServer:  # pylint: disable=too-many-instance-attributes
         _conn_str = _config.resolve_appinsights_connection_string(
             application_insights_connection_string
         ) if _tracing_on else None
-        self._tracing: Optional[TracingHelper] = (
-            TracingHelper(connection_string=_conn_str) if _tracing_on else None
+        self._tracing: Optional[_TracingHelper] = (
+            _TracingHelper(connection_string=_conn_str) if _tracing_on else None
         )
 
         # Timeouts ---------------------------------------------------------

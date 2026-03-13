@@ -205,3 +205,12 @@ def resolve_agent_version() -> str:
     :rtype: str
     """
     return os.environ.get(Constants.AGENT_VERSION, "")
+
+
+def resolve_project_id() -> str:
+    """Resolve the Foundry project ID from the ``AGENT_PROJECT_NAME`` environment variable.
+
+    :return: The project ID, or an empty string if not set.
+    :rtype: str
+    """
+    return os.environ.get(Constants.AGENT_PROJECT_NAME, "")

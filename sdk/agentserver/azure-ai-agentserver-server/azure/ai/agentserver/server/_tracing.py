@@ -28,6 +28,8 @@ from contextlib import contextmanager
 from collections.abc import AsyncIterable, AsyncIterator, Mapping  # pylint: disable=import-error
 from typing import TYPE_CHECKING, Any, Iterator, Optional, Union
 
+from . import _config
+from ._constants import Constants
 from ._logger import get_logger
 
 #: Starlette's ``Content`` type — the element type for streaming bodies.
@@ -38,6 +40,19 @@ _W3C_HEADERS = ("traceparent", "tracestate")
 
 #: Baggage key whose value overrides the parent span ID.
 _LEAF_CUSTOMER_SPAN_ID = "leaf_customer_span_id"
+
+# ------------------------------------------------------------------
+# GenAI semantic convention attribute keys
+# ------------------------------------------------------------------
+_ATTR_INVOCATION_ID = "invocation.id"
+_ATTR_RESPONSE_ID = "gen_ai.response.id"
+_ATTR_PROVIDER_NAME = "gen_ai.provider.name"
+_ATTR_AGENT_ID = "gen_ai.agent.id"
+_ATTR_PROJECT_ID = "microsoft.foundry.project.id"
+_ATTR_OPERATION_NAME = "gen_ai.operation.name"
+_ATTR_CONVERSATION_ID = "gen_ai.conversation.id"
+
+_PROVIDER_NAME_VALUE = "microsoft.foundry"
 
 logger = get_logger()
 
@@ -53,7 +68,7 @@ except ImportError:
         from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 
 
-class TracingHelper:
+class _TracingHelper:
     """Lightweight wrapper around OpenTelemetry.
 
     Only instantiate when tracing is enabled.  If ``opentelemetry-api`` is
@@ -66,10 +81,21 @@ class TracingHelper:
     ``azure-monitor-opentelemetry-exporter``.
     """
 
-    def __init__(self, connection_string: Optional[str] = None) -> None:
+    def __init__(
+        self,
+        connection_string: Optional[str] = None,
+    ) -> None:
         self._enabled = _HAS_OTEL
         self._tracer: Any = None
         self._propagator: Any = None
+
+        # Resolve agent identity from environment variables.
+        agent_name = _config.resolve_agent_name()
+        agent_version = _config.resolve_agent_version()
+        self._agent_label = (
+            f"{agent_name}:{agent_version}" if agent_name and agent_version else agent_name
+        )
+        self._project_id = _config.resolve_project_id()
 
         if not self._enabled:
             logger.warning(
@@ -136,59 +162,65 @@ class TracingHelper:
         :param connection_string: Application Insights connection string.
         :type connection_string: str
         """
-        try:
-            from opentelemetry.sdk.resources import Resource
-            from opentelemetry.sdk.trace import TracerProvider as SdkTracerProvider
-            from opentelemetry.sdk.trace.export import BatchSpanProcessor
-
-            from azure.monitor.opentelemetry.exporter import (  # type: ignore[import-untyped]
-                AzureMonitorTraceExporter,
-            )
-        except ImportError:
-            logger.warning(
-                "Application Insights connection string was provided but "
-                "required packages are not installed.  Install them with: "
-                "pip install azure-ai-agentserver-server[tracing]"
-            )
+        resource = _create_resource()
+        if resource is None:
             return
+        _setup_trace_export(resource, connection_string)
+        _setup_log_export(resource, connection_string)
 
-        resource = Resource.create({"service.name": "azure.ai.agentserver"})
+    # ------------------------------------------------------------------
+    # Span naming and attribute helpers (shared by all protocols)
+    # ------------------------------------------------------------------
 
-        # --- Trace export ---
-        provider = SdkTracerProvider(resource=resource)
-        exporter = AzureMonitorTraceExporter(
-            connection_string=connection_string,
-        )
-        provider.add_span_processor(BatchSpanProcessor(exporter))
-        trace.set_tracer_provider(provider)
-        logger.info("Application Insights trace exporter configured.")
+    def span_name(self, span_operation: str) -> str:
+        """Build a span name using the operation and agent label.
 
-        # --- Log export ---
-        try:
-            from opentelemetry._logs import set_logger_provider
-            from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
-            from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
+        :param span_operation: The span operation (e.g. ``"execute_agent"``).
+            This becomes the first token of the OTel span name.
+        :type span_operation: str
+        :return: ``"<span_operation> <name>:<version>"`` or just
+            ``"<span_operation>"``.
+        :rtype: str
+        """
+        if self._agent_label:
+            return f"{span_operation} {self._agent_label}"
+        return span_operation
 
-            from azure.monitor.opentelemetry.exporter import (  # type: ignore[import-untyped]
-                AzureMonitorLogExporter,
-            )
+    def build_span_attrs(
+        self,
+        invocation_id: str,
+        session_id: str,
+        operation_name: Optional[str] = None,
+    ) -> dict[str, str]:
+        """Build GenAI semantic convention span attributes.
 
-            log_provider = LoggerProvider(resource=resource)
-            set_logger_provider(log_provider)
-            log_exporter = AzureMonitorLogExporter(
-                connection_string=connection_string,
-            )
-            log_provider.add_log_record_processor(
-                BatchLogRecordProcessor(log_exporter)
-            )
-            handler = LoggingHandler(logger_provider=log_provider)
-            logging.getLogger("azure.ai.agentserver").addHandler(handler)
-            logger.info("Application Insights log exporter configured.")
-        except ImportError:
-            logger.warning(
-                "Log export to Application Insights requires "
-                "opentelemetry-sdk.  Logs will not be forwarded."
-            )
+        These attributes are common across all protocol heads (invocation,
+        chat, etc.).
+
+        :param invocation_id: The invocation/request ID for this request.
+        :type invocation_id: str
+        :param session_id: The session ID header value (empty string if absent).
+        :type session_id: str
+        :param operation_name: Optional ``gen_ai.operation.name`` value
+            (e.g. ``"invoke_agent"``).  Omitted from the dict when *None*.
+        :type operation_name: Optional[str]
+        :return: Span attribute dict.
+        :rtype: dict[str, str]
+        """
+        attrs: dict[str, str] = {
+            _ATTR_INVOCATION_ID: invocation_id,
+            _ATTR_RESPONSE_ID: invocation_id,
+            _ATTR_PROVIDER_NAME: _PROVIDER_NAME_VALUE,
+        }
+        if self._agent_label:
+            attrs[_ATTR_AGENT_ID] = self._agent_label
+        if self._project_id:
+            attrs[_ATTR_PROJECT_ID] = self._project_id
+        if operation_name:
+            attrs[_ATTR_OPERATION_NAME] = operation_name
+        if session_id:
+            attrs[_ATTR_CONVERSATION_ID] = session_id
+        return attrs
 
     @contextmanager
     def span(
@@ -267,6 +299,118 @@ class TracingHelper:
             context=ctx,
         )
 
+    # ------------------------------------------------------------------
+    # Request-level convenience wrappers
+    # ------------------------------------------------------------------
+
+    def _prepare_request_span_args(
+        self,
+        headers: Mapping[str, str],
+        invocation_id: str,
+        span_operation: str,
+        operation_name: Optional[str] = None,
+    ) -> tuple[str, dict[str, str], dict[str, str], Optional[str]]:
+        """Extract headers and build span arguments for a request.
+
+        Shared pipeline used by :meth:`start_request_span` and
+        :meth:`request_span` to avoid duplicating header extraction,
+        attribute building, and span naming.
+
+        :param headers: HTTP request headers (any ``Mapping[str, str]``).
+        :type headers: Mapping[str, str]
+        :param invocation_id: The invocation/request ID.
+        :type invocation_id: str
+        :param span_operation: Span operation (e.g. ``"execute_agent"``).
+        :type span_operation: str
+        :param operation_name: Optional ``gen_ai.operation.name`` value.
+        :type operation_name: Optional[str]
+        :return: ``(name, attributes, carrier, baggage)`` ready for
+            :meth:`span` or :meth:`start_span`.
+        :rtype: tuple[str, dict[str, str], dict[str, str], Optional[str]]
+        """
+        carrier = _extract_w3c_carrier(headers)
+        baggage = headers.get("baggage")
+        session_id = headers.get(Constants.SESSION_ID_HEADER, "")
+        span_attrs = self.build_span_attrs(
+            invocation_id, session_id, operation_name=operation_name
+        )
+        return self.span_name(span_operation), span_attrs, carrier, baggage
+
+    def start_request_span(
+        self,
+        headers: Mapping[str, str],
+        invocation_id: str,
+        span_operation: str,
+        operation_name: Optional[str] = None,
+    ) -> Any:
+        """Start a request-scoped span, extracting context from HTTP headers.
+
+        Convenience method that combines header extraction, attribute
+        building, span naming, and span creation into a single call.
+        Use for streaming responses where the span must outlive the
+        initial handler call.  The caller **must** call :meth:`end_span`
+        when work is finished.
+
+        :param headers: HTTP request headers (any ``Mapping[str, str]``).
+        :type headers: Mapping[str, str]
+        :param invocation_id: The invocation/request ID.
+        :type invocation_id: str
+        :param span_operation: Span operation (e.g. ``"execute_agent"``).
+            Becomes the first token of the OTel span name via
+            :meth:`span_name`.
+        :type span_operation: str
+        :param operation_name: Optional ``gen_ai.operation.name`` attribute
+            value (e.g. ``"invoke_agent"``).  Omitted when *None*.
+        :type operation_name: Optional[str]
+        :return: The OTel span, or *None* when tracing is disabled.
+        :rtype: Any
+        """
+        name, attrs, carrier, baggage = self._prepare_request_span_args(
+            headers, invocation_id, span_operation, operation_name
+        )
+        return self.start_span(name, attributes=attrs, carrier=carrier, baggage_header=baggage)
+
+    @contextmanager
+    def request_span(
+        self,
+        headers: Mapping[str, str],
+        invocation_id: str,
+        span_operation: str,
+        operation_name: Optional[str] = None,
+    ) -> Iterator[Any]:
+        """Create a request-scoped span as a context manager.
+
+        Convenience method that combines header extraction, attribute
+        building, span naming, and span creation into a single call.
+        Use for non-streaming request handlers where the span should
+        cover the entire handler execution.
+
+        :param headers: HTTP request headers (any ``Mapping[str, str]``).
+        :type headers: Mapping[str, str]
+        :param invocation_id: The invocation/request ID.
+        :type invocation_id: str
+        :param span_operation: Span operation (e.g. ``"get_invocation"``).
+            Becomes the first token of the OTel span name via
+            :meth:`span_name`.
+        :type span_operation: str
+        :param operation_name: Optional ``gen_ai.operation.name`` attribute
+            value.  Omitted when *None*.
+        :type operation_name: Optional[str]
+        :return: Context manager that yields the OTel span or *None*.
+        :rtype: Iterator[Any]
+        """
+        name, attrs, carrier, baggage = self._prepare_request_span_args(
+            headers, invocation_id, span_operation, operation_name
+        )
+        with self.span(
+            name, attributes=attrs, carrier=carrier, baggage_header=baggage
+        ) as otel_span:
+            yield otel_span
+
+    # ------------------------------------------------------------------
+    # Span lifecycle helpers
+    # ------------------------------------------------------------------
+
     def end_span(self, span: Any, exc: Optional[Exception] = None) -> None:
         """End a span started with :meth:`start_span`.
 
@@ -330,7 +474,88 @@ class TracingHelper:
             self.end_span(span, exc=error)
 
 
-def extract_w3c_carrier(headers: Mapping[str, str]) -> dict[str, str]:
+def _create_resource() -> Any:
+    """Create the OTel resource for Azure Monitor exporters.
+
+    :return: A :class:`~opentelemetry.sdk.resources.Resource`, or *None*
+        if the required packages are not installed.
+    :rtype: Any
+    """
+    try:
+        from opentelemetry.sdk.resources import Resource
+    except ImportError:
+        logger.warning(
+            "Application Insights connection string was provided but "
+            "required packages are not installed.  Install them with: "
+            "pip install azure-ai-agentserver-server[tracing]"
+        )
+        return None
+    return Resource.create({"service.name": "azure.ai.agentserver"})
+
+
+def _setup_trace_export(resource: Any, connection_string: str) -> None:
+    """Configure a global :class:`TracerProvider` that exports to App Insights.
+
+    :param resource: The OTel resource describing this service.
+    :type resource: Any
+    :param connection_string: Application Insights connection string.
+    :type connection_string: str
+    """
+    try:
+        from opentelemetry.sdk.trace import TracerProvider as SdkTracerProvider
+        from opentelemetry.sdk.trace.export import BatchSpanProcessor
+
+        from azure.monitor.opentelemetry.exporter import (  # type: ignore[import-untyped]
+            AzureMonitorTraceExporter,
+        )
+    except ImportError:
+        logger.warning(
+            "Trace export to Application Insights requires "
+            "opentelemetry-sdk and azure-monitor-opentelemetry-exporter.  "
+            "Traces will not be forwarded."
+        )
+        return
+
+    provider = SdkTracerProvider(resource=resource)
+    exporter = AzureMonitorTraceExporter(connection_string=connection_string)
+    provider.add_span_processor(BatchSpanProcessor(exporter))
+    trace.set_tracer_provider(provider)
+    logger.info("Application Insights trace exporter configured.")
+
+
+def _setup_log_export(resource: Any, connection_string: str) -> None:
+    """Configure a global :class:`LoggerProvider` that exports to App Insights.
+
+    :param resource: The OTel resource describing this service.
+    :type resource: Any
+    :param connection_string: Application Insights connection string.
+    :type connection_string: str
+    """
+    try:
+        from opentelemetry._logs import set_logger_provider
+        from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
+        from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
+
+        from azure.monitor.opentelemetry.exporter import (  # type: ignore[import-untyped]
+            AzureMonitorLogExporter,
+        )
+    except ImportError:
+        logger.warning(
+            "Log export to Application Insights requires "
+            "opentelemetry-sdk.  Logs will not be forwarded."
+        )
+        return
+
+    log_provider = LoggerProvider(resource=resource)
+    set_logger_provider(log_provider)
+    log_exporter = AzureMonitorLogExporter(connection_string=connection_string)
+    log_provider.add_log_record_processor(BatchLogRecordProcessor(log_exporter))
+    handler = LoggingHandler(logger_provider=log_provider)
+    logging.getLogger("azure.ai.agentserver").addHandler(handler)
+    logger.info("Application Insights log exporter configured.")
+
+
+def _extract_w3c_carrier(headers: Mapping[str, str]) -> dict[str, str]:
     """Extract W3C trace-context headers from a mapping.
 
     Filters the input to only ``traceparent`` and ``tracestate`` — the two
@@ -347,25 +572,8 @@ def extract_w3c_carrier(headers: Mapping[str, str]) -> dict[str, str]:
         in *headers*.
     :rtype: dict[str, str]
     """
-    result: dict[str, str] = {}
-    for key in _W3C_HEADERS:
-        val = headers.get(key)
-        if val is not None:
-            result[key] = val
+    result: dict[str, str] = {k: v for k in _W3C_HEADERS if (v := headers.get(k)) is not None}
     return result
-
-
-def extract_baggage_header(headers: Mapping[str, str]) -> Optional[str]:
-    """Extract the raw ``baggage`` header value from a mapping.
-
-    Returns *None* if the header is not present.
-
-    :param headers: A mapping of header name to value.
-    :type headers: Mapping[str, str]
-    :return: The raw baggage header value or None.
-    :rtype: Optional[str]
-    """
-    return headers.get("baggage")
 
 
 def _parse_baggage_key(baggage: str, key: str) -> Optional[str]:

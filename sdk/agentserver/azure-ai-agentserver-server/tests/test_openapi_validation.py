@@ -11,7 +11,7 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
 from azure.ai.agentserver.server import AgentServer
-from azure.ai.agentserver.server._openapi_validator import OpenApiValidator
+from azure.ai.agentserver.server._openapi_validator import _OpenApiValidator
 
 
 # ---------------------------------------------------------------------------
@@ -860,9 +860,9 @@ RESPONSE_SPEC: dict = {
 @pytest.mark.asyncio
 async def test_validate_response_valid():
     """Valid response body passes validation."""
-    from azure.ai.agentserver.server._openapi_validator import OpenApiValidator
+    from azure.ai.agentserver.server._openapi_validator import _OpenApiValidator
 
-    v = OpenApiValidator(RESPONSE_SPEC)
+    v = _OpenApiValidator(RESPONSE_SPEC)
     errors = v.validate_response(b'{"result": "ok"}', "application/json")
     assert errors == []
 
@@ -870,9 +870,9 @@ async def test_validate_response_valid():
 @pytest.mark.asyncio
 async def test_validate_response_invalid():
     """Invalid response body returns errors."""
-    from azure.ai.agentserver.server._openapi_validator import OpenApiValidator
+    from azure.ai.agentserver.server._openapi_validator import _OpenApiValidator
 
-    v = OpenApiValidator(RESPONSE_SPEC)
+    v = _OpenApiValidator(RESPONSE_SPEC)
     errors = v.validate_response(b'{"wrong": 42}', "application/json")
     assert len(errors) > 0
 
@@ -880,14 +880,14 @@ async def test_validate_response_invalid():
 @pytest.mark.asyncio
 async def test_validate_response_no_schema():
     """When no response schema exists, validation passes (no-op)."""
-    from azure.ai.agentserver.server._openapi_validator import OpenApiValidator
+    from azure.ai.agentserver.server._openapi_validator import _OpenApiValidator
 
     spec_no_resp = {
         "openapi": "3.0.0",
         "info": {"title": "NoResp", "version": "1.0"},
         "paths": {"/invocations": {"post": {}}},
     }
-    v = OpenApiValidator(spec_no_resp)
+    v = _OpenApiValidator(spec_no_resp)
     errors = v.validate_response(b'{"anything": true}', "application/json")
     assert errors == []
 
@@ -900,14 +900,14 @@ async def test_validate_response_no_schema():
 @pytest.mark.asyncio
 async def test_validate_request_no_schema():
     """When no request schema exists, validation passes (no-op)."""
-    from azure.ai.agentserver.server._openapi_validator import OpenApiValidator
+    from azure.ai.agentserver.server._openapi_validator import _OpenApiValidator
 
     spec_no_req = {
         "openapi": "3.0.0",
         "info": {"title": "NoReq", "version": "1.0"},
         "paths": {"/invocations": {"post": {}}},
     }
-    v = OpenApiValidator(spec_no_req)
+    v = _OpenApiValidator(spec_no_req)
     errors = v.validate_request(b'{"anything": true}', "application/json")
     assert errors == []
 
@@ -920,7 +920,7 @@ async def test_validate_request_no_schema():
 @pytest.mark.asyncio
 async def test_response_schema_fallback_to_first_available():
     """Response schema extraction falls back to first response with JSON."""
-    from azure.ai.agentserver.server._openapi_validator import OpenApiValidator
+    from azure.ai.agentserver.server._openapi_validator import _OpenApiValidator
 
     spec = {
         "openapi": "3.0.0",
@@ -945,7 +945,7 @@ async def test_response_schema_fallback_to_first_available():
             }
         },
     }
-    v = OpenApiValidator(spec)
+    v = _OpenApiValidator(spec)
     # Valid against the 202 schema
     assert v.validate_response(b'{"status": "accepted"}', "application/json") == []
     # Invalid — missing "status"
@@ -1211,9 +1211,9 @@ async def test_writeonly_allowed_in_request():
 @pytest.mark.asyncio
 async def test_readonly_schema_introspection_request():
     """readOnly properties are removed from the preprocessed request schema."""
-    from azure.ai.agentserver.server._openapi_validator import OpenApiValidator
+    from azure.ai.agentserver.server._openapi_validator import _OpenApiValidator
 
-    v = OpenApiValidator(READONLY_SPEC)
+    v = _OpenApiValidator(READONLY_SPEC)
     # 'id' should be gone from requestschema properties
     assert "id" not in v._request_schema.get("properties", {})
 
@@ -1221,9 +1221,9 @@ async def test_readonly_schema_introspection_request():
 @pytest.mark.asyncio
 async def test_readonly_schema_introspection_response():
     """readOnly properties remain in the preprocessed response schema."""
-    from azure.ai.agentserver.server._openapi_validator import OpenApiValidator
+    from azure.ai.agentserver.server._openapi_validator import _OpenApiValidator
 
-    v = OpenApiValidator(READONLY_SPEC)
+    v = _OpenApiValidator(READONLY_SPEC)
     # 'id' should still be in response schema
     assert "id" in v._response_schema.get("properties", {})
 
@@ -1231,18 +1231,18 @@ async def test_readonly_schema_introspection_response():
 @pytest.mark.asyncio
 async def test_writeonly_stripped_in_response():
     """writeOnly properties are removed from the preprocessed response schema."""
-    from azure.ai.agentserver.server._openapi_validator import OpenApiValidator
+    from azure.ai.agentserver.server._openapi_validator import _OpenApiValidator
 
-    v = OpenApiValidator(READONLY_SPEC)
+    v = _OpenApiValidator(READONLY_SPEC)
     assert "password" not in v._response_schema.get("properties", {})
 
 
 @pytest.mark.asyncio
 async def test_writeonly_present_in_request():
     """writeOnly properties remain in the preprocessed request schema."""
-    from azure.ai.agentserver.server._openapi_validator import OpenApiValidator
+    from azure.ai.agentserver.server._openapi_validator import _OpenApiValidator
 
-    v = OpenApiValidator(READONLY_SPEC)
+    v = _OpenApiValidator(READONLY_SPEC)
     assert "password" in v._request_schema.get("properties", {})
 
 
@@ -1306,9 +1306,9 @@ REQUIRED_BODY_SPEC: dict = {
 @pytest.mark.asyncio
 async def test_optional_body_empty_accepted():
     """Empty body is accepted when requestBody.required is false."""
-    from azure.ai.agentserver.server._openapi_validator import OpenApiValidator
+    from azure.ai.agentserver.server._openapi_validator import _OpenApiValidator
 
-    v = OpenApiValidator(OPTIONAL_BODY_SPEC)
+    v = _OpenApiValidator(OPTIONAL_BODY_SPEC)
     errors = v.validate_request(b"", "application/json")
     assert errors == []
 
@@ -1316,9 +1316,9 @@ async def test_optional_body_empty_accepted():
 @pytest.mark.asyncio
 async def test_optional_body_whitespace_accepted():
     """Whitespace-only body is accepted when requestBody.required is false."""
-    from azure.ai.agentserver.server._openapi_validator import OpenApiValidator
+    from azure.ai.agentserver.server._openapi_validator import _OpenApiValidator
 
-    v = OpenApiValidator(OPTIONAL_BODY_SPEC)
+    v = _OpenApiValidator(OPTIONAL_BODY_SPEC)
     errors = v.validate_request(b"   ", "application/json")
     assert errors == []
 
@@ -1326,9 +1326,9 @@ async def test_optional_body_whitespace_accepted():
 @pytest.mark.asyncio
 async def test_optional_body_present_still_validated():
     """When body IS present with optional requestBody, it still must be valid."""
-    from azure.ai.agentserver.server._openapi_validator import OpenApiValidator
+    from azure.ai.agentserver.server._openapi_validator import _OpenApiValidator
 
-    v = OpenApiValidator(OPTIONAL_BODY_SPEC)
+    v = _OpenApiValidator(OPTIONAL_BODY_SPEC)
     errors = v.validate_request(b'{"wrong": 1}', "application/json")
     assert len(errors) > 0
 
@@ -1336,9 +1336,9 @@ async def test_optional_body_present_still_validated():
 @pytest.mark.asyncio
 async def test_required_body_empty_rejected():
     """Empty body is rejected when requestBody.required is true."""
-    from azure.ai.agentserver.server._openapi_validator import OpenApiValidator
+    from azure.ai.agentserver.server._openapi_validator import _OpenApiValidator
 
-    v = OpenApiValidator(REQUIRED_BODY_SPEC)
+    v = _OpenApiValidator(REQUIRED_BODY_SPEC)
     errors = v.validate_request(b"", "application/json")
     assert len(errors) > 0  # "Invalid JSON body"
 
@@ -1346,7 +1346,7 @@ async def test_required_body_empty_rejected():
 @pytest.mark.asyncio
 async def test_default_body_required_behavior():
     """When requestBody.required is omitted, body is required by default."""
-    from azure.ai.agentserver.server._openapi_validator import OpenApiValidator
+    from azure.ai.agentserver.server._openapi_validator import _OpenApiValidator
 
     spec = {
         "openapi": "3.0.0",
@@ -1366,7 +1366,7 @@ async def test_default_body_required_behavior():
             }
         },
     }
-    v = OpenApiValidator(spec)
+    v = _OpenApiValidator(spec)
     errors = v.validate_request(b"", "application/json")
     assert len(errors) > 0
 
@@ -1379,7 +1379,7 @@ async def test_default_body_required_behavior():
 @pytest.mark.asyncio
 async def test_openapi_keywords_stripped():
     """discriminator, xml, externalDocs, example are stripped from schemas."""
-    from azure.ai.agentserver.server._openapi_validator import OpenApiValidator
+    from azure.ai.agentserver.server._openapi_validator import _OpenApiValidator
 
     schema = {
         "type": "object",
@@ -1389,7 +1389,7 @@ async def test_openapi_keywords_stripped():
         "example": {"type": "bar"},
         "properties": {"name": {"type": "string"}},
     }
-    result = OpenApiValidator._preprocess_schema(schema)
+    result = _OpenApiValidator._preprocess_schema(schema)
     assert "discriminator" not in result
     assert "xml" not in result
     assert "externalDocs" not in result
@@ -1400,7 +1400,7 @@ async def test_openapi_keywords_stripped():
 @pytest.mark.asyncio
 async def test_openapi_keywords_stripped_nested():
     """OpenAPI keywords are stripped from nested properties too."""
-    from azure.ai.agentserver.server._openapi_validator import OpenApiValidator
+    from azure.ai.agentserver.server._openapi_validator import _OpenApiValidator
 
     schema = {
         "type": "object",
@@ -1413,7 +1413,7 @@ async def test_openapi_keywords_stripped_nested():
             }
         },
     }
-    result = OpenApiValidator._preprocess_schema(schema)
+    result = _OpenApiValidator._preprocess_schema(schema)
     child = result["properties"]["child"]
     assert "example" not in child
     assert "xml" not in child
@@ -1729,7 +1729,7 @@ async def test_anyof_wrong_type():
 @pytest.mark.asyncio
 async def test_nullable_ref_accepts_null():
     """A nullable $ref field accepts null after preprocessing."""
-    from azure.ai.agentserver.server._openapi_validator import OpenApiValidator
+    from azure.ai.agentserver.server._openapi_validator import _OpenApiValidator
 
     spec: dict = {
         "openapi": "3.0.0",
@@ -1766,7 +1766,7 @@ async def test_nullable_ref_accepts_null():
             }
         },
     }
-    v = OpenApiValidator(spec)
+    v = _OpenApiValidator(spec)
     errors = v.validate_request(b'{"addr": null}', "application/json")
     assert errors == []
 
@@ -1779,20 +1779,20 @@ async def test_nullable_ref_accepts_null():
 @pytest.mark.asyncio
 async def test_apply_nullable_no_duplicate_null():
     """_apply_nullable does not add 'null' twice if type is already a list with null."""
-    from azure.ai.agentserver.server._openapi_validator import OpenApiValidator
+    from azure.ai.agentserver.server._openapi_validator import _OpenApiValidator
 
     schema: dict = {"type": ["string", "null"], "nullable": True}
-    OpenApiValidator._apply_nullable(schema)
+    _OpenApiValidator._apply_nullable(schema)
     assert schema["type"] == ["string", "null"]
 
 
 @pytest.mark.asyncio
 async def test_apply_nullable_false():
     """nullable: false is a no-op (just removes the key)."""
-    from azure.ai.agentserver.server._openapi_validator import OpenApiValidator
+    from azure.ai.agentserver.server._openapi_validator import _OpenApiValidator
 
     schema: dict = {"type": "string", "nullable": False}
-    OpenApiValidator._apply_nullable(schema)
+    _OpenApiValidator._apply_nullable(schema)
     assert schema["type"] == "string"
     assert "nullable" not in schema
 
@@ -1800,7 +1800,7 @@ async def test_apply_nullable_false():
 @pytest.mark.asyncio
 async def test_strip_openapi_keywords_nested_deeply():
     """OpenAPI keywords are stripped from deeply nested schemas."""
-    from azure.ai.agentserver.server._openapi_validator import OpenApiValidator
+    from azure.ai.agentserver.server._openapi_validator import _OpenApiValidator
 
     schema: dict = {
         "type": "object",
@@ -1817,7 +1817,7 @@ async def test_strip_openapi_keywords_nested_deeply():
             }
         },
     }
-    OpenApiValidator._strip_openapi_keywords(schema)
+    _OpenApiValidator._strip_openapi_keywords(schema)
     items_schema = schema["properties"]["items"]["items"]
     assert "example" not in items_schema
     assert "xml" not in items_schema["properties"]["val"]
@@ -1830,8 +1830,8 @@ async def test_strip_openapi_keywords_nested_deeply():
 # --- Helper: direct validator call for unit-level assertions ---
 
 def _validate_request(spec: dict, body: dict) -> list[str]:
-    """Shortcut: build an OpenApiValidator and return request errors."""
-    v = OpenApiValidator(spec)
+    """Shortcut: build an _OpenApiValidator and return request errors."""
+    v = _OpenApiValidator(spec)
     return v.validate_request(
         json.dumps(body).encode(),
         "application/json",

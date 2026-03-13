@@ -17,6 +17,7 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
 from azure.ai.agentserver.server import AgentServer
+from azure.ai.agentserver.server._tracing import _TracingHelper
 
 
 # ---------------------------------------------------------------------------
@@ -66,9 +67,16 @@ def _make_failing_traced_agent(**kwargs) -> AgentServer:
 
 @pytest.fixture()
 def span_exporter():
-    """Return the module-level exporter with a clean slate for each test."""
+    """Return the module-level exporter with a clean slate for each test.
+
+    Patches ``_setup_azure_monitor`` so that an ``APPLICATIONINSIGHTS_CONNECTION_STRING``
+    env var in the CI environment doesn't replace the test TracerProvider.
+    """
     _MODULE_EXPORTER._spans.clear()
-    yield _MODULE_EXPORTER
+    # Ensure the module-level provider is active (a prior test may have replaced it).
+    trace.set_tracer_provider(_MODULE_PROVIDER)
+    with patch.object(_TracingHelper, "_setup_azure_monitor"):
+        yield _MODULE_EXPORTER
 
 
 # Module-level OTel setup — set once to avoid
@@ -431,11 +439,11 @@ class TestAppInsightsConnectionStringResolution:
 
 
 class TestSetupAzureMonitor:
-    """Tests for TracingHelper._setup_azure_monitor (mocked exporter imports)."""
+    """Tests for _TracingHelper._setup_azure_monitor (mocked exporter imports)."""
 
     def test_setup_configures_tracer_provider(self):
         """_setup_azure_monitor sets a global TracerProvider with exporter."""
-        from azure.ai.agentserver.server._tracing import TracingHelper
+        from azure.ai.agentserver.server._tracing import _TracingHelper
 
         mock_exporter = MagicMock()
         mock_exporter_cls = MagicMock(return_value=mock_exporter)
@@ -449,7 +457,7 @@ class TestSetupAzureMonitor:
                 ),
             },
         ), patch("opentelemetry.trace.set_tracer_provider") as mock_set_provider:
-            TracingHelper._setup_azure_monitor("InstrumentationKey=test")
+            _TracingHelper._setup_azure_monitor("InstrumentationKey=test")
 
             mock_exporter_cls.assert_called_once_with(
                 connection_string="InstrumentationKey=test"
@@ -459,7 +467,7 @@ class TestSetupAzureMonitor:
     def test_setup_logs_warning_when_packages_missing(self, caplog):
         """Warns gracefully when azure-monitor exporter is not installed."""
         import builtins
-        from azure.ai.agentserver.server._tracing import TracingHelper
+        from azure.ai.agentserver.server._tracing import _TracingHelper
 
         real_import = builtins.__import__
 
@@ -472,16 +480,16 @@ class TestSetupAzureMonitor:
             import logging
 
             with caplog.at_level(logging.WARNING, logger="azure.ai.agentserver"):
-                TracingHelper._setup_azure_monitor("InstrumentationKey=test")
+                _TracingHelper._setup_azure_monitor("InstrumentationKey=test")
 
-        assert "required packages are not installed" in caplog.text
+        assert "Traces will not be forwarded" in caplog.text
 
     def test_constructor_passes_connection_string(self, monkeypatch):
-        """AgentServer passes resolved connection string to TracingHelper."""
+        """AgentServer passes resolved connection string to _TracingHelper."""
         monkeypatch.delenv("APPLICATIONINSIGHTS_CONNECTION_STRING", raising=False)
 
         with patch(
-            "azure.ai.agentserver.server._tracing.TracingHelper._setup_azure_monitor"
+            "azure.ai.agentserver.server._tracing._TracingHelper._setup_azure_monitor"
         ) as mock_setup:
             _make_echo_traced_agent(
                 enable_tracing=True,
@@ -494,7 +502,7 @@ class TestSetupAzureMonitor:
         monkeypatch.delenv("APPLICATIONINSIGHTS_CONNECTION_STRING", raising=False)
 
         with patch(
-            "azure.ai.agentserver.server._tracing.TracingHelper._setup_azure_monitor"
+            "azure.ai.agentserver.server._tracing._TracingHelper._setup_azure_monitor"
         ) as mock_setup:
             _make_echo_traced_agent(enable_tracing=True)
             mock_setup.assert_not_called()
@@ -507,7 +515,7 @@ class TestSetupAzureMonitor:
         )
 
         with patch(
-            "azure.ai.agentserver.server._tracing.TracingHelper._setup_azure_monitor"
+            "azure.ai.agentserver.server._tracing._TracingHelper._setup_azure_monitor"
         ) as mock_setup:
             _make_echo_traced_agent(enable_tracing=True)
             mock_setup.assert_called_once_with("InstrumentationKey=from-env")
@@ -715,19 +723,6 @@ class TestBaggageParsing:
         assert _parse_baggage_key(baggage, "leaf_customer_span_id") == "abc123"
 
 
-class TestExtractBaggageHeader:
-    """Unit tests for extract_baggage_header."""
-
-    def test_present(self):
-        from azure.ai.agentserver.server._tracing import extract_baggage_header
-        headers = {"baggage": "key=val", "other": "x"}
-        assert extract_baggage_header(headers) == "key=val"
-
-    def test_absent(self):
-        from azure.ai.agentserver.server._tracing import extract_baggage_header
-        assert extract_baggage_header({"other": "x"}) is None
-
-
 @pytest.mark.asyncio
 async def test_baggage_leaf_customer_span_id_overrides_parent(span_exporter):
     """When baggage contains leaf_customer_span_id, the span's parent span ID
@@ -893,3 +888,73 @@ class TestAgentNameVersionResolution:
         from azure.ai.agentserver.server._config import resolve_agent_version
         monkeypatch.delenv("AGENT_VERSION", raising=False)
         assert resolve_agent_version() == ""
+
+
+# ---------------------------------------------------------------------------
+# Tests: project ID resolution and tracing attribute
+# ---------------------------------------------------------------------------
+
+
+class TestProjectIdResolution:
+    """Tests for resolve_project_id and microsoft.foundry.project.id span attribute."""
+
+    def test_project_id_from_env(self, monkeypatch):
+        from azure.ai.agentserver.server._config import resolve_project_id
+        monkeypatch.setenv("AGENT_PROJECT_NAME", "proj-abc-123")
+        assert resolve_project_id() == "proj-abc-123"
+
+    def test_project_id_default_empty(self, monkeypatch):
+        from azure.ai.agentserver.server._config import resolve_project_id
+        monkeypatch.delenv("AGENT_PROJECT_NAME", raising=False)
+        assert resolve_project_id() == ""
+
+
+@pytest.mark.asyncio
+async def test_project_id_attribute_on_invoke_span(monkeypatch, span_exporter):
+    """microsoft.foundry.project.id is set on invoke span when AGENT_PROJECT_NAME is set."""
+    monkeypatch.setenv("AGENT_PROJECT_NAME", "proj-xyz-789")
+    agent = _make_echo_traced_agent(enable_tracing=True)
+    transport = httpx.ASGITransport(app=agent.app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+        await client.post("/invocations", content=b'{}')
+
+    spans = span_exporter.get_finished_spans()
+    invoke_spans = [s for s in spans if "execute_agent" in s.name]
+    assert len(invoke_spans) == 1
+
+    attrs = dict(invoke_spans[0].attributes)
+    assert attrs["microsoft.foundry.project.id"] == "proj-xyz-789"
+
+
+@pytest.mark.asyncio
+async def test_project_id_attribute_absent_when_not_set(monkeypatch, span_exporter):
+    """microsoft.foundry.project.id is NOT set when AGENT_PROJECT_NAME env var is absent."""
+    monkeypatch.delenv("AGENT_PROJECT_NAME", raising=False)
+    agent = _make_echo_traced_agent(enable_tracing=True)
+    transport = httpx.ASGITransport(app=agent.app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+        await client.post("/invocations", content=b'{}')
+
+    spans = span_exporter.get_finished_spans()
+    invoke_spans = [s for s in spans if "execute_agent" in s.name]
+    assert len(invoke_spans) == 1
+
+    attrs = dict(invoke_spans[0].attributes)
+    assert "microsoft.foundry.project.id" not in attrs
+
+
+@pytest.mark.asyncio
+async def test_project_id_attribute_on_get_invocation_span(monkeypatch, span_exporter):
+    """microsoft.foundry.project.id is set on get_invocation span too."""
+    monkeypatch.setenv("AGENT_PROJECT_NAME", "proj-get-456")
+    agent = _make_echo_traced_agent(enable_tracing=True)
+    transport = httpx.ASGITransport(app=agent.app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+        await client.get("/invocations/test-id")
+
+    spans = span_exporter.get_finished_spans()
+    get_spans = [s for s in spans if "get_invocation" in s.name]
+    assert len(get_spans) == 1
+
+    attrs = dict(get_spans[0].attributes)
+    assert attrs["microsoft.foundry.project.id"] == "proj-get-456"

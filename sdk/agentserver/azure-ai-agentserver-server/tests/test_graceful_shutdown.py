@@ -100,6 +100,9 @@ class TestRunPassesTimeout:
         agent = _make_stub_agent(graceful_shutdown_timeout=15)
         agent.run()
         mock_asyncio.run.assert_called_once()
+        # Close the unawaited coroutine passed to asyncio.run to avoid
+        # "coroutine was never awaited" warnings on Python 3.14+.
+        mock_asyncio.run.call_args[0][0].close()
         # Verify the config built internally has the right graceful_timeout
         config = agent._build_hypercorn_config("127.0.0.1", 8088)
         assert config.graceful_timeout == 15.0
@@ -109,6 +112,9 @@ class TestRunPassesTimeout:
     def test_run_passes_default_timeout(self, mock_asyncio, _mock_serve):
         agent = _make_stub_agent()
         agent.run()
+        # Close the unawaited coroutine passed to asyncio.run to avoid
+        # "coroutine was never awaited" warnings on Python 3.14+.
+        mock_asyncio.run.call_args[0][0].close()
         config = agent._build_hypercorn_config("127.0.0.1", 8088)
         assert config.graceful_timeout == 30.0
 
@@ -300,14 +306,16 @@ class TestOnShutdownMethod:
         async def shutdown():
             order.append("callback")
 
-        with patch("azure.ai.agentserver.server._base.logger") as mock_logger:
+        def tracking_info(*args, **kwargs):
+            if args and "shutting down" in str(args[0]).lower():
+                order.append("log")
 
-            def tracking_info(*args, **kwargs):
-                if args and "shutting down" in str(args[0]).lower():
-                    order.append("log")
+        mock_logger = MagicMock()
+        mock_logger.info = MagicMock(side_effect=tracking_info)
 
-            mock_logger.info.side_effect = tracking_info
-
+        with patch(
+            "azure.ai.agentserver.server._base.logger", mock_logger
+        ):
             lifespan = server.app.router.lifespan_context
             async with lifespan(server.app):
                 pass

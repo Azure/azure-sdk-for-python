@@ -8,7 +8,7 @@ import dataclasses
 from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
-    from ._tracing import TracingHelper
+    from ._tracing import _TracingHelper
 
 
 @dataclasses.dataclass(frozen=True)
@@ -20,6 +20,6 @@ class _ServerContext:
     timeout configuration without coupling to the ``AgentServer`` class.
     """
 
-    tracing: Optional[TracingHelper]
+    tracing: Optional[_TracingHelper]
     debug_errors: bool
     request_timeout: int

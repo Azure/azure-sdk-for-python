@@ -103,7 +103,7 @@ _OPENAPI_ONLY_KEYWORDS: frozenset[str] = frozenset(
 )
 
 
-class OpenApiValidator:
+class _OpenApiValidator:
     """Validates request/response bodies against an OpenAPI spec.
 
     Extracts the request and response JSON schemas from the provided OpenAPI spec dict
@@ -211,7 +211,7 @@ class OpenApiValidator:
         :return: JSON Schema dict or None.
         :rtype: Optional[dict[str, Any]]
         """
-        return OpenApiValidator._find_schema_in_paths(
+        return _OpenApiValidator._find_schema_in_paths(
             spec, path, "post", "requestBody"
         )
 
@@ -226,7 +226,7 @@ class OpenApiValidator:
         :return: JSON Schema dict or None.
         :rtype: Optional[dict[str, Any]]
         """
-        return OpenApiValidator._find_schema_in_paths(
+        return _OpenApiValidator._find_schema_in_paths(
             spec, path, "post", "responses"
         )
 
@@ -341,9 +341,9 @@ class OpenApiValidator:
         :rtype: dict[str, Any]
         """
         schema = copy.deepcopy(schema)
-        OpenApiValidator._apply_nullable(schema)
-        OpenApiValidator._strip_readonly_writeonly(schema, context)
-        OpenApiValidator._strip_openapi_keywords(schema)
+        _OpenApiValidator._apply_nullable(schema)
+        _OpenApiValidator._strip_readonly_writeonly(schema, context)
+        _OpenApiValidator._strip_openapi_keywords(schema)
         return schema
 
     @staticmethod
@@ -365,7 +365,7 @@ class OpenApiValidator:
                 schema["type"] = [original, "null"]
             elif isinstance(original, list) and "null" not in original:
                 schema["type"] = original + ["null"]
-        OpenApiValidator._walk_schema(schema, OpenApiValidator._apply_nullable)
+        _OpenApiValidator._walk_schema(schema, _OpenApiValidator._apply_nullable)
 
     @staticmethod
     def _strip_readonly_writeonly(
@@ -403,9 +403,9 @@ class OpenApiValidator:
                 required.remove(name)
 
         def _recurse(child: dict[str, Any]) -> None:
-            OpenApiValidator._strip_readonly_writeonly(child, context)
+            _OpenApiValidator._strip_readonly_writeonly(child, context)
 
-        OpenApiValidator._walk_schema(schema, _recurse)
+        _OpenApiValidator._walk_schema(schema, _recurse)
 
     @staticmethod
     def _strip_openapi_keywords(schema: dict[str, Any]) -> None:
@@ -421,7 +421,7 @@ class OpenApiValidator:
             return
         for kw in _OPENAPI_ONLY_KEYWORDS:
             schema.pop(kw, None)
-        OpenApiValidator._walk_schema(schema, OpenApiValidator._strip_openapi_keywords)
+        _OpenApiValidator._walk_schema(schema, _OpenApiValidator._strip_openapi_keywords)
 
 
 # ------------------------------------------------------------------
