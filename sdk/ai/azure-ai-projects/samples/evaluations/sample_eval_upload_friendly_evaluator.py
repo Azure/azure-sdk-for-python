@@ -48,7 +48,7 @@ load_dotenv()
 endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
 # The folder containing the FriendlyEvaluator code, including common_util/ subfolder
-local_upload_folder = str(Path(__file__).parent / "custom_evaluator" / "friendly_evaluator")
+local_upload_folder = str(Path(__file__).parent / "custom_evaluators" / "friendly_evaluator")
 
 with (
     DefaultAzureCredential() as credential,
