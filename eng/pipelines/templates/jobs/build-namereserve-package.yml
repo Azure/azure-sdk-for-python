@@ -23,8 +23,7 @@ jobs:
         displayName: Install Dependencies
 
       - ${{ if eq(parameters.NameForReservation, 'auto') }}:
-        - name: generatePackages
-          pwsh: |
+        - pwsh: |
             Write-Host "##vso[task.setvariable variable=HasPackages;isOutput=true]false"
             $ErrorActionPreference = 'Stop'
 
@@ -114,11 +113,11 @@ jobs:
 
             Write-Host "`n=== Summary ==="
             Write-Host "Generated reservation packages for $($unregisteredPackages.Count) package(s)."
+          name: generatePackages
           displayName: Discover and Generate Name Reservation Packages
 
       - ${{ else }}:
-        - name: generatePackages
-          pwsh: |
+        - pwsh: |
             Write-Host "##vso[task.setvariable variable=HasPackages;isOutput=true]true"
             $ErrorActionPreference = 'Stop'
             $PSNativeCommandUseErrorActionPreference = $true
@@ -127,6 +126,7 @@ jobs:
               --package_version "${{ parameters.VersionForReservation }}" `
               --output_dir "$(Build.ArtifactStagingDirectory)" `
               "${{ parameters.NameForReservation }}"
+          name: generatePackages
           displayName: Generate Name Reservation Package
 
       - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
