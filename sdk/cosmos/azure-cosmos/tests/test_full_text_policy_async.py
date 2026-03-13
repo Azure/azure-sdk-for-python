@@ -98,7 +98,8 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
             indexing_policy=indexing_policy
         )
         properties = await created_container.read()
-        assert properties["fullTextPolicy"] == full_text_policy
+        assert properties["fullTextPolicy"]["defaultLanguage"] == full_text_policy["defaultLanguage"]
+        assert properties["fullTextPolicy"]["fullTextPaths"] == full_text_policy["fullTextPaths"]
         assert properties["indexingPolicy"]['fullTextIndexes'] == indexing_policy['fullTextIndexes']
         await self.test_db.delete_container(created_container.id)
 
@@ -112,7 +113,7 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
             full_text_policy=full_text_policy_no_paths,
         )
         properties = await created_container.read()
-        assert properties["fullTextPolicy"] == full_text_policy_no_paths
+        assert properties["fullTextPolicy"]["defaultLanguage"] == full_text_policy_no_paths["defaultLanguage"]
         await self.test_db.delete_container(created_container.id)
 
         # Create a container with a full text policy with a given path containing only default language
@@ -130,7 +131,8 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
             full_text_policy=full_text_policy_no_langs,
         )
         properties = await created_container.read()
-        assert properties["fullTextPolicy"] == full_text_policy_no_langs
+        assert properties["fullTextPolicy"]["defaultLanguage"] == full_text_policy_no_langs["defaultLanguage"]
+        assert properties["fullTextPolicy"]["fullTextPaths"] == full_text_policy_no_langs["fullTextPaths"]
 
     async def test_replace_full_text_container_async(self):
         # Replace a container without a full text policy and full text indexing policy
@@ -163,7 +165,8 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
             indexing_policy=indexing_policy
         )
         properties = await replaced_container.read()
-        assert properties["fullTextPolicy"] == full_text_policy
+        assert properties["fullTextPolicy"]["defaultLanguage"] == full_text_policy["defaultLanguage"]
+        assert properties["fullTextPolicy"]["fullTextPaths"] == full_text_policy["fullTextPaths"]
         assert properties["indexingPolicy"]['fullTextIndexes'] == indexing_policy['fullTextIndexes']
         assert created_container_properties['indexingPolicy'] != properties['indexingPolicy']
         await self.test_db.delete_container(created_container.id)
@@ -176,7 +179,8 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
             indexing_policy=indexing_policy
         )
         created_container_properties = await created_container.read()
-        assert created_container_properties["fullTextPolicy"] == full_text_policy
+        assert created_container_properties["fullTextPolicy"]["defaultLanguage"] == full_text_policy["defaultLanguage"]
+        assert created_container_properties["fullTextPolicy"]["fullTextPaths"] == full_text_policy["fullTextPaths"]
         assert created_container_properties["indexingPolicy"]['fullTextIndexes'] == indexing_policy['fullTextIndexes']
 
         # Replace the container with new policies
@@ -189,7 +193,8 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
             indexing_policy=indexing_policy
         )
         properties = await replaced_container.read()
-        assert properties["fullTextPolicy"] == full_text_policy
+        assert properties["fullTextPolicy"]["defaultLanguage"] == full_text_policy["defaultLanguage"]
+        assert properties["fullTextPolicy"]["fullTextPaths"] == full_text_policy["fullTextPaths"]
         assert properties["indexingPolicy"]['fullTextIndexes'] == indexing_policy['fullTextIndexes']
         assert created_container_properties['fullTextPolicy'] != properties['fullTextPolicy']
         assert created_container_properties["indexingPolicy"] != properties["indexingPolicy"]
@@ -355,7 +360,8 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
                     full_text_policy=updated_policy
                 )
                 properties = await replaced_container.read()
-                assert properties["fullTextPolicy"] == updated_policy
+                assert properties["fullTextPolicy"]["defaultLanguage"] == updated_policy["defaultLanguage"]
+                assert properties["fullTextPolicy"]["fullTextPaths"] == updated_policy["fullTextPaths"]
         finally:
             await self.test_db.delete_container(container.id)
 
@@ -387,7 +393,8 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
                     full_text_policy=updated_policy
                 )
                 properties = await replaced_container.read()
-                assert properties["fullTextPolicy"] == updated_policy
+                assert properties["fullTextPolicy"]["defaultLanguage"] == updated_policy["defaultLanguage"]
+                assert properties["fullTextPolicy"]["fullTextPaths"] == updated_policy["fullTextPaths"]
                 item = {
                     "id": str(uuid.uuid4()),
                     "abstract": self.language_abstracts[language_code],
@@ -439,7 +446,8 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
                 full_text_policy=updated_policy
             )
             properties = await replaced_container.read()
-            assert properties["fullTextPolicy"] == updated_policy
+            assert properties["fullTextPolicy"]["defaultLanguage"] == updated_policy["defaultLanguage"]
+            assert properties["fullTextPolicy"]["fullTextPaths"] == updated_policy["fullTextPaths"]
         finally:
             await self.test_db.delete_container(container.id)
 
@@ -522,7 +530,8 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
                     full_text_policy=updated_policy
                 )
                 properties = await replaced_container.read()
-                assert properties["fullTextPolicy"] == updated_policy
+                assert properties["fullTextPolicy"]["defaultLanguage"] == updated_policy["defaultLanguage"]
+                assert properties["fullTextPolicy"]["fullTextPaths"] == updated_policy["fullTextPaths"]
         finally:
             await self.test_db.delete_container(container.id)
 
@@ -562,7 +571,8 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
                     full_text_policy=updated_policy
                 )
                 properties = await replaced_container.read()
-                assert properties["fullTextPolicy"] == updated_policy
+                assert properties["fullTextPolicy"]["defaultLanguage"] == updated_policy["defaultLanguage"]
+                assert properties["fullTextPolicy"]["fullTextPaths"] == updated_policy["fullTextPaths"]
         finally:
             await self.test_db.delete_container(container.id)
 

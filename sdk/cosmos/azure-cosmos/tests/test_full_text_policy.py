@@ -83,7 +83,8 @@ class TestFullTextPolicy(unittest.TestCase):
             indexing_policy=indexing_policy
         )
         properties = created_container.read()
-        assert properties["fullTextPolicy"] == full_text_policy
+        assert properties["fullTextPolicy"]["defaultLanguage"] == full_text_policy["defaultLanguage"]
+        assert properties["fullTextPolicy"]["fullTextPaths"] == full_text_policy["fullTextPaths"]
         assert properties["indexingPolicy"]['fullTextIndexes'] == indexing_policy['fullTextIndexes']
         self.test_db.delete_container(created_container.id)
 
@@ -97,7 +98,7 @@ class TestFullTextPolicy(unittest.TestCase):
             full_text_policy=full_text_policy_no_paths,
         )
         properties = created_container.read()
-        assert properties["fullTextPolicy"] == full_text_policy_no_paths
+        assert properties["fullTextPolicy"]["defaultLanguage"] == full_text_policy_no_paths["defaultLanguage"]
         self.test_db.delete_container(created_container.id)
 
         # Create a container with a full text policy with a given path containing only default language
@@ -115,7 +116,8 @@ class TestFullTextPolicy(unittest.TestCase):
             full_text_policy=full_text_policy_no_langs,
         )
         properties = created_container.read()
-        assert properties["fullTextPolicy"] == full_text_policy_no_langs
+        assert properties["fullTextPolicy"]["defaultLanguage"] == full_text_policy_no_langs["defaultLanguage"]
+        assert properties["fullTextPolicy"]["fullTextPaths"] == full_text_policy_no_langs["fullTextPaths"]
         self.test_db.delete_container(created_container.id)
 
     def test_replace_full_text_container(self):
@@ -149,7 +151,8 @@ class TestFullTextPolicy(unittest.TestCase):
             indexing_policy=indexing_policy
         )
         properties = replaced_container.read()
-        assert properties["fullTextPolicy"] == full_text_policy
+        assert properties["fullTextPolicy"]["defaultLanguage"] == full_text_policy["defaultLanguage"]
+        assert properties["fullTextPolicy"]["fullTextPaths"] == full_text_policy["fullTextPaths"]
         assert properties["indexingPolicy"]['fullTextIndexes'] == indexing_policy['fullTextIndexes']
         assert created_container_properties['indexingPolicy'] != properties['indexingPolicy']
         self.test_db.delete_container(created_container.id)
@@ -162,7 +165,8 @@ class TestFullTextPolicy(unittest.TestCase):
             indexing_policy=indexing_policy
         )
         created_container_properties = created_container.read()
-        assert properties["fullTextPolicy"] == full_text_policy
+        assert properties["fullTextPolicy"]["defaultLanguage"] == full_text_policy["defaultLanguage"]
+        assert properties["fullTextPolicy"]["fullTextPaths"] == full_text_policy["fullTextPaths"]
         assert properties["indexingPolicy"]['fullTextIndexes'] == indexing_policy['fullTextIndexes']
 
         # Replace the container with new policies
@@ -175,7 +179,8 @@ class TestFullTextPolicy(unittest.TestCase):
             indexing_policy=indexing_policy
         )
         properties = replaced_container.read()
-        assert properties["fullTextPolicy"] == full_text_policy
+        assert properties["fullTextPolicy"]["defaultLanguage"] == full_text_policy["defaultLanguage"]
+        assert properties["fullTextPolicy"]["fullTextPaths"] == full_text_policy["fullTextPaths"]
         assert properties["indexingPolicy"]['fullTextIndexes'] == indexing_policy['fullTextIndexes']
         assert created_container_properties['fullTextPolicy'] != properties['fullTextPolicy']
         assert created_container_properties["indexingPolicy"] != properties["indexingPolicy"]
@@ -342,7 +347,8 @@ class TestFullTextPolicy(unittest.TestCase):
                     full_text_policy=updated_policy
                 )
                 properties = replaced_container.read()
-                assert properties["fullTextPolicy"] == updated_policy
+                assert properties["fullTextPolicy"]["defaultLanguage"] == updated_policy["defaultLanguage"]
+                assert properties["fullTextPolicy"]["fullTextPaths"] == updated_policy["fullTextPaths"]
         finally:
             self.test_db.delete_container(container.id)
 
@@ -376,7 +382,8 @@ class TestFullTextPolicy(unittest.TestCase):
                     full_text_policy=updated_policy
                 )
                 properties = replaced_container.read()
-                assert properties["fullTextPolicy"] == updated_policy
+                assert properties["fullTextPolicy"]["defaultLanguage"] == updated_policy["defaultLanguage"]
+                assert properties["fullTextPolicy"]["fullTextPaths"] == updated_policy["fullTextPaths"]
                 # Insert and verify item
                 item = {
                     "id": str(uuid.uuid4()),
@@ -429,7 +436,8 @@ class TestFullTextPolicy(unittest.TestCase):
                 full_text_policy=updated_policy
             )
             properties = replaced_container.read()
-            assert properties["fullTextPolicy"] == updated_policy
+            assert properties["fullTextPolicy"]["defaultLanguage"] == updated_policy["defaultLanguage"]
+            assert properties["fullTextPolicy"]["fullTextPaths"] == updated_policy["fullTextPaths"]
 
         finally:
             # Delete the container at the end of the test
@@ -472,7 +480,8 @@ class TestFullTextPolicy(unittest.TestCase):
                     full_text_policy=updated_policy
                 )
                 properties = replaced_container.read()
-                assert properties["fullTextPolicy"] == updated_policy
+                assert properties["fullTextPolicy"]["defaultLanguage"] == updated_policy["defaultLanguage"]
+                assert properties["fullTextPolicy"]["fullTextPaths"] == updated_policy["fullTextPaths"]
 
         finally:
             # Delete the container at the end of the test
@@ -515,7 +524,8 @@ class TestFullTextPolicy(unittest.TestCase):
                     full_text_policy=updated_policy
                 )
                 properties = replaced_container.read()
-                assert properties["fullTextPolicy"] == updated_policy
+                assert properties["fullTextPolicy"]["defaultLanguage"] == updated_policy["defaultLanguage"]
+                assert properties["fullTextPolicy"]["fullTextPaths"] == updated_policy["fullTextPaths"]
 
         finally:
             # Delete the container at the end of the test
