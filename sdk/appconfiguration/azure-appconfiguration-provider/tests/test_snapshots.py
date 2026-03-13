@@ -150,7 +150,7 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
     def test_create_snapshot_and_load_provider(self, appconfiguration_endpoint_string, **kwargs):
         """Test creating a snapshot and loading provider from it."""
         # Create SDK client for setup
-        sdk_client = self.create_aad_sdk_client(appconfiguration_endpoint_string)
+        sdk_client = self.create_entra_id_sdk_client(appconfiguration_endpoint_string)
 
         # Create unique test configuration settings for the snapshot
         test_settings = [
@@ -295,7 +295,7 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
     def test_create_snapshot_and_load_provider_with_feature_flags(self, appconfiguration_endpoint_string, **kwargs):
         """Test creating a snapshot and loading provider with feature flags from non-snapshot selectors."""
         # Create SDK client for setup
-        sdk_client = self.create_aad_sdk_client(appconfiguration_endpoint_string)
+        sdk_client = self.create_entra_id_sdk_client(appconfiguration_endpoint_string)
 
         # Create unique test configuration settings for the snapshot
         test_settings = [
