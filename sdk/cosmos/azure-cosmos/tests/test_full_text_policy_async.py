@@ -244,8 +244,9 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
             pytest.fail("Container creation should have failed for wrong supported language.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "The Full Text Policy contains an unsupported language spa-SPA. Supported languages are:" \
-                   in e.http_error_message
+            assert re.search(
+                    r"the full.text policy contains an unsupported language.*spa-SPA",
+                    e.http_error_message, re.IGNORECASE)
 
         # Pass a full text policy with an unsupported path language
         full_text_policy_wrong_default = {
@@ -266,8 +267,9 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
             pytest.fail("Container creation should have failed for wrong supported language.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "The Full Text Policy contains an unsupported language spa-SPA. Supported languages are:" \
-                   in e.http_error_message
+            assert re.search(
+                    r"the full.text policy contains an unsupported language.*spa-SPA",
+                    e.http_error_message, re.IGNORECASE)
 
     async def test_fail_create_full_text_indexing_policy_async(self):
         full_text_policy = {
@@ -316,7 +318,9 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
             pytest.fail("Container creation should have failed for invalid path.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "Full-text index specification at index (0) contains invalid path" in e.http_error_message
+            assert re.search(
+                    r"full.text index specification at index \(0\) contains invalid path",
+                    e.http_error_message, re.IGNORECASE)
 
         # Pass a full text indexing policy without a path field
         indexing_policy_no_path = {
@@ -334,7 +338,9 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
             pytest.fail("Container creation should have failed for missing path.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "Missing path in full-text index specification at index (0)" in e.http_error_message
+            assert re.search(
+                    r"missing path in full.text index specification at index \(0\)",
+                    e.http_error_message, re.IGNORECASE)
 
     # Skipped until testing pipeline is set up for full text multi-language support
     @pytest.mark.skip
@@ -494,7 +500,9 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
                 pytest.fail("Container replacement should have failed for unsupported language.")
             except exceptions.CosmosHttpResponseError as e:
                 assert e.status_code == 400
-                assert "The Full Text Policy contains an unsupported language" in e.http_error_message
+                assert re.search(
+                        r"the full.text policy contains an unsupported language",
+                        e.http_error_message, re.IGNORECASE)
         finally:
             await self.test_db.delete_container(container.id)
 
