@@ -18,6 +18,7 @@ USAGE:
 import argparse
 import asyncio
 import os
+import sys
 
 from azure.identity import DefaultAzureCredential
 from dotenv import load_dotenv
@@ -125,5 +126,9 @@ if __name__ == "__main__":
         help="Run synchronous, asynchronous, or both examples (default: both)",
     )
     args = parser.parse_args()
+
+    # Set Windows event loop policy for compatibility if needed
+    if sys.platform == "win32":
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
     asyncio.run(main(args.mode))

@@ -8,6 +8,7 @@
 
 from __future__ import annotations
 
+import sys
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -112,6 +113,7 @@ class TestSqlalchemyEntraAuthentication:
 
 
 @pytest.mark.live_test_only
+@pytest.mark.skipif(sys.implementation.name == "pypy", reason="psycopg2 not supported on PyPy")
 class TestSqlalchemyEntraAuthenticationLive:
     """Live tests for synchronous SQLAlchemy with enable_entra_authentication."""
 

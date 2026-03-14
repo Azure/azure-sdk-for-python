@@ -8,7 +8,9 @@
 
 from __future__ import annotations
 
+import asyncio
 import os
+import sys
 
 import pytest
 
@@ -23,6 +25,14 @@ def _get_pg_config():
     database = os.environ.get("POSTGRESQL_DATABASE", "testdb")
     port = os.environ.get("POSTGRESQL_PORT", "5432")
     return host, database, port
+
+
+@pytest.fixture(scope="session")
+def event_loop_policy():
+    """Use SelectorEventLoop on Windows for psycopg async compatibility."""
+    if sys.platform == "win32":
+        return asyncio.WindowsSelectorEventLoopPolicy()
+    return asyncio.DefaultEventLoopPolicy()
 
 
 @pytest.fixture(scope="session")
