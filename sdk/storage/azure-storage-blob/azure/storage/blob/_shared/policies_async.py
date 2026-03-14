@@ -14,9 +14,27 @@ from azure.core.exceptions import AzureError, StreamClosedError, StreamConsumedE
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, AsyncHTTPPolicy
 
 from .authentication import AzureSigningError, StorageHttpChallenge
-from .constants import DEFAULT_OAUTH_SCOPE
-from .policies import encode_base64, is_retry, StorageContentValidation, StorageRetryPolicy
-from .validation import ChecksumAlgorithm
+from .constants import DATA_BLOCK_SIZE, DEFAULT_OAUTH_SCOPE
+from .policies import (
+    CONTENT_LENGTH_HEADER,
+    CRC64_HEADER,
+    MD5_HEADER,
+    SM_HEADER,
+    SM_HEADER_V1_CRC64,
+    SM_LENGTH_HEADER,
+    encode_base64,
+    is_retry,
+    StorageRetryPolicy,
+)
+from .streams import StructuredMessageEncodeStream, StructuredMessageProperties
+from .streams_async import AsyncStructuredMessageDecoder
+from .validation import (
+    CV_TYPE_ERROR_MSG,
+    ChecksumAlgorithm,
+    calculate_content_md5,
+    calculate_crc64_bytes,
+    is_md5_validation,
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -50,11 +68,104 @@ async def is_checksum_retry(response):
             except (StreamClosedError, StreamConsumedError):
                 pass
         computed_md5 = response.http_request.headers.get("content-md5", None) or encode_base64(
-            StorageContentValidation.get_content_md5(response.http_response.body())
+            calculate_content_md5(response.http_response.body())
         )
         if response.http_response.headers["content-md5"] != computed_md5:
             return True
     return False
+
+
+class AsyncContentValidationPolicy(AsyncHTTPPolicy):
+    """A pipeline policy that performs content validation on uploads and downloads when enabled by the user.
+    This is enabled by setting the "validate_content" key in the request context. When enabled, this policy will
+    calculate and verify content checksums for uploads and downloads, and raise an exception if a mismatch is detected.
+    """
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=unused-argument
+        super().__init__()
+
+    async def send(self, request: "PipelineRequest") -> "PipelineResponse":
+        validate_content = request.context.options.pop("validate_content", False)
+
+        # Download
+        if request.http_request.method == "GET":
+            if validate_content == ChecksumAlgorithm.CRC64:
+                request.http_request.headers[SM_HEADER] = SM_HEADER_V1_CRC64
+
+        # Upload
+        else:
+            # Since HTTP does not differentiate between no content and empty content,
+            # we have to perform a None check.
+            data = request.http_request.data or b""
+            if is_md5_validation(validate_content):
+                computed_md5 = encode_base64(calculate_content_md5(data))
+                request.http_request.headers[MD5_HEADER] = computed_md5
+                request.context["validate_content_md5"] = computed_md5
+
+            elif validate_content == ChecksumAlgorithm.CRC64:
+                if isinstance(data, bytes):
+                    request.http_request.headers[CRC64_HEADER] = encode_base64(calculate_crc64_bytes(data))
+                elif hasattr(data, "read"):
+                    content_length = int(request.http_request.headers.get(CONTENT_LENGTH_HEADER))
+                    # Wrap data in structured message stream and adjust HTTP request
+                    sm_stream = StructuredMessageEncodeStream(data, content_length, StructuredMessageProperties.CRC64)
+                    request.http_request.data = sm_stream
+                    request.http_request.headers[CONTENT_LENGTH_HEADER] = str(len(sm_stream))
+                    request.http_request.headers[SM_LENGTH_HEADER] = str(content_length)
+                    request.http_request.headers[SM_HEADER] = SM_HEADER_V1_CRC64
+                else:
+                    raise ValueError(CV_TYPE_ERROR_MSG)
+
+        request.context["validate_content"] = validate_content
+
+        response = await self.next.send(request)
+
+        if is_md5_validation(validate_content) and response.http_response.headers.get("content-md5"):
+            if hasattr(response.http_response, "load_body"):
+                try:
+                    await response.http_response.load_body()  # Load the body in memory and close the socket
+                except (StreamClosedError, StreamConsumedError):
+                    pass
+            computed_md5 = request.context.get("validate_content_md5") or encode_base64(
+                calculate_content_md5(response.http_response.body())
+            )
+            if response.http_response.headers["content-md5"] != computed_md5:
+                raise AzureError(
+                    (
+                        f"MD5 mismatch. Expected value is '{response.http_response.headers['content-md5']}', "
+                        f"computed value is '{computed_md5}'."
+                    ),
+                    response=response.http_response,
+                )
+
+        elif validate_content == ChecksumAlgorithm.CRC64:
+            # For upload and download verify structured message header present in response if provided in request.
+            sm_request = request.http_request.headers.get(SM_HEADER)
+            sm_response = response.http_response.headers.get(SM_HEADER)
+            if sm_request != sm_response:
+                raise AzureError(
+                    (
+                        f"Expected structured message header in response does not match request. "
+                        f"Request: {sm_request}, Response: {sm_response}",
+                    ),
+                    response=response.http_response,
+                )
+
+            if response.http_request.method == "GET":
+                # Raises exception if missing
+                content_length = int(response.http_response.headers[CONTENT_LENGTH_HEADER])
+
+                # Patch response to return response iterator wrapped in structured message decoder
+                original_stream_download = response.http_response.stream_download
+                def wrapped_stream_download(*args, **kwargs):
+                    iterator = original_stream_download(*args, **kwargs)
+                    decoder = AsyncStructuredMessageDecoder(iterator, content_length, block_size=DATA_BLOCK_SIZE)
+                    decoder.request = iterator.request  # type: ignore
+                    decoder.response = iterator.response  # type: ignore
+                    return decoder
+
+                response.http_response.stream_download = wrapped_stream_download
+
+        return response
 
 
 class AsyncStorageResponseHook(AsyncHTTPPolicy):

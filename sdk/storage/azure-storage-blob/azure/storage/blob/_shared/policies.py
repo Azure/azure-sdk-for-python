@@ -35,7 +35,13 @@ from .authentication import AzureSigningError, StorageHttpChallenge
 from .constants import DEFAULT_OAUTH_SCOPE, DATA_BLOCK_SIZE
 from .models import LocationMode, StorageErrorCode
 from .streams import StructuredMessageDecoder, StructuredMessageEncodeStream, StructuredMessageProperties
-from .validation import calculate_crc64_bytes, ChecksumAlgorithm, is_md5_validation
+from .validation import (
+    CV_TYPE_ERROR_MSG,
+    calculate_content_md5,
+    calculate_crc64_bytes,
+    is_md5_validation,
+    ChecksumAlgorithm,
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -52,7 +58,6 @@ CRC64_HEADER = "x-ms-content-crc64"
 SM_HEADER = "x-ms-structured-body"
 SM_HEADER_V1_CRC64 = "XSM/1.0; properties=crc64"
 SM_LENGTH_HEADER = "x-ms-structured-content-length"
-CV_TYPE_ERROR_MSG = "Data should be bytes or seekable IO[bytes] for content validation."
 
 
 def encode_base64(data: Union[bytes, str]) -> str:
@@ -118,7 +123,7 @@ def is_checksum_retry(response) -> bool:
     # Legacy code - evaluate retry only on validate_content=True
     if validate_content is True and response.http_response.headers.get("content-md5"):
         computed_md5 = response.http_request.headers.get("content-md5", None) or encode_base64(
-            StorageContentValidation.get_content_md5(response.http_response.body())
+            calculate_content_md5(response.http_response.body())
         )
         if response.http_response.headers["content-md5"] != computed_md5:
             return True
@@ -348,35 +353,12 @@ class StorageResponseHook(HTTPPolicy):
 
 
 class StorageContentValidation(SansIOHTTPPolicy):
-    """A simple policy that sends the given headers
-    with the request.
-
-    This will overwrite any headers already defined in the request.
+    """A pipeline policy that performs content validation on uploads and downloads when enabled by the user.
+    This is enabled by setting the "validate_content" key in the request context. When enabled, this policy will
+    calculate and verify content checksums for uploads and downloads, and raise an exception if a mismatch is detected.
     """
     def __init__(self, **kwargs: Any) -> None:  # pylint: disable=unused-argument
-        super(StorageContentValidation, self).__init__()
-
-    @staticmethod
-    def get_content_md5(data):
-        md5 = hashlib.md5()  # nosec
-        if isinstance(data, bytes):
-            md5.update(data)
-        elif hasattr(data, "read"):
-            pos = 0
-            try:
-                pos = data.tell()
-            except:  # pylint: disable=bare-except
-                pass
-            for chunk in iter(lambda: data.read(4096), b""):
-                md5.update(chunk)
-            try:
-                data.seek(pos, SEEK_SET)
-            except (AttributeError, IOError) as exc:
-                raise ValueError(CV_TYPE_ERROR_MSG) from exc
-        else:
-            raise ValueError(CV_TYPE_ERROR_MSG)
-
-        return md5.digest()
+        super().__init__()
 
     def on_request(self, request: "PipelineRequest") -> None:
         validate_content = request.context.options.pop("validate_content", False)
@@ -394,7 +376,7 @@ class StorageContentValidation(SansIOHTTPPolicy):
             # we have to perform a None check.
             data = request.http_request.data or b""
             if is_md5_validation(validate_content):
-                computed_md5 = encode_base64(StorageContentValidation.get_content_md5(data))
+                computed_md5 = encode_base64(calculate_content_md5(data))
                 request.http_request.headers[MD5_HEADER] = computed_md5
                 request.context["validate_content_md5"] = computed_md5
 
@@ -421,7 +403,7 @@ class StorageContentValidation(SansIOHTTPPolicy):
 
         if is_md5_validation(validate_content) and response.http_response.headers.get("content-md5"):
             computed_md5 = request.context.get("validate_content_md5") or encode_base64(
-                StorageContentValidation.get_content_md5(response.http_response.body())
+                calculate_content_md5(response.http_response.body())
             )
             if response.http_response.headers["content-md5"] != computed_md5:
                 raise AzureError(
