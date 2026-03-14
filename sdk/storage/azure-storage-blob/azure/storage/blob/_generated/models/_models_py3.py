@@ -606,13 +606,16 @@ class BlobPropertiesInternal(_serialization.Model):
     :ivar remaining_retention_days:
     :vartype remaining_retention_days: int
     :ivar access_tier: Known values are: "P4", "P6", "P10", "P15", "P20", "P30", "P40", "P50",
-     "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", and "Cold".
+     "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", "Cold", and "Smart".
     :vartype access_tier: str or ~azure.storage.blob.models.AccessTier
     :ivar access_tier_inferred:
     :vartype access_tier_inferred: bool
     :ivar archive_status: Known values are: "rehydrate-pending-to-hot",
-     "rehydrate-pending-to-cool", and "rehydrate-pending-to-cold".
+     "rehydrate-pending-to-cool", "rehydrate-pending-to-cold", and "rehydrate-pending-to-smart".
     :vartype archive_status: str or ~azure.storage.blob.models.ArchiveStatus
+    :ivar smart_access_tier: Known values are: "P4", "P6", "P10", "P15", "P20", "P30", "P40",
+     "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", "Cold", and "Smart".
+    :vartype smart_access_tier: str or ~azure.storage.blob.models.AccessTier
     :ivar customer_provided_key_sha256:
     :vartype customer_provided_key_sha256: str
     :ivar encryption_scope: The name of the encryption scope under which the blob is encrypted.
@@ -674,6 +677,7 @@ class BlobPropertiesInternal(_serialization.Model):
         "access_tier": {"key": "AccessTier", "type": "str"},
         "access_tier_inferred": {"key": "AccessTierInferred", "type": "bool"},
         "archive_status": {"key": "ArchiveStatus", "type": "str"},
+        "smart_access_tier": {"key": "SmartAccessTier", "type": "str"},
         "customer_provided_key_sha256": {"key": "CustomerProvidedKeySha256", "type": "str"},
         "encryption_scope": {"key": "EncryptionScope", "type": "str"},
         "access_tier_change_time": {"key": "AccessTierChangeTime", "type": "rfc-1123"},
@@ -720,6 +724,7 @@ class BlobPropertiesInternal(_serialization.Model):
         access_tier: Optional[Union[str, "_models.AccessTier"]] = None,
         access_tier_inferred: Optional[bool] = None,
         archive_status: Optional[Union[str, "_models.ArchiveStatus"]] = None,
+        smart_access_tier: Optional[Union[str, "_models.AccessTier"]] = None,
         customer_provided_key_sha256: Optional[str] = None,
         encryption_scope: Optional[str] = None,
         access_tier_change_time: Optional[datetime.datetime] = None,
@@ -788,13 +793,16 @@ class BlobPropertiesInternal(_serialization.Model):
         :keyword remaining_retention_days:
         :paramtype remaining_retention_days: int
         :keyword access_tier: Known values are: "P4", "P6", "P10", "P15", "P20", "P30", "P40", "P50",
-         "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", and "Cold".
+         "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", "Cold", and "Smart".
         :paramtype access_tier: str or ~azure.storage.blob.models.AccessTier
         :keyword access_tier_inferred:
         :paramtype access_tier_inferred: bool
         :keyword archive_status: Known values are: "rehydrate-pending-to-hot",
-         "rehydrate-pending-to-cool", and "rehydrate-pending-to-cold".
+         "rehydrate-pending-to-cool", "rehydrate-pending-to-cold", and "rehydrate-pending-to-smart".
         :paramtype archive_status: str or ~azure.storage.blob.models.ArchiveStatus
+        :keyword smart_access_tier: Known values are: "P4", "P6", "P10", "P15", "P20", "P30", "P40",
+         "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", "Cold", and "Smart".
+        :paramtype smart_access_tier: str or ~azure.storage.blob.models.AccessTier
         :keyword customer_provided_key_sha256:
         :paramtype customer_provided_key_sha256: str
         :keyword encryption_scope: The name of the encryption scope under which the blob is encrypted.
@@ -851,6 +859,7 @@ class BlobPropertiesInternal(_serialization.Model):
         self.access_tier = access_tier
         self.access_tier_inferred = access_tier_inferred
         self.archive_status = archive_status
+        self.smart_access_tier = smart_access_tier
         self.customer_provided_key_sha256 = customer_provided_key_sha256
         self.encryption_scope = encryption_scope
         self.access_tier_change_time = access_tier_change_time

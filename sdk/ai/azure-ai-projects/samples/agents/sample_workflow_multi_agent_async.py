@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv aiohttp
+    pip install "azure-ai-projects>=2.0.0" python-dotenv aiohttp
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -32,7 +32,6 @@ from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
     PromptAgentDefinition,
     WorkflowAgentDefinition,
-    ItemResourceType,
 )
 
 load_dotenv()
@@ -44,7 +43,7 @@ async def main():
 
     async with (
         DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
         project_client.get_openai_client() as openai_client,
     ):
 
@@ -110,6 +109,10 @@ trigger:
       output:
         messages: Local.LatestMessage
 
+    - kind: SendActivity
+      id: send_teacher_reply
+      activity: "{{Last(Local.LatestMessage).Text}}"        
+        
     - kind: SetVariable
       id: set_variable_turncount
       variable: Local.TurnCount
@@ -149,21 +152,23 @@ trigger:
 
         stream = await openai_client.responses.create(
             conversation=conversation.id,
-            extra_body={"agent": {"name": workflow.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": workflow.name, "type": "agent_reference"}},
             input="1 + 1 = ?",
             stream=True,
-            metadata={"x-ms-debug-mode-enabled": "1"},
         )
 
         async for event in stream:
             print(f"Event {event.sequence_number} type '{event.type}'", end="")
             if (
                 event.type == "response.output_item.added" or event.type == "response.output_item.done"
-            ) and event.item.type == ItemResourceType.WORKFLOW_ACTION:
+            ) and event.item.type == "workflow_action":
                 print(
                     f": item action ID '{event.item.action_id}' is '{event.item.status}' (previous action ID: '{event.item.previous_action_id}')",
                     end="",
                 )
+            elif event.type == "response.completed":
+                response = await openai_client.responses.retrieve(event.response.id)
+                print(f": Final Response: {response}", end="")
             print("", flush=True)
 
         await openai_client.conversations.delete(conversation_id=conversation.id)

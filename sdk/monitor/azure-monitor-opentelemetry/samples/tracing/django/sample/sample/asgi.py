@@ -16,14 +16,15 @@ https://docs.djangoproject.com/en/3.2/howto/deployment/asgi/
 
 import os
 
-from azure.monitor.opentelemetry import configure_azure_monitor
 from django.core.asgi import get_asgi_application
+from azure.monitor.opentelemetry import configure_azure_monitor
 
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "sample.settings")
 
 # Configure Azure monitor collection telemetry pipeline
-# configure_azure_monitor should only be called once in etiher asgi.py, wsgi.py, or manage.py, depending on startup method.
+# configure_azure_monitor should only be called once in etiher asgi.py, wsgi.py, or manage.py,
+# depending on startup method.
 # If using asgi, please remove configure_azure_monitor from wsgi.py and manage.py
 configure_azure_monitor()
 

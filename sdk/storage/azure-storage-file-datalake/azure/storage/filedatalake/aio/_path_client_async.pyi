@@ -238,3 +238,33 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> DataLakeLeaseClient: ...
+    @distributed_trace_async
+    async def set_blob_tags(
+        self,
+        tags: Optional[Dict[str, str]] = None,
+        *,
+        version_id: Optional[str] = None,
+        validate_content: Optional[bool] = None,
+        if_tags_match_condition: Optional[str] = None,
+        lease: Optional[Union[DataLakeLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]: ...
+    @distributed_trace_async
+    async def get_tags(
+        self,
+        *,
+        version_id: Optional[str] = None,
+        if_tags_match_condition: Optional[str] = None,
+        lease: Optional[Union[DataLakeLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> Dict[str, str]: ...

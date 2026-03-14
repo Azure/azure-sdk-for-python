@@ -952,28 +952,50 @@ Cross region hedging availability strategy improves availability and reduces lat
 
 #### Enabling Cross Region Hedging
 
-You can enable cross region hedging by passing the `availability_strategy_config` parameter as a dictionary to the `CosmosClient` or per-request. The most common configuration keys are `threshold_ms` (delay before sending a hedged request) and `threshold_steps_ms` (step interval for additional hedged requests).
+You can enable cross region hedging by passing the `availability_strategy` parameter to the `CosmosClient` or per-request. This parameter accepts:
+
+- **`True`**: Enable hedging with default values (`threshold_ms=500`, `threshold_steps_ms=100`) or override client settings to this default at the request level.
+- **`False`**: Explicitly disable hedging at the client or request level (overrides client-level settings)
+- **`dict`**: Enable hedging with custom values. The keys are `threshold_ms` (delay before sending a hedged request) and `threshold_steps_ms` (step interval for additional hedged requests). Missing keys will use default values.
+- **`None`**: Default value only usable at the request level. Use the client-level configurations.
+
+Hedging will also be implicitly enabled when per-partition automatic failover is enabled, in which case the `CrossRegionHedgingStrategy` applies the default values outlined above of 500 ms for `threshold_ms` and 100 ms for `threshold_steps_ms` unless you override them via `availability_strategy`.
 
 #### Client-level configuration
 
 ```python
 from azure.cosmos import CosmosClient
 
+# Enable with default values
 client = CosmosClient(
     "<account-uri>",
     "<account-key>",
-    availability_strategy_config={"threshold_ms": 150, "threshold_steps_ms": 50}
+    availability_strategy=True
+)
+
+# Enable with custom values
+client = CosmosClient(
+    "<account-uri>",
+    "<account-key>",
+    availability_strategy={"threshold_ms": 150, "threshold_steps_ms": 50}
 )
 ```
 
 #### Request-level configuration
 
 ```python
-# Override or provide the strategy per request
+# Override or provide the strategy per request with custom values
 container.read_item(
     item="item_id",
     partition_key="pk_value",
-    availability_strategy_config={"threshold_ms": 150, "threshold_steps_ms": 50}
+    availability_strategy={"threshold_ms": 150, "threshold_steps_ms": 50}
+)
+
+# Enable with default values for a specific request
+container.read_item(
+    item="item_id",
+    partition_key="pk_value",
+    availability_strategy=True
 )
 ```
 
@@ -984,7 +1006,7 @@ container.read_item(
 container.read_item(
     item="item_id",
     partition_key="pk_value",
-    availability_strategy_config=None
+    availability_strategy=False
 )
 ```
 
@@ -999,7 +1021,7 @@ executor = ThreadPoolExecutor(max_workers=2)
 client = CosmosClient(
     "<account-uri>",
     "<account-key>",
-    availability_strategy_config={"threshold_ms": 150, "threshold_steps_ms": 50},
+    availability_strategy=True,  # or use a dict for custom values
     availability_strategy_executor=executor
 )
 ```
@@ -1007,16 +1029,32 @@ client = CosmosClient(
 #### Customized max concurrency for hedging for async client
 
 ```python
-# Customize the max concurrency on the default ThreadPoolExecutor for the sync client
-from azure.cosmos import CosmosClient
+# Customize the max concurrency for the async client
+from azure.cosmos.aio import CosmosClient
 
 client = CosmosClient(
     "<account-uri>",
     "<account-key>",
-    availability_strategy_config={"threshold_ms": 150, "threshold_steps_ms": 50},
+    availability_strategy=True,  # or use a dict for custom values
     availability_strategy_max_concurrency=2
 )
 ```
+
+### Cross Region Hedging - Best Practices
+
+1. Configure appropriate thresholds based on your application's needs:
+   - Lower thresholds: More aggressive hedging, potentially higher costs
+   - Higher thresholds: More conservative, may impact latency
+
+2. Use request-level overrides judiciously:
+   - Disable hedging for non-critical operations
+   - Use custom thresholds for latency-sensitive operations
+
+3. Monitor usage:
+   - Track hedging patterns
+   - Adjust thresholds based on observed performance
+
+4. Enable multiple write regions when write availability is critical
 
 ## Troubleshooting
 

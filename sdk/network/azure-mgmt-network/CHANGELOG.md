@@ -1,5 +1,50 @@
 # Release History
 
+## 30.2.0 (2026-02-11)
+
+### Features Added
+
+  - Client `NetworkManagementClient` added operation group `service_gateways`
+  - Client `NetworkManagementClient` added operation group `virtual_network_appliances`
+  - Enum `ActionType` added member `CAPTCHA`
+  - Enum `FirewallPolicyIntrusionDetectionProfileType` added member `CORE`
+  - Enum `FirewallPolicyIntrusionDetectionProfileType` added member `EMERGING`
+  - Enum `FirewallPolicyIntrusionDetectionProfileType` added member `OFF`
+  - Model `NatGateway` added property `service_gateway`
+  - Model `PolicySettings` added property `captcha_cookie_expiration_in_mins`
+  - Model `Subnet` added property `service_gateway`
+  - Enum `WebApplicationFirewallAction` added member `CAPTCHA`
+  - Added enum `AddressUpdateAction`
+  - Added model `GetServiceGatewayAddressLocationsResult`
+  - Added model `GetServiceGatewayServicesResult`
+  - Added model `RouteTargetAddressPropertiesFormat`
+  - Added model `ServiceGateway`
+  - Added model `ServiceGatewayAddress`
+  - Added model `ServiceGatewayAddressLocation`
+  - Added model `ServiceGatewayAddressLocationResponse`
+  - Added model `ServiceGatewayListResult`
+  - Added model `ServiceGatewayService`
+  - Added model `ServiceGatewayServiceRequest`
+  - Added model `ServiceGatewaySku`
+  - Added enum `ServiceGatewaySkuName`
+  - Added enum `ServiceGatewaySkuTier`
+  - Added model `ServiceGatewayUpdateAddressLocationsRequest`
+  - Added model `ServiceGatewayUpdateServicesRequest`
+  - Added enum `ServiceType`
+  - Added enum `ServiceUpdateAction`
+  - Added enum `UpdateAction`
+  - Added model `VirtualNetworkAppliance`
+  - Added model `VirtualNetworkApplianceIpConfiguration`
+  - Added model `VirtualNetworkApplianceListResult`
+  - Added operation group `ServiceGatewaysOperations`
+  - Added operation group `VirtualNetworkAppliancesOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed enum value `FirewallPolicyIntrusionDetectionProfileType.ADVANCED`
+  - Deleted or renamed enum value `FirewallPolicyIntrusionDetectionProfileType.BASIC`
+  - Deleted or renamed enum value `FirewallPolicyIntrusionDetectionProfileType.STANDARD`
+
 ## 30.1.0 (2025-11-19)
 
 ### Features Added

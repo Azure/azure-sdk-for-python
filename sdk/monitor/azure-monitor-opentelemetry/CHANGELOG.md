@@ -1,6 +1,19 @@
 # Release History
 
-## 1.8.6 (Unreleased)
+## 1.8.7 (Unreleased)
+
+### Features Added
+- Add Browser SDK loader feature ([#42904](https://github.com/Azure/azure-sdk-for-python/pull/44162))
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+- Remove internal import from sample file
+  ([#45619](https://github.com/Azure/azure-sdk-for-python/pull/45619))
+
+## 1.8.6 (2026-02-05)
 
 ### Features Added
 
@@ -8,10 +21,9 @@
   ([#44902](https://github.com/Azure/azure-sdk-for-python/pull/44902))
 
 ### Breaking Changes
+
 - The default sampling behavior has been changed from ApplicationInsightsSampler with 100% sampling (all traces sampled) to RateLimitedSampler with 5.0 traces per second. This change significantly reduces telemetry volume for high-traffic applications and provides better cost optimization out of the box. Impact: Applications with more than 5 requests per second will see fewer traces exported by default.
   ([#44925](https://github.com/Azure/azure-sdk-for-python/pull/44925))
-
-### Bugs Fixed
 
 ### Other Changes
 - Add missing copyright headers and ensure consistent formatting across files.

@@ -2,6 +2,12 @@
 
 # Azure Mixed Reality Authentication Package client library for Python
 
+## Deprecation notice
+
+This package has been deprecated and will no longer be maintained after 10-01-2025. This package will only receive security fixes until 10-01-2025.
+
+## Overview
+
 Mixed Reality services, like Azure Remote Rendering use the Mixed Reality security
 token service (STS) for authentication. This package supports exchanging Mixed Reality account credentials for an access
 token from the STS that can be used to access Mixed Reality services.

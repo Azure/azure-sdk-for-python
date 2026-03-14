@@ -9,6 +9,7 @@ from corehttp.rest import HttpRequest
 from corehttp.transport import HttpTransport
 from corehttp.runtime.pipeline import Pipeline
 from corehttp.rest._requests_basic import StreamDownloadGenerator, RestRequestsTransportResponse
+from corehttp.exceptions import ServiceResponseError
 import pytest
 
 from utils import HTTP_RESPONSES, create_http_response, create_transport_response
@@ -61,7 +62,7 @@ def test_connection_error_response(http_response):
     http_response = create_http_response(http_response, http_request, MockInternalResponse())
     stream = StreamDownloadGenerator(pipeline, http_response, decompress=False)
     with mock.patch("time.sleep", return_value=None):
-        with pytest.raises(requests.exceptions.ConnectionError):
+        with pytest.raises(ServiceResponseError):
             stream.__next__()
 
 
@@ -108,5 +109,5 @@ def test_response_streaming_error_behavior():
     )
 
     downloader = response.iter_raw()
-    with pytest.raises(requests.exceptions.ConnectionError):
+    with pytest.raises(ServiceResponseError):
         b"".join(downloader)

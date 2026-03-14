@@ -154,8 +154,8 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         props = await blob.get_blob_properties()
         while props.copy.status == 'pending':
             count = count + 1
-            if count > 10:
-                self.fail('Timed out waiting for async copy to complete.')
+            if count > 15:
+                pytest.fail('Timed out waiting for async copy to complete.')
             self.sleep(6)
             props = await blob.get_blob_properties()
         return props
@@ -3748,5 +3748,24 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         )
         content = await (await identity_blob.download_blob()).readall()
         assert content == data
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_smart_rehydrate(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        await blob.upload_blob(b"abc123", overwrite=True)
+        await blob.set_standard_blob_tier(standard_blob_tier=StandardBlobTier.ARCHIVE)
+        await blob.set_standard_blob_tier(
+            standard_blob_tier=StandardBlobTier.SMART,
+            rehydrate_priority=RehydratePriority.HIGH
+        )
+
+        props = await blob.get_blob_properties()
+        assert props is not None
+        assert props.archive_status == "rehydrate-pending-to-smart"
 
 # ------------------------------------------------------------------------------

@@ -4,6 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from django.test import TestCase
+from django.test import TestCase  # pylint: disable=unused-import
 
 # Create your tests here.

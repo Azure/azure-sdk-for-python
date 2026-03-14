@@ -1,11 +1,9 @@
-# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
 
 from openai.types.eval_create_params import DataSourceConfigCustom
-
 
 evaluator_to_data_source_config = {
     "coherence": DataSourceConfigCustom(

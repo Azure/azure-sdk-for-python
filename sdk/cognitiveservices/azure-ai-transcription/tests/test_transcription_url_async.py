@@ -16,12 +16,12 @@ class TestTranscriptionUrlAsync(TranscriptionClientTestBase):
     async def test_transcribe_from_public_url_async(self, transcription_endpoint, transcription_test_audio_url):
         """Test async transcription from a public URL."""
         client = self.create_async_client(endpoint=transcription_endpoint)
-        
+
         async with client:
             audio_url = transcription_test_audio_url
-            
+
             result = await client.transcribe_from_url(audio_url)
-            
+
             assert result is not None
             assert result.combined_phrases is not None
             assert len(result.combined_phrases) > 0

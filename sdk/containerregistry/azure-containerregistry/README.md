@@ -136,7 +136,8 @@ with ContainerRegistryClient(self.endpoint, self.credential) as client:
         # Keep the three most recent images, delete everything else
         manifest_count = 0
         for manifest in client.list_manifest_properties(
-            repository, order_by=ArtifactManifestOrder.LAST_UPDATED_ON_DESCENDING
+            repository,
+            order_by=ArtifactManifestOrder.LAST_UPDATED_ON_DESCENDING,
         ):
             manifest_count += 1
             if manifest_count > 3:

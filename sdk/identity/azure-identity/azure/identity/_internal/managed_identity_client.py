@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import abc
+import logging
 import time
 from typing import Any, Callable, Dict, Optional
 
@@ -12,10 +13,12 @@ from azure.core.credentials import AccessTokenInfo
 from azure.core.exceptions import ClientAuthenticationError, DecodeError
 from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.rest import HttpRequest
 from .. import CredentialUnavailableError
 from .._internal import _scopes_to_resource
 from .._internal.pipeline import build_pipeline
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class ManagedIdentityClientBase(abc.ABC):
@@ -24,7 +27,7 @@ class ManagedIdentityClientBase(abc.ABC):
         request_factory: Callable[[str, dict], HttpRequest],
         client_id: Optional[str] = None,
         identity_config: Optional[Dict] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self._custom_cache = False
         self._cache = kwargs.pop("_cache", None)
@@ -101,6 +104,15 @@ class ManagedIdentityClientBase(abc.ABC):
             expires_on = int(token["expires_on"])
             refresh_on = int(token["refresh_on"]) if "refresh_on" in token else None
             if expires_on > now and (not refresh_on or refresh_on > now):
+                expires_in = expires_on - int(now)
+                refresh_on_msg = f", refresh in {refresh_on - int(now)}s" if refresh_on else ""
+                _LOGGER.debug(
+                    "Access token found in cache for resource %s (expires in %ss%s, cache ID: %s)",
+                    resource,
+                    expires_in,
+                    refresh_on_msg,
+                    id(self._cache),
+                )
                 return AccessTokenInfo(
                     token["secret"], expires_on, token_type=token.get("token_type", "Bearer"), refresh_on=refresh_on
                 )

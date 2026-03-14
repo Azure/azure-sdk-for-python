@@ -39,7 +39,7 @@ def await_result(func: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> T:
     :type args: list
     :rtype: any
     :return: The result of the function
-    :raises: TypeError
+    :raises TypeError: If the function returns an awaitable object.
     """
     result = func(*args, **kwargs)
     if hasattr(result, "__await__"):

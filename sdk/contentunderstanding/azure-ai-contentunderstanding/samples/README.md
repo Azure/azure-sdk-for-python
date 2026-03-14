@@ -206,6 +206,19 @@ Grants copy authorization and copies an analyzer from a source resource to a tar
 - Required environment variables for cross-resource operations
 - Cross-subscription analyzer deployment
 
+### Sample 16: Create Analyzer With Labels
+
+#### `sample_create_analyzer_with_labels.py` / `sample_create_analyzer_with_labels_async.py`
+Creates a custom analyzer with labeled training data from Azure Blob Storage. Labeled data improves extraction accuracy by providing annotated examples that teach the model how to identify and extract specific fields from your documents.
+
+**Key concepts:**
+- Creating analyzers with labeled training data (LabeledDataKnowledgeSource)
+- Uploading training files to Azure Blob Storage
+- Generating User Delegation SAS URLs via DefaultAzureCredential
+- Defining field schemas with extract and generate methods
+- Using labeled data for improved field extraction accuracy
+- Content Understanding Studio alternative for labeling workflow
+
 ## Common Patterns
 
 ### Authentication
@@ -241,7 +254,7 @@ result = poller.result()
 
 **Access markdown content:**
 ```python
-result: AnalyzeResult = poller.result()
+result: AnalysisResult = poller.result()
 content = result.contents[0]
 print(content.markdown)
 ```
@@ -256,7 +269,7 @@ invoice_total = content.fields["TotalAmount"].value
 
 **Access document properties:**
 ```python
-if content.kind == MediaContentKind.DOCUMENT:
+if content.kind == AnalysisContentKind.DOCUMENT:
     doc_content: DocumentContent = content  # type: ignore
     print(f"Pages: {doc_content.start_page_number} - {doc_content.end_page_number}")
     for table in doc_content.tables:

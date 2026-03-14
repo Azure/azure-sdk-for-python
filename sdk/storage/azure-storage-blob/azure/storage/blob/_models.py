@@ -89,6 +89,7 @@ class StandardBlobTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COOL = 'Cool'  #: Cool
     COLD = 'Cold'  #: Cold
     HOT = 'Hot'  #: Hot
+    SMART = 'Smart'  #: Smart
 
 
 class PremiumPageBlobTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1392,7 +1393,11 @@ class BlobProperties(DictMixin):
         is optimized for storing data that is infrequently accessed and stored
         for at least a month. The archive tier is optimized for storing
         data that is rarely accessed and stored for at least six months
-        with flexible latency requirements."""
+        with flexible latency requirements. The smart tier is optimized
+        automatically to determine the most cost-effective access tier
+        with no performance impact."""
+    smart_access_tier: Optional[str]
+    """Smart access tier of blob."""
     rehydrate_priority: Optional[str]
     """Indicates the priority with which to rehydrate an archived blob"""
     blob_tier_change_time: Optional["datetime"]
@@ -1459,6 +1464,7 @@ class BlobProperties(DictMixin):
         self.content_settings = ContentSettings(**kwargs)
         self.lease = LeaseProperties(**kwargs)
         self.blob_tier = kwargs.get('x-ms-access-tier')
+        self.smart_access_tier = kwargs.get('x-ms-smart-access-tier')
         self.rehydrate_priority = kwargs.get('x-ms-rehydrate-priority')
         self.blob_tier_change_time = kwargs.get('x-ms-access-tier-change-time')
         self.blob_tier_inferred = kwargs.get('x-ms-access-tier-inferred')

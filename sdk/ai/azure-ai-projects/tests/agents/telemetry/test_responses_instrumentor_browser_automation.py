@@ -6,10 +6,16 @@
 """
 Tests for ResponsesInstrumentor with browser automation agents.
 """
+
 import os
 import pytest
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
-from azure.ai.projects.telemetry._utils import SPAN_NAME_INVOKE_AGENT
+from azure.ai.projects.telemetry._utils import (
+    OPERATION_NAME_INVOKE_AGENT,
+    SPAN_NAME_INVOKE_AGENT,
+    _set_use_message_events,
+    RESPONSES_PROVIDER,
+)
 from azure.core.settings import settings
 from gen_ai_trace_verifier import GenAiTraceVerifier
 from devtools_testutils import recorded_by_proxy, RecordedTransport
@@ -25,6 +31,9 @@ settings.tracing_implementation = "OpenTelemetry"
 _utils._span_impl_type = settings.tracing_implementation()
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
     """Tests for ResponsesInstrumentor with browser automation agents."""
 
@@ -38,6 +47,7 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
     def test_sync_browser_automation_non_streaming_with_content_recording(self, **kwargs):
         """Test synchronous browser automation agent with non-streaming and content recording enabled."""
         self.cleanup()
+        _set_use_message_events(True)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -92,7 +102,7 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
                           news stories and provide a summary of the most recent one.
                           """,
                     stream=False,
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
 
                 assert response.output is not None
@@ -105,8 +115,8 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
 
                 expected_attributes = [
                     ("az.namespace", "Microsoft.CognitiveServices"),
-                    ("gen_ai.operation.name", "responses"),
-                    ("gen_ai.provider.name", "azure.openai"),
+                    ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
+                    ("gen_ai.provider.name", RESPONSES_PROVIDER),
                     ("server.address", ""),
                     ("gen_ai.conversation.id", conversation.id),
                     ("gen_ai.agent.name", agent.name),
@@ -173,6 +183,7 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
     def test_sync_browser_automation_non_streaming_without_content_recording(self, **kwargs):
         """Test synchronous browser automation agent with non-streaming and content recording disabled."""
         self.cleanup()
+        _set_use_message_events(True)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -226,7 +237,7 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
                           news stories and provide a summary of the most recent one.
                           """,
                     stream=False,
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
 
                 self.exporter.force_flush()
@@ -236,8 +247,8 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
 
                 expected_attributes = [
                     ("az.namespace", "Microsoft.CognitiveServices"),
-                    ("gen_ai.operation.name", "responses"),
-                    ("gen_ai.provider.name", "azure.openai"),
+                    ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
+                    ("gen_ai.provider.name", RESPONSES_PROVIDER),
                     ("server.address", ""),
                     ("gen_ai.conversation.id", conversation.id),
                     ("gen_ai.agent.name", agent.name),
@@ -302,6 +313,7 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
     def test_sync_browser_automation_streaming_with_content_recording(self, **kwargs):
         """Test synchronous browser automation agent with streaming and content recording enabled."""
         self.cleanup()
+        _set_use_message_events(True)
         os.environ.update(
             {CONTENT_TRACING_ENV_VARIABLE: "True", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
         )
@@ -348,7 +360,7 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
                           news stories and provide a summary of the most recent one.
                           """,
                     stream=True,
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
                 for _ in stream:
                     pass
@@ -365,8 +377,8 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
 
                 expected_attributes = [
                     ("az.namespace", "Microsoft.CognitiveServices"),
-                    ("gen_ai.operation.name", "responses"),
-                    ("gen_ai.provider.name", "azure.openai"),
+                    ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
+                    ("gen_ai.provider.name", RESPONSES_PROVIDER),
                     ("server.address", ""),
                     ("gen_ai.conversation.id", conversation.id),
                     ("gen_ai.agent.name", agent.name),
@@ -429,6 +441,7 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
     def test_sync_browser_automation_streaming_without_content_recording(self, **kwargs):
         """Test synchronous browser automation agent with streaming and content recording disabled."""
         self.cleanup()
+        _set_use_message_events(True)
         os.environ.update(
             {CONTENT_TRACING_ENV_VARIABLE: "False", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
         )
@@ -473,7 +486,7 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
                           news stories and provide a summary of the most recent one.
                           """,
                     stream=True,
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
                 for _ in stream:
                     pass
@@ -490,8 +503,8 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
 
                 expected_attributes = [
                     ("az.namespace", "Microsoft.CognitiveServices"),
-                    ("gen_ai.operation.name", "responses"),
-                    ("gen_ai.provider.name", "azure.openai"),
+                    ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
+                    ("gen_ai.provider.name", RESPONSES_PROVIDER),
                     ("server.address", ""),
                     ("gen_ai.conversation.id", conversation.id),
                     ("gen_ai.agent.name", agent.name),

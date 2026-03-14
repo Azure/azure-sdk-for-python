@@ -1932,16 +1932,18 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
     def set_standard_blob_tier(self, standard_blob_tier: Union[str, "StandardBlobTier"], **kwargs: Any) -> None:
         """This operation sets the tier on a block blob.
 
-        A block blob's tier determines Hot/Cool/Archive storage type.
+        A block blob's tier determines Hot/Cool/Archive/Smart storage type.
         This operation does not update the blob's ETag.
 
         :param standard_blob_tier:
             Indicates the tier to be set on the blob. Options include 'Hot', 'Cool',
-            'Archive'. The hot tier is optimized for storing data that is accessed
+            'Archive', 'Smart'. The hot tier is optimized for storing data that is accessed
             frequently. The cool storage tier is optimized for storing data that
             is infrequently accessed and stored for at least a month. The archive
             tier is optimized for storing data that is rarely accessed and stored
-            for at least six months with flexible latency requirements.
+            for at least six months with flexible latency requirements. The smart
+            tier is optimized automatically to determine the most cost-effective access
+            tier with no performance impact.
         :type standard_blob_tier: str or ~azure.storage.blob.StandardBlobTier
         :keyword ~azure.storage.blob.RehydratePriority rehydrate_priority:
             Indicates the priority with which to rehydrate an archived blob

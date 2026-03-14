@@ -174,6 +174,7 @@ def get_blob_properties_from_generated_code(generated: "BlobItemInternal") -> Bl
     blob.deleted_time = generated.properties.deleted_time
     blob.remaining_retention_days = generated.properties.remaining_retention_days
     blob.blob_tier = generated.properties.access_tier  # type: ignore [assignment]
+    blob.smart_access_tier = generated.properties.smart_access_tier
     blob.rehydrate_priority = generated.properties.rehydrate_priority
     blob.blob_tier_inferred = generated.properties.access_tier_inferred
     blob.archive_status = generated.properties.archive_status

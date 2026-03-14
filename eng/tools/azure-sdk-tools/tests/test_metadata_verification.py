@@ -13,20 +13,14 @@ import shutil
 import glob
 import sys
 
+from unittest.mock import MagicMock
 from ci_tools.parsing import ParsedSetup
-
-# Import the functions we want to test from the verify modules
-tox_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "tox"))
-if tox_path not in sys.path:
-    sys.path.append(tox_path)
-
-# Also add the azure-sdk-tools path so pypi_tools can be imported
-tools_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-if tools_path not in sys.path:
-    sys.path.append(tools_path)
-
-from verify_whl import verify_whl_root_directory
-from verify_sdist import verify_sdist
+from azpysdk.verify_whl import (
+    verify_whl_root_directory,
+    has_stable_version_on_pypi,
+    verify_conda_section,
+)
+from azpysdk.verify_sdist import verify_sdist_helper
 
 # Test scenario paths
 scenarios_folder = os.path.join(os.path.dirname(__file__), "integration", "scenarios")
@@ -99,9 +93,13 @@ def test_verify_valid_metadata_passes(package_type, scenario_name, scenario_path
         # Run the appropriate verification function
         if package_type == "wheel":
             expected_module = parsed_pkg.namespace.split(".")[0] if parsed_pkg.namespace else "azure"
-            result = verify_whl_root_directory(os.path.dirname(package_path), expected_module, parsed_pkg)
+            result = verify_whl_root_directory(
+                os.path.dirname(package_path), expected_module, parsed_pkg, sys.executable, pypi_versions=[]
+            )
         else:
-            result = verify_sdist(actual_scenario_path, os.path.dirname(package_path), parsed_pkg)
+            result = verify_sdist_helper(
+                actual_scenario_path, os.path.dirname(package_path), parsed_pkg, sys.executable
+            )
 
         # The valid metadata should pass verification (return True)
         assert result is True, f"verify_{package_type} should return True for valid {scenario_name} metadata scenario"
@@ -142,9 +140,13 @@ def test_verify_invalid_metadata_fails(package_type, scenario_name, scenario_pat
         with caplog.at_level("ERROR"):
             if package_type == "wheel":
                 expected_module = parsed_pkg.namespace.split(".")[0] if parsed_pkg.namespace else "azure"
-                result = verify_whl_root_directory(os.path.dirname(package_path), expected_module, parsed_pkg)
+                result = verify_whl_root_directory(
+                    os.path.dirname(package_path), expected_module, parsed_pkg, sys.executable, pypi_versions=None
+                )
             else:
-                result = verify_sdist(actual_scenario_path, os.path.dirname(package_path), parsed_pkg)
+                result = verify_sdist_helper(
+                    actual_scenario_path, os.path.dirname(package_path), parsed_pkg, sys.executable
+                )
 
         # The invalid metadata should fail verification (return False)
         assert (
@@ -173,3 +175,66 @@ def test_verify_invalid_metadata_fails(package_type, scenario_name, scenario_pat
         # Cleanup dist directory
         if os.path.exists(dist_dir):
             shutil.rmtree(dist_dir)
+
+
+# ======================= has_stable_version_on_pypi tests =======================
+
+
+def test_has_stable_version_on_pypi_with_stable():
+    """Returns True when at least one stable version exists."""
+    assert has_stable_version_on_pypi(["1.0.0", "2.0.0b1", "0.1.0"]) is True
+
+
+def test_has_stable_version_on_pypi_only_previews():
+    """Returns False when all versions are pre-releases."""
+    assert has_stable_version_on_pypi(["1.0.0b1", "2.0.0a3", "0.1.0rc1"]) is False
+
+
+def test_has_stable_version_on_pypi_empty():
+    """Returns False for an empty version list."""
+    assert has_stable_version_on_pypi([]) is False
+
+
+def test_has_stable_version_on_pypi_only_zero():
+    """Returns False when the only stable version is 0.0.0."""
+    assert has_stable_version_on_pypi(["0.0.0"]) is False
+
+
+# ======================= verify_conda_section tests =======================
+
+
+def test_verify_conda_section_skips_when_no_stable_version():
+    """Should return True (pass) when there are no stable versions on PyPI."""
+    parsed_pkg = MagicMock()
+    result = verify_conda_section("/fake/path", "pkg", parsed_pkg, pypi_versions=["1.0.0b1"])
+    assert result is True
+
+
+def test_verify_conda_section_fails_missing_conda_section(tmp_path):
+    """Should fail when pyproject.toml exists but has no [tool.azure-sdk-conda] section."""
+    pyproject = tmp_path / "pyproject.toml"
+    pyproject.write_text("[project]\nname = 'pkg'\n")
+    parsed_pkg = MagicMock()
+    parsed_pkg.get_conda_config.return_value = None
+    result = verify_conda_section(str(tmp_path), "pkg", parsed_pkg, pypi_versions=["1.0.0"])
+    assert result is False
+
+
+def test_verify_conda_section_fails_missing_in_bundle(tmp_path):
+    """Should fail when [tool.azure-sdk-conda] exists but 'in_bundle' key is missing."""
+    pyproject = tmp_path / "pyproject.toml"
+    pyproject.write_text("[tool.azure-sdk-conda]\nsome_other_key = true\n")
+    parsed_pkg = MagicMock()
+    parsed_pkg.get_conda_config.return_value = {"some_other_key": True}
+    result = verify_conda_section(str(tmp_path), "pkg", parsed_pkg, pypi_versions=["1.0.0"])
+    assert result is False
+
+
+def test_verify_conda_section_passes_with_valid_config(tmp_path):
+    """Should pass when [tool.azure-sdk-conda] has 'in_bundle' defined."""
+    pyproject = tmp_path / "pyproject.toml"
+    pyproject.write_text("[tool.azure-sdk-conda]\nin_bundle = true\n")
+    parsed_pkg = MagicMock()
+    parsed_pkg.get_conda_config.return_value = {"in_bundle": True}
+    result = verify_conda_section(str(tmp_path), "pkg", parsed_pkg, pypi_versions=["1.0.0"])
+    assert result is True

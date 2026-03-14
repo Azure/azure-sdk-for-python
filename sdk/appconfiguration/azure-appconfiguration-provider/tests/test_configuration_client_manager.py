@@ -3,10 +3,17 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
 import unittest
-from unittest.mock import patch, call
+from unittest.mock import patch, call, MagicMock
+import pytest
 from azure.appconfiguration.provider._client_manager import ConfigurationClientManager
+
+
+def _create_mock_credential():
+    """Create a mock credential that satisfies token credential checks."""
+    credential = MagicMock()
+    credential.get_token = MagicMock()
+    return credential
 
 
 class MockClient:
@@ -111,7 +118,9 @@ class TestConfigurationClientManager(unittest.TestCase):
 
     @patch("azure.appconfiguration.provider._client_manager.find_auto_failover_endpoints")
     @patch("azure.appconfiguration.provider._client_manager._ConfigurationClientWrapper.from_credential")
-    def test_refresh_clients_credential(self, mock_client, mock_update_failover_endpoints):
+    def test_refresh_clients_credential(
+        self, mock_client, mock_update_failover_endpoints
+    ):  # pylint: disable=too-many-statements
         endpoint = "https://fake.endpoint"
 
         mock_client.return_value = MockClient("https://fake.endpoint", "", "fake-credential", 0, 0)
@@ -191,7 +200,9 @@ class TestConfigurationClientManager(unittest.TestCase):
 
     @patch("azure.appconfiguration.provider._client_manager.find_auto_failover_endpoints")
     @patch("azure.appconfiguration.provider._client_manager._ConfigurationClientWrapper.from_connection_string")
-    def test_refresh_clients_connection_string(self, mock_client, mock_update_failover_endpoints):
+    def test_refresh_clients_connection_string(
+        self, mock_client, mock_update_failover_endpoints
+    ):  # pylint: disable=too-many-statements
         endpoint = "https://fake.endpoint"
 
         mock_client.return_value = MockClient(
@@ -291,12 +302,12 @@ class TestConfigurationClientManager(unittest.TestCase):
         mock_client.assert_not_called()
 
     @patch("azure.appconfiguration.provider._client_manager.find_auto_failover_endpoints")
-    @patch("azure.appconfiguration.provider._client_manager._ConfigurationClientWrapper.from_credential")
-    def test_calculate_backoff(self, mock_client, mock_update_failover_endpoints):
+    def test_calculate_backoff(self, mock_update_failover_endpoints):
         endpoint = "https://fake.endpoint"
         mock_update_failover_endpoints.return_value = []
-        manager = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 30, 600, False)
-        manager_invalid = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 600, 30, False)
+        credential = _create_mock_credential()
+        manager = ConfigurationClientManager(None, endpoint, credential, "", 0, 0, True, 30, 600, False)
+        manager_invalid = ConfigurationClientManager(None, endpoint, credential, "", 0, 0, True, 600, 30, False)
 
         assert manager._calculate_backoff(0) == 30000.0
         assert 30000.0 <= manager._calculate_backoff(1) <= 60000.0

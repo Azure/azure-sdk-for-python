@@ -51,9 +51,7 @@ async def create_semantic_configuration_async():
 
         index.semantic_search = SemanticSearch(configurations=[semantic_config])
         await index_client.create_or_update_index(index)
-    print(
-        f"Updated: index '{index_name}' (semantic config '{semantic_configuration_name}')"
-    )
+    print(f"Updated: index '{index_name}' (semantic config '{semantic_configuration_name}')")
 
 
 async def speller_async():
@@ -62,13 +60,9 @@ async def speller_async():
     from azure.search.documents.aio import SearchClient
 
     credential = AzureKeyCredential(key)
-    search_client = SearchClient(
-        endpoint=service_endpoint, index_name=index_name, credential=credential
-    )
+    search_client = SearchClient(endpoint=service_endpoint, index_name=index_name, credential=credential)
     async with search_client:
-        results = await search_client.search(
-            search_text="luxury", query_language="en-us", query_speller="lexicon"
-        )
+        results = await search_client.search(search_text="luxury", query_language="en-us", query_speller="lexicon")
 
         print("Results: speller")
         async for result in results:
@@ -83,9 +77,7 @@ async def semantic_ranking_async():
     from azure.search.documents.aio import SearchClient
 
     credential = AzureKeyCredential(key)
-    search_client = SearchClient(
-        endpoint=service_endpoint, index_name=index_name, credential=credential
-    )
+    search_client = SearchClient(endpoint=service_endpoint, index_name=index_name, credential=credential)
     async with search_client:
         results = await search_client.search(
             search_text="luxury",
