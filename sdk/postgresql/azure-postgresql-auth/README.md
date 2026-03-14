@@ -95,16 +95,16 @@ from functools import partial
 credential = DefaultAzureCredential()
 connection_factory = partial(EntraConnection, credential=credential)
 
-with pool.ThreadedConnectionPool(
+connection_pool = pool.ThreadedConnectionPool(
     minconn=1,
     maxconn=5,
     host="your-server.postgres.database.azure.com",
     database="your_database",
     connection_factory=connection_factory,
-) as connection_pool:
-    conn = connection_pool.getconn()
-    with conn.cursor() as cur:
-        cur.execute("SELECT 1")
+)
+conn = connection_pool.getconn()
+with conn.cursor() as cur:
+    cur.execute("SELECT 1")
 ```
 
 ### psycopg2 — Direct connection

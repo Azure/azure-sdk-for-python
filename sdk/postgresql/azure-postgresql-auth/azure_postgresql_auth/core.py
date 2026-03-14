@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import base64
 import json
-from typing import Any, cast
+from typing import Any, cast, Optional
 
 from azure.core.credentials import TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
@@ -63,14 +63,14 @@ def decode_jwt(token: str) -> dict[str, Any]:
     """
     try:
         payload = token.split(".")[1]
-        padding = "=" * (4 - len(payload) % 4)
+        padding = "=" * (-len(payload) % 4)
         decoded_payload = base64.urlsafe_b64decode(payload + padding)
         return cast(dict[str, Any], json.loads(decoded_payload))
     except Exception as e:
         raise TokenDecodeError("Invalid JWT token format") from e
 
 
-def parse_principal_name(xms_mirid: str) -> str | None:
+def parse_principal_name(xms_mirid: str) -> Optional[str]:
     """Parses the principal name from an Azure resource path.
 
     :param xms_mirid: The xms_mirid claim value containing the Azure resource path.

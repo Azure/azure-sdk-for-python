@@ -14,18 +14,19 @@ from unittest.mock import MagicMock, patch
 import pytest
 from sqlalchemy import create_engine, text
 
-from azure_postgresql_auth.errors import CredentialValueError
+from azure_postgresql_auth.errors import CredentialValueError, EntraConnectionValueError
 from azure_postgresql_auth.sqlalchemy import enable_entra_authentication
 
-from utils import TEST_USERS, MockTokenCredential, create_valid_jwt_token
+from utils import TEST_USERS, MockTokenCredential, capture_event_handler, create_valid_jwt_token
+
+SYNC_MODULE = "azure_postgresql_auth.sqlalchemy.entra_connection"
 
 
 class TestSqlalchemyEntraAuthentication:
     """Tests for enable_entra_authentication function."""
 
-    @patch("azure_postgresql_auth.sqlalchemy.entra_connection.get_entra_conninfo")
-    @patch("azure_postgresql_auth.sqlalchemy.entra_connection.event.listens_for")
-    def test_provides_entra_credentials(self, mock_listens_for, mock_get_conninfo):
+    @patch(f"{SYNC_MODULE}.get_entra_conninfo")
+    def test_provides_entra_credentials(self, mock_get_conninfo):
         """Test that the event handler provides Entra credentials."""
         token = create_valid_jwt_token(TEST_USERS["ENTRA_USER"])
         mock_get_conninfo.return_value = {
@@ -33,22 +34,9 @@ class TestSqlalchemyEntraAuthentication:
             "password": token,
         }
 
-        # Capture the decorated handler
-        registered_handlers = []
+        handler, mock_listens_for, mock_engine = capture_event_handler(enable_entra_authentication, SYNC_MODULE)
+        mock_listens_for.assert_called_once_with(mock_engine, "do_connect")
 
-        def capture_decorator(engine, event_name):
-            def decorator(fn):
-                registered_handlers.append(fn)
-                return fn
-
-            return decorator
-
-        mock_listens_for.side_effect = capture_decorator
-        mock_engine = MagicMock()
-        enable_entra_authentication(mock_engine)
-
-        assert len(registered_handlers) == 1
-        handler = registered_handlers[0]
         credential = MockTokenCredential(token)
         cparams = {"credential": credential}
         handler(MagicMock(), MagicMock(), [], cparams)
@@ -56,28 +44,24 @@ class TestSqlalchemyEntraAuthentication:
         assert cparams["user"] == TEST_USERS["ENTRA_USER"]
         assert cparams["password"] == token
 
-    @patch("azure_postgresql_auth.sqlalchemy.entra_connection.event.listens_for")
-    def test_missing_credential_raises_error(self, mock_listens_for):
+    def test_missing_credential_raises_error(self):
         """Test that the event handler raises CredentialValueError when no credential."""
-        registered_handlers = []
-
-        def capture_decorator(engine, event_name):
-            def decorator(fn):
-                registered_handlers.append(fn)
-                return fn
-
-            return decorator
-
-        mock_listens_for.side_effect = capture_decorator
-        mock_engine = MagicMock()
-        enable_entra_authentication(mock_engine)
-
-        assert len(registered_handlers) == 1
-        handler = registered_handlers[0]
+        handler, _, _ = capture_event_handler(enable_entra_authentication, SYNC_MODULE)
         with pytest.raises(CredentialValueError):
             handler(MagicMock(), MagicMock(), [], {})
 
-    @patch("azure_postgresql_auth.sqlalchemy.entra_connection.get_entra_conninfo")
+    @pytest.mark.parametrize(
+        "credential_value",
+        [None, "not-a-credential", 12345],
+        ids=["none", "string", "int"],
+    )
+    def test_invalid_credential_raises_error(self, credential_value):
+        """Test that non-TokenCredential values raise CredentialValueError."""
+        handler, _, _ = capture_event_handler(enable_entra_authentication, SYNC_MODULE)
+        with pytest.raises(CredentialValueError):
+            handler(MagicMock(), MagicMock(), [], {"credential": credential_value})
+
+    @patch(f"{SYNC_MODULE}.get_entra_conninfo")
     def test_credential_removed_from_cparams(self, mock_get_conninfo):
         """Test that the credential parameter is removed before DBAPI connect."""
         token = create_valid_jwt_token(TEST_USERS["ENTRA_USER"])
@@ -86,30 +70,71 @@ class TestSqlalchemyEntraAuthentication:
             "password": token,
         }
         credential = MockTokenCredential(token)
-
-        # Simulate what the event handler does
         cparams = {"credential": credential}
 
-        mock_engine = MagicMock()
-        # We need to capture the registered handler
-        registered_handlers = []
+        handler, _, _ = capture_event_handler(enable_entra_authentication, SYNC_MODULE)
+        handler(MagicMock(), MagicMock(), [], cparams)
+        assert "credential" not in cparams
+        assert cparams["user"] == TEST_USERS["ENTRA_USER"]
+        assert cparams["password"] == token
 
-        def capture_handler(engine, event_name):
-            def decorator(fn):
-                registered_handlers.append(fn)
-                return fn
+    @patch(f"{SYNC_MODULE}.get_entra_conninfo")
+    def test_existing_credentials_preserved(self, mock_get_conninfo):
+        """Test that existing user/password in cparams are preserved."""
+        token = create_valid_jwt_token(TEST_USERS["ENTRA_USER"])
+        credential = MockTokenCredential(token)
 
-            return decorator
+        handler, _, _ = capture_event_handler(enable_entra_authentication, SYNC_MODULE)
 
-        with patch("azure_postgresql_auth.sqlalchemy.entra_connection.event.listens_for", side_effect=capture_handler):
-            enable_entra_authentication(mock_engine)
+        cparams = {"credential": credential, "user": "existing", "password": "secret"}
+        handler(MagicMock(), MagicMock(), [], cparams)
 
-        if registered_handlers:
-            handler = registered_handlers[0]
-            handler(MagicMock(), MagicMock(), [], cparams)
-            assert "credential" not in cparams
-            assert cparams["user"] == TEST_USERS["ENTRA_USER"]
-            assert cparams["password"] == token
+        mock_get_conninfo.assert_not_called()
+        assert cparams["user"] == "existing"
+        assert cparams["password"] == "secret"
+        assert "credential" not in cparams
+
+    @pytest.mark.parametrize(
+        "cparams_extra,should_call",
+        [
+            ({}, True),
+            ({"user": "existing"}, True),
+            ({"password": "secret"}, True),
+            ({"user": "existing", "password": "secret"}, False),
+        ],
+        ids=["neither", "user-only", "password-only", "both"],
+    )
+    @patch(f"{SYNC_MODULE}.get_entra_conninfo")
+    def test_partial_credentials_trigger_entra_lookup(self, mock_get_conninfo, cparams_extra, should_call):
+        """Test that get_entra_conninfo is called when user or password is missing."""
+        token = create_valid_jwt_token(TEST_USERS["ENTRA_USER"])
+        mock_get_conninfo.return_value = {
+            "user": TEST_USERS["ENTRA_USER"],
+            "password": token,
+        }
+        credential = MockTokenCredential(token)
+
+        handler, _, _ = capture_event_handler(enable_entra_authentication, SYNC_MODULE)
+
+        cparams = {"credential": credential, **cparams_extra}
+        handler(MagicMock(), MagicMock(), [], cparams)
+
+        if should_call:
+            mock_get_conninfo.assert_called_once_with(credential)
+        else:
+            mock_get_conninfo.assert_not_called()
+
+    @patch(f"{SYNC_MODULE}.get_entra_conninfo")
+    def test_entra_credential_failure_raises_error(self, mock_get_conninfo):
+        """Test that credential retrieval failure raises EntraConnectionValueError."""
+        mock_get_conninfo.side_effect = Exception("auth failed")
+        token = create_valid_jwt_token(TEST_USERS["ENTRA_USER"])
+        credential = MockTokenCredential(token)
+
+        handler, _, _ = capture_event_handler(enable_entra_authentication, SYNC_MODULE)
+
+        with pytest.raises(EntraConnectionValueError, match="Could not retrieve Entra credentials"):
+            handler(MagicMock(), MagicMock(), [], {"credential": credential})
 
 
 @pytest.mark.live_test_only
@@ -142,19 +167,31 @@ class TestSqlalchemyEntraAuthenticationLive:
 
         engine.dispose()
 
-    def test_token_caching_behavior(self, connection_url, credential):
-        """Test that credentials are invoked for each connection."""
+    def test_multiple_sequential_connections(self, connection_url, credential):
+        """Test that the same credential works across multiple sequential connections."""
         engine = create_engine(connection_url, connect_args={"credential": credential})
         enable_entra_authentication(engine)
 
-        # First connection
-        with engine.connect() as conn1:
-            result = conn1.execute(text("SELECT 1"))
+        for _ in range(3):
+            with engine.connect() as conn:
+                result = conn.execute(text("SELECT 1"))
+                assert result.fetchone()[0] == 1
+
+        engine.dispose()
+
+    def test_connection_pool_reuse(self, connection_url, credential):
+        """Test that a pooled connection still works after being returned and reacquired."""
+        engine = create_engine(connection_url, connect_args={"credential": credential}, pool_size=1, max_overflow=0)
+        enable_entra_authentication(engine)
+
+        # First connection: use and return to pool
+        with engine.connect() as conn:
+            result = conn.execute(text("SELECT 1"))
             assert result.fetchone()[0] == 1
 
-        # Second connection
-        with engine.connect() as conn2:
-            result = conn2.execute(text("SELECT 1"))
-            assert result.fetchone()[0] == 1
+        # Second connection: reuse the pooled connection
+        with engine.connect() as conn:
+            result = conn.execute(text("SELECT current_user"))
+            assert result.fetchone()[0] is not None
 
         engine.dispose()

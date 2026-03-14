@@ -11,6 +11,7 @@ from __future__ import annotations
 import base64
 import json
 from datetime import datetime, timedelta, timezone
+from unittest.mock import MagicMock, patch
 
 from azure.core.credentials import AccessToken, TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
@@ -64,6 +65,36 @@ def create_jwt_token_with_unique_name(username: str) -> str:
     header_encoded = create_base64_url_string(json.dumps(header))
     payload_encoded = create_base64_url_string(json.dumps(payload))
     return f"{header_encoded}.{payload_encoded}.fake-signature"
+
+
+def capture_event_handler(enable_fn, mock_module_path):
+    """Patch event.listens_for, call enable_fn, and return the captured handler.
+
+    :param enable_fn: The enable_entra_authentication[_async] function to call.
+    :param mock_module_path: The module path prefix to patch (e.g.
+        "azure_postgresql_auth.sqlalchemy.entra_connection").
+    :returns: A tuple of (handler, mock_listens_for) where handler is the
+        captured event handler function and mock_listens_for is the mock
+        for asserting registration arguments.
+    """
+    registered_handlers = []
+    mock_listens_for = MagicMock()
+
+    def capture_decorator(*args, **kwargs):
+        mock_listens_for(*args, **kwargs)
+
+        def decorator(fn):
+            registered_handlers.append(fn)
+            return fn
+
+        return decorator
+
+    with patch(f"{mock_module_path}.event.listens_for", side_effect=capture_decorator):
+        mock_engine = MagicMock()
+        enable_fn(mock_engine)
+
+    assert len(registered_handlers) == 1, "Expected exactly one event handler to be registered"
+    return registered_handlers[0], mock_listens_for, mock_engine
 
 
 class MockTokenCredential(TokenCredential):

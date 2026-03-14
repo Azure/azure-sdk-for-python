@@ -98,16 +98,10 @@ class TestPsycopg3EntraConnectionLive:
                 result = cur.fetchone()
                 assert result[0] == 1
 
-    def test_token_caching_behavior(self, connection_params, credential):
-        """Test that credentials are invoked for each connection."""
-        # First connection
-        with EntraConnection.connect(**connection_params, credential=credential) as conn1:
-            with conn1.cursor() as cur:
-                cur.execute("SELECT 1")
-                assert cur.fetchone()[0] == 1
-
-        # Second connection
-        with EntraConnection.connect(**connection_params, credential=credential) as conn2:
-            with conn2.cursor() as cur:
-                cur.execute("SELECT 1")
-                assert cur.fetchone()[0] == 1
+    def test_multiple_sequential_connections(self, connection_params, credential):
+        """Test that the same credential works across multiple sequential connections."""
+        for _ in range(3):
+            with EntraConnection.connect(**connection_params, credential=credential) as conn:
+                with conn.cursor() as cur:
+                    cur.execute("SELECT 1")
+                    assert cur.fetchone()[0] == 1
