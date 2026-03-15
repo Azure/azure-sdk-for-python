@@ -43,6 +43,9 @@ class HumanInTheLoopJsonHelper(HumanInTheLoopHelper):
             logger.warning("Interrupt is not of type Interrupt: %s", interrupt_info)
             return None
         name, call_id, arguments = self.interrupt_to_function_call(interrupt_info)
+        if name is None or call_id is None or arguments is None:
+            logger.warning("Interrupt could not be converted to a function call: %s", interrupt_info)
+            return None
         return project_models.FunctionToolCallItemResource(
             call_id=call_id,
             name=name,

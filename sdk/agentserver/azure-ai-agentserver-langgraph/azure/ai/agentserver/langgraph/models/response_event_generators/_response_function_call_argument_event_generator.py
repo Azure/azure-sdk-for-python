@@ -1,14 +1,20 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import List, Union
+from typing import List, Optional, Union
 
 from langchain_core import messages as langgraph_messages
 from langchain_core.messages import AnyMessage
 from langgraph.types import Interrupt
 
 from azure.ai.agentserver.core.models import _projects as project_models
-from . import ResponseEventGenerator, StreamEventState
+from ._response_event_generator import (
+    ResponseEventGenerator,
+    ResponseGeneratorEvents,
+    ResponseGeneratorMessage,
+    ResponseGeneratorResult,
+    StreamEventState,
+)
 from .._human_in_the_loop_helper import HumanInTheLoopHelper
 from .._utils import extract_function_call
 from ..._context import LanggraphRunContext
@@ -25,7 +31,7 @@ class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):  # pyl
         message_id,
         output_index: int,
         *,
-        hitl_helper: HumanInTheLoopHelper = None,
+        hitl_helper: Optional[HumanInTheLoopHelper] = None,
     ):
         """Initialize the function-call-argument generator.
 
@@ -50,8 +56,8 @@ class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):  # pyl
         self.hitl_helper = hitl_helper
 
     def try_process_message(
-        self, message, context: LanggraphRunContext, stream_state: StreamEventState
-    ) -> tuple[bool, ResponseEventGenerator, List[project_models.ResponseStreamEvent]]:
+        self, message: ResponseGeneratorMessage, context: LanggraphRunContext, stream_state: StreamEventState
+    ) -> ResponseGeneratorResult:
         """Process one message into function-call argument events.
 
         :param message: The message or interrupt to process.
@@ -65,8 +71,8 @@ class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):  # pyl
         :rtype: tuple[bool, ResponseEventGenerator, List[project_models.ResponseStreamEvent]]
         """
         is_processed = False
-        events = []
-        next_processor = self
+        events: ResponseGeneratorEvents = []
+        next_processor: Optional[ResponseEventGenerator] = self
         if not self.started:
             self.started = True  # does not need to do anything special on start
 
@@ -85,8 +91,8 @@ class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):  # pyl
         return is_processed, next_processor, events
 
     def on_start(
-        self, _event: AnyMessage, _run_details, _stream_state: StreamEventState
-    ) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
+        self, _event: ResponseGeneratorMessage, _run_details, _stream_state: StreamEventState
+    ) -> tuple[bool, ResponseGeneratorEvents]:
         """Start argument generation for the current function call.
 
         :param _event: The current message.
@@ -106,10 +112,10 @@ class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):  # pyl
 
     def process(
         self,
-        message: Union[langgraph_messages.AnyMessage, Interrupt],
+        message: ResponseGeneratorMessage,
         _run_details,
         stream_state: StreamEventState,
-    ) -> tuple[bool, ResponseEventGenerator, List[project_models.ResponseStreamEvent]]:
+    ) -> ResponseGeneratorResult:
         """Convert one message into function-call argument delta events.
 
         :param message: The message or interrupt to process.
@@ -131,7 +137,7 @@ class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):  # pyl
                 _, _, argument = self.hitl_helper.interrupt_to_function_call(message)
             else:
                 argument = None
-        else:
+        elif isinstance(message, langgraph_messages.BaseMessage):
             tool_call = self.get_tool_call_info(message)
             if tool_call:
                 _, _, argument = extract_function_call(tool_call)
@@ -147,7 +153,7 @@ class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):  # pyl
             return True, self, [argument_delta_event]
         return False, self, []
 
-    def has_finish_reason(self, message: AnyMessage) -> bool:
+    def has_finish_reason(self, message: ResponseGeneratorMessage) -> bool:
         """Check whether the message marks completion for this argument stream.
 
         :param message: The message to inspect.
@@ -169,7 +175,7 @@ class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):  # pyl
             return True
         return False
 
-    def should_end(self, event: AnyMessage) -> bool:
+    def should_end(self, event: ResponseGeneratorMessage) -> bool:
         """Determine whether this generator should stop processing.
 
         :param event: The current event.
@@ -185,8 +191,8 @@ class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):  # pyl
         return False
 
     def on_end(
-        self, _message: AnyMessage, _context: LanggraphRunContext, stream_state: StreamEventState
-    ) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
+        self, _message: ResponseGeneratorMessage, _context: LanggraphRunContext, stream_state: StreamEventState
+    ) -> tuple[bool, ResponseGeneratorEvents]:
         """Emit the final function-call-arguments-done event.
 
         :param _message: The terminal message for the argument stream.
@@ -206,10 +212,11 @@ class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):  # pyl
             sequence_number=stream_state.sequence_number,
         )
         stream_state.sequence_number += 1
-        self.parent.aggregate_content(self.aggregated_content)  # pass aggregated content to parent
+        if self.parent:
+            self.parent.aggregate_content(self.aggregated_content)  # pass aggregated content to parent
         return True, [done_event]
 
-    def get_tool_call_info(self, message: Union[langgraph_messages.AnyMessage, Interrupt]):
+    def get_tool_call_info(self, message: ResponseGeneratorMessage):
         """Extract the first tool call from a message when present.
 
         :param message: The message to inspect.

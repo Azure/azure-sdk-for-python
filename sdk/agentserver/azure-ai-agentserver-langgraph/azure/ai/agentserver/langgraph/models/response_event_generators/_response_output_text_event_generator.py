@@ -1,13 +1,16 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import List
+from typing import List, Optional
 
-from langchain_core.messages import AnyMessage
+from langchain_core import messages as langgraph_messages
 
 from azure.ai.agentserver.core.models import _projects as project_models
 from ._response_event_generator import (
     ResponseEventGenerator,
+    ResponseGeneratorEvents,
+    ResponseGeneratorMessage,
+    ResponseGeneratorResult,
     StreamEventState,
 )
 from ..._context import LanggraphRunContext
@@ -23,7 +26,7 @@ class ResponseOutputTextEventGenerator(ResponseEventGenerator):
         content_index: int,
         output_index: int,
         item_id: str,
-        message_id: str,
+        message_id: Optional[str],
     ):
         """Initialize the output-text event generator.
 
@@ -38,7 +41,7 @@ class ResponseOutputTextEventGenerator(ResponseEventGenerator):
         :param item_id: The response item identifier.
         :type item_id: str
         :param message_id: The originating message identifier.
-        :type message_id: str
+        :type message_id: Optional[str]
         """
         super().__init__(logger, parent)
         self.output_index = output_index
@@ -48,8 +51,8 @@ class ResponseOutputTextEventGenerator(ResponseEventGenerator):
         self.aggregated_content = ""
 
     def try_process_message(
-        self, message: AnyMessage, _context, stream_state: StreamEventState
-    ) -> tuple[bool, ResponseEventGenerator, List[project_models.ResponseStreamEvent]]:
+        self, message: ResponseGeneratorMessage, _context, stream_state: StreamEventState
+    ) -> ResponseGeneratorResult:
         """Process a message into text delta and completion events.
 
         :param message: The message chunk to process.
@@ -63,12 +66,12 @@ class ResponseOutputTextEventGenerator(ResponseEventGenerator):
         :rtype: tuple[bool, ResponseEventGenerator, List[project_models.ResponseStreamEvent]]
         """
         is_processed = False
-        events = []
-        next_processor = self
+        events: ResponseGeneratorEvents = []
+        next_processor: Optional[ResponseEventGenerator] = self
         if not self.started:
             self.started = True
 
-        if message:
+        if isinstance(message, langgraph_messages.BaseMessage):
             is_processed, next_processor, processed_events = self.process(message, stream_state)
             if not is_processed:
                 self.logger.warning("OutputTextEventGenerator did not process message: %s", message)
@@ -82,8 +85,8 @@ class ResponseOutputTextEventGenerator(ResponseEventGenerator):
         return is_processed, next_processor, events
 
     def process(
-        self, message: AnyMessage, stream_state: StreamEventState
-    ) -> tuple[bool, ResponseEventGenerator, List[project_models.ResponseStreamEvent]]:
+        self, message: langgraph_messages.BaseMessage, stream_state: StreamEventState
+    ) -> ResponseGeneratorResult:
         """Convert message content into text delta events.
 
         :param message: The message containing text content.
@@ -96,7 +99,7 @@ class ResponseOutputTextEventGenerator(ResponseEventGenerator):
         """
         if message and message.content:
             content = [message.content] if isinstance(message.content, str) else message.content
-            res = []
+            res: ResponseGeneratorEvents = []
             for item in content:
                 if not isinstance(item, str):
                     self.logger.warning("Skipping non-string content item: %s", item)
@@ -115,7 +118,7 @@ class ResponseOutputTextEventGenerator(ResponseEventGenerator):
             return True, self, res
         return False, self, []
 
-    def has_finish_reason(self, message) -> bool:
+    def has_finish_reason(self, message: ResponseGeneratorMessage) -> bool:
         """Check whether the message marks completion for this text stream.
 
         :param message: The message to inspect.
@@ -124,13 +127,13 @@ class ResponseOutputTextEventGenerator(ResponseEventGenerator):
         :return: True when the message carries a finish reason.
         :rtype: bool
         """
-        if not message or message.id != self.message_id:
+        if not isinstance(message, langgraph_messages.BaseMessage) or message.id != self.message_id:
             return False
         if message.response_metadata and message.response_metadata.get("finish_reason"):
             return True
         return False
 
-    def should_end(self, message) -> bool:
+    def should_end(self, message: ResponseGeneratorMessage) -> bool:
         """Determine whether text streaming for this item should end.
 
         :param message: The message to inspect.
@@ -141,13 +144,15 @@ class ResponseOutputTextEventGenerator(ResponseEventGenerator):
         """
         if message is None:
             return True
+        if not isinstance(message, langgraph_messages.BaseMessage):
+            return True
         if message.id != self.message_id:
             return True
         return False
 
     def on_end(
-        self, message, _context: LanggraphRunContext, stream_state: StreamEventState
-    ) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
+        self, message: ResponseGeneratorMessage, _context: LanggraphRunContext, stream_state: StreamEventState
+    ) -> tuple[bool, ResponseGeneratorEvents]:
         """Emit the final text-done event for the current content part.
 
         :param message: The terminal message for this text stream.
@@ -172,6 +177,7 @@ class ResponseOutputTextEventGenerator(ResponseEventGenerator):
             sequence_number=stream_state.sequence_number,
         )
         stream_state.sequence_number += 1
-        self.parent.aggregate_content(self.aggregated_content)
+        if self.parent:
+            self.parent.aggregate_content(self.aggregated_content)
         has_finish = self.has_finish_reason(message)
         return has_finish, [done_event]

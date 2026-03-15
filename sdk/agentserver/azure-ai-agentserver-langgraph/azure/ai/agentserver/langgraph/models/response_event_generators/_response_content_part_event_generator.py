@@ -1,15 +1,22 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import List
+from typing import Any, Optional
 
 from langchain_core import messages as langgraph_messages
 
 from azure.ai.agentserver.core.models import _projects as project_models
 
 from . import _item_content_helpers as item_content_helpers
-from ._response_event_generator import ResponseEventGenerator, StreamEventState
+from ._response_event_generator import (
+    ResponseEventGenerator,
+    ResponseGeneratorEvents,
+    ResponseGeneratorMessage,
+    ResponseGeneratorResult,
+    StreamEventState,
+)
 from ._response_output_text_event_generator import ResponseOutputTextEventGenerator
+from ..._context import LanggraphRunContext
 
 
 class ResponseContentPartEventGenerator(ResponseEventGenerator):
@@ -20,7 +27,7 @@ class ResponseContentPartEventGenerator(ResponseEventGenerator):
         logger,
         parent: ResponseEventGenerator,
         item_id: str,
-        message_id: str,
+        message_id: Optional[str],
         output_index: int,
         content_index: int,
     ):
@@ -33,7 +40,7 @@ class ResponseContentPartEventGenerator(ResponseEventGenerator):
         :param item_id: The response item identifier.
         :type item_id: str
         :param message_id: The originating message identifier.
-        :type message_id: str
+        :type message_id: Optional[str]
         :param output_index: The output item index.
         :type output_index: int
         :param content_index: The content part index within the item.
@@ -45,11 +52,11 @@ class ResponseContentPartEventGenerator(ResponseEventGenerator):
         self.item_id = item_id
         self.message_id = message_id
         self.aggregated_content = ""
-        self.item_content_helper = None
+        self.item_content_helper: Optional[item_content_helpers.ItemContentHelper] = None
 
     def try_process_message(
-        self, message, context, stream_state: StreamEventState
-    ) -> tuple[bool, ResponseEventGenerator, List[project_models.ResponseStreamEvent]]:
+        self, message: ResponseGeneratorMessage, context: LanggraphRunContext, stream_state: StreamEventState
+    ) -> ResponseGeneratorResult:
         """Process a message into content-part events.
 
         :param message: The message to process.
@@ -63,8 +70,8 @@ class ResponseContentPartEventGenerator(ResponseEventGenerator):
         :rtype: tuple[bool, ResponseEventGenerator, List[project_models.ResponseStreamEvent]]
         """
         is_processed = False
-        events = []
-        next_processor = self
+        events: ResponseGeneratorEvents = []
+        next_processor: Optional[ResponseEventGenerator] = self
         if not self.item_content_helper:
             if not self.try_create_item_content_helper(message):
                 # cannot create item content, skip this message
@@ -78,7 +85,7 @@ class ResponseContentPartEventGenerator(ResponseEventGenerator):
             events.extend(start_events)
 
         if self.should_end(message):
-            complete_events = self.on_end(message, context, stream_state)
+            _, complete_events = self.on_end(message, context, stream_state)
             events.extend(complete_events)
             next_processor = self.parent
             is_processed = self.has_finish_reason(message) if message else False
@@ -91,8 +98,8 @@ class ResponseContentPartEventGenerator(ResponseEventGenerator):
         return is_processed, next_processor, events
 
     def on_start(
-        self, _event, _run_details, stream_state: StreamEventState
-    ) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
+        self, _event: ResponseGeneratorMessage, _run_details: LanggraphRunContext, stream_state: StreamEventState
+    ) -> tuple[bool, ResponseGeneratorEvents]:
         """Emit the content-part-added event.
 
         :param _event: The current message.
@@ -106,6 +113,8 @@ class ResponseContentPartEventGenerator(ResponseEventGenerator):
         :rtype: tuple[bool, List[project_models.ResponseStreamEvent]]
         """
         if self.started:
+            return False, []
+        if self.item_content_helper is None:
             return False, []
 
         start_event = project_models.ResponseContentPartAddedEvent(
@@ -121,8 +130,8 @@ class ResponseContentPartEventGenerator(ResponseEventGenerator):
         return True, [start_event]
 
     def on_end(
-        self, _message, _context, stream_state: StreamEventState
-    ) -> List[project_models.ResponseStreamEvent]:
+        self, _message: ResponseGeneratorMessage, _context: LanggraphRunContext, stream_state: StreamEventState
+    ) -> tuple[bool, ResponseGeneratorEvents]:
         """Emit the content-part-done event.
 
         :param _message: The terminal message.
@@ -132,9 +141,11 @@ class ResponseContentPartEventGenerator(ResponseEventGenerator):
         :param stream_state: The mutable stream state.
         :type stream_state: StreamEventState
 
-        :return: The completion events.
-        :rtype: List[project_models.ResponseStreamEvent]
+        :return: Completion status and the completion events.
+        :rtype: tuple[bool, List[project_models.ResponseStreamEvent]]
         """
+        if self.item_content_helper is None:
+            return False, []
         aggregated_content = self.item_content_helper.create_item_content()
         done_event = project_models.ResponseContentPartDoneEvent(
             item_id=self.item_id,
@@ -146,9 +157,9 @@ class ResponseContentPartEventGenerator(ResponseEventGenerator):
         stream_state.sequence_number += 1
         if self.parent:
             self.parent.aggregate_content(aggregated_content.as_dict())
-        return [done_event]
+        return True, [done_event]
 
-    def try_create_item_content_helper(self, message):
+    def try_create_item_content_helper(self, message: ResponseGeneratorMessage) -> bool:
         """Create the content helper that matches the message payload.
 
         :param message: The message to inspect.
@@ -167,15 +178,18 @@ class ResponseContentPartEventGenerator(ResponseEventGenerator):
                 return True
         return False
 
-    def aggregate_content(self, content):
+    def aggregate_content(self, content: Any) -> None:
         """Aggregate child content into the current content helper.
 
         :param content: The child content to aggregate.
         :type content: Any
         """
-        return self.item_content_helper.aggregate_content(content)
+        if self.item_content_helper is None:
+            return None
+        self.item_content_helper.aggregate_content(content)
+        return None
 
-    def is_text_content(self, content):
+    def is_text_content(self, content: Any) -> bool:
         """Check whether the message content can be treated as plain text.
 
         :param content: The content payload to inspect.
@@ -190,15 +204,17 @@ class ResponseContentPartEventGenerator(ResponseEventGenerator):
             return True
         return False
 
-    def create_child_processor(self, _message) -> ResponseEventGenerator:
+    def create_child_processor(self, _message: ResponseGeneratorMessage) -> Optional[ResponseEventGenerator]:
         """Create the child generator for the current content helper.
 
         :param _message: The originating message, unused by this generator.
         :type _message: Any
 
         :return: The child generator.
-        :rtype: ResponseEventGenerator
+        :rtype: Optional[ResponseEventGenerator]
         """
+        if self.item_content_helper is None:
+            return None
         if self.item_content_helper.content_type in (
             project_models.ItemContentType.INPUT_TEXT,
             project_models.ItemContentType.OUTPUT_TEXT,
@@ -213,7 +229,7 @@ class ResponseContentPartEventGenerator(ResponseEventGenerator):
             )
         raise ValueError(f"Unsupported item content type for child processor: {self.item_content_helper.content_type}")
 
-    def has_finish_reason(self, message) -> bool:
+    def has_finish_reason(self, message: ResponseGeneratorMessage) -> bool:
         """Check whether the message contains a finish reason.
 
         :param message: The message to inspect.
@@ -228,7 +244,7 @@ class ResponseContentPartEventGenerator(ResponseEventGenerator):
             return True
         return False
 
-    def should_end(self, event) -> bool:
+    def should_end(self, event: ResponseGeneratorMessage) -> bool:
         """Determine whether content generation for this item should end.
 
         :param event: The current message or chunk.
@@ -239,9 +255,13 @@ class ResponseContentPartEventGenerator(ResponseEventGenerator):
         """
         if event is None:
             return True
+        if not isinstance(event, langgraph_messages.BaseMessage):
+            return True
         if event.id != self.message_id:
             return True
         # if is Message not MessageChunk, should create child and end in the second iteration
         if not isinstance(event, langgraph_messages.BaseMessageChunk):
+            if self.item_content_helper is None:
+                return True
             return self.item_content_helper.has_aggregated_content
         return False

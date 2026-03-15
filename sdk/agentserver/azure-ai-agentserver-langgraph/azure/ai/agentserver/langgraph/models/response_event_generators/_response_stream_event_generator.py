@@ -2,13 +2,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import time
-from typing import List, Optional, Union
+from typing import Any, List, Optional, Union
 
 from langchain_core import messages as langgraph_messages
 
 from azure.ai.agentserver.core.models import _projects as project_models
 from ._response_event_generator import (
     ResponseEventGenerator,
+    ResponseGeneratorEvents,
+    ResponseGeneratorMessage,
+    ResponseGeneratorResult,
     StreamEventState,
 )
 from ._response_output_item_event_generator import ResponseOutputItemEventGenerator
@@ -36,8 +39,11 @@ class ResponseStreamEventGenerator(ResponseEventGenerator):
         self.aggregated_contents: List[project_models.ItemResource] = []
 
     def on_start(
-        self, context: LanggraphRunContext, stream_state: StreamEventState
-    ) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
+        self,
+        _message: ResponseGeneratorMessage,
+        context: LanggraphRunContext,
+        stream_state: StreamEventState,
+    ) -> tuple[bool, ResponseGeneratorEvents]:
         """Emit the initial response-created and in-progress stream events.
 
         :param context: The run context for the current request.
@@ -101,10 +107,10 @@ class ResponseStreamEventGenerator(ResponseEventGenerator):
 
     def try_process_message(
         self,
-        message: Optional[langgraph_messages.AnyMessage],
+        message: ResponseGeneratorMessage,
         context: LanggraphRunContext,
         stream_state: StreamEventState,
-    ) -> tuple[bool, Optional[ResponseEventGenerator], List[project_models.ResponseStreamEvent]]:
+    ) -> ResponseGeneratorResult:
         """Process a streamed message or transition to a child generator.
 
         :param message: The streamed message to process.
@@ -118,14 +124,14 @@ class ResponseStreamEventGenerator(ResponseEventGenerator):
         :rtype: tuple[bool, Optional[ResponseEventGenerator], List[project_models.ResponseStreamEvent]]
         """
         is_processed = False
-        next_processor = self
-        events = []
+        next_processor: Optional[ResponseEventGenerator] = self
+        events: ResponseGeneratorEvents = []
 
         if not self.started:
-            self.started, start_events = self.on_start(context, stream_state)
+            self.started, start_events = self.on_start(message, context, stream_state)
             events.extend(start_events)
 
-        if message:
+        if message is not None:
             # create a child processor
             next_processor = ResponseOutputItemEventGenerator(
                 self.logger, self, len(self.aggregated_contents), message.id, hitl_helper=self.hitl_helper
@@ -134,14 +140,13 @@ class ResponseStreamEventGenerator(ResponseEventGenerator):
 
         if self.should_end(message):
             # received a None message, indicating end of the stream
-            done_events = self.on_end(message, context, stream_state)
+            is_processed, done_events = self.on_end(message, context, stream_state)
             events.extend(done_events)
-            is_processed = True
             next_processor = None
 
         return is_processed, next_processor, events
 
-    def should_end(self, event: langgraph_messages.AnyMessage) -> bool:
+    def should_end(self, event: ResponseGeneratorMessage) -> bool:
         """Determine whether the stream should end for the current event.
 
         :param event: The current stream event.
@@ -156,10 +161,10 @@ class ResponseStreamEventGenerator(ResponseEventGenerator):
 
     def on_end(
         self,
-        _message: Optional[langgraph_messages.AnyMessage],
+        _message: ResponseGeneratorMessage,
         context: LanggraphRunContext,
         stream_state: StreamEventState,
-    ) -> List[project_models.ResponseStreamEvent]:
+    ) -> tuple[bool, ResponseGeneratorEvents]:
         """Emit the final response-completed event for the stream.
 
         :param _message: The terminal message for the stream.
@@ -169,8 +174,8 @@ class ResponseStreamEventGenerator(ResponseEventGenerator):
         :param stream_state: The mutable stream state.
         :type stream_state: StreamEventState
 
-        :return: The final stream events.
-        :rtype: List[project_models.ResponseStreamEvent]
+        :return: Completion status and the final stream events.
+        :rtype: tuple[bool, List[project_models.ResponseStreamEvent]]
         """
         agent_id = context.agent_run.get_agent_id_object()
         conversation = context.agent_run.get_conversation_object()
@@ -190,13 +195,13 @@ class ResponseStreamEventGenerator(ResponseEventGenerator):
         stream_state.sequence_number += 1
         if self.parent:
             self.parent.aggregate_content(self.aggregated_contents)
-        return [done_event]
+        return True, [done_event]
 
-    def aggregate_content(self, content: Union[List[project_models.ItemResource], project_models.ItemResource]) -> None:
+    def aggregate_content(self, content: Any) -> None:
         """Collect item resources produced by child generators.
 
         :param content: The child content to aggregate.
-        :type content: Union[List[project_models.ItemResource], project_models.ItemResource]
+        :type content: Any
         """
         if isinstance(content, list):
             for c in content:

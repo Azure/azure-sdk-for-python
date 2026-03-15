@@ -74,6 +74,17 @@ class HumanInTheLoopHelper:
         """
         raise NotImplementedError("Subclasses must implement convert_interrupt method.")
 
+    def interrupt_to_function_call(self, interrupt: Interrupt) -> tuple[Optional[str], Optional[str], Optional[str]]:
+        """Convert an interrupt into function-call fields.
+
+        :param interrupt: The interrupt to convert.
+        :type interrupt: Interrupt
+
+        :return: A tuple of function name, call id, and serialized arguments.
+        :rtype: tuple[Optional[str], Optional[str], Optional[str]]
+        """
+        raise NotImplementedError("Subclasses must implement interrupt_to_function_call method.")
+
     def validate_and_convert_human_feedback(
             self, state: Optional[StateSnapshot], input_data: Union[str, ResponseInputParam]
     ) -> Optional[Command]:

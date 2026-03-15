@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Any, Mapping, Optional
 
 from langgraph.types import Interrupt
 
@@ -38,7 +38,7 @@ class ItemResourceHelper(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def add_aggregate_content(self, item):
+    def add_aggregate_content(self, item: Any) -> None:
         """Accumulate child content into the helper state.
 
         :param item: The child content to aggregate.
@@ -61,7 +61,7 @@ class ItemResourceHelper(ABC):
 class FunctionCallItemResourceHelper(ItemResourceHelper):
     """Helper for streaming function-call item resources."""
 
-    def __init__(self, item_id: str = None, tool_call: dict = None):
+    def __init__(self, item_id: Optional[str] = None, tool_call: Optional[Mapping[str, Any]] = None):
         """Initialize the function-call item helper.
 
         :param item_id: The response item identifier.
@@ -70,8 +70,8 @@ class FunctionCallItemResourceHelper(ItemResourceHelper):
         :type tool_call: dict
         """
         super().__init__(project_models.ItemType.FUNCTION_CALL, item_id)
-        self.call_id = None
-        self.name = None
+        self.call_id: Optional[str] = None
+        self.name: Optional[str] = None
         self.arguments = ""
         if tool_call:
             self.name, self.call_id, _ = extract_function_call(tool_call)
@@ -95,7 +95,7 @@ class FunctionCallItemResourceHelper(ItemResourceHelper):
         }
         return project_models.ItemResource(content)
 
-    def add_aggregate_content(self, item):
+    def add_aggregate_content(self, item: Any) -> None:
         """Accumulate additional function-call arguments.
 
         :param item: The content fragment to aggregate.
@@ -104,7 +104,7 @@ class FunctionCallItemResourceHelper(ItemResourceHelper):
         if isinstance(item, str):
             self.arguments += item
             return
-        if not isinstance(item, dict):
+        if not isinstance(item, Mapping):
             return
         if item.get("type") != project_models.ItemType.FUNCTION_CALL:
             return
@@ -154,11 +154,13 @@ class FunctionCallInterruptItemResourceHelper(ItemResourceHelper):
             return None
         item_resource = self.hitl_helper.convert_interrupt(self.interrupt)
         if item_resource is not None and not is_done:
-            if getattr(item_resource, "arguments", None) is not None:
-                item_resource.arguments = ""
+            item_resource_data = item_resource.as_dict()
+            if "arguments" in item_resource_data:
+                item_resource_data["arguments"] = ""
+            return project_models.ItemResource(item_resource_data)
         return item_resource
 
-    def add_aggregate_content(self, item):
+    def add_aggregate_content(self, item: Any) -> None:
         """Ignore aggregated content for interrupt-backed items.
 
         :param item: The content fragment to aggregate.
@@ -178,7 +180,7 @@ class FunctionCallInterruptItemResourceHelper(ItemResourceHelper):
 class FunctionCallOutputItemResourceHelper(ItemResourceHelper):
     """Helper for streaming function-call-output item resources."""
 
-    def __init__(self, item_id: str = None, call_id: str = None):
+    def __init__(self, item_id: Optional[str] = None, call_id: Optional[str] = None):
         """Initialize the function-call-output helper.
 
         :param item_id: The response item identifier.
@@ -208,7 +210,7 @@ class FunctionCallOutputItemResourceHelper(ItemResourceHelper):
         }
         return project_models.ItemResource(content)
 
-    def add_aggregate_content(self, item):
+    def add_aggregate_content(self, item: Any) -> None:
         """Accumulate additional function-call-output content.
 
         :param item: The content fragment to aggregate.
@@ -217,7 +219,7 @@ class FunctionCallOutputItemResourceHelper(ItemResourceHelper):
         if isinstance(item, str):
             self.content += item
             return
-        if not isinstance(item, dict):
+        if not isinstance(item, Mapping):
             return
         content = item.get("text")
         if isinstance(content, str):
@@ -265,7 +267,7 @@ class MessageItemResourceHelper(ItemResourceHelper):
         }
         return project_models.ItemResource(content)
 
-    def add_aggregate_content(self, item):
+    def add_aggregate_content(self, item: Any) -> None:
         """Accumulate additional message content.
 
         :param item: The content fragment to aggregate.

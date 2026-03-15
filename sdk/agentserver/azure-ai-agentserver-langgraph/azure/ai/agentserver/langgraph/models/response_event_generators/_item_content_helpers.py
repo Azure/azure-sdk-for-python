@@ -1,6 +1,8 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+from typing import Any
+
 from azure.ai.agentserver.core.models import _projects as project_models
 
 
@@ -25,6 +27,14 @@ class ItemContentHelper:
         return project_models.ItemContent(
             type=self.content_type,
         )
+
+    def aggregate_content(self, _item: Any) -> None:
+        """Accumulate additional content into the helper state.
+
+        :param _item: The content fragment to aggregate.
+        :type _item: Any
+        """
+        raise NotImplementedError
 
 
 class InputTextItemContentHelper(ItemContentHelper):

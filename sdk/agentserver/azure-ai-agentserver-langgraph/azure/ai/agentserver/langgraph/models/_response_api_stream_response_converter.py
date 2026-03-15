@@ -6,6 +6,7 @@ from abc import ABC, abstractmethod
 from typing import Any, List, Optional, Union
 
 from langchain_core.messages import AnyMessage
+from langgraph.types import Interrupt
 
 from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.models import ResponseStreamEvent
@@ -110,7 +111,7 @@ class ResponseAPIMessagesStreamResponseConverter(ResponseAPIStreamResponseConver
         return res
 
     def try_process_message(
-        self, event: Union[AnyMessage, Any, None], context: LanggraphRunContext
+        self, event: Union[AnyMessage, Interrupt, Any, None], context: LanggraphRunContext
     ) -> List[ResponseStreamEvent]:
         """Process one message through the current event-generator chain.
 
@@ -129,25 +130,28 @@ class ResponseAPIMessagesStreamResponseConverter(ResponseAPIStreamResponseConver
             return []
 
         is_processed = False
-        next_processor = self.current_generator
+        next_processor: Optional[ResponseEventGenerator] = self.current_generator
         returned_events = []
         while not is_processed:
-            is_processed, next_processor, processed_events = self.current_generator.try_process_message(
+            current_generator = self.current_generator
+            if current_generator is None:
+                break
+            is_processed, next_processor, processed_events = current_generator.try_process_message(
                 event, context, self.stream_state
             )
             returned_events.extend(processed_events)
-            if not is_processed and next_processor == self.current_generator:
+            if not is_processed and next_processor == current_generator:
                 logger.warning(
                     "Message can not be processed by current generator %s: %s: %s",
-                    type(self.current_generator).__name__,
+                    type(current_generator).__name__,
                     type(event),
                     event,
                 )
                 break
-            if next_processor != self.current_generator:
+            if next_processor != current_generator:
                 logger.info(
                     "Switching processor from %s to %s",
-                    type(self.current_generator).__name__,
+                    type(current_generator).__name__,
                     type(next_processor).__name__ if next_processor is not None else "NoneType",
                 )
                 self.current_generator = next_processor
