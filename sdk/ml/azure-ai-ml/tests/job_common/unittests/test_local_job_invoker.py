@@ -1,7 +1,9 @@
 import io
 import os
+import shutil
 import tarfile
 import tempfile
+import zipfile
 from pathlib import Path
 from unittest.mock import MagicMock
 
@@ -13,7 +15,6 @@ from azure.ai.ml.operations._local_job_invoker import (
     patch_invocation_script_serialization,
     unzip_to_temporary_file,
 )
-import zipfile
 
 @pytest.mark.unittest
 @pytest.mark.training_experiences_test
@@ -66,11 +67,11 @@ class TestLocalJobInvoker:
             flags = _get_creationflags_and_startupinfo_for_background_process("linux")
 
         assert flags == {"stderr": -2, "stdin": -3, "stdout": -3}
-
 def _make_job_definition(name="test-run"):
     job_def = MagicMock()
     job_def.name = name
     return job_def
+
 
 @pytest.mark.unittest
 @pytest.mark.training_experiences_test
@@ -87,9 +88,13 @@ class TestUnzipPathTraversalPrevention:
         job_def = _make_job_definition("safe-run")
         result = unzip_to_temporary_file(job_def, zip_bytes)
 
-        assert result.exists()
-        assert (result / "azureml-setup" / "invocation.sh").exists()
-        assert (result / "azureml-setup" / "config.json").exists()
+        try:
+            assert result.exists()
+            assert (result / "azureml-setup" / "invocation.sh").exists()
+            assert (result / "azureml-setup" / "config.json").exists()
+        finally:
+            if result.exists():
+                shutil.rmtree(result, ignore_errors=True)
 
     def test_zip_with_path_traversal_is_rejected(self):
         buf = io.BytesIO()
@@ -147,7 +152,7 @@ class TestSafeTarExtract:
             buf.seek(0)
 
             with tarfile.open(fileobj=buf, mode="r") as tar:
-                with pytest.raises((ValueError, Exception)):
+                with pytest.raises(ValueError):
                     _safe_tar_extractall(tar, dest)
 
     def test_tar_with_symlink_is_rejected(self):
@@ -161,7 +166,7 @@ class TestSafeTarExtract:
             buf.seek(0)
 
             with tarfile.open(fileobj=buf, mode="r") as tar:
-                with pytest.raises((ValueError, Exception)):
+                with pytest.raises(ValueError):
                     _safe_tar_extractall(tar, dest)
 
     def test_tar_with_hardlink_is_rejected(self):
@@ -175,5 +180,5 @@ class TestSafeTarExtract:
             buf.seek(0)
 
             with tarfile.open(fileobj=buf, mode="r") as tar:
-                with pytest.raises((ValueError, Exception)):
+                with pytest.raises(ValueError):
                     _safe_tar_extractall(tar, dest)
