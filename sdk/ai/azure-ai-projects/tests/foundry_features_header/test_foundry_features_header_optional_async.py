@@ -82,15 +82,24 @@ def async_client_preview_disabled() -> Iterator[AsyncAIProjectClient]:
     )
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="module", autouse=True)
 def _print_report_optional_async() -> Iterator[None]:
-    """Print the Foundry-Features optional header report after all async tests finish."""
+    """Print two Foundry-Features reports after all async optional tests finish:
+    one for the allow_preview=True test and one for the allow_preview-unset test.
+    """
     yield
-    report = TestFoundryFeaturesHeaderOptionalAsync._report
-    max_len = TestFoundryFeaturesHeaderOptionalAsync._report_max_label_len
-    if report:
-        print("\n\nFoundry-Features optional header report (async):")
-        for label, header_value in sorted(report):
+    present_report = TestFoundryFeaturesHeaderOptionalAsync._report
+    if present_report:
+        max_len = TestFoundryFeaturesHeaderOptionalAsync._report_max_label_len
+        print("\n\nFoundry-Features optional header report (async) — test_optional_header_present_when_preview_enabled_async:")
+        for label, header_value in sorted(present_report):
+            print(f"{label:<{max_len}}  |  \"{header_value}\"")
+
+    absent_report = TestFoundryFeaturesHeaderOptionalAsync._report_absent
+    if absent_report:
+        max_len = TestFoundryFeaturesHeaderOptionalAsync._report_absent_max_label_len
+        print("\n\nFoundry-Features optional header report (async) — test_optional_header_absent_when_preview_not_enabled_async:")
+        for label, header_value in sorted(absent_report):
             print(f"{label:<{max_len}}  |  \"{header_value}\"")
 
 
@@ -99,6 +108,8 @@ class TestFoundryFeaturesHeaderOptionalAsync(FoundryFeaturesHeaderTestBase):
 
     _report: ClassVar[List[Tuple[str, str]]] = []
     _report_max_label_len: ClassVar[int] = 0
+    _report_absent: ClassVar[List[Tuple[str, str]]] = []
+    _report_absent_max_label_len: ClassVar[int] = 0
 
     @staticmethod
     async def _capture_async(call: Any) -> Any:

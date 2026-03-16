@@ -134,7 +134,7 @@ def client() -> Iterator[AIProjectClient]:
         yield c
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="module", autouse=True)
 def _print_report() -> Iterator[None]:
     """Print the full Foundry-Features header report after all tests finish."""
     yield

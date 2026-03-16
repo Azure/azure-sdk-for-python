@@ -86,13 +86,15 @@ class AsyncFakeCredential:
 class FoundryFeaturesHeaderTestBase:
     """Base class with utilities shared by sync and async Foundry-Features header tests.
 
-    Subclasses must define their own *class-level* ``_report`` and
-    ``_report_max_label_len`` so that each test module accumulates its own
-    report and the two reports do not bleed into one another.
+    Subclasses must define their own *class-level* ``_report``, ``_report_absent``,
+    ``_report_max_label_len``, and ``_report_absent_max_label_len`` so that each test
+    module accumulates its own reports and they do not bleed into one another.
     """
 
     _report: ClassVar[List[Tuple[str, str]]] = []
     _report_max_label_len: ClassVar[int] = 0
+    _report_absent: ClassVar[List[Tuple[str, str]]] = []
+    _report_absent_max_label_len: ClassVar[int] = 0
 
     # ------------------------------------------------------------------
     # Fake-argument builder
@@ -139,8 +141,8 @@ class FoundryFeaturesHeaderTestBase:
         args: list[Any] = []
         kwargs: dict[str, Any] = {}
 
-        for pname, param in sig.parameters.items():
-            if pname in ("self", "cls"):
+        for param_name, param in sig.parameters.items():
+            if param_name in ("self", "cls"):
                 continue
             if param.kind in (param.VAR_POSITIONAL, param.VAR_KEYWORD):
                 continue
@@ -155,7 +157,7 @@ class FoundryFeaturesHeaderTestBase:
             if param.kind in (param.POSITIONAL_OR_KEYWORD, param.POSITIONAL_ONLY):
                 args.append(fake)
             else:  # KEYWORD_ONLY
-                kwargs[pname] = fake
+                kwargs[param_name] = fake
 
         return lambda: method(*args, **kwargs)
 
@@ -183,8 +185,13 @@ class FoundryFeaturesHeaderTestBase:
 
     @classmethod
     def _record_header_absence_assertion(cls, label: str, request: Any) -> None:
-        """Assert the Foundry-Features header is absent on *request*."""
+        """Assert the Foundry-Features header is absent on *request*,
+        then record the result in *cls._report_absent* for the end-of-module summary.
+        """
         assert FOUNDRY_FEATURES_HEADER not in request.headers, (
             f"{label}: expected '{FOUNDRY_FEATURES_HEADER}' header to be absent.\n"
             f"Actual headers: {dict(request.headers)}"
         )
+        absence_note = f'\'{FOUNDRY_FEATURES_HEADER}\' header not present (as expected)'
+        cls._report_absent_max_label_len = max(cls._report_absent_max_label_len, len(label))
+        cls._report_absent.append((label, absence_note))

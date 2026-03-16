@@ -83,15 +83,24 @@ def client_preview_disabled() -> Iterator[AIProjectClient]:
         yield c
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="module", autouse=True)
 def _print_report_optional() -> Iterator[None]:
-    """Print the Foundry-Features optional header report after all sync tests finish."""
+    """Print two Foundry-Features reports after all sync optional tests finish:
+    one for the allow_preview=True test and one for the allow_preview-unset test.
+    """
     yield
-    report = TestFoundryFeaturesHeaderOptional._report
-    max_len = TestFoundryFeaturesHeaderOptional._report_max_label_len
-    if report:
-        print("\n\nFoundry-Features optional header report (sync):")
-        for label, header_value in sorted(report):
+    present_report = TestFoundryFeaturesHeaderOptional._report
+    if present_report:
+        max_len = TestFoundryFeaturesHeaderOptional._report_max_label_len
+        print("\n\nFoundry-Features optional header report (sync) — test_optional_header_present_when_preview_enabled:")
+        for label, header_value in sorted(present_report):
+            print(f"{label:<{max_len}}  |  \"{header_value}\"")
+
+    absent_report = TestFoundryFeaturesHeaderOptional._report_absent
+    if absent_report:
+        max_len = TestFoundryFeaturesHeaderOptional._report_absent_max_label_len
+        print("\n\nFoundry-Features optional header report (sync) — test_optional_header_absent_when_preview_not_enabled:")
+        for label, header_value in sorted(absent_report):
             print(f"{label:<{max_len}}  |  \"{header_value}\"")
 
 
@@ -100,6 +109,8 @@ class TestFoundryFeaturesHeaderOptional(FoundryFeaturesHeaderTestBase):
 
     _report: ClassVar[List[Tuple[str, str]]] = []
     _report_max_label_len: ClassVar[int] = 0
+    _report_absent: ClassVar[List[Tuple[str, str]]] = []
+    _report_absent_max_label_len: ClassVar[int] = 0
 
     @staticmethod
     def _capture(call: Any) -> Any:

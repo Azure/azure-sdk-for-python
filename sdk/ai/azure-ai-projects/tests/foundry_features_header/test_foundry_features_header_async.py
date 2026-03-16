@@ -144,7 +144,7 @@ def async_client() -> Iterator[AsyncAIProjectClient]:
     )
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="module", autouse=True)
 def _print_report_async() -> Iterator[None]:
     """Print the full Foundry-Features header report after all async tests finish."""
     yield
