@@ -114,7 +114,7 @@ with (
 
     print("Creating evaluation")
     eval_object = client.evals.create(
-        name="OpenAI graders test",
+        name="OpenAI graders test - model target",
         data_source_config=data_source_config,
         testing_criteria=testing_criteria,  # type: ignore
     )
@@ -160,21 +160,27 @@ with (
             )
         ],
     )
+    
+    data_source = {
+        "type": "azure_ai_target_completions",
+        "source": source_file_content,
+        "input_messages": input_messages,
+        "target": {
+            "type": "azure_ai_model",
+            "model": model_deployment_name_for_audio,
+            "sampling_params": {  # Note: model sampling parameters are optional and can differ per model
+                "top_p": 1.0,
+                "max_completion_tokens": 5000,
+            },
+        },
+    }
 
     print("Creating Eval Run")
     eval_run_object = client.evals.runs.create(
         eval_id=eval_object.id,
         name="Eval",
         metadata={"team": "eval-exp", "scenario": "notifications-v1"},
-        data_source=CreateEvalCompletionsRunDataSourceParam(
-            type="completions",
-            source=source_file_content,
-            model=model_deployment_name_for_audio,
-            input_messages=input_messages,
-            sampling_params={
-                "temperature": 0.8,
-            },
-        )
+        data_source=data_source # type: ignore
     )
     print(f"Eval Run created (id: {eval_run_object.id}, name: {eval_run_object.name})")
     pprint(eval_run_object)
