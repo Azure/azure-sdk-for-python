@@ -42,6 +42,12 @@ Install Azure Identity for credential support:
 pip install azure-identity
 ```
 
+Note: If using async credentials in `azure.identity.aio`, you must first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/):
+
+```bash
+pip install aiohttp
+```
+
 ## Key concepts
 
 ### Authentication flow
