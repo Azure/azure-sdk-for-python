@@ -48,7 +48,7 @@ def build_service_set_properties_request(*, timeout: Optional[int] = None, **kwa
     content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?restype=service&comp=properties"
+    _url = "?restype=service&comp=properties"
 
     # Construct parameters
     if timeout is not None:
@@ -69,7 +69,7 @@ def build_service_get_properties_request(*, timeout: Optional[int] = None, **kwa
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = "/?restype=service&comp=properties"
+    _url = "?restype=service&comp=properties"
 
     # Construct parameters
     if timeout is not None:
@@ -90,7 +90,7 @@ def build_service_get_statistics_request(*, timeout: Optional[int] = None, **kwa
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = "/?restype=service&comp=stats"
+    _url = "?restype=service&comp=stats"
 
     # Construct parameters
     if timeout is not None:
@@ -119,7 +119,7 @@ def build_service_list_containers_segment_request(  # pylint: disable=name-too-l
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = "/?comp=list"
+    _url = "?comp=list"
 
     # Construct parameters
     if prefix is not None:
@@ -151,7 +151,7 @@ def build_service_get_user_delegation_key_request(  # pylint: disable=name-too-l
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = "/?restype=service&comp=userdelegationkey"
+    _url = "?restype=service&comp=userdelegationkey"
 
     # Construct parameters
     if timeout is not None:
@@ -171,7 +171,7 @@ def build_service_get_account_info_request(*, timeout: Optional[int] = None, **k
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?restype=account&comp=properties"
+    _url = "?restype=account&comp=properties"
 
     # Construct parameters
     if timeout is not None:
@@ -194,7 +194,7 @@ def build_service_submit_batch_request(
     accept = _headers.pop("Accept", "multipart/mixed")
 
     # Construct URL
-    _url = "/?comp=batch"
+    _url = "?comp=batch"
 
     # Construct parameters
     if timeout is not None:
@@ -224,7 +224,7 @@ def build_service_filter_blobs_request(
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = "/?comp=blobs"
+    _url = "?comp=blobs"
 
     # Construct parameters
     if timeout is not None:
