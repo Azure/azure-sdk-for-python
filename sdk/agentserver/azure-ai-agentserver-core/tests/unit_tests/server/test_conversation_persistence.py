@@ -53,7 +53,6 @@ def create_mock_agent():
     return agent
 
 
-@pytest.mark.unit
 class TestShouldStore:
     """Tests for _should_store method."""
 
@@ -110,7 +109,6 @@ class TestShouldStore:
         assert not result  # Falsy value when endpoint is None
 
 
-@pytest.mark.unit
 class TestItemsAreEqual:
     """Tests for _items_are_equal method."""
 
@@ -185,7 +183,6 @@ class TestItemsAreEqual:
         assert agent._items_are_equal(item1, item2) is False
 
 
-@pytest.mark.unit
 class TestSaveInputToConversation:
     """Tests for _save_input_to_conversation method."""
 

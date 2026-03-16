@@ -21,6 +21,13 @@ import requests
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
+env_paths = [
+    project_root / ".env",
+    Path.cwd() / ".env",
+    Path(__file__).parent / ".env",
+]
+has_env_file = any(env_path.exists() for env_path in env_paths)
+
 
 class BaseCustomAgentTest:
     """Base class for Custom agent sample tests with common utilities."""
@@ -190,7 +197,7 @@ class TestSimpleMockAgent:
         assert lines_read > 0, "Expected to read at least one line from streaming response"
 
 
-@pytest.mark.skip
+@pytest.mark.skipif(not has_env_file, reason="Requires a .env file for MCP sample configuration")
 class TestMcpSimple:
     """Test suite for Custom MCP Simple - uses Microsoft Learn MCP."""
 
@@ -234,7 +241,7 @@ class TestMcpSimple:
         assert found_keyword, f"Expected one of {expected_keywords} in response"
 
 
-@pytest.mark.skip
+@pytest.mark.skipif(not has_env_file, reason="Requires a .env file for bilingual weekend planner configuration")
 class TestBilingualWeekendPlanner:
     """Test suite for the bilingual weekend planner custom sample."""
 

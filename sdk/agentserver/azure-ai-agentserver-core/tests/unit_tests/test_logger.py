@@ -4,7 +4,6 @@ import pytest
 from unittest.mock import MagicMock, patch
 
 
-@pytest.mark.unit
 class TestGetProjectEndpoint:
     """Tests for get_project_endpoint function."""
 
@@ -76,7 +75,6 @@ class TestGetProjectEndpoint:
             assert result is None or result == ""
 
 
-@pytest.mark.unit
 class TestGetApplicationInsightsConnstr:
     """Tests for _get_application_insights_connstr function."""
 
@@ -116,7 +114,6 @@ class TestGetApplicationInsightsConnstr:
             assert mock_logger.debug.called or result is None or result == ""
 
 
-@pytest.mark.unit
 class TestLoggerConfiguration:
     """Tests for logger configuration."""
 
