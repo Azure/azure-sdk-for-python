@@ -17,7 +17,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b4" python-dotenv aiohttp
+    pip install "azure-ai-projects>=2.0.0" python-dotenv aiohttp
 
     Deploy a chat model (e.g. gpt-4.1) and an embedding model (e.g. text-embedding-3-small).
     Once you have deployed models, set the deployment name in the variables below.
@@ -52,7 +52,7 @@ async def main() -> None:
 
     async with (
         DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
     ):
 
         # Delete memory store, if it already exists
@@ -86,15 +86,10 @@ async def main() -> None:
         scope = "user_123"
 
         # Add a memory to the memory store
-        user_message = {
-            "role": "user",
-            "content": "I prefer dark roast coffee and usually drink it in the morning",
-            "type": "message",
-        }
         update_poller = await project_client.beta.memory_stores.begin_update_memories(
             name=memory_store.name,
             scope=scope,
-            items=[user_message],  # Pass conversation items that you want to add to memory
+            items="I prefer dark roast coffee and usually drink it in the morning",  # Pass conversation items that you want to add to memory
             update_delay=0,  # Trigger update immediately without waiting for inactivity
         )
 
@@ -107,11 +102,10 @@ async def main() -> None:
             )
 
         # Retrieve memories from the memory store
-        query_message = {"role": "user", "content": "What are my coffee preferences?", "type": "message"}
         search_response = await project_client.beta.memory_stores.search_memories(
             name=memory_store.name,
             scope=scope,
-            items=[query_message],
+            items="What are my coffee preferences?",
             options=MemorySearchOptions(max_memories=5),
         )
         print(f"Found {len(search_response.memories)} memories")

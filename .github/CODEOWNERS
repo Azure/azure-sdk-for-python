@@ -339,6 +339,8 @@
 # PRLabel: %Monitor
 /sdk/monitor/azure-monitor-ingestion/    @Azure/azure-sdk-write-monitor-data-plane
 
+# PRLabel: %Cognitive - Content Understanding
+/sdk/contentunderstanding/                                           @bojunehsu @changjian-wang @chienyuanchang @yungshinlintw 
 # PRLabel: %Monitor
 /sdk/monitor/azure-monitor-query/    @Azure/azure-sdk-write-monitor-query-logs
 
