@@ -21,7 +21,7 @@ import os
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
 from testpreparer_async import ContentUnderstandingPreparer, ContentUnderstandingClientTestBaseAsync
-from azure.ai.contentunderstanding.models import AnalyzeInput, DocumentContent
+from azure.ai.contentunderstanding.models import AnalysisInput, DocumentContent
 
 
 class TestSampleAnalyzeInvoiceAsync(ContentUnderstandingClientTestBaseAsync):
@@ -49,7 +49,7 @@ class TestSampleAnalyzeInvoiceAsync(ContentUnderstandingClientTestBaseAsync):
             invoice_data = f.read()
 
         # Analyze the invoice
-        poller = await client.begin_analyze(analyzer_id="prebuilt-invoice", inputs=[AnalyzeInput(data=invoice_data)])
+        poller = await client.begin_analyze(analyzer_id="prebuilt-invoice", inputs=[AnalysisInput(data=invoice_data)])
 
         # Wait for analysis to complete
         result = await poller.result()

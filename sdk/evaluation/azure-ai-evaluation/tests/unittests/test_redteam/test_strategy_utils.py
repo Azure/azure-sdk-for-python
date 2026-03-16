@@ -6,12 +6,22 @@ import pytest
 from unittest.mock import MagicMock, patch
 from typing import Dict, List, Callable
 
-from pyrit.common import initialize_pyrit, IN_MEMORY
+import httpx
+
+from pyrit.memory import CentralMemory, SQLiteMemory
+
+# Initialize PyRIT with in-memory database
+CentralMemory.set_memory_instance(SQLiteMemory(db_path=":memory:"))
 
 from azure.ai.evaluation.red_team._utils.strategy_utils import (
     strategy_converter_map,
     get_converter_for_strategy,
     get_chat_target,
+    PYRIT_HTTP_TIMEOUT,
+    DEFAULT_CONNECT_TIMEOUT,
+    DEFAULT_READ_TIMEOUT,
+    DEFAULT_WRITE_TIMEOUT,
+    DEFAULT_POOL_TIMEOUT,
 )
 from azure.ai.evaluation.red_team._attack_strategy import AttackStrategy
 from azure.ai.evaluation.red_team._callback_chat_target import _CallbackChatTarget
@@ -22,8 +32,6 @@ from pyrit.prompt_converter import (
     MorseConverter,
 )
 from pyrit.prompt_target import PromptChatTarget, OpenAIChatTarget
-
-initialize_pyrit(memory_db_type=IN_MEMORY)
 
 
 @pytest.mark.unittest
@@ -116,14 +124,25 @@ class TestChatTargetFunctions:
             model_name="gpt-35-turbo",
             endpoint="https://example.openai.azure.com",
             api_key="test-api-key",
-            api_version="2024-06-01",
+            httpx_client_kwargs={
+                "timeout": httpx.Timeout(
+                    connect=DEFAULT_CONNECT_TIMEOUT,
+                    read=DEFAULT_READ_TIMEOUT,
+                    write=DEFAULT_WRITE_TIMEOUT,
+                    pool=DEFAULT_POOL_TIMEOUT,
+                )
+            },
         )
-        assert result == mock_instance
 
-        # Reset mock
-        mock_openai_chat_target.reset_mock()
+    @patch("pyrit.auth.get_azure_openai_auth")
+    @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
+    def test_get_chat_target_azure_openai_keyless(self, mock_openai_chat_target, mock_get_auth):
+        """Test getting chat target with keyless (DefaultAzureCredential) auth via PyRIT."""
+        mock_instance = MagicMock()
+        mock_openai_chat_target.return_value = mock_instance
+        mock_auth_result = MagicMock()
+        mock_get_auth.return_value = mock_auth_result
 
-        # Test with AAD auth
         config = {
             "azure_deployment": "gpt-35-turbo",
             "azure_endpoint": "https://example.openai.azure.com",
@@ -131,12 +150,21 @@ class TestChatTargetFunctions:
 
         result = get_chat_target(config)
 
+        mock_get_auth.assert_called_once_with("https://example.openai.azure.com")
         mock_openai_chat_target.assert_called_once_with(
             model_name="gpt-35-turbo",
             endpoint="https://example.openai.azure.com",
-            use_aad_auth=True,
-            api_version="2024-06-01",
+            api_key=mock_auth_result,
+            httpx_client_kwargs={
+                "timeout": httpx.Timeout(
+                    connect=DEFAULT_CONNECT_TIMEOUT,
+                    read=DEFAULT_READ_TIMEOUT,
+                    write=DEFAULT_WRITE_TIMEOUT,
+                    pool=DEFAULT_POOL_TIMEOUT,
+                )
+            },
         )
+        assert result == mock_instance
 
     @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
     def test_get_chat_target_azure_openai_with_credential_in_target(self, mock_openai_chat_target):
@@ -163,15 +191,8 @@ class TestChatTargetFunctions:
         call_kwargs = mock_openai_chat_target.call_args[1]
         assert call_kwargs["model_name"] == "gpt-35-turbo"
         assert call_kwargs["endpoint"] == "https://example.openai.azure.com"
-        assert call_kwargs["api_version"] == "2024-06-01"
         # api_key should be a callable (token provider)
         assert callable(call_kwargs["api_key"])
-
-        # Verify the token provider returns the expected token
-        token_provider = call_kwargs["api_key"]
-        token = token_provider()
-        assert token == "test-access-token"
-        mock_credential.get_token.assert_called_with("https://cognitiveservices.azure.com/.default")
 
         assert result == mock_instance
 
@@ -201,15 +222,8 @@ class TestChatTargetFunctions:
         call_kwargs = mock_openai_chat_target.call_args[1]
         assert call_kwargs["model_name"] == "gpt-35-turbo"
         assert call_kwargs["endpoint"] == "https://example.openai.azure.com"
-        assert call_kwargs["api_version"] == "2024-06-01"
         # api_key should be a callable (token provider)
         assert callable(call_kwargs["api_key"])
-
-        # Verify the token provider returns the expected token
-        token_provider = call_kwargs["api_key"]
-        token = token_provider()
-        assert token == "test-access-token"
-        mock_credential.get_token.assert_called_with("https://cognitiveservices.azure.com/.default")
 
         assert result == mock_instance
 
@@ -235,7 +249,14 @@ class TestChatTargetFunctions:
             model_name="gpt-35-turbo",
             endpoint="https://example.openai.azure.com",
             api_key="test-api-key",
-            api_version="2024-06-01",
+            httpx_client_kwargs={
+                "timeout": httpx.Timeout(
+                    connect=DEFAULT_CONNECT_TIMEOUT,
+                    read=DEFAULT_READ_TIMEOUT,
+                    write=DEFAULT_WRITE_TIMEOUT,
+                    pool=DEFAULT_POOL_TIMEOUT,
+                )
+            },
         )
         # Credential should not be used
         mock_credential.get_token.assert_not_called()
@@ -299,7 +320,14 @@ class TestChatTargetFunctions:
             model_name="gpt-4",
             endpoint=None,
             api_key="test-api-key",
-            api_version="2024-06-01",
+            httpx_client_kwargs={
+                "timeout": httpx.Timeout(
+                    connect=DEFAULT_CONNECT_TIMEOUT,
+                    read=DEFAULT_READ_TIMEOUT,
+                    write=DEFAULT_WRITE_TIMEOUT,
+                    pool=DEFAULT_POOL_TIMEOUT,
+                )
+            },
         )
 
         # Test with base_url
@@ -317,7 +345,14 @@ class TestChatTargetFunctions:
             model_name="gpt-4",
             endpoint="https://example.com/api",
             api_key="test-api-key",
-            api_version="2024-06-01",
+            httpx_client_kwargs={
+                "timeout": httpx.Timeout(
+                    connect=DEFAULT_CONNECT_TIMEOUT,
+                    read=DEFAULT_READ_TIMEOUT,
+                    write=DEFAULT_WRITE_TIMEOUT,
+                    pool=DEFAULT_POOL_TIMEOUT,
+                )
+            },
         )
 
     @patch("azure.ai.evaluation.red_team._utils.strategy_utils._CallbackChatTarget")
@@ -402,3 +437,273 @@ class TestChatTargetFunctions:
 
         # Verify we get a callback target
         assert isinstance(result, _CallbackChatTarget)
+
+    @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
+    def test_get_chat_target_foundry_endpoint_appends_openai_v1(self, mock_openai_chat_target):
+        """Test that Foundry-style endpoints get /openai/v1 appended."""
+        mock_instance = MagicMock()
+        mock_openai_chat_target.return_value = mock_instance
+
+        config = {
+            "azure_deployment": "gpt-4o",
+            "azure_endpoint": "https://my-resource.services.ai.azure.com",
+            "api_key": "test-key",
+        }
+
+        result = get_chat_target(config)
+
+        call_kwargs = mock_openai_chat_target.call_args[1]
+        assert (
+            call_kwargs["endpoint"] == "https://my-resource.services.ai.azure.com/openai/v1"
+        ), f"Foundry endpoint should have /openai/v1 appended, got: {call_kwargs['endpoint']}"
+        assert call_kwargs["model_name"] == "gpt-4o"
+
+    @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
+    def test_get_chat_target_foundry_endpoint_openai_without_v1(self, mock_openai_chat_target):
+        """Test that Foundry endpoint ending in /openai (without /v1) gets upgraded."""
+        mock_instance = MagicMock()
+        mock_openai_chat_target.return_value = mock_instance
+
+        config = {
+            "azure_deployment": "gpt-4o",
+            "azure_endpoint": "https://my-resource.services.ai.azure.com/openai",
+            "api_key": "test-key",
+        }
+
+        result = get_chat_target(config)
+
+        call_kwargs = mock_openai_chat_target.call_args[1]
+        assert (
+            call_kwargs["endpoint"] == "https://my-resource.services.ai.azure.com/openai/v1"
+        ), f"Endpoint ending in /openai should be upgraded to /openai/v1, got: {call_kwargs['endpoint']}"
+
+    @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
+    def test_get_chat_target_foundry_endpoint_no_double_append(self, mock_openai_chat_target):
+        """Test that already-normalized Foundry endpoints don't get /openai/v1 doubled."""
+        mock_instance = MagicMock()
+        mock_openai_chat_target.return_value = mock_instance
+
+        config = {
+            "azure_deployment": "gpt-4o",
+            "azure_endpoint": "https://my-resource.services.ai.azure.com/openai/v1",
+            "api_key": "test-key",
+        }
+
+        result = get_chat_target(config)
+
+        call_kwargs = mock_openai_chat_target.call_args[1]
+        assert (
+            call_kwargs["endpoint"] == "https://my-resource.services.ai.azure.com/openai/v1"
+        ), f"Already-normalized endpoint should not be modified, got: {call_kwargs['endpoint']}"
+
+    @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
+    def test_get_chat_target_foundry_endpoint_with_trailing_slash(self, mock_openai_chat_target):
+        """Test that Foundry endpoint with trailing slash is handled correctly."""
+        mock_instance = MagicMock()
+        mock_openai_chat_target.return_value = mock_instance
+
+        config = {
+            "azure_deployment": "gpt-4o",
+            "azure_endpoint": "https://my-resource.services.ai.azure.com/",
+            "api_key": "test-key",
+        }
+
+        result = get_chat_target(config)
+
+        call_kwargs = mock_openai_chat_target.call_args[1]
+        assert (
+            call_kwargs["endpoint"] == "https://my-resource.services.ai.azure.com/openai/v1"
+        ), f"Trailing slash should be stripped before appending, got: {call_kwargs['endpoint']}"
+
+    @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
+    def test_get_chat_target_traditional_aoai_not_modified(self, mock_openai_chat_target):
+        """Test that traditional Azure OpenAI endpoints are NOT modified."""
+        mock_instance = MagicMock()
+        mock_openai_chat_target.return_value = mock_instance
+
+        config = {
+            "azure_deployment": "gpt-4o",
+            "azure_endpoint": "https://my-resource.openai.azure.com",
+            "api_key": "test-key",
+        }
+
+        result = get_chat_target(config)
+
+        call_kwargs = mock_openai_chat_target.call_args[1]
+        assert (
+            call_kwargs["endpoint"] == "https://my-resource.openai.azure.com"
+        ), f"Traditional AOAI endpoint should not be modified, got: {call_kwargs['endpoint']}"
+
+    @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
+    def test_get_chat_target_foundry_endpoint_case_insensitive(self, mock_openai_chat_target):
+        """Test that Foundry hostname detection is case-insensitive (RFC 4343)."""
+        mock_instance = MagicMock()
+        mock_openai_chat_target.return_value = mock_instance
+
+        config = {
+            "azure_deployment": "gpt-4o",
+            "azure_endpoint": "https://my-resource.SERVICES.AI.AZURE.COM",
+            "api_key": "test-key",
+        }
+
+        result = get_chat_target(config)
+
+        call_kwargs = mock_openai_chat_target.call_args[1]
+        assert (
+            call_kwargs["endpoint"] == "https://my-resource.SERVICES.AI.AZURE.COM/openai/v1"
+        ), f"Case-insensitive hostname should be detected, got: {call_kwargs['endpoint']}"
+
+    @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
+    def test_get_chat_target_non_foundry_url_with_matching_substring_not_modified(self, mock_openai_chat_target):
+        """Test that non-Foundry URLs containing .services.ai.azure.com in the path are NOT modified."""
+        mock_instance = MagicMock()
+        mock_openai_chat_target.return_value = mock_instance
+
+        config = {
+            "azure_deployment": "gpt-4o",
+            "azure_endpoint": "https://my-resource.openai.azure.com",
+            "api_key": "test-key",
+        }
+
+        result = get_chat_target(config)
+
+        call_kwargs = mock_openai_chat_target.call_args[1]
+        assert (
+            call_kwargs["endpoint"] == "https://my-resource.openai.azure.com"
+        ), f"Non-Foundry endpoint should not be modified, got: {call_kwargs['endpoint']}"
+
+
+@pytest.mark.unittest
+class TestHttpxTimeoutConfiguration:
+    """Test that httpx timeout is configurable via http_timeout parameter."""
+
+    @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
+    def test_custom_http_timeout(self, mock_openai_chat_target):
+        """Verify custom http_timeout overrides the default."""
+        mock_openai_chat_target.return_value = MagicMock()
+
+        config = {
+            "azure_deployment": "gpt-4",
+            "azure_endpoint": "https://example.openai.azure.com",
+            "api_key": "test-key",
+        }
+        get_chat_target(config, http_timeout=300)
+
+        call_kwargs = mock_openai_chat_target.call_args[1]
+        assert call_kwargs["httpx_client_kwargs"] == {
+            "timeout": httpx.Timeout(
+                connect=DEFAULT_CONNECT_TIMEOUT,
+                read=300,
+                write=DEFAULT_WRITE_TIMEOUT,
+                pool=DEFAULT_POOL_TIMEOUT,
+            )
+        }
+
+    @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
+    def test_default_http_timeout(self, mock_openai_chat_target):
+        """Verify default timeout is PYRIT_HTTP_TIMEOUT when http_timeout is not specified."""
+        mock_openai_chat_target.return_value = MagicMock()
+
+        config = {
+            "azure_deployment": "gpt-4",
+            "azure_endpoint": "https://example.openai.azure.com",
+            "api_key": "test-key",
+        }
+        get_chat_target(config)
+
+        call_kwargs = mock_openai_chat_target.call_args[1]
+        assert call_kwargs["httpx_client_kwargs"] == {
+            "timeout": httpx.Timeout(
+                connect=DEFAULT_CONNECT_TIMEOUT,
+                read=DEFAULT_READ_TIMEOUT,
+                write=DEFAULT_WRITE_TIMEOUT,
+                pool=DEFAULT_POOL_TIMEOUT,
+            )
+        }
+
+    @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
+    def test_none_http_timeout_uses_default(self, mock_openai_chat_target):
+        """Verify explicit None falls back to default."""
+        mock_openai_chat_target.return_value = MagicMock()
+
+        config = {
+            "azure_deployment": "gpt-4",
+            "azure_endpoint": "https://example.openai.azure.com",
+            "api_key": "test-key",
+        }
+        get_chat_target(config, http_timeout=None)
+
+        call_kwargs = mock_openai_chat_target.call_args[1]
+        assert call_kwargs["httpx_client_kwargs"] == {
+            "timeout": httpx.Timeout(
+                connect=DEFAULT_CONNECT_TIMEOUT,
+                read=DEFAULT_READ_TIMEOUT,
+                write=DEFAULT_WRITE_TIMEOUT,
+                pool=DEFAULT_POOL_TIMEOUT,
+            )
+        }
+
+    @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
+    def test_httpx_timeout_credential_auth_path(self, mock_openai_chat_target):
+        """Verify httpx timeout is set in the TokenCredential auth path."""
+        mock_openai_chat_target.return_value = MagicMock()
+        mock_credential = MagicMock()
+        mock_credential.get_token.return_value = MagicMock(token="tok")
+
+        config = {
+            "azure_deployment": "gpt-4",
+            "azure_endpoint": "https://example.openai.azure.com",
+            "credential": mock_credential,
+        }
+        get_chat_target(config)
+
+        call_kwargs = mock_openai_chat_target.call_args[1]
+        assert "httpx_client_kwargs" in call_kwargs
+        assert call_kwargs["httpx_client_kwargs"] == {
+            "timeout": httpx.Timeout(
+                connect=DEFAULT_CONNECT_TIMEOUT,
+                read=DEFAULT_READ_TIMEOUT,
+                write=DEFAULT_WRITE_TIMEOUT,
+                pool=DEFAULT_POOL_TIMEOUT,
+            )
+        }
+
+    def test_invalid_http_timeout_string(self):
+        """Verify ValueError for non-numeric http_timeout."""
+        config = {
+            "azure_deployment": "gpt-4",
+            "azure_endpoint": "https://example.openai.azure.com",
+            "api_key": "test-key",
+        }
+        with pytest.raises(ValueError, match="positive number of seconds"):
+            get_chat_target(config, http_timeout="300")
+
+    def test_invalid_http_timeout_negative(self):
+        """Verify ValueError for negative http_timeout."""
+        config = {
+            "azure_deployment": "gpt-4",
+            "azure_endpoint": "https://example.openai.azure.com",
+            "api_key": "test-key",
+        }
+        with pytest.raises(ValueError, match="greater than 0"):
+            get_chat_target(config, http_timeout=-1)
+
+    def test_invalid_http_timeout_zero(self):
+        """Verify ValueError for zero http_timeout."""
+        config = {
+            "azure_deployment": "gpt-4",
+            "azure_endpoint": "https://example.openai.azure.com",
+            "api_key": "test-key",
+        }
+        with pytest.raises(ValueError, match="greater than 0"):
+            get_chat_target(config, http_timeout=0)
+
+    def test_invalid_http_timeout_bool(self):
+        """Verify ValueError for boolean http_timeout."""
+        config = {
+            "azure_deployment": "gpt-4",
+            "azure_endpoint": "https://example.openai.azure.com",
+            "api_key": "test-key",
+        }
+        with pytest.raises(ValueError, match="positive number of seconds"):
+            get_chat_target(config, http_timeout=True)

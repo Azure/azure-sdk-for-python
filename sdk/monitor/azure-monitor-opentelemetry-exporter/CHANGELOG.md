@@ -4,9 +4,23 @@
 
 ### Features Added
 
+- Add Browser SDK loader SDK Stats feature bit ([#42904](https://github.com/Azure/azure-sdk-for-python/pull/44162))
+
 ### Breaking Changes
 
 ### Bugs Fixed
+- Exempt specific GenAI attributes values from custom properties truncation
+  ([#45596](https://github.com/Azure/azure-sdk-for-python/pull/45596))
+- Fix attributes override in Rate Limited Sampler
+  ([#45592](https://github.com/Azure/azure-sdk-for-python/pull/45592))
+- Add environment variable to disable/enable custom properties truncation
+  ([#45479](https://github.com/Azure/azure-sdk-for-python/pull/45479))
+- Fix io counters import issue in performance counters
+  ([#45286](https://github.com/Azure/azure-sdk-for-python/pull/45286))
+- Remove custom properties truncation
+  ([#45118](https://github.com/Azure/azure-sdk-for-python/pull/45118))
+- Fix fallback logic when connection string is provided only via environment variable
+  ([#45252](https://github.com/Azure/azure-sdk-for-python/pull/45252))
 
 ### Other Changes
 

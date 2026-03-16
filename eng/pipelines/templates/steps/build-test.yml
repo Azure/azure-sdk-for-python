@@ -36,11 +36,6 @@ steps:
 
   - template: set-dev-build.yml
 
-  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
-    - template: ../steps/auth-dev-feed.yml
-      parameters:
-        DevFeedName: ${{ parameters.DevFeedName }}
-
   - pwsh: |
       Write-Host (Get-Command python).Source
       $ErrorActionPreference = 'Stop'

@@ -20,12 +20,12 @@ DESCRIPTION:
     inputs across all modalities. This sample focuses on prebuilt RAG analyzers (the prebuilt-*Search
     analyzers, such as prebuilt-documentSearch) with URL inputs.
 
-    Important: For URL inputs, use begin_analyze() with AnalyzeInput objects that wrap the URL.
+    Important: For URL inputs, use begin_analyze() with AnalysisInput objects that wrap the URL.
     For binary data (local files), use begin_analyze_binary() instead. This sample demonstrates
     begin_analyze() with URL inputs.
 
-    Documents, HTML, and images with text are returned as DocumentContent (derived from MediaContent),
-    while audio and video are returned as AudioVisualContent (also derived from MediaContent). These
+    Documents, HTML, and images with text are returned as DocumentContent (derived from AnalysisContent),
+    while audio and video are returned as AudioVisualContent (also derived from AnalysisContent). These
     prebuilt RAG analyzers return markdown and a one-paragraph Summary for each content item;
     prebuilt-videoSearch can return multiple segments, so iterate over all contents rather than just
     the first.
@@ -41,15 +41,16 @@ USAGE:
 """
 
 import os
+from typing import cast
 
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import (
-    AnalyzeInput,
-    AnalyzeResult,
+    AnalysisInput,
+    AnalysisResult,
     AudioVisualContent,
     DocumentContent,
-    MediaContent,
+    AnalysisContent,
 )
 from azure.core.credentials import AzureKeyCredential
 from azure.identity import DefaultAzureCredential
@@ -76,20 +77,22 @@ def main() -> None:
 
     poller = client.begin_analyze(
         analyzer_id="prebuilt-documentSearch",
-        inputs=[AnalyzeInput(url=document_url)],
+        inputs=[AnalysisInput(url=document_url)],
     )
-    result: AnalyzeResult = poller.result()
+    result: AnalysisResult = poller.result()
 
     # Extract markdown content
     print("\nMarkdown:")
     content = result.contents[0]
     print(content.markdown)
 
-    # Cast MediaContent to DocumentContent to access document-specific properties
-    # DocumentContent derives from MediaContent and provides additional properties
+    # Cast AnalysisContent to DocumentContent to access document-specific properties
+    # DocumentContent derives from AnalysisContent and provides additional properties
     # to access full information about document, including Pages, Tables and many others
-    document_content: DocumentContent = content  # type: ignore
-    print(f"\nPages: {document_content.start_page_number} - {document_content.end_page_number}")
+    document_content = cast(DocumentContent, content)
+    print(
+        f"\nPages: {document_content.start_page_number} - {document_content.end_page_number}"
+    )
 
     # Check for pages
     if document_content.pages and len(document_content.pages) > 0:
@@ -110,26 +113,28 @@ def main() -> None:
 
     poller = client.begin_analyze(
         analyzer_id="prebuilt-videoSearch",
-        inputs=[AnalyzeInput(url=video_url)],
+        inputs=[AnalysisInput(url=video_url)],
     )
     result = poller.result()
 
     # prebuilt-videoSearch can detect video segments, so we should iterate through all segments
     segment_index = 1
     for media in result.contents:
-        # Cast MediaContent to AudioVisualContent to access audio/visual-specific properties
-        # AudioVisualContent derives from MediaContent and provides additional properties
+        # Cast AnalysisContent to AudioVisualContent to access audio/visual-specific properties
+        # AudioVisualContent derives from AnalysisContent and provides additional properties
         # to access full information about audio/video, including timing, transcript phrases, and many others
-        video_content: AudioVisualContent = media  # type: ignore
+        video_content = cast(AudioVisualContent, media)
         print(f"\n--- Segment {segment_index} ---")
         print("Markdown:")
         print(video_content.markdown)
 
-        summary = video_content.fields.get("Summary")
+        summary = video_content.fields.get("Summary") if video_content.fields else None
         if summary and hasattr(summary, "value"):
             print(f"Summary: {summary.value}")
 
-        print(f"Start: {video_content.start_time_ms} ms, End: {video_content.end_time_ms} ms")
+        print(
+            f"Start: {video_content.start_time_ms} ms, End: {video_content.end_time_ms} ms"
+        )
         print(f"Frame size: {video_content.width} x {video_content.height}")
 
         print("---------------------")
@@ -147,18 +152,18 @@ def main() -> None:
 
     poller = client.begin_analyze(
         analyzer_id="prebuilt-audioSearch",
-        inputs=[AnalyzeInput(url=audio_url)],
+        inputs=[AnalysisInput(url=audio_url)],
     )
     result = poller.result()
 
-    # Cast MediaContent to AudioVisualContent to access audio/visual-specific properties
-    # AudioVisualContent derives from MediaContent and provides additional properties
+    # Cast AnalysisContent to AudioVisualContent to access audio/visual-specific properties
+    # AudioVisualContent derives from AnalysisContent and provides additional properties
     # to access full information about audio/video, including timing, transcript phrases, and many others
-    audio_content: AudioVisualContent = result.contents[0]  # type: ignore
+    audio_content = cast(AudioVisualContent, result.contents[0])
     print("Markdown:")
     print(audio_content.markdown)
 
-    summary = audio_content.fields.get("Summary")
+    summary = audio_content.fields.get("Summary") if audio_content.fields else None
     if summary and hasattr(summary, "value"):
         print(f"Summary: {summary.value}")
 
@@ -180,7 +185,7 @@ def main() -> None:
 
     poller = client.begin_analyze(
         analyzer_id="prebuilt-imageSearch",
-        inputs=[AnalyzeInput(url=image_url)],
+        inputs=[AnalysisInput(url=image_url)],
     )
     result = poller.result()
 
@@ -188,7 +193,7 @@ def main() -> None:
     print("Markdown:")
     print(content.markdown)
 
-    summary = content.fields.get("Summary")
+    summary = content.fields.get("Summary") if content.fields else None
     if summary and hasattr(summary, "value"):
         print(f"Summary: {summary.value}")
     # [END analyze_image_from_url]

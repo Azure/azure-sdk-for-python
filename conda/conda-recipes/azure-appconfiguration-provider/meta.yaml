@@ -41,13 +41,13 @@ about:
   home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/appconfiguration/azure-appconfiguration-provider"
   license: MIT
   license_family: MIT
-  license_file: 
+  license_file:
   summary: "Microsoft Azure Appconfiguration Provider Client Library for Python"
   description: |
     This is the Microsoft Azure Appconfiguration Provider Client Library for Python.
-    Please see https://aka.ms/azsdk/conda/releases/appconfiguration for version details.
-  doc_url: 
-  dev_url: 
+    Please see https://aka.ms/azsdk/conda/releases/appconfiguration-provider for version details.
+  doc_url:
+  dev_url:
 
 extra:
   recipe-maintainers:

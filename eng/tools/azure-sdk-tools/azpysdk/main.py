@@ -40,6 +40,7 @@ from .latestdependency import latestdependency
 from .samples import samples
 from .devtest import devtest
 from .optional import optional
+from .update_snippet import update_snippet
 
 from ci_tools.logging import configure_logging, logger
 
@@ -79,6 +80,11 @@ def build_parser() -> argparse.ArgumentParser:
     common.add_argument(
         "--isolate", action="store_true", default=False, help="If set, run in an isolated virtual environment."
     )
+    common.add_argument(
+        "--service",
+        default=None,
+        help="Name of service directory (under sdk/) to scope package discovery. 'auto' is treated as unset.",
+    )
 
     subparsers = parser.add_subparsers(title="commands", dest="command")
 
@@ -110,6 +116,7 @@ def build_parser() -> argparse.ArgumentParser:
     samples().register(subparsers, [common])
     devtest().register(subparsers, [common])
     optional().register(subparsers, [common])
+    update_snippet().register(subparsers, [common])
 
     return parser
 

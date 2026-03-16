@@ -3,18 +3,30 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import functools
 import time
 import unittest
 import sys
 from unittest.mock import Mock
 import pytest
+from devtools_testutils import EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
-from async_preparers import app_config_decorator_async
 from testcase import has_feature_flag
 from asynctestcase import AppConfigTestCase
-from test_constants import FEATURE_MANAGEMENT_KEY
+from test_constants import (
+    APPCONFIGURATION_ENDPOINT_STRING,
+    APPCONFIGURATION_KEYVAULT_SECRET_URL,
+    FEATURE_MANAGEMENT_KEY,
+)
 from azure.appconfiguration import ConfigurationSetting
 from azure.appconfiguration.provider import WatchKey
+
+AppConfigProviderPreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "appconfiguration",
+    appconfiguration_endpoint_string=APPCONFIGURATION_ENDPOINT_STRING,
+    appconfiguration_keyvault_secret_url=APPCONFIGURATION_KEYVAULT_SECRET_URL,
+)
 
 try:
     # Python 3.7 does not support AsyncMock
@@ -22,7 +34,7 @@ try:
 
     class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
         # method: refresh
-        @app_config_decorator_async
+        @AppConfigProviderPreparer()
         @recorded_by_proxy_async
         @pytest.mark.skipif(sys.version_info < (3, 8), reason="Python 3.7 does not support AsyncMock")
         @pytest.mark.asyncio
@@ -42,7 +54,7 @@ try:
                 assert FEATURE_MANAGEMENT_KEY in client
                 assert has_feature_flag(client, "Alpha")
 
-                appconfig_client = self.create_aad_sdk_client(appconfiguration_endpoint_string)
+                appconfig_client = self.create_appconfig_client(appconfiguration_endpoint_string)
 
                 setting = await appconfig_client.get_configuration_setting(key="refresh_message")
                 setting.value = "updated value"
@@ -91,13 +103,13 @@ try:
                 assert mock_callback.call_count == 2
 
         # method: refresh
-        @app_config_decorator_async
+        @AppConfigProviderPreparer()
         @recorded_by_proxy_async
         @pytest.mark.skipif(sys.version_info < (3, 8), reason="Python 3.7 does not support AsyncMock")
         @pytest.mark.asyncio
         async def test_no_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
 
-            appconfig_client = self.create_aad_sdk_client(appconfiguration_endpoint_string)
+            appconfig_client = self.create_appconfig_client(appconfiguration_endpoint_string)
 
             watch_key = ConfigurationSetting(key="watch key", value="0")
             await appconfig_client.set_configuration_setting(watch_key)
@@ -142,7 +154,7 @@ try:
                 assert mock_callback.call_count == 1
 
         # method: refresh
-        @app_config_decorator_async
+        @AppConfigProviderPreparer()
         @recorded_by_proxy_async
         @pytest.mark.skipif(sys.version_info < (3, 8), reason="Python 3.7 does not support AsyncMock")
         @pytest.mark.asyncio
@@ -160,7 +172,7 @@ try:
                 assert FEATURE_MANAGEMENT_KEY in client
                 assert has_feature_flag(client, "Alpha")
 
-                appconfig_client = self.create_aad_sdk_client(appconfiguration_endpoint_string)
+                appconfig_client = self.create_appconfig_client(appconfiguration_endpoint_string)
 
                 setting = await appconfig_client.get_configuration_setting(key="refresh_message")
                 setting.value = "updated value"

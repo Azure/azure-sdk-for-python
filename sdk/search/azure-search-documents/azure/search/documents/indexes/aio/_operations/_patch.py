@@ -16,6 +16,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ... import models as _models
+from ..._operations._patch import _convert_index_response
 from ._operations import (
     _SearchIndexClientOperationsMixin as _SearchIndexClientOperationsMixinGenerated,
     _SearchIndexerClientOperationsMixin as _SearchIndexerClientOperationsMixinGenerated,
@@ -337,6 +338,29 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
             )
 
     @distributed_trace
+    def list_indexes(self, *, select: Optional[List[str]] = None, **kwargs: Any) -> AsyncItemPaged[_models.SearchIndex]:
+        """Lists all indexes available for a search service.
+
+        :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
+            list of JSON property names, or '*' for all properties. The default is all properties.
+            Default value is None.
+        :paramtype select: list[str]
+        :return: An async iterator like instance of SearchIndex
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models.SearchIndex]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        if select is not None:
+            return cast(
+                AsyncItemPaged[_models.SearchIndex],
+                self._list_indexes_with_selected_properties(
+                    select=select,
+                    cls=lambda objs: [_convert_index_response(x) for x in objs],
+                    **kwargs,
+                ),
+            )
+        return self._list_indexes(**kwargs)
+
+    @distributed_trace
     def list_index_names(self, **kwargs: Any) -> AsyncItemPaged[str]:
         """Lists the names of all indexes available for a search service.
 
@@ -344,7 +368,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        names = self.list_indexes(cls=lambda objs: [x.name for x in objs], **kwargs)
+        names = self._list_indexes(cls=lambda objs: [x.name for x in objs], **kwargs)
         return cast(AsyncItemPaged[str], names)
 
     @distributed_trace_async

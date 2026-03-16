@@ -32,9 +32,9 @@ class KnowledgeBaseRetrievalClient(_KnowledgeBaseRetrievalClientOperationsMixin)
      credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2025-11-01-preview". Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2025-11-01-preview" and None. Default value is "2025-11-01-preview". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 

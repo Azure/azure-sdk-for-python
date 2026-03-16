@@ -21,7 +21,7 @@ import os
 import pytest
 from devtools_testutils import recorded_by_proxy
 from testpreparer import ContentUnderstandingPreparer, ContentUnderstandingClientTestBase
-from azure.ai.contentunderstanding.models import AnalyzeInput, AnalyzeResult, DocumentContent
+from azure.ai.contentunderstanding.models import AnalysisInput, AnalysisResult, DocumentContent
 
 
 class TestSampleDeleteResult(ContentUnderstandingClientTestBase):
@@ -57,10 +57,10 @@ class TestSampleDeleteResult(ContentUnderstandingClientTestBase):
 
         # Analyze to get an operation ID
         analyze_operation = client.begin_analyze(
-            analyzer_id="prebuilt-invoice", inputs=[AnalyzeInput(data=file_bytes)]
+            analyzer_id="prebuilt-invoice", inputs=[AnalysisInput(data=file_bytes)]
         )
 
-        result: AnalyzeResult = analyze_operation.result()
+        result: AnalysisResult = analyze_operation.result()
 
         # Assertions for analysis
         assert analyze_operation is not None, "Analysis operation should not be null"

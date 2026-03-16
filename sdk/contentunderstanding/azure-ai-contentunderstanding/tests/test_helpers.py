@@ -145,8 +145,8 @@ def assert_simple_content_analyzer_result(analysis_result: Any, result_name: str
     print(f"Validating {result_name} properties")
     assert analysis_result is not None, f"{result_name} should not be None"
     assert (
-        analysis_result.__class__.__name__ == "AnalyzeResult"
-    ), f"{result_name} should be AnalyzeResult, got {analysis_result.__class__.__name__}"
+        analysis_result.__class__.__name__ == "AnalysisResult"
+    ), f"{result_name} should be AnalysisResult, got {analysis_result.__class__.__name__}"
     assert analysis_result.contents is not None, f"{result_name} should have contents"
     assert len(analysis_result.contents) > 0, f"{result_name} should have at least one content"
 

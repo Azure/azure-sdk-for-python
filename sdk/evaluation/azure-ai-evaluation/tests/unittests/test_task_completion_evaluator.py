@@ -238,10 +238,10 @@ class TestTaskCompletionEvaluator:
 
         query = "Complete this task"
         response = "Done"
-        result = evaluator(query=query, response=response)
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(query=query, response=response)
 
-        key = _TaskCompletionEvaluator._RESULT_KEY
-        assert result[key] == 0
+        assert "Evaluator returned invalid output" in str(exc_info.value)
 
     def test_default_success_value(self, mock_model_config):
         """Test that default success value is 0 when not provided"""
