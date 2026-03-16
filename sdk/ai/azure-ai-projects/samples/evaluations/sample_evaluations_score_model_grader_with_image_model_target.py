@@ -32,7 +32,6 @@ from azure.ai.projects import AIProjectClient
 import time
 from pprint import pprint
 from openai.types.evals.create_eval_completions_run_data_source_param import (
-    CreateEvalCompletionsRunDataSourceParam,
     SourceFileContent,
     SourceFileContentContent,
     InputMessagesTemplate,
