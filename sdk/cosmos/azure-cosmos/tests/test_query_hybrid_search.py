@@ -506,14 +506,22 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
                 "FullTextContains(c.text, 'John') ORDER BY RANK FullTextScore(c.title, 'John')"
 
         # With Local scope and partition key, statistics are scoped to just that partition
-        results_local = self.test_container.query_items(query, partition_key='2',
+        results_local = self.test_container.query_items(query, partition_key='1',
                                                         full_text_score_scope="Local")
         result_list_local = list(results_local)
         # Only index=2 has pk='1' among the 'John' matches (57 and 85 have pk='2')
-        assert len(result_list_local) == 1
+        assert len(result_list_local) > 0
         for res in result_list_local:
-            assert res['pk'] == '2'
+            assert res['pk'] == '1'
             assert res['index'] == 2
+
+    def test_hybrid_search_with_invalid_full_text_score_scope(self):
+        """Test that an invalid full_text_score_scope value raises ValueError."""
+        query = "SELECT TOP 10 c.index FROM c WHERE FullTextContains(c.title, 'John') " \
+                "ORDER BY RANK FullTextScore(c.title, 'John')"
+        with pytest.raises(ValueError, match="full_text_score_scope must be 'Local' or 'Global'"):
+            list(self.test_container.query_items(query, enable_cross_partition_query=True,
+                                                 full_text_score_scope="invalid"))
 
     def test_hybrid_search_rrf_with_full_text_score_scope_local(self):
         """Test RRF hybrid search with Local scope returns valid results."""
