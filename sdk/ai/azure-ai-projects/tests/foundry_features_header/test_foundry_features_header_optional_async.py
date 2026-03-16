@@ -28,25 +28,18 @@ from foundry_features_header_test_base import (
 
 _NON_BETA_OPTIONAL_ASYNC_TEST_CASES = [
     # Each pytest.param entry has the following positional arguments:
-    #   1. label                (str)  – Human-readable test name, e.g. "mysubclient.my_method() [async]"
-    #   2. subclient_name       (str)  – Attribute name on AIProjectClient, e.g. "agents"
-    #   3. method_name          (str)  – Method name on the sub-client, e.g. "create_version"
-    #   4. expected_header_value (str) – Expected value of the Foundry-Features header when allow_preview=True
-    #      Use a comma-separated list of feature=version pairs, e.g. "FeatureA=V1Preview,FeatureB=V1Preview"
-    #   id= should match the label for readability in pytest output.
+    #   1. method_name           (str) – "<subclient>.<method>" on AIProjectClient, e.g. "agents.create_version"
+    #      The subclient and method names are parsed automatically from this string.
+    #   2. expected_header_value (str) – Expected value of the Foundry-Features header when allow_preview=True.
+    #      Use a comma-separated list of feature=version pairs, e.g. "FeatureA=V1Preview,FeatureB=V1Preview".
+    #   The test id is derived automatically from method_name.
     pytest.param(
-        "agents.create_version() [async]",
-        "agents",
-        "create_version",
+        "agents.create_version",
         "HostedAgents=V1Preview,WorkflowAgents=V1Preview",
-        id="agents.create_version() [async]",
     ),
     pytest.param(
-        "evaluation_rules.create_or_update() [async]",
-        "evaluation_rules",
-        "create_or_update",
+        "evaluation_rules.create_or_update",
         "Evaluations=V1Preview",
-        id="evaluation_rules.create_or_update() [async]",
     ),
 ]
 
@@ -141,32 +134,30 @@ class TestFoundryFeaturesHeaderOptionalAsync(FoundryFeaturesHeaderTestBase):
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
-        "label,subclient_name,method_name,expected_header_value", _NON_BETA_OPTIONAL_ASYNC_TEST_CASES
+        "method_name,expected_header_value", _NON_BETA_OPTIONAL_ASYNC_TEST_CASES
     )
     async def test_optional_header_present_when_preview_enabled_async(
         self,
         async_client_preview_enabled: AsyncAIProjectClient,
-        label: str,
-        subclient_name: str,
         method_name: str,
         expected_header_value: str,
     ) -> None:
+        subclient_name, method_attr = method_name.split(".")
         sc = getattr(async_client_preview_enabled, subclient_name)
-        method = getattr(sc, method_name)
-        await self._assert_header_present_async(label, self._make_fake_call(method), expected_header_value)
+        method = getattr(sc, method_attr)
+        await self._assert_header_present_async(method_name, self._make_fake_call(method), expected_header_value)
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
-        "label,subclient_name,method_name,_expected_header_value", _NON_BETA_OPTIONAL_ASYNC_TEST_CASES
+        "method_name,_expected_header_value", _NON_BETA_OPTIONAL_ASYNC_TEST_CASES
     )
     async def test_optional_header_absent_when_preview_not_enabled_async(
         self,
         async_client_preview_disabled: AsyncAIProjectClient,
-        label: str,
-        subclient_name: str,
         method_name: str,
         _expected_header_value: str,
     ) -> None:
+        subclient_name, method_attr = method_name.split(".")
         sc = getattr(async_client_preview_disabled, subclient_name)
-        method = getattr(sc, method_name)
-        await self._assert_header_absent_async(label, self._make_fake_call(method))
+        method = getattr(sc, method_attr)
+        await self._assert_header_absent_async(method_name, self._make_fake_call(method))
