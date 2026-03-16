@@ -50,6 +50,8 @@ folder_path = os.path.dirname(file_path)
 
 endpoint = os.environ.get("FOUNDRY_PROJECT_ENDPOINT", "")
 model_deployment_name = os.environ.get("FOUNDRY_MODEL_NAME", "")
+agent_name = os.environ.get("AGENT_NAME", "")
+agent_version = os.environ.get("AGENT_VERSION", "")
 
 
 def image_to_data_uri(image_path: str) -> str:
@@ -111,7 +113,7 @@ with (
 
     print("Creating evaluation")
     eval_object = client.evals.create(
-        name="OpenAI graders test - agent target",
+        name="OpenAI graders test - model target",
         data_source_config=data_source_config,
         testing_criteria=testing_criteria,  # type: ignore
     )
@@ -163,12 +165,9 @@ with (
         "source": source_file_content,
         "input_messages": input_messages,
         "target": {
-            "type": "azure_ai_model",
-            "model": model_deployment_name,
-            "sampling_params": {  # Note: model sampling parameters are optional and can differ per model
-                "top_p": 1.0,
-                "max_completion_tokens": 5000,
-            },
+            "type": "azure_ai_agent",
+            "name": agent_name,
+            "version": agent_version,  # Version is optional. Defaults to latest version if not specified
         },
     }
 
