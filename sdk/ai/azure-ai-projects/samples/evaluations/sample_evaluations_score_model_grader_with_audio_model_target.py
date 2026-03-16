@@ -154,12 +154,12 @@ with (
                     input_audio={
                         "data": "{{item.audio_data}}",
                         "format": "wav",
-                    }
-                )
-            )
+                    },
+                ),
+            ),
         ],
     )
-    
+
     data_source = {
         "type": "azure_ai_target_completions",
         "source": source_file_content,
@@ -179,7 +179,7 @@ with (
         eval_id=eval_object.id,
         name="Eval",
         metadata={"team": "eval-exp", "scenario": "notifications-v1"},
-        data_source=data_source # type: ignore
+        data_source=data_source,  # type: ignore
     )
     print(f"Eval Run created (id: {eval_run_object.id}, name: {eval_run_object.name})")
     pprint(eval_run_object)
