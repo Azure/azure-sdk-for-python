@@ -13,7 +13,7 @@ from abc import abstractmethod
 from typing import Any, AsyncGenerator, Generator, Optional, Union
 
 import uvicorn
-from opentelemetry import context as otel_context, trace
+from opentelemetry import trace
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 from starlette.applications import Starlette
 from starlette.concurrency import iterate_in_threadpool
@@ -117,47 +117,66 @@ class FoundryCBAgent:
             parent_ctx = TraceContextTextMapPropagator().extract(
                 carrier=request.headers
             )
-            with self.tracer.start_as_current_span(
-                name=f"HostedAgents-{context.response_id}",
-                attributes=ctx,
-                kind=trace.SpanKind.SERVER,
-                context=parent_ctx,
-            ):
-                try:
-                    logger.info("Start processing CreateResponse request.")
 
-                    # Save input to conversation if store=True
-                    if self._should_store(context):
-                        logger.debug("Storing input to conversation.")
-                        await self._save_input_to_conversation(context)
+            if not context.stream:
+                # Non-streaming path: span wraps the entire agent_run and
+                # response so all child spans nest under the HostedAgents span.
+                with self.tracer.start_as_current_span(
+                    name=f"HostedAgents-{context.response_id}",
+                    attributes=ctx,
+                    kind=trace.SpanKind.SERVER,
+                    context=parent_ctx,
+                ):
+                    try:
+                        logger.info("Start processing CreateResponse request.")
 
-                    context_carrier = {}
-                    TraceContextTextMapPropagator().inject(context_carrier)
-
-                    ex = None
-                    resp = await self.agent_run(context)
-                except Exception as e:
-                    # TODO: extract status code from exception
-                    logger.error(f"Error processing CreateResponse request: {e}", exc_info=True)
-                    ex = e
-
-                if not context.stream:
-                    logger.info("End of processing CreateResponse request.")
-                    result = resp if not ex else project_models.ResponseError(
-                        code=project_models.ResponseErrorCode.SERVER_ERROR,
-                        message=_format_error(ex))
-                    if not ex:
-                        attach_foundry_metadata_to_response(result)
-                        # Save output to conversation if store=True
+                        # Save input to conversation if store=True
                         if self._should_store(context):
-                            logger.debug("Storing output to conversation.")
-                            await self._save_output_to_conversation(context, result)
-                    return JSONResponse(result.as_dict(), headers=self.create_response_headers())
+                            logger.debug("Storing input to conversation.")
+                            await self._save_input_to_conversation(context)
 
-                async def gen_async(ex):
-                    ctx = TraceContextTextMapPropagator().extract(carrier=context_carrier)
-                    prev_ctx = otel_context.get_current()
-                    otel_context.attach(ctx)
+                        resp = await self.agent_run(context)
+                    except Exception as e:
+                        logger.error(f"Error processing CreateResponse request: {e}", exc_info=True)
+                        result = project_models.ResponseError(
+                            code=project_models.ResponseErrorCode.SERVER_ERROR,
+                            message=_format_error(e))
+                        return JSONResponse(result.as_dict(), headers=self.create_response_headers())
+
+                    logger.info("End of processing CreateResponse request.")
+                    attach_foundry_metadata_to_response(resp)
+                    # Save output to conversation if store=True
+                    if self._should_store(context):
+                        logger.debug("Storing output to conversation.")
+                        await self._save_output_to_conversation(context, resp)
+                    return JSONResponse(resp.as_dict(), headers=self.create_response_headers())
+
+            # Streaming path: agent_run returns a generator.  The actual
+            # work happens during iteration, so the span is created INSIDE
+            # gen_async() where it stays open for the full streaming
+            # lifetime.  parent_ctx is passed directly so the span
+            # correctly becomes a child of the caller's span.
+            try:
+                logger.info("Start processing CreateResponse request.")
+
+                # Save input to conversation if store=True
+                if self._should_store(context):
+                    logger.debug("Storing input to conversation.")
+                    await self._save_input_to_conversation(context)
+
+                ex = None
+                resp = await self.agent_run(context)
+            except Exception as e:
+                logger.error(f"Error processing CreateResponse request: {e}", exc_info=True)
+                ex = e
+
+            async def gen_async(ex, parent_ctx):
+                with self.tracer.start_as_current_span(
+                    name=f"HostedAgents-{context.response_id}",
+                    attributes=ctx,
+                    kind=trace.SpanKind.SERVER,
+                    context=parent_ctx,
+                ):
                     seq = 0
                     output_events = []  # Collect events for saving to conversation
                     try:
@@ -190,13 +209,12 @@ class FoundryCBAgent:
                                 message=_format_error(ex),
                                 param="")
                             yield _event_to_sse_chunk(err)
-                        otel_context.attach(prev_ctx)
 
-                return StreamingResponse(
-                    gen_async(ex),
-                    media_type="text/event-stream",
-                    headers=self.create_response_headers(),
-                )
+            return StreamingResponse(
+                gen_async(ex, parent_ctx),
+                media_type="text/event-stream",
+                headers=self.create_response_headers(),
+            )
 
         async def liveness_endpoint(request):
             result = await self.agent_liveness(request)
