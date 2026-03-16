@@ -180,3 +180,11 @@ class FoundryFeaturesHeaderTestBase:
         cls._report_max_label_len = max(cls._report_max_label_len, len(label))
         cls._report.append((label, header_value))
         return header_value
+
+    @classmethod
+    def _record_header_absence_assertion(cls, label: str, request: Any) -> None:
+        """Assert the Foundry-Features header is absent on *request*."""
+        assert FOUNDRY_FEATURES_HEADER not in request.headers, (
+            f"{label}: expected '{FOUNDRY_FEATURES_HEADER}' header to be absent.\n"
+            f"Actual headers: {dict(request.headers)}"
+        )
