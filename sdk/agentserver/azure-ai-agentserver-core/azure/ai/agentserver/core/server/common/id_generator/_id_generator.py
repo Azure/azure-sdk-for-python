@@ -17,3 +17,6 @@ class IdGenerator(ABC):
 
     def generate_message_id(self) -> str:
         return self.generate("msg")
+
+    def generate_oauthreq_id(self) -> str:
+        return self.generate("oauthreq")

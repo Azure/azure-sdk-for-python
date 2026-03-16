@@ -17,10 +17,10 @@ Subpackages
 Submodules
 ----------
 
-azure.ai.agentserver.core.server.base module
---------------------------------------------
+azure.ai.agentserver.core.server.\_base module
+----------------------------------------------
 
-.. automodule:: azure.ai.agentserver.core.server.base
+.. automodule:: azure.ai.agentserver.core.server._base
    :inherited-members:
    :members:
    :undoc-members:
