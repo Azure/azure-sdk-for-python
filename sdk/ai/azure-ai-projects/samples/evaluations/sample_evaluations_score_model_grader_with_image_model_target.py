@@ -47,8 +47,21 @@ load_dotenv()
 file_path = os.path.abspath(__file__)
 folder_path = os.path.dirname(file_path)
 
-endpoint = os.environ.get("FOUNDRY_PROJECT_ENDPOINT", "")
-model_deployment_name = os.environ.get("FOUNDRY_MODEL_NAME", "")
+endpoint = os.environ.get("AZURE_AI_PROJECT_ENDPOINT")
+model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME")
+
+if not endpoint:
+    raise EnvironmentError(
+        "AZURE_AI_PROJECT_ENDPOINT environment variable is required but was not found or is empty. "
+        "Set it to your Azure AI Project endpoint, e.g. "
+        "https://<account_name>.services.ai.azure.com/api/projects/<project_name>."
+    )
+
+if not model_deployment_name:
+    raise EnvironmentError(
+        "AZURE_AI_MODEL_DEPLOYMENT_NAME environment variable is required but was not found or is empty. "
+        "Set it to the name of the model deployment to use for evaluation."
+    )
 
 
 def image_to_data_uri(image_path: str) -> str:
