@@ -16,7 +16,9 @@ from azure.core.polling.base_polling import (
     _raise_if_bad_http_status_and_method,
 )
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
+from azure.core.rest import HttpRequest
 from ._models import CustomCredential as CustomCredentialGenerated
+from ._enums import _FoundryFeaturesOptInKeys
 from ..models import MemoryStoreUpdateCompletedResult, MemoryStoreUpdateResult
 
 
@@ -115,6 +117,26 @@ class UpdateMemoriesLROPollingMethod(LROBasePolling):
 
         return client, continuation_token, deserialization_callback
 
+    def request_status(self, status_link: str) -> Any:
+        """Override to explicitly inject the Foundry-Features header into each polling GET request.
+
+        The base LROBasePolling.request_status() creates a new HttpRequest and passes custom
+        headers only via pipeline context options (through **_operation_config). While HeadersPolicy
+        normally applies those, directly setting the header on the request object is more robust
+        and does not depend on the pipeline configuration.
+
+        :param str status_link: The URL to poll.
+        :return: The response of the status request.
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        """
+        if self._path_format_arguments:
+            status_link = self._client.format_url(status_link, **self._path_format_arguments)
+        if "request_id" not in self._operation_config:
+            self._operation_config["request_id"] = self._get_request_id()
+        request = HttpRequest("GET", status_link)
+        request.headers["Foundry-Features"] = _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW.value
+        return self._client.send_request(request, _return_pipeline_response=True, **self._operation_config)
+
     def _poll(self) -> None:
         """Poll status of operation so long as operation is incomplete and
         we have an endpoint to query.
@@ -185,6 +207,26 @@ class AsyncUpdateMemoriesLROPollingMethod(AsyncLROBasePolling):
             raise ValueError("Need kwarg 'deserialization_callback' to be recreated from continuation_token") from exc
 
         return client, continuation_token, deserialization_callback
+
+    async def request_status(self, status_link: str) -> Any:  # type: ignore[override]
+        """Override to explicitly inject the Foundry-Features header into each polling GET request.
+
+        The base AsyncLROBasePolling.request_status() creates a new HttpRequest and passes custom
+        headers only via pipeline context options (through **_operation_config). While HeadersPolicy
+        normally applies those, directly setting the header on the request object is more robust
+        and does not depend on the pipeline configuration.
+
+        :param str status_link: The URL to poll.
+        :return: The response of the status request.
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        """
+        if self._path_format_arguments:
+            status_link = self._client.format_url(status_link, **self._path_format_arguments)
+        if "request_id" not in self._operation_config:
+            self._operation_config["request_id"] = self._get_request_id()
+        request = HttpRequest("GET", status_link)
+        request.headers["Foundry-Features"] = _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW.value
+        return await self._client.send_request(request, _return_pipeline_response=True, **self._operation_config)
 
     async def _poll(self) -> None:
         """Poll status of operation so long as operation is incomplete and
