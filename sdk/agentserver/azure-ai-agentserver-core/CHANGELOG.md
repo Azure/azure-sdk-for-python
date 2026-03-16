@@ -1,6 +1,13 @@
 # Release History
 
 
+## 1.0.0b17 (2026-03-15)
+
+### Other Changes
+
+- Pin langchain-azure-ai[opentelemetry]==1.1.0b1 to mitigate installation issue.
+
+
 ## 1.0.0b16 (2026-03-10)
 
 ### Other Changes
