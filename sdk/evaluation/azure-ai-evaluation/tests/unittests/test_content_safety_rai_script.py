@@ -634,3 +634,116 @@ class TestParseEvalResult:
         # Token counts should be extracted from properties.metrics
         assert result["violence_prompt_tokens"] == "15"
         assert result["violence_completion_tokens"] == "55"
+
+    def test_parse_eval_result_xpia_uses_xpia_prefix(self):
+        """Test that IndirectAttackEvaluator output uses 'xpia' prefix, not 'indirect_attack'."""
+        from azure.ai.evaluation._evaluators._common._base_rai_svc_eval import RaiServiceEvaluatorBase
+        from azure.ai.evaluation._common.constants import EvaluationMetrics
+
+        # Simulate a sync_evals response for XPIA (indirect_attack)
+        eval_result = {
+            "results": [
+                {
+                    "name": "indirect_attack",
+                    "type": "azure_ai_evaluator",
+                    "metric": "indirect_attack",
+                    "score": 0.0,
+                    "reason": "No indirect attack detected.",
+                    "properties": {
+                        "scoreProperties": {
+                            "label": "false",
+                            "manipulated_content": "false",
+                            "intrusion": "false",
+                            "information_gathering": "false",
+                        },
+                        "metrics": {"promptTokens": "10", "completionTokens": "20"},
+                    },
+                }
+            ]
+        }
+
+        evaluator = RaiServiceEvaluatorBase.__new__(RaiServiceEvaluatorBase)
+        evaluator._eval_metric = EvaluationMetrics.XPIA
+
+        result = evaluator._parse_eval_result(eval_result)
+
+        # Output keys MUST use "xpia" prefix for backward compatibility
+        assert "xpia_label" in result, f"Expected 'xpia_label' in result, got keys: {list(result.keys())}"
+        assert "xpia_reason" in result
+        assert "xpia_manipulated_content" in result
+        assert "xpia_intrusion" in result
+        assert "xpia_information_gathering" in result
+        # Must NOT have "indirect_attack_" prefixed keys
+        assert "indirect_attack_label" not in result
+        assert "indirect_attack_reason" not in result
+        # Verify values
+        assert result["xpia_label"] == False
+        assert result["xpia_reason"] == "No indirect attack detected."
+        assert result["xpia_manipulated_content"] == False
+        assert result["xpia_intrusion"] == False
+        assert result["xpia_information_gathering"] == False
+        assert result["xpia_prompt_tokens"] == "10"
+        assert result["xpia_completion_tokens"] == "20"
+
+    def test_parse_eval_result_xpia_legacy_indirect_attack_keys_renamed(self):
+        """Test that legacy responses with 'indirect_attack_' keys are renamed to 'xpia_'."""
+        from azure.ai.evaluation._evaluators._common._base_rai_svc_eval import RaiServiceEvaluatorBase
+        from azure.ai.evaluation._common.constants import EvaluationMetrics
+
+        # Simulate a legacy response that uses "indirect_attack_" prefix
+        legacy_result = {
+            "indirect_attack_label": True,
+            "indirect_attack_reason": "Attack detected",
+            "indirect_attack_manipulated_content": True,
+            "indirect_attack_intrusion": False,
+            "indirect_attack_information_gathering": False,
+            "indirect_attack_total_tokens": "100",
+        }
+
+        evaluator = RaiServiceEvaluatorBase.__new__(RaiServiceEvaluatorBase)
+        evaluator._eval_metric = EvaluationMetrics.XPIA
+
+        result = evaluator._parse_eval_result(legacy_result)
+
+        # Legacy "indirect_attack_" keys should be renamed to "xpia_"
+        assert "xpia_label" in result
+        assert "xpia_reason" in result
+        assert "xpia_manipulated_content" in result
+        assert "indirect_attack_label" not in result
+        assert result["xpia_label"] == True
+        assert result["xpia_reason"] == "Attack detected"
+
+    def test_parse_eval_result_xpia_with_camelcase_sub_metrics(self):
+        """Test that camelCase sub-metric keys from service are handled correctly."""
+        from azure.ai.evaluation._evaluators._common._base_rai_svc_eval import RaiServiceEvaluatorBase
+        from azure.ai.evaluation._common.constants import EvaluationMetrics
+        import math
+
+        # Service may return camelCase keys like "manipulatedContent"
+        eval_result = {
+            "results": [
+                {
+                    "metric": "indirect_attack",
+                    "score": 0.0,
+                    "reason": "Attack detected.",
+                    "properties": {
+                        "scoreProperties": {
+                            "label": "true",
+                            "manipulatedContent": "true",
+                            "intrusion": "false",
+                            "informationGathering": "true",
+                        },
+                    },
+                }
+            ]
+        }
+
+        evaluator = RaiServiceEvaluatorBase.__new__(RaiServiceEvaluatorBase)
+        evaluator._eval_metric = EvaluationMetrics.XPIA
+
+        result = evaluator._parse_eval_result(eval_result)
+
+        assert result["xpia_label"] == True
+        assert result["xpia_manipulated_content"] == True
+        assert result["xpia_intrusion"] == False
+        assert result["xpia_information_gathering"] == True

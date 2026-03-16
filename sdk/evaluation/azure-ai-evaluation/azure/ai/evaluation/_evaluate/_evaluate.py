@@ -192,6 +192,9 @@ def _aggregate_label_defect_metrics(df: pd.DataFrame) -> Tuple[List[str], Dict[s
         EvaluationMetrics.LOGOS_AND_BRANDS,
         _InternalEvaluationMetrics.ECI,
         EvaluationMetrics.XPIA,
+        # "xpia" is the output key prefix used by IndirectAttackEvaluator (EvaluationMetrics.XPIA
+        # has value "indirect_attack" for service communication, but outputs use "xpia" prefix)
+        "xpia",
         EvaluationMetrics.CODE_VULNERABILITY,
         EvaluationMetrics.UNGROUNDED_ATTRIBUTES,
     ]
@@ -318,6 +321,9 @@ def _get_token_count_columns_to_exclude(df: pd.DataFrame) -> List[str]:
 
     # Combine all known metrics
     all_known_metrics = evaluation_metrics_values + internal_metrics_values
+    # IndirectAttackEvaluator (EvaluationMetrics.XPIA) outputs token count columns with
+    # "xpia" prefix for backward compatibility, so include "xpia" explicitly.
+    all_known_metrics.append("xpia")
 
     # Find token count columns that belong to known metrics
     token_count_cols = [

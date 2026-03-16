@@ -4,6 +4,7 @@
 
 ### Bugs Fixed
 - Fixed inconsistency where sample data in evaluation result items did not match the generated sample data from corresponding input rows, ensuring proper synchronization between row-level input samples and their associated evaluation output items.
+- Fixed `IndirectAttackEvaluator` results not displaying correctly in AI Foundry portal by restoring the `xpia_` output key prefix (e.g. `xpia_label`, `xpia_reason`, `xpia_manipulated_content`, `xpia_intrusion`, `xpia_information_gathering`) for backward compatibility with AI Foundry's expected column names.
 
 ## 1.16.0 (2026-03-10)
 
