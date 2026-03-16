@@ -12,6 +12,8 @@ from opentelemetry.semconv.metrics.http_metrics import (
 from azure.core import CaseInsensitiveEnumMeta
 
 
+_EXPORTER_DOMAIN_SCHEMA_VERSION = 2
+
 # Environment variables
 
 _APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL = "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"
@@ -183,10 +185,24 @@ class RetryCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 RetryCodeType = Union[RetryCode, int]
 
 
+# Customer SDK Stats metric names: (lowercase_otel_name, pascal_case_display_name)
+_ITEM_SUCCESS_COUNT_NAME = ("item_success_count", "Item_Success_Count")
+_ITEM_DROP_COUNT_NAME = ("item_dropped_count", "Item_Dropped_Count")
+_ITEM_RETRY_COUNT_NAME = ("item_retry_count", "Item_Retry_Count")
+
+_CUSTOMER_SDKSTATS_METRIC_NAME_MAPPINGS = dict(
+    [
+        _ITEM_SUCCESS_COUNT_NAME,
+        _ITEM_DROP_COUNT_NAME,
+        _ITEM_RETRY_COUNT_NAME,
+    ]
+)
+
+
 class CustomerSdkStatsMetricName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    ITEM_SUCCESS_COUNT = "Item_Success_Count"
-    ITEM_DROP_COUNT = "Item_Dropped_Count"
-    ITEM_RETRY_COUNT = "Item_Retry_Count"
+    ITEM_SUCCESS_COUNT = _ITEM_SUCCESS_COUNT_NAME[0]
+    ITEM_DROP_COUNT = _ITEM_DROP_COUNT_NAME[0]
+    ITEM_RETRY_COUNT = _ITEM_RETRY_COUNT_NAME[0]
 
 
 ## Map from Azure Monitor envelope base_types to TelemetryType
@@ -338,5 +354,16 @@ _DEFAULT_LOG_MESSAGE = "n/a"
 
 # Resource attribute applicationId
 _APPLICATION_ID_RESOURCE_KEY = "microsoft.applicationId"
+
+# Gen AI attributes whose value should be exempt from truncation
+_GEN_AI_ATTRIBUTES = (
+    "gen_ai.input.messages",
+    "gen_ai.output.messages",
+    "gen_ai.system_instructions",
+    "gen_ai.tool.definitions",
+    "gen_ai.tool.call.arguments",
+    "gen_ai.tool.call.result",
+    "gen_ai.evaluation.explanation",
+)
 
 # cSpell:disable

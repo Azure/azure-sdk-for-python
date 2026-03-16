@@ -4,6 +4,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from consts import (
+    KEY,
+    LABEL,
+    TEST_VALUE,
+    TEST_CONTENT_TYPE,
+)
 from devtools_testutils import AzureRecordedTestCase
 from azure.appconfiguration import (
     AzureAppConfigurationClient,
@@ -13,15 +19,11 @@ from azure.appconfiguration import (
     ConfigurationSnapshot,
 )
 from azure.core.exceptions import ResourceExistsError
-from consts import (
-    KEY,
-    LABEL,
-    TEST_VALUE,
-    TEST_CONTENT_TYPE,
-)
 
 
 class AppConfigTestCase(AzureRecordedTestCase):
+    client = None
+
     def create_aad_client(self, appconfiguration_endpoint_string, audience=None):
         cred = self.get_credential(AzureAppConfigurationClient)
         return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred, audience=audience)
@@ -68,7 +70,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
             for snapshot in snapshots:
                 try:
                     self.client.archive_snapshot(name=snapshot.name)
-                except Exception:
+                except Exception:  # pylint:disable=broad-except
                     pass
 
             # Delete all configuration settings

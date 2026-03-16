@@ -9,4 +9,3 @@
 from typing import Union
 
 BandMetadataElement = Union[str, dict[str, str]]
-IntervalLegendsElement = Union[list[int], dict[str, str]]

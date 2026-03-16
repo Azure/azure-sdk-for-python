@@ -17,16 +17,12 @@ class TestTranscriptionOptions(TranscriptionClientTestBase):
     def test_transcribe_profanity_filter_raw(self, transcription_endpoint, transcription_test_audio_url):
         """Test transcription with no profanity filtering."""
         client = self.create_client(endpoint=transcription_endpoint)
-        
+
         audio_url = transcription_test_audio_url
-        options = TranscriptionOptions(
-            audio_url=audio_url,
-            locales=["en-US"],
-            profanity_filter_mode="None"
-        )
-        
+        options = TranscriptionOptions(audio_url=audio_url, locales=["en-US"], profanity_filter_mode="None")
+
         result = client.transcribe_from_url(audio_url, options=options)
-        
+
         assert result is not None
         assert result.combined_phrases is not None
         assert len(result.combined_phrases) > 0
@@ -36,16 +32,12 @@ class TestTranscriptionOptions(TranscriptionClientTestBase):
     def test_transcribe_profanity_filter_masked(self, transcription_endpoint, transcription_test_audio_url):
         """Test transcription with profanity masking."""
         client = self.create_client(endpoint=transcription_endpoint)
-        
+
         audio_url = transcription_test_audio_url
-        options = TranscriptionOptions(
-            audio_url=audio_url,
-            locales=["en-US"],
-            profanity_filter_mode="Masked"
-        )
-        
+        options = TranscriptionOptions(audio_url=audio_url, locales=["en-US"], profanity_filter_mode="Masked")
+
         result = client.transcribe_from_url(audio_url, options=options)
-        
+
         assert result is not None
         assert result.combined_phrases is not None
         assert result.combined_phrases[0].text is not None
@@ -55,16 +47,12 @@ class TestTranscriptionOptions(TranscriptionClientTestBase):
     def test_transcribe_profanity_filter_removed(self, transcription_endpoint, transcription_test_audio_url):
         """Test transcription with profanity filter set to Removed."""
         client = self.create_client(endpoint=transcription_endpoint)
-        
+
         audio_url = transcription_test_audio_url
-        options = TranscriptionOptions(
-            audio_url=audio_url,
-            locales=["en-US"],
-            profanity_filter_mode="Removed"
-        )
-        
+        options = TranscriptionOptions(audio_url=audio_url, locales=["en-US"], profanity_filter_mode="Removed")
+
         result = client.transcribe_from_url(audio_url, options=options)
-        
+
         assert result is not None
         assert result.combined_phrases is not None
 
@@ -73,21 +61,18 @@ class TestTranscriptionOptions(TranscriptionClientTestBase):
     def test_transcribe_with_phrase_list(self, transcription_endpoint, transcription_test_audio_url):
         """Test transcription with a custom phrase list for better recognition."""
         client = self.create_client(endpoint=transcription_endpoint)
-        
+
         audio_url = transcription_test_audio_url
-        
+
         # Add custom phrases for better recognition
         options = TranscriptionOptions(
             audio_url=audio_url,
             locales=["en-US"],
-            phrase_list=PhraseListProperties(
-                phrases=["Azure", "Cognitive Services", "Speech SDK"],
-                biasing_weight=1.0
-            )
+            phrase_list=PhraseListProperties(phrases=["Azure", "Cognitive Services", "Speech SDK"], biasing_weight=1.0),
         )
-        
+
         result = client.transcribe_from_url(audio_url, options=options)
-        
+
         assert result is not None
         assert result.combined_phrases is not None
         assert len(result.combined_phrases) > 0
@@ -98,17 +83,14 @@ class TestTranscriptionOptions(TranscriptionClientTestBase):
     def test_transcribe_multiple_locales(self, transcription_endpoint, transcription_test_audio_url):
         """Test transcription with multiple locales specified."""
         client = self.create_client(endpoint=transcription_endpoint)
-        
+
         audio_url = transcription_test_audio_url
-        
+
         # Specify multiple locales for auto-detection
-        options = TranscriptionOptions(
-            audio_url=audio_url,
-            locales=["en-US", "es-ES", "fr-FR"]
-        )
-        
+        options = TranscriptionOptions(audio_url=audio_url, locales=["en-US", "es-ES", "fr-FR"])
+
         result = client.transcribe_from_url(audio_url, options=options)
-        
+
         assert result is not None
         assert result.combined_phrases is not None
         assert len(result.combined_phrases) > 0

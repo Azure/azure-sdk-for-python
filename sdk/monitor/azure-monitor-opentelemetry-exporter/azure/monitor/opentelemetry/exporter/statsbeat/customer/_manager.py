@@ -32,6 +32,7 @@ from azure.monitor.opentelemetry.exporter._utils import (
     get_compute_type,
 )
 
+from azure.monitor.opentelemetry.exporter.statsbeat._state import set_statsbeat_customer_sdkstats_feature_set
 from ._utils import get_customer_sdkstats_export_interval, categorize_status_code, is_customer_sdkstats_enabled
 
 
@@ -62,6 +63,7 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
             self._status = CustomerSdkStatsStatus.UNINITIALIZED
         else:
             self._status = CustomerSdkStatsStatus.DISABLED
+            set_statsbeat_customer_sdkstats_feature_set()
 
         self._counters = _CustomerSdkStatsTelemetryCounters()
         self._language = _CUSTOMER_SDKSTATS_LANGUAGE
@@ -329,7 +331,7 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
                             if count > 0:
                                 # Create attributes by copying base and adding drop-specific data
                                 attributes = self._base_attributes.copy()
-                                attributes["drop.code"] = drop_code
+                                attributes["drop.code"] = drop_code if isinstance(drop_code, int) else drop_code.value
                                 attributes["drop.reason"] = reason
                                 attributes["telemetry_type"] = telemetry_type
                                 if telemetry_type in (_REQUEST, _DEPENDENCY):
@@ -353,7 +355,7 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
                         if count > 0:
                             # Create attributes by copying base and adding retry-specific data
                             attributes = self._base_attributes.copy()
-                            attributes["retry.code"] = retry_code
+                            attributes["retry.code"] = retry_code if isinstance(retry_code, int) else retry_code.value
                             attributes["retry.reason"] = reason
                             attributes["telemetry_type"] = telemetry_type
                             observations.append(Observation(count, attributes))

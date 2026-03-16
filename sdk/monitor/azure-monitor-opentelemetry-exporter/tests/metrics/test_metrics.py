@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+import datetime
 import os
 import platform
 import shutil
@@ -26,11 +27,12 @@ from azure.monitor.opentelemetry.exporter.export.metrics._exporter import (
     AzureMonitorMetricExporter,
     _get_metric_export_result,
 )
-from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys
-from azure.monitor.opentelemetry.exporter._utils import (
-    azure_monitor_context,
-    ns_to_iso_str,
-)
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import ContextTagKeys
+from azure.monitor.opentelemetry.exporter._utils import azure_monitor_context
+
+
+def ns_to_datetime(ns: int) -> datetime.datetime:
+    return datetime.datetime.fromtimestamp(ns / 1e9, tz=datetime.timezone.utc)
 
 
 def throw(exc_type, *args, **kwargs):
@@ -40,9 +42,9 @@ def throw(exc_type, *args, **kwargs):
     return func
 
 
-# pylint: disable=import-error
-# pylint: disable=protected-access
-# pylint: disable=too-many-lines
+# pylint: disable=import-error, too-many-public-methods
+# pylint: disable=protected-access, too-many-statements
+# pylint: disable=too-many-lines, unused-argument
 class TestAzureMetricExporter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -243,7 +245,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         envelope = exporter._point_to_envelope(point, "test name", resource, scope)
         self.assertEqual(envelope.instrumentation_key, exporter._instrumentation_key)
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Metric")
-        self.assertEqual(envelope.time, ns_to_iso_str(point.time_unix_nano))
+        self.assertEqual(envelope.time, ns_to_datetime(point.time_unix_nano))
         self.assertEqual(envelope.data.base_type, "MetricData")
         self.assertEqual(len(envelope.data.base_data.properties), 1)
         self.assertEqual(envelope.data.base_data.properties["test"], "attribute")
@@ -260,7 +262,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         envelope = exporter._point_to_envelope(point, "test name", resource)
         self.assertEqual(envelope.instrumentation_key, exporter._instrumentation_key)
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Metric")
-        self.assertEqual(envelope.time, ns_to_iso_str(point.time_unix_nano))
+        self.assertEqual(envelope.time, ns_to_datetime(point.time_unix_nano))
         self.assertEqual(envelope.data.base_type, "MetricData")
         self.assertEqual(len(envelope.data.base_data.properties), 1)
         self.assertEqual(envelope.data.base_data.properties["test"], "attribute")
@@ -399,7 +401,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         envelope = exporter._point_to_envelope(point, "test name", resource, scope)
         self.assertEqual(envelope.instrumentation_key, exporter._instrumentation_key)
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Metric")
-        self.assertEqual(envelope.time, ns_to_iso_str(point.time_unix_nano))
+        self.assertEqual(envelope.time, ns_to_datetime(point.time_unix_nano))
         self.assertEqual(envelope.data.base_type, "MetricData")
         self.assertEqual(len(envelope.data.base_data.properties), 1)
         self.assertEqual(envelope.data.base_data.properties["test"], "attribute")
@@ -446,7 +448,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         envelope = exporter._point_to_envelope(point, "http.client.duration", resource)
         self.assertEqual(envelope.instrumentation_key, exporter._instrumentation_key)
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Metric")
-        self.assertEqual(envelope.time, ns_to_iso_str(point.time_unix_nano))
+        self.assertEqual(envelope.time, ns_to_datetime(point.time_unix_nano))
         self.assertEqual(envelope.data.base_type, "MetricData")
         self.assertEqual(envelope.data.base_data.properties["_MS.MetricId"], "dependencies/duration")
         self.assertEqual(envelope.data.base_data.properties["_MS.IsAutocollected"], "True")
@@ -485,7 +487,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         envelope = exporter._point_to_envelope(point, "http.client.request.duration", resource)
         self.assertEqual(envelope.instrumentation_key, exporter._instrumentation_key)
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Metric")
-        self.assertEqual(envelope.time, ns_to_iso_str(point.time_unix_nano))
+        self.assertEqual(envelope.time, ns_to_datetime(point.time_unix_nano))
         self.assertEqual(envelope.data.base_type, "MetricData")
         self.assertEqual(envelope.data.base_data.properties["_MS.MetricId"], "dependencies/duration")
         self.assertEqual(envelope.data.base_data.properties["_MS.IsAutocollected"], "True")
@@ -521,7 +523,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         envelope = exporter._point_to_envelope(point, "http.server.duration", resource)
         self.assertEqual(envelope.instrumentation_key, exporter._instrumentation_key)
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Metric")
-        self.assertEqual(envelope.time, ns_to_iso_str(point.time_unix_nano))
+        self.assertEqual(envelope.time, ns_to_datetime(point.time_unix_nano))
         self.assertEqual(envelope.data.base_type, "MetricData")
         self.assertEqual(envelope.data.base_data.properties["_MS.MetricId"], "requests/duration")
         self.assertEqual(envelope.data.base_data.properties["_MS.IsAutocollected"], "True")
@@ -563,7 +565,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         envelope = exporter._point_to_envelope(point, "http.server.request.duration", resource)
         self.assertEqual(envelope.instrumentation_key, exporter._instrumentation_key)
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Metric")
-        self.assertEqual(envelope.time, ns_to_iso_str(point.time_unix_nano))
+        self.assertEqual(envelope.time, ns_to_datetime(point.time_unix_nano))
         self.assertEqual(envelope.data.base_type, "MetricData")
         self.assertEqual(envelope.data.base_data.properties["_MS.MetricId"], "requests/duration")
         self.assertEqual(envelope.data.base_data.properties["_MS.IsAutocollected"], "True")
@@ -621,7 +623,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         envelope = exporter._point_to_envelope(point, "http.client.duration", resource)
         self.assertEqual(envelope.instrumentation_key, exporter._instrumentation_key)
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Metric")
-        self.assertEqual(envelope.time, ns_to_iso_str(point.time_unix_nano))
+        self.assertEqual(envelope.time, ns_to_datetime(point.time_unix_nano))
         self.assertEqual(envelope.data.base_type, "MetricData")
         self.assertEqual(envelope.data.base_data.properties["_MS.MetricId"], "dependencies/duration")
         self.assertEqual(envelope.data.base_data.properties["_MS.IsAutocollected"], "True")
@@ -659,7 +661,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         envelope = exporter._point_to_envelope(point, "http.client.request.duration", resource)
         self.assertEqual(envelope.instrumentation_key, exporter._instrumentation_key)
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Metric")
-        self.assertEqual(envelope.time, ns_to_iso_str(point.time_unix_nano))
+        self.assertEqual(envelope.time, ns_to_datetime(point.time_unix_nano))
         self.assertEqual(envelope.data.base_type, "MetricData")
         self.assertEqual(envelope.data.base_data.properties["_MS.MetricId"], "dependencies/duration")
         self.assertEqual(envelope.data.base_data.properties["_MS.IsAutocollected"], "True")
@@ -694,7 +696,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         envelope = exporter._point_to_envelope(point, "http.server.duration", resource)
         self.assertEqual(envelope.instrumentation_key, exporter._instrumentation_key)
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Metric")
-        self.assertEqual(envelope.time, ns_to_iso_str(point.time_unix_nano))
+        self.assertEqual(envelope.time, ns_to_datetime(point.time_unix_nano))
         self.assertEqual(envelope.data.base_type, "MetricData")
         self.assertEqual(envelope.data.base_data.properties["_MS.MetricId"], "requests/duration")
         self.assertEqual(envelope.data.base_data.properties["_MS.IsAutocollected"], "True")
@@ -735,7 +737,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         envelope = exporter._point_to_envelope(point, "http.server.request.duration", resource)
         self.assertEqual(envelope.instrumentation_key, exporter._instrumentation_key)
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Metric")
-        self.assertEqual(envelope.time, ns_to_iso_str(point.time_unix_nano))
+        self.assertEqual(envelope.time, ns_to_datetime(point.time_unix_nano))
         self.assertEqual(envelope.data.base_type, "MetricData")
         self.assertEqual(envelope.data.base_data.properties["_MS.MetricId"], "requests/duration")
         self.assertEqual(envelope.data.base_data.properties["_MS.IsAutocollected"], "True")

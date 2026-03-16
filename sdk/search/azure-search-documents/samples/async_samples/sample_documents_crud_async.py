@@ -108,6 +108,22 @@ async def delete_document_async():
     # [END delete_document_async]
 
 
+async def merge_or_upload_document_async():
+    # [START merge_or_upload_document_async]
+    from azure.core.credentials import AzureKeyCredential
+    from azure.search.documents.aio import SearchClient
+
+    search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
+
+    async with search_client:
+        result = await search_client.merge_or_upload_documents(
+            documents=[{"HotelId": "100", "HotelName": "Azure Sanctuary & Spa"}]
+        )
+
+    print(f"Merge or upload: document 100 (succeeded={result[0].succeeded})")
+    # [END merge_or_upload_document_async]
+
+
 if __name__ == "__main__":
     asyncio.run(upload_document_async())
     asyncio.run(merge_document_async())

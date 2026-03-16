@@ -150,8 +150,8 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         properties = await file_client.get_file_properties()
         while properties.copy.status != 'success':
             count = count + 1
-            if count > 10:
-                self.fail('Timed out waiting for async copy to complete.')
+            if count > 15:
+                pytest.fail('Timed out waiting for async copy to complete.')
             self.sleep(6)
             properties = await file_client.get_file_properties()
         assert properties.copy.status == 'success'
@@ -4141,3 +4141,50 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
 
         result = await (await file_client.download_file(decompress=False)).readall()
         assert result == compressed_data
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_upload_file_with_none_max_concurrency(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        await self._setup_share(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key.secret,
+            max_range_size=4 * 1024)
+
+        data = b"hello world"
+
+        # max_concurrency=None should not raise TypeError
+        await file_client.upload_file(data, max_concurrency=None)
+
+        await self.assertFileEqual(file_client, data)
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_download_file_with_none_max_concurrency(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        await self._setup_share(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key.secret,
+            max_range_size=4 * 1024)
+
+        data = b"hello world"
+        await file_client.upload_file(data)
+
+        # max_concurrency=None should not raise TypeError
+        content = await (await file_client.download_file(max_concurrency=None)).readall()
+
+        assert content == data

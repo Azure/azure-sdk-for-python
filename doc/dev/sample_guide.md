@@ -54,17 +54,14 @@ The given `START`/`END` keywords can be used in a [sphinx literalinclude][sphinx
 [Literalinclude example][literalinclude]
 
 The rendered code snippets are sensitive to the indentation in the sample file. Sphinx will adjust the dedent accordingly to ensure the sample is captured accurately and not accidentally trimmed.
-You can preview how published reference documentation will look by running either
-- [tox][tox]: `tox run -e sphinx -c ../../../eng/tox/tox.ini --root <path to python package>`. 
-- [azpysdk](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/tool_usage_guide.md): run `azpysdk sphinx .` in the package directory.
+You can preview how published reference documentation will look by running
+[azpysdk](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/tool_usage_guide.md): `azpysdk sphinx .` in the package directory.
 
 ## Test run samples in CI live tests
 Per the [Python guidelines][snippet_guidelines], sample code and snippets should be test run in CI to ensure they remain functional. Samples should be run in the package's live test pipeline which is scheduled to run daily.
 To ensure samples do get tested as part of regular CI runs, add these [lines][live_tests] to the package's tests.yml. 
 
-You can test this CI step locally first with tox or azpysdk:
-- To use [tox][tox], run `tox run -e samples -c ../../../eng/tox/tox.ini --root <path to python package>`. 
-- To use [azpysdk](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/tool_usage_guide.md), run `azpysdk samples .` in the package directory.
+You can test this CI step locally first with [azpysdk](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/tool_usage_guide.md) by running `azpysdk samples .` in the package directory.
 
 The `Test Samples` step in CI will rely on the resources provisioned and environment variables used for running the package's tests.
 
@@ -95,7 +92,6 @@ For general how-to with the Python SDK, see the [Azure SDK for Python Overview][
 [literalinclude]: https://github.com/Azure/azure-sdk-for-python/blob/7b3dfdca0658f6a4706654556d3142b4bce2b0d1/sdk/cognitivelanguage/azure-ai-language-questionanswering/azure/ai/language/questionanswering/_operations/_patch.py#L244-L251
 [snippet_guidelines]: https://azure.github.io/azure-sdk/python_design.html#code-snippets
 [live_tests]: https://github.com/Azure/azure-sdk-for-python/blob/7b3dfdca0658f6a4706654556d3142b4bce2b0d1/sdk/translation/tests.yml#L13-L14
-[tox]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#tox
 [msft_samples]: https://learn.microsoft.com/samples/browse/
 [python_guidelines]: https://azure.github.io/azure-sdk/python_design.html
 [document_sdk]: https://review.learn.microsoft.com/help/platform/reference-document-sdk-client-libraries?branch=main

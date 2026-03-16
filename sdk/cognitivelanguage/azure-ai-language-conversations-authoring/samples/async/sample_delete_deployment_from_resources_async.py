@@ -38,7 +38,7 @@ from azure.ai.language.conversations.authoring.aio import ConversationAuthoringC
 from azure.ai.language.conversations.authoring.models import ProjectResourceIds
 
 
-async def sample_delete_deployment_from_resources_async():
+async def sample_delete_deployment_async():
     # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
 
@@ -73,7 +73,7 @@ async def sample_delete_deployment_from_resources_async():
 
 
 async def main():
-    await sample_delete_deployment_from_resources_async()
+    await sample_delete_deployment_async()
 
 
 if __name__ == "__main__":

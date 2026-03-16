@@ -5,13 +5,13 @@
 # ------------------------------------
 
 """
-FILE: sample_text_extractive_summarization.py
+FILE: sample_extract_summary.py
 
 DESCRIPTION:
     This sample demonstrates how to run an **extractive summarization** action over text.
 
 USAGE:
-    python sample_text_extractive_summarization.py
+    python sample_extract_summary.py
 
 REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_TEXT_ENDPOINT
@@ -38,7 +38,7 @@ from azure.ai.textanalytics.models import (
 )
 
 
-def sample_text_extractive_summarization():
+def sample_extract_summary():
     # get settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     credential = DefaultAzureCredential()
@@ -144,15 +144,15 @@ def sample_text_extractive_summarization():
                         f"\n[Non-extractive action] name={op_result.task_name}, "
                         f"status={op_result.status}, kind={op_result.kind}"
                     )
-                except Exception:
-                    print("\n[Non-extractive action present]")
+                except (AttributeError, TypeError) as e:
+                    print(f"\n[Non-extractive action present] Error: {e}")
 
 
 # [END text_extractive_summarization]
 
 
 def main():
-    sample_text_extractive_summarization()
+    sample_extract_summary()
 
 
 if __name__ == "__main__":

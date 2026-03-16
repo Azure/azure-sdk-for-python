@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -17,7 +16,6 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     SourceFileContentContent,
 )
 from openai.types.eval_create_params import DataSourceConfigCustom
-
 
 load_dotenv()
 

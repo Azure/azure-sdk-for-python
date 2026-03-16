@@ -1,5 +1,7 @@
 # pylint: disable=line-too-long,useless-suppression
 import functools
+from typing import cast, List
+
 import pytest
 
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
@@ -20,12 +22,10 @@ from azure.ai.language.conversations.models import (
     ConversationalPiiResult,
     ConversationPiiItemResult,
     NamedEntity,
-    InputWarning,
     ConversationError,
     CharacterMaskPolicyType,
     RedactionCharacter,
 )
-from typing import cast, List
 from azure.core.credentials import AzureKeyCredential
 
 ConversationsPreparer = functools.partial(

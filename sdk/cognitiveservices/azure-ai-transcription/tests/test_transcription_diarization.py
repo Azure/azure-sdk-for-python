@@ -17,18 +17,16 @@ class TestTranscriptionDiarization(TranscriptionClientTestBase):
     def test_transcribe_with_diarization_enabled(self, transcription_endpoint, transcription_test_audio_url):
         """Test transcription with speaker diarization enabled."""
         client = self.create_client(endpoint=transcription_endpoint)
-        
+
         audio_url = transcription_test_audio_url
-        
+
         # Enable diarization
         options = TranscriptionOptions(
-            audio_url=audio_url,
-            locales=["en-US"],
-            diarization_options=TranscriptionDiarizationOptions(max_speakers=2)
+            audio_url=audio_url, locales=["en-US"], diarization_options=TranscriptionDiarizationOptions(max_speakers=2)
         )
-        
+
         result = client.transcribe_from_url(audio_url, options=options)
-        
+
         assert result is not None
         assert result.combined_phrases is not None
         assert result.phrases is not None

@@ -27,7 +27,7 @@ class TestComputeManagementSoftDeletedResourceOperationsAsync(AzureMgmtRecordedT
             gallery_name="str",
             artifact_type="str",
             artifact_name="str",
-            api_version="2024-03-03",
+            api_version="2025-03-03",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

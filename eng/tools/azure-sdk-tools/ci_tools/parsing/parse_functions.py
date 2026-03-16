@@ -16,6 +16,7 @@ from typing import Dict, List, Tuple, Any, Optional, Union
 
 # this assumes the presence of "packaging"
 from packaging.requirements import Requirement
+from packaging.version import Version, InvalidVersion
 from setuptools import Extension
 
 from ci_tools.variables import str_to_bool
@@ -351,6 +352,9 @@ class ParsedSetup:
     def get_build_config(self) -> Optional[Dict[str, Any]]:
         return get_build_config(self.folder)
 
+    def get_conda_config(self) -> Optional[Dict[str, Any]]:
+        return get_conda_config(self.folder)
+
     def get_config_setting(self, setting: str, default: Any = True) -> Any:
         return get_config_setting(self.folder, setting, default)
 
@@ -383,7 +387,7 @@ class ParsedSetup:
 
 def update_build_config(package_path: str, new_build_config: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Attempts to update a pyproject.toml's [tools.azure-sdk-tools] section with a new check configuration.
+    Attempts to update a pyproject.toml's [tool.azure-sdk-tools] section with a new check configuration.
 
     This function can only append or override existing check values. It cannot delete them.
     """
@@ -450,6 +454,27 @@ def get_build_config(package_path: str) -> Optional[Dict[str, Any]]:
                     tool_configs = toml_dict["tool"]
                     if "azure-sdk-build" in tool_configs:
                         return tool_configs["azure-sdk-build"]
+        except:
+            return {}
+
+
+def get_conda_config(package_path: str) -> Optional[Dict[str, Any]]:
+    """
+    Attempts to retrieve all values within [tool.azure-sdk-conda] section of a pyproject.toml.
+    """
+    if os.path.isfile(package_path):
+        package_path = os.path.dirname(package_path)
+
+    toml_file = os.path.join(package_path, "pyproject.toml")
+
+    if os.path.exists(toml_file):
+        try:
+            with open(toml_file, "rb") as f:
+                toml_dict = toml.load(f)
+                if "tool" in toml_dict:
+                    tool_configs = toml_dict["tool"]
+                    if "azure-sdk-conda" in tool_configs:
+                        return tool_configs["azure-sdk-conda"]
         except:
             return {}
 

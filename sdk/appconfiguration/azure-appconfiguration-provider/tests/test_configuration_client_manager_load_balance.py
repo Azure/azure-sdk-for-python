@@ -3,10 +3,17 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
+import pytest
 from azure.appconfiguration.provider._client_manager import ConfigurationClientManager
+
+
+def _create_mock_credential():
+    """Create a mock credential that satisfies token credential checks."""
+    credential = MagicMock()
+    credential.get_token = MagicMock()
+    return credential
 
 
 class MockClient:
@@ -23,8 +30,7 @@ class MockClient:
 class TestConfigurationClientManagerLoadBalance(unittest.TestCase):
 
     @patch("azure.appconfiguration.provider._client_manager.find_auto_failover_endpoints")
-    @patch("azure.appconfiguration.provider._client_manager.AzureAppConfigurationClient.from_connection_string")
-    def test_find_active_clients(self, mock_client, mock_find_auto_failover_endpoints):
+    def test_find_active_clients(self, mock_find_auto_failover_endpoints):
         # Single endpoint test no load balancing
         endpoint = "https://fake.endpoint"
         connection_string = "Endpoint=https://fake.endpoint/;Id=fake_id;Secret=fake_secret"
@@ -92,14 +98,14 @@ class TestConfigurationClientManagerLoadBalance(unittest.TestCase):
         manager.close()
 
     @patch("azure.appconfiguration.provider._client_manager.find_auto_failover_endpoints")
-    @patch("azure.appconfiguration.provider._client_manager.AzureAppConfigurationClient")
-    def test_find_active_clients_entra_id(self, mock_client, mock_find_auto_failover_endpoints):
+    def test_find_active_clients_entra_id(self, mock_find_auto_failover_endpoints):
         # Single endpoint test no load balancing
         endpoint = "https://fake.endpoint"
+        credential = _create_mock_credential()
 
         mock_find_auto_failover_endpoints.return_value = []
 
-        with ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 0, 0, False) as manager:
+        with ConfigurationClientManager(None, endpoint, credential, "", 0, 0, True, 0, 0, False) as manager:
             assert manager.get_next_active_client() is None
 
             manager.find_active_clients()
@@ -109,7 +115,7 @@ class TestConfigurationClientManagerLoadBalance(unittest.TestCase):
         failover_endpoints = ["https://fake.endpoint2", "https://fake.endpoint3"]
         mock_find_auto_failover_endpoints.return_value = failover_endpoints
 
-        manager = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 0, 0, True)
+        manager = ConfigurationClientManager(None, endpoint, credential, "", 0, 0, True, 0, 0, True)
         manager.refresh_clients()
 
         manager.find_active_clients()
@@ -122,7 +128,7 @@ class TestConfigurationClientManagerLoadBalance(unittest.TestCase):
         # Single endpoint test load balancing
         mock_find_auto_failover_endpoints.return_value = []
 
-        manager = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 0, 0, True)
+        manager = ConfigurationClientManager(None, endpoint, credential, "", 0, 0, True, 0, 0, True)
         manager.refresh_clients()
 
         manager.find_active_clients()
@@ -131,7 +137,7 @@ class TestConfigurationClientManagerLoadBalance(unittest.TestCase):
         # Multiple endpoint test load balancing
         mock_find_auto_failover_endpoints.return_value = ["https://fake.endpoint2", "https://fake.endpoint3"]
 
-        manager = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 0, 0, True)
+        manager = ConfigurationClientManager(None, endpoint, credential, "", 0, 0, True, 0, 0, True)
         manager.refresh_clients()
 
         manager.find_active_clients()

@@ -1,5 +1,7 @@
 # pylint: disable=line-too-long,useless-suppression
 import functools
+import pytest
+
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, recorded_by_proxy
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
@@ -17,14 +19,13 @@ class TestConversations(AzureRecordedTestCase):
     def create_client(self, endpoint: str, key: str) -> TextAuthoringClient:
         return TextAuthoringClient(endpoint, AzureKeyCredential(key))
 
-
 class TestConversationsCase(TestConversations):
     @ConversationsPreparer()
     @recorded_by_proxy
     def test_delete_project(self, authoring_endpoint, authoring_key):
         client = self.create_client(authoring_endpoint, authoring_key)
 
-        project_name = "MyImportTextProjectRaw0723"
+        project_name = "MyTextProject0902"
 
         # Act: begin delete (LRO)
         poller = client.begin_delete_project(project_name)

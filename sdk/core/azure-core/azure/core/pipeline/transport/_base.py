@@ -130,9 +130,10 @@ def _urljoin(base_url: str, stub_url: str) -> str:
 
     # Note that _replace is a public API named that way to avoid conflicts in namedtuple
     # https://docs.python.org/3/library/collections.html?highlight=namedtuple#collections.namedtuple
-    parsed_base_url = parsed_base_url._replace(
-        path=parsed_base_url.path.rstrip("/") + "/" + stub_url_path,
-    )
+    if stub_url_path:
+        parsed_base_url = parsed_base_url._replace(
+            path=parsed_base_url.path.rstrip("/") + "/" + stub_url_path.lstrip("/"),
+        )
     if stub_url_query:
         query_params = [stub_url_query]
         if parsed_base_url.query:
@@ -661,9 +662,8 @@ class PipelineClientBase:
         if url:
             parsed = urlparse(url)
             if not parsed.scheme or not parsed.netloc:
-                url = url.lstrip("/")
                 try:
-                    base = self._base_url.format(**kwargs).rstrip("/")
+                    base = self._base_url.format(**kwargs)
                 except KeyError as key:
                     err_msg = "The value provided for the url part {} was incorrect, and resulted in an invalid url"
                     raise ValueError(err_msg.format(key.args[0])) from key

@@ -18,6 +18,7 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) CONTAINERREGISTRY_ENDPOINT - The URL of your Container Registry account
 """
+
 import os
 import json
 from io import BytesIO
@@ -168,7 +169,10 @@ class SetGetImage(object):
             }
             # Set the image with one custom media type
             client.set_manifest(
-                repository_name, docker_manifest, tag="sample", media_type=str(docker_manifest["mediaType"])
+                repository_name,
+                docker_manifest,
+                tag="sample",
+                media_type=str(docker_manifest["mediaType"]),
             )
 
             # Get the image

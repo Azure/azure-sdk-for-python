@@ -1,7 +1,6 @@
 # pylint: disable=line-too-long,useless-suppression
 from datetime import date, datetime
 import functools
-from importlib import resources
 
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 from azure.core.credentials import AzureKeyCredential

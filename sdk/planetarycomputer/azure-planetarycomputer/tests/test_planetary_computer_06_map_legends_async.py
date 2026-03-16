@@ -6,6 +6,7 @@
 """
 Unit tests for Map Legend operations.
 """
+from collections.abc import MutableMapping
 import io
 import logging
 from pathlib import Path
@@ -65,9 +66,7 @@ class TestPlanetaryComputerMapLegendsAsync(PlanetaryComputerProClientTestBaseAsy
         test_logger.info(f"Response: {response}")
 
         # Assert response is a dictionary
-        assert isinstance(
-            response, dict
-        ), f"Response should be a dict, got {type(response)}"
+        assert isinstance(response, MutableMapping), f"Response should be a dict, got {type(response)}"
         assert len(response) > 0, "Response should not be empty"
 
         # Assert MTBS Severity classes are present (0-6)
@@ -362,7 +361,7 @@ class TestPlanetaryComputerMapLegendsAsync(PlanetaryComputerProClientTestBaseAsy
         test_logger.info(f"Response: {response}")
 
         # Assert response is a dictionary
-        assert isinstance(response, dict), "Response should be a dict"
+        assert isinstance(response, MutableMapping), "Response should be a dict"
 
         # Validate all keys are string class values
         for key in response.keys():
