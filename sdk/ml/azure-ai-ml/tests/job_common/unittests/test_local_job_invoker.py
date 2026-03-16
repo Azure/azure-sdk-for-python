@@ -107,8 +107,12 @@ class TestUnzipPathTraversalPrevention:
         zip_bytes = buf.getvalue()
 
         job_def = _make_job_definition("traversal-run")
-        with pytest.raises(ValueError, match="path traversal"):
-            unzip_to_temporary_file(job_def, zip_bytes)
+        temp_dir = Path(tempfile.gettempdir(), AZUREML_RUNS_DIR, job_def.name)
+        try:
+            with pytest.raises(ValueError, match="path traversal"):
+                unzip_to_temporary_file(job_def, zip_bytes)
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
 
     def test_zip_with_absolute_path_is_rejected(self):
         buf = io.BytesIO()
@@ -120,8 +124,12 @@ class TestUnzipPathTraversalPrevention:
         zip_bytes = buf.getvalue()
 
         job_def = _make_job_definition("absolute-path-run")
-        with pytest.raises(ValueError, match="path traversal"):
-            unzip_to_temporary_file(job_def, zip_bytes)
+        temp_dir = Path(tempfile.gettempdir(), AZUREML_RUNS_DIR, job_def.name)
+        try:
+            with pytest.raises(ValueError, match="path traversal"):
+                unzip_to_temporary_file(job_def, zip_bytes)
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
 
 
 @pytest.mark.unittest

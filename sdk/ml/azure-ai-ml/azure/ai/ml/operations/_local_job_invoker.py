@@ -39,21 +39,33 @@ module_logger = logging.getLogger(__name__)
 
 
 def unzip_to_temporary_file(job_definition: JobBaseData, zip_content: Any) -> Path:
-    temp_dir = Path(tempfile.gettempdir(), AZUREML_RUNS_DIR, job_definition.name)
+    # Base directory for all local runs
+    base_temp_dir = Path(tempfile.gettempdir(), AZUREML_RUNS_DIR).resolve()
+    base_temp_dir.mkdir(parents=True, exist_ok=True)
+    # Sanitize job name to a safe directory name
+    job_name = job_definition.name or "job"
+    safe_job_name = re.sub(r"[^A-Za-z0-9_.-]", "_", job_name)
+    if not safe_job_name or safe_job_name in {".", ".."}:
+        safe_job_name = "job"
+    temp_dir = (base_temp_dir / safe_job_name).resolve()
+    # Ensure the resolved extraction directory stays within the base temp directory
+    if temp_dir != base_temp_dir and not str(temp_dir).startswith(
+        str(base_temp_dir) + os.sep
+    ):
+        raise ValueError("Job name results in an invalid extraction directory.")
     temp_dir.mkdir(parents=True, exist_ok=True)
-    resolved_temp_dir = temp_dir.resolve()
+    resolved_temp_dir = temp_dir
     with zipfile.ZipFile(io.BytesIO(zip_content)) as zip_ref:
         for member in zip_ref.namelist():
             member_path = (resolved_temp_dir / member).resolve()
-            # Ensure the member extracts within temp_dir (allow temp_dir itself for directory entries)
-            if member_path != resolved_temp_dir and not str(member_path).startswith(
-                str(resolved_temp_dir) + os.sep
-            ):
+            if member_path != resolved_temp_dir and not str(
+                member_path
+            ).startswith(str(resolved_temp_dir) + os.sep):
                 raise ValueError(
                     f"Zip archive contains a path traversal entry and cannot be extracted safely: {member}"
                 )
-        zip_ref.extractall(temp_dir)
-    return temp_dir
+        zip_ref.extractall(resolved_temp_dir)
+    return resolved_temp_dir
 
 
 def _get_creationflags_and_startupinfo_for_background_process(
