@@ -49,7 +49,9 @@ def unzip_to_temporary_file(job_definition: JobBaseData, zip_content: Any) -> Pa
             if member_path != resolved_temp_dir and not str(member_path).startswith(
                 str(resolved_temp_dir) + os.sep
             ):
-                raise ValueError(f"Zip archive contains a path traversal entry and cannot be extracted safely: {member}")
+                raise ValueError(
+                    f"Zip archive contains a path traversal entry and cannot be extracted safely: {member}"
+                )
         zip_ref.extractall(temp_dir)
     return temp_dir
 
@@ -102,19 +104,25 @@ def patch_invocation_script_serialization(invocation_path: Path) -> None:
     if searchRes:
         patched_json = searchRes.group(2).replace('"', '\\"')
         patched_json = patched_json.replace("'", '"')
-        invocation_path.write_text(searchRes.group(1) + patched_json + searchRes.group(3))
+        invocation_path.write_text(
+            searchRes.group(1) + patched_json + searchRes.group(3)
+        )
 
 
 def invoke_command(project_temp_dir: Path) -> None:
     if os.name == "nt":
-        invocation_script = project_temp_dir / AZUREML_RUN_SETUP_DIR / INVOCATION_BAT_FILE
+        invocation_script = (
+            project_temp_dir / AZUREML_RUN_SETUP_DIR / INVOCATION_BAT_FILE
+        )
         # There is a bug in Execution service on the serialized json for snapshots.
         # This is a client-side patch until the service fixes it, at which point it should
         # be a no-op
         patch_invocation_script_serialization(invocation_script)
         invoked_command = ["cmd.exe", "/c", "{0}".format(invocation_script)]
     else:
-        invocation_script = project_temp_dir / AZUREML_RUN_SETUP_DIR / INVOCATION_BASH_FILE
+        invocation_script = (
+            project_temp_dir / AZUREML_RUN_SETUP_DIR / INVOCATION_BASH_FILE
+        )
         subprocess.check_output(["chmod", "+x", invocation_script])
         invoked_command = ["/bin/bash", "-c", "{0}".format(invocation_script)]
 
@@ -150,10 +158,12 @@ def get_execution_service_response(
     try:
         local = job_definition.properties.services.get("Local", None)
 
-        (url, encodedBody) = local.endpoint.split(EXECUTION_SERVICE_URL_KEY)
+        url, encodedBody = local.endpoint.split(EXECUTION_SERVICE_URL_KEY)
         body = urllib.parse.unquote_plus(encodedBody)
         body_dict: Dict = json.loads(body)
-        response = requests_pipeline.post(url, json=body_dict, headers={"Authorization": "Bearer " + token})
+        response = requests_pipeline.post(
+            url, json=body_dict, headers={"Authorization": "Bearer " + token}
+        )
         response.raise_for_status()
         return (response.content, body_dict.get("SnapshotId", None))  # type: ignore[return-value]
     except AzureError as err:
@@ -173,6 +183,7 @@ def is_local_run(job_definition: JobBaseData) -> bool:
         return False
     local = job_definition.properties.services.get("Local", None)
     return local is not None and EXECUTION_SERVICE_URL_KEY in local.endpoint
+
 
 def _safe_tar_extractall(tar: tarfile.TarFile, dest_dir: str) -> None:
     """Extract tar archive members safely, preventing path traversal (TarSlip).
@@ -211,12 +222,15 @@ def _safe_tar_extractall(tar: tarfile.TarFile, dest_dir: str) -> None:
                     f"{member.name}"
                 )
             member_path = os.path.realpath(os.path.join(resolved_dest, member.name))
-            if member_path != resolved_dest and not member_path.startswith(resolved_dest + os.sep):
+            if member_path != resolved_dest and not member_path.startswith(
+                resolved_dest + os.sep
+            ):
                 raise ValueError(
                     f"Tar archive contains a path traversal entry and cannot be extracted safely: {member.name}"
                 )
         # All members validated; safe to extract
         tar.extractall(resolved_dest)
+
 
 class CommonRuntimeHelper:
     COMMON_RUNTIME_BOOTSTRAPPER_INFO = "common_runtime_bootstrapper_info.json"
@@ -243,14 +257,18 @@ class CommonRuntimeHelper:
         "Unable to communicate with Docker daemon. Is Docker running/installed?\n "
         "For local submissions, we need to build a Docker container to run your job in.\n Detailed message: {}"
     )
-    DOCKER_LOGIN_FAILURE_MSG = "Login to Docker registry '{}' failed. See error message: {}"
+    DOCKER_LOGIN_FAILURE_MSG = (
+        "Login to Docker registry '{}' failed. See error message: {}"
+    )
     BOOTSTRAP_BINARY_FAILURE_MSG = (
         "Azure Common Runtime execution failed. See detailed message below for troubleshooting "
         "information or re-submit with flag --use-local-runtime to try running on your local runtime: {}"
     )
 
     def __init__(self, job_name: str):
-        self.common_runtime_temp_folder = os.path.join(Path.home(), ".azureml-common-runtime", job_name)
+        self.common_runtime_temp_folder = os.path.join(
+            Path.home(), ".azureml-common-runtime", job_name
+        )
         if os.path.exists(self.common_runtime_temp_folder):
             shutil.rmtree(self.common_runtime_temp_folder)
         Path(self.common_runtime_temp_folder).mkdir(parents=True)
@@ -259,10 +277,14 @@ class CommonRuntimeHelper:
             CommonRuntimeHelper.VM_BOOTSTRAPPER_FILE_NAME,
         )
         self.stdout = open(  # pylint: disable=consider-using-with
-            os.path.join(self.common_runtime_temp_folder, "stdout"), "w+", encoding=DefaultOpenEncoding.WRITE
+            os.path.join(self.common_runtime_temp_folder, "stdout"),
+            "w+",
+            encoding=DefaultOpenEncoding.WRITE,
         )
         self.stderr = open(  # pylint: disable=consider-using-with
-            os.path.join(self.common_runtime_temp_folder, "stderr"), "w+", encoding=DefaultOpenEncoding.WRITE
+            os.path.join(self.common_runtime_temp_folder, "stderr"),
+            "w+",
+            encoding=DefaultOpenEncoding.WRITE,
         )
 
     # Bug Item number: 2885723
@@ -294,9 +316,13 @@ class CommonRuntimeHelper:
                     registry=registry.get("url"),
                 )
             except Exception as e:
-                raise RuntimeError(self.DOCKER_LOGIN_FAILURE_MSG.format(registry.get("url"), e)) from e
+                raise RuntimeError(
+                    self.DOCKER_LOGIN_FAILURE_MSG.format(registry.get("url"), e)
+                ) from e
         else:
-            raise RuntimeError("Registry information is missing from bootstrapper configuration.")
+            raise RuntimeError(
+                "Registry information is missing from bootstrapper configuration."
+            )
 
         return client
 
@@ -323,7 +349,9 @@ class CommonRuntimeHelper:
             msg = f"Copying {path_in_container} from container has failed. Detailed message: {e}"
             raise MlException(message=msg, no_personal_data_message=msg) from e
 
-    def get_common_runtime_info_from_response(self, response: Any) -> Tuple[Dict[str, str], str]:
+    def get_common_runtime_info_from_response(
+        self, response: Any
+    ) -> Tuple[Dict[str, str], str]:
         """Extract common-runtime info from Execution Service response.
 
         :param response: Content of zip file from Execution Service containing all the
@@ -334,13 +362,22 @@ class CommonRuntimeHelper:
         """
 
         with zipfile.ZipFile(io.BytesIO(response)) as zip_ref:
-            bootstrapper_path = f"{AZUREML_RUN_SETUP_DIR}/{self.COMMON_RUNTIME_BOOTSTRAPPER_INFO}"
+            bootstrapper_path = (
+                f"{AZUREML_RUN_SETUP_DIR}/{self.COMMON_RUNTIME_BOOTSTRAPPER_INFO}"
+            )
             job_spec_path = f"{AZUREML_RUN_SETUP_DIR}/{self.COMMON_RUNTIME_JOB_SPEC}"
-            if not all(file_path in zip_ref.namelist() for file_path in [bootstrapper_path, job_spec_path]):
-                raise RuntimeError(f"{bootstrapper_path}, {job_spec_path} are not in the execution service response.")
+            if not all(
+                file_path in zip_ref.namelist()
+                for file_path in [bootstrapper_path, job_spec_path]
+            ):
+                raise RuntimeError(
+                    f"{bootstrapper_path}, {job_spec_path} are not in the execution service response."
+                )
 
             with zip_ref.open(bootstrapper_path, "r") as bootstrapper_file:
-                bootstrapper_json = json.loads(base64.b64decode(bootstrapper_file.read()))
+                bootstrapper_json = json.loads(
+                    base64.b64decode(bootstrapper_file.read())
+                )
             with zip_ref.open(job_spec_path, "r") as job_spec_file:
                 job_spec = job_spec_file.read().decode("utf-8")
 
@@ -362,9 +399,13 @@ class CommonRuntimeHelper:
         tag = bootstrapper_info.get("tag")
 
         if repo_prefix:
-            bootstrapper_image = f"{repository}/{repo_prefix}/boot/vm-bootstrapper/binimage/linux:{tag}"
+            bootstrapper_image = (
+                f"{repository}/{repo_prefix}/boot/vm-bootstrapper/binimage/linux:{tag}"
+            )
         else:
-            bootstrapper_image = f"{repository}/boot/vm-bootstrapper/binimage/linux:{tag}"
+            bootstrapper_image = (
+                f"{repository}/boot/vm-bootstrapper/binimage/linux:{tag}"
+            )
 
         try:
             boot_img = docker_client.images.pull(bootstrapper_image)
@@ -378,7 +419,9 @@ class CommonRuntimeHelper:
         boot_container.stop()
         boot_container.remove()
 
-    def execute_bootstrapper(self, bootstrapper_binary: str, job_spec: str) -> subprocess.Popen:
+    def execute_bootstrapper(
+        self, bootstrapper_binary: str, job_spec: str
+    ) -> subprocess.Popen:
         """Runs vm-bootstrapper with the job specification passed to it. This will build the Docker container, create
         all necessary files and directories, and run the job locally. Command args are defined by Common Runtime team
         here: https://msdata.visualstudio.com/Vienna/_git/vienna?path=/src/azureml- job-runtime/common-
@@ -422,7 +465,9 @@ class CommonRuntimeHelper:
         process.kill()
         raise RuntimeError(LOCAL_JOB_FAILURE_MSG.format(self.stderr.read()))
 
-    def check_bootstrapper_process_status(self, bootstrapper_process: subprocess.Popen) -> Optional[int]:
+    def check_bootstrapper_process_status(
+        self, bootstrapper_process: subprocess.Popen
+    ) -> Optional[int]:
         """Check if bootstrapper process status is non-zero.
 
         :param bootstrapper_process: bootstrapper process
@@ -433,7 +478,9 @@ class CommonRuntimeHelper:
         return_code = bootstrapper_process.poll()
         if return_code:
             self.stderr.seek(0)
-            raise RuntimeError(self.BOOTSTRAP_BINARY_FAILURE_MSG.format(self.stderr.read()))
+            raise RuntimeError(
+                self.BOOTSTRAP_BINARY_FAILURE_MSG.format(self.stderr.read())
+            )
         return return_code
 
 
@@ -458,7 +505,9 @@ def start_run_if_local(
     :rtype: str
     """
     token = credential.get_token(ws_base_url + "/.default").token
-    (zip_content, snapshot_id) = get_execution_service_response(job_definition, token, requests_pipeline)
+    zip_content, snapshot_id = get_execution_service_response(
+        job_definition, token, requests_pipeline
+    )
 
     try:
         temp_dir = unzip_to_temporary_file(job_definition, zip_content)

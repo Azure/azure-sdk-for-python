@@ -16,6 +16,7 @@ from azure.ai.ml.operations._local_job_invoker import (
     unzip_to_temporary_file,
 )
 
+
 @pytest.mark.unittest
 @pytest.mark.training_experiences_test
 class TestLocalJobInvoker:
@@ -67,6 +68,8 @@ class TestLocalJobInvoker:
             flags = _get_creationflags_and_startupinfo_for_background_process("linux")
 
         assert flags == {"stderr": -2, "stdin": -3, "stdout": -3}
+
+
 def _make_job_definition(name="test-run"):
     job_def = MagicMock()
     job_def.name = name
