@@ -27,6 +27,9 @@ Discovery strategy:
 
 Run with:  pytest tests/foundry_features_header/test_required_header_async.py -s
 The -s flag (or --capture=no) is required to see the printed report.
+
+NOTE: This does not test follow up paging calls for "list" operations. It only
+tests the first call.
 """
 
 import inspect
