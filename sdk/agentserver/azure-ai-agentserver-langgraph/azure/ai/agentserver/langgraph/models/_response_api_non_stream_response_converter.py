@@ -139,6 +139,12 @@ class ResponseAPIMessagesNonStreamResponseConverter(ResponseAPINonStreamResponse
                     )
                 tool_call = output_message.tool_calls[0]
                 name, call_id, argument = extract_function_call(tool_call)
+                if not isinstance(call_id, str) or not call_id:
+                    raise ValueError(f"Function tool call missing call_id: {tool_call}")
+                if not isinstance(name, str) or not name:
+                    raise ValueError(f"Function tool call missing name: {tool_call}")
+                if not isinstance(argument, str):
+                    raise ValueError(f"Function tool call missing arguments: {tool_call}")
                 return project_models.FunctionToolCallItemResource(
                     call_id=call_id,
                     name=name,
@@ -154,10 +160,13 @@ class ResponseAPIMessagesNonStreamResponseConverter(ResponseAPINonStreamResponse
                 status="completed",
             )
         if isinstance(output_message, messages.ToolMessage):
+            if not isinstance(output_message.content, str):
+                raise ValueError(f"Function tool output must be a string: {output_message}")
             return project_models.FunctionToolCallOutputItemResource(
                 call_id=output_message.tool_call_id,
                 output=output_message.content,
                 id=self.context.agent_run.id_generator.generate_function_output_id(),
+                status="completed",
             )
         logger.warning("Unsupported message type: %s, %s", type(output_message), output_message)
         return None

@@ -186,7 +186,7 @@ class FoundryCheckpointSaver(
                 ):
                     item = await self._client.read_item(item_id)
                     if item:
-                        task_id, channel, value, _ = self.serde.loads_typed(item.data)
+                        task_id, channel, value, _ = self.serde.loads(item.data)
                         writes.append((task_id, channel, value))
             except (ValueError, TypeError):
                 continue
@@ -218,7 +218,7 @@ class FoundryCheckpointSaver(
             item_id = CheckpointItemId(session_id=thread_id, item_id=blob_item_id)
             item = await self._client.read_item(item_id)
             if item:
-                type_tag, data = self.serde.loads_typed(item.data)
+                type_tag, data = self.serde.loads(item.data)
                 if type_tag != "empty":
                     channel_values[channel] = data
 
@@ -256,7 +256,7 @@ class FoundryCheckpointSaver(
             return None
 
         # Deserialize checkpoint data
-        checkpoint_data = self.serde.loads_typed(item.data)
+        checkpoint_data = self.serde.loads(item.data)
         checkpoint: Checkpoint = checkpoint_data["checkpoint"]
         metadata: CheckpointMetadata = checkpoint_data["metadata"]
 
@@ -335,7 +335,7 @@ class FoundryCheckpointSaver(
         checkpoint_copy = checkpoint.copy()
         channel_values: Dict[str, Any] = checkpoint_copy.pop("channel_values", {})  # type: ignore[misc]
 
-        checkpoint_data = self.serde.dumps_typed({
+        checkpoint_data = self.serde.dumps({
             "checkpoint": checkpoint_copy,
             "metadata": metadata,
         })
@@ -354,9 +354,9 @@ class FoundryCheckpointSaver(
         # Create blob items for channel values with new versions
         for channel, version in new_versions.items():
             if channel in channel_values:
-                blob_data = self.serde.dumps_typed(channel_values[channel])
+                blob_data = self.serde.dumps(channel_values[channel])
             else:
-                blob_data = self.serde.dumps_typed(("empty", b""))
+                blob_data = self.serde.dumps(("empty", b""))
 
             blob_item_id = make_item_id(
                 checkpoint_ns, checkpoint_id, "blob", f"{channel}:{version}"
@@ -412,7 +412,7 @@ class FoundryCheckpointSaver(
 
         items: List[CheckpointItem] = []
         for idx, (channel, value) in enumerate(writes):
-            write_data = self.serde.dumps_typed((task_id, channel, value, task_path))
+            write_data = self.serde.dumps((task_id, channel, value, task_path))
             write_item_id = make_item_id(
                 checkpoint_ns, checkpoint_id, "writes", f"{task_id}:{idx}"
             )

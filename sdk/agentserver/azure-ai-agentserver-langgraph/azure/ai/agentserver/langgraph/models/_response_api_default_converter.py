@@ -85,6 +85,7 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
             stream_mode=stream_mode,
             config={},
             context=context,
+            invoke_kwargs={},
         )
 
     async def convert_response_non_stream(
@@ -116,21 +117,24 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
         )
         return response
 
-    async def convert_response_stream(  # type: ignore[override]
+    def convert_response_stream(
         self,
         output: AsyncIterator[Union[Dict[str, Any], Any]],
         context: LanggraphRunContext,
     ) -> AsyncIterable[ResponseStreamEvent]:
-        converter = self._create_stream_response_converter(context)
-        async for event in output:
-            converted_output = converter.convert(event)
-            for e in converted_output:
-                yield e
+        async def _stream() -> AsyncIterator[ResponseStreamEvent]:
+            converter = self._create_stream_response_converter(context)
+            async for event in output:
+                converted_output = converter.convert(event)
+                for converted_event in converted_output:
+                    yield converted_event
 
-        state = await self._aget_state(context)
-        finalized_output = converter.finalize(state)  # finalize the response with graph state after stream
-        for event in finalized_output:
-            yield event
+            state = await self._aget_state(context)
+            finalized_output = converter.finalize(state)  # finalize the response with graph state after stream
+            for event in finalized_output:
+                yield event
+
+        return _stream()
 
     def get_stream_mode(self, context: LanggraphRunContext) -> StreamMode:
         """Select the graph stream mode for the current request.

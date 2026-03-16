@@ -29,7 +29,17 @@ from azure.ai.agentserver.core.models import Response, ResponseStreamEvent
 from .._context import LanggraphRunContext
 
 
-class GraphInputArguments(TypedDict):
+class _GraphOptionalInvokeArguments(TypedDict, total=False):
+  """Optional adapter-level graph invocation arguments.
+
+  :ivar invoke_kwargs: Additional keyword arguments forwarded to LangGraph invocation methods.
+  :vartype invoke_kwargs: Dict[str, Any]
+  """
+
+  invoke_kwargs: Dict[str, Any]
+
+
+class GraphInputArguments(_GraphOptionalInvokeArguments):
     """TypedDict for LangGraph input arguments."""
     input: Union[Dict[str, Any], Command, None]
     config: RunnableConfig
@@ -78,11 +88,11 @@ class ResponseAPIConverter(ABC):
         """
 
     @abstractmethod
-    async def convert_response_stream(
-            self,
-            output: AsyncIterator[Union[Dict[str, Any], Any]],
-            context: LanggraphRunContext,
-        ) -> AsyncIterable[ResponseStreamEvent]:
+    def convert_response_stream(
+      self,
+      output: AsyncIterator[Union[Dict[str, Any], Any]],
+      context: LanggraphRunContext,
+    ) -> AsyncIterable[ResponseStreamEvent]:
         """Convert an async iterator of LangGraph stream events into stream events.
 
         This is a convenience wrapper around state_to_response_stream that retrieves

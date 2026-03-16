@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 import os
 import re
-from typing import TYPE_CHECKING, List, Optional, cast
+from typing import TYPE_CHECKING, Any, List, Optional, cast
 
 from langgraph.graph.state import CompiledStateGraph
 
@@ -20,6 +20,7 @@ from .tools._context import FoundryToolContext
 from .tools._resolver import FoundryLangChainToolResolver
 
 if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
     from azure.core.credentials_async import AsyncTokenCredential
 
 logger = get_logger()
@@ -33,7 +34,7 @@ class LangGraphAdapter(FoundryCBAgent):
     def __init__(
         self,
         graph: CompiledStateGraph,
-        credentials: "Optional[AsyncTokenCredential]" = None,
+        credentials: "Optional[AsyncTokenCredential | TokenCredential]" = None,
         converter: "Optional[ResponseAPIConverter]" = None,
     ) -> None:
         """
@@ -43,7 +44,7 @@ class LangGraphAdapter(FoundryCBAgent):
             and returns CompiledStateGraph (sync or async).
         :type graph: Union[CompiledStateGraph, GraphFactory]
         :param credentials: Azure credentials for authentication.
-        :type credentials: Optional[AsyncTokenCredential]
+        :type credentials: Optional[AsyncTokenCredential | TokenCredential]
         :param converter: custom response converter.
         :type converter: Optional[ResponseAPIConverter]
         """
@@ -51,6 +52,7 @@ class LangGraphAdapter(FoundryCBAgent):
         self._graph = graph
         self._tool_resolver = FoundryLangChainToolResolver()
         self.azure_ai_tracer = None
+        self.converter: ResponseAPIConverter
 
         if not converter:
             if is_state_schema_valid(self._graph.builder.state_schema):
@@ -162,7 +164,7 @@ class LangGraphAdapter(FoundryCBAgent):
         :rtype: dict
         """
         try:
-            result = await self._graph.ainvoke(**input_arguments)
+            result = await self._ainvoke_graph(input_arguments)
             output = await self.converter.convert_response_non_stream(result, input_arguments["context"])
             return output
         except Exception as e:  # pylint: disable=broad-except
@@ -182,7 +184,7 @@ class LangGraphAdapter(FoundryCBAgent):
         """
         try:
             logger.info("Starting streaming agent run %s", input_arguments["context"].agent_run.response_id)
-            stream = self._graph.astream(**input_arguments)
+            stream = self._astream_graph(input_arguments)
             async for output_event in self.converter.convert_response_stream(
                 stream,
                 input_arguments["context"],
@@ -191,6 +193,40 @@ class LangGraphAdapter(FoundryCBAgent):
         except Exception as e:  # pylint: disable=broad-except
             logger.error("Error during streaming agent run: %s", e, exc_info=True)
             raise e
+
+    async def _ainvoke_graph(self, input_arguments: GraphInputArguments) -> Any:
+        """Invoke the compiled graph with the LangGraph-supported arguments only.
+
+        :param input_arguments: The adapter-level graph invocation arguments.
+        :type input_arguments: GraphInputArguments
+
+        :return: The graph execution result.
+        :rtype: Any
+        """
+        invoke_kwargs = input_arguments.get("invoke_kwargs", {})
+        return await self._graph.ainvoke(
+            input_arguments["input"],
+            config=input_arguments["config"],
+            stream_mode=input_arguments["stream_mode"],
+            **invoke_kwargs,
+        )
+
+    def _astream_graph(self, input_arguments: GraphInputArguments):
+        """Stream the compiled graph with the LangGraph-supported arguments only.
+
+        :param input_arguments: The adapter-level graph invocation arguments.
+        :type input_arguments: GraphInputArguments
+
+        :return: The async graph event iterator.
+        :rtype: AsyncIterator[Any]
+        """
+        invoke_kwargs = input_arguments.get("invoke_kwargs", {})
+        return self._graph.astream(
+            input_arguments["input"],
+            config=input_arguments["config"],
+            stream_mode=input_arguments["stream_mode"],
+            **invoke_kwargs,
+        )
 
     def ensure_runnable_config(self, input_arguments: GraphInputArguments, context: LanggraphRunContext):
         """
