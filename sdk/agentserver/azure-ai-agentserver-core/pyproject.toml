@@ -56,7 +56,7 @@ readme = { file = ["README.md"], content-type = "text/markdown" }
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
 
-[tool.azure-sdk-build]
-breaking = false   # incompatible python version
-pyright = false
-verifytypes = false
+# [tool.azure-sdk-build]
+# breaking = false   # incompatible python version
+# pyright = false
+# verifytypes = false
