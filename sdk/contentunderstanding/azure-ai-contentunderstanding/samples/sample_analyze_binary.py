@@ -89,11 +89,16 @@ def main() -> None:
     # [END analyze_document_from_binary]
 
     # [START analyze_binary_with_content_range]
+    # Use a multi-page document for ContentRange demonstrations.
+    multi_page_path = "sample_files/mixed_financial_invoices.pdf"
+    with open(multi_page_path, "rb") as f:
+        multi_page_bytes = f.read()
+
     # Analyze only pages 3 onward.
     print("\nAnalyzing pages 3 onward with ContentRange...")
     range_poller = client.begin_analyze_binary(
         analyzer_id="prebuilt-documentSearch",
-        binary_input=file_bytes,
+        binary_input=multi_page_bytes,
         content_range=ContentRange.pages_from(3),
     )
     range_result: AnalysisResult = range_poller.result()
@@ -108,7 +113,7 @@ def main() -> None:
     print("\nAnalyzing combined pages (1-3, 5, 9-) with ContentRange...")
     combine_range_poller = client.begin_analyze_binary(
         analyzer_id="prebuilt-documentSearch",
-        binary_input=file_bytes,
+        binary_input=multi_page_bytes,
         content_range=ContentRange.combine(
             ContentRange.pages(1, 3),
             ContentRange.page(5),
@@ -131,7 +136,7 @@ def main() -> None:
     print("\nAnalyzing with raw ContentRange string '1-3,5,9-'...")
     raw_range_poller = client.begin_analyze_binary(
         analyzer_id="prebuilt-documentSearch",
-        binary_input=file_bytes,
+        binary_input=multi_page_bytes,
         content_range=ContentRange("1-3,5,9-"),
     )
     raw_range_result: AnalysisResult = raw_range_poller.result()
