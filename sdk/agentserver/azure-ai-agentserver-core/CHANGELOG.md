@@ -5,6 +5,13 @@
 
 ### Other Changes
 
+- Refined code
+
+
+## 1.0.0b16 (2026-03-10)
+
+### Other Changes
+
 - Upgraded to support agent-framework v1.0.0rc3.
 
 
