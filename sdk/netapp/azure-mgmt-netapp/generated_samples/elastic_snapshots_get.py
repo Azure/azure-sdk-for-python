@@ -15,7 +15,7 @@ from azure.mgmt.netapp import NetAppManagementClient
     pip install azure-identity
     pip install azure-mgmt-netapp
 # USAGE
-    python backups_under_backup_vault_list.py
+    python elastic_snapshots_get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,15 +30,16 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.backups.list_by_vault(
+    response = client.elastic_snapshots.get(
         resource_group_name="myRG",
         account_name="account1",
-        backup_vault_name="backupVault1",
+        pool_name="pool1",
+        volume_name="volume1",
+        snapshot_name="snapshot1",
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
-# x-ms-original-file: 2025-12-01/BackupsUnderBackupVault_List.json
+# x-ms-original-file: 2025-12-15-preview/ElasticSnapshots_Get.json
 if __name__ == "__main__":
     main()
