@@ -48,9 +48,26 @@ load_dotenv()
 file_path = os.path.abspath(__file__)
 folder_path = os.path.dirname(file_path)
 
-endpoint = os.environ.get("FOUNDRY_PROJECT_ENDPOINT", "")
-model_deployment_name = os.environ.get("FOUNDRY_MODEL_NAME", "")
-model_deployment_name_for_audio = os.environ.get("FOUNDRY_MODEL_NAME_FOR_AUDIO", "")
+endpoint = os.getenv("AZURE_AI_PROJECT_ENDPOINT")
+model_deployment_name = os.getenv("AZURE_AI_MODEL_DEPLOYMENT_NAME")
+model_deployment_name_for_audio = os.getenv("AZURE_AI_MODEL_DEPLOYMENT_NAME_FOR_AUDIO")
+
+missing_env_vars = [
+    name
+    for name, value in {
+        "AZURE_AI_PROJECT_ENDPOINT": endpoint,
+        "AZURE_AI_MODEL_DEPLOYMENT_NAME": model_deployment_name,
+        "AZURE_AI_MODEL_DEPLOYMENT_NAME_FOR_AUDIO": model_deployment_name_for_audio,
+    }.items()
+    if not value
+]
+
+if missing_env_vars:
+    raise RuntimeError(
+        "Missing required environment variables for this sample: "
+        + ", ".join(missing_env_vars)
+        + ". Please set them as described in the sample docstring."
+    )
 
 
 def audio_to_base64(audio_path: str) -> str:
