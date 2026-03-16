@@ -27,6 +27,11 @@ class FoundryToolBindingMiddleware(AgentMiddleware):
     _DummyToolName: ClassVar[str] = "__dummy_tool_by_foundry_middleware__"
 
     def __init__(self, foundry_tools: List[FoundryToolLike]):
+        """Initialize the middleware with the Foundry tools to bind.
+
+        :param foundry_tools: The Foundry tools that should be bound at runtime.
+        :type foundry_tools: List[FoundryToolLike]
+        """
         super().__init__()
 
         # to ensure `create_agent()` will create a tool node when there are foundry tools to bind
@@ -38,6 +43,11 @@ class FoundryToolBindingMiddleware(AgentMiddleware):
 
     @classmethod
     def _dummy_tool(cls) -> BaseTool:
+        """Create a placeholder tool so agent creation wires a tool node.
+
+        :return: The placeholder tool instance.
+        :rtype: BaseTool
+        """
         return Tool(name=cls._DummyToolName,
                     func=lambda x: None,
                     description="__dummy_tool_by_foundry_middleware__")

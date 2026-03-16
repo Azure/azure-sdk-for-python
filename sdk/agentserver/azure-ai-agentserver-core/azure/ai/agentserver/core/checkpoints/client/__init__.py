@@ -3,16 +3,4 @@
 # ---------------------------------------------------------
 """Checkpoint client module for Azure AI Agent Server."""
 
-from ._client import FoundryCheckpointClient
-from ._models import (
-    CheckpointItem,
-    CheckpointItemId,
-    CheckpointSession,
-)
-
-__all__ = [
-    "CheckpointItem",
-    "CheckpointItemId",
-    "CheckpointSession",
-    "FoundryCheckpointClient",
-]
+__path__ = __import__("pkgutil").extend_path(__path__, __name__)

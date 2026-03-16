@@ -11,8 +11,8 @@ from langgraph.types import (
 )
 
 from azure.ai.agentserver.core.logger import get_logger
-from azure.ai.agentserver.core.models import projects as project_models
-from azure.ai.agentserver.core.models.openai import (ResponseInputItemParam, ResponseInputParam)
+from azure.ai.agentserver.core.models import _projects as project_models
+from azure.ai.agentserver.core.models._openai import (ResponseInputItemParam, ResponseInputParam)
 from .._context import LanggraphRunContext
 
 INTERRUPT_NODE_NAME = "__interrupt__"
@@ -21,7 +21,13 @@ logger = get_logger()
 
 class HumanInTheLoopHelper:
     """Helper class for managing human-in-the-loop interactions in LangGraph."""
+
     def __init__(self, context: LanggraphRunContext):
+        """Initialize the helper with the current LangGraph run context.
+
+        :param context: The current run context.
+        :type context: LanggraphRunContext
+        """
         self.context = context
 
     def has_interrupt(self, state: Optional[StateSnapshot]) -> bool:
@@ -68,6 +74,17 @@ class HumanInTheLoopHelper:
         """
         raise NotImplementedError("Subclasses must implement convert_interrupt method.")
 
+    def interrupt_to_function_call(self, interrupt: Interrupt) -> tuple[Optional[str], Optional[str], Optional[str]]:
+        """Convert an interrupt into function-call fields.
+
+        :param interrupt: The interrupt to convert.
+        :type interrupt: Interrupt
+
+        :return: A tuple of function name, call id, and serialized arguments.
+        :rtype: tuple[Optional[str], Optional[str], Optional[str]]
+        """
+        raise NotImplementedError("Subclasses must implement interrupt_to_function_call method.")
+
     def validate_and_convert_human_feedback(
             self, state: Optional[StateSnapshot], input_data: Union[str, ResponseInputParam]
     ) -> Optional[Command]:
@@ -104,6 +121,16 @@ class HumanInTheLoopHelper:
     def _validate_input_format(
         self, input_data: Union[str, ResponseInputParam], interrupt_obj: Interrupt
     ) -> Optional[ResponseInputItemParam]:
+        """Validate the interrupt feedback payload format.
+
+        :param input_data: The request input payload to validate.
+        :type input_data: Union[str, ResponseInputParam]
+        :param interrupt_obj: The interrupt that the feedback must match.
+        :type interrupt_obj: Interrupt
+
+        :return: The validated function call output item, if valid.
+        :rtype: Optional[ResponseInputItemParam]
+        """
         if isinstance(input_data, str):
             logger.warning("Expecting function call output item, got string: %s", input_data)
             return None

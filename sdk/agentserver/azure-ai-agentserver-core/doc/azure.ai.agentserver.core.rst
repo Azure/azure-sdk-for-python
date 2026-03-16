@@ -13,6 +13,7 @@ Subpackages
    :maxdepth: 4
 
    azure.ai.agentserver.core.application
+   azure.ai.agentserver.core.checkpoints
    azure.ai.agentserver.core.models
    azure.ai.agentserver.core.server
    azure.ai.agentserver.core.tools

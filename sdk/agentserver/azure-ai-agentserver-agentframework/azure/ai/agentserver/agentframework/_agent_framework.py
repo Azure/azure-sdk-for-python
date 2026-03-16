@@ -18,7 +18,7 @@ from azure.ai.agentserver.core.models import (
     Response as OpenAIResponse,
     ResponseStreamEvent,
 )
-from azure.ai.agentserver.core.models.projects import ResponseErrorEvent, ResponseFailedEvent
+from azure.ai.agentserver.core.models._projects import ResponseErrorEvent, ResponseFailedEvent
 from azure.ai.agentserver.core.tools import OAuthConsentRequiredError  # pylint: disable=import-error
 
 from .models.agent_framework_output_streaming_converter import AgentFrameworkOutputStreamingConverter

@@ -10,7 +10,7 @@ from azure.ai.agentserver.core.application import (
     set_current_app,
 )
 from azure.ai.agentserver.core.models import Response as OpenAIResponse
-from azure.ai.agentserver.core.models.projects import ResponseCreatedEvent, ResponseErrorEvent
+from azure.ai.agentserver.core.models._projects import ResponseCreatedEvent, ResponseErrorEvent
 from azure.ai.agentserver.core.server._response_metadata import (
     METADATA_KEY,
     attach_foundry_metadata_to_response,

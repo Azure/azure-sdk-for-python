@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import asyncio  # pylint: disable=C4763
+import asyncio  # pylint: disable=C4763  # azure-sdk: async-client-bad-name
 from abc import ABC, abstractmethod
 from typing import Any, Awaitable, Collection, List, Mapping, MutableMapping, Optional, Union
 

@@ -3,11 +3,11 @@
 # ---------------------------------------------------------
 from typing import Optional
 
-from .id_generator.foundry_id_generator import FoundryIdGenerator
-from .id_generator.id_generator import IdGenerator
+from .id_generator._foundry_id_generator import FoundryIdGenerator
+from .id_generator._id_generator import IdGenerator
 from ...logger import get_logger
 from ...models import CreateResponse
-from ...models.projects import AgentId, AgentReference, ResponseConversation1
+from ...models._projects import AgentId, AgentReference, ResponseConversation1
 
 logger = get_logger()
 
@@ -48,10 +48,10 @@ class AgentRunContext:
     def stream(self) -> bool:
         return self._stream
 
-    def get_agent_id_object(self) -> AgentId:
+    def get_agent_id_object(self) -> Optional[AgentId]:
         agent = self.request.get("agent")
         if not agent:
-            return None  # type: ignore
+            return None
         return AgentId(
             {
                 "type": agent.type,
@@ -60,9 +60,9 @@ class AgentRunContext:
             }
         )
 
-    def get_conversation_object(self) -> ResponseConversation1:
+    def get_conversation_object(self) -> Optional[ResponseConversation1]:
         if not self._conversation_id:
-            return None  # type: ignore
+            return None
         return ResponseConversation1(id=self._conversation_id)
 
 
@@ -75,11 +75,11 @@ def _deserialize_create_response(payload: dict) -> CreateResponse:
 
     tools = payload.get("tools")
     if tools:
-        _deserialized["tools"] = [tool for tool in tools]  # pylint: disable=unnecessary-comprehension
+        _deserialized["tools"] = list(tools)
     return _deserialized
 
 
-def _deserialize_agent_reference(payload: dict) -> AgentReference:
+def _deserialize_agent_reference(payload: dict) -> Optional[AgentReference]:
     if not payload:
-        return None  # type: ignore
+        return None
     return AgentReference(**payload)

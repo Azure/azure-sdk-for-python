@@ -9,7 +9,7 @@ from typing import Dict
 
 from ..application._metadata import get_current_app
 from ..models import Response as OpenAIResponse, ResponseStreamEvent
-from ..models.projects import (
+from ..models._projects import (
     ResponseCompletedEvent,
     ResponseCreatedEvent,
     ResponseInProgressEvent,

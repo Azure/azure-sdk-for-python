@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import List, Optional, Union, overload
+from typing import List, Optional, Union, cast, overload
 
 from langchain_core.language_models import BaseChatModel
 
@@ -54,10 +54,10 @@ def use_foundry_tools(  # pylint: disable=C4743
     if isinstance(model_or_tools, BaseChatModel):
         if tools is None:
             raise ValueError("Tools must be provided when a model is given.")
-        foundry_tools = [ensure_foundry_tool(tool) for tool in tools]
+        foundry_tools = cast(List[FoundryToolLike], [ensure_foundry_tool(tool) for tool in tools])
         get_registry().extend(foundry_tools)
         return FoundryToolLateBindingChatModel(model_or_tools, runtime=None, foundry_tools=foundry_tools)
 
-    foundry_tools = [ensure_foundry_tool(tool) for tool in model_or_tools]
+    foundry_tools = cast(List[FoundryToolLike], [ensure_foundry_tool(tool) for tool in model_or_tools])
     get_registry().extend(foundry_tools)
     return FoundryToolBindingMiddleware(foundry_tools)

@@ -42,7 +42,7 @@ class AsyncIteratorMock:
 
 def create_mock_agent():
     """Create a mock FoundryCBAgent without calling __init__."""
-    from azure.ai.agentserver.core.server.base import FoundryCBAgent
+    from azure.ai.agentserver.core.server._base import FoundryCBAgent
 
     # Create instance without calling __init__
     agent = object.__new__(FoundryCBAgent)

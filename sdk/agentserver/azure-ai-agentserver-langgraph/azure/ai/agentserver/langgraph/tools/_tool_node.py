@@ -35,7 +35,13 @@ class FoundryToolNodeWrappers(TypedDict):
 
 class FoundryToolCallWrapper:
     """A ToolCallWrapper that tries to resolve invokable foundry tools from context if tool is not resolved yet."""
+
     def __init__(self, foundry_tools: List[FoundryToolLike]):
+        """Initialize the wrapper with the allowed Foundry tools.
+
+        :param foundry_tools: The Foundry tools that may be resolved at runtime.
+        :type foundry_tools: List[FoundryToolLike]
+        """
         self._allowed_foundry_tools = foundry_tools
 
     def as_wrappers(self) -> FoundryToolNodeWrappers:
@@ -74,6 +80,14 @@ class FoundryToolCallWrapper:
         return await invocation(self._maybe_calling_foundry_tool(request))
 
     def _maybe_calling_foundry_tool(self, request: ToolCallRequest) -> ToolCallRequest:
+        """Attach a resolved Foundry tool to the tool call request when possible.
+
+        :param request: The incoming tool call request.
+        :type request: ToolCallRequest
+
+        :return: The request with a resolved tool when a matching Foundry tool is available.
+        :rtype: ToolCallRequest
+        """
         from .._context import LanggraphRunContext
 
         if (request.tool

@@ -31,6 +31,15 @@ class FoundryToolLateBindingChatModel(BaseChatModel):
     """
 
     def __init__(self, delegate: BaseChatModel, runtime: Optional[Runtime], foundry_tools: List[FoundryToolLike]):
+        """Initialize the late-binding chat model wrapper.
+
+        :param delegate: The underlying chat model.
+        :type delegate: BaseChatModel
+        :param runtime: The active LangGraph runtime, if available.
+        :type runtime: Optional[Runtime]
+        :param foundry_tools: The Foundry tools to resolve and bind at call time.
+        :type foundry_tools: List[FoundryToolLike]
+        """
         super().__init__()
         self._delegate = delegate
         self._runtime = runtime
@@ -75,8 +84,6 @@ class FoundryToolLateBindingChatModel(BaseChatModel):
         :type tools: Sequence[Dict[str, Any] | type | Callable | BaseTool]
         :keyword tool_choice: Optional tool choice strategy.
         :type tool_choice: str | None
-        :keyword kwargs: Additional keyword arguments for tool binding.
-        :type kwargs: Any
         :return: A Runnable with the tools bound for later invocation.
         :rtype: Runnable[LanguageModelInput, AIMessage]
         """
@@ -89,6 +96,14 @@ class FoundryToolLateBindingChatModel(BaseChatModel):
         return self
 
     def _bound_delegate_for_call(self, config: Optional[RunnableConfig]) -> Runnable[LanguageModelInput, AIMessage]:
+        """Resolve and bind all tools before invoking the delegate model.
+
+        :param config: The runnable config carrying the LangGraph run context.
+        :type config: Optional[RunnableConfig]
+
+        :return: The delegate model with all applicable tools bound.
+        :rtype: Runnable[LanguageModelInput, AIMessage]
+        """
         from .._context import LanggraphRunContext
 
         foundry_tools: Iterable[BaseTool] = []
@@ -108,24 +123,90 @@ class FoundryToolLateBindingChatModel(BaseChatModel):
         bound_kwargs = self._bound_kwargs or {}
         return self._delegate.bind_tools(all_tools, **bound_kwargs)
 
-    def invoke(self, input: Any, config: Optional[RunnableConfig] = None, **kwargs: Any) -> Any:
+    def invoke(self, input: Any, config: Optional[RunnableConfig] = None, **kwargs: Any) -> Any:  # pylint: disable=C4758
+        """Invoke the wrapped chat model with late-bound tools.
+
+        :param input: The model input.
+        :type input: Any
+        :param config: Optional runnable config.
+        :type config: Optional[RunnableConfig]
+
+        :return: The model result.
+        :rtype: Any
+        """
         return self._bound_delegate_for_call(config).invoke(input, config=config, **kwargs)
 
-    async def ainvoke(self, input: Any, config: Optional[RunnableConfig] = None, **kwargs: Any) -> Any:
+    async def ainvoke(self, input: Any, config: Optional[RunnableConfig] = None, **kwargs: Any) -> Any:  # pylint: disable=C4758
+        """Asynchronously invoke the wrapped chat model with late-bound tools.
+
+        :param input: The model input.
+        :type input: Any
+        :param config: Optional runnable config.
+        :type config: Optional[RunnableConfig]
+        :keyword kwargs: Additional invocation keyword arguments.
+        :type kwargs: Any
+
+        :return: The model result.
+        :rtype: Any
+        """
         return await self._bound_delegate_for_call(config).ainvoke(input, config=config, **kwargs)
 
-    def stream(self, input: Any, config: Optional[RunnableConfig] = None, **kwargs: Any):
+    def stream(self, input: Any, config: Optional[RunnableConfig] = None, **kwargs: Any):  # pylint: disable=C4758
+        """Stream results from the wrapped chat model with late-bound tools.
+
+        :param input: The model input.
+        :type input: Any
+        :param config: Optional runnable config.
+        :type config: Optional[RunnableConfig]
+        :keyword kwargs: Additional streaming keyword arguments.
+        :type kwargs: Any
+
+        :return: A synchronous iterator of streamed outputs.
+        :rtype: Iterator[Any]
+        """
         yield from self._bound_delegate_for_call(config).stream(input, config=config, **kwargs)
 
-    async def astream(self, input: Any, config: Optional[RunnableConfig] = None, **kwargs: Any):
+    async def astream(self, input: Any, config: Optional[RunnableConfig] = None, **kwargs: Any):  # pylint: disable=C4758
+        """Asynchronously stream results from the wrapped chat model.
+
+        :param input: The model input.
+        :type input: Any
+        :param config: Optional runnable config.
+        :type config: Optional[RunnableConfig]
+        :keyword kwargs: Additional streaming keyword arguments.
+        :type kwargs: Any
+
+        :return: An async iterator of streamed outputs.
+        :rtype: AsyncIterator[Any]
+        """
         async for x in self._bound_delegate_for_call(config).astream(input, config=config, **kwargs):
             yield x
 
     @property
     def _llm_type(self) -> str:
+        """Return the descriptive model type for LangChain integrations.
+
+        :return: The logical model type name.
+        :rtype: str
+        """
         return f"foundry_tool_binding_model({getattr(self._delegate, '_llm_type', type(self._delegate).__name__)})"
 
-    def _generate(self, messages: list[BaseMessage], stop: list[str] | None = None,
+    def _generate(self, messages: list[BaseMessage], stop: list[str] | None = None,  # pylint: disable=C4758
                   run_manager: CallbackManagerForLLMRun | None = None, **kwargs: Any) -> ChatResult:
+        """Disallow direct LangChain generation on the wrapper.
+
+        :param messages: The prompt messages.
+        :type messages: list[BaseMessage]
+        :param stop: Optional stop sequences.
+        :type stop: list[str] | None
+        :param run_manager: Optional LangChain run manager.
+        :type run_manager: CallbackManagerForLLMRun | None
+        :keyword kwargs: Additional generation keyword arguments.
+        :type kwargs: Any
+
+        :raises NotImplementedError: Always raised because calls should route through the delegate methods.
+        :return: This method never returns.
+        :rtype: ChatResult
+        """
         # should never be called as invoke/ainvoke/stream/astream are redirected to delegate
         raise NotImplementedError()

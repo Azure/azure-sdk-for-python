@@ -40,8 +40,9 @@ class UserInfoContextMiddleware(BaseHTTPMiddleware):
         :type user_resolver: Optional[Callable[[Request], Awaitable[Optional[UserInfo]]]]
 
         """
+        user_info_var : _UserContextType = user_context or ContextVarUserProvider.default_user_info_context
         app.add_middleware(UserInfoContextMiddleware,  # type: ignore[arg-type]
-                           user_info_var=user_context or ContextVarUserProvider.default_user_info_context,
+                           user_info_var=user_info_var,
                            user_resolver=user_resolver or cls._default_user_resolver)
 
     @staticmethod

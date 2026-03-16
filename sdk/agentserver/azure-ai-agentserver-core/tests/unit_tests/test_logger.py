@@ -78,31 +78,31 @@ class TestGetProjectEndpoint:
 
 @pytest.mark.unit
 class TestGetApplicationInsightsConnstr:
-    """Tests for get_application_insights_connstr function."""
+    """Tests for _get_application_insights_connstr function."""
 
     def test_returns_connstr_from_env_var(self):
         """Test that connection string is returned from environment variable."""
-        from azure.ai.agentserver.core.logger import get_application_insights_connstr
+        from azure.ai.agentserver.core.logger import _get_application_insights_connstr
 
         with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test123"}, clear=False):
-            result = get_application_insights_connstr()
+            result = _get_application_insights_connstr()
             assert result == "InstrumentationKey=test123"
 
     def test_returns_none_when_no_connstr_and_no_project(self):
         """Test that None is returned when no connection string and no project endpoint."""
-        from azure.ai.agentserver.core.logger import get_application_insights_connstr
+        from azure.ai.agentserver.core.logger import _get_application_insights_connstr
 
         with patch.dict(os.environ, {
             "APPLICATIONINSIGHTS_CONNECTION_STRING": "",
             "AZURE_AI_PROJECT_ENDPOINT": "",
             "AGENT_PROJECT_RESOURCE_ID": "",
         }, clear=False):
-            result = get_application_insights_connstr()
+            result = _get_application_insights_connstr()
             assert result is None or result == ""
 
     def test_logs_debug_when_not_configured(self):
         """Test that debug message is logged when not configured."""
-        from azure.ai.agentserver.core.logger import get_application_insights_connstr
+        from azure.ai.agentserver.core.logger import _get_application_insights_connstr
 
         mock_logger = MagicMock()
 
@@ -111,7 +111,7 @@ class TestGetApplicationInsightsConnstr:
             "AZURE_AI_PROJECT_ENDPOINT": "",
             "AGENT_PROJECT_RESOURCE_ID": "",
         }, clear=False):
-            result = get_application_insights_connstr(logger=mock_logger)
+            result = _get_application_insights_connstr(logger=mock_logger)
             # Debug should be called when not configured, or result should be None
             assert mock_logger.debug.called or result is None or result == ""
 

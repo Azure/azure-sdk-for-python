@@ -5,7 +5,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from azure.ai.agentserver.langgraph.models.response_api_default_converter import ResponseAPIDefaultConverter
+from azure.ai.agentserver.langgraph.models import ResponseAPIDefaultConverter
 
 
 class DummyGraphState:

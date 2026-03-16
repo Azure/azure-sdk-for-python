@@ -2,10 +2,9 @@ azure.ai.agentserver.core.tools package
 =======================================
 
 .. automodule:: azure.ai.agentserver.core.tools
-   :inherited-members:
+   :inherited-members: BaseModel
    :members:
    :undoc-members:
-   :exclude-members: BaseModel,model_json_schema
 
 Subpackages
 -----------

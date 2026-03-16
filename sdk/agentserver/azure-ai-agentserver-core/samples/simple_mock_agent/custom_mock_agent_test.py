@@ -3,7 +3,7 @@ import datetime
 
 from azure.ai.agentserver.core import AgentRunContext, FoundryCBAgent
 from azure.ai.agentserver.core.models import Response as OpenAIResponse
-from azure.ai.agentserver.core.models.projects import (
+from azure.ai.agentserver.core.models._projects import (
     ItemContentOutputText,
     ResponseCompletedEvent,
     ResponseCreatedEvent,

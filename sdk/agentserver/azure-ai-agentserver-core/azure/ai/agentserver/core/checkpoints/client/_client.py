@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=client-method-missing-kwargs,client-accepts-api-version-keyword,missing-client-constructor-parameter-kwargs
+# ^^^ azure-sdk pylint rules: internal client not intended as a public Azure SDK client
 """Asynchronous client for Azure AI Foundry checkpoint storage API."""
 
 from typing import Any, AsyncContextManager, List, Optional

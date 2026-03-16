@@ -4,7 +4,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, ToolMessage
 
-from azure.ai.agentserver.langgraph.models.response_api_request_converter import convert_item_resource_to_message
+from azure.ai.agentserver.langgraph.models import convert_item_resource_to_message
 
 
 @pytest.mark.unit
@@ -113,7 +113,7 @@ class TestConvertItemResourceToMessage:
 
 def _create_converter():
     """Helper to create a ResponseAPIDefaultConverter with mocked graph."""
-    from azure.ai.agentserver.langgraph.models.response_api_default_converter import (
+    from azure.ai.agentserver.langgraph.models import (
         ResponseAPIDefaultConverter,
     )
 
@@ -122,7 +122,7 @@ def _create_converter():
     mock_graph.checkpointer = None
 
     with patch(
-        "azure.ai.agentserver.langgraph.models.utils.is_state_schema_valid",
+        "azure.ai.agentserver.langgraph.models._utils.is_state_schema_valid",
         return_value=True,
     ):
         return ResponseAPIDefaultConverter(graph=mock_graph)
@@ -381,7 +381,7 @@ class TestFetchHistoricalItems:
         converter = _create_converter()
 
         with patch(
-            "azure.ai.agentserver.langgraph.models.response_api_default_converter.get_project_endpoint",
+            "azure.ai.agentserver.langgraph.models._response_api_default_converter.get_project_endpoint",
             return_value=None,
         ):
             result = await converter._fetch_historical_items("conv_123")
@@ -393,7 +393,7 @@ class TestFetchHistoricalItems:
         converter = _create_converter()
 
         with patch(
-            "azure.ai.agentserver.langgraph.models.response_api_default_converter.get_project_endpoint",
+            "azure.ai.agentserver.langgraph.models._response_api_default_converter.get_project_endpoint",
             return_value="https://test.endpoint.com",
         ):
             with patch.dict("sys.modules", {"openai": None}):
@@ -421,7 +421,7 @@ class TestFetchHistoricalItems:
         mock_client.conversations.items.list = mock_list
 
         with patch(
-            "azure.ai.agentserver.langgraph.models.response_api_default_converter.get_project_endpoint",
+            "azure.ai.agentserver.langgraph.models._response_api_default_converter.get_project_endpoint",
             return_value="https://test.endpoint.com",
         ):
             with patch(

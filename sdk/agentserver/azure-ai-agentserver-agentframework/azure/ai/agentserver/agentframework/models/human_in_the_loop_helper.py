@@ -8,7 +8,7 @@ from typing import Any, Dict, List, Optional, Union
 from agent_framework import Content, Message, WorkflowCheckpoint, WorkflowEvent
 
 from azure.ai.agentserver.core.logger import get_logger
-from azure.ai.agentserver.core.server.common.constants import HUMAN_IN_THE_LOOP_FUNCTION_NAME
+from azure.ai.agentserver.core.server.common._constants import HUMAN_IN_THE_LOOP_FUNCTION_NAME
 
 logger = get_logger()
 

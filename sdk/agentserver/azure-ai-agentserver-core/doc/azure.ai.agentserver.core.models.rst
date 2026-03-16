@@ -6,12 +6,3 @@ azure.ai.agentserver.core.models package
    :members:
    :undoc-members:
    :ignore-module-all:
-
-Subpackages
------------
-
-.. toctree::
-   :maxdepth: 4
-
-   azure.ai.agentserver.core.models.openai
-   azure.ai.agentserver.core.models.projects

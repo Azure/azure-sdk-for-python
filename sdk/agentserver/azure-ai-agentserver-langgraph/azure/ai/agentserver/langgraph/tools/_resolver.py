@@ -21,6 +21,11 @@ class ResolvedTools(Iterable[BaseTool]):
     :type tools: Iterable[Tuple[ResolvedFoundryTool, BaseTool]]
     """
     def __init__(self, tools: Iterable[Tuple[ResolvedFoundryTool, BaseTool]]):
+        """Initialize the resolved-tools view.
+
+        :param tools: The resolved tool pairs to index by Foundry tool id.
+        :type tools: Iterable[Tuple[ResolvedFoundryTool, BaseTool]]
+        """
         self._by_source_id: Dict[str, List[BaseTool]] = defaultdict(list)
         for rt, t in tools:
             self._by_source_id[rt.definition.id].append(t)
@@ -74,6 +79,11 @@ class ResolvedTools(Iterable[BaseTool]):
             yield from self._by_source_id.get(ft.id, [])
 
     def __iter__(self):
+        """Iterate over all resolved LangChain tools.
+
+        :return: An iterator over the resolved tools.
+        :rtype: Iterator[BaseTool]
+        """
         for tool_list in self._by_source_id.values():
             yield from tool_list
 
@@ -85,6 +95,11 @@ class FoundryLangChainToolResolver:
     :type name_resolver: Optional[ToolNameResolver]
     """
     def __init__(self, name_resolver: Optional[ToolNameResolver] = None):
+        """Initialize the Foundry-to-LangChain tool resolver.
+
+        :param name_resolver: Optional resolver for stable tool names.
+        :type name_resolver: Optional[ToolNameResolver]
+        """
         self._name_resolver = name_resolver or ToolNameResolver()
 
     async def resolve_from_registry(self) -> ResolvedTools:
@@ -108,6 +123,14 @@ class FoundryLangChainToolResolver:
         return ResolvedTools(tools=((tool, self._create_structured_tool(tool)) for tool in resolved_foundry_tools))
 
     def _create_structured_tool(self, resolved_tool: ResolvedFoundryTool) -> StructuredTool:
+        """Create a LangChain structured tool from a resolved Foundry tool.
+
+        :param resolved_tool: The resolved Foundry tool descriptor.
+        :type resolved_tool: ResolvedFoundryTool
+
+        :return: The structured tool wrapper.
+        :rtype: StructuredTool
+        """
         name = self._name_resolver.resolve(resolved_tool)
         args_schema = self._create_pydantic_model(name, resolved_tool.input_schema)
 
@@ -127,6 +150,16 @@ class FoundryLangChainToolResolver:
 
     @classmethod
     def _create_pydantic_model(cls, tool_name: str, input_schema: SchemaDefinition) -> type[BaseModel]:
+        """Create a Pydantic model for a Foundry tool input schema.
+
+        :param tool_name: The tool name used to derive the model name.
+        :type tool_name: str
+        :param input_schema: The Foundry schema definition.
+        :type input_schema: SchemaDefinition
+
+        :return: The generated Pydantic model type.
+        :rtype: type[BaseModel]
+        """
         field_definitions: Dict[str, Any] = {}
         required_fields = input_schema.required or set()
         for prop_name, prop in input_schema.properties.items():

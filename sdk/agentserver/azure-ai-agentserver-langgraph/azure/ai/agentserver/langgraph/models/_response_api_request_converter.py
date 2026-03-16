@@ -1,11 +1,9 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=logging-fstring-interpolation
-# mypy: ignore-errors
 from abc import ABC, abstractmethod
 import json
-from typing import Dict, List
+from typing import Any, Dict, List, Optional, cast
 
 from langchain_core.messages import (
     AIMessage,
@@ -17,7 +15,9 @@ from langchain_core.messages import (
 from langchain_core.messages.tool import ToolCall
 
 from azure.ai.agentserver.core.logger import get_logger
-from azure.ai.agentserver.core.models import CreateResponse, openai as openai_models, projects as project_models
+from azure.ai.agentserver.core.models import (
+    CreateResponse, _openai as openai_models, _projects as project_models
+)
 
 logger = get_logger()
 
@@ -38,7 +38,7 @@ item_content_type_mapping = {
 }
 
 
-def convert_item_resource_to_message(item: Dict) -> AnyMessage:
+def convert_item_resource_to_message(item: Dict) -> Optional[AnyMessage]:
     """
     Convert an ItemResource (from AIProjectClient conversation items) to a LangGraph message.
 
@@ -67,13 +67,11 @@ def convert_item_resource_to_message(item: Dict) -> AnyMessage:
                 # Fallback: try to get any text field
                 text_content = content[0].get("text", "")
             content = text_content
-        elif isinstance(content, str):
-            pass  # content is already a string
-        else:
+        elif not isinstance(content, str):
             content = str(content) if content else ""
 
         if role not in role_mapping:
-            logger.warning(f"Unknown role '{role}' in item resource, defaulting to USER")
+            logger.warning("Unknown role '%s' in item resource, defaulting to USER", role)
             role = project_models.ResponsesMessageRole.USER
 
         return role_mapping[role](content=content)
@@ -100,8 +98,8 @@ def convert_item_resource_to_message(item: Dict) -> AnyMessage:
             output = " ".join(text_parts)
         return ToolMessage(content=output, tool_call_id=call_id)
 
-    logger.warning(f"Unsupported item type '{item_type}' in item resource, skipping")
-    return None  # type: ignore
+    logger.warning("Unsupported item type '%s' in item resource, skipping", item_type)
+    return None
 
 
 class ResponseAPIRequestConverter(ABC):
@@ -120,12 +118,24 @@ class ResponseAPIRequestConverter(ABC):
 
 
 class ResponseAPIMessageRequestConverter(ResponseAPIRequestConverter):
+    """Convert Response API input items into LangGraph message inputs."""
+
     def __init__(self, data: CreateResponse):
+        """Initialize the request converter.
+
+        :param data: The incoming create-response payload.
+        :type data: CreateResponse
+        """
         self.data: CreateResponse = data
 
     def convert(self) -> dict:
+        """Convert the request payload into LangGraph message input.
+
+        :return: A LangGraph-compatible input dictionary.
+        :rtype: dict
+        """
         # Convert the CreateRunRequest input to a format suitable for LangGraph
-        langgraph_input = {"messages": []}
+        langgraph_input: dict[str, list[AnyMessage]] = {"messages": []}
 
         instructions = self.data.get("instructions")
         if instructions and isinstance(instructions, str):
@@ -152,17 +162,18 @@ class ResponseAPIMessageRequestConverter(ResponseAPIRequestConverter):
         :return: The converted LangGraph message.
         :rtype: AnyMessage
         """
-        item_type = item.get("type", project_models.ItemType.MESSAGE)
+        item_data = cast(Dict[str, Any], item)
+        item_type = item_data.get("type", project_models.ItemType.MESSAGE)
         if item_type == project_models.ItemType.MESSAGE:
             # this is a message
-            return self.convert_message(item)
+            return self.convert_message(item_data)
         if item_type == project_models.ItemType.FUNCTION_CALL:
-            return self.convert_function_call(item)
+            return self.convert_function_call(item_data)
         if item_type == project_models.ItemType.FUNCTION_CALL_OUTPUT:
-            return self.convert_function_call_output(item)
+            return self.convert_function_call_output(item_data)
         raise ValueError(f"Unsupported OpenAIItemParam type: {item_type}, {item}")
 
-    def convert_message(self, message: dict) -> AnyMessage:
+    def convert_message(self, message: Dict[str, Any]) -> AnyMessage:
         """
         Convert a message dict to a LangGraph message
 
@@ -182,31 +193,53 @@ class ResponseAPIMessageRequestConverter(ResponseAPIRequestConverter):
             return role_mapping[role](content=self.convert_OpenAIItemContentList(content))
         raise ValueError(f"Unsupported ResponseMessagesItemParam content type: {type(content)}, {content}")
 
-    def convert_function_call(self, item: dict) -> AnyMessage:
-        try:
-            item = openai_models.ResponseFunctionToolCallParam(**item)
-            argument = item.get("arguments", None)
-            args = json.loads(argument) if argument else {}
-        except json.JSONDecodeError as e:
-            raise ValueError(f"Invalid JSON in function call arguments: {item}") from e
-        except Exception as e:
-            raise ValueError(f"Invalid function call item: {item}") from e
-        return AIMessage(tool_calls=[ToolCall(id=item.get("call_id"), name=item.get("name"), args=args)], content="")
+    def convert_function_call(self, item: Dict[str, Any]) -> AnyMessage:
+        """Convert a function call input item into an AI message.
 
-    def convert_function_call_output(self, item: dict) -> ToolMessage:
+        :param item: The function call item payload.
+        :type item: dict
+
+        :return: The converted AI message.
+        :rtype: AnyMessage
+        """
+        call_id = item.get("call_id")
+        name = item.get("name")
+        argument = item.get("arguments")
+
+        if not isinstance(call_id, str) or not call_id:
+            raise ValueError(f"Function call item missing call_id: {item}")
+        if not isinstance(name, str) or not name:
+            raise ValueError(f"Function call item missing name: {item}")
+        if argument is not None and not isinstance(argument, str):
+            raise ValueError(f"Function call arguments must be a string: {item}")
+
         try:
-            item = openai_models.response_input_item_param.FunctionCallOutput(**item)  # pylint: disable=no-member
-        except Exception as e:
-            raise ValueError(f"Invalid function call output item: {item}") from e
+            args = json.loads(argument) if argument else {}
+        except json.JSONDecodeError as error:
+            raise ValueError(f"Invalid JSON in function call arguments: {item}") from error
+        return AIMessage(tool_calls=[ToolCall(id=call_id, name=name, args=args)], content="")
+
+    def convert_function_call_output(self, item: Dict[str, Any]) -> ToolMessage:
+        """Convert a function call output item into a tool message.
+
+        :param item: The function call output payload.
+        :type item: dict
+
+        :return: The converted tool message.
+        :rtype: ToolMessage
+        """
+        call_id = item.get("call_id")
+        if not isinstance(call_id, str) or not call_id:
+            raise ValueError(f"Function call output item missing call_id: {item}")
 
         output = item.get("output", None)
         if isinstance(output, str):
-            return ToolMessage(content=output, tool_call_id=item.get("call_id"))
+            return ToolMessage(content=output, tool_call_id=call_id)
         if isinstance(output, list):
-            return ToolMessage(content=self.convert_OpenAIItemContentList(output), tool_call_id=item.get("call_id"))
+            return ToolMessage(content=self.convert_OpenAIItemContentList(output), tool_call_id=call_id)
         raise ValueError(f"Unsupported function call output type: {type(output)}, {output}")
 
-    def convert_OpenAIItemContentList(self, content: List[Dict]) -> List[Dict]:
+    def convert_OpenAIItemContentList(self, content: List[Dict[str, Any]]) -> List[str | Dict[str, Any]]:
         """
         Convert ItemContent to a list format
 
@@ -216,12 +249,12 @@ class ResponseAPIMessageRequestConverter(ResponseAPIRequestConverter):
         :return: The converted list of ItemContent.
         :rtype: List[Dict]
         """
-        result = []
+        result: List[str | Dict[str, Any]] = []
         for item in content:
             result.append(self.convert_OpenAIItemContent(item))
         return result
 
-    def convert_OpenAIItemContent(self, content: Dict) -> Dict:
+    def convert_OpenAIItemContent(self, content: Dict[str, Any]) -> Dict[str, Any]:
         """
         Convert ItemContent to a dict format
 
@@ -233,5 +266,7 @@ class ResponseAPIMessageRequestConverter(ResponseAPIRequestConverter):
         """
         res = content.copy()
         content_type = content.get("type")
+        if content_type is None:
+            return res
         res["type"] = item_content_type_mapping.get(content_type, content_type)
         return res

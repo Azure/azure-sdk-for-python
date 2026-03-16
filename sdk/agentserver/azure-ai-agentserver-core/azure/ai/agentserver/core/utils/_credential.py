@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 from __future__ import annotations
 
-import asyncio  # pylint: disable=C4763
+import asyncio  # pylint: disable=C4763  # azure-sdk: async-client-bad-name
 import inspect
 from types import TracebackType
 from typing import Any, Type, cast
@@ -12,7 +12,7 @@ from azure.core.credentials import AccessToken, TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 
 
-async def _to_thread(func, *args, **kwargs):  # pylint: disable=C4743
+async def _to_thread(func, *args, **kwargs):  # pylint: disable=C4743  # azure-sdk: client-method-should-not-use-static-method
     """Compatibility wrapper for asyncio.to_thread (Python 3.8+).
 
     :param func: The function to run in a thread.

@@ -9,7 +9,7 @@ from typing import List, Optional
 
 from agent_framework import WorkflowCheckpoint
 
-from azure.ai.agentserver.core.checkpoints.client import (
+from azure.ai.agentserver.core.checkpoints import (
     CheckpointItem,
     CheckpointItemId,
     FoundryCheckpointClient,

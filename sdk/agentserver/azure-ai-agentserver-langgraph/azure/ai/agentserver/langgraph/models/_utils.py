@@ -2,15 +2,15 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import json
-from typing import get_type_hints
+from typing import Any, Mapping, Optional, Tuple, get_type_hints
 
 
-def extract_function_call(tool_call: dict):
+def extract_function_call(tool_call: Mapping[str, Any]) -> Tuple[Optional[str], Optional[str], Optional[str]]:
     """
     Extract function call details from tool_call dict.
 
     :param tool_call: The tool call dictionary containing function call details.
-    :type tool_call: dict
+    :type tool_call: Mapping[str, Any]
 
     :return: A tuple of (name, call_id, argument).
     :rtype: tuple[str | None, str | None, str | None]

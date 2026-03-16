@@ -9,18 +9,18 @@ azure.ai.agentserver.core.server.common.id\_generator package
 Submodules
 ----------
 
-azure.ai.agentserver.core.server.common.id\_generator.foundry\_id\_generator module
------------------------------------------------------------------------------------
+azure.ai.agentserver.core.server.common.id\_generator.\_foundry\_id\_generator module
+------------------------------------------------------------------------------------
 
-.. automodule:: azure.ai.agentserver.core.server.common.id_generator.foundry_id_generator
+.. automodule:: azure.ai.agentserver.core.server.common.id_generator._foundry_id_generator
    :inherited-members:
    :members:
    :undoc-members:
 
-azure.ai.agentserver.core.server.common.id\_generator.id\_generator module
---------------------------------------------------------------------------
+azure.ai.agentserver.core.server.common.id\_generator.\_id\_generator module
+---------------------------------------------------------------------------
 
-.. automodule:: azure.ai.agentserver.core.server.common.id_generator.id_generator
+.. automodule:: azure.ai.agentserver.core.server.common.id_generator._id_generator
    :inherited-members:
    :members:
    :undoc-members:
