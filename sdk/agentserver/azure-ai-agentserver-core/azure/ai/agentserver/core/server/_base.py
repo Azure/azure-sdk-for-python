@@ -284,8 +284,6 @@ class FoundryCBAgent:
         :return: Configured AsyncOpenAI client scoped to the Foundry project endpoint.
         :rtype: AsyncOpenAI
         """
-        from openai import AsyncOpenAI
-
         token_provider = get_bearer_token_provider(
             self.credentials, "https://ai.azure.com/.default"
         )

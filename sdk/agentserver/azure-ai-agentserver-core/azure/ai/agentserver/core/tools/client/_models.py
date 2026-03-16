@@ -343,6 +343,7 @@ class SchemaDefinition(BaseModel):
 
             # Find the first matching key in the datasource
             value_found = False
+            value = None
             for key in keys_to_check:
                 if key in datasource:
                     value = datasource[key]

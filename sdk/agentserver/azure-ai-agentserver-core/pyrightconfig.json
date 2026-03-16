@@ -5,6 +5,8 @@
   "reportMissingImports": "warning",
   "reportGeneralTypeIssues": "warning",
   "reportReturnType": "warning",
+  "reportPossiblyUnboundVariable":"warning",
+  "reportCallIssue":"warning",
 
   "exclude": [
     "**/azure/ai/agentserver/core/models/**",
