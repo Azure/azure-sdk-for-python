@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+"""Unit tests for commandline_utility module."""
+
 import subprocess
 import os
 from unittest import mock
@@ -12,8 +14,10 @@ from azure.ai.ml._local_endpoints.utilities.commandline_utility import run_cli_c
 
 
 class TestRunCliCommand:
+    """Tests for run_cli_command function."""
 
     def test_stderr_to_stdout_true_passes_correct_args(self):
+        """Verify stderr=STDOUT is passed when stderr_to_stdout=True."""
         cmd = ["echo", "hello"]
         custom_env = {"FOO": "BAR"}
 
@@ -42,6 +46,7 @@ class TestRunCliCommand:
             assert called_kwargs.get("env") == custom_env
 
     def test_stderr_to_stdout_false_omits_stderr(self):
+        """Verify stderr is not passed when stderr_to_stdout=False."""
         cmd = ["echo", "hello"]
         custom_env = {"FOO": "BAR"}
 
@@ -63,6 +68,7 @@ class TestRunCliCommand:
             assert called_kwargs.get("env") == custom_env
 
     def test_shell_metacharacters_not_interpreted(self):
+        """Verify shell metacharacters are not interpreted in arguments."""
         malicious_arg = "safe_path; echo INJECTED; #"
         cmd = ["echo", malicious_arg]
 
@@ -85,6 +91,7 @@ class TestRunCliCommand:
                 assert called_kwargs.get("shell") is False
 
     def test_return_json_parses_output(self):
+        """Verify JSON output is parsed correctly."""
         cmd = ["echo", "test"]
         # exclude_warnings expects { and } on separate lines
         json_output = b'{\n"key": "value"\n}'
@@ -100,6 +107,7 @@ class TestRunCliCommand:
             assert result == {"key": "value"}
 
     def test_called_process_error_is_raised(self):
+        """Verify CalledProcessError propagates correctly."""
         cmd = ["bad_command"]
 
         with mock.patch("subprocess.check_output") as check_output_mock:

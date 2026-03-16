@@ -12,7 +12,11 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException
 
 
 def _print_command_results(test_passed, time_taken, output):
-    print("Command {} in {} seconds.".format("successful" if test_passed else "failed", time_taken))
+    print(
+        "Command {} in {} seconds.".format(
+            "successful" if test_passed else "failed", time_taken
+        )
+    )
     print("Output: \n{}\n".format(output))
 
 
@@ -33,7 +37,9 @@ def run_cli_command(
     # execution. We use subprocess.list2cmdline to safely quote the arguments before
     # passing them to the shell, preventing command injection.
 
-    if not do_not_print:  # Avoid printing the az login service principal password, for example
+    if (
+        not do_not_print
+    ):  # Avoid printing the az login service principal password, for example
         print("Preparing to run CLI command: \n{}\n".format(" ".join(cmd_arguments)))
         print("Current directory: {}".format(os.getcwd()))
 
@@ -67,7 +73,9 @@ def run_cli_command(
             subprocess_args["shell"] = False
             cmd_to_run = cmd_arguments
 
-        output = subprocess.check_output(cmd_to_run, **subprocess_args).decode(encoding="UTF-8")
+        output = subprocess.check_output(cmd_to_run, **subprocess_args).decode(
+            encoding="UTF-8"
+        )
 
         time_taken = time.time() - start_time
         if not do_not_print:
@@ -121,6 +129,7 @@ def exclude_warnings(cmd_output):
 
     return json_output
 
+
 def _test_run_cli_command_stderr_to_stdout_true():
     """Internal test to validate subprocess arguments when stderr_to_stdout is True."""
     cmd = ["echo", "hello"]
@@ -144,7 +153,8 @@ def _test_run_cli_command_stderr_to_stdout_true():
         assert called_kwargs.get("stderr") is subprocess.STDOUT
         # Verify environment is forwarded.
         assert called_kwargs.get("env") == custom_env
-        
+
+
 def _test_run_cli_command_stderr_to_stdout_false():
     """Internal test to validate subprocess arguments when stderr_to_stdout is False."""
     cmd = ["echo", "hello"]
