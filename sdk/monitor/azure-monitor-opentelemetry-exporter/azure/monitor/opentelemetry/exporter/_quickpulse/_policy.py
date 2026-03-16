@@ -8,7 +8,7 @@ from weakref import ReferenceType
 from azure.core.pipeline import PipelineResponse, policies
 
 from azure.monitor.opentelemetry.exporter._quickpulse._constants import _QUICKPULSE_REDIRECT_HEADER_NAME
-from azure.monitor.opentelemetry.exporter._quickpulse._generated import QuickpulseClient
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics import LiveMetricsClient
 
 
 # Quickpulse endpoint handles redirects via header instead of status codes
@@ -16,8 +16,8 @@ from azure.monitor.opentelemetry.exporter._quickpulse._generated import Quickpul
 # pylint: disable=protected-access
 class _QuickpulseRedirectPolicy(policies.RedirectPolicy):
     def __init__(self, **kwargs: Any) -> None:
-        # Weakref to QuickPulseClient instance
-        self._qp_client_ref: Optional[ReferenceType[QuickpulseClient]] = None
+        # Weakref to LiveMetricsClient instance
+        self._qp_client_ref: Optional[ReferenceType[LiveMetricsClient]] = None
         super().__init__(**kwargs)
 
     # Gets the redirect location from header

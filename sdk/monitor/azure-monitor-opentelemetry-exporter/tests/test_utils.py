@@ -9,7 +9,10 @@ from unittest.mock import patch
 
 from opentelemetry.sdk.resources import Resource
 from azure.monitor.opentelemetry.exporter import _utils
-from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import TelemetryItem
+from azure.monitor.opentelemetry.exporter._constants import _GEN_AI_ATTRIBUTES
+from opentelemetry.sdk.resources import Resource
+from unittest.mock import patch
 
 
 TEST_AI_DEVICE_ID = "TEST_AI_DEVICE_ID"
@@ -23,8 +26,6 @@ TEST_AZURE_MONITOR_CONTEXT = {
         TEST_SDK_VERSION_PREFIX,
     ),
 }
-TEST_TIMESTAMP = "TEST_TIMESTAMP"
-TEST_TIME = "TEST_TIME"
 TEST_WEBSITE_SITE_NAME = "TEST_WEBSITE_SITE_NAME"
 TEST_KUBERNETES_SERVICE_HOST = "TEST_KUBERNETES_SERVICE_HOST"
 TEST_AKS_ARM_NAMESPACE_ID = "TEST_AKS_ARM_NAMESPACE_ID"
@@ -36,8 +37,9 @@ class TestUtils(unittest.TestCase):
         self._valid_instrumentation_key = "1234abcd-5678-4efa-8abc-1234567890ab"
 
     def test_filter_custom_properties_drops_invalid_entries(self):
+        oversized_value = "v" * 9000
         properties = {
-            "valid_key": "valid_value",
+            "valid_key": oversized_value,
             "k" * 151: "should_be_dropped",
             "": "missing_key",
             "short": "ok",
@@ -48,22 +50,55 @@ class TestUtils(unittest.TestCase):
 
         self.assertEqual(len(filtered), 2)
         self.assertIn("valid_key", filtered)
-        self.assertEqual(filtered["valid_key"], "valid_value")
+        self.assertEqual(len(filtered["valid_key"]), 9000)
         self.assertEqual(filtered["short"], "ok")
         self.assertNotIn("k" * 151, filtered)
 
-    def test_filter_custom_properties_preserves_large_values(self):
-        # Ensure values larger than 64KiB are not truncated
+    def test_custom_properties_gen_ai_attributes_not_truncated(self):
+        # All values in _GEN_AI_ATTRIBUTES should not be truncated even when > 64KiB
         large_value = "x" * (64 * 1024 + 1000)
-        properties = {
-            "large_key": large_value,
-        }
-
+        properties = {key: large_value for key in _GEN_AI_ATTRIBUTES}
         filtered = _utils._filter_custom_properties(properties)
+        for key in _GEN_AI_ATTRIBUTES:
+            with self.subTest(key=key):
+                self.assertIn(key, filtered)
+                self.assertEqual(len(filtered[key]), 64 * 1024 + 1000)
 
-        self.assertIn("large_key", filtered)
-        self.assertEqual(filtered["large_key"], large_value)
-        self.assertEqual(len(filtered["large_key"]), 64 * 1024 + 1000)
+    def test_filter_custom_properties_non_gen_ai_truncated_at_64kb(self):
+        # Regular properties exceeding 64KiB should be truncated
+        max_length = 64 * 1024
+        large_value = "y" * (max_length + 2000)
+        properties = {
+            "span_kind": large_value,
+            "gen_ai.agent.version": large_value,
+            "http.method": large_value,
+            "custom.attribute": large_value,
+        }
+        filtered = _utils._filter_custom_properties(properties)
+        for key in properties:
+            with self.subTest(key=key):
+                self.assertIn(key, filtered)
+                self.assertEqual(len(filtered[key]), max_length)
+
+    def test_filter_custom_properties_mixed_gen_ai_and_regular(self):
+        # Gen AI attributes keep full value, regular ones are truncated
+        max_length = 64 * 1024
+        large_value = "z" * (max_length + 3000)
+        properties = {
+            "gen_ai.input.messages": large_value,
+            "gen_ai.output.messages": large_value,
+            "gen_ai.agent.version": large_value,
+            "span_kind": large_value,
+            "db.statement": large_value,
+        }
+        filtered = _utils._filter_custom_properties(properties)
+        # Gen AI attributes — not truncated
+        self.assertEqual(len(filtered["gen_ai.input.messages"]), max_length + 3000)
+        self.assertEqual(len(filtered["gen_ai.output.messages"]), max_length + 3000)
+        # Regular attributes — truncated
+        self.assertEqual(len(filtered["gen_ai.agent.version"]), max_length)
+        self.assertEqual(len(filtered["span_kind"]), max_length)
+        self.assertEqual(len(filtered["db.statement"]), max_length)
 
     def test_nanoseconds_to_duration(self):
         ns_to_duration = _utils.ns_to_duration
@@ -292,22 +327,17 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
         self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
 
-    @patch(
-        "azure.monitor.opentelemetry.exporter._utils.ns_to_iso_str",
-        return_value=TEST_TIME,
-    )
-    @patch(
-        "azure.monitor.opentelemetry.exporter._utils.azure_monitor_context",
-        TEST_AZURE_MONITOR_CONTEXT,
-    )
-    def test_create_telemetry_item(self, mock_ns_to_iso_str):
-        result = _utils._create_telemetry_item(TEST_TIMESTAMP)
+    @patch("azure.monitor.opentelemetry.exporter._utils.azure_monitor_context", TEST_AZURE_MONITOR_CONTEXT)
+    def test_create_telemetry_item(self):
+        time_ns = time.time_ns()
+        expected_datetime = datetime.datetime.fromtimestamp(time_ns / 1e9, tz=datetime.timezone.utc)
+        result = _utils._create_telemetry_item(time_ns)
         expected_tags = dict(TEST_AZURE_MONITOR_CONTEXT)
         expected = TelemetryItem(
             name="",
             instrumentation_key="",
             tags=expected_tags,
-            time=TEST_TIME,
+            time=expected_datetime,
         )
         self.assertEqual(result, expected)
 

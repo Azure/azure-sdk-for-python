@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b4" python-dotenv aiohttp
+    pip install "azure-ai-projects>=2.0.0" python-dotenv aiohttp
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -24,6 +24,7 @@ USAGE:
     4) AI_SEARCH_CONNECTION_NAME - Optional. The name of an existing AI Search connection to use in this sample.
     5) AI_SEARCH_INDEX_NAME - Optional. The name of the AI Search index to use in this sample.
 """
+
 import asyncio
 import os
 from dotenv import load_dotenv
