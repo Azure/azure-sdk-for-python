@@ -13,14 +13,3 @@ Subpackages
    :maxdepth: 4
 
    azure.ai.agentserver.core.server.common
-
-Submodules
-----------
-
-azure.ai.agentserver.core.server.\_base module
-----------------------------------------------
-
-.. automodule:: azure.ai.agentserver.core.server._base
-   :inherited-members:
-   :members:
-   :undoc-members:
