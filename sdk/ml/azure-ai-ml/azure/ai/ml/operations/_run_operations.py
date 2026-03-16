@@ -53,10 +53,7 @@ class RunOperations(_ScopeDependentOperations):
                 self._workspace_name,
                 run_id,
                 top=kwargs.pop("max_results", None),
-                cls=lambda pipeline_response, deserialized, response_headers: [
-                    self._translate_from_rest_object(obj)
-                    for obj in (deserialized.value if hasattr(deserialized, "value") else deserialized)
-                ],
+                cls=lambda objs: [self._translate_from_rest_object(obj) for obj in objs],
             ),
         )
 

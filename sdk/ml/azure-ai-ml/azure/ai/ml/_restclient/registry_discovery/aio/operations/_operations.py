@@ -109,7 +109,7 @@ class RegistryManagementNonWorkspaceOperations:
 
         Instead, you should access the following operations through
         :class:`~registry_discovery.aio.RegistryDiscoveryClient`'s
-        :attr:`get_registry_management_non_workspace` attribute.
+        :attr:`registry_management_non_workspace` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -155,6 +155,7 @@ class RegistryManagementNonWorkspaceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -172,7 +173,7 @@ class RegistryManagementNonWorkspaceOperations:
             raise HttpResponseError(response=response)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.RegistryDiscoveryDto, response.json())
 

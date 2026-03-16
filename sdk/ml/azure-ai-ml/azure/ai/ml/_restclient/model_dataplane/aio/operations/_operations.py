@@ -10,8 +10,10 @@ from collections.abc import MutableMapping
 from io import IOBase
 import json
 from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
+import urllib.parse
 
 from azure.core import AsyncPipelineClient
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -24,6 +26,7 @@ from azure.core.exceptions import (
 )
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
@@ -226,6 +229,7 @@ class AssetsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -243,7 +247,7 @@ class AssetsOperations:
             raise HttpResponseError(response=response)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Asset, response.json())
 
@@ -252,8 +256,8 @@ class AssetsOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def list(  # pylint: disable=too-many-locals
+    @distributed_trace
+    def list(  # pylint: disable=too-many-locals
         self,
         subscription_id: str,
         resource_group_name: str,
@@ -270,7 +274,7 @@ class AssetsOperations:
         type: Optional[str] = None,
         orderby: Optional[Union[str, _models.OrderString]] = None,
         **kwargs: Any
-    ) -> _models.AssetPaginatedResult:
+    ) -> AsyncItemPaged["_models.Asset"]:
         """List assets in a workspace.
 
         :param subscription_id: The Azure subscription identifier. Required.
@@ -300,10 +304,15 @@ class AssetsOperations:
         :keyword orderby: Order by expression. Known values are: "CreatedAtDesc", "CreatedAtAsc",
          "UpdatedAtDesc", and "UpdatedAtAsc". Default value is None.
         :paramtype orderby: str or ~model_dataplane.models.OrderString
-        :return: AssetPaginatedResult. The AssetPaginatedResult is compatible with MutableMapping
-        :rtype: ~model_dataplane.models.AssetPaginatedResult
+        :return: An iterator like instance of Asset
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~model_dataplane.models.Asset]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.Asset]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -312,59 +321,82 @@ class AssetsOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        cls: ClsType[_models.AssetPaginatedResult] = kwargs.pop("cls", None)
+                _request = build_assets_list_request(
+                    subscription_id=subscription_id,
+                    resource_group_name=resource_group_name,
+                    workspace_name=workspace_name,
+                    run_id=run_id,
+                    project_id=project_id,
+                    name=name,
+                    tag=tag,
+                    count=count,
+                    skip_token=skip_token,
+                    tags=tags,
+                    properties=properties,
+                    type=type,
+                    orderby=orderby,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _request = build_assets_list_request(
-            subscription_id=subscription_id,
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-            run_id=run_id,
-            project_id=project_id,
-            name=name,
-            tag=tag,
-            count=count,
-            skip_token=skip_token,
-            tags=tags,
-            properties=properties,
-            type=type,
-            orderby=orderby,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+            return _request
 
-        response = pipeline_response.http_response
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.Asset],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return None, AsyncList(list_of_elem)
 
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.AssetPaginatedResult, response.json())
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
 
-        return deserialized  # type: ignore
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
     async def query_by_id(
@@ -411,6 +443,7 @@ class AssetsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -428,7 +461,7 @@ class AssetsOperations:
             raise HttpResponseError(response=response)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Asset, response.json())
 
@@ -597,6 +630,7 @@ class AssetsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -614,7 +648,7 @@ class AssetsOperations:
             raise HttpResponseError(response=response)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Asset, response.json())
 
@@ -745,6 +779,7 @@ class ExtensiveModelsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -762,7 +797,7 @@ class ExtensiveModelsOperations:
             raise HttpResponseError(response=response)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ExtensiveModel, response.json())
 
@@ -1033,6 +1068,7 @@ class ModelsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1050,7 +1086,7 @@ class ModelsOperations:
             raise HttpResponseError(response=response)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Model, response.json())
 
@@ -1059,8 +1095,8 @@ class ModelsOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def list(  # pylint: disable=too-many-locals
+    @distributed_trace
+    def list(  # pylint: disable=too-many-locals
         self,
         subscription_id: str,
         resource_group_name: str,
@@ -1083,7 +1119,7 @@ class ModelsOperations:
         feed: Optional[str] = None,
         list_view_type: Optional[Union[str, _models.ListViewType]] = None,
         **kwargs: Any
-    ) -> _models.ModelPagedResponse:
+    ) -> AsyncItemPaged["_models.Model"]:
         """List models in a workspace.
 
         :param subscription_id: The Azure subscription identifier. Required.
@@ -1125,10 +1161,15 @@ class ModelsOperations:
         :keyword list_view_type: The list view type filter. Known values are: "ActiveOnly",
          "ArchivedOnly", and "All". Default value is None.
         :paramtype list_view_type: str or ~model_dataplane.models.ListViewType
-        :return: ModelPagedResponse. The ModelPagedResponse is compatible with MutableMapping
-        :rtype: ~model_dataplane.models.ModelPagedResponse
+        :return: An iterator like instance of Model
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~model_dataplane.models.Model]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.Model]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1137,65 +1178,88 @@ class ModelsOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        cls: ClsType[_models.ModelPagedResponse] = kwargs.pop("cls", None)
+                _request = build_models_list_request(
+                    subscription_id=subscription_id,
+                    resource_group_name=resource_group_name,
+                    workspace_name=workspace_name,
+                    name=name,
+                    tag=tag,
+                    version=version,
+                    framework=framework,
+                    description=description,
+                    count=count,
+                    offset=offset,
+                    skip_token=skip_token,
+                    tags=tags,
+                    properties=properties,
+                    run_id=run_id,
+                    dataset_id=dataset_id,
+                    order_by=order_by,
+                    latest_version_only=latest_version_only,
+                    feed=feed,
+                    list_view_type=list_view_type,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _request = build_models_list_request(
-            subscription_id=subscription_id,
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-            name=name,
-            tag=tag,
-            version=version,
-            framework=framework,
-            description=description,
-            count=count,
-            offset=offset,
-            skip_token=skip_token,
-            tags=tags,
-            properties=properties,
-            run_id=run_id,
-            dataset_id=dataset_id,
-            order_by=order_by,
-            latest_version_only=latest_version_only,
-            feed=feed,
-            list_view_type=list_view_type,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+            return _request
 
-        response = pipeline_response.http_response
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.Model],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return None, AsyncList(list_of_elem)
 
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.ModelPagedResponse, response.json())
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
 
-        return deserialized  # type: ignore
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
 
     @overload
     async def create_unregistered_input_model(
@@ -1344,6 +1408,7 @@ class ModelsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1361,7 +1426,7 @@ class ModelsOperations:
             raise HttpResponseError(response=response)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Model, response.json())
 
@@ -1517,6 +1582,7 @@ class ModelsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1534,7 +1600,7 @@ class ModelsOperations:
             raise HttpResponseError(response=response)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Model, response.json())
 
@@ -1698,6 +1764,7 @@ class ModelsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1715,7 +1782,7 @@ class ModelsOperations:
             raise HttpResponseError(response=response)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.BatchModelPathResponseDto, response.json())
 
@@ -1780,6 +1847,7 @@ class ModelsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1797,7 +1865,7 @@ class ModelsOperations:
             raise HttpResponseError(response=response)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Model, response.json())
 
@@ -2025,6 +2093,7 @@ class ModelsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2042,7 +2111,7 @@ class ModelsOperations:
             raise HttpResponseError(response=response)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Model, response.json())
 
@@ -2206,6 +2275,7 @@ class ModelsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2223,7 +2293,7 @@ class ModelsOperations:
             raise HttpResponseError(response=response)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ModelListModelsRequestPagedResponse, response.json())
 
@@ -2383,6 +2453,7 @@ class ModelsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2400,7 +2471,7 @@ class ModelsOperations:
             raise HttpResponseError(response=response)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ModelBatchResponseDto, response.json())
 

@@ -134,46 +134,6 @@ class Asset(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AssetPaginatedResult(_Model):
-    """Paginated result of assets.
-
-    :ivar value: The list of assets.
-    :vartype value: list[~model_dataplane.models.Asset]
-    :ivar continuation_token: The continuation token for the next page.
-    :vartype continuation_token: str
-    :ivar next_link: The link to the next page.
-    :vartype next_link: str
-    """
-
-    value: Optional[list["_models.Asset"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The list of assets."""
-    continuation_token: Optional[str] = rest_field(
-        name="continuationToken", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The continuation token for the next page."""
-    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
-    """The link to the next page."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: Optional[list["_models.Asset"]] = None,
-        continuation_token: Optional[str] = None,
-        next_link: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class BatchGetResolvedUrisDto(_Model):
     """Request DTO for batch resolving model URIs.
 
@@ -1080,46 +1040,6 @@ class ModelListModelsRequestPagedResponse(_Model):
         next_link: Optional[str] = None,
         continuation_token: Optional[str] = None,
         next_request: Optional["_models.ListModelsRequest"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ModelPagedResponse(_Model):
-    """Paginated response of models.
-
-    :ivar value: The list of models.
-    :vartype value: list[~model_dataplane.models.Model]
-    :ivar continuation_token: The continuation token for the next page.
-    :vartype continuation_token: str
-    :ivar next_link: The link to the next page.
-    :vartype next_link: str
-    """
-
-    value: Optional[list["_models.Model"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The list of models."""
-    continuation_token: Optional[str] = rest_field(
-        name="continuationToken", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The continuation token for the next page."""
-    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
-    """The link to the next page."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: Optional[list["_models.Model"]] = None,
-        continuation_token: Optional[str] = None,
-        next_link: Optional[str] = None,
     ) -> None: ...
 
     @overload
