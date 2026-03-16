@@ -12,7 +12,7 @@ DESCRIPTION:
     The OpenAI official tutorial is here: https://cookbook.openai.com/examples/evaluation/use-cases/evalsapi_audio_inputs
 
 USAGE:
-    python sample_evaluations_score_model_grader_with_audio.py
+    python sample_evaluations_score_model_grader_with_audio_model_target.py
 
     Before running the sample:
 
@@ -48,9 +48,9 @@ load_dotenv()
 file_path = os.path.abspath(__file__)
 folder_path = os.path.dirname(file_path)
 
-endpoint = os.environ.get("FOUNDRY_PROJECT_ENDPOINT", "")
-model_deployment_name = os.environ.get("FOUNDRY_MODEL_NAME", "")
-model_deployment_name_for_audio = os.environ.get("FOUNDRY_MODEL_NAME_FOR_AUDIO", "")
+endpoint = os.environ.get("AZURE_AI_PROJECT_ENDPOINT", "")
+model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "")
+model_deployment_name_for_audio = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME_FOR_AUDIO", "")
 
 
 def audio_to_base64(audio_path: str) -> str:
