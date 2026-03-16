@@ -75,5 +75,3 @@ combine-as-imports = true
 breaking = false   # incompatible python version
 pyright = false
 verifytypes = false
-# latestdependency = false
-# dependencies = false
