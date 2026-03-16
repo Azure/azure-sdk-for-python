@@ -1291,9 +1291,6 @@ class RedTeam:
         :type timeout: int
         :param skip_evals: Whether to skip the evaluation process
         :type skip_evals: bool
-        :keyword _http_timeout: Internal. HTTP timeout in seconds for the underlying httpx client
-            used by PyRIT's OpenAIChatTarget. Must be a positive int or float. Defaults to 180.
-        :paramtype _http_timeout: Optional[Union[int, float]]
         :return: The output from the red team scan
         :rtype: RedTeamResult
         """
@@ -1750,7 +1747,7 @@ class RedTeam:
                 objectives_by_risk[risk_value] = []
 
                 # Get baseline objectives for this risk category from cache
-                baseline_key = ((risk_value,), "baseline")
+                baseline_key = ((get_attack_objective_from_risk_category(risk_category).lower(),), "baseline")
                 self.logger.debug(f"Looking for baseline_key: {baseline_key}")
                 self.logger.debug(f"Available keys in attack_objectives: {list(self.attack_objectives.keys())}")
                 if baseline_key in self.attack_objectives:
