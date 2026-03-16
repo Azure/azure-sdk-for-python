@@ -117,6 +117,7 @@ def urljoin(base_url, stub_url):
     parsed = parsed._replace(path=parsed.path + "/" + stub_url)
     return parsed.geturl()
 
+
 class QueueMessagePolicy(SansIOHTTPPolicy):
 
     def on_request(self, request):
