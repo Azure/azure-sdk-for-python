@@ -212,6 +212,9 @@ def construct_prompty_model_config(
     if _is_aoi_model_config(model_config) and user_agent:
         prompty_model_config["parameters"]["extra_headers"].update({"x-ms-useragent": user_agent})
 
+    if "extra_headers" in model_config:
+        prompty_model_config["parameters"]["extra_headers"].update(model_config["extra_headers"])
+
     return prompty_model_config
 
 

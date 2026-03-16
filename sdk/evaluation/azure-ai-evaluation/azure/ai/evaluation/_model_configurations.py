@@ -78,6 +78,7 @@ class OpenAIModelConfiguration(TypedDict):
     model: str
     base_url: NotRequired[str]
     organization: NotRequired[str]
+    extra_headers: NotRequired[Dict[str, str]]
 
 
 class AzureAIProject(TypedDict):
