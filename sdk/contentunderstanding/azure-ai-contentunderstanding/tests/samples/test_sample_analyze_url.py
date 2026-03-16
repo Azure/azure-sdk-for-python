@@ -545,6 +545,12 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
         assert len(range_segments) > 0, "TimeRange(0, 5s) should return segments"
         for seg in range_segments:
             assert (seg.end_time_ms or 0) > (seg.start_time_ms or 0), "Segment should have EndTime > StartTime"
+            assert (seg.start_time_ms or 0) >= 0, (
+                f"Range(0-5s) segment StartTime ({seg.start_time_ms} ms) should be >= 0 ms"
+            )
+            assert (seg.end_time_ms or 0) <= 5000, (
+                f"Range(0-5s) segment EndTime ({seg.end_time_ms} ms) should be <= 5000 ms"
+            )
         print(f"[PASS] TimeRange(0, 5s): {len(range_segments)} segment(s)")
 
         # ContentRange.time_range_from(10s) — from 10 seconds onward (wire format: "10000-")
@@ -566,6 +572,9 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
         for seg in from_segments:
             assert (seg.end_time_ms or 0) > (seg.start_time_ms or 0), "Segment should have EndTime > StartTime"
             assert seg.markdown, "Segment should have markdown"
+            assert (seg.start_time_ms or 0) >= 10000, (
+                f"TimeRangeFrom(10s) segment StartTime ({seg.start_time_ms} ms) should be >= 10000 ms"
+            )
         print(f"[PASS] TimeRangeFrom(10s): {len(from_segments)} segment(s)")
 
         # ContentRange.time_range(1200ms, 3651ms) — sub-second precision (wire format: "1200-3651")
@@ -588,6 +597,12 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
         assert len(subsec_segments) > 0, "Sub-second TimeRange should return segments"
         for seg in subsec_segments:
             assert (seg.end_time_ms or 0) > (seg.start_time_ms or 0), "Segment should have EndTime > StartTime"
+            assert (seg.start_time_ms or 0) >= 1200, (
+                f"Range(1200-3651ms) segment StartTime ({seg.start_time_ms} ms) should be >= 1200 ms"
+            )
+            assert (seg.end_time_ms or 0) <= 3651, (
+                f"Range(1200-3651ms) segment EndTime ({seg.end_time_ms} ms) should be <= 3651 ms"
+            )
         print(f"[PASS] TimeRange(1.2s, 3.651s): {len(subsec_segments)} segment(s)")
 
         # ContentRange.combine() — combined time ranges (wire format: "0-3000,30000-")
@@ -614,6 +629,14 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
         for seg in combine_segments:
             assert (seg.end_time_ms or 0) > (seg.start_time_ms or 0), "Segment should have EndTime > StartTime"
             assert seg.markdown, "Segment should have markdown"
+            # Each segment should fall within one of the combined ranges: 0-3s or 30s-
+            seg_start = seg.start_time_ms or 0
+            seg_end = seg.end_time_ms or 0
+            in_first_range = seg_start >= 0 and seg_end <= 3000
+            in_second_range = seg_start >= 30000
+            assert in_first_range or in_second_range, (
+                f"Combine(0-3s, 30s-) segment ({seg_start}-{seg_end} ms) should fall within 0-3000 ms or >= 30000 ms"
+            )
         print(f"[PASS] Combine(0-3s, 30s-): {len(combine_segments)} segment(s)")
 
         # --- Raw string ContentRange test for video ---
@@ -637,6 +660,13 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
             f"Raw ContentRange('0-5000') should return same segment count as TimeRange equivalent "
             f"({len(raw_video_segments)} vs {len(range_segments)})"
         )
+        for seg in raw_video_segments:
+            assert (seg.start_time_ms or 0) >= 0, (
+                f"Raw Range(0-5000) segment StartTime ({seg.start_time_ms} ms) should be >= 0 ms"
+            )
+            assert (seg.end_time_ms or 0) <= 5000, (
+                f"Raw Range(0-5000) segment EndTime ({seg.end_time_ms} ms) should be <= 5000 ms"
+            )
         print(f"[PASS] Raw ContentRange('0-5000'): {len(raw_video_segments)} segment(s), matches TimeRange result")
 
         print("\n[SUCCESS] All video URL ContentRange assertions passed")
@@ -688,6 +718,9 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
         from_result = from_poller.result()
         assert from_result.contents is not None
         from_audio = cast(AudioVisualContent, from_result.contents[0])
+        assert (from_audio.start_time_ms or 0) >= 5000, (
+            f"TimeRangeFrom(5s) audio StartTime ({from_audio.start_time_ms} ms) should be >= 5000 ms"
+        )
         assert len(full_audio.markdown or '') >= len(from_audio.markdown or ''), (
             f"Full audio markdown ({len(full_audio.markdown or '')} chars) should be >= range-limited ({len(from_audio.markdown or '')} chars)"
         )
@@ -717,6 +750,12 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
         assert (window_audio.end_time_ms or 0) > (window_audio.start_time_ms or 0), (
             "TimeRange(2s, 8s) should have EndTime > StartTime"
         )
+        assert (window_audio.start_time_ms or 0) >= 2000, (
+            f"TimeRange(2s, 8s) audio StartTime ({window_audio.start_time_ms} ms) should be >= 2000 ms"
+        )
+        assert (window_audio.end_time_ms or 0) <= 8000, (
+            f"TimeRange(2s, 8s) audio EndTime ({window_audio.end_time_ms} ms) should be <= 8000 ms"
+        )
         assert window_audio.markdown, "TimeRange(2s, 8s) should have markdown"
         assert len(window_audio.markdown) > 0, "TimeRange(2s, 8s) markdown should not be empty"
         window_duration = (window_audio.end_time_ms or 0) - (window_audio.start_time_ms or 0)
@@ -745,6 +784,12 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
         assert (subsec_audio.end_time_ms or 0) > (subsec_audio.start_time_ms or 0), (
             "TimeRange(1.2s, 3.651s) should have EndTime > StartTime"
         )
+        assert (subsec_audio.start_time_ms or 0) >= 1200, (
+            f"TimeRange(1.2s, 3.651s) audio StartTime ({subsec_audio.start_time_ms} ms) should be >= 1200 ms"
+        )
+        assert (subsec_audio.end_time_ms or 0) <= 3651, (
+            f"TimeRange(1.2s, 3.651s) audio EndTime ({subsec_audio.end_time_ms} ms) should be <= 3651 ms"
+        )
         assert subsec_audio.markdown, "TimeRange(1.2s, 3.651s) should have markdown"
         assert len(subsec_audio.markdown) > 0, "TimeRange(1.2s, 3.651s) markdown should not be empty"
         subsec_duration = (subsec_audio.end_time_ms or 0) - (subsec_audio.start_time_ms or 0)
@@ -769,6 +814,9 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
         raw_audio_result = raw_audio_poller.result()
         assert raw_audio_result.contents is not None
         raw_audio = cast(AudioVisualContent, raw_audio_result.contents[0])
+        assert (raw_audio.start_time_ms or 0) >= 5000, (
+            f"Raw ContentRange('5000-') audio StartTime ({raw_audio.start_time_ms} ms) should be >= 5000 ms"
+        )
         assert len(from_audio.markdown or '') == len(raw_audio.markdown or ''), (
             f"Raw ContentRange('5000-') should return same markdown length as TimeRangeFrom(5s) "
             f"({len(from_audio.markdown or '')} vs {len(raw_audio.markdown or '')})"
