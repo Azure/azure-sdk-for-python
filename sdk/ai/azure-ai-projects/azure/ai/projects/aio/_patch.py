@@ -66,7 +66,6 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         self, endpoint: str, credential: AsyncTokenCredential, *, allow_preview: bool = False, **kwargs: Any
     ) -> None:
 
-        self._allow_preview = allow_preview
         self._console_logging_enabled: bool = (
             os.environ.get("AZURE_AI_PROJECTS_CONSOLE_LOGGING", "false").lower() == "true"
         )
