@@ -1,0 +1,18 @@
+emit:
+  - "@typespec/openapi3"
+  - "@azure-tools/typespec-python"
+options:
+  "@typespec/openapi3":
+    emitter-output-dir: "{output-dir}"
+  "@azure-tools/typespec-python":
+    emitter-output-dir: "{output-dir}"
+    package-name: "azure-ai-responses-server"
+    package-mode: "dataplane"
+    flavor: "azure"
+    generate-test: false
+    generate-sample: false
+imports:
+  - "@azure-tools/typespec-azure-core"
+  - "@azure-tools/typespec-azure-core/experimental"
+  - "@azure-tools/typespec-client-generator-core"
+  - "@azure-tools/openai-typespec/views/client-emitters/models/responses"
