@@ -12,7 +12,7 @@ from devtools_testutils import (
 import pytest
 from azure.appconfiguration import AzureAppConfigurationClient
 from azure.identity import DefaultAzureCredential
-from testcase import setup_configs
+from testcase import setup_configs, cleanup_test_resources
 
 # autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
 
@@ -42,6 +42,8 @@ def setup_app_config_keys():
     snapshot_names["ff_snapshot"] = ff_snap_name
 
     yield
+
+    cleanup_test_resources(client, snapshot_names=[snap_name, ff_snap_name])
 
 
 @pytest.fixture(scope="session", autouse=True)

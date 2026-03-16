@@ -255,9 +255,7 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
     @pytest.mark.live_test_only  # Needed to fix an azure core dependency compatibility issue
     @AppConfigProviderPreparer()
     @recorded_by_proxy_async
-    async def test_create_snapshot_and_load_provider_with_feature_flags(
-        self, appconfiguration_endpoint_string
-    ):
+    async def test_create_snapshot_and_load_provider_with_feature_flags(self, appconfiguration_endpoint_string):
         """Test loading provider with feature flags from a pre-created snapshot."""
         snapshot_name = conftest.snapshot_names["ff_snapshot"]
 
