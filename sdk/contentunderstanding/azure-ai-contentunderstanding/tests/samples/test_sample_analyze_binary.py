@@ -263,7 +263,7 @@ class TestSampleAnalyzeBinary(ContentUnderstandingClientTestBase):
 
         # Read the sample file (use multi-page document for ContentRange testing)
         tests_dir = os.path.dirname(os.path.dirname(__file__))
-        file_path = os.path.join(tests_dir, "test_data", "mixed_financial_docs.pdf")
+        file_path = os.path.join(tests_dir, "test_data", "mixed_financial_invoices.pdf")
         if not os.path.exists(file_path):
             file_path = os.path.join(tests_dir, "test_data", "sample_invoice.pdf")
 
@@ -375,5 +375,89 @@ class TestSampleAnalyzeBinary(ContentUnderstandingClientTestBase):
         )
         assert combine2_doc.start_page_number == 1, f"Combine should start at page 1, got {combine2_doc.start_page_number}"
         print(f"[PASS] Combine(Page(1), Pages(3,4)): {combine2_page_count} pages, {len(combine2_doc.markdown or '')} chars")
+
+        # --- Raw string ContentRange tests ---
+        # Verify raw string constructor produces identical results to factory methods.
+
+        # Raw string "2" — single page, equivalent to ContentRange.page(2)
+        print("\nVerifying raw ContentRange('2') matches Page(2)...")
+        raw_page2_poller = client.begin_analyze_binary(
+            analyzer_id="prebuilt-documentSearch",
+            binary_input=file_bytes,
+            content_range=ContentRange("2"),
+        )
+        raw_page2_result = raw_page2_poller.result()
+        raw_page2_doc = raw_page2_result.contents[0]
+        assert isinstance(raw_page2_doc, DocumentContent)
+        raw_page2_page_count = len(raw_page2_doc.pages) if raw_page2_doc.pages else 0
+        assert raw_page2_page_count == 1, f"Raw ContentRange('2') should return exactly 1 page, got {raw_page2_page_count}"
+        assert raw_page2_doc.start_page_number == 2, f"Raw ContentRange('2') should start at page 2"
+        assert raw_page2_doc.end_page_number == 2, f"Raw ContentRange('2') should end at page 2"
+        assert len(page2_doc.markdown or '') == len(raw_page2_doc.markdown or ''), (
+            f"Raw ContentRange('2') should return same markdown length as Page(2) "
+            f"({len(page2_doc.markdown or '')} vs {len(raw_page2_doc.markdown or '')})"
+        )
+        print(f"[PASS] Raw ContentRange('2'): matches Page(2) result")
+
+        # Raw string "1-3" — page range, equivalent to ContentRange.pages(1, 3)
+        print("\nVerifying raw ContentRange('1-3') matches Pages(1, 3)...")
+        raw_pages13_poller = client.begin_analyze_binary(
+            analyzer_id="prebuilt-documentSearch",
+            binary_input=file_bytes,
+            content_range=ContentRange("1-3"),
+        )
+        raw_pages13_result = raw_pages13_poller.result()
+        raw_pages13_doc = raw_pages13_result.contents[0]
+        assert isinstance(raw_pages13_doc, DocumentContent)
+        raw_pages13_page_count = len(raw_pages13_doc.pages) if raw_pages13_doc.pages else 0
+        assert raw_pages13_page_count == 3, f"Raw ContentRange('1-3') should return exactly 3 pages, got {raw_pages13_page_count}"
+        assert raw_pages13_doc.start_page_number == 1, f"Raw ContentRange('1-3') should start at page 1"
+        assert raw_pages13_doc.end_page_number == 3, f"Raw ContentRange('1-3') should end at page 3"
+        assert len(pages13_doc.markdown or '') == len(raw_pages13_doc.markdown or ''), (
+            f"Raw ContentRange('1-3') should return same markdown length as Pages(1,3) "
+            f"({len(pages13_doc.markdown or '')} vs {len(raw_pages13_doc.markdown or '')})"
+        )
+        print(f"[PASS] Raw ContentRange('1-3'): matches Pages(1, 3) result")
+
+        # Raw string "3-" — pages from, equivalent to ContentRange.pages_from(3)
+        print("\nVerifying raw ContentRange('3-') matches PagesFrom(3)...")
+        raw_from3_poller = client.begin_analyze_binary(
+            analyzer_id="prebuilt-documentSearch",
+            binary_input=file_bytes,
+            content_range=ContentRange("3-"),
+        )
+        raw_from3_result = raw_from3_poller.result()
+        raw_from3_doc = raw_from3_result.contents[0]
+        assert isinstance(raw_from3_doc, DocumentContent)
+        raw_from3_page_count = len(raw_from3_doc.pages) if raw_from3_doc.pages else 0
+        assert raw_from3_page_count == range_page_count, (
+            f"Raw ContentRange('3-') should return same page count as PagesFrom(3), "
+            f"got {raw_from3_page_count} vs {range_page_count}"
+        )
+        assert len(range_doc.markdown or '') == len(raw_from3_doc.markdown or ''), (
+            f"Raw ContentRange('3-') should return same markdown length as PagesFrom(3)"
+        )
+        print(f"[PASS] Raw ContentRange('3-'): matches PagesFrom(3) result")
+
+        # Raw string "1-3,5,9-" — combined ranges, equivalent to Combine(Pages(1,3), Page(5), PagesFrom(9))
+        print("\nVerifying raw ContentRange('1-3,5,9-')...")
+        raw_combine_poller = client.begin_analyze_binary(
+            analyzer_id="prebuilt-documentSearch",
+            binary_input=file_bytes,
+            content_range=ContentRange("1-3,5,9-"),
+        )
+        raw_combine_result = raw_combine_poller.result()
+        assert raw_combine_result.contents is not None
+        raw_combine_doc = raw_combine_result.contents[0]
+        assert isinstance(raw_combine_doc, DocumentContent)
+        raw_combine_page_count = len(raw_combine_doc.pages) if raw_combine_doc.pages else 0
+        assert raw_combine_page_count == combine_page_count, (
+            f"Raw ContentRange('1-3,5,9-') should return same page count as Combine equivalent, "
+            f"got {raw_combine_page_count} vs {combine_page_count}"
+        )
+        assert len(combine_doc.markdown or '') == len(raw_combine_doc.markdown or ''), (
+            f"Raw ContentRange('1-3,5,9-') should return same markdown length as Combine equivalent"
+        )
+        print(f"[PASS] Raw ContentRange('1-3,5,9-'): matches Combine result")
 
         print("\n[SUCCESS] All ContentRange binary test assertions passed")

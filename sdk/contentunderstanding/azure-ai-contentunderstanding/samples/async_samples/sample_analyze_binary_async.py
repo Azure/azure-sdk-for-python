@@ -130,6 +130,28 @@ async def main() -> None:
             )
         # [END analyze_binary_with_combined_content_range]
 
+        # [START analyze_binary_with_raw_content_range]
+        # You can also pass a range string directly to the ContentRange constructor.
+        # This is equivalent to using the factory methods and is useful for dynamically
+        # constructed or user-supplied ranges.
+        # Analyze pages 1-3, page 5, and pages 9 onward using a raw range string.
+        # This is equivalent to: ContentRange.combine(ContentRange.pages(1, 3), ContentRange.page(5), ContentRange.pages_from(9))
+        print("\nAnalyzing with raw ContentRange string '1-3,5,9-'...")
+        raw_range_poller = await client.begin_analyze_binary(
+            analyzer_id="prebuilt-documentSearch",
+            binary_input=file_bytes,
+            content_range=ContentRange("1-3,5,9-"),
+        )
+        raw_range_result: AnalysisResult = await raw_range_poller.result()
+
+        if isinstance(raw_range_result.contents[0], DocumentContent):
+            raw_doc = raw_range_result.contents[0]
+            print(
+                f"Raw ContentRange analysis returned pages"
+                f" {raw_doc.start_page_number} - {raw_doc.end_page_number}"
+            )
+        # [END analyze_binary_with_raw_content_range]
+
         # [START extract_markdown]
         print("\nMarkdown Content:")
         print("=" * 50)
