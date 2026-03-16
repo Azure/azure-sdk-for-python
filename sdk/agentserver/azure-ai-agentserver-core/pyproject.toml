@@ -56,20 +56,6 @@ readme = { file = ["README.md"], content-type = "text/markdown" }
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
 
-[tool.ruff]
-line-length = 120
-target-version = "py311"
-lint.select = ["E", "F", "B", "I"]   # E=pycodestyle errors, F=Pyflakes, B=bugbear, I=import sort
-lint.ignore = []
-fix = false
-exclude = [
-    "**/azure/ai/agentserver/core/models/",
-]
-
-[tool.ruff.lint.isort]
-known-first-party = ["azure.ai.agentserver.core"]
-combine-as-imports = true
-
 [tool.azure-sdk-build]
 breaking = false   # incompatible python version
 pyright = false
