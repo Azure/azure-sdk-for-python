@@ -1,10 +1,16 @@
 # Release History
 
-## 1.38.3 (Unreleased)
+## 1.38.4 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.38.3 (2026-03-12)
 
 ### Bugs Fixed
 
