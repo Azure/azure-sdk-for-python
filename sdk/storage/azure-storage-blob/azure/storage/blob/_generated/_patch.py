@@ -10,7 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import Any, Optional, TYPE_CHECKING
 
 from azure.core import PipelineClient
-from azure.core.pipeline import PipelineRequest
+from azure.core.pipeline import Pipeline, PipelineRequest
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 from ._client import BlobClient as GeneratedBlobClient
@@ -95,7 +95,12 @@ class AzureBlobStorage(GeneratedBlobClient):
         self._config = BlobClientConfiguration(url=url, credential=credential, **kwargs)
 
         if pipeline is not None:
-            self._client = PipelineClient(base_url=_endpoint, pipeline=pipeline)
+            # Wrap the pre-built pipeline to inject RangeHeaderPolicy
+            _wrapped_pipeline = Pipeline(
+                transport=pipeline._transport,
+                policies=[RangeHeaderPolicy()] + list(pipeline._impl_policies),
+            )
+            self._client = PipelineClient(base_url=_endpoint, pipeline=_wrapped_pipeline)
         else:
             _policies = kwargs.pop("policies", None)
             if _policies is None:

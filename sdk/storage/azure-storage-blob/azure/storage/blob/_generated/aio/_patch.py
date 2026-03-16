@@ -11,6 +11,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import Any, Optional, TYPE_CHECKING
 
 from azure.core import AsyncPipelineClient
+from azure.core.pipeline import AsyncPipeline
 
 from ._client import BlobClient as GeneratedBlobClient
 from ._configuration import BlobClientConfiguration as GeneratedBlobClientConfiguration
@@ -86,7 +87,12 @@ class AzureBlobStorage(GeneratedBlobClient):
         self._config = BlobClientConfiguration(url=url, credential=credential, **kwargs)
 
         if pipeline is not None:
-            self._client = AsyncPipelineClient(base_url=_endpoint, pipeline=pipeline)
+            # Wrap the pre-built pipeline to inject RangeHeaderPolicy
+            _wrapped_pipeline = AsyncPipeline(
+                transport=pipeline._transport,
+                policies=[RangeHeaderPolicy()] + list(pipeline._impl_policies),
+            )
+            self._client = AsyncPipelineClient(base_url=_endpoint, pipeline=_wrapped_pipeline)
         else:
             _policies = kwargs.pop("policies", None)
             if _policies is None:

@@ -539,7 +539,216 @@ class LeaseAccessConditions(_Model):
 # Alias: the old autorest-generated name was BlobItemInternal; the new TypeSpec-generated name is BlobItem.
 from ._models import BlobItem as BlobItemInternal  # noqa: E402
 
-__all__: list[str] = [
+"""
+
+Patch the new TypeSpec-generated models so they remain compatible with the
+old autorest-style serialization pipeline (``Serializer`` / ``Deserializer``
+from ``_utils.serialization``). The serialization code relies on class-level
+``_attribute_map``, ``_validation``, ``_xml_map``, ``is_xml_model()`` and
+``_create_xml_node()`` — none of which exist on the new ``model_base.Model``
+subclasses.  The wrappers below add exactly those attributes so that:
+
+1. The public ``_models.py`` can keep subclassing these generated models.
+2. The operations code can keep serializing / deserializing them unchanged.
+3. Forward-reference resolution in ``model_base`` finds *these* classes
+   (which inherit ``_is_model = True``) rather than the old
+   ``_serialization.Model`` versions.
+"""
+import xml.etree.ElementTree as ET
+from typing import Any, List
+
+from ._models import (
+    AccessPolicy as _GenAccessPolicy,
+    ArrowField as _GenArrowField,
+    CorsRule as _GenCorsRule,
+    Logging as _GenLogging,
+    Metrics as _GenMetrics,
+    RetentionPolicy as _GenRetentionPolicy,
+    StaticWebsite as _GenStaticWebsite,
+)
+
+
+# ---------------------------------------------------------------------------
+# Helper – XML node factory (same logic as _utils.serialization._create_xml_node)
+# ---------------------------------------------------------------------------
+
+
+def _create_xml_node(tag, prefix=None, ns=None):
+    if prefix and ns:
+        ET.register_namespace(prefix, ns)
+    if ns:
+        return ET.Element("{" + ns + "}" + tag)
+    return ET.Element(tag)
+
+
+# ---------------------------------------------------------------------------
+# Mixin – provides the four attributes / methods the old serializer expects
+# ---------------------------------------------------------------------------
+
+
+class _AutorestCompatMixin:
+    """Adds msrest-style (de)serialization hooks to ``model_base.Model`` subclasses."""
+
+    _attribute_map: dict = {}
+    _validation: dict = {}
+
+    @classmethod
+    def is_xml_model(cls) -> bool:
+        return bool(getattr(cls, "_xml_map", None))
+
+    @classmethod
+    def _create_xml_node(cls):
+        xml_map = getattr(cls, "_xml_map", {})
+        return _create_xml_node(
+            xml_map.get("name", cls.__name__),
+            xml_map.get("prefix"),
+            xml_map.get("ns"),
+        )
+
+
+# ---------------------------------------------------------------------------
+# Autorest-compatible wrappers for every model imported by public _models.py
+# ---------------------------------------------------------------------------
+
+
+class AccessPolicy(_AutorestCompatMixin, _GenAccessPolicy):
+    """AccessPolicy with autorest serialization compatibility."""
+
+    _attribute_map = {
+        "start": {"key": "Start", "type": "str"},
+        "expiry": {"key": "Expiry", "type": "str"},
+        "permission": {"key": "Permission", "type": "str"},
+    }
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ArrowField(_AutorestCompatMixin, _GenArrowField):
+    """ArrowField with autorest serialization compatibility."""
+
+    _validation = {
+        "type": {"required": True},
+    }
+    _attribute_map = {
+        "type": {"key": "Type", "type": "str"},
+        "name": {"key": "Name", "type": "str"},
+        "precision": {"key": "Precision", "type": "int"},
+        "scale": {"key": "Scale", "type": "int"},
+    }
+    _xml_map = {"name": "Field"}
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CorsRule(_AutorestCompatMixin, _GenCorsRule):
+    """CorsRule with autorest serialization compatibility."""
+
+    _validation = {
+        "allowed_origins": {"required": True},
+        "allowed_methods": {"required": True},
+        "allowed_headers": {"required": True},
+        "exposed_headers": {"required": True},
+        "max_age_in_seconds": {"required": True, "minimum": 0},
+    }
+    _attribute_map = {
+        "allowed_origins": {"key": "AllowedOrigins", "type": "str"},
+        "allowed_methods": {"key": "AllowedMethods", "type": "str"},
+        "allowed_headers": {"key": "AllowedHeaders", "type": "str"},
+        "exposed_headers": {"key": "ExposedHeaders", "type": "str"},
+        "max_age_in_seconds": {"key": "MaxAgeInSeconds", "type": "int"},
+    }
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Logging(_AutorestCompatMixin, _GenLogging):
+    """Logging with autorest serialization compatibility."""
+
+    _validation = {
+        "version": {"required": True},
+        "delete": {"required": True},
+        "read": {"required": True},
+        "write": {"required": True},
+        "retention_policy": {"required": True},
+    }
+    _attribute_map = {
+        "version": {"key": "Version", "type": "str"},
+        "delete": {"key": "Delete", "type": "bool"},
+        "read": {"key": "Read", "type": "bool"},
+        "write": {"key": "Write", "type": "bool"},
+        "retention_policy": {"key": "RetentionPolicy", "type": "RetentionPolicy"},
+    }
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Metrics(_AutorestCompatMixin, _GenMetrics):
+    """Metrics with autorest serialization compatibility."""
+
+    _validation = {
+        "enabled": {"required": True},
+    }
+    _attribute_map = {
+        "version": {"key": "Version", "type": "str"},
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "include_apis": {"key": "IncludeAPIs", "type": "bool"},
+        "retention_policy": {"key": "RetentionPolicy", "type": "RetentionPolicy"},
+    }
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RetentionPolicy(_AutorestCompatMixin, _GenRetentionPolicy):
+    """RetentionPolicy with autorest serialization compatibility."""
+
+    _validation = {
+        "enabled": {"required": True},
+        "days": {"minimum": 1},
+    }
+    _attribute_map = {
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "days": {"key": "Days", "type": "int"},
+        "allow_permanent_delete": {"key": "AllowPermanentDelete", "type": "bool"},
+    }
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StaticWebsite(_AutorestCompatMixin, _GenStaticWebsite):
+    """StaticWebsite with autorest serialization compatibility."""
+
+    _validation = {
+        "enabled": {"required": True},
+    }
+    _attribute_map = {
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "index_document": {"key": "IndexDocument", "type": "str"},
+        "error_document404_path": {"key": "ErrorDocument404Path", "type": "str"},
+        "default_index_document_path": {"key": "DefaultIndexDocumentPath", "type": "str"},
+    }
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+# ---------------------------------------------------------------------------
+# Public API
+# ---------------------------------------------------------------------------
+
+__all__: List[str] = [
+    "AccessPolicy",
+    "ArrowField",
+    "CorsRule",
+    "Logging",
+    "Metrics",
+    "RetentionPolicy",
+    "StaticWebsite",
     "AppendPositionAccessConditions",
     "BlobHTTPHeaders",
     "BlobItemInternal",
