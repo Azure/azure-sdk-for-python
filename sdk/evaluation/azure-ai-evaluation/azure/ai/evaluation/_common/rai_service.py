@@ -1044,6 +1044,15 @@ async def evaluate_with_rai_service_sync(
     :return: The EvalRunOutputItem containing the evaluation results (or parsed dict if legacy).
     :rtype: Union[EvalRunOutputItem, Dict[str, Union[str, float]]]
     """
+    # Normalize metric name based on endpoint:
+    # - Legacy annotation endpoint expects "hate_fairness" (service-side name)
+    # - Sync evals endpoint expects "hate_unfairness" (builtin.hate_unfairness)
+    metric_name_str = metric_name.value if hasattr(metric_name, "value") else metric_name
+    if use_legacy_endpoint and metric_name_str == "hate_unfairness":
+        metric_name = EvaluationMetrics.HATE_FAIRNESS
+    elif not use_legacy_endpoint and metric_name_str == "hate_fairness":
+        metric_name = EvaluationMetrics.HATE_UNFAIRNESS
+
     # Route to legacy endpoint if requested
     if use_legacy_endpoint:
         return await evaluate_with_rai_service(
@@ -1261,6 +1270,13 @@ async def evaluate_with_rai_service_sync_multimodal(
     :return: The EvalRunOutputItem or legacy response payload.
     :rtype: Union[Dict, EvalRunOutputItem]
     """
+    # Normalize metric name based on endpoint (same logic as evaluate_with_rai_service_sync)
+    metric_name_str = metric_name.value if hasattr(metric_name, "value") else metric_name
+    if use_legacy_endpoint and metric_name_str == "hate_unfairness":
+        metric_name = "hate_fairness"
+    elif not use_legacy_endpoint and metric_name_str == "hate_fairness":
+        metric_name = "hate_unfairness"
+
     # Route to legacy endpoint if requested
     if use_legacy_endpoint:
         return await evaluate_with_rai_service_multimodal(

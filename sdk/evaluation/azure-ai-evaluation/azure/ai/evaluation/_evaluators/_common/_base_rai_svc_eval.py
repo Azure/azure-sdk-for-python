@@ -14,6 +14,7 @@ from azure.ai.evaluation._common.constants import (
 from azure.ai.evaluation._common.rai_service import (
     evaluate_with_rai_service_sync,
     evaluate_with_rai_service_sync_multimodal,
+    evaluate_with_rai_service_multimodal,
 )
 from azure.ai.evaluation._common.utils import validate_azure_ai_project, is_onedp_project
 from azure.ai.evaluation._exceptions import EvaluationException
@@ -125,6 +126,8 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
     async def _evaluate_conversation(self, conversation: Dict) -> Dict[str, T]:
         """Evaluates content according to this evaluator's metric.
         Evaluates each turn separately to maintain per-turn granularity.
+        When using the legacy endpoint, sends the entire conversation in a single call
+        (matching pre-sync-migration behavior).
         """
         validate_conversation(conversation)
         messages = conversation["messages"]
@@ -132,10 +135,19 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         # Convert enum to string value
         metric_value = self._eval_metric.value if hasattr(self._eval_metric, "value") else self._eval_metric
 
-        # Extract conversation turns (user-assistant pairs)
+        # Legacy path: send entire conversation in a single call (pre-sync-migration behavior)
+        if self._use_legacy_endpoint:
+            result = await evaluate_with_rai_service_multimodal(
+                messages=messages,
+                metric_name=self._eval_metric,
+                project_scope=self._azure_ai_project,
+                credential=self._credential,
+            )
+            return result
+
+        # Sync path: evaluate each turn separately for per-turn granularity
         turns = self._extract_turns(messages)
 
-        # Evaluate each turn separately
         per_turn_results = []
         for turn in turns:
             turn_result = await evaluate_with_rai_service_sync_multimodal(
@@ -212,6 +224,10 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
             evaluator_name=self.__class__.__name__,
             use_legacy_endpoint=self._use_legacy_endpoint,
         )
+
+        # Legacy endpoint returns a pre-parsed dict from parse_response(); return directly
+        if self._use_legacy_endpoint:
+            return eval_result
 
         # Parse the EvalRunOutputItem format to the expected dict format
         return self._parse_eval_result(eval_result)
