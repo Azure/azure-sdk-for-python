@@ -225,6 +225,88 @@ class TestCrossPartitionQuery(unittest.TestCase):
                                   'PotentialCompositeIndexes': []}
         self.assertDictEqual(expected_index_metrics, index_metrics)
 
+    @pytest.mark.skip(reason="Emulator does not support query advisor yet")
+    def test_populate_query_advice(self):
+        doc_id = 'MyId' + str(uuid.uuid4())
+        document_definition = {
+            'pk': 'pk', 'id': doc_id, 'name': 'test document',
+            'tags': [{'name': 'python'}, {'name': 'cosmos'}],
+            'timestamp': '2099-01-01T00:00:00Z', 'ticks': 0, 'ts': 0
+        }
+        self.created_container.create_item(body=document_definition)
+
+        QUERY_ADVICE_HEADER = http_constants.HttpHeaders.QueryAdvice
+
+        # QA1000 - PartialArrayContains: ARRAY_CONTAINS with partial match
+        query_iterable = self.created_container.query_items(
+            query='SELECT * FROM c WHERE ARRAY_CONTAINS(c.tags, {"name": "python"}, true)',
+            partition_key='pk', populate_query_advice=True
+        )
+        list(query_iterable)
+        query_advice = self.created_container.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
+        self.assertIsNotNone(query_advice)
+        self.assertIn("QA1000", query_advice)
+
+        # QA1002 - Contains: CONTAINS usage
+        query_iterable = self.created_container.query_items(
+            query='SELECT * FROM c WHERE CONTAINS(c.name, "test")',
+            partition_key='pk', populate_query_advice=True
+        )
+        list(query_iterable)
+        query_advice = self.created_container.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
+        self.assertIsNotNone(query_advice)
+        self.assertIn("QA1002", query_advice)
+
+        # QA1003 - CaseInsensitiveStartsWithOrStringEquals: case-insensitive STARTSWITH
+        query_iterable = self.created_container.query_items(
+            query='SELECT * FROM c WHERE STARTSWITH(c.name, "test", true)',
+            partition_key='pk', populate_query_advice=True
+        )
+        list(query_iterable)
+        query_advice = self.created_container.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
+        self.assertIsNotNone(query_advice)
+        self.assertIn("QA1003", query_advice)
+
+        # QA1004 - CaseInsensitiveEndsWith: case-insensitive ENDSWITH
+        query_iterable = self.created_container.query_items(
+            query='SELECT * FROM c WHERE ENDSWITH(c.name, "document", true)',
+            partition_key='pk', populate_query_advice=True
+        )
+        list(query_iterable)
+        query_advice = self.created_container.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
+        self.assertIsNotNone(query_advice)
+        self.assertIn("QA1004", query_advice)
+
+        # QA1007 - GetCurrentDateTime: usage of GetCurrentDateTime
+        query_iterable = self.created_container.query_items(
+            query='SELECT * FROM c WHERE c.timestamp < GetCurrentDateTime()',
+            partition_key='pk', populate_query_advice=True
+        )
+        list(query_iterable)
+        query_advice = self.created_container.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
+        self.assertIsNotNone(query_advice)
+        self.assertIn("QA1007", query_advice)
+
+        # QA1008 - GetCurrentTicks: usage of GetCurrentTicks
+        query_iterable = self.created_container.query_items(
+            query='SELECT * FROM c WHERE c.ticks < GetCurrentTicks()',
+            partition_key='pk', populate_query_advice=True
+        )
+        list(query_iterable)
+        query_advice = self.created_container.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
+        self.assertIsNotNone(query_advice)
+        self.assertIn("QA1008", query_advice)
+
+        # QA1009 - GetCurrentTimestamp: usage of GetCurrentTimestamp
+        query_iterable = self.created_container.query_items(
+            query='SELECT * FROM c WHERE c.ts < GetCurrentTimestamp()',
+            partition_key='pk', populate_query_advice=True
+        )
+        list(query_iterable)
+        query_advice = self.created_container.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
+        self.assertIsNotNone(query_advice)
+        self.assertIn("QA1009", query_advice)
+
     def test_get_query_plan_through_gateway(self):
         self._validate_query_plan(query="Select top 10 value count(c.id) from c",
                                   container_link=self.created_container.container_link,

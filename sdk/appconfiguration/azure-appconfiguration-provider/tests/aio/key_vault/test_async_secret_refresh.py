@@ -102,7 +102,7 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
         )
 
         # Add a key vault reference to the client (this will use mock resolver)
-        appconfig_client = self.create_aad_sdk_client(appconfiguration_endpoint_string)
+        appconfig_client = self.create_appconfig_client(appconfiguration_endpoint_string)
 
         # Get and modify a key vault reference setting
         kv_setting = await appconfig_client.get_configuration_setting(key="secret", label="prod")
