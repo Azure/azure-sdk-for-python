@@ -60,7 +60,7 @@ parameters:
     default: false
   - name: OSName
     type: string
-  - name: ToxTestEnv
+  - name: CheckEnv
     type: string
     default: 'whl'
   - name: UseFederatedAuth
@@ -158,7 +158,7 @@ jobs:
             ${{ insert }}: ${{ parameters.EnvVars }}
           PythonVersion: $(PythonVersion)
           OSVmImage: $(OSVmImage)
-          ToxTestEnv: ${{ parameters.ToxTestEnv }}
+          CheckEnv: ${{ parameters.CheckEnv }}
           AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
           TestMarkArgument: ${{ parameters.TestMarkArgument }}
           InjectedPackages: ${{ parameters.InjectedPackages }}
