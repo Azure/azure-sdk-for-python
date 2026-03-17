@@ -46,9 +46,18 @@ LOGGER = logging.getLogger(__name__)
 # Metric names that differ between the sync evals endpoint and the legacy annotation endpoint.
 # Key = sync endpoint metric name, Value = legacy annotation API metric name.
 # Used bidirectionally: forward lookup for sync→legacy, reverse for legacy→sync.
+# Note: only metrics where the API request metric name differs should be here.
+# For XPIA and ECI, the legacy API uses the annotation_task, not MetricList,
+# so the metric name doesn't need remapping — but the response key does.
 _SYNC_TO_LEGACY_METRIC_NAMES: Dict[str, str] = {
     "hate_unfairness": "hate_fairness",
     "groundedness": "generic_groundedness",
+}
+
+# Legacy response key lookup: the annotation API may return results under a different
+# key than the sync metric name. This is a superset of _SYNC_TO_LEGACY_METRIC_NAMES.
+_SYNC_TO_LEGACY_RESPONSE_KEYS: Dict[str, str] = {
+    **_SYNC_TO_LEGACY_METRIC_NAMES,
     "indirect_attack": "xpia",
     "election_critical_information": "eci",
 }
@@ -463,9 +472,17 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
                 )
                 result[pm_metric_name + "_model"] = parsed_response["model"] if "model" in parsed_response else ""
             return result
+        # Check for metric_name in response; also check legacy key name if different
+        response_key = metric_name
         if metric_name not in batch_response[0]:
-            return {}
-        response = batch_response[0][metric_name]
+            legacy_key = _SYNC_TO_LEGACY_RESPONSE_KEYS.get(
+                metric_name.value if hasattr(metric_name, "value") else metric_name
+            )
+            if legacy_key and legacy_key in batch_response[0]:
+                response_key = legacy_key
+            else:
+                return {}
+        response = batch_response[0][response_key]
         response = response.replace("false", "False")
         response = response.replace("true", "True")
         parsed_response = literal_eval(response)
@@ -557,13 +574,21 @@ def _parse_content_harm_response(
     }
 
     response = batch_response[0]
+    # Check for metric_name in response; also check legacy key name if different
+    response_key = metric_name
     if metric_name not in response:
-        return result
+        legacy_key = _SYNC_TO_LEGACY_RESPONSE_KEYS.get(
+            metric_name.value if hasattr(metric_name, "value") else metric_name
+        )
+        if legacy_key and legacy_key in response:
+            response_key = legacy_key
+        else:
+            return result
 
     try:
-        harm_response = literal_eval(response[metric_name])
+        harm_response = literal_eval(response[response_key])
     except Exception:  # pylint: disable=broad-exception-caught
-        harm_response = response[metric_name]
+        harm_response = response[response_key]
 
     total_tokens = 0
     prompt_tokens = 0
