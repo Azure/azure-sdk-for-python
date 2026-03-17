@@ -38,6 +38,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-10-01-preview/ServiceDeleteOperation_example.json
+# x-ms-original-file: 2026-02-01/ServiceDeleteOperation_example.json
 if __name__ == "__main__":
     main()

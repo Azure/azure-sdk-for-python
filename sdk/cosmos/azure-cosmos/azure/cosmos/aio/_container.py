@@ -42,7 +42,7 @@ from .._base import (_build_properties_cache, _deserialize_throughput, _replace_
                      build_options as _build_options, GenerateGuidId, validate_cache_staleness_value)
 from .._change_feed.feed_range_internal import FeedRangeInternalEpk
 
-from .._cosmos_responses import CosmosDict, CosmosList
+from .._cosmos_responses import CosmosDict, CosmosList, CosmosAsyncItemPaged
 from ._cosmos_span_attributes_async import cosmos_span_attributes_async
 from .._constants import _Constants as Constants, TimeoutScope
 from .._routing.routing_range import Range
@@ -555,13 +555,14 @@ class ContainerProxy:
             partition_key: PartitionKeyType,
             populate_index_metrics: Optional[bool] = None,
             populate_query_metrics: Optional[bool] = None,
+            populate_query_advice: Optional[bool] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
             session_token: Optional[str] = None,
             throughput_bucket: Optional[int] = None,
             availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
             **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
+    ) -> CosmosAsyncItemPaged:
         """Return all results matching the given `query`.
 
         You can use any value for the container name in the FROM clause, but
@@ -596,6 +597,9 @@ class ContainerProxy:
             existing indexes and how it could use potential new indexes. Please note that this option will incur
             overhead, so it should be enabled only when debugging slow queries.
         :keyword bool populate_query_metrics: Enable returning query metrics in response headers.
+        :keyword bool populate_query_advice: Used to obtain the query advice to understand aspects of the query that can
+            be optimized. Please note that this option will incur additional latency overhead, so it should be enabled
+            when debugging queries.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
@@ -609,7 +613,7 @@ class ContainerProxy:
             or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :returns: An Iterable of items (dicts).
-        :rtype: AsyncItemPaged[dict[str, Any]]
+        :rtype: CosmosAsyncItemPaged
 
         .. admonition:: Example:
 
@@ -643,13 +647,14 @@ class ContainerProxy:
             parameters: Optional[list[dict[str, object]]] = None,
             populate_index_metrics: Optional[bool] = None,
             populate_query_metrics: Optional[bool] = None,
+            populate_query_advice: Optional[bool] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
             session_token: Optional[str] = None,
             throughput_bucket: Optional[int] = None,
             availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
             **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
+    ) -> CosmosAsyncItemPaged:
         """Return all results matching the given `query`.
 
         You can use any value for the container name in the FROM clause, but
@@ -681,6 +686,9 @@ class ContainerProxy:
             existing indexes and how it could use potential new indexes. Please note that this option will incur
             overhead, so it should be enabled only when debugging slow queries.
         :keyword bool populate_query_metrics: Enable returning query metrics in response headers.
+        :keyword bool populate_query_advice: Used to obtain the query advice to understand aspects of the query that can
+            be optimized. Please note that this option will incur additional latency overhead, so it should be enabled
+            when debugging queries.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
@@ -694,7 +702,7 @@ class ContainerProxy:
             or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :returns: An Iterable of items (dicts).
-        :rtype: AsyncItemPaged[dict[str, Any]]
+        :rtype: CosmosAsyncItemPaged
 
         .. admonition:: Example:
 
@@ -727,13 +735,14 @@ class ContainerProxy:
             parameters: Optional[list[dict[str, object]]] = None,
             populate_index_metrics: Optional[bool] = None,
             populate_query_metrics: Optional[bool] = None,
+            populate_query_advice: Optional[bool] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
             session_token: Optional[str] = None,
             throughput_bucket: Optional[int] = None,
             availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
             **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
+    ) -> CosmosAsyncItemPaged:
         """Return all results matching the given `query`.
 
         You can use any value for the container name in the FROM clause, but
@@ -764,6 +773,9 @@ class ContainerProxy:
             existing indexes and how it could use potential new indexes. Please note that this option will incur
             overhead, so it should be enabled only when debugging slow queries.
         :keyword bool populate_query_metrics: Enable returning query metrics in response headers.
+        :keyword bool populate_query_advice: Used to obtain the query advice to understand aspects of the query that can
+            be optimized. Please note that this option will incur additional latency overhead, so it should be enabled
+            when debugging queries.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
@@ -777,7 +789,7 @@ class ContainerProxy:
             or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :returns: An Iterable of items (dicts).
-        :rtype: AsyncItemPaged[Dict[str, Any]]
+        :rtype: CosmosAsyncItemPaged
 
         .. admonition:: Example:
 
@@ -803,7 +815,7 @@ class ContainerProxy:
         self,
         *args: Any,
         **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
+    ) -> CosmosAsyncItemPaged:
         """Return all results matching the given `query`.
 
         You can use any value for the container name in the FROM clause, but
@@ -841,6 +853,9 @@ class ContainerProxy:
         :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
             existing indexes and how it could use potential new indexes. Please note that this option will incur
             overhead, so it should be enabled only when debugging slow queries.
+        :keyword bool populate_query_advice: Used to obtain the query advice to understand aspects of the query that can
+            be optimized. Please note that this option will incur additional latency overhead, so it should be enabled
+            when debugging queries.
         :keyword bool populate_query_metrics: Enable returning query metrics in response headers.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
@@ -855,7 +870,7 @@ class ContainerProxy:
             or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :returns: An Iterable of items (dicts).
-        :rtype: AsyncItemPaged[dict[str, Any]]
+        :rtype: CosmosAsyncItemPaged
 
         .. admonition:: Example:
 
@@ -884,6 +899,8 @@ class ContainerProxy:
             feed_options["populateQueryMetrics"] = kwargs.pop("populate_query_metrics")
         if utils.valid_key_value_exist(kwargs, "populate_index_metrics"):
             feed_options["populateIndexMetrics"] = kwargs.pop("populate_index_metrics")
+        if utils.valid_key_value_exist(kwargs, "populate_query_advice"):
+            feed_options["populateQueryAdvice"] = kwargs.pop("populate_query_advice")
         if utils.valid_key_value_exist(kwargs, "enable_scan_in_query"):
             feed_options["enableScanInQuery"] = kwargs.pop("enable_scan_in_query")
         if utils.valid_key_value_exist(kwargs, "max_integrated_cache_staleness_in_ms"):

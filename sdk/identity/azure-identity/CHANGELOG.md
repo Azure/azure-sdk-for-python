@@ -10,6 +10,16 @@
 
 ### Other Changes
 
+## 1.25.3 (2026-03-12)
+
+### Bugs Fixed
+
+- Fixed an issue where an expired token could skip refresh when a recent token request was made, due to the retry delay taking precedence over expiration. ([#45496](https://github.com/Azure/azure-sdk-for-python/pull/45496))
+
+### Other Changes
+
+- Bumped minimum dependency on `msal` to `>=1.35.1`.
+
 ## 1.26.0b2 (2026-02-11)
 
 ### Breaking Changes

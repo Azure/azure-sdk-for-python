@@ -1,6 +1,34 @@
 # Release History
 
-## 1.15.1 (Unreleased)
+## 1.16.1 (Unreleased)
+
+### Bugs Fixed
+- Fixed inconsistency where sample data in evaluation result items did not match the generated sample data from corresponding input rows, ensuring proper synchronization between row-level input samples and their associated evaluation output items.
+
+## 1.16.0 (2026-03-10)
+
+### Bugs Fixed
+- Fixed `UnicodeDecodeError` on Windows when reading red team JSONL files containing non-ASCII characters (UnicodeConfusable strategy, CJK languages) by adding explicit `encoding="utf-8"` to all file open calls in the result processing path.
+- Fixed `NotFoundError: 404` when using `model_config` dict target with Foundry-style endpoints (`*.services.ai.azure.com`) by appending `/openai/v1` to the endpoint URL for PyRIT compatibility.
+- Fixed red team scan status stuck at `in_progress` in results.json despite the scan completing, by treating leftover `pending` entries as `failed`.
+- Fixed `ungrounded_attributes` risk category being silently skipped due to a cache key mismatch (`isa` vs `ungrounded_attributes`) in the Foundry execution path.
+- Fixed RAI evaluation service errors (`ServiceInvocationException`) incorrectly inflating attack success rate by treating error responses as undetermined instead of attack success.
+- Fixed Foundry red team double-evaluation that caused ~3x scan latency by removing redundant evaluation_processor.evaluate() call.
+- Fixed lost red team attack details where baseline overwrites wiped evaluation results.
+- Fixed incorrect per_testing_criteria that showed attack strategies alongside risk categories.
+- Fixed metadata leak of internal scorer fields (attack_success, attack_strategy, score) into results.json.
+- Improved error logging with run_id, display_name, and full stack traces for red team scan failures.
+- Fixed httpx read timeout errors during red team scans by configuring explicit HTTP timeout on PyRIT OpenAIChatTarget instances (default: 180s, configurable via `_http_timeout` scan kwarg).
+- Fixed `InvalidInputError` crash when evaluating agent tool output containing unresolvable relative image paths from Document Intelligence indexed PDFs, by gracefully falling back to text representation.
+- Fixed `InvalidInputError` crash on markdown image references with empty alt text (e.g. `![](figures/14.2)`) from Document Intelligence by allowing empty alt text in the image URL parser.
+
+## 1.15.2 (2026-02-23)
+
+### Bugs Fixed
+
+- Fixed batch evaluation to report per-line errors only on the rows that failed.
+
+## 1.15.1 (2026-02-19)
 
 ### Bugs Fixed
 

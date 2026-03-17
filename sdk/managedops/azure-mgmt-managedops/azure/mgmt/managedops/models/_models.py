@@ -9,7 +9,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_field
 
@@ -53,28 +53,25 @@ class AzureMonitorInformation(_Model):
 
     :ivar dcr_id: ID of Data Collection Rule (DCR) associated with this service. Required.
     :vartype dcr_id: str
-    :ivar enablement_status: Indicates whether the service is enabled. Required. Is one of the
-     following types: Literal["Enabled"], Literal["InProgress"], Literal["Failed"],
-     Literal["Disabled"], str
-    :vartype enablement_status: str or str or str or str or str
+    :ivar enablement_status: Indicates whether the service is enabled. Required. Known values are:
+     "Enabled", "InProgress", "Failed", and "Disabled".
+    :vartype enablement_status: str or ~azure.mgmt.managedops.models.EnablementState
     """
 
     dcr_id: str = rest_field(name="dcrId", visibility=["read", "create", "update", "delete", "query"])
     """ID of Data Collection Rule (DCR) associated with this service. Required."""
-    enablement_status: Union[Literal["Enabled"], Literal["InProgress"], Literal["Failed"], Literal["Disabled"], str] = (
-        rest_field(name="enablementStatus", visibility=["read", "create", "update", "delete", "query"])
+    enablement_status: Union[str, "_models.EnablementState"] = rest_field(
+        name="enablementStatus", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Indicates whether the service is enabled. Required. Is one of the following types:
-     Literal[\"Enabled\"], Literal[\"InProgress\"], Literal[\"Failed\"], Literal[\"Disabled\"], str"""
+    """Indicates whether the service is enabled. Required. Known values are: \"Enabled\",
+     \"InProgress\", \"Failed\", and \"Disabled\"."""
 
     @overload
     def __init__(
         self,
         *,
         dcr_id: str,
-        enablement_status: Union[
-            Literal["Enabled"], Literal["InProgress"], Literal["Failed"], Literal["Disabled"], str
-        ],
+        enablement_status: Union[str, "_models.EnablementState"],
     ) -> None: ...
 
     @overload
@@ -124,28 +121,25 @@ class ChangeTrackingInformation(_Model):
 
     :ivar dcr_id: ID of Data Collection Rule (DCR) associated with this service. Required.
     :vartype dcr_id: str
-    :ivar enablement_status: Indicates whether the service is enabled. Required. Is one of the
-     following types: Literal["Enabled"], Literal["InProgress"], Literal["Failed"],
-     Literal["Disabled"], str
-    :vartype enablement_status: str or str or str or str or str
+    :ivar enablement_status: Indicates whether the service is enabled. Required. Known values are:
+     "Enabled", "InProgress", "Failed", and "Disabled".
+    :vartype enablement_status: str or ~azure.mgmt.managedops.models.EnablementState
     """
 
     dcr_id: str = rest_field(name="dcrId", visibility=["read", "create", "update", "delete", "query"])
     """ID of Data Collection Rule (DCR) associated with this service. Required."""
-    enablement_status: Union[Literal["Enabled"], Literal["InProgress"], Literal["Failed"], Literal["Disabled"], str] = (
-        rest_field(name="enablementStatus", visibility=["read", "create", "update", "delete", "query"])
+    enablement_status: Union[str, "_models.EnablementState"] = rest_field(
+        name="enablementStatus", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Indicates whether the service is enabled. Required. Is one of the following types:
-     Literal[\"Enabled\"], Literal[\"InProgress\"], Literal[\"Failed\"], Literal[\"Disabled\"], str"""
+    """Indicates whether the service is enabled. Required. Known values are: \"Enabled\",
+     \"InProgress\", \"Failed\", and \"Disabled\"."""
 
     @overload
     def __init__(
         self,
         *,
         dcr_id: str,
-        enablement_status: Union[
-            Literal["Enabled"], Literal["InProgress"], Literal["Failed"], Literal["Disabled"], str
-        ],
+        enablement_status: Union[str, "_models.EnablementState"],
     ) -> None: ...
 
     @overload
@@ -162,25 +156,22 @@ class ChangeTrackingInformation(_Model):
 class DefenderCspmInformation(_Model):
     """Defender Cloud Security Posture Management (CSPM) service information.
 
-    :ivar enablement_status: Indicates whether the service is enabled. Required. Is one of the
-     following types: Literal["Enabled"], Literal["InProgress"], Literal["Failed"],
-     Literal["Disabled"], str
-    :vartype enablement_status: str or str or str or str or str
+    :ivar enablement_status: Indicates whether the service is enabled. Required. Known values are:
+     "Enabled", "InProgress", "Failed", and "Disabled".
+    :vartype enablement_status: str or ~azure.mgmt.managedops.models.EnablementState
     """
 
-    enablement_status: Union[Literal["Enabled"], Literal["InProgress"], Literal["Failed"], Literal["Disabled"], str] = (
-        rest_field(name="enablementStatus", visibility=["read", "create", "update", "delete", "query"])
+    enablement_status: Union[str, "_models.EnablementState"] = rest_field(
+        name="enablementStatus", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Indicates whether the service is enabled. Required. Is one of the following types:
-     Literal[\"Enabled\"], Literal[\"InProgress\"], Literal[\"Failed\"], Literal[\"Disabled\"], str"""
+    """Indicates whether the service is enabled. Required. Known values are: \"Enabled\",
+     \"InProgress\", \"Failed\", and \"Disabled\"."""
 
     @overload
     def __init__(
         self,
         *,
-        enablement_status: Union[
-            Literal["Enabled"], Literal["InProgress"], Literal["Failed"], Literal["Disabled"], str
-        ],
+        enablement_status: Union[str, "_models.EnablementState"],
     ) -> None: ...
 
     @overload
@@ -197,25 +188,22 @@ class DefenderCspmInformation(_Model):
 class DefenderForServersInformation(_Model):
     """Defender for Servers service information.
 
-    :ivar enablement_status: Indicates whether the service is enabled. Required. Is one of the
-     following types: Literal["Enabled"], Literal["InProgress"], Literal["Failed"],
-     Literal["Disabled"], str
-    :vartype enablement_status: str or str or str or str or str
+    :ivar enablement_status: Indicates whether the service is enabled. Required. Known values are:
+     "Enabled", "InProgress", "Failed", and "Disabled".
+    :vartype enablement_status: str or ~azure.mgmt.managedops.models.EnablementState
     """
 
-    enablement_status: Union[Literal["Enabled"], Literal["InProgress"], Literal["Failed"], Literal["Disabled"], str] = (
-        rest_field(name="enablementStatus", visibility=["read", "create", "update", "delete", "query"])
+    enablement_status: Union[str, "_models.EnablementState"] = rest_field(
+        name="enablementStatus", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Indicates whether the service is enabled. Required. Is one of the following types:
-     Literal[\"Enabled\"], Literal[\"InProgress\"], Literal[\"Failed\"], Literal[\"Disabled\"], str"""
+    """Indicates whether the service is enabled. Required. Known values are: \"Enabled\",
+     \"InProgress\", \"Failed\", and \"Disabled\"."""
 
     @overload
     def __init__(
         self,
         *,
-        enablement_status: Union[
-            Literal["Enabled"], Literal["InProgress"], Literal["Failed"], Literal["Disabled"], str
-        ],
+        enablement_status: Union[str, "_models.EnablementState"],
     ) -> None: ...
 
     @overload
@@ -241,12 +229,12 @@ class DesiredConfiguration(_Model):
     :ivar user_assigned_managed_identity_id: User assigned Managed Identity used to perform
      operations on machines managed by Ops360. Required.
     :vartype user_assigned_managed_identity_id: str
-    :ivar defender_for_servers: Desired enablement state of the Defender For Servers service. Is
-     one of the following types: Literal["Enable"], Literal["Disable"], str
-    :vartype defender_for_servers: str or str or str
+    :ivar defender_for_servers: Desired enablement state of the Defender For Servers service. Known
+     values are: "Enable" and "Disable".
+    :vartype defender_for_servers: str or ~azure.mgmt.managedops.models.DesiredEnablementState
     :ivar defender_cspm: Desired enablement state of the Defender Cloud Security Posture Management
-     (CSPM) service. Is one of the following types: Literal["Enable"], Literal["Disable"], str
-    :vartype defender_cspm: str or str or str
+     (CSPM) service. Known values are: "Enable" and "Disable".
+    :vartype defender_cspm: str or ~azure.mgmt.managedops.models.DesiredEnablementState
     """
 
     change_tracking_and_inventory: "_models.ChangeTrackingConfiguration" = rest_field(
@@ -262,16 +250,16 @@ class DesiredConfiguration(_Model):
     )
     """User assigned Managed Identity used to perform operations on machines managed by Ops360.
      Required."""
-    defender_for_servers: Optional[Union[Literal["Enable"], Literal["Disable"], str]] = rest_field(
+    defender_for_servers: Optional[Union[str, "_models.DesiredEnablementState"]] = rest_field(
         name="defenderForServers", visibility=["read", "create", "update"]
     )
-    """Desired enablement state of the Defender For Servers service. Is one of the following types:
-     Literal[\"Enable\"], Literal[\"Disable\"], str"""
-    defender_cspm: Optional[Union[Literal["Enable"], Literal["Disable"], str]] = rest_field(
+    """Desired enablement state of the Defender For Servers service. Known values are: \"Enable\" and
+     \"Disable\"."""
+    defender_cspm: Optional[Union[str, "_models.DesiredEnablementState"]] = rest_field(
         name="defenderCspm", visibility=["read", "create", "update"]
     )
-    """Desired enablement state of the Defender Cloud Security Posture Management (CSPM) service. Is
-     one of the following types: Literal[\"Enable\"], Literal[\"Disable\"], str"""
+    """Desired enablement state of the Defender Cloud Security Posture Management (CSPM) service.
+     Known values are: \"Enable\" and \"Disable\"."""
 
     @overload
     def __init__(
@@ -280,8 +268,8 @@ class DesiredConfiguration(_Model):
         change_tracking_and_inventory: "_models.ChangeTrackingConfiguration",
         azure_monitor_insights: "_models.AzureMonitorConfiguration",
         user_assigned_managed_identity_id: str,
-        defender_for_servers: Optional[Union[Literal["Enable"], Literal["Disable"], str]] = None,
-        defender_cspm: Optional[Union[Literal["Enable"], Literal["Disable"], str]] = None,
+        defender_for_servers: Optional[Union[str, "_models.DesiredEnablementState"]] = None,
+        defender_cspm: Optional[Union[str, "_models.DesiredEnablementState"]] = None,
     ) -> None: ...
 
     @overload
@@ -298,31 +286,31 @@ class DesiredConfiguration(_Model):
 class DesiredConfigurationUpdate(_Model):
     """Updatable parameters in the Desired configuration input.
 
-    :ivar defender_for_servers: Desired enablement state of the Defender For Servers service. Is
-     one of the following types: Literal["Enable"], Literal["Disable"], str
-    :vartype defender_for_servers: str or str or str
+    :ivar defender_for_servers: Desired enablement state of the Defender For Servers service. Known
+     values are: "Enable" and "Disable".
+    :vartype defender_for_servers: str or ~azure.mgmt.managedops.models.DesiredEnablementState
     :ivar defender_cspm: Desired enablement state of the Defender Cloud Security Posture Management
-     (CSPM) service. Is one of the following types: Literal["Enable"], Literal["Disable"], str
-    :vartype defender_cspm: str or str or str
+     (CSPM) service. Known values are: "Enable" and "Disable".
+    :vartype defender_cspm: str or ~azure.mgmt.managedops.models.DesiredEnablementState
     """
 
-    defender_for_servers: Optional[Union[Literal["Enable"], Literal["Disable"], str]] = rest_field(
+    defender_for_servers: Optional[Union[str, "_models.DesiredEnablementState"]] = rest_field(
         name="defenderForServers", visibility=["read", "create", "update"]
     )
-    """Desired enablement state of the Defender For Servers service. Is one of the following types:
-     Literal[\"Enable\"], Literal[\"Disable\"], str"""
-    defender_cspm: Optional[Union[Literal["Enable"], Literal["Disable"], str]] = rest_field(
+    """Desired enablement state of the Defender For Servers service. Known values are: \"Enable\" and
+     \"Disable\"."""
+    defender_cspm: Optional[Union[str, "_models.DesiredEnablementState"]] = rest_field(
         name="defenderCspm", visibility=["read", "create", "update"]
     )
-    """Desired enablement state of the Defender Cloud Security Posture Management (CSPM) service. Is
-     one of the following types: Literal[\"Enable\"], Literal[\"Disable\"], str"""
+    """Desired enablement state of the Defender Cloud Security Posture Management (CSPM) service.
+     Known values are: \"Enable\" and \"Disable\"."""
 
     @overload
     def __init__(
         self,
         *,
-        defender_for_servers: Optional[Union[Literal["Enable"], Literal["Disable"], str]] = None,
-        defender_cspm: Optional[Union[Literal["Enable"], Literal["Disable"], str]] = None,
+        defender_for_servers: Optional[Union[str, "_models.DesiredEnablementState"]] = None,
+        defender_cspm: Optional[Union[str, "_models.DesiredEnablementState"]] = None,
     ) -> None: ...
 
     @overload
@@ -411,25 +399,22 @@ class ErrorResponse(_Model):
 class GuestConfigurationInformation(_Model):
     """Azure Policy and Machine Configuration service information.
 
-    :ivar enablement_status: Indicates whether the service is enabled. Required. Is one of the
-     following types: Literal["Enabled"], Literal["InProgress"], Literal["Failed"],
-     Literal["Disabled"], str
-    :vartype enablement_status: str or str or str or str or str
+    :ivar enablement_status: Indicates whether the service is enabled. Required. Known values are:
+     "Enabled", "InProgress", "Failed", and "Disabled".
+    :vartype enablement_status: str or ~azure.mgmt.managedops.models.EnablementState
     """
 
-    enablement_status: Union[Literal["Enabled"], Literal["InProgress"], Literal["Failed"], Literal["Disabled"], str] = (
-        rest_field(name="enablementStatus", visibility=["read", "create", "update", "delete", "query"])
+    enablement_status: Union[str, "_models.EnablementState"] = rest_field(
+        name="enablementStatus", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Indicates whether the service is enabled. Required. Is one of the following types:
-     Literal[\"Enabled\"], Literal[\"InProgress\"], Literal[\"Failed\"], Literal[\"Disabled\"], str"""
+    """Indicates whether the service is enabled. Required. Known values are: \"Enabled\",
+     \"InProgress\", \"Failed\", and \"Disabled\"."""
 
     @overload
     def __init__(
         self,
         *,
-        enablement_status: Union[
-            Literal["Enabled"], Literal["InProgress"], Literal["Failed"], Literal["Disabled"], str
-        ],
+        enablement_status: Union[str, "_models.EnablementState"],
     ) -> None: ...
 
     @overload
@@ -906,25 +891,22 @@ class SystemData(_Model):
 class UpdateManagerInformation(_Model):
     """Azure Update Manager service information.
 
-    :ivar enablement_status: Indicates whether the service is enabled. Required. Is one of the
-     following types: Literal["Enabled"], Literal["InProgress"], Literal["Failed"],
-     Literal["Disabled"], str
-    :vartype enablement_status: str or str or str or str or str
+    :ivar enablement_status: Indicates whether the service is enabled. Required. Known values are:
+     "Enabled", "InProgress", "Failed", and "Disabled".
+    :vartype enablement_status: str or ~azure.mgmt.managedops.models.EnablementState
     """
 
-    enablement_status: Union[Literal["Enabled"], Literal["InProgress"], Literal["Failed"], Literal["Disabled"], str] = (
-        rest_field(name="enablementStatus", visibility=["read", "create", "update", "delete", "query"])
+    enablement_status: Union[str, "_models.EnablementState"] = rest_field(
+        name="enablementStatus", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Indicates whether the service is enabled. Required. Is one of the following types:
-     Literal[\"Enabled\"], Literal[\"InProgress\"], Literal[\"Failed\"], Literal[\"Disabled\"], str"""
+    """Indicates whether the service is enabled. Required. Known values are: \"Enabled\",
+     \"InProgress\", \"Failed\", and \"Disabled\"."""
 
     @overload
     def __init__(
         self,
         *,
-        enablement_status: Union[
-            Literal["Enabled"], Literal["InProgress"], Literal["Failed"], Literal["Disabled"], str
-        ],
+        enablement_status: Union[str, "_models.EnablementState"],
     ) -> None: ...
 
     @overload

@@ -52,7 +52,7 @@
 
 # ServiceLabel: %AI Projects %Service Attention
 # PRLabel: %AI Projects
-/sdk/ai/azure-ai-projects/    @dargilco @glharper @howieleung @kingernupur @nick863 @trangevi @trrwilson
+/sdk/ai/azure-ai-projects/    @dargilco @glharper @howieleung @kingernupur @nick863 @trangevi @trrwilson @bobogogo1990
 
 # PRLabel: %App Configuration
 /sdk/appconfiguration/    @albertofori @avanigupta @jimmyca15 @mrm9084 @rossgrambo @xiangyan99
@@ -339,6 +339,8 @@
 # PRLabel: %Monitor
 /sdk/monitor/azure-monitor-ingestion/    @Azure/azure-sdk-write-monitor-data-plane
 
+# PRLabel: %Cognitive - Content Understanding
+/sdk/contentunderstanding/                                           @bojunehsu @changjian-wang @chienyuanchang @yungshinlintw 
 # PRLabel: %Monitor
 /sdk/monitor/azure-monitor-query/    @Azure/azure-sdk-write-monitor-query-logs
 

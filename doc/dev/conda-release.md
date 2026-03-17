@@ -10,8 +10,9 @@ Azure SDK for Python ships new releases to Conda on a **quarterly cadence** (Mar
 This section covers instructions for managing a quarterly conda release, which require a few manual steps.
 
 ### Prerequisites
-- Create an account on https://anaconda.org/
-- Contact Steve Dower to join the AzureSDK group on https://anaconda.org/microsoft
+- Create an account on https://anaconda.org/ 
+   - Use the "sign up with email" option with your Microsoft email
+- Email or message Steve Dower with your Anaconda username, and request access to the AzureSDK group on https://anaconda.org/microsoft.
 
 ### Automated PR Creation
 
@@ -20,8 +21,20 @@ The **[Conda Update Pipeline](https://dev.azure.com/azure-sdk/internal/_build?de
 - Detects which packages have new GA versions since the last conda release, using the [Python Packages CSV](https://github.com/Azure/azure-sdk/blob/main/_data/releases/latest/python-packages.csv) as the source of truth.
 - Updates package versions across the repo's conda configuration files.
 - Opens a PR on `main` with all the necessary changes.
+   - The PR link can be found in the pipeline output for the "Create pull request" step
 
 You can also trigger it manually from [Azure DevOps](https://dev.azure.com/azure-sdk/internal/_build?definitionId=8044&_a=summary) if needed.
+
+#### Conda File Updates
+
+The "Update Conda Files" step of the pipeline runs a script to update Conda files. It logs changes made, and outputs packages that may need manual adjustments. It may output:
+- **Deprecated packages**: 
+   - Packages with existing Conda metadata that were missing from the CSV will be flagged. 
+   - Check if these are really deprecated. If so, related package metadata should be kept until the package is retired, and then it can be fully deleted.
+- **Unknown bundle packages**: 
+   - Packages need to specify if they are released individually or as a bundle to Conda, in their `pyproject.toml`. Packages without this metadata will be flagged.
+- **Other**: 
+   - Packages may be flagged when encountering various unexpected behaviors or exceptions, such as failing to generate or process its metadata files, etc. Manually check these to ensure changes are correct.
 
 #### Dry Run
 
@@ -39,16 +52,20 @@ The auto-generated PR includes:
 ### Review, Approve, and Cleanup (manual)
 
 1. **Review the PR.** Check the report in the pipeline output for any packages that encountered unexpected behavior and may need manual fixes.
+   - The PR triggers a [public build](https://dev.azure.com/azure-sdk/public/_build?definitionId=8092) which validates the changes to the Conda recipes.
 
-2. **Handle new data plane packages** (if any are listed in the pipeline output):
+2. **Merge the PR** into `main`.
+
+3. **Handle new data plane packages** (if any are listed in the pipeline output):
    - Submit the [Conda placeholder form](https://forms.office.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR180k2XpSUFBtXHTh8-jMUlUNlA1MFpZOVhZME1aNU1EU1Y3SjZRU0JNRC4u) to create a private dummy library on Conda for **each new data plane** package (group name AzureSdk). 
       - ⚠️**This must be done before uploading to Conda / approving the upload stage.** ⚠️
-      - The form triggers a pipeline to push the placeholder library. Verify from the Anaconda portal that the placeholders have been added before proceeding.
+      - The form submits a request to create the placeholder library, which must be **manually approved** (allow enough buffer time for this).
+         - Contact Steve Dower with questions related to this form. 
+      - Verify from the Anaconda portal that the placeholders have been added before proceeding.
    - Create an AKA link for new release logs at [https://aka.ms/](https://aka.ms/).
+      - The `meta.yaml` for the new package(s) will contain the short link to use.
 
-3. **Merge the PR** into `main`.
-
-4. **Build the packages.** Merging triggers the **[Conda Build/Release Pipeline](https://dev.azure.com/azure-sdk/internal/_build?definitionId=6321)** (`conda-sdk-client.yml`) automatically. You can also run it manually and select which packages to include.
+4. **Build the packages.** Merging to main triggers the internal **[Conda Build/Release Pipeline](https://dev.azure.com/azure-sdk/internal/_build?definitionId=6321)** (`conda-sdk-client.yml`) automatically, but you must queue a manual run to enable the release stage. Running manually also enables customization of which packages to include.
 
 5. **Approve the release.** After a successful build, the pipeline will show a pending approval gate. Approve it to publish the packages to Anaconda (under the `Microsoft` channel).
 
@@ -56,9 +73,22 @@ The auto-generated PR includes:
 
    Log in to [Anaconda.org](https://anaconda.org/) and navigate to the package page:
 
-   a. **Delete placeholder:** Go to the package settings and remove the dummy placeholder library created in step 2.
+   a. **Delete placeholder:** Go to the package settings and remove the dummy placeholder library (version 0.0.0) created in step 3.
 
    b. **Make public:** In the package settings, change the visibility from private to public.
+
+## Troubleshooting
+
+### Release Failures
+
+#### Not enough permission to create
+```
+Unauthorized: ('User "<User: _login=<...>>" has not enough permissions to create "<User: _login=microsoft>/<package>>" package', 401)
+```
+
+- This error indicates there is no existing entry in Anaconda for this package. Ensure you've submitted the form to request a placeholder for new data plane packages. 
+
+- After resolving release issues, it is safe to rerun the build pipeline with all package parameters even if some packages were already uploaded, as the upload will just skip existing packages in Anaconda.
 
 ## Developer Guide
 

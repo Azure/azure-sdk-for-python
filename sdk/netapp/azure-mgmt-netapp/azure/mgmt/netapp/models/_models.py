@@ -73,6 +73,8 @@ class AccountProperties(_Model):
     :vartype provisioning_state: str
     :ivar active_directories: Active Directories.
     :vartype active_directories: list[~azure.mgmt.netapp.models.ActiveDirectory]
+    :ivar entra_id_config: Entra ID configuration for the account.
+    :vartype entra_id_config: ~azure.mgmt.netapp.models.EntraIdConfig
     :ivar encryption: Encryption settings.
     :vartype encryption: ~azure.mgmt.netapp.models.AccountEncryption
     :ivar disable_showmount: Shows the status of disableShowmount for all volumes under the
@@ -94,6 +96,10 @@ class AccountProperties(_Model):
         name="activeDirectories", visibility=["read", "create", "update", "delete", "query"]
     )
     """Active Directories."""
+    entra_id_config: Optional["_models.EntraIdConfig"] = rest_field(
+        name="entraIdConfig", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Entra ID configuration for the account."""
     encryption: Optional["_models.AccountEncryption"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -119,9 +125,78 @@ class AccountProperties(_Model):
         self,
         *,
         active_directories: Optional[list["_models.ActiveDirectory"]] = None,
+        entra_id_config: Optional["_models.EntraIdConfig"] = None,
         encryption: Optional["_models.AccountEncryption"] = None,
         nfs_v4_id_domain: Optional[str] = None,
         ldap_configuration: Optional["_models.LdapConfiguration"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AccountPropertiesPatch(_Model):
+    """NetApp account properties for PATCH operations.
+
+    :ivar active_directories: Active Directories.
+    :vartype active_directories: list[~azure.mgmt.netapp.models.ActiveDirectory]
+    :ivar entra_id_config: Entra ID configuration for the account.
+    :vartype entra_id_config: ~azure.mgmt.netapp.models.EntraIdConfigPatch
+    :ivar encryption: Encryption settings.
+    :vartype encryption: ~azure.mgmt.netapp.models.AccountEncryption
+    :ivar nfs_v4_id_domain: Domain for NFSv4 user ID mapping. This property will be set for all
+     NetApp accounts in the subscription and region and only affect non ldap NFSv4 volumes.
+    :vartype nfs_v4_id_domain: str
+    :ivar multi_ad_status: MultiAD Status for the account. Known values are: "Disabled" and
+     "Enabled".
+    :vartype multi_ad_status: str or ~azure.mgmt.netapp.models.MultiAdStatus
+    :ivar ldap_configuration: LDAP Configuration for the account.
+    :vartype ldap_configuration: ~azure.mgmt.netapp.models.LdapConfigurationPatch
+    """
+
+    active_directories: Optional[list["_models.ActiveDirectory"]] = rest_field(
+        name="activeDirectories", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Active Directories."""
+    entra_id_config: Optional["_models.EntraIdConfigPatch"] = rest_field(
+        name="entraIdConfig", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Entra ID configuration for the account."""
+    encryption: Optional["_models.AccountEncryption"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Encryption settings."""
+    nfs_v4_id_domain: Optional[str] = rest_field(
+        name="nfsV4IDDomain", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Domain for NFSv4 user ID mapping. This property will be set for all NetApp accounts in the
+     subscription and region and only affect non ldap NFSv4 volumes."""
+    multi_ad_status: Optional[Union[str, "_models.MultiAdStatus"]] = rest_field(
+        name="multiAdStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """MultiAD Status for the account. Known values are: \"Disabled\" and \"Enabled\"."""
+    ldap_configuration: Optional["_models.LdapConfigurationPatch"] = rest_field(
+        name="ldapConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """LDAP Configuration for the account."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        active_directories: Optional[list["_models.ActiveDirectory"]] = None,
+        entra_id_config: Optional["_models.EntraIdConfigPatch"] = None,
+        encryption: Optional["_models.AccountEncryption"] = None,
+        nfs_v4_id_domain: Optional[str] = None,
+        multi_ad_status: Optional[Union[str, "_models.MultiAdStatus"]] = None,
+        ldap_configuration: Optional["_models.LdapConfigurationPatch"] = None,
     ) -> None: ...
 
     @overload
@@ -719,6 +794,58 @@ class AuthorizeRequest(_Model):
         self,
         *,
         remote_volume_resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AzureKeyVaultDetails(_Model):
+    """Specifies the Azure Key Vault settings. These are used when
+    a) retrieving the bucket server certificate, and
+    b) storing the bucket credentials
+
+    Notes:
+
+
+
+    1. If a bucket certificate was previously provided directly using the certificateObject
+    property, it is possible to subsequently use the Azure Key Vault for certificate management by
+    using these 'akvDetails' properties. However, once Azure Key Vault is configured, it is no
+    longer possible to provide the certificate directly via the certificateObject property.
+
+    2. These properties are mutually exclusive with the server.certificateObject property.
+
+    :ivar certificate_akv_details: Specifies the Azure Key Vault settings for retrieving the bucket
+     server certificate.
+    :vartype certificate_akv_details: ~azure.mgmt.netapp.models.CertificateAkvDetails
+    :ivar credentials_akv_details: Specifies the Azure Key Vault settings for storing the bucket
+     credentials.
+    :vartype credentials_akv_details: ~azure.mgmt.netapp.models.CredentialsAkvDetails
+    """
+
+    certificate_akv_details: Optional["_models.CertificateAkvDetails"] = rest_field(
+        name="certificateAkvDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the Azure Key Vault settings for retrieving the bucket server certificate."""
+    credentials_akv_details: Optional["_models.CredentialsAkvDetails"] = rest_field(
+        name="credentialsAkvDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the Azure Key Vault settings for storing the bucket credentials."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        certificate_akv_details: Optional["_models.CertificateAkvDetails"] = None,
+        credentials_akv_details: Optional["_models.CredentialsAkvDetails"] = None,
     ) -> None: ...
 
     @overload
@@ -1545,7 +1672,15 @@ class Bucket(ProxyResource):
     )
     """Bucket properties."""
 
-    __flattened_items = ["path", "file_system_user", "provisioning_state", "status", "server", "permissions"]
+    __flattened_items = [
+        "path",
+        "file_system_user",
+        "provisioning_state",
+        "status",
+        "server",
+        "permissions",
+        "akv_details",
+    ]
 
     @overload
     def __init__(
@@ -1660,7 +1795,7 @@ class BucketPatch(ProxyResource):
     )
     """Bucket properties."""
 
-    __flattened_items = ["path", "file_system_user", "provisioning_state", "server", "permissions"]
+    __flattened_items = ["file_system_user", "provisioning_state", "server", "permissions", "akv_details"]
 
     @overload
     def __init__(
@@ -1701,8 +1836,6 @@ class BucketPatch(ProxyResource):
 class BucketPatchProperties(_Model):
     """Bucket resource properties for a Patch operation.
 
-    :ivar path: The volume path mounted inside the bucket.
-    :vartype path: str
     :ivar file_system_user: File System user having access to volume data. For Unix, this is the
      user's uid and gid. For Windows, this is the user's username. Note that the Unix and Windows
      user details are mutually exclusive, meaning one or other must be supplied, but not both.
@@ -1715,10 +1848,22 @@ class BucketPatchProperties(_Model):
     :ivar permissions: Access permissions for the bucket. Either ReadOnly or ReadWrite. Known
      values are: "ReadOnly" and "ReadWrite".
     :vartype permissions: str or ~azure.mgmt.netapp.models.BucketPatchPermissions
+    :ivar akv_details: Specifies the Azure Key Vault settings. These are used when
+     a) retrieving the bucket server certificate, and
+     b) storing the bucket credentials
+
+     Notes:
+
+
+
+     1. If a bucket certificate was previously provided directly using the certificateObject
+     property, it is possible to subsequently use the Azure Key Vault for certificate management by
+     using these 'akvDetails' properties. However, once Azure Key Vault is configured, it is no
+     longer possible to provide the certificate directly via the certificateObject property.
+     2. These properties are mutually exclusive with the server.certificateObject property.
+    :vartype akv_details: ~azure.mgmt.netapp.models.AzureKeyVaultDetails
     """
 
-    path: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The volume path mounted inside the bucket."""
     file_system_user: Optional["_models.FileSystemUser"] = rest_field(
         name="fileSystemUser", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1739,15 +1884,31 @@ class BucketPatchProperties(_Model):
     )
     """Access permissions for the bucket. Either ReadOnly or ReadWrite. Known values are: \"ReadOnly\"
      and \"ReadWrite\"."""
+    akv_details: Optional["_models.AzureKeyVaultDetails"] = rest_field(
+        name="akvDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the Azure Key Vault settings. These are used when
+     a) retrieving the bucket server certificate, and
+     b) storing the bucket credentials
+     
+     Notes:
+     
+     
+     
+     1. If a bucket certificate was previously provided directly using the certificateObject
+     property, it is possible to subsequently use the Azure Key Vault for certificate management by
+     using these 'akvDetails' properties. However, once Azure Key Vault is configured, it is no
+     longer possible to provide the certificate directly via the certificateObject property.
+     2. These properties are mutually exclusive with the server.certificateObject property."""
 
     @overload
     def __init__(
         self,
         *,
-        path: Optional[str] = None,
         file_system_user: Optional["_models.FileSystemUser"] = None,
         server: Optional["_models.BucketServerPatchProperties"] = None,
         permissions: Optional[Union[str, "_models.BucketPatchPermissions"]] = None,
+        akv_details: Optional["_models.AzureKeyVaultDetails"] = None,
     ) -> None: ...
 
     @overload
@@ -1787,9 +1948,23 @@ class BucketProperties(_Model):
      is ReadOnly if no value is provided during bucket creation. Known values are: "ReadOnly" and
      "ReadWrite".
     :vartype permissions: str or ~azure.mgmt.netapp.models.BucketPermissions
+    :ivar akv_details: Specifies the Azure Key Vault settings. These are used when
+     a) retrieving the bucket server certificate, and
+     b) storing the bucket credentials
+
+     Notes:
+
+
+
+     1. If a bucket certificate was previously provided directly using the certificateObject
+     property, it is possible to subsequently use the Azure Key Vault for certificate management by
+     using these 'akvDetails' properties. However, once Azure Key Vault is configured, it is no
+     longer possible to provide the certificate directly via the certificateObject property.
+     2. These properties are mutually exclusive with the server.certificateObject property.
+    :vartype akv_details: ~azure.mgmt.netapp.models.AzureKeyVaultDetails
     """
 
-    path: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    path: Optional[str] = rest_field(visibility=["read", "create"])
     """The volume path mounted inside the bucket. The default is the root path '/' if no value is
      provided when the bucket is created."""
     file_system_user: Optional["_models.FileSystemUser"] = rest_field(
@@ -1819,6 +1994,22 @@ class BucketProperties(_Model):
     )
     """Access permissions for the bucket. Either ReadOnly or ReadWrite. The default is ReadOnly if no
      value is provided during bucket creation. Known values are: \"ReadOnly\" and \"ReadWrite\"."""
+    akv_details: Optional["_models.AzureKeyVaultDetails"] = rest_field(
+        name="akvDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the Azure Key Vault settings. These are used when
+     a) retrieving the bucket server certificate, and
+     b) storing the bucket credentials
+     
+     Notes:
+     
+     
+     
+     1. If a bucket certificate was previously provided directly using the certificateObject
+     property, it is possible to subsequently use the Azure Key Vault for certificate management by
+     using these 'akvDetails' properties. However, once Azure Key Vault is configured, it is no
+     longer possible to provide the certificate directly via the certificateObject property.
+     2. These properties are mutually exclusive with the server.certificateObject property."""
 
     @overload
     def __init__(
@@ -1828,6 +2019,7 @@ class BucketProperties(_Model):
         file_system_user: Optional["_models.FileSystemUser"] = None,
         server: Optional["_models.BucketServerProperties"] = None,
         permissions: Optional[Union[str, "_models.BucketPermissions"]] = None,
+        akv_details: Optional["_models.AzureKeyVaultDetails"] = None,
     ) -> None: ...
 
     @overload
@@ -1847,18 +2039,31 @@ class BucketServerPatchProperties(_Model):
     :ivar fqdn: The host part of the bucket URL, resolving to the bucket IP address and allowed by
      the server certificate.
     :vartype fqdn: str
-    :ivar certificate_object: A base64-encoded PEM file, which includes both the bucket server's
-     certificate and private key. It is used to authenticate the user and allows access to volume
-     data in a read-only manner.
+    :ivar certificate_object: The base64-encoded contents of a PEM file, which includes both the
+     bucket server's certificate and private key. It is generated by the end user and allows the
+     user to access volume data in a read-only manner. Note: This is only used when Azure Key Vault
+     is not configured. This property is mutually exclusive with the Azure Key Vault 'akv'
+     properties.
     :vartype certificate_object: str
+    :ivar on_certificate_conflict_action: Action to take when there is a certificate conflict.
+     Possible values include: 'Update', 'Fail'. Known values are: "Update" and "Fail".
+    :vartype on_certificate_conflict_action: str or
+     ~azure.mgmt.netapp.models.OnCertificateConflictAction
     """
 
     fqdn: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The host part of the bucket URL, resolving to the bucket IP address and allowed by the server
      certificate."""
     certificate_object: Optional[str] = rest_field(name="certificateObject", visibility=["create", "update"])
-    """A base64-encoded PEM file, which includes both the bucket server's certificate and private key.
-     It is used to authenticate the user and allows access to volume data in a read-only manner."""
+    """The base64-encoded contents of a PEM file, which includes both the bucket server's certificate
+     and private key. It is generated by the end user and allows the user to access volume data in a
+     read-only manner. Note: This is only used when Azure Key Vault is not configured. This property
+     is mutually exclusive with the Azure Key Vault 'akv' properties."""
+    on_certificate_conflict_action: Optional[Union[str, "_models.OnCertificateConflictAction"]] = rest_field(
+        name="onCertificateConflictAction", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Action to take when there is a certificate conflict. Possible values include: 'Update', 'Fail'.
+     Known values are: \"Update\" and \"Fail\"."""
 
     @overload
     def __init__(
@@ -1866,6 +2071,7 @@ class BucketServerPatchProperties(_Model):
         *,
         fqdn: Optional[str] = None,
         certificate_object: Optional[str] = None,
+        on_certificate_conflict_action: Optional[Union[str, "_models.OnCertificateConflictAction"]] = None,
     ) -> None: ...
 
     @overload
@@ -1892,10 +2098,16 @@ class BucketServerProperties(_Model):
     :vartype certificate_expiry_date: ~datetime.datetime
     :ivar ip_address: The bucket server's IPv4 address.
     :vartype ip_address: str
-    :ivar certificate_object: A base64-encoded PEM file, which includes both the bucket server's
-     certificate and private key. It is used to authenticate the user and allows access to volume
-     data in a read-only manner.
+    :ivar certificate_object: The base64-encoded contents of a PEM file, which includes both the
+     bucket server's certificate and private key. It is generated by the end user and allows the
+     user to access volume data in a read-only manner. Note: This is only used when Azure Key Vault
+     is not configured. This property is mutually exclusive with the Azure Key Vault 'akv'
+     properties.
     :vartype certificate_object: str
+    :ivar on_certificate_conflict_action: Action to take when there is a certificate conflict.
+     Possible values include: 'Update', 'Fail'. Known values are: "Update" and "Fail".
+    :vartype on_certificate_conflict_action: str or
+     ~azure.mgmt.netapp.models.OnCertificateConflictAction
     """
 
     fqdn: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1910,8 +2122,15 @@ class BucketServerProperties(_Model):
     ip_address: Optional[str] = rest_field(name="ipAddress", visibility=["read"])
     """The bucket server's IPv4 address."""
     certificate_object: Optional[str] = rest_field(name="certificateObject", visibility=["create", "update"])
-    """A base64-encoded PEM file, which includes both the bucket server's certificate and private key.
-     It is used to authenticate the user and allows access to volume data in a read-only manner."""
+    """The base64-encoded contents of a PEM file, which includes both the bucket server's certificate
+     and private key. It is generated by the end user and allows the user to access volume data in a
+     read-only manner. Note: This is only used when Azure Key Vault is not configured. This property
+     is mutually exclusive with the Azure Key Vault 'akv' properties."""
+    on_certificate_conflict_action: Optional[Union[str, "_models.OnCertificateConflictAction"]] = rest_field(
+        name="onCertificateConflictAction", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Action to take when there is a certificate conflict. Possible values include: 'Update', 'Fail'.
+     Known values are: \"Update\" and \"Fail\"."""
 
     @overload
     def __init__(
@@ -1919,6 +2138,7 @@ class BucketServerProperties(_Model):
         *,
         fqdn: Optional[str] = None,
         certificate_object: Optional[str] = None,
+        on_certificate_conflict_action: Optional[Union[str, "_models.OnCertificateConflictAction"]] = None,
     ) -> None: ...
 
     @overload
@@ -2014,8 +2234,8 @@ class CacheMountTargetProperties(_Model):
 class CacheProperties(_Model):
     """Cache resource properties.
 
-    :ivar filepath: The file path of the Cache. Required.
-    :vartype filepath: str
+    :ivar file_path: The file path of the Cache. Required.
+    :vartype file_path: str
     :ivar size: Maximum storage quota allowed for a file system in bytes. Valid values are in the
      range 50GiB to 1PiB. Values expressed in bytes as multiples of 1GiB. Required.
     :vartype size: int
@@ -2092,7 +2312,7 @@ class CacheProperties(_Model):
     :vartype write_back: str or ~azure.mgmt.netapp.models.EnableWriteBackState
     """
 
-    filepath: str = rest_field(visibility=["read", "create"])
+    file_path: str = rest_field(name="filePath", visibility=["read", "create"])
     """The file path of the Cache. Required."""
     size: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Maximum storage quota allowed for a file system in bytes. Valid values are in the range 50GiB
@@ -2195,10 +2415,10 @@ class CacheProperties(_Model):
      \"Enabled\"."""
 
     @overload
-    def __init__(  # pylint: disable=too-many-locals
+    def __init__(
         self,
         *,
-        filepath: str,
+        file_path: str,
         size: int,
         cache_subnet_resource_id: str,
         peering_subnet_resource_id: str,
@@ -2540,6 +2760,45 @@ class CapacityPoolPatch(_Model):
             super().__setattr__(key, value)
 
 
+class CertificateAkvDetails(_Model):
+    """Specifies the Azure Key Vault settings for retrieving the bucket server certificate.
+
+    :ivar certificate_key_vault_uri: The base URI of the Azure Key Vault that is used when
+     retrieving the bucket certificate.
+    :vartype certificate_key_vault_uri: str
+    :ivar certificate_name: The name of the bucket server certificate stored in the Azure Key
+     Vault.
+    :vartype certificate_name: str
+    """
+
+    certificate_key_vault_uri: Optional[str] = rest_field(
+        name="certificateKeyVaultUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The base URI of the Azure Key Vault that is used when retrieving the bucket certificate."""
+    certificate_name: Optional[str] = rest_field(
+        name="certificateName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the bucket server certificate stored in the Azure Key Vault."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        certificate_key_vault_uri: Optional[str] = None,
+        certificate_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ChangeKeyVault(_Model):
     """Change key vault request.
 
@@ -2807,6 +3066,56 @@ class ClusterPeerCommandResponse(_Model):
         self,
         *,
         peer_accept_command: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CredentialsAkvDetails(_Model):
+    """Specifies the Azure Key Vault settings for storing the bucket credentials.
+
+    :ivar credentials_key_vault_uri: The base URI of the Azure Key Vault that is used when storing
+     the bucket credentials.
+    :vartype credentials_key_vault_uri: str
+    :ivar secret_name: The name of the secret stored in Azure Key Vault. The associated key pair
+     has the following structure:
+
+     {
+     "access_key_id": "<REDACTED>",
+     "secret_access_key": "<REDACTED>"
+     }.
+    :vartype secret_name: str
+    """
+
+    credentials_key_vault_uri: Optional[str] = rest_field(
+        name="credentialsKeyVaultUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The base URI of the Azure Key Vault that is used when storing the bucket credentials."""
+    secret_name: Optional[str] = rest_field(
+        name="secretName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the secret stored in Azure Key Vault. The associated key pair has the following
+     structure:
+     
+     {
+     \"access_key_id\": \"<REDACTED>\",
+     \"secret_access_key\": \"<REDACTED>\"
+     }."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        credentials_key_vault_uri: Optional[str] = None,
+        secret_name: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -3914,6 +4223,9 @@ class ElasticEncryptionIdentity(_Model):
      authenticate with key vault. Applicable if identity.type has 'UserAssigned'. It should match
      key of identity.userAssignedIdentities.
     :vartype user_assigned_identity: str
+    :ivar federated_client_id: ClientId of the multi-tenant Entra ID Application. Used to access
+     cross-tenant keyvaults.
+    :vartype federated_client_id: str
     """
 
     principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
@@ -3924,12 +4236,17 @@ class ElasticEncryptionIdentity(_Model):
     """The ARM resource identifier of the user assigned identity used to authenticate with key vault.
      Applicable if identity.type has 'UserAssigned'. It should match key of
      identity.userAssignedIdentities."""
+    federated_client_id: Optional[str] = rest_field(
+        name="federatedClientId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ClientId of the multi-tenant Entra ID Application. Used to access cross-tenant keyvaults."""
 
     @overload
     def __init__(
         self,
         *,
         user_assigned_identity: Optional[str] = None,
+        federated_client_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -5095,7 +5412,7 @@ class EncryptionIdentity(_Model):
      authenticate with key vault. Applicable if identity.type has 'UserAssigned'. It should match
      key of identity.userAssignedIdentities.
     :vartype user_assigned_identity: str
-    :ivar federated_client_id: ClientId of the multi-tenant AAD Application. Used to access
+    :ivar federated_client_id: ClientId of the multi-tenant Entra ID Application. Used to access
      cross-tenant keyvaults.
     :vartype federated_client_id: str
     """
@@ -5111,7 +5428,7 @@ class EncryptionIdentity(_Model):
     federated_client_id: Optional[str] = rest_field(
         name="federatedClientId", visibility=["read", "create", "update", "delete", "query"]
     )
-    """ClientId of the multi-tenant AAD Application. Used to access cross-tenant keyvaults."""
+    """ClientId of the multi-tenant Entra ID Application. Used to access cross-tenant keyvaults."""
 
     @overload
     def __init__(
@@ -5157,6 +5474,215 @@ class EncryptionTransitionRequest(_Model):
         *,
         virtual_network_id: str,
         private_endpoint_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EntraIdAkvConfig(_Model):
+    """Using AKV config, certificate will be fetched, which will contain private key & public
+    certificate, that correspond to the public certificate which is uploaded on the application
+    created by customer. This will be used further for authentication.
+
+    :ivar azure_key_vault_uri: The Azure Key Vault URI where the Entra ID credentials are stored.
+     Required.
+    :vartype azure_key_vault_uri: str
+    :ivar certificate_name: The name of the certificate in Azure Key Vault. Required.
+    :vartype certificate_name: str
+    :ivar user_assigned_identity: The ARM resource identifier of the user assigned identity used to
+     authenticate with key vault.
+    :vartype user_assigned_identity: str
+    """
+
+    azure_key_vault_uri: str = rest_field(
+        name="azureKeyVaultUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure Key Vault URI where the Entra ID credentials are stored. Required."""
+    certificate_name: str = rest_field(
+        name="certificateName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the certificate in Azure Key Vault. Required."""
+    user_assigned_identity: Optional[str] = rest_field(
+        name="userAssignedIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ARM resource identifier of the user assigned identity used to authenticate with key vault."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        azure_key_vault_uri: str,
+        certificate_name: str,
+        user_assigned_identity: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EntraIdAkvConfigPatch(_Model):
+    """Using AKV config, certificate will be fetched, which will contain private key & public
+    certificate, that correspond to the public certificate which is uploaded on the application
+    created by customer. This will be used further for authentication.
+
+    :ivar azure_key_vault_uri: The Azure Key Vault URI where the Entra ID credentials are stored.
+    :vartype azure_key_vault_uri: str
+    :ivar certificate_name: The name of the certificate in Azure Key Vault.
+    :vartype certificate_name: str
+    :ivar user_assigned_identity: The ARM resource identifier of the user assigned identity used to
+     authenticate with key vault.
+    :vartype user_assigned_identity: str
+    """
+
+    azure_key_vault_uri: Optional[str] = rest_field(
+        name="azureKeyVaultUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure Key Vault URI where the Entra ID credentials are stored."""
+    certificate_name: Optional[str] = rest_field(
+        name="certificateName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the certificate in Azure Key Vault."""
+    user_assigned_identity: Optional[str] = rest_field(
+        name="userAssignedIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ARM resource identifier of the user assigned identity used to authenticate with key vault."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        azure_key_vault_uri: Optional[str] = None,
+        certificate_name: Optional[str] = None,
+        user_assigned_identity: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EntraIdConfig(_Model):
+    """Entra ID configuration for the account.
+
+    :ivar application_id: ApplicationId of the app created by customer to provide authentication
+     and required API permissions for Microsoft Graph endpoint. Required.
+    :vartype application_id: str
+    :ivar domain: Domain of the Active directory synced to Entra ID for hybrid identities.
+     Required.
+    :vartype domain: str
+    :ivar server_name_prefix: Using ServerNamePrefix, FQDN (Fully Qualified Domain Name) will be
+     generated for SMB share, using this FQDN, SMB Share will be mounted on Entra Joined VM.
+     Required.
+    :vartype server_name_prefix: str
+    :ivar entra_id_akv_config: Using AKV config, certificate will be fetched, which will contain
+     private key & public certificate, that correspond to the public certificate which is uploaded
+     on the application created by customer. This will be used further for authentication.
+    :vartype entra_id_akv_config: ~azure.mgmt.netapp.models.EntraIdAkvConfig
+    """
+
+    application_id: str = rest_field(name="applicationId", visibility=["read", "create", "update", "delete", "query"])
+    """ApplicationId of the app created by customer to provide authentication and required API
+     permissions for Microsoft Graph endpoint. Required."""
+    domain: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Domain of the Active directory synced to Entra ID for hybrid identities. Required."""
+    server_name_prefix: str = rest_field(
+        name="serverNamePrefix", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Using ServerNamePrefix, FQDN (Fully Qualified Domain Name) will be generated for SMB share,
+     using this FQDN, SMB Share will be mounted on Entra Joined VM. Required."""
+    entra_id_akv_config: Optional["_models.EntraIdAkvConfig"] = rest_field(
+        name="entraIdAkvConfig", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Using AKV config, certificate will be fetched, which will contain private key & public
+     certificate, that correspond to the public certificate which is uploaded on the application
+     created by customer. This will be used further for authentication."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        application_id: str,
+        domain: str,
+        server_name_prefix: str,
+        entra_id_akv_config: Optional["_models.EntraIdAkvConfig"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EntraIdConfigPatch(_Model):
+    """Entra ID Patch configuration for the account.
+
+    :ivar application_id: ApplicationId of the app created by customer to provide authentication
+     and required API permissions for Microsoft Graph endpoint.
+    :vartype application_id: str
+    :ivar domain: Domain of the Active directory synced to Entra ID for hybrid identities.
+    :vartype domain: str
+    :ivar server_name_prefix: Using ServerNamePrefix, FQDN (Fully Qualified Domain Name) will be
+     generated for SMB share, using this FQDN, SMB Share will be mounted on Entra Joined VM.
+    :vartype server_name_prefix: str
+    :ivar entra_id_akv_config: Using AKV config, certificate will be fetched, which will contain
+     private key & public certificate, that correspond to the public certificate which is uploaded
+     on the application created by customer. This will be used further for authentication.
+    :vartype entra_id_akv_config: ~azure.mgmt.netapp.models.EntraIdAkvConfigPatch
+    """
+
+    application_id: Optional[str] = rest_field(
+        name="applicationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ApplicationId of the app created by customer to provide authentication and required API
+     permissions for Microsoft Graph endpoint."""
+    domain: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Domain of the Active directory synced to Entra ID for hybrid identities."""
+    server_name_prefix: Optional[str] = rest_field(
+        name="serverNamePrefix", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Using ServerNamePrefix, FQDN (Fully Qualified Domain Name) will be generated for SMB share,
+     using this FQDN, SMB Share will be mounted on Entra Joined VM."""
+    entra_id_akv_config: Optional["_models.EntraIdAkvConfigPatch"] = rest_field(
+        name="entraIdAkvConfig", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Using AKV config, certificate will be fetched, which will contain private key & public
+     certificate, that correspond to the public certificate which is uploaded on the application
+     created by customer. This will be used further for authentication."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        application_id: Optional[str] = None,
+        domain: Optional[str] = None,
+        server_name_prefix: Optional[str] = None,
+        entra_id_akv_config: Optional["_models.EntraIdAkvConfigPatch"] = None,
     ) -> None: ...
 
     @overload
@@ -5808,6 +6334,66 @@ class LdapConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
+class LdapConfigurationPatch(_Model):
+    """LDAP configuration for PATCH operations (no default values).
+
+    :ivar domain: Name of the LDAP configuration domain.
+    :vartype domain: str
+    :ivar ldap_servers: List of LDAP server IP addresses (IPv4 only) for the LDAP domain.
+    :vartype ldap_servers: list[str]
+    :ivar ldap_over_tls: Specifies whether or not the LDAP traffic needs to be secured via TLS.
+    :vartype ldap_over_tls: bool
+    :ivar server_ca_certificate: When LDAP over SSL/TLS is enabled, the LDAP client is required to
+     have base64 encoded ldap servers CA certificate.
+    :vartype server_ca_certificate: str
+    :ivar certificate_cn_host: The CN host name used while generating the certificate, LDAP Over
+     TLS requires the CN host name to create DNS host entry.
+    :vartype certificate_cn_host: str
+    """
+
+    domain: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the LDAP configuration domain."""
+    ldap_servers: Optional[list[str]] = rest_field(
+        name="ldapServers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of LDAP server IP addresses (IPv4 only) for the LDAP domain."""
+    ldap_over_tls: Optional[bool] = rest_field(
+        name="ldapOverTLS", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies whether or not the LDAP traffic needs to be secured via TLS."""
+    server_ca_certificate: Optional[str] = rest_field(
+        name="serverCACertificate", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """When LDAP over SSL/TLS is enabled, the LDAP client is required to have base64 encoded ldap
+     servers CA certificate."""
+    certificate_cn_host: Optional[str] = rest_field(
+        name="certificateCNHost", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The CN host name used while generating the certificate, LDAP Over TLS requires the CN host name
+     to create DNS host entry."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        domain: Optional[str] = None,
+        ldap_servers: Optional[list[str]] = None,
+        ldap_over_tls: Optional[bool] = None,
+        server_ca_certificate: Optional[str] = None,
+        certificate_cn_host: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class LdapSearchScopeOpt(_Model):
     """LDAP search scope.
 
@@ -5853,12 +6439,12 @@ class LdapSearchScopeOpt(_Model):
 class ListQuotaReportResponse(_Model):
     """Quota Report for volume.
 
-    :ivar value: List of quota reports.
-    :vartype value: list[~azure.mgmt.netapp.models.QuotaReport]
+    :ivar quota_report_records: List of quota reports.
+    :vartype quota_report_records: list[~azure.mgmt.netapp.models.QuotaReport]
     """
 
-    value: Optional[list["_models.QuotaReport"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
+    quota_report_records: Optional[list["_models.QuotaReport"]] = rest_field(
+        name="quotaReportRecords", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of quota reports."""
 
@@ -5866,7 +6452,39 @@ class ListQuotaReportResponse(_Model):
     def __init__(
         self,
         *,
-        value: Optional[list["_models.QuotaReport"]] = None,
+        quota_report_records: Optional[list["_models.QuotaReport"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ListQuotaReportResult(_Model):
+    """
+
+    * Result of ListQuotaReportResponse.
+
+    :ivar properties: Represents the properties of the ListQuotaReport.
+    :vartype properties: ~azure.mgmt.netapp.models.ListQuotaReportResponse
+    """
+
+    properties: Optional["_models.ListQuotaReportResponse"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the properties of the ListQuotaReport."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ListQuotaReportResponse"] = None,
     ) -> None: ...
 
     @overload
@@ -6271,6 +6889,7 @@ class NetAppAccount(TrackedResource):
     __flattened_items = [
         "provisioning_state",
         "active_directories",
+        "entra_id_config",
         "encryption",
         "disable_showmount",
         "nfs_v4_id_domain",
@@ -6331,7 +6950,7 @@ class NetAppAccountPatch(_Model):
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar properties: NetApp Account properties.
-    :vartype properties: ~azure.mgmt.netapp.models.AccountProperties
+    :vartype properties: ~azure.mgmt.netapp.models.AccountPropertiesPatch
     :ivar identity: The identity used for the resource.
     :vartype identity: ~azure.mgmt.netapp.models.ManagedServiceIdentity
     """
@@ -6346,7 +6965,7 @@ class NetAppAccountPatch(_Model):
     """Resource type."""
     tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
-    properties: Optional["_models.AccountProperties"] = rest_field(
+    properties: Optional["_models.AccountPropertiesPatch"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """NetApp Account properties."""
@@ -6356,10 +6975,9 @@ class NetAppAccountPatch(_Model):
     """The identity used for the resource."""
 
     __flattened_items = [
-        "provisioning_state",
         "active_directories",
+        "entra_id_config",
         "encryption",
-        "disable_showmount",
         "nfs_v4_id_domain",
         "multi_ad_status",
         "ldap_configuration",
@@ -6371,7 +6989,7 @@ class NetAppAccountPatch(_Model):
         *,
         location: Optional[str] = None,
         tags: Optional[dict[str, str]] = None,
-        properties: Optional["_models.AccountProperties"] = None,
+        properties: Optional["_models.AccountPropertiesPatch"] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -6778,6 +7396,9 @@ class PeeringPassphrases(_Model):
     :vartype cluster_peering_passphrase: str
     :ivar vserver_peering_command: The vserver peering command. Required.
     :vartype vserver_peering_command: str
+    :ivar critical_warning: Warnings that are critical for the cluster peering and vserver peering
+     processes.
+    :vartype critical_warning: str
     """
 
     cluster_peering_command: str = rest_field(
@@ -6792,6 +7413,8 @@ class PeeringPassphrases(_Model):
         name="vserverPeeringCommand", visibility=["read", "create", "update", "delete", "query"]
     )
     """The vserver peering command. Required."""
+    critical_warning: Optional[str] = rest_field(name="criticalWarning", visibility=["read"])
+    """Warnings that are critical for the cluster peering and vserver peering processes."""
 
     @overload
     def __init__(
@@ -6883,8 +7506,8 @@ class PoolChangeRequest(_Model):
 class PoolPatchProperties(_Model):
     """Patchable pool properties.
 
-    :ivar size: Provisioned size of the pool (in bytes). Allowed values are in 1TiB chunks (value
-     must be multiple of 1099511627776).
+    :ivar size: Provisioned size of the pool (in bytes). Allowed values are 512GiB (549755813888
+     bytes) or in 1TiB chunks (value must be multiple of 1099511627776).
     :vartype size: int
     :ivar qos_type: The qos type of the pool. Known values are: "Auto" and "Manual".
     :vartype qos_type: str or ~azure.mgmt.netapp.models.QosType
@@ -6896,8 +7519,8 @@ class PoolPatchProperties(_Model):
     """
 
     size: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Provisioned size of the pool (in bytes). Allowed values are in 1TiB chunks (value must be
-     multiple of 1099511627776)."""
+    """Provisioned size of the pool (in bytes). Allowed values are 512GiB (549755813888 bytes) or in
+     1TiB chunks (value must be multiple of 1099511627776)."""
     qos_type: Optional[Union[str, "_models.QosType"]] = rest_field(
         name="qosType", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6938,8 +7561,8 @@ class PoolProperties(_Model):
 
     :ivar pool_id: UUID v4 used to identify the Pool.
     :vartype pool_id: str
-    :ivar size: Provisioned size of the pool (in bytes). Allowed values are in 1TiB chunks (value
-     must be multiple of 1099511627776). Required.
+    :ivar size: Provisioned size of the pool (in bytes). Allowed values are 512GiB (549755813888
+     bytes) or in 1TiB chunks (value must be multiple of 1099511627776). Required.
     :vartype size: int
     :ivar service_level: The service level of the file system. Required. Known values are:
      "Standard", "Premium", "Ultra", "StandardZRS", and "Flexible".
@@ -6966,8 +7589,8 @@ class PoolProperties(_Model):
     pool_id: Optional[str] = rest_field(name="poolId", visibility=["read"])
     """UUID v4 used to identify the Pool."""
     size: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Provisioned size of the pool (in bytes). Allowed values are in 1TiB chunks (value must be
-     multiple of 1099511627776). Required."""
+    """Provisioned size of the pool (in bytes). Allowed values are 512GiB (549755813888 bytes) or in
+     1TiB chunks (value must be multiple of 1099511627776). Required."""
     service_level: Union[str, "_models.ServiceLevel"] = rest_field(
         name="serviceLevel", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -7200,7 +7823,7 @@ class QuotaReport(_Model):
 
     :ivar quota_type: Type of quota. Known values are: "DefaultUserQuota", "DefaultGroupQuota",
      "IndividualUserQuota", and "IndividualGroupQuota".
-    :vartype quota_type: str or ~azure.mgmt.netapp.models.Type
+    :vartype quota_type: str or ~azure.mgmt.netapp.models.QuotaType
     :ivar quota_target: UserID/GroupID/SID based on the quota target type. UserID and groupID can
      be found by running ‘id’ or ‘getent’ command for the user or group and SID can be found by
      running <wmic useraccount where name='user-name' get sid>.
@@ -7217,7 +7840,7 @@ class QuotaReport(_Model):
     :vartype is_derived_quota: bool
     """
 
-    quota_type: Optional[Union[str, "_models.Type"]] = rest_field(
+    quota_type: Optional[Union[str, "_models.QuotaType"]] = rest_field(
         name="quotaType", visibility=["read", "create", "update", "delete", "query"]
     )
     """Type of quota. Known values are: \"DefaultUserQuota\", \"DefaultGroupQuota\",
@@ -7249,12 +7872,81 @@ class QuotaReport(_Model):
     def __init__(
         self,
         *,
-        quota_type: Optional[Union[str, "_models.Type"]] = None,
+        quota_type: Optional[Union[str, "_models.QuotaType"]] = None,
         quota_target: Optional[str] = None,
         quota_limit_used_in_ki_bs: Optional[int] = None,
         quota_limit_total_in_ki_bs: Optional[int] = None,
         percentage_used: Optional[float] = None,
         is_derived_quota: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class QuotaReportFilterRequest(_Model):
+    """Quota report filters. When filtering by quotaType or quotaTarget, both properties must be
+    supplied together. This constraint is enforced by the service/API at runtime, and requests
+    violating this rule will return a validation error. The usageThresholdPercentage filter is
+    independent and can be used alone or in combination with quotaType and quotaTarget to further
+    refine results.
+
+    :ivar quota_type: Type of quota. If provided, quotaTarget must also be specified. The quotaType
+     and quotaTarget properties are optional, but when filtering by quota type, quotaType and
+     quotaTarget must be supplied together. Service/API will return an error if only one is
+     provided. Known values are: "DefaultUserQuota", "DefaultGroupQuota", "IndividualUserQuota", and
+     "IndividualGroupQuota".
+    :vartype quota_type: str or ~azure.mgmt.netapp.models.QuotaType
+    :ivar quota_target: UserID/GroupID/SID based on the quota target type. UserID and groupID can
+     be found by running 'id' or 'getent' command for the user or group and SID can be found by
+     running <wmic useraccount where name='user-name' get sid>. If provided, quotaType must also be
+     specified. The quotaType and quotaTarget properties are optional, but when filtering by quota
+     target, quotaType and quotaTarget must be supplied together. Service/API will return an error
+     if only one is provided.
+    :vartype quota_target: str
+    :ivar usage_threshold_percentage: The usageThresholdPercentage filter takes the usage threshold
+     percentage and returns records where the usage is greater than or equal to the input value.
+     This is an optional property.
+    :vartype usage_threshold_percentage: int
+    """
+
+    quota_type: Optional[Union[str, "_models.QuotaType"]] = rest_field(
+        name="quotaType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of quota. If provided, quotaTarget must also be specified. The quotaType and quotaTarget
+     properties are optional, but when filtering by quota type, quotaType and quotaTarget must be
+     supplied together. Service/API will return an error if only one is provided. Known values are:
+     \"DefaultUserQuota\", \"DefaultGroupQuota\", \"IndividualUserQuota\", and
+     \"IndividualGroupQuota\"."""
+    quota_target: Optional[str] = rest_field(
+        name="quotaTarget", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """UserID/GroupID/SID based on the quota target type. UserID and groupID can be found by running
+     'id' or 'getent' command for the user or group and SID can be found by running <wmic
+     useraccount where name='user-name' get sid>. If provided, quotaType must also be specified. The
+     quotaType and quotaTarget properties are optional, but when filtering by quota target,
+     quotaType and quotaTarget must be supplied together. Service/API will return an error if only
+     one is provided."""
+    usage_threshold_percentage: Optional[int] = rest_field(
+        name="usageThresholdPercentage", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The usageThresholdPercentage filter takes the usage threshold percentage and returns records
+     where the usage is greater than or equal to the input value. This is an optional property."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        quota_type: Optional[Union[str, "_models.QuotaType"]] = None,
+        quota_target: Optional[str] = None,
+        usage_threshold_percentage: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -7345,13 +8037,12 @@ class RansomwareProtectionSettings(_Model):
 
 
 class RansomwareReport(ProxyResource):
-    """Advanced Ransomware Protection (ARP) report
-    Get details of the specified Advanced Ransomware Protection report (ARP).
-    ARP reports are created with a list of suspected files when it detects any combination of high
-    data entropy, abnormal volume activity with data encryption, and unusual file extensions.
-    ARP creates snapshots named Anti_ransomware_backup when it detects a potential ransomware
-    threat. You can use one of these ARP snapshots or another snapshot of your volume to restore
-    data.
+    """Advanced Ransomware Protection (ARP) report Get details of the specified Advanced Ransomware
+    Protection report (ARP). ARP reports are created with a list of suspected files when it detects
+    any combination of high data entropy, abnormal volume activity with data encryption, and
+    unusual file extensions. ARP creates snapshots named Anti_ransomware_backup when it detects a
+    potential ransomware threat. You can use one of these ARP snapshots or another snapshot of your
+    volume to restore data.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -7751,7 +8442,7 @@ class Replication(_Model):
     :vartype endpoint_type: str or ~azure.mgmt.netapp.models.EndpointType
     :ivar replication_schedule: Schedule. Known values are: "_10minutely", "hourly", and "daily".
     :vartype replication_schedule: str or ~azure.mgmt.netapp.models.ReplicationSchedule
-    :ivar remote_volume_resource_id: The resource ID of the remote volume. Required.
+    :ivar remote_volume_resource_id: The resource ID of the remote volume.
     :vartype remote_volume_resource_id: str
     :ivar remote_volume_region: The remote region for the other end of the Volume Replication.
     :vartype remote_volume_region: str
@@ -7775,10 +8466,10 @@ class Replication(_Model):
         name="replicationSchedule", visibility=["read", "create", "update", "delete", "query"]
     )
     """Schedule. Known values are: \"_10minutely\", \"hourly\", and \"daily\"."""
-    remote_volume_resource_id: str = rest_field(
+    remote_volume_resource_id: Optional[str] = rest_field(
         name="remoteVolumeResourceId", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The resource ID of the remote volume. Required."""
+    """The resource ID of the remote volume."""
     remote_volume_region: Optional[str] = rest_field(
         name="remoteVolumeRegion", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -7801,9 +8492,9 @@ class Replication(_Model):
     def __init__(
         self,
         *,
-        remote_volume_resource_id: str,
         endpoint_type: Optional[Union[str, "_models.EndpointType"]] = None,
         replication_schedule: Optional[Union[str, "_models.ReplicationSchedule"]] = None,
+        remote_volume_resource_id: Optional[str] = None,
         remote_volume_region: Optional[str] = None,
     ) -> None: ...
 
@@ -8221,10 +8912,10 @@ class SmbSettings(_Model):
     :ivar smb_encryption: Enables encryption for in-flight smb3 data. Only applicable for
      SMB/DualProtocol cache. Known values are: "Disabled" and "Enabled".
     :vartype smb_encryption: str or ~azure.mgmt.netapp.models.SmbEncryptionState
-    :ivar smb_access_based_enumerations: Enables access-based enumeration share property for SMB
+    :ivar smb_access_based_enumeration: Enables access-based enumeration share property for SMB
      Shares. Only applicable for SMB/DualProtocol volume. Known values are: "Disabled" and
      "Enabled".
-    :vartype smb_access_based_enumerations: str or
+    :vartype smb_access_based_enumeration: str or
      ~azure.mgmt.netapp.models.SmbAccessBasedEnumeration
     :ivar smb_non_browsable: Enables non-browsable property for SMB Shares. Only applicable for
      SMB/DualProtocol volume. Known values are: "Disabled" and "Enabled".
@@ -8236,8 +8927,8 @@ class SmbSettings(_Model):
     )
     """Enables encryption for in-flight smb3 data. Only applicable for SMB/DualProtocol cache. Known
      values are: \"Disabled\" and \"Enabled\"."""
-    smb_access_based_enumerations: Optional[Union[str, "_models.SmbAccessBasedEnumeration"]] = rest_field(
-        name="smbAccessBasedEnumerations", visibility=["read", "create", "update", "delete", "query"]
+    smb_access_based_enumeration: Optional[Union[str, "_models.SmbAccessBasedEnumeration"]] = rest_field(
+        name="smbAccessBasedEnumeration", visibility=["read", "create", "update", "delete", "query"]
     )
     """Enables access-based enumeration share property for SMB Shares. Only applicable for
      SMB/DualProtocol volume. Known values are: \"Disabled\" and \"Enabled\"."""
@@ -8252,7 +8943,7 @@ class SmbSettings(_Model):
         self,
         *,
         smb_encryption: Optional[Union[str, "_models.SmbEncryptionState"]] = None,
-        smb_access_based_enumerations: Optional[Union[str, "_models.SmbAccessBasedEnumeration"]] = None,
+        smb_access_based_enumeration: Optional[Union[str, "_models.SmbAccessBasedEnumeration"]] = None,
         smb_non_browsable: Optional[Union[str, "_models.SmbNonBrowsable"]] = None,
     ) -> None: ...
 
@@ -10029,11 +10720,9 @@ class VolumePatchProperties(_Model):
     :vartype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
     :ivar usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a soft
      quota used for alerting only. For regular volumes, valid values are in the range 50GiB to
-     100TiB.
-     For large volumes, valid values are in the range 100TiB to 500TiB, and on an exceptional basis,
-     from to 2400GiB to 2400TiB.
-     For extra large volumes, valid values are in the range 2400GiB to 7200TiB. Values expressed in
-     bytes as multiples of 1 GiB.
+     100TiB. For large volumes, valid values are in the range 100TiB to 500TiB, and on an
+     exceptional basis, from to 2400GiB to 2400TiB. For extra large volumes, valid values are in the
+     range 2400GiB to 7200TiB. Values expressed in bytes as multiples of 1 GiB.
     :vartype usage_threshold: int
     :ivar export_policy: Set of export policy rules.
     :vartype export_policy: ~azure.mgmt.netapp.models.VolumePatchPropertiesExportPolicy
@@ -10067,13 +10756,11 @@ class VolumePatchProperties(_Model):
     :vartype coolness_period: int
     :ivar cool_access_retrieval_policy: coolAccessRetrievalPolicy determines the data retrieval
      behavior from the cool tier to standard storage based on the read pattern for cool access
-     enabled volumes. The possible values for this field are:
-     Default - Data will be pulled from cool tier to standard storage on random reads. This policy
-     is the default.
-     OnRead - All client-driven data read is pulled from cool tier to standard storage on both
-     sequential and random reads.
-     Never - No client-driven data is pulled from cool tier to standard storage. Known values are:
-     "Default", "OnRead", and "Never".
+     enabled volumes. The possible values for this field are: Default - Data will be pulled from
+     cool tier to standard storage on random reads. This policy is the default. OnRead - All
+     client-driven data read is pulled from cool tier to standard storage on both sequential and
+     random reads. Never - No client-driven data is pulled from cool tier to standard storage. Known
+     values are: "Default", "OnRead", and "Never".
     :vartype cool_access_retrieval_policy: str or
      ~azure.mgmt.netapp.models.CoolAccessRetrievalPolicy
     :ivar cool_access_tiering_policy: coolAccessTieringPolicy determines which cold data blocks are
@@ -10105,11 +10792,10 @@ class VolumePatchProperties(_Model):
         name="usageThreshold", visibility=["read", "create", "update", "delete", "query"]
     )
     """Maximum storage quota allowed for a file system in bytes. This is a soft quota used for
-     alerting only. For regular volumes, valid values are in the range 50GiB to 100TiB.
-     For large volumes, valid values are in the range 100TiB to 500TiB, and on an exceptional basis,
-     from to 2400GiB to 2400TiB.
-     For extra large volumes, valid values are in the range 2400GiB to 7200TiB. Values expressed in
-     bytes as multiples of 1 GiB."""
+     alerting only. For regular volumes, valid values are in the range 50GiB to 100TiB. For large
+     volumes, valid values are in the range 100TiB to 500TiB, and on an exceptional basis, from to
+     2400GiB to 2400TiB. For extra large volumes, valid values are in the range 2400GiB to 7200TiB.
+     Values expressed in bytes as multiples of 1 GiB."""
     export_policy: Optional["_models.VolumePatchPropertiesExportPolicy"] = rest_field(
         name="exportPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10162,13 +10848,10 @@ class VolumePatchProperties(_Model):
     )
     """coolAccessRetrievalPolicy determines the data retrieval behavior from the cool tier to standard
      storage based on the read pattern for cool access enabled volumes. The possible values for this
-     field are:
-     Default - Data will be pulled from cool tier to standard storage on random reads. This policy
-     is the default.
-     OnRead - All client-driven data read is pulled from cool tier to standard storage on both
-     sequential and random reads.
-     Never - No client-driven data is pulled from cool tier to standard storage. Known values are:
-     \"Default\", \"OnRead\", and \"Never\"."""
+     field are: Default - Data will be pulled from cool tier to standard storage on random reads.
+     This policy is the default. OnRead - All client-driven data read is pulled from cool tier to
+     standard storage on both sequential and random reads. Never - No client-driven data is pulled
+     from cool tier to standard storage. Known values are: \"Default\", \"OnRead\", and \"Never\"."""
     cool_access_tiering_policy: Optional[Union[str, "_models.CoolAccessTieringPolicy"]] = rest_field(
         name="coolAccessTieringPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10314,11 +10997,9 @@ class VolumeProperties(_Model):
     :vartype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
     :ivar usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a soft
      quota used for alerting only. For regular volumes, valid values are in the range 50GiB to
-     100TiB.
-     For large volumes, valid values are in the range 100TiB to 500TiB, and on an exceptional basis,
-     from to 2400GiB to 2400TiB.
-     For extra large volumes, valid values are in the range 2400GiB to 7200TiB. Values expressed in
-     bytes as multiples of 1 GiB. Required.
+     100TiB. For large volumes, valid values are in the range 100TiB to 500TiB, and on an
+     exceptional basis, from to 2400GiB to 2400TiB. For extra large volumes, valid values are in the
+     range 2400GiB to 7200TiB. Values expressed in bytes as multiples of 1 GiB. Required.
     :vartype usage_threshold: int
     :ivar export_policy: Set of export policy rules.
     :vartype export_policy: ~azure.mgmt.netapp.models.VolumePropertiesExportPolicy
@@ -10420,13 +11101,11 @@ class VolumeProperties(_Model):
     :vartype coolness_period: int
     :ivar cool_access_retrieval_policy: coolAccessRetrievalPolicy determines the data retrieval
      behavior from the cool tier to standard storage based on the read pattern for cool access
-     enabled volumes. The possible values for this field are:
-     Default - Data will be pulled from cool tier to standard storage on random reads. This policy
-     is the default.
-     OnRead - All client-driven data read is pulled from cool tier to standard storage on both
-     sequential and random reads.
-     Never - No client-driven data is pulled from cool tier to standard storage. Known values are:
-     "Default", "OnRead", and "Never".
+     enabled volumes. The possible values for this field are: Default - Data will be pulled from
+     cool tier to standard storage on random reads. This policy is the default. OnRead - All
+     client-driven data read is pulled from cool tier to standard storage on both sequential and
+     random reads. Never - No client-driven data is pulled from cool tier to standard storage. Known
+     values are: "Default", "OnRead", and "Never".
     :vartype cool_access_retrieval_policy: str or
      ~azure.mgmt.netapp.models.CoolAccessRetrievalPolicy
     :ivar cool_access_tiering_policy: coolAccessTieringPolicy determines which cold data blocks are
@@ -10494,11 +11173,10 @@ class VolumeProperties(_Model):
     :ivar is_large_volume: Specifies whether volume is a Large Volume or Regular Volume.
     :vartype is_large_volume: bool
     :ivar large_volume_type: Specifies the type of the Large Volume. When set to 'LargeVolume', the
-     large volume is created with standard configuration.
-     If it is set to 'ExtraLargeVolume7Dot2PiB', the extra large volume is created with higher
-     capacity limit 7.2PiB with cool access enabled,
-     delivering higher capacity limit with lower costs. Known values are: "LargeVolume" and
-     "PremExtraLargeVolume7Dot2PiB".
+     large volume is created with standard configuration. If it is set to
+     'ExtraLargeVolume7Dot2PiB', the extra large volume is created with higher capacity limit 7.2PiB
+     with cool access enabled, delivering higher capacity limit with lower costs. Known values are:
+     "LargeVolume" and "PremExtraLargeVolume7Dot2PiB".
     :vartype large_volume_type: str or ~azure.mgmt.netapp.models.LargeVolumeType
     :ivar originating_resource_id: Id of the snapshot or backup that the volume is restored from.
     :vartype originating_resource_id: str
@@ -10531,11 +11209,10 @@ class VolumeProperties(_Model):
      \"StandardZRS\", and \"Flexible\"."""
     usage_threshold: int = rest_field(name="usageThreshold", visibility=["read", "create", "update", "delete", "query"])
     """Maximum storage quota allowed for a file system in bytes. This is a soft quota used for
-     alerting only. For regular volumes, valid values are in the range 50GiB to 100TiB.
-     For large volumes, valid values are in the range 100TiB to 500TiB, and on an exceptional basis,
-     from to 2400GiB to 2400TiB.
-     For extra large volumes, valid values are in the range 2400GiB to 7200TiB. Values expressed in
-     bytes as multiples of 1 GiB. Required."""
+     alerting only. For regular volumes, valid values are in the range 50GiB to 100TiB. For large
+     volumes, valid values are in the range 100TiB to 500TiB, and on an exceptional basis, from to
+     2400GiB to 2400TiB. For extra large volumes, valid values are in the range 2400GiB to 7200TiB.
+     Values expressed in bytes as multiples of 1 GiB. Required."""
     export_policy: Optional["_models.VolumePropertiesExportPolicy"] = rest_field(
         name="exportPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10668,13 +11345,10 @@ class VolumeProperties(_Model):
     )
     """coolAccessRetrievalPolicy determines the data retrieval behavior from the cool tier to standard
      storage based on the read pattern for cool access enabled volumes. The possible values for this
-     field are:
-     Default - Data will be pulled from cool tier to standard storage on random reads. This policy
-     is the default.
-     OnRead - All client-driven data read is pulled from cool tier to standard storage on both
-     sequential and random reads.
-     Never - No client-driven data is pulled from cool tier to standard storage. Known values are:
-     \"Default\", \"OnRead\", and \"Never\"."""
+     field are: Default - Data will be pulled from cool tier to standard storage on random reads.
+     This policy is the default. OnRead - All client-driven data read is pulled from cool tier to
+     standard storage on both sequential and random reads. Never - No client-driven data is pulled
+     from cool tier to standard storage. Known values are: \"Default\", \"OnRead\", and \"Never\"."""
     cool_access_tiering_policy: Optional[Union[str, "_models.CoolAccessTieringPolicy"]] = rest_field(
         name="coolAccessTieringPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10762,10 +11436,9 @@ class VolumeProperties(_Model):
         name="largeVolumeType", visibility=["read", "create"]
     )
     """Specifies the type of the Large Volume. When set to 'LargeVolume', the large volume is created
-     with standard configuration.
-     If it is set to 'ExtraLargeVolume7Dot2PiB', the extra large volume is created with higher
-     capacity limit 7.2PiB with cool access enabled,
-     delivering higher capacity limit with lower costs. Known values are: \"LargeVolume\" and
+     with standard configuration. If it is set to 'ExtraLargeVolume7Dot2PiB', the extra large volume
+     is created with higher capacity limit 7.2PiB with cool access enabled, delivering higher
+     capacity limit with lower costs. Known values are: \"LargeVolume\" and
      \"PremExtraLargeVolume7Dot2PiB\"."""
     originating_resource_id: Optional[str] = rest_field(name="originatingResourceId", visibility=["read"])
     """Id of the snapshot or backup that the volume is restored from."""
@@ -11074,7 +11747,7 @@ class VolumeQuotaRulesProperties(_Model):
     :vartype quota_size_in_ki_bs: int
     :ivar quota_type: Type of quota. Known values are: "DefaultUserQuota", "DefaultGroupQuota",
      "IndividualUserQuota", and "IndividualGroupQuota".
-    :vartype quota_type: str or ~azure.mgmt.netapp.models.Type
+    :vartype quota_type: str or ~azure.mgmt.netapp.models.QuotaType
     :ivar quota_target: UserID/GroupID/SID based on the quota target type. UserID and groupID can
      be found by running ‘id’ or ‘getent’ command for the user or group and SID can be found by
      running <wmic useraccount where name='user-name' get sid>.
@@ -11091,7 +11764,7 @@ class VolumeQuotaRulesProperties(_Model):
         name="quotaSizeInKiBs", visibility=["read", "create", "update", "delete", "query"]
     )
     """Size of quota."""
-    quota_type: Optional[Union[str, "_models.Type"]] = rest_field(name="quotaType", visibility=["read", "create"])
+    quota_type: Optional[Union[str, "_models.QuotaType"]] = rest_field(name="quotaType", visibility=["read", "create"])
     """Type of quota. Known values are: \"DefaultUserQuota\", \"DefaultGroupQuota\",
      \"IndividualUserQuota\", and \"IndividualGroupQuota\"."""
     quota_target: Optional[str] = rest_field(name="quotaTarget", visibility=["read", "create"])
@@ -11104,7 +11777,7 @@ class VolumeQuotaRulesProperties(_Model):
         self,
         *,
         quota_size_in_ki_bs: Optional[int] = None,
-        quota_type: Optional[Union[str, "_models.Type"]] = None,
+        quota_type: Optional[Union[str, "_models.QuotaType"]] = None,
         quota_target: Optional[str] = None,
     ) -> None: ...
 

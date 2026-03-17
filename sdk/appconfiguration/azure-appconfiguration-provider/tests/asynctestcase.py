@@ -5,10 +5,10 @@
 # license information.
 # --------------------------------------------------------------------------
 from devtools_testutils import AzureRecordedTestCase
-from azure.appconfiguration.aio import AzureAppConfigurationClient
 from testcase import get_configs
-from azure.appconfiguration.provider.aio import load
+from azure.appconfiguration.aio import AzureAppConfigurationClient
 from azure.appconfiguration.provider import AzureAppConfigurationKeyVaultOptions
+from azure.appconfiguration.provider.aio import load
 
 
 class AppConfigTestCase(AzureRecordedTestCase):
@@ -38,13 +38,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
 
         return await load(**kwargs)
 
-    @staticmethod
-    def create_sdk_client(appconfiguration_connection_string):
-        return AzureAppConfigurationClient.from_connection_string(
-            appconfiguration_connection_string, user_agent="SDK/Integration"
-        )
-
-    def create_aad_sdk_client(self, appconfiguration_endpoint_string):
+    def create_appconfig_client(self, appconfiguration_endpoint_string):
         cred = self.get_credential(AzureAppConfigurationClient, is_async=True)
         return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred, user_agent="SDK/Integration")
 
@@ -72,7 +66,7 @@ async def cleanup_test_resources_async(
         for snapshot_name in snapshot_names:
             try:
                 await client.archive_snapshot(snapshot_name)
-            except Exception:
+            except Exception:  # pylint: disable=broad-except
                 pass
 
     # Delete configuration settings and feature flags
@@ -80,7 +74,7 @@ async def cleanup_test_resources_async(
         for setting in settings:
             try:
                 await client.delete_configuration_setting(key=setting.key, label=setting.label)
-            except Exception:
+            except Exception:  # pylint: disable=broad-except
                 pass
 
 

@@ -11,8 +11,8 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     BaseExporter,
     ExportResult,
 )
-from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
-from azure.monitor.opentelemetry.exporter._generated.models import (
+from azure.monitor.opentelemetry.exporter._generated.exporter import AzureMonitorClient
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     TelemetryItem,
     TrackResponse,
     TelemetryErrorDetails,
@@ -47,7 +47,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """Set up class-level resources including a single customer stats manager"""
-        from azure.monitor.opentelemetry.exporter._generated.models import TelemetryEventData, MonitorBase
+        from azure.monitor.opentelemetry.exporter._generated.exporter.models import TelemetryEventData, MonitorBase
 
         os.environ.pop("APPLICATIONINSIGHTS_SDKSTATS_DISABLED", None)
         os.environ["APPLICATIONINSIGHTS_SDKSTATS_DISABLED"] = "false"
@@ -156,8 +156,13 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
     def test_transmit_retryable_http_error_customer_sdkstats_track_retry_items(self, track_retry_mock):
         """Test that _track_retry_items is called on retryable HTTP errors (e.g., 408, 502, 503, 504)"""
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
-        with mock.patch("requests.Session.request") as request_mock:
-            request_mock.return_value = MockResponse(408, "{}")
+        error_response = mock.Mock()
+        error_response.status_code = 408
+        with mock.patch.object(
+            AzureMonitorClient,
+            "track",
+            side_effect=HttpResponseError("Retryable error", response=error_response),
+        ):
             result = exporter._transmit(self._envelopes_to_export)
 
         track_retry_mock.assert_called_once()
@@ -185,10 +190,15 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
     def test_transmit_invalid_http_error_customer_sdkstats_track_dropped_items_and_shutdown(self, track_dropped_mock):
         """Test that _track_dropped_items is called and customer sdkstats is shutdown on invalid HTTP errors (e.g., 400)"""  # pylint: disable=line-too-long
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
-        with mock.patch("requests.Session.request") as request_mock, mock.patch(
+        error_response = mock.Mock()
+        error_response.status_code = 400
+        with mock.patch.object(
+            AzureMonitorClient,
+            "track",
+            side_effect=HttpResponseError("Invalid error", response=error_response),
+        ), mock.patch(
             "azure.monitor.opentelemetry.exporter.statsbeat.customer.shutdown_customer_sdkstats_metrics"
         ) as shutdown_mock:
-            request_mock.return_value = MockResponse(400, "{}")
             result = exporter._transmit(self._envelopes_to_export)
 
         track_dropped_mock.assert_called_once()
