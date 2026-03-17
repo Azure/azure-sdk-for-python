@@ -31,12 +31,12 @@ def main():
     )
 
     response = client.scheduled_actions.virtual_machines_get_operation_errors(
-        locationparameter="gcdqwzmxtcn",
-        request_body={"operationIds": ["ksufjznokhsbowdupyt"]},
+        locationparameter="vkkri",
+        request_body={"operationIds": ["enrmeatzaw"]},
     )
     print(response)
 
 
-# x-ms-original-file: 2025-04-15-preview/ScheduledActions_VirtualMachinesGetOperationErrors_MinimumSet_Gen.json
+# x-ms-original-file: 2026-03-01-preview/ScheduledActions_VirtualMachinesGetOperationErrors_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()
