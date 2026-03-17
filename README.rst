@@ -19,7 +19,7 @@ access Management (Virtual Machines, ...) or Runtime (ServiceBus using HTTP, Bat
 Complete feature list of this repo and where to find Python packages not in this repo can be found on our 
 `Azure SDK for Python documentation <https://docs.microsoft.com/python/api/overview/azure/?view=azure-python>`__.
 
-The SDK supports Python 3.7 or later. For more details, please read our page on `Azure SDK for Python version support policy <https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy>`__.
+The SDK supports Python 3.7 or later. For more details, please read our page on `Azure SDK for Python version support policy <https://github.com/Azure/azure-sdk-for-python/blob/main/doc/python_version_support_policy.md>`__.
 
 If you're currently using the ``azure`` package < 1.0 then please read important information in `this issue <https://github.com/Azure/azure-sdk-for-python/issues/440>`__.
 
@@ -60,7 +60,7 @@ For further samples please visit the `Azure Samples website <https://azure.micro
 Tests
 =====
 
-For detailed documentation about our test framework, please visit this `Azure SDK test tutorial <https://github.com/Azure/azure-sdk-for-python/wiki/Contributing-to-the-tests>`__.
+For detailed documentation about our test framework, please visit this `Azure SDK test tutorial <https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md>`__.
 
 Need Help?
 ==========

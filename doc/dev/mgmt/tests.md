@@ -147,13 +147,6 @@ Code in the [`azure-sdk-tools/devtools_testutils`][devtools_testutils] directory
 
 New tests should be located alongside the packages containing the code they test. For example, the tests for `azure-mgmt-media` are in `azure-mgmt-media/tests`.
 
-There are also legacy tests in the following three locations:
-
-*   azure-servicebus/tests
-*   azure-servicemanagement-legacy/tests
-
-For more information about legacy tests, see [Legacy tests](https://github.com/Azure/azure-sdk-for-python/wiki/Legacy-tests).
-
 ## Writing management plane test
 
 Management plane SDKs are those that are formatted `azure-mgmt-xxxx`, otherwise the SDK is data plane. Management plane SDKs work against the [Azure Resource Manager APIs][arm_apis], while the data plane SDKs will work against service APIs. This section will demonstrate writing tests using `devtools_testutils` with a few increasingly sophisticated examples to show how to use some of the features of the underlying test frameworks.
