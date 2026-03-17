@@ -14,7 +14,6 @@ from azure.ai.evaluation._common.constants import (
 from azure.ai.evaluation._common.rai_service import (
     evaluate_with_rai_service_sync,
     evaluate_with_rai_service_sync_multimodal,
-    evaluate_with_rai_service_multimodal,
 )
 from azure.ai.evaluation._common.utils import validate_azure_ai_project, is_onedp_project
 from azure.ai.evaluation._exceptions import EvaluationException
@@ -127,7 +126,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         """Evaluates content according to this evaluator's metric.
         Evaluates each turn separately to maintain per-turn granularity.
         When using the legacy endpoint, sends the entire conversation in a single call
-        (matching pre-sync-migration behavior).
+        (matching pre-sync-migration behavior) via the sync wrapper for metric normalization.
         """
         validate_conversation(conversation)
         messages = conversation["messages"]
@@ -136,12 +135,14 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         metric_value = self._eval_metric.value if hasattr(self._eval_metric, "value") else self._eval_metric
 
         # Legacy path: send entire conversation in a single call (pre-sync-migration behavior)
+        # Route through evaluate_with_rai_service_sync_multimodal so metric name normalization applies.
         if self._use_legacy_endpoint:
-            result = await evaluate_with_rai_service_multimodal(
+            result = await evaluate_with_rai_service_sync_multimodal(
                 messages=messages,
-                metric_name=self._eval_metric,
+                metric_name=metric_value,
                 project_scope=self._azure_ai_project,
                 credential=self._credential,
+                use_legacy_endpoint=True,
             )
             return result
 

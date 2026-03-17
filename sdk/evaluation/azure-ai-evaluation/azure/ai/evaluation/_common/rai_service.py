@@ -62,6 +62,9 @@ _SYNC_TO_LEGACY_RESPONSE_KEYS: Dict[str, str] = {
     "election_critical_information": "eci",
 }
 
+# Reverse mapping: legacy metric name → sync metric name (built once at module level)
+_LEGACY_TO_SYNC_METRIC_NAMES: Dict[str, str] = {v: k for k, v in _SYNC_TO_LEGACY_METRIC_NAMES.items()}
+
 USER_TEXT_TEMPLATE_DICT: Dict[str, Template] = {
     "DEFAULT": Template("<Human>{$query}</><System>{$response}</>"),
 }
@@ -1088,8 +1091,7 @@ async def evaluate_with_rai_service_sync(
             metric_display_name = metric_display_name or metric_name_str
             metric_name = legacy_name
     else:
-        _legacy_to_sync = {v: k for k, v in _SYNC_TO_LEGACY_METRIC_NAMES.items()}
-        sync_name = _legacy_to_sync.get(metric_name_str)
+        sync_name = _LEGACY_TO_SYNC_METRIC_NAMES.get(metric_name_str)
         if sync_name:
             metric_name = sync_name
 
@@ -1317,8 +1319,7 @@ async def evaluate_with_rai_service_sync_multimodal(
         if legacy_name:
             metric_name = legacy_name
     else:
-        _legacy_to_sync = {v: k for k, v in _SYNC_TO_LEGACY_METRIC_NAMES.items()}
-        sync_name = _legacy_to_sync.get(metric_name_str)
+        sync_name = _LEGACY_TO_SYNC_METRIC_NAMES.get(metric_name_str)
         if sync_name:
             metric_name = sync_name
 

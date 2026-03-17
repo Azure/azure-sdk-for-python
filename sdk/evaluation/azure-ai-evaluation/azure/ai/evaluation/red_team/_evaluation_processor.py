@@ -207,7 +207,7 @@ class EvaluationProcessor:
 
                     # Find the result matching our metric/risk category
                     eval_result = None
-                    lookup_names = {metric_name, risk_cat_value, effective_metric_name}
+                    lookup_names = {metric_name, risk_cat_value}
                     for result_item in results:
                         result_dict = result_item if isinstance(result_item, dict) else result_item.__dict__
                         result_name = str(result_dict.get("name") or "")

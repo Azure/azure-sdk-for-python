@@ -528,7 +528,7 @@ class TestContentSafetyEvaluator:
         )
 
         _, kwargs = legacy_mock.call_args
-        assert kwargs["metric_name"] == EvaluationMetrics.HATE_FAIRNESS
+        assert kwargs["metric_name"] == "hate_fairness"
 
         legacy_mock.reset_mock()
 
@@ -546,16 +546,15 @@ class TestContentSafetyEvaluator:
         )
 
         _, kwargs = legacy_mock.call_args
-        assert kwargs["metric_name"] == EvaluationMetrics.HATE_FAIRNESS
+        assert kwargs["metric_name"] == "hate_fairness"
 
     @pytest.mark.asyncio
-    @patch("azure.identity.DefaultAzureCredential")
     @patch("azure.ai.evaluation._common.rai_service.fetch_or_reuse_token")
     @patch("azure.ai.evaluation._common.rai_service.get_rai_svc_url")
     @patch("azure.ai.evaluation._common.rai_service.ensure_service_availability")
     @patch("azure.ai.evaluation._common.rai_service.get_sync_http_client_with_retry")
     async def test_evaluate_with_rai_service_sync_maps_hate_fairness_to_hate_unfairness(
-        self, http_client_mock, ensure_avail_mock, get_url_mock, fetch_token_mock, cred_mock
+        self, http_client_mock, ensure_avail_mock, get_url_mock, fetch_token_mock
     ):
         """When use_legacy_endpoint=False and metric is hate_fairness, payload should use hate_unfairness."""
         fetch_token_mock.return_value = "fake-token"
