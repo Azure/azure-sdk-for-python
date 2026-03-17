@@ -352,6 +352,7 @@ def _is_any_synthetic_source(properties: Optional[Any]) -> bool:
 # pylint: disable=W0622
 def _filter_custom_properties(properties: Attributes, filter=None) -> Dict[str, str]:
     max_length = 64 * 1024
+    max_length_for_genai_attributes = 256 * 1024
     processed_properties: Dict[str, str] = {}
     if not properties:
         return processed_properties
@@ -365,7 +366,6 @@ def _filter_custom_properties(properties: Attributes, filter=None) -> Dict[str, 
         if not key or len(key) > 150 or val is None:
             continue
         if key in _GEN_AI_ATTRIBUTES:
-            max_length_for_genai_attributes = 256 * 1024
             processed_properties[key] = str(val)[:max_length_for_genai_attributes]
         else:
             processed_properties[key] = str(val)[:max_length]
