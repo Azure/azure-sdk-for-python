@@ -1,9 +1,13 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+
 import json
 import os
 import subprocess
 import sys
 import time
-from unittest import mock
+
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException
 
 
@@ -27,12 +31,6 @@ def run_cli_command(
     if not custom_environment:
         custom_environment = os.environ
 
-    # Use argv form with shell=False to avoid shell injection risks while keeping behavior
-    # consistent across platforms (including macOS).
-    # On Windows, many CLI tools (e.g., "code") are .cmd/.bat shims that require shell
-    # execution. We use subprocess.list2cmdline to safely quote the arguments before
-    # passing them to the shell, preventing command injection.
-
     if (
         not do_not_print
     ):  # Avoid printing the az login service principal password, for example
@@ -48,28 +46,18 @@ def run_cli_command(
         # the environment variables.
 
         subprocess_args = {
+            "shell": False,
             "stderr": subprocess.STDOUT,
             "env": custom_environment,
         }
 
         if not stderr_to_stdout:
-            subprocess_args = {"env": custom_environment}
+            subprocess_args = {"shell": False, "env": custom_environment}
 
         if sys.version_info[0] != 2:
             subprocess_args["timeout"] = timeout
 
-        # On Windows, many CLI commands are provided as .cmd/.bat shims that require
-        # shell execution. Use list2cmdline to build a safely quoted command string
-        # when invoking via the shell.
-        if os.name == "nt":
-            command_to_execute = subprocess.list2cmdline(cmd_arguments)
-            subprocess_args["shell"] = True
-            cmd_to_run = command_to_execute
-        else:
-            subprocess_args["shell"] = False
-            cmd_to_run = cmd_arguments
-
-        output = subprocess.check_output(cmd_to_run, **subprocess_args).decode(
+        output = subprocess.check_output(cmd_arguments, **subprocess_args).decode(
             encoding="UTF-8"
         )
 
