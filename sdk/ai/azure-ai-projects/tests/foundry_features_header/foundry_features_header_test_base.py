@@ -16,6 +16,7 @@ test_required_header_async.py (async):
 """
 
 import inspect
+import pytest
 from typing import Any, ClassVar, List, Tuple, Union, get_origin
 
 from azure.core.credentials import AccessToken
@@ -41,10 +42,29 @@ EXPECTED_FOUNDRY_FEATURES: dict[str, str] = {
     "toolsets": "Toolsets=V1Preview",
 }
 
+# Shared test cases for non-beta methods that optionally send the Foundry-Features header.
+# Used by both test_foundry_features_header_optional.py (sync) and
+# test_foundry_features_header_optional_async.py (async).
+_NON_BETA_OPTIONAL_TEST_CASES = [
+    # Each pytest.param entry has the following positional arguments:
+    #   1. method_name           (str) – "<subclient>.<method>" on AIProjectClient, e.g. "agents.create_version"
+    #      The subclient and method names are parsed automatically from this string.
+    #   2. expected_header_value (str) – Expected value of the Foundry-Features header when allow_preview=True.
+    #      Use a comma-separated list of feature=version pairs, e.g. "FeatureA=V1Preview,FeatureB=V1Preview".
+    #   The test id is derived automatically from method_name.
+    pytest.param(
+        "agents.create_version",
+        "HostedAgents=V1Preview,WorkflowAgents=V1Preview,AgentEndpoint=V1Preview",
+    ),
+    pytest.param(
+        "evaluation_rules.create_or_update",
+        "Evaluations=V1Preview",
+    ),
+]
+
 # Both sentinel values – used by _make_fake_call to detect required parameters
 # whose defaults are the internal _Unset object (rather than inspect.Parameter.empty).
 _UNSET_SENTINELS: frozenset = frozenset({_SyncUnset, _AsyncUnset})
-
 
 # ---------------------------------------------------------------------------
 # Sentinel exception raised by capturing transports

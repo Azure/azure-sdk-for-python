@@ -2271,12 +2271,7 @@ class AgentsOperations:
 
     @overload
     def create_version(
-        self,
-        agent_name: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentVersionDetails:
         """Create a new agent version.
 
@@ -2299,12 +2294,7 @@ class AgentsOperations:
 
     @overload
     def create_version(
-        self,
-        agent_name: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentVersionDetails:
         """Create a new agent version.
 
