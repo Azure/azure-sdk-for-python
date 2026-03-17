@@ -19,9 +19,10 @@ from ._operations import (
     BetaEvaluationTaxonomiesOperations,
     BetaEvaluatorsOperations,
     BetaInsightsOperations,
+    BetaOperations as GeneratedBetaOperations,
     BetaRedTeamsOperations,
     BetaSchedulesOperations,
-    BetaOperations as GeneratedBetaOperations,
+    BetaToolsetsOperations,
 )
 
 
@@ -59,15 +60,16 @@ class BetaOperations(GeneratedBetaOperations):
 __all__: List[str] = [
     "AgentsOperations",
     "BetaEvaluationTaxonomiesOperations",
-    "EvaluationRulesOperations",
     "BetaEvaluatorsOperations",
     "BetaInsightsOperations",
     "BetaMemoryStoresOperations",
     "BetaOperations",
     "BetaRedTeamsOperations",
     "BetaSchedulesOperations",
+    "BetaToolsetsOperations",
     "ConnectionsOperations",
     "DatasetsOperations",
+    "EvaluationRulesOperations",
     "TelemetryOperations",
 ]  # Add all objects you want publicly available to users at this package level
 

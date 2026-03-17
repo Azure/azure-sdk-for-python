@@ -54,7 +54,7 @@ _NON_BETA_OPTIONAL_TEST_CASES = [
     #   The test id is derived automatically from method_name.
     pytest.param(
         "agents.create_version",
-        "HostedAgents=V1Preview,WorkflowAgents=V1Preview,AgentEndpoint=V1Preview",
+        "HostedAgents=V1Preview,WorkflowAgents=V1Preview,AgentEndpoints=V1Preview",
     ),
     pytest.param(
         "evaluation_rules.create_or_update",
