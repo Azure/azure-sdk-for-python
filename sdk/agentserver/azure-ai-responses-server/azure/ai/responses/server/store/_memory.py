@@ -9,7 +9,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Dict
 
 from .._generated import Response
-from .._models import ResponseExecution, ResponseStatus, StreamEventRecord, StreamReplayState
+from ..models import ResponseExecution, ResponseStatus, StreamEventRecord, StreamReplayState
 from ._base import ResponseStore
 
 
