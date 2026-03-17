@@ -42,7 +42,7 @@ class TestAppConfigurationProviderWatchAll(AppConfigTestCase, unittest.TestCase)
         assert FEATURE_MANAGEMENT_KEY in client
         assert has_feature_flag(client, "Alpha")
 
-        appconfig_client = self.create_aad_sdk_client(appconfiguration_endpoint_string)
+        appconfig_client = self.create_appconfig_client(appconfiguration_endpoint_string)
 
         setting = appconfig_client.get_configuration_setting(key="refresh_message")
         setting.value = "updated value"
@@ -104,7 +104,7 @@ class TestAppConfigurationProviderWatchAll(AppConfigTestCase, unittest.TestCase)
         )
         assert client["refresh_message"] == "original value"
 
-        appconfig_client = self.create_aad_sdk_client(appconfiguration_endpoint_string)
+        appconfig_client = self.create_appconfig_client(appconfiguration_endpoint_string)
 
         setting = appconfig_client.get_configuration_setting(key="refresh_message")
         setting.value = "updated value"
@@ -134,7 +134,7 @@ class TestAppConfigurationProviderWatchAll(AppConfigTestCase, unittest.TestCase)
         )
         assert client["refresh_message"] == "original value"
 
-        appconfig_client = self.create_aad_sdk_client(appconfiguration_endpoint_string)
+        appconfig_client = self.create_appconfig_client(appconfiguration_endpoint_string)
 
         setting = appconfig_client.get_configuration_setting(key="refresh_message")
         setting.value = "updated value"
@@ -168,7 +168,7 @@ class TestAppConfigurationProviderWatchAll(AppConfigTestCase, unittest.TestCase)
         assert client["refresh_message"] == "original value"
         assert client["non_refreshed_message"] == "Static"
 
-        appconfig_client = self.create_aad_sdk_client(appconfiguration_endpoint_string)
+        appconfig_client = self.create_appconfig_client(appconfiguration_endpoint_string)
 
         # Change multiple settings at once
         setting = appconfig_client.get_configuration_setting(key="refresh_message")
@@ -219,7 +219,7 @@ class TestAppConfigurationProviderWatchAll(AppConfigTestCase, unittest.TestCase)
         assert FEATURE_MANAGEMENT_KEY in client
         assert has_feature_flag(client, "Alpha")
 
-        appconfig_client = self.create_aad_sdk_client(appconfiguration_endpoint_string)
+        appconfig_client = self.create_appconfig_client(appconfiguration_endpoint_string)
 
         setting = appconfig_client.get_configuration_setting(key="refresh_message")
         setting.value = "updated value"
