@@ -15,7 +15,7 @@
 
 #### Other Changes
 * Enhanced error logging by attaching endpoint information to exceptions during database account retrieval. See [PR 44484](https://github.com/Azure/azure-sdk-for-python/pull/44484)
-
+* Enhanced telemetry logging to include cosmos specific attributes and added a sample on how to use head sampling to reduce telemetry volume. See [PR 45343](https://github.com/Azure/azure-sdk-for-python/pull/45343)
 ### 4.15.0 (2026-02-19)
 
 #### Features Added
