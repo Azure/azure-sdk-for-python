@@ -55,7 +55,8 @@ To report an issue with the client library, or request additional features, plea
 * An [Azure subscription][azure_sub].
 * A [project in Microsoft Foundry](https://learn.microsoft.com/azure/foundry/how-to/create-projects).
 * A Foundry project endpoint URL of the form `https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name`. It can be found in your Microsoft Foundry Project home page. Below we will assume the environment variable `FOUNDRY_PROJECT_ENDPOINT` was defined to hold this value.
-* An Entra ID token for authentication. Your application needs an object that implements the [TokenCredential](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential) interface. Code samples here use [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential). To get that working, you will need:
+* To authenticate using API key, you will need the "Project API key" as shown in your Microsoft Foundry Project home page.
+* To authenticate using Entra ID, your application needs an object that implements the [TokenCredential](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential) interface. Code samples here use [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential). To get that working, you will need:
   * An appropriate role assignment. See [Role-based access control in Microsoft Foundry portal](https://learn.microsoft.com/azure/foundry/concepts/rbac-foundry). Role assignment can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
   * [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) installed.
   * You are logged into your Azure account by running `az login`.
@@ -74,9 +75,46 @@ pip show azure-ai-projects
 
 ## Key concepts
 
-### Create and authenticate the client with Entra ID
+### Create and authenticate the client with API key
 
-Entra ID is the only authentication method supported at the moment by the client.
+To construct a synchronous client using a context manager:
+
+```python
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.projects import AIProjectClient
+
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+api_key = os.environ["FOUNDRY_PROJECT_API_KEY"]
+
+with (
+    AIProjectClient(endpoint=endpoint, credential=AzureKeyCredential(api_key)) as project_client
+):
+```
+
+To construct an asynchronous client, install the additional package [aiohttp](https://pypi.org/project/aiohttp/):
+
+```bash
+pip install aiohttp
+```
+
+and run:
+
+```python
+import os
+import asyncio
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.projects.aio import AIProjectClient
+
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+api_key = os.environ["FOUNDRY_PROJECT_API_KEY"]
+
+async with (
+    AIProjectClient(endpoint=endpoint, credential=AzureKeyCredential(api_key)) as project_client
+):
+```
+
+### Create and authenticate the client with Entra ID
 
 To construct a synchronous client using a context manager:
 
@@ -85,9 +123,11 @@ import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=os.environ["FOUNDRY_PROJECT_ENDPOINT"], credential=credential) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
 ```
 
@@ -105,9 +145,11 @@ import asyncio
 from azure.ai.projects.aio import AIProjectClient
 from azure.identity.aio import DefaultAzureCredential
 
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+
 async with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=os.environ["FOUNDRY_PROJECT_ENDPOINT"], credential=credential) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
 ```
 
