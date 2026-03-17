@@ -365,7 +365,8 @@ def _filter_custom_properties(properties: Attributes, filter=None) -> Dict[str, 
         if not key or len(key) > 150 or val is None:
             continue
         if key in _GEN_AI_ATTRIBUTES:
-            processed_properties[key] = str(val)
+            max_length_for_genai_attributes = 256 * 1024
+            processed_properties[key] = str(val)[:max_length_for_genai_attributes]
         else:
             processed_properties[key] = str(val)[:max_length]
     return processed_properties
