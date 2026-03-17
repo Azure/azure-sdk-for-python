@@ -1,5 +1,6 @@
 import argparse
 import os
+import subprocess
 import sys
 
 from typing import Optional, List
@@ -62,6 +63,13 @@ class apistub(Check):
             dest="dest_dir",
             default=None,
             help="Destination directory for generated API stub token files.",
+        )
+        p.add_argument(
+            "--md",
+            dest="generate_md",
+            default=False,
+            action="store_true",
+            help="Additionally generate api.md from the JSON token file using Export-APIViewMarkdown.ps1.",
         )
         p.set_defaults(func=self.run)
 
@@ -146,6 +154,18 @@ class apistub(Check):
 
             try:
                 self.run_venv_command(executable, cmds, cwd=staging_directory, check=True, immediately_dump=True)
+                if getattr(args, "generate_md", False):
+                    token_json_path = os.path.join(out_token_path, f"{package_name}_python.json")
+                    md_script = os.path.join(REPO_ROOT, "eng", "common", "scripts", "Export-APIViewMarkdown.ps1")
+                    logger.info(f"Generating api.md for {package_name}")
+                    try:
+                        subprocess.run(
+                            ["pwsh", md_script, "-TokenJsonPath", token_json_path, "-OutputPath", out_token_path],
+                            check=True,
+                        )
+                    except (CalledProcessError, FileNotFoundError) as e:
+                        logger.error(f"Failed to generate api.md: {e}")
+                        results.append(1)
             except CalledProcessError as e:
                 logger.error(f"{package_name} exited with error {e.returncode}")
                 results.append(e.returncode)
