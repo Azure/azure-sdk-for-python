@@ -4,6 +4,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 
-"""Compatibility re-exports for generated models preserved under sdk/models."""
+"""Model-only generated package surface."""
 
-from .sdk.models.models import *  # type: ignore # noqa: F401,F403
+from .models import *  # type: ignore # noqa: F401,F403
