@@ -28,6 +28,13 @@ def run_cli_command(
     do_not_print=True,
     stderr_to_stdout=True,
 ):
+    # Ensure cmd_arguments is always a list for shell=False safety.
+    # Some callers may pass a pre-joined string; split it to maintain
+    # compatibility while keeping shell=False.
+    if isinstance(cmd_arguments, str):
+        import shlex
+        cmd_arguments = shlex.split(cmd_arguments)
+        
     if not custom_environment:
         custom_environment = os.environ
 
