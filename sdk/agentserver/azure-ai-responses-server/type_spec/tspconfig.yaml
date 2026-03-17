@@ -9,10 +9,15 @@ options:
     package-name: "azure-ai-responses-server"
     package-mode: "dataplane"
     flavor: "azure"
+    unreferenced-types-handling: keepAll
     generate-test: false
     generate-sample: false
 imports:
+  - "@typespec/http"
+  - "@typespec/openapi"
   - "@azure-tools/typespec-azure-core"
   - "@azure-tools/typespec-azure-core/experimental"
   - "@azure-tools/typespec-client-generator-core"
-  - "@azure-tools/openai-typespec/views/client-emitters/models/responses"
+  - "@typespec/versioning"
+  - "@typespec/events"
+  - "@typespec/sse"

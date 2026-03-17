@@ -7,6 +7,9 @@
 // Pattern based on:
 //   https://github.com/Azure/azure-rest-api-specs/.../sdk-service-agents-contracts
 
+// OpenAI base models + operations used by the local responses contract view
+import "@azure-tools/openai-typespec/views/client-emitters";
+
 // OpenAI responses routes + models (routes reference the model types, making them visible to the emitter)
 import "./TempTypeSpecFiles/openai-responses/routes.tsp";
 
