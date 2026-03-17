@@ -1,0 +1,62 @@
+[build-system]
+requires = ["setuptools>=64"]
+
+[project]
+name = "azure-ai-responses-server"
+version = "0.1.0"
+description = "Python SDK for building servers implementing the Azure AI Responses protocol"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [
+    { name = "Microsoft Corporation" },
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+    "azure-core>=1.30.0",
+    "starlette>=0.45.0",
+    "uvicorn>=0.31.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-asyncio>=0.21",
+    "ruff>=0.4",
+    "mypy>=1.0",
+]
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests*",
+    "type_spec*",
+    "specs",
+    "samples*",
+    "doc*",
+    "azure",
+    "azure.ai",
+]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
