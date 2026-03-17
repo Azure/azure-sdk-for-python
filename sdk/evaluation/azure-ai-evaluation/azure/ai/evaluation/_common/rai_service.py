@@ -1047,11 +1047,20 @@ async def evaluate_with_rai_service_sync(
     # Normalize metric name based on endpoint:
     # - Legacy annotation endpoint expects "hate_fairness" (service-side name)
     # - Sync evals endpoint expects "hate_unfairness" (builtin.hate_unfairness)
+    # - Legacy annotation endpoint expects "generic_groundedness" for groundedness pro
+    # - Sync evals endpoint expects "groundedness" (builtin.groundedness)
     metric_name_str = metric_name.value if hasattr(metric_name, "value") else metric_name
-    if use_legacy_endpoint and metric_name_str == "hate_unfairness":
-        metric_name = EvaluationMetrics.HATE_FAIRNESS
-    elif not use_legacy_endpoint and metric_name_str == "hate_fairness":
-        metric_name = EvaluationMetrics.HATE_UNFAIRNESS
+    if use_legacy_endpoint:
+        if metric_name_str == "hate_unfairness":
+            metric_name = EvaluationMetrics.HATE_FAIRNESS
+        elif metric_name_str == "groundedness":
+            metric_name = "generic_groundedness"
+            # Preserve "groundedness" in output keys via metric_display_name
+            if metric_display_name is None:
+                metric_display_name = "groundedness"
+    else:
+        if metric_name_str == "hate_fairness":
+            metric_name = EvaluationMetrics.HATE_UNFAIRNESS
 
     # Route to legacy endpoint if requested
     if use_legacy_endpoint:
