@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 import types
+<<<<<<< HEAD
 from pathlib import Path
+=======
+>>>>>>> lusu/response-server
 
 import pytest
 
@@ -29,6 +32,7 @@ class _PassGeneratedValidators:
         return []
 
 
+<<<<<<< HEAD
 def _load_generated_validators_module() -> types.ModuleType:
     validators_path = (
         Path(__file__).resolve().parents[2] / "azure" / "ai" / "responses" / "server" / "_generated" / "_validators.py"
@@ -38,6 +42,8 @@ def _load_generated_validators_module() -> types.ModuleType:
     return module
 
 
+=======
+>>>>>>> lusu/response-server
 def test_parse_create_response_uses_generated_payload_validator(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(_validation, "CreateResponse", _StubCreateResponse)
     monkeypatch.setattr(_validation, "_generated_validators", _StubGeneratedValidators)
@@ -72,6 +78,7 @@ def test_parse_create_response_without_generated_module_still_parses() -> None:
     finally:
         _validation.CreateResponse = original_create_response
         _validation._generated_validators = module
+<<<<<<< HEAD
 
 
 def test_generated_create_response_validator_accepts_string_input() -> None:
@@ -174,3 +181,5 @@ def test_generated_create_response_validator_accepts_mixed_input_item_types() ->
         }
     )
     assert errors == []
+=======
+>>>>>>> lusu/response-server

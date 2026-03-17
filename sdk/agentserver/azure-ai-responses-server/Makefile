@@ -8,8 +8,12 @@ VALIDATORS_OUTPUT ?= azure/ai/responses/server/_generated/_validators.py
 ROOT_SCHEMAS ?= CreateResponse
 LOCAL_TYPESPEC_PACKAGES := @typespec/compiler @typespec/http @typespec/openapi @typespec/openapi3 @typespec/versioning @typespec/events @typespec/sse @azure-tools/typespec-python @azure-tools/typespec-azure-core @azure-tools/typespec-client-generator-core @azure-tools/openai-typespec
 TEMP_OUTPUT_DIR := $(OUTPUT_DIR)/.tmp_codegen
+<<<<<<< HEAD
 MODEL_PACKAGE_DIR := $(TEMP_OUTPUT_DIR)/azure/ai/responses/server/sdk/models
 MODEL_SHIMS_DIR := scripts/generated_shims
+=======
+MODEL_FILES_DIR := $(TEMP_OUTPUT_DIR)/azure/ai/responses/server/sdk/models/models
+>>>>>>> lusu/response-server
 
 .PHONY: generate-models generate-validators generate-contracts clean install-typespec-deps
 
@@ -64,6 +68,7 @@ generate-models:
 	@echo Generating Python models...
 	@if exist "$(OUTPUT_DIR)" rmdir /s /q "$(OUTPUT_DIR)"
 	cd /d $(TYPESPEC_DIR) && npx tsp compile . --emit @azure-tools/typespec-python --option "@azure-tools/typespec-python.emitter-output-dir=$(TYPESPEC_OUTPUT_DIR)"
+<<<<<<< HEAD
 	@if not exist "$(MODEL_PACKAGE_DIR)" (echo Error: generated model package was not found. 1>&2 && exit /b 1)
 	@if not exist "$(OUTPUT_DIR)\sdk" mkdir "$(OUTPUT_DIR)\sdk"
 	@xcopy /E /I /Y "$(MODEL_PACKAGE_DIR)" "$(OUTPUT_DIR)\sdk\models" >NUL
@@ -77,6 +82,13 @@ generate-models:
 	@copy /Y "$(MODEL_SHIMS_DIR)\_enums.py" "$(OUTPUT_DIR)\_enums.py" >NUL
 	@copy /Y "$(MODEL_SHIMS_DIR)\_models.py" "$(OUTPUT_DIR)\_models.py" >NUL
 	@copy /Y "$(MODEL_SHIMS_DIR)\_patch.py" "$(OUTPUT_DIR)\_patch.py" >NUL
+=======
+	@if not exist "$(MODEL_FILES_DIR)" (echo Error: generated model files were not found. 1>&2 && exit /b 1)
+	@move /y "$(MODEL_FILES_DIR)\__init__.py" "$(OUTPUT_DIR)\__init__.py" >NUL
+	@move /y "$(MODEL_FILES_DIR)\_enums.py" "$(OUTPUT_DIR)\_enums.py" >NUL
+	@move /y "$(MODEL_FILES_DIR)\_models.py" "$(OUTPUT_DIR)\_models.py" >NUL
+	@move /y "$(MODEL_FILES_DIR)\_patch.py" "$(OUTPUT_DIR)\_patch.py" >NUL
+>>>>>>> lusu/response-server
 	@if exist "$(TEMP_OUTPUT_DIR)" rmdir /s /q "$(TEMP_OUTPUT_DIR)"
 else
 generate-models:
@@ -96,6 +108,7 @@ generate-models:
 	@echo "Generating Python models..."
 	rm -rf $(OUTPUT_DIR)
 	cd $(TYPESPEC_DIR) && npx tsp compile . --emit @azure-tools/typespec-python --option "@azure-tools/typespec-python.emitter-output-dir=$(TYPESPEC_OUTPUT_DIR)"
+<<<<<<< HEAD
 	@test -d $(MODEL_PACKAGE_DIR) || { \
 		echo "Error: generated model package was not found." >&2; \
 		exit 1; \
@@ -112,6 +125,13 @@ generate-models:
 	cp $(MODEL_SHIMS_DIR)/_enums.py $(OUTPUT_DIR)/_enums.py
 	cp $(MODEL_SHIMS_DIR)/_models.py $(OUTPUT_DIR)/_models.py
 	cp $(MODEL_SHIMS_DIR)/_patch.py $(OUTPUT_DIR)/_patch.py
+=======
+	@test -d $(MODEL_FILES_DIR)
+	mv $(MODEL_FILES_DIR)/__init__.py $(OUTPUT_DIR)/__init__.py
+	mv $(MODEL_FILES_DIR)/_enums.py $(OUTPUT_DIR)/_enums.py
+	mv $(MODEL_FILES_DIR)/_models.py $(OUTPUT_DIR)/_models.py
+	mv $(MODEL_FILES_DIR)/_patch.py $(OUTPUT_DIR)/_patch.py
+>>>>>>> lusu/response-server
 	rm -rf $(TEMP_OUTPUT_DIR)
 endif
 

@@ -44,6 +44,7 @@ def _build_output(spec: dict[str, Any], roots: list[str]) -> str:
     schemas = spec.get("components", {}).get("schemas", {})
     if not isinstance(schemas, dict):
         schemas = {}
+<<<<<<< HEAD
     else:
         schemas = dict(schemas)
 
@@ -82,6 +83,10 @@ def _build_output(spec: dict[str, Any], roots: list[str]) -> str:
 
     # If explicit roots are provided, respect them and skip route-wide discovery.
     discovered_roots = [] if roots else discover_post_request_roots(spec)
+=======
+
+    discovered_roots = discover_post_request_roots(spec)
+>>>>>>> lusu/response-server
     merged_roots: list[str] = []
     seen: set[str] = set()
     for root in [*roots, *discovered_roots]:
