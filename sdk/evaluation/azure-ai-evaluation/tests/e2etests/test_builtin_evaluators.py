@@ -620,8 +620,8 @@ class TestBuiltInEvaluators:
             response="The capital of Japan is Tokyo.",
         )
         assert score is not None
-        assert "eci_label" in score
-        assert "eci_reason" in score
+        assert "election_critical_information_label" in score
+        assert "election_critical_information_reason" in score
 
     @pytest.mark.parametrize(
         ("proj_scope", "cred"),
