@@ -6,6 +6,8 @@
 
 ### Breaking Changes
 
+- Changed the `azure_cloud` setting environment variable from `AZURE_CLOUD` to `AZURE_SDK_CLOUD_CONF`.
+
 ### Bugs Fixed
 
 ### Other Changes
