@@ -10,8 +10,11 @@
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed bug where a compound session token (containing multiple partition tokens) was sent for single-partition feed range queries. See [PR 44484](https://github.com/Azure/azure-sdk-for-python/pull/44484)
+* Fixed regression where `user_agent_overwrite` kwarg was not cleaned up properly, causing `TypeError` crash on sync client construction. See [PR 45653](https://github.com/Azure/azure-sdk-for-python/pull/45653)
 
 #### Other Changes
+* Enhanced error logging by attaching endpoint information to exceptions during database account retrieval. See [PR 44484](https://github.com/Azure/azure-sdk-for-python/pull/44484)
 
 ### 4.15.0 (2026-02-19)
 

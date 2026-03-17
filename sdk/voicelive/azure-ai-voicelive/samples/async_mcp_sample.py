@@ -32,7 +32,6 @@ import sys
 import asyncio
 import logging
 import base64
-import signal
 import threading
 import queue
 from typing import Union, Optional, Any, Callable, TYPE_CHECKING, cast
@@ -674,14 +673,6 @@ async def main():
         instructions="You are a helpful AI assistant with access to some mcp server. ",
     )
 
-    # Setup signal handlers for graceful shutdown
-    def signal_handler(sig, frame):
-        logger.info("Received shutdown signal")
-        raise KeyboardInterrupt()
-
-    signal.signal(signal.SIGINT, signal_handler)
-    signal.signal(signal.SIGTERM, signal_handler)
-
     try:
         await client.run()
     except KeyboardInterrupt:
@@ -750,4 +741,7 @@ if __name__ == "__main__":
     print("=" * 65)
 
     # Run the async main function
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("\n👋 Voice Live MCP shut down.")
