@@ -322,7 +322,6 @@ class TestBuiltInEvaluators:
             ("project_scope_onedp", "azure_cred_onedp"),
         ),
     )
-    @pytest.mark.skip(reason="No test proxy recordings yet - run in live mode to record")
     def test_hate_unfairness_evaluator_with_legacy_endpoint(self, request, proj_scope, cred):
         """Test HateUnfairnessEvaluator with _use_legacy_endpoint=True to use legacy polling-based endpoint"""
         project_scope = request.getfixturevalue(proj_scope)
@@ -363,8 +362,9 @@ class TestBuiltInEvaluators:
             ("project_scope_onedp", "azure_cred_onedp"),
         ),
     )
-    @pytest.mark.skip(reason="No test proxy recordings yet - run in live mode to record")
     def test_self_harm_evaluator_with_legacy_endpoint(self, request, proj_scope, cred):
+        project_scope = request.getfixturevalue(proj_scope)
+        azure_cred = request.getfixturevalue(cred)
 
         # Test with legacy endpoint
         eval_fn_legacy = SelfHarmEvaluator(azure_cred, project_scope, _use_legacy_endpoint=True)
@@ -401,7 +401,6 @@ class TestBuiltInEvaluators:
             ("project_scope_onedp", "azure_cred_onedp"),
         ),
     )
-    @pytest.mark.skip(reason="No test proxy recordings yet - run in live mode to record")
     def test_sexual_evaluator_with_legacy_endpoint(self, request, proj_scope, cred):
         project_scope = request.getfixturevalue(proj_scope)
         azure_cred = request.getfixturevalue(cred)
@@ -441,7 +440,6 @@ class TestBuiltInEvaluators:
             ("project_scope_onedp", "azure_cred_onedp"),
         ),
     )
-    @pytest.mark.skip(reason="No test proxy recordings yet - run in live mode to record")
     def test_legacy_and_sync_output_keys_match(self, request, proj_scope, cred):
         project_scope = request.getfixturevalue(proj_scope)
         azure_cred = request.getfixturevalue(cred)
@@ -472,7 +470,6 @@ class TestBuiltInEvaluators:
             ("project_scope_onedp", "azure_cred_onedp"),
         ),
     )
-    @pytest.mark.skip(reason="No test proxy recordings yet - run in live mode to record")
     def test_content_safety_evaluator_conversation_with_legacy_endpoint(self, request, proj_scope, cred):
         project_scope = request.getfixturevalue(proj_scope)
         azure_cred = request.getfixturevalue(cred)
