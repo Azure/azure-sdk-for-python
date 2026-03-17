@@ -609,8 +609,27 @@ from ._models import (
     Metrics as _GenMetrics,
     RetentionPolicy as _GenRetentionPolicy,
     StaticWebsite as _GenStaticWebsite,
+    StorageServiceProperties as _GenStorageServiceProperties,
 )
 
+
+# ---------------------------------------------------------------------------
+# Force generated base classes to resolve their rest_field types NOW, while
+# ``_module`` still points at the correct generated-models module.
+#
+# ``Model.__new__`` caches ``rf._type`` on the shared ``_RestField``
+# descriptors. The *first* subclass whose ``__new__`` fires wins.
+# If an external package (e.g. azure-storage-file-datalake) subclasses one of
+# these models and instantiates it before blob code does, the forward
+# reference ``"_models.RetentionPolicy"`` resolves against *that* package's
+# module, producing the wrong deserializer.  By creating throwaway instances
+# here (at import time, inside the generated package), we lock in the correct
+# types so that later subclasses cannot corrupt them.
+# ---------------------------------------------------------------------------
+_GenRetentionPolicy(enabled=False)
+_GenLogging(version="1.0", delete=False, read=False, write=False, retention_policy=_GenRetentionPolicy(enabled=False))
+_GenMetrics(enabled=False, retention_policy=_GenRetentionPolicy(enabled=False))
+_GenStorageServiceProperties()
 
 # ---------------------------------------------------------------------------
 # Helper – XML node factory (same logic as _utils.serialization._create_xml_node)
