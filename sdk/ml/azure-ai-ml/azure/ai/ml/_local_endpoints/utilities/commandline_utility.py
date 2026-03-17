@@ -7,7 +7,7 @@ import os
 import subprocess
 import sys
 import time
-
+import shlex
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException
 
 
@@ -32,9 +32,8 @@ def run_cli_command(
     # Some callers may pass a pre-joined string; split it to maintain
     # compatibility while keeping shell=False.
     if isinstance(cmd_arguments, str):
-        import shlex
         cmd_arguments = shlex.split(cmd_arguments)
-        
+
     if not custom_environment:
         custom_environment = os.environ
 
