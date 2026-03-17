@@ -142,7 +142,12 @@ def build_agents_list_request(
 
 
 def build_agents_create_version_request(
-    agent_name: str, *, foundry_features: Optional[Union[str, _AgentDefinitionOptInKeys]] = None, **kwargs: Any
+    agent_name: str,
+    *,
+    foundry_features: Optional[
+        Union[str, _AgentDefinitionOptInKeys, Literal[_FoundryFeaturesOptInKeys.AGENT_ENDPOINT_V1_PREVIEW]]
+    ] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -2229,6 +2234,9 @@ class AgentsOperations:
         agent_name: str,
         *,
         definition: _models.AgentDefinition,
+        foundry_features: Optional[
+            Union[str, _AgentDefinitionOptInKeys, Literal[_FoundryFeaturesOptInKeys.AGENT_ENDPOINT_V1_PREVIEW]]
+        ] = None,
         content_type: str = "application/json",
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
@@ -2246,6 +2254,7 @@ class AgentsOperations:
         :keyword definition: The agent definition. This can be a workflow, hosted agent, or a simple
          agent definition. Required.
         :paramtype definition: ~azure.ai.projects.models.AgentDefinition
+         or ~azure.ai.projects.models.AGENT_ENDPOINT_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2265,7 +2274,15 @@ class AgentsOperations:
 
     @overload
     def create_version(
-        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        agent_name: str,
+        body: JSON,
+        *,
+        foundry_features: Optional[
+            Union[str, _AgentDefinitionOptInKeys, Literal[_FoundryFeaturesOptInKeys.AGENT_ENDPOINT_V1_PREVIEW]]
+        ] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.AgentVersionDetails:
         """Create a new agent version.
 
@@ -2278,6 +2295,7 @@ class AgentsOperations:
         :type agent_name: str
         :param body: Required.
         :type body: JSON
+         or ~azure.ai.projects.models.AGENT_ENDPOINT_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2288,7 +2306,15 @@ class AgentsOperations:
 
     @overload
     def create_version(
-        self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        agent_name: str,
+        body: IO[bytes],
+        *,
+        foundry_features: Optional[
+            Union[str, _AgentDefinitionOptInKeys, Literal[_FoundryFeaturesOptInKeys.AGENT_ENDPOINT_V1_PREVIEW]]
+        ] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.AgentVersionDetails:
         """Create a new agent version.
 
@@ -2301,6 +2327,7 @@ class AgentsOperations:
         :type agent_name: str
         :param body: Required.
         :type body: IO[bytes]
+         or ~azure.ai.projects.models.AGENT_ENDPOINT_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2316,6 +2343,9 @@ class AgentsOperations:
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         definition: _models.AgentDefinition = _Unset,
+        foundry_features: Optional[
+            Union[str, _AgentDefinitionOptInKeys, Literal[_FoundryFeaturesOptInKeys.AGENT_ENDPOINT_V1_PREVIEW]]
+        ] = None,
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
@@ -2334,6 +2364,7 @@ class AgentsOperations:
         :keyword definition: The agent definition. This can be a workflow, hosted agent, or a simple
          agent definition. Required.
         :paramtype definition: ~azure.ai.projects.models.AgentDefinition
+         or ~azure.ai.projects.models.AGENT_ENDPOINT_V1_PREVIEW
         :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
          useful for storing additional information about the object in a structured
          format, and querying for objects via API or the dashboard.
@@ -2347,7 +2378,6 @@ class AgentsOperations:
         :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Optional[str] = _get_agent_definition_opt_in_keys if self._config.allow_preview else None  # type: ignore
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,

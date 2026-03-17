@@ -47,7 +47,6 @@ from foundry_features_header_test_base import (
     _RequestCaptured,
 )
 
-
 # ---------------------------------------------------------------------------
 # Async-specific transport
 # ---------------------------------------------------------------------------
@@ -156,7 +155,7 @@ def _print_report_async() -> Iterator[None]:
     if report:
         print("\n\nFoundry-Features header report (async):")
         for label, header_value in sorted(report):
-            print(f"{label:<{max_len}}  |  \"{header_value}\"")
+            print(f'{label:<{max_len}}  |  "{header_value}"')
 
 
 # ---------------------------------------------------------------------------

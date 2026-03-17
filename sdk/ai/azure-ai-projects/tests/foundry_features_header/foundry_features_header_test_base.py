@@ -147,9 +147,7 @@ class FoundryFeaturesHeaderTestBase:
             if param.kind in (param.VAR_POSITIONAL, param.VAR_KEYWORD):
                 continue
 
-            is_required = (
-                param.default is inspect.Parameter.empty or param.default in _UNSET_SENTINELS
-            )
+            is_required = param.default is inspect.Parameter.empty or param.default in _UNSET_SENTINELS
             if not is_required:
                 continue
 
@@ -176,8 +174,7 @@ class FoundryFeaturesHeaderTestBase:
             f"missing or empty.\nActual headers: {dict(request.headers)}"
         )
         assert header_value == expected_value, (
-            f"{label}: expected '{FOUNDRY_FEATURES_HEADER}: {expected_value}' "
-            f"but got '{header_value}'"
+            f"{label}: expected '{FOUNDRY_FEATURES_HEADER}: {expected_value}' " f"but got '{header_value}'"
         )
         cls._report_max_label_len = max(cls._report_max_label_len, len(label))
         cls._report.append((label, header_value))
@@ -192,6 +189,6 @@ class FoundryFeaturesHeaderTestBase:
             f"{label}: expected '{FOUNDRY_FEATURES_HEADER}' header to be absent.\n"
             f"Actual headers: {dict(request.headers)}"
         )
-        absence_note = f'\'{FOUNDRY_FEATURES_HEADER}\' header not present (as expected)'
+        absence_note = f"'{FOUNDRY_FEATURES_HEADER}' header not present (as expected)"
         cls._report_absent_max_label_len = max(cls._report_absent_max_label_len, len(label))
         cls._report_absent.append((label, absence_note))
