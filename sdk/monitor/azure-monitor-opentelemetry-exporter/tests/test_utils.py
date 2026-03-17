@@ -83,7 +83,7 @@ class TestUtils(unittest.TestCase):
     def test_filter_custom_properties_mixed_gen_ai_and_regular(self):
         # Gen AI attributes truncated at 256kb, regular ones are truncated at 64kb
         max_length = 64 * 1024
-        max_length_for_genai_attributes = 256 * 1024
+        max_length_for_gen_ai_attributes = 256 * 1024
         large_value = "z" * (1024 * 1024 + 3000)
         properties = {
             "gen_ai.input.messages": large_value,
@@ -94,8 +94,8 @@ class TestUtils(unittest.TestCase):
         }
         filtered = _utils._filter_custom_properties(properties)
 
-        self.assertEqual(len(filtered["gen_ai.input.messages"]), max_length_for_genai_attributes)
-        self.assertEqual(len(filtered["gen_ai.output.messages"]), max_length_for_genai_attributes)
+        self.assertEqual(len(filtered["gen_ai.input.messages"]), max_length_for_gen_ai_attributes)
+        self.assertEqual(len(filtered["gen_ai.output.messages"]), max_length_for_gen_ai_attributes)
 
         self.assertEqual(len(filtered["gen_ai.agent.version"]), max_length)
         self.assertEqual(len(filtered["span_kind"]), max_length)
@@ -103,14 +103,14 @@ class TestUtils(unittest.TestCase):
 
     def test_custom_properties_gen_ai_attributes_truncated_at_256kb(self):
         # All values in _GEN_AI_ATTRIBUTES should be truncated when > 256kb
-        max_length_for_genai_attributes = 256 * 1024
+        max_length_for_gen_ai_attributes = 256 * 1024
         large_value = "x" * (256 * 1024 + 1000)
         properties = {key: large_value for key in _GEN_AI_ATTRIBUTES}
         filtered = _utils._filter_custom_properties(properties)
         for key in _GEN_AI_ATTRIBUTES:
             with self.subTest(key=key):
                 self.assertIn(key, filtered)
-                self.assertEqual(len(filtered[key]), max_length_for_genai_attributes)
+                self.assertEqual(len(filtered[key]), max_length_for_gen_ai_attributes)
 
     def test_nanoseconds_to_duration(self):
         ns_to_duration = _utils.ns_to_duration
