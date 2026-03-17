@@ -192,33 +192,37 @@ _booked_interviews = []
 )
 def get_job_details(
     job_id: Annotated[str, "The job ID to retrieve (e.g., JOB-SWE-2025-001)"],
-) -> str:
+) -> dict:
     """Get job posting details."""
     job = JOBS.get(job_id)
     if not job:
-        return f"Job ID '{job_id}' not found in the system."
+        raise ValueError(f"Job ID '{job_id}' not found in the system.")
 
     if job["status"] != "open":
-        return f"Warning: Job '{job_id}' is not open. Current status: {job['status']}"
+        raise ValueError(f"Job '{job_id}' is not open. Current status: {job['status']}")
 
-    must_have = "\n".join(f"  - {r} (Required)" for r in job["requirements"]["must_have"])
-    nice_to_have = "\n".join(f"  - {r} (Preferred)" for r in job["requirements"]["nice_to_have"])
-
-    return f"""Job Details for {job_id}:
-Title: {job['title']}
-Department: {job['department']}
-Location: {job['location']}
-Remote Allowed: {'Yes' if job['remote_allowed'] else 'No'}
-Salary Range: ${job['salary_range'][0]:,} - ${job['salary_range'][1]:,}
-Hiring Manager: {job['hiring_manager']}
-Status: {job['status']}
-Urgency: {job['urgency']}
-
-Requirements:
-{must_have}
-{nice_to_have}
-
-Description: {job['description']}"""
+    return {
+        "status": "ok",
+        "job": {
+            "job_id": job_id,
+            "title": job["title"],
+            "department": job["department"],
+            "location": job["location"],
+            "remote_allowed": job["remote_allowed"],
+            "salary_range": {
+                "min": job["salary_range"][0],
+                "max": job["salary_range"][1],
+            },
+            "hiring_manager": job["hiring_manager"],
+            "status": job["status"],
+            "urgency": job["urgency"],
+            "description": job["description"],
+            "requirements": {
+                "must_have": list(job["requirements"]["must_have"]),
+                "nice_to_have": list(job["requirements"]["nice_to_have"]),
+            },
+        },
+    }
 
 
 @tool(
@@ -228,21 +232,27 @@ Description: {job['description']}"""
 )
 def extract_requirements(
     job_id: Annotated[str, "The job ID to extract requirements from"],
-) -> str:
+) -> dict:
     """Extract structured requirements from job posting."""
     job = JOBS.get(job_id)
     if not job:
         raise ValueError(f"Job ID '{job_id}' not found.")
 
-    must = ", ".join(job["requirements"]["must_have"])
-    nice = ", ".join(job["requirements"]["nice_to_have"])
-
-    return f"""Structured Requirements for {job_id} ({job['title']}):
-
-MUST HAVE: {must}
-NICE TO HAVE: {nice}
-Salary Range: ${job['salary_range'][0]:,} - ${job['salary_range'][1]:,}
-Location: {job['location']} {'(Remote OK)' if job['remote_allowed'] else '(On-site required)'}"""
+    return {
+        "status": "ok",
+        "job_id": job_id,
+        "title": job["title"],
+        "requirements": {
+            "must_have": list(job["requirements"]["must_have"]),
+            "nice_to_have": list(job["requirements"]["nice_to_have"]),
+        },
+        "salary_range": {
+            "min": job["salary_range"][0],
+            "max": job["salary_range"][1],
+        },
+        "location": job["location"],
+        "remote_allowed": job["remote_allowed"],
+    }
 
 
 # ============================================================================
@@ -258,27 +268,42 @@ Location: {job['location']} {'(Remote OK)' if job['remote_allowed'] else '(On-si
 def query_external_candidates(
     job_id: Annotated[str, "The job ID to find candidates for"],
     min_experience: Annotated[int, "Minimum years of experience required"] = 0,
-) -> str:
+) -> dict:
     """Query external candidates from job boards."""
     candidates = [
-        c
-        for c in EXTERNAL_CANDIDATES.values()
-        if job_id in c["applied_jobs"] and c["years_experience"] >= min_experience
+        (candidate_id, candidate)
+        for candidate_id, candidate in EXTERNAL_CANDIDATES.items()
+        if job_id in candidate["applied_jobs"] and candidate["years_experience"] >= min_experience
     ]
     if not candidates:
-        return f"No external candidates found for job {job_id} matching the criteria."
+        return {
+            "status": "ok",
+            "job_id": job_id,
+            "candidate_count": 0,
+            "candidates": [],
+        }
 
-    lines = [f"External Candidates for {job_id} ({len(candidates)} found):"]
-    for c in candidates:
-        visa = " [Visa Required]" if c["visa_required"] else ""
-        lines.append(
-            f"\n- {[k for k, v in EXTERNAL_CANDIDATES.items() if v is c][0]}: {c['name']}\n"
-            f"  Experience: {c['years_experience']} years | Location: {c['location']}{visa}\n"
-            f"  Skills: {', '.join(c['skills'][:6])}\n"
-            f"  Current: {c['current_title']} at {c['current_company']}\n"
-            f"  Salary Expectation: ${c['salary_expectation']:,}"
+    result_candidates = []
+    for candidate_id, c in candidates:
+        result_candidates.append(
+            {
+                "candidate_id": candidate_id,
+                "name": c["name"],
+                "years_experience": c["years_experience"],
+                "location": c["location"],
+                "visa_required": c["visa_required"],
+                "skills": list(c["skills"]),
+                "current_title": c["current_title"],
+                "current_company": c["current_company"],
+                "salary_expectation": c["salary_expectation"],
+            }
         )
-    return "\n".join(lines)
+    return {
+        "status": "ok",
+        "job_id": job_id,
+        "candidate_count": len(result_candidates),
+        "candidates": result_candidates,
+    }
 
 
 @tool(
@@ -289,25 +314,46 @@ def query_external_candidates(
 def query_internal_employees(
     job_id: Annotated[str, "The job ID to find internal candidates for"],
     eligible_only: Annotated[bool, "Only return transfer-eligible employees"] = True,
-) -> str:
+) -> dict:
     """Query internal employees for mobility."""
-    candidates = [c for c in INTERNAL_CANDIDATES.values() if job_id in c["applied_jobs"]]
+    candidates = [
+        (candidate_id, candidate)
+        for candidate_id, candidate in INTERNAL_CANDIDATES.items()
+        if job_id in candidate["applied_jobs"]
+    ]
     if eligible_only:
-        candidates = [c for c in candidates if c["transfer_eligible"]]
+        candidates = [(candidate_id, c) for candidate_id, c in candidates if c["transfer_eligible"]]
 
     if not candidates:
-        return f"No internal candidates found for job {job_id}."
+        return {
+            "status": "ok",
+            "job_id": job_id,
+            "candidate_count": 0,
+            "candidates": [],
+        }
 
-    lines = [f"Internal Candidates for {job_id} ({len(candidates)} found):"]
-    for c in candidates:
-        lines.append(
-            f"\n- {[k for k, v in INTERNAL_CANDIDATES.items() if v is c][0]} (Employee: {c['employee_id']}): {c['name']}\n"
-            f"  Current Role: {c['current_title']} ({c['department']})\n"
-            f"  Tenure: {c['tenure_years']} years | Performance: {c['performance_rating']}/5.0\n"
-            f"  Transfer Eligible: {'Yes' if c['transfer_eligible'] else 'No'}\n"
-            f"  Skills: {', '.join(c['skills'][:6])}"
+    result_candidates = []
+    for candidate_id, c in candidates:
+        result_candidates.append(
+            {
+                "candidate_id": candidate_id,
+                "employee_id": c["employee_id"],
+                "name": c["name"],
+                "current_title": c["current_title"],
+                "department": c["department"],
+                "tenure_years": c["tenure_years"],
+                "performance_rating": c["performance_rating"],
+                "transfer_eligible": c["transfer_eligible"],
+                "skills": list(c["skills"]),
+            }
         )
-    return "\n".join(lines)
+    return {
+        "status": "ok",
+        "job_id": job_id,
+        "eligible_only": eligible_only,
+        "candidate_count": len(result_candidates),
+        "candidates": result_candidates,
+    }
 
 
 # ============================================================================
@@ -323,7 +369,7 @@ def query_internal_employees(
 def score_candidate(
     candidate_id: Annotated[str, "The candidate ID to score"],
     job_id: Annotated[str, "The job ID to score against"],
-) -> str:
+) -> dict:
     """Score a candidate against job requirements."""
     job = JOBS.get(job_id)
     if not job:
@@ -332,7 +378,7 @@ def score_candidate(
     # Look up candidate
     candidate = EXTERNAL_CANDIDATES.get(candidate_id) or INTERNAL_CANDIDATES.get(candidate_id)
     if not candidate:
-        raise ValueError(f"Candidate '{candidate_id}' not found.")
+        raise ValueError(f"candidate_id '{candidate_id}' was not found.")
 
     # Simple scoring
     must_have = job["requirements"]["must_have"]
@@ -348,13 +394,23 @@ def score_candidate(
     must_matched = [r for r in must_have if any(r.lower() in s for s in skills_lower)]
     must_gaps = [r for r in must_have if not any(r.lower() in s for s in skills_lower)]
 
-    return f"""Scoring Report for {candidate_id} ({candidate['name']}) against {job_id}:
-Overall Score: {score}/100
-Skills Matched (Must Have): {', '.join(must_matched) or 'None'}
-Skills Gaps (Must Have): {', '.join(must_gaps) or 'None'}
-Nice-to-Have Matches: {nice_matches}/{len(nice_to_have)}
-Experience: {candidate['years_experience']} years
-Salary Expectation: ${candidate.get('salary_expectation', 0):,} (Budget: ${job['salary_range'][0]:,}-${job['salary_range'][1]:,})"""
+    return {
+        "status": "ok",
+        "candidate_id": candidate_id,
+        "candidate_name": candidate["name"],
+        "job_id": job_id,
+        "overall_score": score,
+        "must_have_matches": must_matched,
+        "must_have_gaps": must_gaps,
+        "nice_to_have_match_count": nice_matches,
+        "nice_to_have_total": len(nice_to_have),
+        "years_experience": candidate["years_experience"],
+        "salary_expectation": candidate.get("salary_expectation"),
+        "job_salary_range": {
+            "min": job["salary_range"][0],
+            "max": job["salary_range"][1],
+        },
+    }
 
 
 @tool(
@@ -365,17 +421,23 @@ Salary Expectation: ${candidate.get('salary_expectation', 0):,} (Budget: ${job['
 def rank_candidates(
     candidate_ids: Annotated[str, "Comma-separated candidate IDs to rank"],
     job_id: Annotated[str, "The job ID candidates are being ranked for"],
-) -> str:
+) -> dict:
     """Rank candidates and produce shortlist."""
-    ids = [c.strip() for c in candidate_ids.split(",")]
+    if isinstance(candidate_ids, list):
+        ids = [str(candidate_id).strip() for candidate_id in candidate_ids if str(candidate_id).strip()]
+    else:
+        ids = [candidate_id.strip() for candidate_id in str(candidate_ids).split(",") if candidate_id.strip()]
+
     job = JOBS.get(job_id)
     if not job:
         raise ValueError(f"Job '{job_id}' not found.")
 
     scored = []
+    missing_candidate_ids = []
     for cid in ids:
         cand = EXTERNAL_CANDIDATES.get(cid) or INTERNAL_CANDIDATES.get(cid)
         if not cand:
+            missing_candidate_ids.append(cid)
             continue
         skills_lower = [s.lower() for s in cand["skills"]]
         must_have = job["requirements"]["must_have"]
@@ -386,15 +448,31 @@ def rank_candidates(
         score = min(100, score + min(cand["years_experience"], 10))
         scored.append((cid, cand["name"], score))
 
+    if missing_candidate_ids:
+        if len(missing_candidate_ids) == 1:
+            raise ValueError(f"candidate_id '{missing_candidate_ids[0]}' was not found.")
+        missing = ", ".join(missing_candidate_ids)
+        raise ValueError(f"candidate_id values were not found: {missing}")
+
     scored.sort(key=lambda x: x[2], reverse=True)
 
-    lines = [f"Candidate Ranking for {job_id} ({job['title']}):"]
+    ranked_candidates = []
     for rank, (cid, name, score) in enumerate(scored, 1):
-        lines.append(f"  #{rank}: {cid} ({name}) — Score: {score}/100")
+        ranked_candidates.append(
+            {
+                "rank": rank,
+                "candidate_id": cid,
+                "candidate_name": name,
+                "score": score,
+            }
+        )
 
-    if scored:
-        lines.append(f"\nRecommended Shortlist (top 3): {', '.join(s[0] for s in scored[:3])}")
-    return "\n".join(lines)
+    return {
+        "status": "ok",
+        "job_id": job_id,
+        "ranked_candidates": ranked_candidates,
+        "recommended_shortlist_candidate_ids": [s[0] for s in scored[:3]],
+    }
 
 
 # ============================================================================
@@ -410,15 +488,19 @@ def rank_candidates(
 def check_compliance(
     candidate_ids: Annotated[str, "Comma-separated candidate IDs in the shortlist"],
     job_id: Annotated[str, "The job ID the shortlist is for"],
-) -> str:
+) -> dict:
     """Check shortlist for compliance."""
     ids = [c.strip() for c in candidate_ids.split(",")]
-    return f"""Compliance Report for {job_id}:
-Shortlist Size: {len(ids)} candidates
-EEOC Status: PASS
-Adverse Impact Analysis: No adverse impact detected (4/5ths rule satisfied)
-Demographic Distribution: Diverse candidate pool
-Recommendation: Shortlist is compliant — proceed to interviews."""
+    return {
+        "status": "ok",
+        "job_id": job_id,
+        "shortlist_candidate_ids": ids,
+        "shortlist_size": len(ids),
+        "eeoc_status": "PASS",
+        "adverse_impact": "No adverse impact detected (4/5ths rule satisfied)",
+        "demographic_distribution": "Diverse candidate pool",
+        "recommendation": "Shortlist is compliant — proceed to interviews.",
+    }
 
 
 @tool(
@@ -429,15 +511,20 @@ Recommendation: Shortlist is compliant — proceed to interviews."""
 def detect_bias(
     candidate_ids: Annotated[str, "Comma-separated candidate IDs that were selected"],
     job_id: Annotated[str, "The job ID"],
-) -> str:
+) -> dict:
     """Detect potential bias in selection."""
-    return f"""Bias Detection Report for {job_id}:
-Selection Criteria Analysis: All criteria are job-related
-Geographic Bias: Not detected
-Experience Bias: Not detected (range 4-9 years in pool)
-Education Bias: Not detected (mix of BS/MS/PhD)
-Overall Risk: LOW
-Recommendation: No corrective action needed."""
+    ids = [c.strip() for c in candidate_ids.split(",") if c.strip()]
+    return {
+        "status": "ok",
+        "job_id": job_id,
+        "selected_candidate_ids": ids,
+        "selection_criteria_analysis": "All criteria are job-related",
+        "geographic_bias": "Not detected",
+        "experience_bias": "Not detected (range 4-9 years in pool)",
+        "education_bias": "Not detected (mix of BS/MS/PhD)",
+        "overall_risk": "LOW",
+        "recommendation": "No corrective action needed.",
+    }
 
 
 # ============================================================================
@@ -452,20 +539,21 @@ Recommendation: No corrective action needed."""
 )
 def get_calendar_availability(
     hiring_manager_id: Annotated[str, "The hiring manager's employee ID"],
-) -> str:
+) -> dict:
     """Get calendar availability."""
     slots = CALENDAR_SLOTS.get(hiring_manager_id)
     if not slots:
-        return f"No calendar data found for manager {hiring_manager_id}."
+        raise ValueError(f"No calendar data found for manager {hiring_manager_id}.")
 
     available = [s for s in slots if s["available"]]
     if not available:
-        return f"No available slots found for manager {hiring_manager_id}."
+        raise ValueError(f"No available slots found for manager {hiring_manager_id}.")
 
-    lines = [f"Available Interview Slots for {hiring_manager_id}:"]
-    for s in available:
-        lines.append(f"  - {s['date']} at {s['time']}")
-    return "\n".join(lines)
+    return {
+        "status": "ok",
+        "hiring_manager_id": hiring_manager_id,
+        "available_slots": available,
+    }
 
 
 @tool(
@@ -478,10 +566,12 @@ def book_interview(
     hiring_manager_id: Annotated[str, "The hiring manager's employee ID"],
     date: Annotated[str, "Interview date (YYYY-MM-DD)"],
     time: Annotated[str, "Interview time (e.g., '10:00 AM')"],
-) -> str:
+) -> dict:
     """Book an interview slot."""
     cand = EXTERNAL_CANDIDATES.get(candidate_id) or INTERNAL_CANDIDATES.get(candidate_id)
-    name = cand["name"] if cand else candidate_id
+    if not cand:
+        raise ValueError(f"candidate_id '{candidate_id}' was not found.")
+    name = cand["name"]
 
     _booked_interviews.append(
         {
@@ -492,9 +582,15 @@ def book_interview(
         }
     )
 
-    return f"""Interview Booked:
-Candidate: {name} ({candidate_id})
-Hiring Manager: {hiring_manager_id}
-Date: {date} at {time}
-Format: Video Conference (Teams link will be sent)
-Confirmation: Sent to all participants."""
+    return {
+        "status": "ok",
+        "booking": {
+            "candidate_id": candidate_id,
+            "candidate_name": name,
+            "hiring_manager_id": hiring_manager_id,
+            "date": date,
+            "time": time,
+            "format": "Video Conference",
+            "confirmation": "Sent to all participants.",
+        },
+    }

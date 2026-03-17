@@ -9,7 +9,6 @@ Agents are designed for an HR recruitment workflow scenario.
 
 import os
 
-from agent_framework import Agent
 from agent_framework.azure import AzureAIClient
 from azure.identity import DefaultAzureCredential
 
@@ -30,108 +29,35 @@ from .hr_tools import (
 # System Instructions
 # ============================================================================
 
-REQ_MASTER_INSTRUCTIONS = """You are a Requisition Master agent handling job intake and requirements analysis.
+REQ_MASTER_INSTRUCTIONS = """You are ReqMaster.
+Use only these tools: get_job_details, extract_requirements.
+Retrieve job details, confirm the role is open, and return structured must-have and nice-to-have requirements.
+Include job_id, hiring manager, location/remote constraints, urgency, and salary range."""
 
-Your responsibilities:
-1. Retrieve and validate job posting details
-2. Extract structured requirements (must-have vs nice-to-have)
-3. Verify job is approved and open for sourcing
-4. Identify hiring manager and team context
-5. Set up screening criteria for candidate matching
+TALENT_SCOUT_INSTRUCTIONS = """You are TalentScout.
+Use only query_external_candidates.
+Return external candidates for the job and summarize fit using the tool output.
+Always preserve and surface candidate_id values exactly as returned."""
 
-When processing job requisitions:
-- Validate the job ID exists and is in 'open' status
-- Extract all required and preferred skills
-- Note salary range and location requirements
-- Identify urgency level
-- Flag any special requirements
+MOBILITY_SCOUT_INSTRUCTIONS = """You are MobilityScout.
+Use only query_internal_employees.
+Return internal candidates for the job and summarize transfer readiness from the tool output.
+Always preserve and surface candidate_id and employee_id values exactly as returned."""
 
-Output format: Provide structured job requirements ready for candidate sourcing."""
+EVALUATOR_INSTRUCTIONS = """You are Evaluator.
+Use score_candidate and rank_candidates.
+Score provided candidate_id values against the job, then produce a ranked shortlist.
+Keep candidate_id values exact and include them in every recommendation."""
 
-TALENT_SCOUT_INSTRUCTIONS = """You are a Talent Scout agent specializing in external candidate sourcing.
+COMPLIANCE_GUARD_INSTRUCTIONS = """You are ComplianceGuard.
+Use check_compliance and detect_bias.
+Evaluate the provided shortlist for compliance and bias, then return a clear pass/fail-style summary.
+If concerns exist, list concrete adjustments."""
 
-Your responsibilities:
-1. Query external job boards for applicants
-2. Screen candidates against job requirements
-3. Filter based on experience, skills, and location
-4. Handle visa sponsorship considerations
-
-When processing external candidates:
-- Verify all required skills are present
-- Note any visa sponsorship requirements
-- Check salary expectations against job budget
-- Flag candidates with relevant industry experience
-- Prioritize candidates with shorter notice periods
-
-Output format: Provide structured candidate profiles with skills match analysis."""
-
-MOBILITY_SCOUT_INSTRUCTIONS = """You are an Internal Mobility Scout agent specializing in internal transfers.
-
-Your responsibilities:
-1. Query the HRIS system for employees interested in the role
-2. Verify transfer eligibility (tenure, performance, no PIP)
-3. Assess skills match with current role experience
-4. Coordinate with HR on internal transfer policies
-
-When processing internal candidates:
-- Verify minimum tenure requirement (usually 1+ year)
-- Check performance rating (must be meeting expectations or above)
-- Confirm employee is not on a Performance Improvement Plan
-- Note current team and potential backfill needs
-
-Output format: Provide structured profiles with eligibility status and current role context."""
-
-EVALUATOR_INSTRUCTIONS = """You are an Evaluator agent responsible for candidate assessment.
-
-Your responsibilities:
-1. Score candidates against job requirements
-2. Rank candidates by overall fit score
-3. Identify skill gaps and development needs
-4. Compare salary expectations to budget
-5. Produce a ranked shortlist with justification
-
-When evaluating candidates:
-- Weight required skills higher than preferred
-- Consider years of experience relative to role level
-- Factor in location and remote work compatibility
-- Note any red flags or concerns
-- Provide clear rationale for rankings
-
-Output format: Provide ranked shortlist with scores, evaluation notes, and recommendations."""
-
-COMPLIANCE_GUARD_INSTRUCTIONS = """You are a Compliance Guard agent ensuring fair hiring practices.
-
-Your responsibilities:
-1. Analyze shortlists for adverse impact using the 4/5ths rule
-2. Check demographic distribution of selections
-3. Verify selection criteria are job-related
-4. Flag potential bias in screening decisions
-5. Ensure EEOC compliance documentation
-
-When reviewing for compliance:
-- Always call the check_compliance tool before drafting your final response
-- Also run detect_bias to check for patterns
-- Calculate selection rates by demographic group
-- Flag any disparate impact concerns
-- Recommend adjustments if bias is detected
-
-Output format: Provide compliance report with pass/fail status and recommendations."""
-
-SCHEDULER_INSTRUCTIONS = """You are a Scheduler agent coordinating interviews.
-
-Your responsibilities:
-1. Check calendar availability for hiring managers
-2. Find suitable interview slots for candidates
-3. Book interview rooms or video conferences
-4. Handle scheduling logistics
-
-When scheduling interviews:
-- Check interviewer availability first
-- Allow buffer time between interviews
-- Consider time zones for remote candidates
-- Include video conference links for virtual interviews
-
-Output format: Provide booking confirmation with time, participants, and meeting link."""
+SCHEDULER_INSTRUCTIONS = """You are Scheduler.
+Use get_calendar_availability and book_interview.
+Find available slots and book interviews for specified candidate_id values.
+Return clear confirmations with candidate_id, manager, date, and time."""
 
 ORCHESTRATOR_INSTRUCTIONS = """You coordinate an HR recruitment team conversation to fulfill hiring requests.
 
@@ -141,6 +67,7 @@ Guidelines:
 - Use Evaluator to score and rank candidates
 - Only finish after a shortlist has been produced with clear recommendations
 - Keep the conversation focused on the hiring task
+- When requesting evaluation, compliance checks, or scheduling, pass candidate_id lists exactly as returned by sourcing tools
 
 IMPORTANT: Do not choose the same agent twice in a row.
 """
@@ -153,11 +80,10 @@ Your team members:
 - Evaluator: Scores and ranks all candidates
 - ComplianceGuard: Checks shortlists for fairness and compliance
 
-Strategy:
-1. First, have TalentScout and MobilityScout source candidates in parallel
-2. Then have Evaluator score and rank all candidates together
-3. Finally, have ComplianceGuard review the shortlist for compliance
-4. End when you have a compliant, ranked shortlist ready for interviews
+Your task is to orchestrate these specialists to fulfill hiring requests, ensuring clear handoffs.
+Always choose the agent best suited for the current step, and give it clear instructions on what to do.
+When requesting evaluation, compliance checks, or scheduling, pass candidate_id lists exactly as returned by sourcing tools
+Only set is_progress_being_made to False or is_in_loop to True IF AND ONLY IF the workflow is genuinely stuck without a clear path forward. Do not set these flags to these values for any other reason.
 """
 
 
@@ -194,95 +120,95 @@ async def cleanup_clients():
     _created_clients.clear()
 
 
-async def create_req_master() -> Agent:
+async def create_req_master():
     """Create a Requisition Master agent."""
     client = await _create_client("ReqMaster")
-    return Agent(
+    return client.as_agent(
         name="ReqMaster",
         description="Extracts requisition requirements and hiring constraints from job postings.",
         instructions=REQ_MASTER_INSTRUCTIONS,
-        client=client,
         tools=[get_job_details, extract_requirements],
+        default_options={"store": False}
     )
 
 
-async def create_talent_scout() -> Agent:
+async def create_talent_scout():
     """Create a Talent Scout agent for external candidate sourcing."""
     client = await _create_client("TalentScout")
-    return Agent(
+    return client.as_agent(
         name="TalentScout",
         description="Sources external candidates from job boards.",
         instructions=TALENT_SCOUT_INSTRUCTIONS,
-        client=client,
         tools=[query_external_candidates],
+        default_options={"store": False}
     )
 
 
-async def create_mobility_scout() -> Agent:
+async def create_mobility_scout():
     """Create an Internal Mobility Scout agent."""
     client = await _create_client("MobilityScout")
-    return Agent(
+    return client.as_agent(
         name="MobilityScout",
         description="Finds eligible internal transfer candidates from HRIS systems.",
         instructions=MOBILITY_SCOUT_INSTRUCTIONS,
-        client=client,
         tools=[query_internal_employees],
+        default_options={"store": False}
     )
 
 
-async def create_evaluator() -> Agent:
+async def create_evaluator():
     """Create an Evaluator agent for candidate scoring and ranking."""
     client = await _create_client("Evaluator")
-    return Agent(
+    return client.as_agent(
         name="Evaluator",
         description="Scores, ranks, and compares candidate fit against role requirements.",
         instructions=EVALUATOR_INSTRUCTIONS,
-        client=client,
         tools=[score_candidate, rank_candidates],
+        default_options={"store": False}
     )
 
 
-async def create_compliance_guard() -> Agent:
+async def create_compliance_guard():
     """Create a Compliance Guard agent for bias and EEOC compliance."""
     client = await _create_client("ComplianceGuard")
-    return Agent(
+    return client.as_agent(
         name="ComplianceGuard",
         description="Performs fairness and policy compliance checks on shortlists.",
         instructions=COMPLIANCE_GUARD_INSTRUCTIONS,
-        client=client,
         tools=[check_compliance, detect_bias],
+        default_options={"store": False}
     )
 
 
-async def create_scheduler() -> Agent:
+async def create_scheduler():
     """Create a Scheduler agent for interview coordination."""
     client = await _create_client("Scheduler")
-    return Agent(
+    return client.as_agent(
         name="Scheduler",
         description="Coordinates interview slots and confirms interview logistics.",
         instructions=SCHEDULER_INSTRUCTIONS,
-        client=client,
         tools=[get_calendar_availability, book_interview],
+        default_options={"store": False}
     )
 
 
-async def create_orchestrator() -> Agent:
+async def create_orchestrator():
     """Create an Orchestrator agent for group chat management."""
     client = await _create_client("Orchestrator")
-    return Agent(
+    return client.as_agent(
         name="Orchestrator",
         description="Coordinates multi-agent HR recruitment by selecting speakers.",
         instructions=ORCHESTRATOR_INSTRUCTIONS,
-        client=client,
+        default_options={"store": False}
     )
 
 
-async def create_magentic_manager() -> Agent:
+async def create_magentic_manager():
     """Create a Manager agent for Magentic orchestration."""
     client = await _create_client("HiringManager")
-    return Agent(
+    return client.as_agent(
         name="HiringManager",
         description="Coordinates the HR recruitment workflow across multiple specialists.",
         instructions=MAGENTIC_MANAGER_INSTRUCTIONS,
-        client=client,
+        default_options={"store": False}
     )
