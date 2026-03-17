@@ -1,14 +1,15 @@
 # Python TypeSpec Code Generation Tooling
 # Targets: generate-models, clean, install-typespec-deps
 
-OUTPUT_DIR  ?= azure/ai/responses/server/_generated
+OUTPUT_DIR  ?= azure/ai/responses/server/models/_generated
 TYPESPEC_DIR ?= type_spec
 OPENAPI_SPEC ?= type_spec/TempTypeSpecFiles/Foundry/openapi3/v1/microsoft-foundry-openapi3.yaml
-VALIDATORS_OUTPUT ?= azure/ai/responses/server/_generated/_validators.py
+VALIDATORS_OUTPUT ?= $(OUTPUT_DIR)/_validators.py
 ROOT_SCHEMAS ?= CreateResponse
 LOCAL_TYPESPEC_PACKAGES := @typespec/compiler @typespec/http @typespec/openapi @typespec/openapi3 @typespec/versioning @typespec/events @typespec/sse @azure-tools/typespec-python @azure-tools/typespec-azure-core @azure-tools/typespec-client-generator-core @azure-tools/openai-typespec
 TEMP_OUTPUT_DIR := $(OUTPUT_DIR)/.tmp_codegen
-MODEL_FILES_DIR := $(TEMP_OUTPUT_DIR)/azure/ai/responses/server/sdk/models/models
+MODEL_PACKAGE_DIR := $(TEMP_OUTPUT_DIR)/azure/ai/responses/server/sdk/models
+MODEL_SHIMS_DIR := scripts/generated_shims
 
 .PHONY: generate-models generate-validators generate-contracts clean install-typespec-deps
 
@@ -63,11 +64,19 @@ generate-models:
 	@echo Generating Python models...
 	@if exist "$(OUTPUT_DIR)" rmdir /s /q "$(OUTPUT_DIR)"
 	cd /d $(TYPESPEC_DIR) && npx tsp compile . --emit @azure-tools/typespec-python --option "@azure-tools/typespec-python.emitter-output-dir=$(TYPESPEC_OUTPUT_DIR)"
-	@if not exist "$(MODEL_FILES_DIR)" (echo Error: generated model files were not found. 1>&2 && exit /b 1)
-	@move /y "$(MODEL_FILES_DIR)\__init__.py" "$(OUTPUT_DIR)\__init__.py" >NUL
-	@move /y "$(MODEL_FILES_DIR)\_enums.py" "$(OUTPUT_DIR)\_enums.py" >NUL
-	@move /y "$(MODEL_FILES_DIR)\_models.py" "$(OUTPUT_DIR)\_models.py" >NUL
-	@move /y "$(MODEL_FILES_DIR)\_patch.py" "$(OUTPUT_DIR)\_patch.py" >NUL
+	@if not exist "$(MODEL_PACKAGE_DIR)" (echo Error: generated model package was not found. 1>&2 && exit /b 1)
+	@if not exist "$(OUTPUT_DIR)\sdk" mkdir "$(OUTPUT_DIR)\sdk"
+	@xcopy /E /I /Y "$(MODEL_PACKAGE_DIR)" "$(OUTPUT_DIR)\sdk\models" >NUL
+	@if exist "$(OUTPUT_DIR)\sdk\models\aio" rmdir /s /q "$(OUTPUT_DIR)\sdk\models\aio"
+	@if exist "$(OUTPUT_DIR)\sdk\models\operations" rmdir /s /q "$(OUTPUT_DIR)\sdk\models\operations"
+	@if exist "$(OUTPUT_DIR)\sdk\models\_client.py" del /q "$(OUTPUT_DIR)\sdk\models\_client.py"
+	@if exist "$(OUTPUT_DIR)\sdk\models\_configuration.py" del /q "$(OUTPUT_DIR)\sdk\models\_configuration.py"
+	@if exist "$(OUTPUT_DIR)\sdk\models\_version.py" del /q "$(OUTPUT_DIR)\sdk\models\_version.py"
+	@copy /Y "$(MODEL_SHIMS_DIR)\sdk_models__init__.py" "$(OUTPUT_DIR)\sdk\models\__init__.py" >NUL
+	@copy /Y "$(MODEL_SHIMS_DIR)\__init__.py" "$(OUTPUT_DIR)\__init__.py" >NUL
+	@copy /Y "$(MODEL_SHIMS_DIR)\_enums.py" "$(OUTPUT_DIR)\_enums.py" >NUL
+	@copy /Y "$(MODEL_SHIMS_DIR)\_models.py" "$(OUTPUT_DIR)\_models.py" >NUL
+	@copy /Y "$(MODEL_SHIMS_DIR)\_patch.py" "$(OUTPUT_DIR)\_patch.py" >NUL
 	@if exist "$(TEMP_OUTPUT_DIR)" rmdir /s /q "$(TEMP_OUTPUT_DIR)"
 else
 generate-models:
@@ -87,11 +96,22 @@ generate-models:
 	@echo "Generating Python models..."
 	rm -rf $(OUTPUT_DIR)
 	cd $(TYPESPEC_DIR) && npx tsp compile . --emit @azure-tools/typespec-python --option "@azure-tools/typespec-python.emitter-output-dir=$(TYPESPEC_OUTPUT_DIR)"
-	@test -d $(MODEL_FILES_DIR)
-	mv $(MODEL_FILES_DIR)/__init__.py $(OUTPUT_DIR)/__init__.py
-	mv $(MODEL_FILES_DIR)/_enums.py $(OUTPUT_DIR)/_enums.py
-	mv $(MODEL_FILES_DIR)/_models.py $(OUTPUT_DIR)/_models.py
-	mv $(MODEL_FILES_DIR)/_patch.py $(OUTPUT_DIR)/_patch.py
+	@test -d $(MODEL_PACKAGE_DIR) || { \
+		echo "Error: generated model package was not found." >&2; \
+		exit 1; \
+	}
+	mkdir -p $(OUTPUT_DIR)/sdk
+	cp -R $(MODEL_PACKAGE_DIR) $(OUTPUT_DIR)/sdk/models
+	rm -rf $(OUTPUT_DIR)/sdk/models/aio
+	rm -rf $(OUTPUT_DIR)/sdk/models/operations
+	rm -f $(OUTPUT_DIR)/sdk/models/_client.py
+	rm -f $(OUTPUT_DIR)/sdk/models/_configuration.py
+	rm -f $(OUTPUT_DIR)/sdk/models/_version.py
+	cp $(MODEL_SHIMS_DIR)/sdk_models__init__.py $(OUTPUT_DIR)/sdk/models/__init__.py
+	cp $(MODEL_SHIMS_DIR)/__init__.py $(OUTPUT_DIR)/__init__.py
+	cp $(MODEL_SHIMS_DIR)/_enums.py $(OUTPUT_DIR)/_enums.py
+	cp $(MODEL_SHIMS_DIR)/_models.py $(OUTPUT_DIR)/_models.py
+	cp $(MODEL_SHIMS_DIR)/_patch.py $(OUTPUT_DIR)/_patch.py
 	rm -rf $(TEMP_OUTPUT_DIR)
 endif
 

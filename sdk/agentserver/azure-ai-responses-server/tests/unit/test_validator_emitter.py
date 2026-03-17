@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from types import ModuleType
 
 from scripts.validator_emitter import build_validator_module
@@ -24,6 +25,51 @@ def test_emitter_generates_required_property_check() -> None:
     module = _load_module(build_validator_module(schemas, ["CreateResponse"]))
     errors = module.validate_CreateResponse({})
     assert any(e["path"] == "$.model" and "missing" in e["message"].lower() for e in errors)
+
+
+def test_emitter_generates_class_without_schema_definition() -> None:
+    schemas = {
+        "CreateResponse": {
+            "type": "object",
+            "required": ["model"],
+            "properties": {"model": {"type": "string"}},
+        }
+    }
+    code = build_validator_module(schemas, ["CreateResponse"])
+    assert "class CreateResponseValidator" in code
+    assert "\nSCHEMAS =" not in code
+
+
+def test_emitter_uses_generated_enum_values_when_available() -> None:
+    schemas = {
+        "OpenAI.ToolType": {
+            "anyOf": [
+                {"type": "string"},
+                {"type": "string", "enum": ["function", "file_search"]},
+            ]
+        }
+    }
+    code = build_validator_module(schemas, ["OpenAI.ToolType"])
+    assert "_enum_values('ToolType')" in code
+
+
+def test_emitter_deduplicates_string_union_error_message() -> None:
+    schemas = {
+        "OpenAI.InputItemType": {
+            "anyOf": [
+                {"type": "string"},
+                {"type": "string", "enum": ["message", "item_reference"]},
+            ]
+        }
+    }
+
+    module = _load_module(build_validator_module(schemas, ["OpenAI.InputItemType"]))
+    errors = module.validate_OpenAI_InputItemType(123)
+    assert errors
+    assert errors[0]["path"] == "$"
+    assert "InputItemType" in errors[0]["message"]
+    assert "got integer" in errors[0]["message"].lower()
+    assert "string, string" not in errors[0]["message"]
 
 
 def test_emitter_generates_nullable_handling() -> None:
@@ -181,3 +227,23 @@ def test_emitter_generates_array_and_map_checks() -> None:
     errors = module.validate_CreateResponse({"tools": [{}], "metadata": {"a": 1}})
     assert any(e["path"] == "$.tools[0].name" for e in errors)
     assert any(e["path"] == "$.metadata.a" for e in errors)
+
+
+def test_emitter_uses_descriptive_helper_function_names() -> None:
+    schemas = {
+        "CreateResponse": {
+            "type": "object",
+            "properties": {
+                "model": {"type": "string"},
+                "metadata": {
+                    "type": "object",
+                    "additionalProperties": {"type": "string"},
+                },
+            },
+        }
+    }
+
+    code = build_validator_module(schemas, ["CreateResponse"])
+    assert "_validate_CreateResponse_model" in code
+    assert "_validate_CreateResponse_metadata" in code
+    assert re.search(r"_validate_branch_\d+", code) is None

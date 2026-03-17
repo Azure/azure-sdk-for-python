@@ -6,7 +6,7 @@ from datetime import datetime
 from typing import Protocol
 
 from .._generated import Response
-from .._models import ResponseExecution, ResponseStatus, StreamEventRecord
+from ..models import ResponseExecution, ResponseStatus, StreamEventRecord
 
 
 class ResponseStore(Protocol):

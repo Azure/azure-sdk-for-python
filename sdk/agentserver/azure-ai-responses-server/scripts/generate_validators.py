@@ -44,8 +44,44 @@ def _build_output(spec: dict[str, Any], roots: list[str]) -> str:
     schemas = spec.get("components", {}).get("schemas", {})
     if not isinstance(schemas, dict):
         schemas = {}
+    else:
+        schemas = dict(schemas)
 
-    discovered_roots = discover_post_request_roots(spec)
+    def _find_create_response_inline_schema() -> dict[str, Any] | None:
+        paths = spec.get("paths", {})
+        for path, methods in paths.items():
+            if not isinstance(methods, dict):
+                continue
+            if "responses" not in str(path).lower():
+                continue
+            post = methods.get("post")
+            if not isinstance(post, dict):
+                continue
+            request_body = post.get("requestBody", {})
+            content = request_body.get("content", {}).get("application/json", {})
+            schema = content.get("schema", {})
+            if isinstance(schema, dict) and "anyOf" in schema:
+                branches = schema.get("anyOf", [])
+                if isinstance(branches, list) and branches and isinstance(branches[0], dict):
+                    return branches[0]
+            if isinstance(schema, dict) and "oneOf" in schema:
+                branches = schema.get("oneOf", [])
+                if isinstance(branches, list) and branches and isinstance(branches[0], dict):
+                    return branches[0]
+            if isinstance(schema, dict):
+                return schema
+        return None
+
+    for root in roots:
+        if root in schemas:
+            continue
+        if root == "CreateResponse":
+            inline_schema = _find_create_response_inline_schema()
+            if isinstance(inline_schema, dict):
+                schemas[root] = inline_schema
+
+    # If explicit roots are provided, respect them and skip route-wide discovery.
+    discovered_roots = [] if roots else discover_post_request_roots(spec)
     merged_roots: list[str] = []
     seen: set[str] = set()
     for root in [*roots, *discovered_roots]:

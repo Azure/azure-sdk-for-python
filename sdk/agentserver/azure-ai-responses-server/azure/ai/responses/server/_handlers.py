@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 from typing import Any, AsyncIterable, Awaitable, Callable, Mapping, Protocol, Sequence, runtime_checkable
 
 from ._generated import CreateResponse, OutputItem, ResponseStreamEvent
-from ._models import ResponseModeFlags
+from .models import ResponseModeFlags
 
 OutputItemsLoader = Callable[[], Awaitable[Sequence[OutputItem]]]
 RawBodyType = Mapping[str, Any] | Sequence[Any] | str | int | float | bool | None
