@@ -138,3 +138,39 @@ def test_generated_create_response_validator_rejects_input_item_type_with_wrong_
         }
     )
     assert any(e["path"] == "$.input" and "Expected one of: string, array" in e["message"] for e in errors)
+
+
+@pytest.mark.parametrize(
+    "item_type",
+    [
+        "message",
+        "item_reference",
+        "function_call_output",
+        "computer_call_output",
+        "apply_patch_call_output",
+    ],
+)
+def test_generated_create_response_validator_accepts_multiple_input_item_types(item_type: str) -> None:
+    validators = _load_generated_validators_module()
+    errors = validators.validate_CreateResponse(
+        {
+            "model": "gpt-4o",
+            "input": [{"type": item_type}],
+        }
+    )
+    assert errors == []
+
+
+def test_generated_create_response_validator_accepts_mixed_input_item_types() -> None:
+    validators = _load_generated_validators_module()
+    errors = validators.validate_CreateResponse(
+        {
+            "model": "gpt-4o",
+            "input": [
+                {"type": "message"},
+                {"type": "item_reference"},
+                {"type": "function_call_output"},
+            ],
+        }
+    )
+    assert errors == []
