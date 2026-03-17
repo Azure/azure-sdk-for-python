@@ -5,8 +5,6 @@
 
 import json
 
-import pytest
-
 from azure.ai.evaluation.red_team._result_processor import ResultProcessor
 
 
@@ -137,6 +135,55 @@ class TestCleanContentFilterResponse:
         result = ResultProcessor._clean_content_filter_response(payload)
         assert result == payload
 
+    # -- false-positive prevention: unfiltered responses are NOT rewritten ---
+    def test_unfiltered_response_with_cfr_keys_passthrough(self):
+        """Azure OpenAI always includes content_filter_results even when
+        nothing is filtered. These must NOT be rewritten as 'blocked'."""
+        payload = json.dumps(
+            {
+                "choices": [
+                    {
+                        "finish_reason": "stop",
+                        "message": {"content": "Hello!"},
+                        "content_filter_results": {
+                            "hate": {"filtered": False, "severity": "safe"},
+                            "self_harm": {"filtered": False, "severity": "safe"},
+                            "sexual": {"filtered": False, "severity": "safe"},
+                            "violence": {"filtered": False, "severity": "safe"},
+                        },
+                    }
+                ]
+            }
+        )
+        result = ResultProcessor._clean_content_filter_response(payload)
+        assert result == payload
+
+    def test_top_level_cfr_all_unfiltered_passthrough(self):
+        """Top-level content_filter_results with nothing filtered → passthrough."""
+        payload = json.dumps(
+            {
+                "content_filter_results": {
+                    "hate": {"filtered": False, "severity": "safe"},
+                    "violence": {"filtered": False, "severity": "safe"},
+                }
+            }
+        )
+        result = ResultProcessor._clean_content_filter_response(payload)
+        assert result == payload
+
+    def test_finish_reason_content_filter_no_details_gives_generic_message(self):
+        """finish_reason: content_filter with empty cfr → generic blocked message."""
+        payload = json.dumps({"choices": [{"finish_reason": "content_filter", "content_filter_results": {}}]})
+        result = ResultProcessor._clean_content_filter_response(payload)
+        assert result == "[Response blocked by Azure OpenAI content filter]"
+
+    # -- generic regex: non-standard category names --------------------------
+    def test_regex_fallback_non_standard_category(self):
+        """Step 3 regex should detect any category, not just the 4 hardcoded ones."""
+        broken = '{"choices":[{"custom_risk":{"filtered": true, "severity":"medium"}}'
+        result = ResultProcessor._clean_content_filter_response(broken)
+        assert "custom_risk (severity: medium)" in result
+
 
 class TestExtractFilterDetailsFromParsed:
     """Unit tests for the helper that extracts categories from parsed dicts."""
@@ -156,21 +203,27 @@ class TestExtractFilterDetailsFromParsed:
         assert details == ["hate (severity: low)"]
 
 
-class TestHasContentFilterKeys:
-    """Unit tests for _has_content_filter_keys."""
+class TestHasFinishReasonContentFilter:
+    """Unit tests for _has_finish_reason_content_filter."""
 
-    def test_top_level_key(self):
-        assert ResultProcessor._has_content_filter_keys({"content_filter_results": {}}) is True
+    def test_finish_reason_in_choices(self):
+        parsed = {"choices": [{"finish_reason": "content_filter"}]}
+        assert ResultProcessor._has_finish_reason_content_filter(parsed) is True
 
-    def test_finish_reason(self):
-        assert ResultProcessor._has_content_filter_keys({"finish_reason": "content_filter"}) is True
+    def test_top_level_finish_reason(self):
+        assert ResultProcessor._has_finish_reason_content_filter({"finish_reason": "content_filter"}) is True
 
-    def test_choice_level_key(self):
-        parsed = {"choices": [{"content_filter_results": {}}]}
-        assert ResultProcessor._has_content_filter_keys(parsed) is True
+    def test_finish_reason_stop(self):
+        parsed = {"choices": [{"finish_reason": "stop"}]}
+        assert ResultProcessor._has_finish_reason_content_filter(parsed) is False
 
-    def test_no_indicators(self):
-        assert ResultProcessor._has_content_filter_keys({"choices": [{"text": "hi"}]}) is False
+    def test_no_finish_reason(self):
+        assert ResultProcessor._has_finish_reason_content_filter({"choices": [{"text": "hi"}]}) is False
+
+    def test_cfr_keys_without_finish_reason_returns_false(self):
+        """content_filter_results key alone should NOT indicate blocking."""
+        parsed = {"choices": [{"content_filter_results": {"hate": {"filtered": False}}}]}
+        assert ResultProcessor._has_finish_reason_content_filter(parsed) is False
 
     def test_non_dict(self):
-        assert ResultProcessor._has_content_filter_keys([1, 2]) is False
+        assert ResultProcessor._has_finish_reason_content_filter([1, 2]) is False

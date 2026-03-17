@@ -664,8 +664,11 @@ class ResultProcessor:
                 filter_details = ResultProcessor._extract_filter_details_from_parsed(parsed)
                 if filter_details:
                     return f"[Response blocked by content filter: {', '.join(filter_details)}]"
-                # Parsed successfully and contains content_filter indicators → generic message
-                if ResultProcessor._has_content_filter_keys(parsed):
+                # Only emit a generic blocked message when finish_reason
+                # actually indicates content filtering.  Azure OpenAI always
+                # includes content_filter_results in responses (even unfiltered
+                # ones), so key-presence alone is not sufficient.
+                if ResultProcessor._has_finish_reason_content_filter(parsed):
                     return "[Response blocked by Azure OpenAI content filter]"
             except (json.JSONDecodeError, TypeError, ValueError):
                 pass
@@ -692,24 +695,27 @@ class ResultProcessor:
         # looks like a payload but json.loads failed, e.g. truncated JSON).
         if stripped.startswith(("{", "[")):
             try:
-                for category in ["hate", "self_harm", "sexual", "violence"]:
-                    pattern = f'"{category}".*?"filtered"\\s*:\\s*true'
-                    if re.search(pattern, content, re.IGNORECASE):
-                        sev_match = re.search(
-                            f'"{category}".*?"severity"\\s*:\\s*"(\\w+)"',
-                            content,
-                            re.IGNORECASE,
-                        )
-                        severity = sev_match.group(1) if sev_match else "unknown"
-                        filter_details.append(f"{category} (severity: {severity})")
+                # Generic scan: find any key whose object has "filtered": true
+                for m in re.finditer(
+                    r'"([^"]+)"\s*:\s*\{[^}]*"filtered"\s*:\s*true[^}]*\}',
+                    content,
+                    re.IGNORECASE,
+                ):
+                    category = m.group(1)
+                    sev_match = re.search(
+                        rf'"{re.escape(category)}".*?"severity"\s*:\s*"(\w+)"',
+                        content,
+                        re.IGNORECASE,
+                    )
+                    severity = sev_match.group(1) if sev_match else "unknown"
+                    filter_details.append(f"{category} (severity: {severity})")
             except (re.error, AttributeError):
                 pass
 
             if filter_details:
                 return f"[Response blocked by content filter: {', '.join(filter_details)}]"
-            # Last resort: if it starts with JSON chars and mentions content_filter
-            content_lower = content.lower()
-            if "content_filter" in content_lower or '"finish_reason":"content_filter"' in content_lower:
+            # Last resort: only rewrite if finish_reason indicates content filtering
+            if '"finish_reason"' in content and '"content_filter"' in content:
                 return "[Response blocked by Azure OpenAI content filter]"
 
         return content
@@ -741,20 +747,15 @@ class ResultProcessor:
         return details
 
     @staticmethod
-    def _has_content_filter_keys(parsed: Any) -> bool:
-        """Check whether a parsed JSON object contains content-filter indicator keys."""
+    def _has_finish_reason_content_filter(parsed: Any) -> bool:
+        """Return True if the parsed response has finish_reason == 'content_filter'."""
         if not isinstance(parsed, dict):
             return False
-        if "content_filter_results" in parsed:
-            return True
         if parsed.get("finish_reason") == "content_filter":
             return True
         for choice in parsed.get("choices", []):
-            if isinstance(choice, dict):
-                if "content_filter_results" in choice:
-                    return True
-                if choice.get("finish_reason") == "content_filter":
-                    return True
+            if isinstance(choice, dict) and choice.get("finish_reason") == "content_filter":
+                return True
         return False
 
     @staticmethod
