@@ -43,6 +43,14 @@ from .utils import get_harm_severity_level, retrieve_content_type
 
 LOGGER = logging.getLogger(__name__)
 
+# Metric names that differ between the sync evals endpoint and the legacy annotation endpoint.
+# Key = sync endpoint metric name, Value = legacy annotation API metric name.
+# Used bidirectionally: forward lookup for sync→legacy, reverse for legacy→sync.
+_SYNC_TO_LEGACY_METRIC_NAMES: Dict[str, str] = {
+    "hate_unfairness": "hate_fairness",
+    "groundedness": "generic_groundedness",
+}
+
 USER_TEXT_TEMPLATE_DICT: Dict[str, Template] = {
     "DEFAULT": Template("<Human>{$query}</><System>{$response}</>"),
 }
@@ -1044,23 +1052,19 @@ async def evaluate_with_rai_service_sync(
     :return: The EvalRunOutputItem containing the evaluation results (or parsed dict if legacy).
     :rtype: Union[EvalRunOutputItem, Dict[str, Union[str, float]]]
     """
-    # Normalize metric name based on endpoint:
-    # - Legacy annotation endpoint expects "hate_fairness" (service-side name)
-    # - Sync evals endpoint expects "hate_unfairness" (builtin.hate_unfairness)
-    # - Legacy annotation endpoint expects "generic_groundedness" for groundedness pro
-    # - Sync evals endpoint expects "groundedness" (builtin.groundedness)
+    # Normalize metric name: the sync evals endpoint and legacy annotation API use different
+    # names for some metrics. Apply the mapping based on which endpoint we're targeting.
     metric_name_str = metric_name.value if hasattr(metric_name, "value") else metric_name
     if use_legacy_endpoint:
-        if metric_name_str == "hate_unfairness":
-            metric_name = EvaluationMetrics.HATE_FAIRNESS
-        elif metric_name_str == "groundedness":
-            metric_name = "generic_groundedness"
-            # Preserve "groundedness" in output keys via metric_display_name
-            if metric_display_name is None:
-                metric_display_name = "groundedness"
+        legacy_name = _SYNC_TO_LEGACY_METRIC_NAMES.get(metric_name_str)
+        if legacy_name:
+            metric_display_name = metric_display_name or metric_name_str
+            metric_name = legacy_name
     else:
-        if metric_name_str == "hate_fairness":
-            metric_name = EvaluationMetrics.HATE_UNFAIRNESS
+        _legacy_to_sync = {v: k for k, v in _SYNC_TO_LEGACY_METRIC_NAMES.items()}
+        sync_name = _legacy_to_sync.get(metric_name_str)
+        if sync_name:
+            metric_name = sync_name
 
     # Route to legacy endpoint if requested
     if use_legacy_endpoint:
@@ -1279,12 +1283,17 @@ async def evaluate_with_rai_service_sync_multimodal(
     :return: The EvalRunOutputItem or legacy response payload.
     :rtype: Union[Dict, EvalRunOutputItem]
     """
-    # Normalize metric name based on endpoint (same logic as evaluate_with_rai_service_sync)
+    # Normalize metric name (same mapping as evaluate_with_rai_service_sync)
     metric_name_str = metric_name.value if hasattr(metric_name, "value") else metric_name
-    if use_legacy_endpoint and metric_name_str == "hate_unfairness":
-        metric_name = "hate_fairness"
-    elif not use_legacy_endpoint and metric_name_str == "hate_fairness":
-        metric_name = "hate_unfairness"
+    if use_legacy_endpoint:
+        legacy_name = _SYNC_TO_LEGACY_METRIC_NAMES.get(metric_name_str)
+        if legacy_name:
+            metric_name = legacy_name
+    else:
+        _legacy_to_sync = {v: k for k, v in _SYNC_TO_LEGACY_METRIC_NAMES.items()}
+        sync_name = _legacy_to_sync.get(metric_name_str)
+        if sync_name:
+            metric_name = sync_name
 
     # Route to legacy endpoint if requested
     if use_legacy_endpoint:
