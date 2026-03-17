@@ -10,7 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 import os
 import logging
-from typing import List, Any
+from typing import List, Any, Union
 import httpx  # pylint: disable=networking-import-outside-azure-core-transport
 from openai import AsyncOpenAI
 from azure.core.credentials import AzureKeyCredential
