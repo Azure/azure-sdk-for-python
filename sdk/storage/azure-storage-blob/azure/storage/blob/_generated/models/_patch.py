@@ -11,7 +11,51 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import datetime
 from typing import Any, Mapping, Optional, overload
 
-from .._utils.model_base import Model as _Model, rest_field
+from .._utils.model_base import Model as _Model, rest_field, _MyMutableMapping, _RestField
+
+
+# Lazily initialize _data for subclasses that skip super().__init__() (e.g. datalake models).
+def _lazy_data_getattr(self, name):
+    if name == "_data":
+        object.__setattr__(self, "_data", {})
+        return self._data
+    raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
+
+
+# Route attribute assignments through _RestField descriptors even when they are shadowed
+# by class-level defaults in subclasses (e.g. datalake models define class attrs that
+# shadow the parent's _RestField descriptors, so self.x = v becomes a plain setattr
+# instead of calling _RestField.__set__).
+def _model_setattr(self, name, value):
+    if not name.startswith("_"):
+        # Walk the MRO looking for a _RestField descriptor that may be shadowed
+        for cls in type(self).__mro__:
+            member = cls.__dict__.get(name)
+            if isinstance(member, _RestField):
+                member.__set__(self, value)
+                return
+    object.__setattr__(self, name, value)
+
+
+# Route attribute reads through _RestField descriptors even when they are shadowed
+# by class-level defaults in subclasses. Without this, self.enabled would return the
+# class-level default (e.g. False) instead of the value stored in _data.
+def _model_getattribute(self, name):
+    if not name.startswith("_"):
+        try:
+            rest_fields = type(self)._attr_to_rest_field
+        except AttributeError:
+            pass
+        else:
+            rf = rest_fields.get(name)
+            if rf is not None:
+                return rf.__get__(self, type(self))
+    return object.__getattribute__(self, name)
+
+
+_MyMutableMapping.__getattr__ = _lazy_data_getattr
+_MyMutableMapping.__setattr__ = _model_setattr
+_MyMutableMapping.__getattribute__ = _model_getattribute
 
 
 class AppendPositionAccessConditions(_Model):
