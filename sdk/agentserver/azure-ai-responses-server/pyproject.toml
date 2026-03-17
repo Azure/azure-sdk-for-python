@@ -1,6 +1,5 @@
 [build-system]
 requires = ["setuptools>=64"]
-build-backend = "setuptools.backends._legacy:_Backend"
 
 [project]
 name = "azure-ai-responses-server"
@@ -19,10 +18,11 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
-    "License :: OSI Approved :: MIT License",
 ]
 dependencies = [
     "azure-core>=1.30.0",
+    "starlette>=0.45.0",
+    "uvicorn>=0.31.0",
 ]
 
 [project.optional-dependencies]
@@ -31,6 +31,17 @@ dev = [
     "pytest-asyncio>=0.21",
     "ruff>=0.4",
     "mypy>=1.0",
+]
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests*",
+    "type_spec*",
+    "specs",
+    "samples*",
+    "doc*",
+    "azure",
+    "azure.ai",
 ]
 
 [tool.ruff]

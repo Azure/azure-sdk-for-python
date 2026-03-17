@@ -3,16 +3,49 @@
 
 OUTPUT_DIR  ?= azure/ai/responses/server/_generated
 TYPESPEC_DIR ?= type_spec
+OPENAPI_SPEC ?= type_spec/TempTypeSpecFiles/Foundry/openapi3/v1/microsoft-foundry-openapi3.yaml
+VALIDATORS_OUTPUT ?= azure/ai/responses/server/_generated/_validators.py
+ROOT_SCHEMAS ?= CreateResponse
 LOCAL_TYPESPEC_PACKAGES := @typespec/compiler @typespec/http @typespec/openapi @typespec/openapi3 @typespec/versioning @typespec/events @typespec/sse @azure-tools/typespec-python @azure-tools/typespec-azure-core @azure-tools/typespec-client-generator-core @azure-tools/openai-typespec
 TEMP_OUTPUT_DIR := $(OUTPUT_DIR)/.tmp_codegen
 MODEL_FILES_DIR := $(TEMP_OUTPUT_DIR)/azure/ai/responses/server/sdk/models/models
 
-.PHONY: generate-models clean install-typespec-deps
+.PHONY: generate-models generate-validators generate-contracts clean install-typespec-deps
 
 ifeq ($(OS),Windows_NT)
 SHELL := cmd
 .SHELLFLAGS := /c
 endif
+
+# --------------------------------------------------------------------------
+# generate-validators: Generate JSON payload validators from OpenAPI
+# --------------------------------------------------------------------------
+ifeq ($(OS),Windows_NT)
+generate-validators:
+	@where python >NUL 2>NUL || (echo Error: python is required and was not found on PATH. 1>&2 && exit /b 1)
+	@if not exist "$(OPENAPI_SPEC)" (echo Error: OpenAPI spec not found at $(OPENAPI_SPEC). 1>&2 && exit /b 1)
+	@echo Generating payload validators from $(OPENAPI_SPEC)...
+	python scripts/generate_validators.py --input "$(OPENAPI_SPEC)" --output "$(VALIDATORS_OUTPUT)" --root-schemas "$(ROOT_SCHEMAS)"
+	@echo Generated validators at $(VALIDATORS_OUTPUT)
+else
+generate-validators:
+	@command -v python >/dev/null 2>&1 || { \
+		echo "Error: python is required and was not found on PATH." >&2; \
+		exit 1; \
+	}
+	@test -f "$(OPENAPI_SPEC)" || { \
+		echo "Error: OpenAPI spec not found at $(OPENAPI_SPEC)." >&2; \
+		exit 1; \
+	}
+	@echo "Generating payload validators from $(OPENAPI_SPEC)..."
+	python scripts/generate_validators.py --input "$(OPENAPI_SPEC)" --output "$(VALIDATORS_OUTPUT)" --root-schemas "$(ROOT_SCHEMAS)"
+	@echo "Generated validators at $(VALIDATORS_OUTPUT)"
+endif
+
+# --------------------------------------------------------------------------
+# generate-contracts: Generate models + validators artifacts
+# --------------------------------------------------------------------------
+generate-contracts: generate-models generate-validators
 
 TYPESPEC_OUTPUT_DIR := {cwd}/../$(TEMP_OUTPUT_DIR)
 
