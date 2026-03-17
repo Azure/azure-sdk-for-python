@@ -49,6 +49,8 @@ LOGGER = logging.getLogger(__name__)
 _SYNC_TO_LEGACY_METRIC_NAMES: Dict[str, str] = {
     "hate_unfairness": "hate_fairness",
     "groundedness": "generic_groundedness",
+    "indirect_attack": "xpia",
+    "election_critical_information": "eci",
 }
 
 USER_TEXT_TEMPLATE_DICT: Dict[str, Template] = {
