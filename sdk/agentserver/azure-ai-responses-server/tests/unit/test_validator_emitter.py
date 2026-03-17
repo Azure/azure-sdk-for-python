@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-<<<<<<< HEAD
 import re
-=======
->>>>>>> lusu/response-server
 from types import ModuleType
 
 from scripts.validator_emitter import build_validator_module
@@ -30,7 +27,6 @@ def test_emitter_generates_required_property_check() -> None:
     assert any(e["path"] == "$.model" and "missing" in e["message"].lower() for e in errors)
 
 
-<<<<<<< HEAD
 def test_emitter_generates_class_without_schema_definition() -> None:
     schemas = {
         "CreateResponse": {
@@ -76,8 +72,6 @@ def test_emitter_deduplicates_string_union_error_message() -> None:
     assert "string, string" not in errors[0]["message"]
 
 
-=======
->>>>>>> lusu/response-server
 def test_emitter_generates_nullable_handling() -> None:
     schemas = {
         "CreateResponse": {
@@ -233,7 +227,6 @@ def test_emitter_generates_array_and_map_checks() -> None:
     errors = module.validate_CreateResponse({"tools": [{}], "metadata": {"a": 1}})
     assert any(e["path"] == "$.tools[0].name" for e in errors)
     assert any(e["path"] == "$.metadata.a" for e in errors)
-<<<<<<< HEAD
 
 
 def test_emitter_uses_descriptive_helper_function_names() -> None:
@@ -254,5 +247,3 @@ def test_emitter_uses_descriptive_helper_function_names() -> None:
     assert "_validate_CreateResponse_model" in code
     assert "_validate_CreateResponse_metadata" in code
     assert re.search(r"_validate_branch_\d+", code) is None
-=======
->>>>>>> lusu/response-server
