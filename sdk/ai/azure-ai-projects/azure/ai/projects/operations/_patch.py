@@ -47,6 +47,8 @@ class BetaOperations(GeneratedBetaOperations):
     """:class:`~azure.ai.projects.operations.BetaRedTeamsOperations` operations"""
     schedules: BetaSchedulesOperations
     """:class:`~azure.ai.projects.operations.BetaSchedulesOperations` operations"""
+    toolsets: BetaToolsetsOperations
+    """:class:`~azure.ai.projects.operations.BetaToolsetsOperations` operations"""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
