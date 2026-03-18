@@ -1734,6 +1734,7 @@ class RedTeam:
             # Using the user's callback would cause the callback response to leak
             # into converted prompts.
             adversarial_template_key = self._get_adversarial_template_key(flattened_attack_strategies)
+            is_crescendo = adversarial_template_key == "orchestrators/crescendo/crescendo_variant_1.yaml"
             adversarial_chat = AzureRAIServiceTarget(
                 client=self.generated_rai_client,
                 api_version=None,
@@ -1741,6 +1742,7 @@ class RedTeam:
                 prompt_template_key=adversarial_template_key,
                 logger=self.logger,
                 is_one_dp_project=self._one_dp_project,
+                crescendo_format=is_crescendo,
             )
 
             foundry_manager = FoundryExecutionManager(
@@ -1849,7 +1851,8 @@ class RedTeam:
         finally:
             progress_bar.close()
 
-    def _get_adversarial_template_key(self, flattened_attack_strategies: List) -> str:
+    @staticmethod
+    def _get_adversarial_template_key(flattened_attack_strategies: List) -> str:
         """Select the appropriate RAI service template key for the adversarial chat target.
 
         Different attack strategies require different prompt templates:

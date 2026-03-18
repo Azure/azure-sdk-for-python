@@ -3612,52 +3612,31 @@ class TestAdversarialChatTargetRegression:
     causing the callback response to appear as the user message in results.
     """
 
-    def test_adversarial_chat_target_is_not_callback_chat_target(self):
-        """Verify adversarial_chat_target should be AzureRAIServiceTarget, not _CallbackChatTarget."""
-        from azure.ai.evaluation.red_team._callback_chat_target import _CallbackChatTarget
+    def test_adversarial_chat_target_accepts_rai_service_target(self):
+        """Verify FoundryExecutionManager accepts AzureRAIServiceTarget as adversarial_chat_target."""
         from azure.ai.evaluation.red_team._utils._rai_service_target import AzureRAIServiceTarget
-        from pyrit.memory import CentralMemory, SQLiteMemory
 
-        CentralMemory.set_memory_instance(SQLiteMemory(db_path=":memory:"))
-
-        mock_callback = MagicMock()
-        callback_target = _CallbackChatTarget(callback=mock_callback)
-
-        # The callback target should NOT be used as adversarial_chat_target
-        manager = FoundryExecutionManager(
-            credential=MagicMock(),
-            azure_ai_project={"subscription_id": "s", "resource_group_name": "r", "project_name": "p"},
-            logger=MagicMock(),
-            output_dir="/test",
-            adversarial_chat_target=callback_target,
-        )
-
-        # This test documents the anti-pattern: adversarial_chat_target should NOT be a _CallbackChatTarget
-        assert isinstance(manager.adversarial_chat_target, _CallbackChatTarget)
-
-        # The correct usage is AzureRAIServiceTarget
         rai_target = AzureRAIServiceTarget(
             client=MagicMock(),
             model="gpt-4",
             prompt_template_key="prompt_converters/tense_converter.yaml",
             logger=MagicMock(),
         )
-        manager_correct = FoundryExecutionManager(
+        manager = FoundryExecutionManager(
             credential=MagicMock(),
             azure_ai_project={"subscription_id": "s", "resource_group_name": "r", "project_name": "p"},
             logger=MagicMock(),
             output_dir="/test",
             adversarial_chat_target=rai_target,
         )
-        assert isinstance(manager_correct.adversarial_chat_target, AzureRAIServiceTarget)
-        assert not isinstance(manager_correct.adversarial_chat_target, _CallbackChatTarget)
+        assert isinstance(manager.adversarial_chat_target, AzureRAIServiceTarget)
 
     def test_get_adversarial_template_key_baseline(self):
         """Template key should default to tense converter for single-turn strategies."""
         from azure.ai.evaluation.red_team._red_team import RedTeam
 
         strategies = [AttackStrategy.Baseline]
-        key = RedTeam._get_adversarial_template_key(None, strategies)
+        key = RedTeam._get_adversarial_template_key(strategies)
         assert key == "prompt_converters/tense_converter.yaml"
 
     def test_get_adversarial_template_key_difficult(self):
@@ -3665,7 +3644,7 @@ class TestAdversarialChatTargetRegression:
         from azure.ai.evaluation.red_team._red_team import RedTeam
 
         strategies = [AttackStrategy.Baseline, [AttackStrategy.Tense, AttackStrategy.Base64]]
-        key = RedTeam._get_adversarial_template_key(None, strategies)
+        key = RedTeam._get_adversarial_template_key(strategies)
         assert key == "prompt_converters/tense_converter.yaml"
 
     def test_get_adversarial_template_key_crescendo(self):
@@ -3673,7 +3652,7 @@ class TestAdversarialChatTargetRegression:
         from azure.ai.evaluation.red_team._red_team import RedTeam
 
         strategies = [AttackStrategy.Crescendo, AttackStrategy.Baseline]
-        key = RedTeam._get_adversarial_template_key(None, strategies)
+        key = RedTeam._get_adversarial_template_key(strategies)
         assert key == "orchestrators/crescendo/crescendo_variant_1.yaml"
 
     def test_get_adversarial_template_key_multi_turn(self):
@@ -3681,7 +3660,7 @@ class TestAdversarialChatTargetRegression:
         from azure.ai.evaluation.red_team._red_team import RedTeam
 
         strategies = [AttackStrategy.MultiTurn, AttackStrategy.Baseline]
-        key = RedTeam._get_adversarial_template_key(None, strategies)
+        key = RedTeam._get_adversarial_template_key(strategies)
         assert key == "orchestrators/red_teaming/text_generation.yaml"
 
     def test_build_messages_user_shows_original_value(self):
