@@ -34,11 +34,7 @@ from ._shared.uploads import (
 )
 
 if TYPE_CHECKING:
-    from ._generated.operations import (
-        AppendBlobOperations,
-        BlockBlobOperations,
-        PageBlobOperations,
-    )
+    from ._generated.operations import AppendBlobOperations, BlockBlobOperations, PageBlobOperations
     from ._shared.models import StorageConfiguration
     BlobLeaseClient = TypeVar("BlobLeaseClient")
 
