@@ -1,4 +1,4 @@
-paramters:
+parameters:
   - name: targetFolder
     type: string
   - name: owners
