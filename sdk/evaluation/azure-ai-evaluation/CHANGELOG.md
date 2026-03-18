@@ -1,9 +1,18 @@
 # Release History
 
-## 1.16.1 (Unreleased)
+## 1.16.1 (2026-03-18)
+
+### Features Added
+
+- Agentic evaluators (Groundedness, ToolCallAccuracy, ToolCallSuccess, ToolInputAccuracy, ToolOutputUtilization, ToolSelection) now accept plain string inputs directly, skipping structured parsing when string format is provided.
 
 ### Bugs Fixed
+
 - Fixed inconsistency where sample data in evaluation result items did not match the generated sample data from corresponding input rows, ensuring proper synchronization between row-level input samples and their associated evaluation output items.
+- Fixed indirect jailbreak (XPIA) `ValueError` when targeting models by converting `binary_path` file-based context prompts to inline text before invoking the callback target.
+- Fixed content-filter responses showing raw JSON API payloads in red team results by detecting blocked responses and replacing them with human-readable messages.
+- Fixed missing `token_usage` on row-level output items for agent targets using the Foundry execution path by extracting usage data from piece labels.
+- Fixed 7 backwards-compatibility bugs with the `_use_legacy_endpoint=True` feature flag including metric name mapping, result parsing, conversation evaluation mode, and Foundry scorer integration.
 
 ## 1.16.0 (2026-03-10)
 
