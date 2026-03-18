@@ -150,9 +150,7 @@ class TestTagIsStableForTypeSpec:
         input_path, output_path = io_paths
         input_data = {
             "specFolder": "spec",
-            "relatedReadmeMdFiles": [
-                "specification/test/resource-manager/readme.md"
-            ],
+            "relatedReadmeMdFiles": ["specification/test/resource-manager/readme.md"],
             "sdkReleaseType": "stable",
         }
         result = self._run_main(
@@ -171,9 +169,7 @@ class TestTagIsStableForTypeSpec:
         input_path, output_path = io_paths
         input_data = {
             "specFolder": "spec",
-            "relatedReadmeMdFiles": [
-                "specification/test/resource-manager/readme.md"
-            ],
+            "relatedReadmeMdFiles": ["specification/test/resource-manager/readme.md"],
             "sdkReleaseType": "stable",  # even though release type says "stable"
         }
         result = self._run_main(
