@@ -19,24 +19,24 @@ class ContentRange:
     Example usage::
 
         # Document pages
-        range = ContentRange.page(5)                    # "5"
-        range = ContentRange.pages(1, 3)                # "1-3"
-        range = ContentRange.pages_from(9)              # "9-"
+        content_range = ContentRange.page(5)                    # "5"
+        content_range = ContentRange.pages(1, 3)                # "1-3"
+        content_range = ContentRange.pages_from(9)              # "9-"
 
         # Audio/video time ranges
-        range = ContentRange.time_range(
-            timedelta(0), timedelta(seconds=5))         # "0-5000"
-        range = ContentRange.time_range_from(
-            timedelta(seconds=5))                       # "5000-"
+        content_range = ContentRange.time_range(
+            timedelta(0), timedelta(seconds=5))                 # "0-5000"
+        content_range = ContentRange.time_range_from(
+            timedelta(seconds=5))                               # "5000-"
 
         # Combine multiple ranges
-        range = ContentRange.combine(
+        content_range = ContentRange.combine(
             ContentRange.pages(1, 3),
             ContentRange.page(5),
-            ContentRange.pages_from(9))                 # "1-3,5,9-"
+            ContentRange.pages_from(9))                         # "1-3,5,9-"
 
         # Or construct from a raw string
-        range = ContentRange("1-3,5,9-")
+        content_range = ContentRange("1-3,5,9-")
     """
 
     def __init__(self, value: str) -> None:
