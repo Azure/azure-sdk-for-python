@@ -55,16 +55,11 @@ class TestSecretRefresh(AppConfigTestCase, unittest.TestCase):
 
         # Mock the refresh method to track calls
         with patch.object(client, "refresh") as mock_refresh:
-            # Wait for the secret refresh interval to pass
-            time.sleep(2)
-
             client.refresh()
 
             # Verify refresh was called
             assert mock_refresh.call_count >= 1
 
-            # Wait again to ensure multiple refreshes
-            time.sleep(2)
             client.refresh()
 
             # Should have been called at least twice now
@@ -94,7 +89,7 @@ class TestSecretRefresh(AppConfigTestCase, unittest.TestCase):
         )
 
         # Add a key vault reference to the client (this will use mock resolver)
-        appconfig_client = self.create_aad_sdk_client(appconfiguration_endpoint_string)
+        appconfig_client = self.create_appconfig_client(appconfiguration_endpoint_string)
 
         # Get and modify a key vault reference setting
         kv_setting = appconfig_client.get_configuration_setting(key="secret", label="prod")
@@ -108,15 +103,20 @@ class TestSecretRefresh(AppConfigTestCase, unittest.TestCase):
         kv_setting.secret_id = appconfiguration_keyvault_secret_url2
         appconfig_client.set_configuration_setting(kv_setting)
 
-        # Wait for the secret refresh interval to pass
-        time.sleep(2)
+        try:
+            # Expire the refresh timers to simulate time passing
+            client._refresh_timer._next_refresh_time = 0
+            client._secret_provider.secret_refresh_timer._next_refresh_time = 0
 
-        # Access the value again to trigger refresh
-        client.refresh()
+            # Access the value again to trigger refresh
+            client.refresh()
 
-        # Verify the value was updated
-        assert client["secret"] == "Very secret value 2"
-        assert mock_callback.call_count >= 1
+            # Verify the value was updated
+            assert client["secret"] == "Very secret value 2"
+            assert mock_callback.call_count >= 1
+        finally:
+            kv_setting.secret_id = appconfiguration_keyvault_secret_url
+            appconfig_client.set_configuration_setting(kv_setting)
 
     @AppConfigProviderPreparer()
     @recorded_by_proxy
