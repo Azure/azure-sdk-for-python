@@ -9,24 +9,32 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import datetime
-from typing import Any, Mapping, Optional, overload
+import xml.etree.ElementTree as ET
+from typing import Any, List, Mapping, Optional, overload
 
 from .._utils.model_base import Model as _Model, rest_field, _MyMutableMapping, _RestField
+from ._models import (
+    BlobItem as BlobItemInternal,
+    AccessPolicy as _GenAccessPolicy,
+    ArrowField as _GenArrowField,
+    CorsRule as _GenCorsRule,
+    Logging as _GenLogging,
+    Metrics as _GenMetrics,
+    RetentionPolicy as _GenRetentionPolicy,
+    StaticWebsite as _GenStaticWebsite,
+    StorageServiceProperties as _GenStorageServiceProperties,
+)
 
-
-# Lazily initialize _data for subclasses that skip super().__init__() (e.g. datalake models).
 def _lazy_data_getattr(self, name):
+    """Lazily initialize _data for subclasses that skip super().__init__()."""
     if name == "_data":
         object.__setattr__(self, "_data", {})
         return self._data
     raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
 
 
-# Route attribute assignments through _RestField descriptors even when they are shadowed
-# by class-level defaults in subclasses (e.g. datalake models define class attrs that
-# shadow the parent's _RestField descriptors, so self.x = v becomes a plain setattr
-# instead of calling _RestField.__set__).
 def _model_setattr(self, name, value):
+    """Route attribute writes through _RestField descriptors even when shadowed."""
     if not name.startswith("_"):
         # Walk the MRO looking for a _RestField descriptor that may be shadowed
         for cls in type(self).__mro__:
@@ -37,10 +45,8 @@ def _model_setattr(self, name, value):
     object.__setattr__(self, name, value)
 
 
-# Route attribute reads through _RestField descriptors even when they are shadowed
-# by class-level defaults in subclasses. Without this, self.enabled would return the
-# class-level default (e.g. False) instead of the value stored in _data.
 def _model_getattribute(self, name):
+    """Route attribute reads through _RestField descriptors even when shadowed."""
     if not name.startswith("_"):
         try:
             rest_fields = type(self)._attr_to_rest_field
@@ -56,6 +62,169 @@ def _model_getattribute(self, name):
 _MyMutableMapping.__getattr__ = _lazy_data_getattr
 _MyMutableMapping.__setattr__ = _model_setattr
 _MyMutableMapping.__getattribute__ = _model_getattribute
+
+
+# ---------------------------------------------------------------------------
+# Eagerly resolve rest_field forward references while _module still points at
+# the correct generated-models module.  Model.__new__ caches rf._type on
+# shared _RestField descriptors; the *first* subclass whose __new__ fires
+# wins.  Creating throwaway instances here locks in the correct types so
+# external packages (e.g. azure-storage-file-datalake) can't corrupt them.
+# ---------------------------------------------------------------------------
+_GenRetentionPolicy(enabled=False)
+_GenLogging(version="1.0", delete=False, read=False, write=False, retention_policy=_GenRetentionPolicy(enabled=False))
+_GenMetrics(enabled=False, retention_policy=_GenRetentionPolicy(enabled=False))
+_GenStorageServiceProperties()
+
+
+# ---------------------------------------------------------------------------
+# Autorest serialization compatibility layer
+# ---------------------------------------------------------------------------
+# The old autorest serialization pipeline (Serializer/Deserializer from
+# _utils.serialization) relies on class-level _attribute_map, _validation,
+# _xml_map, is_xml_model(), and _create_xml_node() — none of which exist on
+# the new model_base.Model subclasses.  The wrappers below add exactly those
+# attributes so that the operations code can keep serializing/deserializing
+# them unchanged.
+# ---------------------------------------------------------------------------
+
+
+def _create_xml_node(tag, prefix=None, ns=None):
+    if prefix and ns:
+        ET.register_namespace(prefix, ns)
+    if ns:
+        return ET.Element("{" + ns + "}" + tag)
+    return ET.Element(tag)
+
+
+class _AutorestCompatMixin:
+    """Adds msrest-style (de)serialization hooks to ``model_base.Model`` subclasses."""
+
+    _attribute_map: dict = {}
+    _validation: dict = {}
+
+    @classmethod
+    def is_xml_model(cls) -> bool:
+        return bool(getattr(cls, "_xml_map", None))
+
+    @classmethod
+    def _create_xml_node(cls):
+        xml_map = getattr(cls, "_xml_map", {})
+        return _create_xml_node(
+            xml_map.get("name", cls.__name__),
+            xml_map.get("prefix"),
+            xml_map.get("ns"),
+        )
+
+
+class AccessPolicy(_AutorestCompatMixin, _GenAccessPolicy):
+    """AccessPolicy with autorest serialization compatibility."""
+
+    _attribute_map = {
+        "start": {"key": "Start", "type": "str"},
+        "expiry": {"key": "Expiry", "type": "str"},
+        "permission": {"key": "Permission", "type": "str"},
+    }
+
+
+class ArrowField(_AutorestCompatMixin, _GenArrowField):
+    """ArrowField with autorest serialization compatibility."""
+
+    _validation = {
+        "type": {"required": True},
+    }
+    _attribute_map = {
+        "type": {"key": "Type", "type": "str"},
+        "name": {"key": "Name", "type": "str"},
+        "precision": {"key": "Precision", "type": "int"},
+        "scale": {"key": "Scale", "type": "int"},
+    }
+    _xml_map = {"name": "Field"}
+
+
+class CorsRule(_AutorestCompatMixin, _GenCorsRule):
+    """CorsRule with autorest serialization compatibility."""
+
+    _validation = {
+        "allowed_origins": {"required": True},
+        "allowed_methods": {"required": True},
+        "allowed_headers": {"required": True},
+        "exposed_headers": {"required": True},
+        "max_age_in_seconds": {"required": True, "minimum": 0},
+    }
+    _attribute_map = {
+        "allowed_origins": {"key": "AllowedOrigins", "type": "str"},
+        "allowed_methods": {"key": "AllowedMethods", "type": "str"},
+        "allowed_headers": {"key": "AllowedHeaders", "type": "str"},
+        "exposed_headers": {"key": "ExposedHeaders", "type": "str"},
+        "max_age_in_seconds": {"key": "MaxAgeInSeconds", "type": "int"},
+    }
+
+
+class Logging(_AutorestCompatMixin, _GenLogging):
+    """Logging with autorest serialization compatibility."""
+
+    _validation = {
+        "version": {"required": True},
+        "delete": {"required": True},
+        "read": {"required": True},
+        "write": {"required": True},
+        "retention_policy": {"required": True},
+    }
+    _attribute_map = {
+        "version": {"key": "Version", "type": "str"},
+        "delete": {"key": "Delete", "type": "bool"},
+        "read": {"key": "Read", "type": "bool"},
+        "write": {"key": "Write", "type": "bool"},
+        "retention_policy": {"key": "RetentionPolicy", "type": "RetentionPolicy"},
+    }
+
+
+class Metrics(_AutorestCompatMixin, _GenMetrics):
+    """Metrics with autorest serialization compatibility."""
+
+    _validation = {
+        "enabled": {"required": True},
+    }
+    _attribute_map = {
+        "version": {"key": "Version", "type": "str"},
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "include_apis": {"key": "IncludeAPIs", "type": "bool"},
+        "retention_policy": {"key": "RetentionPolicy", "type": "RetentionPolicy"},
+    }
+
+
+class RetentionPolicy(_AutorestCompatMixin, _GenRetentionPolicy):
+    """RetentionPolicy with autorest serialization compatibility."""
+
+    _validation = {
+        "enabled": {"required": True},
+        "days": {"minimum": 1},
+    }
+    _attribute_map = {
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "days": {"key": "Days", "type": "int"},
+        "allow_permanent_delete": {"key": "AllowPermanentDelete", "type": "bool"},
+    }
+
+
+class StaticWebsite(_AutorestCompatMixin, _GenStaticWebsite):
+    """StaticWebsite with autorest serialization compatibility."""
+
+    _validation = {
+        "enabled": {"required": True},
+    }
+    _attribute_map = {
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "index_document": {"key": "IndexDocument", "type": "str"},
+        "error_document404_path": {"key": "ErrorDocument404Path", "type": "str"},
+        "default_index_document_path": {"key": "DefaultIndexDocumentPath", "type": "str"},
+    }
+
+
+# ---------------------------------------------------------------------------
+# Parameter group models
+# ---------------------------------------------------------------------------
 
 
 class AppendPositionAccessConditions(_Model):
@@ -580,229 +749,6 @@ class LeaseAccessConditions(_Model):
         super().__init__(*args, **kwargs)
 
 
-# Alias: the old autorest-generated name was BlobItemInternal; the new TypeSpec-generated name is BlobItem.
-from ._models import BlobItem as BlobItemInternal  # noqa: E402
-
-"""
-
-Patch the new TypeSpec-generated models so they remain compatible with the
-old autorest-style serialization pipeline (``Serializer`` / ``Deserializer``
-from ``_utils.serialization``). The serialization code relies on class-level
-``_attribute_map``, ``_validation``, ``_xml_map``, ``is_xml_model()`` and
-``_create_xml_node()`` — none of which exist on the new ``model_base.Model``
-subclasses.  The wrappers below add exactly those attributes so that:
-
-1. The public ``_models.py`` can keep subclassing these generated models.
-2. The operations code can keep serializing / deserializing them unchanged.
-3. Forward-reference resolution in ``model_base`` finds *these* classes
-   (which inherit ``_is_model = True``) rather than the old
-   ``_serialization.Model`` versions.
-"""
-import xml.etree.ElementTree as ET
-from typing import Any, List
-
-from ._models import (
-    AccessPolicy as _GenAccessPolicy,
-    ArrowField as _GenArrowField,
-    CorsRule as _GenCorsRule,
-    Logging as _GenLogging,
-    Metrics as _GenMetrics,
-    RetentionPolicy as _GenRetentionPolicy,
-    StaticWebsite as _GenStaticWebsite,
-    StorageServiceProperties as _GenStorageServiceProperties,
-)
-
-
-# ---------------------------------------------------------------------------
-# Force generated base classes to resolve their rest_field types NOW, while
-# ``_module`` still points at the correct generated-models module.
-#
-# ``Model.__new__`` caches ``rf._type`` on the shared ``_RestField``
-# descriptors. The *first* subclass whose ``__new__`` fires wins.
-# If an external package (e.g. azure-storage-file-datalake) subclasses one of
-# these models and instantiates it before blob code does, the forward
-# reference ``"_models.RetentionPolicy"`` resolves against *that* package's
-# module, producing the wrong deserializer.  By creating throwaway instances
-# here (at import time, inside the generated package), we lock in the correct
-# types so that later subclasses cannot corrupt them.
-# ---------------------------------------------------------------------------
-_GenRetentionPolicy(enabled=False)
-_GenLogging(version="1.0", delete=False, read=False, write=False, retention_policy=_GenRetentionPolicy(enabled=False))
-_GenMetrics(enabled=False, retention_policy=_GenRetentionPolicy(enabled=False))
-_GenStorageServiceProperties()
-
-# ---------------------------------------------------------------------------
-# Helper – XML node factory (same logic as _utils.serialization._create_xml_node)
-# ---------------------------------------------------------------------------
-
-
-def _create_xml_node(tag, prefix=None, ns=None):
-    if prefix and ns:
-        ET.register_namespace(prefix, ns)
-    if ns:
-        return ET.Element("{" + ns + "}" + tag)
-    return ET.Element(tag)
-
-
-# ---------------------------------------------------------------------------
-# Mixin – provides the four attributes / methods the old serializer expects
-# ---------------------------------------------------------------------------
-
-
-class _AutorestCompatMixin:
-    """Adds msrest-style (de)serialization hooks to ``model_base.Model`` subclasses."""
-
-    _attribute_map: dict = {}
-    _validation: dict = {}
-
-    @classmethod
-    def is_xml_model(cls) -> bool:
-        return bool(getattr(cls, "_xml_map", None))
-
-    @classmethod
-    def _create_xml_node(cls):
-        xml_map = getattr(cls, "_xml_map", {})
-        return _create_xml_node(
-            xml_map.get("name", cls.__name__),
-            xml_map.get("prefix"),
-            xml_map.get("ns"),
-        )
-
-
-# ---------------------------------------------------------------------------
-# Autorest-compatible wrappers for every model imported by public _models.py
-# ---------------------------------------------------------------------------
-
-
-class AccessPolicy(_AutorestCompatMixin, _GenAccessPolicy):
-    """AccessPolicy with autorest serialization compatibility."""
-
-    _attribute_map = {
-        "start": {"key": "Start", "type": "str"},
-        "expiry": {"key": "Expiry", "type": "str"},
-        "permission": {"key": "Permission", "type": "str"},
-    }
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ArrowField(_AutorestCompatMixin, _GenArrowField):
-    """ArrowField with autorest serialization compatibility."""
-
-    _validation = {
-        "type": {"required": True},
-    }
-    _attribute_map = {
-        "type": {"key": "Type", "type": "str"},
-        "name": {"key": "Name", "type": "str"},
-        "precision": {"key": "Precision", "type": "int"},
-        "scale": {"key": "Scale", "type": "int"},
-    }
-    _xml_map = {"name": "Field"}
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CorsRule(_AutorestCompatMixin, _GenCorsRule):
-    """CorsRule with autorest serialization compatibility."""
-
-    _validation = {
-        "allowed_origins": {"required": True},
-        "allowed_methods": {"required": True},
-        "allowed_headers": {"required": True},
-        "exposed_headers": {"required": True},
-        "max_age_in_seconds": {"required": True, "minimum": 0},
-    }
-    _attribute_map = {
-        "allowed_origins": {"key": "AllowedOrigins", "type": "str"},
-        "allowed_methods": {"key": "AllowedMethods", "type": "str"},
-        "allowed_headers": {"key": "AllowedHeaders", "type": "str"},
-        "exposed_headers": {"key": "ExposedHeaders", "type": "str"},
-        "max_age_in_seconds": {"key": "MaxAgeInSeconds", "type": "int"},
-    }
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class Logging(_AutorestCompatMixin, _GenLogging):
-    """Logging with autorest serialization compatibility."""
-
-    _validation = {
-        "version": {"required": True},
-        "delete": {"required": True},
-        "read": {"required": True},
-        "write": {"required": True},
-        "retention_policy": {"required": True},
-    }
-    _attribute_map = {
-        "version": {"key": "Version", "type": "str"},
-        "delete": {"key": "Delete", "type": "bool"},
-        "read": {"key": "Read", "type": "bool"},
-        "write": {"key": "Write", "type": "bool"},
-        "retention_policy": {"key": "RetentionPolicy", "type": "RetentionPolicy"},
-    }
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class Metrics(_AutorestCompatMixin, _GenMetrics):
-    """Metrics with autorest serialization compatibility."""
-
-    _validation = {
-        "enabled": {"required": True},
-    }
-    _attribute_map = {
-        "version": {"key": "Version", "type": "str"},
-        "enabled": {"key": "Enabled", "type": "bool"},
-        "include_apis": {"key": "IncludeAPIs", "type": "bool"},
-        "retention_policy": {"key": "RetentionPolicy", "type": "RetentionPolicy"},
-    }
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class RetentionPolicy(_AutorestCompatMixin, _GenRetentionPolicy):
-    """RetentionPolicy with autorest serialization compatibility."""
-
-    _validation = {
-        "enabled": {"required": True},
-        "days": {"minimum": 1},
-    }
-    _attribute_map = {
-        "enabled": {"key": "Enabled", "type": "bool"},
-        "days": {"key": "Days", "type": "int"},
-        "allow_permanent_delete": {"key": "AllowPermanentDelete", "type": "bool"},
-    }
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class StaticWebsite(_AutorestCompatMixin, _GenStaticWebsite):
-    """StaticWebsite with autorest serialization compatibility."""
-
-    _validation = {
-        "enabled": {"required": True},
-    }
-    _attribute_map = {
-        "enabled": {"key": "Enabled", "type": "bool"},
-        "index_document": {"key": "IndexDocument", "type": "str"},
-        "error_document404_path": {"key": "ErrorDocument404Path", "type": "str"},
-        "default_index_document_path": {"key": "DefaultIndexDocumentPath", "type": "str"},
-    }
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-# ---------------------------------------------------------------------------
-# Public API
-# ---------------------------------------------------------------------------
 
 __all__: List[str] = [
     "AccessPolicy",

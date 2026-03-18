@@ -34,10 +34,11 @@ def parse_page_list(page_list: "PageList") -> List["PageRange"]:
     page_ranges = page_list.page_range
     clear_ranges = page_list.clear_range
 
+    # Change in TypeSpec model_base generation, optional properties that are empty will not be set to an empty list but to None
     if page_ranges is None:
-        raise ValueError("PageList's 'page_range' is malformed or None.")
+        page_ranges = []
     if clear_ranges is None:
-        raise ValueError("PageList's 'clear_ranges' is malformed or None.")
+        clear_ranges = []
 
     ranges = []
     p_i, c_i = 0, 0
@@ -187,6 +188,9 @@ class RetentionPolicy(GeneratedRetentionPolicy):
         be deleted. If enabled=True, the number of days must be specified.
     """
 
+    enabled: bool = False
+    days: Optional[int] = None
+
     def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
         super(RetentionPolicy, self).__init__(enabled=enabled, days=days, allow_permanent_delete=None)
         if self.enabled and (self.days is None):
@@ -218,14 +222,23 @@ class BlobAnalyticsLogging(GeneratedLogging):
         policy will be disabled by default.
     """
 
+    version: str = '1.0'
+    """The version of Storage Analytics to configure."""
+    delete: bool = False
+    """Indicates whether all delete requests should be logged."""
+    read: bool = False
+    """Indicates whether all read requests should be logged."""
+    write: bool = False
+    """Indicates whether all write requests should be logged."""
+    retention_policy: RetentionPolicy = RetentionPolicy()
+    """Determines how long the associated data should persist."""
+
     def __init__(self, **kwargs: Any) -> None:
-        super(BlobAnalyticsLogging, self).__init__(
-            version=kwargs.get('version', '1.0'),
-            delete=kwargs.get('delete', False),
-            read=kwargs.get('read', False),
-            write=kwargs.get('write', False),
-            retention_policy=kwargs.get('retention_policy') or RetentionPolicy()
-        )
+        self.version = kwargs.get('version', '1.0')
+        self.delete = kwargs.get('delete', False)
+        self.read = kwargs.get('read', False)
+        self.write = kwargs.get('write', False)
+        self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
 
     @classmethod
     def _from_generated(cls, generated):
@@ -256,13 +269,20 @@ class Metrics(GeneratedMetrics):
         policy will be disabled by default.
     """
 
+    version: str = '1.0'
+    """The version of Storage Analytics to configure."""
+    enabled: bool = False
+    """Indicates whether metrics are enabled for the Blob service."""
+    include_apis: Optional[bool]
+    """Indicates whether metrics should generate summary statistics for called API operations."""
+    retention_policy: RetentionPolicy = RetentionPolicy()
+    """Determines how long the associated data should persist."""
+
     def __init__(self, **kwargs: Any) -> None:
-        super(Metrics, self).__init__(
-            version=kwargs.get('version', '1.0'),
-            enabled=kwargs.get('enabled', False),
-            include_apis=kwargs.get('include_apis'),
-            retention_policy=kwargs.get('retention_policy') or RetentionPolicy()
-        )
+        self.version = kwargs.get('version', '1.0')
+        self.enabled = kwargs.get('enabled', False)
+        self.include_apis = kwargs.get('include_apis')
+        self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
 
     @classmethod
     def _from_generated(cls, generated):
@@ -290,22 +310,26 @@ class StaticWebsite(GeneratedStaticWebsite):
         Absolute path of the default index page.
     """
 
+    enabled: bool = False
+    """Indicates whether this account is hosting a static website."""
+    index_document: Optional[str]
+    """The default name of the index page under each directory."""
+    error_document404_path: Optional[str]
+    """The absolute path of the custom 404 page."""
+    default_index_document_path: Optional[str]
+    """Absolute path of the default index page."""
+
     def __init__(self, **kwargs: Any) -> None:
-        enabled = kwargs.get('enabled', False)
-        if enabled:
-            index_document = kwargs.get('index_document')
-            error_document404_path = kwargs.get('error_document404_path')
-            default_index_document_path = kwargs.get('default_index_document_path')
+        self.enabled = kwargs.get('enabled', False)
+        if self.enabled:
+            self.index_document = kwargs.get('index_document')
+            self.error_document404_path = kwargs.get('error_document404_path')
+            self.default_index_document_path = kwargs.get('default_index_document_path')
         else:
-            index_document = None
-            error_document404_path = None
-            default_index_document_path = None
-        super(StaticWebsite, self).__init__(
-            enabled=enabled,
-            index_document=index_document,
-            error_document404_path=error_document404_path,
-            default_index_document_path=default_index_document_path
-        )
+            self.index_document = None
+            self.error_document404_path = None
+            self.default_index_document_path = None
+
     @classmethod
     def _from_generated(cls, generated):
         if not generated:
@@ -361,13 +385,11 @@ class CorsRule(GeneratedCorsRule):
     """The number of seconds that the client/browser should cache a pre-flight response."""
 
     def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
-        super(CorsRule, self).__init__(
-            allowed_origins=','.join(allowed_origins),
-            allowed_methods=','.join(allowed_methods),
-            allowed_headers=','.join(kwargs.get('allowed_headers', [])),
-            exposed_headers=','.join(kwargs.get('exposed_headers', [])),
-            max_age_in_seconds=kwargs.get('max_age_in_seconds', 0)
-        )
+        self.allowed_origins = ','.join(allowed_origins)
+        self.allowed_methods = ','.join(allowed_methods)
+        self.allowed_headers = ','.join(kwargs.get('allowed_headers', []))
+        self.exposed_headers = ','.join(kwargs.get('exposed_headers', []))
+        self.max_age_in_seconds = kwargs.get('max_age_in_seconds', 0)
 
     @staticmethod
     def _to_generated(rules: Optional[List["CorsRule"]]) -> Optional[List[GeneratedCorsRule]]:
@@ -1035,11 +1057,9 @@ class AccessPolicy(GenAccessPolicy):
         expiry: Optional[Union[str, "datetime"]] = None,
         start: Optional[Union[str, "datetime"]] = None
     ) -> None:
-        super(AccessPolicy, self).__init__(
-            start=start,  # type: ignore[arg-type]
-            expiry=expiry,  # type: ignore[arg-type]
-            permission=permission,  # type: ignore[arg-type]
-        )
+        self.start = start
+        self.expiry = expiry
+        self.permission = permission
 
 
 class BlobSasPermissions(object):

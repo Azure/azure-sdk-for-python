@@ -194,6 +194,6 @@ class PageRangePaged(AsyncPageIterator):
     @staticmethod
     def _build_page(response):
         if not response:
-            raise StopIteration
+            raise StopAsyncIteration
 
         return parse_page_list(response)
