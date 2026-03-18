@@ -106,6 +106,14 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         return super().__call__(*args, **kwargs)
 
     @override
+    def _convert_kwargs_to_eval_input(self, **kwargs):
+        if self._use_legacy_endpoint and "conversation" in kwargs and kwargs["conversation"] is not None:
+            # Legacy endpoint: pass conversation through intact so _evaluate_conversation
+            # can send all messages in a single API call (pre-sync-migration behavior).
+            return [kwargs]
+        return super()._convert_kwargs_to_eval_input(**kwargs)
+
+    @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, T]:
         """Perform the evaluation using the Azure AI RAI service.
         The exact evaluation performed is determined by the evaluation metric supplied
