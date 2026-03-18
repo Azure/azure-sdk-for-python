@@ -25,6 +25,7 @@ from ._models import (
     StorageServiceProperties as _GenStorageServiceProperties,
 )
 
+
 def _lazy_data_getattr(self, name):
     """Lazily initialize _data for subclasses that skip super().__init__()."""
     if name == "_data":
@@ -747,7 +748,6 @@ class LeaseAccessConditions(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
 
 
 __all__: List[str] = [
