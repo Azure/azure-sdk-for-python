@@ -21,26 +21,9 @@ from foundry_features_header_test_base import (
     FAKE_ENDPOINT,
     FakeCredential,
     FoundryFeaturesHeaderTestBase,
+    _NON_BETA_OPTIONAL_TEST_CASES,
     _RequestCaptured,
 )
-
-
-_NON_BETA_OPTIONAL_TEST_CASES = [
-    # Each pytest.param entry has the following positional arguments:
-    #   1. method_name           (str) – "<subclient>.<method>" on AIProjectClient, e.g. "agents.create_version"
-    #      The subclient and method names are parsed automatically from this string.
-    #   2. expected_header_value (str) – Expected value of the Foundry-Features header when allow_preview=True.
-    #      Use a comma-separated list of feature=version pairs, e.g. "FeatureA=V1Preview,FeatureB=V1Preview".
-    #   The test id is derived automatically from method_name.
-    pytest.param(
-        "agents.create_version",
-        "HostedAgents=V1Preview,WorkflowAgents=V1Preview",
-    ),
-    pytest.param(
-        "evaluation_rules.create_or_update",
-        "Evaluations=V1Preview",
-    ),
-]
 
 
 class CapturingTransport(HttpTransport):
@@ -94,14 +77,16 @@ def _print_report_optional() -> Iterator[None]:
         max_len = TestFoundryFeaturesHeaderOptional._report_max_label_len
         print("\n\nFoundry-Features optional header report (sync) — test_optional_header_present_when_preview_enabled:")
         for label, header_value in sorted(present_report):
-            print(f"{label:<{max_len}}  |  \"{header_value}\"")
+            print(f'{label:<{max_len}}  |  "{header_value}"')
 
     absent_report = TestFoundryFeaturesHeaderOptional._report_absent
     if absent_report:
         max_len = TestFoundryFeaturesHeaderOptional._report_absent_max_label_len
-        print("\n\nFoundry-Features optional header report (sync) — test_optional_header_absent_when_preview_not_enabled:")
+        print(
+            "\n\nFoundry-Features optional header report (sync) — test_optional_header_absent_when_preview_not_enabled:"
+        )
         for label, header_value in sorted(absent_report):
-            print(f"{label:<{max_len}}  |  \"{header_value}\"")
+            print(f'{label:<{max_len}}  |  "{header_value}"')
 
 
 class TestFoundryFeaturesHeaderOptional(FoundryFeaturesHeaderTestBase):

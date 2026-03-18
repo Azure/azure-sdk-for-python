@@ -512,6 +512,7 @@ class AgentsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _foundry_features: Optional[str] = _get_agent_definition_opt_in_keys if self._config.allow_preview else None  # type: ignore
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,

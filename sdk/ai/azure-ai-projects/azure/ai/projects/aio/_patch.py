@@ -10,13 +10,14 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 import os
 import logging
-from typing import List, Any
+from typing import List, Any, Union
 import httpx  # pylint: disable=networking-import-outside-azure-core-transport
 from openai import AsyncOpenAI
+from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import get_bearer_token_provider
-from .._patch import _BearerTokenRedactionFilter
+from .._patch import _AuthSecretsFilter
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
 
@@ -46,8 +47,10 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
      the form "https://{ai-services-account-name}.services.ai.azure.com/api/projects/_project".
      Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Required.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :param credential: Credential used to authenticate requests to the service. Is either a key
+     credential type or a token credential type. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or
+     ~azure.core.credentials_async.AsyncTokenCredential
     :param allow_preview: Whether to enable preview features. Optional, default is False.
      Set this to True to create a Hosted Agent (using :class:`~azure.ai.projects.models.HostedAgentDefinition`)
      or a Workflow Agent (using :class:`~azure.ai.projects.models.WorkflowAgentDefinition`).
@@ -56,6 +59,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
      are all in preview, but do not require setting `allow_preview=True` since it's implied by the sub-client name.
      When preview features are enabled, the client libraries sends the HTTP request header `Foundry-Features`
      with the appropriate value in all relevant calls to the service.
+    :type allow_preview: bool
     :keyword api_version: The API version to use for this operation. Known values are "v1" and
      None. Default value is "v1". Note that overriding this default value may result in unsupported
      behavior.
@@ -63,7 +67,12 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     """
 
     def __init__(
-        self, endpoint: str, credential: AsyncTokenCredential, *, allow_preview: bool = False, **kwargs: Any
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
+        *,
+        allow_preview: bool = False,
+        **kwargs: Any,
     ) -> None:
 
         self._console_logging_enabled: bool = (
@@ -77,7 +86,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
             azure_logger = logging.getLogger("azure")
             azure_logger.setLevel(logging.DEBUG)
             console_handler = logging.StreamHandler(stream=sys.stdout)
-            console_handler.addFilter(_BearerTokenRedactionFilter())
+            console_handler.addFilter(_AuthSecretsFilter())
             azure_logger.addHandler(console_handler)
             # Exclude detailed logs for network calls associated with getting Entra ID token.
             logging.getLogger("azure.identity").setLevel(logging.ERROR)
@@ -104,8 +113,12 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         The AsyncOpenAI client constructor is called with:
         * ``base_url`` set to the endpoint provided to the AIProjectClient constructor, with "/openai/v1" appended.
         Can be overridden by passing ``base_url`` as a keyword argument.
-        * ``api_key`` set to a get_bearer_token_provider() callable that uses the TokenCredential provided to the
-        AIProjectClient constructor, with scope "https://ai.azure.com/.default".
+        * If :class:`~azure.ai.projects.aio.AIProjectClient` was constructed with a bearer token, ``api_key`` is set
+        to a get_bearer_token_provider() callable that uses the TokenCredential provided to the AIProjectClient
+        constructor, with scope ``https://ai.azure.com/.default``.
+        Can be overridden by passing ``api_key`` as a keyword argument.
+        * If :class:`~azure.ai.projects.aio.AIProjectClient` was constructed with ``api-key``, it is passed to the
+        OpenAI constructor as is.
         Can be overridden by passing ``api_key`` as a keyword argument.
 
         .. note:: The packages ``openai`` and ``azure.identity`` must be installed prior to calling this method.
@@ -129,13 +142,17 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
             base_url,
         )
 
-        # Allow caller to override api_key, otherwise use token provider
+        # Allow caller to override api_key, otherwise use api-key or token provider given during AIProjectClient constructor
         if "api_key" in kwargs:
             api_key = kwargs.pop("api_key")
         else:
-            api_key = get_bearer_token_provider(
-                self._config.credential,  # pylint: disable=protected-access
-                "https://ai.azure.com/.default",
+            api_key = (
+                self._config.credential.key  # pylint: disable=protected-access
+                if isinstance(self._config.credential, AzureKeyCredential)
+                else get_bearer_token_provider(
+                    self._config.credential,  # pylint: disable=protected-access
+                    "https://ai.azure.com/.default",
+                )
             )
 
         if "http_client" in kwargs:
@@ -190,7 +207,7 @@ class OpenAILoggingTransport(httpx.AsyncHTTPTransport):
     """
 
     def _sanitize_auth_header(self, headers):
-        """Sanitize authorization header by redacting sensitive information.
+        """Sanitize authorization and api-key headers by redacting sensitive information.
 
         :param headers: Dictionary of HTTP headers to sanitize
         :type headers: dict

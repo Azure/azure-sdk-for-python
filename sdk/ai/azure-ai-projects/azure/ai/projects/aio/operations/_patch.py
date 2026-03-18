@@ -19,9 +19,10 @@ from ._operations import (
     BetaEvaluationTaxonomiesOperations,
     BetaEvaluatorsOperations,
     BetaInsightsOperations,
+    BetaOperations as GeneratedBetaOperations,
     BetaRedTeamsOperations,
     BetaSchedulesOperations,
-    BetaOperations as GeneratedBetaOperations,
+    BetaToolsetsOperations,
 )
 
 
@@ -47,6 +48,8 @@ class BetaOperations(GeneratedBetaOperations):
     """:class:`~azure.ai.projects.aio.operations.BetaRedTeamsOperations` operations"""
     schedules: BetaSchedulesOperations
     """:class:`~azure.ai.projects.aio.operations.BetaSchedulesOperations` operations"""
+    toolsets: BetaToolsetsOperations
+    """:class:`~azure.ai.projects.operations.BetaToolsetsOperations` operations"""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
@@ -57,15 +60,16 @@ class BetaOperations(GeneratedBetaOperations):
 __all__: List[str] = [
     "AgentsOperations",
     "BetaEvaluationTaxonomiesOperations",
-    "EvaluationRulesOperations",
     "BetaEvaluatorsOperations",
     "BetaInsightsOperations",
     "BetaMemoryStoresOperations",
     "BetaOperations",
     "BetaRedTeamsOperations",
     "BetaSchedulesOperations",
+    "BetaToolsetsOperations",
     "ConnectionsOperations",
     "DatasetsOperations",
+    "EvaluationRulesOperations",
     "TelemetryOperations",
 ]  # Add all objects you want publicly available to users at this package level
 

@@ -43,6 +43,7 @@ _get_agent_definition_opt_in_keys: str = ",".join(
     [
         _AgentDefinitionOptInKeys.HOSTED_AGENTS_V1_PREVIEW.value,
         _AgentDefinitionOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW.value,
+        _FoundryFeaturesOptInKeys.AGENT_ENDPOINT_V1_PREVIEW.value,
     ]
 )
 
@@ -142,7 +143,12 @@ def build_agents_list_request(
 
 
 def build_agents_create_version_request(
-    agent_name: str, *, foundry_features: Optional[Union[str, _AgentDefinitionOptInKeys]] = None, **kwargs: Any
+    agent_name: str,
+    *,
+    foundry_features: Optional[
+        Union[str, _AgentDefinitionOptInKeys, Literal[_FoundryFeaturesOptInKeys.AGENT_ENDPOINT_V1_PREVIEW]]
+    ] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -2348,6 +2354,7 @@ class AgentsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _foundry_features: Optional[str] = _get_agent_definition_opt_in_keys if self._config.allow_preview else None  # type: ignore
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,

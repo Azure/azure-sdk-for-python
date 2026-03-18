@@ -45,7 +45,6 @@ from foundry_features_header_test_base import (
     _RequestCaptured,
 )
 
-
 # ---------------------------------------------------------------------------
 # Sync-specific transport
 # ---------------------------------------------------------------------------
@@ -146,7 +145,7 @@ def _print_report() -> Iterator[None]:
     if report:
         print("\n\nFoundry-Features header report (sync):")
         for label, header_value in sorted(report):
-            print(f"{label:<{max_len}}  |  \"{header_value}\"")
+            print(f'{label:<{max_len}}  |  "{header_value}"')
 
 
 # ---------------------------------------------------------------------------

@@ -22,26 +22,9 @@ from foundry_features_header_test_base import (
     FAKE_ENDPOINT,
     AsyncFakeCredential,
     FoundryFeaturesHeaderTestBase,
+    _NON_BETA_OPTIONAL_TEST_CASES,
     _RequestCaptured,
 )
-
-
-_NON_BETA_OPTIONAL_ASYNC_TEST_CASES = [
-    # Each pytest.param entry has the following positional arguments:
-    #   1. method_name           (str) – "<subclient>.<method>" on AIProjectClient, e.g. "agents.create_version"
-    #      The subclient and method names are parsed automatically from this string.
-    #   2. expected_header_value (str) – Expected value of the Foundry-Features header when allow_preview=True.
-    #      Use a comma-separated list of feature=version pairs, e.g. "FeatureA=V1Preview,FeatureB=V1Preview".
-    #   The test id is derived automatically from method_name.
-    pytest.param(
-        "agents.create_version",
-        "HostedAgents=V1Preview,WorkflowAgents=V1Preview",
-    ),
-    pytest.param(
-        "evaluation_rules.create_or_update",
-        "Evaluations=V1Preview",
-    ),
-]
 
 
 class CapturingAsyncTransport(AsyncHttpTransport):
@@ -91,16 +74,20 @@ def _print_report_optional_async() -> Iterator[None]:
     present_report = TestFoundryFeaturesHeaderOptionalAsync._report
     if present_report:
         max_len = TestFoundryFeaturesHeaderOptionalAsync._report_max_label_len
-        print("\n\nFoundry-Features optional header report (async) — test_optional_header_present_when_preview_enabled_async:")
+        print(
+            "\n\nFoundry-Features optional header report (async) — test_optional_header_present_when_preview_enabled_async:"
+        )
         for label, header_value in sorted(present_report):
-            print(f"{label:<{max_len}}  |  \"{header_value}\"")
+            print(f'{label:<{max_len}}  |  "{header_value}"')
 
     absent_report = TestFoundryFeaturesHeaderOptionalAsync._report_absent
     if absent_report:
         max_len = TestFoundryFeaturesHeaderOptionalAsync._report_absent_max_label_len
-        print("\n\nFoundry-Features optional header report (async) — test_optional_header_absent_when_preview_not_enabled_async:")
+        print(
+            "\n\nFoundry-Features optional header report (async) — test_optional_header_absent_when_preview_not_enabled_async:"
+        )
         for label, header_value in sorted(absent_report):
-            print(f"{label:<{max_len}}  |  \"{header_value}\"")
+            print(f'{label:<{max_len}}  |  "{header_value}"')
 
 
 class TestFoundryFeaturesHeaderOptionalAsync(FoundryFeaturesHeaderTestBase):
@@ -144,9 +131,7 @@ class TestFoundryFeaturesHeaderOptionalAsync(FoundryFeaturesHeaderTestBase):
         cls._record_header_absence_assertion(label, request)
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize(
-        "method_name,expected_header_value", _NON_BETA_OPTIONAL_ASYNC_TEST_CASES
-    )
+    @pytest.mark.parametrize("method_name,expected_header_value", _NON_BETA_OPTIONAL_TEST_CASES)
     async def test_optional_header_present_when_preview_enabled_async(
         self,
         async_client_preview_enabled: AsyncAIProjectClient,
@@ -159,9 +144,7 @@ class TestFoundryFeaturesHeaderOptionalAsync(FoundryFeaturesHeaderTestBase):
         await self._assert_header_present_async(method_name, self._make_fake_call(method), expected_header_value)
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize(
-        "method_name,_expected_header_value", _NON_BETA_OPTIONAL_ASYNC_TEST_CASES
-    )
+    @pytest.mark.parametrize("method_name,_expected_header_value", _NON_BETA_OPTIONAL_TEST_CASES)
     async def test_optional_header_absent_when_preview_not_enabled_async(
         self,
         async_client_preview_disabled: AsyncAIProjectClient,

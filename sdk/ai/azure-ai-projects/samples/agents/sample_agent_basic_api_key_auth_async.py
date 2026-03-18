@@ -6,8 +6,11 @@
 """
 DESCRIPTION:
     This sample demonstrates how to run basic Prompt Agent operations
-    using the asynchronous AIProjectClient. It uses Entra ID authentication to
+    using the asynchronous AIProjectClient. It uses API key authentication to
     connect to the Microsoft Foundry service.
+
+    Note that API key authentication is available starting with version
+    2.0.2 of the client library.
 
     The OpenAI compatible Responses and Conversation calls in this sample are made using
     the OpenAI client from the `openai` package. See https://platform.openai.com/docs/api-reference
@@ -18,31 +21,30 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0" python-dotenv aiohttp
+    pip install "azure-ai-projects>=2.0.2" python-dotenv aiohttp
 
     Set these environment variables with your own values:
-    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
-       page of your Microsoft Foundry portal.
-    2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
+    2) FOUNDRY_PROJECT_API_KEY - The Project API key as found in your Foundry project home page.
+    3) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
 """
 
 import asyncio
 import os
 from dotenv import load_dotenv
-from azure.identity.aio import DefaultAzureCredential
+from azure.core.credentials import AzureKeyCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import PromptAgentDefinition
 
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+api_key = os.environ["FOUNDRY_PROJECT_API_KEY"]
 
 
 async def main() -> None:
     async with (
-        DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        AIProjectClient(endpoint=endpoint, credential=AzureKeyCredential(api_key)) as project_client,
         project_client.get_openai_client() as openai_client,
     ):
 
