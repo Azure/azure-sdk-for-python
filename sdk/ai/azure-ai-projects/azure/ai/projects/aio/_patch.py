@@ -26,6 +26,7 @@ logger = logging.getLogger(__name__)
 
 class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-instance-attributes
     """AIProjectClient.
+
     :ivar beta: BetaOperations operations
     :vartype beta: azure.ai.projects.aio.operations.BetaOperations
     :ivar agents: AgentsOperations operations

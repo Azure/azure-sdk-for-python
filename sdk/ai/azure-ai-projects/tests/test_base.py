@@ -40,6 +40,7 @@ servicePreparer = functools.partial(
     EnvironmentVariableLoader,
     "",
     foundry_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+    foundry_project_api_key="sanitized-api-key",
     foundry_model_name="sanitized-model-deployment-name",
     image_generation_model_deployment_name="sanitized-gpt-image",
     bing_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-bing-connection",
