@@ -299,6 +299,13 @@ class TestStorageClient(StorageRecordedTestCase):
             assert service._client._client._pipeline._transport.connection_config.timeout == 22
             assert default_service._client._client._pipeline._transport.connection_config.timeout in [20, (20, 2000)]
 
+    @BlobPreparer()
+    def test_create_service_ipv6(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+
+
     # --Connection String Test Cases --------------------------------------------
 
     @BlobPreparer()
