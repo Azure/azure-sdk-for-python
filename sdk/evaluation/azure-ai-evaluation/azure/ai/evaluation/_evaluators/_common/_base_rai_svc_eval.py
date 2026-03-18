@@ -106,6 +106,14 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         return super().__call__(*args, **kwargs)
 
     @override
+    def _convert_kwargs_to_eval_input(self, **kwargs):
+        if self._use_legacy_endpoint and "conversation" in kwargs and kwargs["conversation"] is not None:
+            # Legacy endpoint: pass conversation through intact so _evaluate_conversation
+            # can send all messages in a single API call (pre-sync-migration behavior).
+            return [kwargs]
+        return super()._convert_kwargs_to_eval_input(**kwargs)
+
+    @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, T]:
         """Perform the evaluation using the Azure AI RAI service.
         The exact evaluation performed is determined by the evaluation metric supplied
@@ -125,17 +133,31 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
     async def _evaluate_conversation(self, conversation: Dict) -> Dict[str, T]:
         """Evaluates content according to this evaluator's metric.
         Evaluates each turn separately to maintain per-turn granularity.
+        When using the legacy endpoint, sends the entire conversation in a single call
+        (matching pre-sync-migration behavior) via the sync wrapper for metric normalization.
         """
-        validate_conversation(conversation)
         messages = conversation["messages"]
 
         # Convert enum to string value
         metric_value = self._eval_metric.value if hasattr(self._eval_metric, "value") else self._eval_metric
 
-        # Extract conversation turns (user-assistant pairs)
+        if self._use_legacy_endpoint:
+            # Legacy path: send entire conversation in a single call (pre-sync-migration behavior)
+            # Route through evaluate_with_rai_service_sync_multimodal for metric normalization.
+            result = await evaluate_with_rai_service_sync_multimodal(
+                messages=messages,
+                metric_name=metric_value,
+                project_scope=self._azure_ai_project,
+                credential=self._credential,
+                use_legacy_endpoint=True,
+            )
+            # Wrap as single-turn result and aggregate to produce evaluation_per_turn structure
+            return self._aggregate_results([result])
+
+        # Sync path: validate multimodal conversation and evaluate each turn separately
+        validate_conversation(conversation)
         turns = self._extract_turns(messages)
 
-        # Evaluate each turn separately
         per_turn_results = []
         for turn in turns:
             turn_result = await evaluate_with_rai_service_sync_multimodal(
@@ -212,6 +234,10 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
             evaluator_name=self.__class__.__name__,
             use_legacy_endpoint=self._use_legacy_endpoint,
         )
+
+        # Legacy endpoint returns a pre-parsed dict from parse_response(); return directly
+        if self._use_legacy_endpoint:
+            return eval_result
 
         # Parse the EvalRunOutputItem format to the expected dict format
         return self._parse_eval_result(eval_result)
