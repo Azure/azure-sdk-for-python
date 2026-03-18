@@ -6,24 +6,26 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.nginx import NginxManagementClient
+from azure.mgmt.nginx.aio import NginxManagementClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestNginxManagementDefaultWafPolicyOperations(AzureMgmtRecordedTestCase):
+class TestNginxManagementNginxDeploymentWafPoliciesOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(NginxManagementClient)
+        self.client = self.create_mgmt_client(NginxManagementClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_default_waf_policy_list(self, resource_group):
-        response = self.client.default_waf_policy.list(
+    @recorded_by_proxy_async
+    async def test_nginx_deployment_waf_policies_analysis(self, resource_group):
+        response = await self.client.nginx_deployment_waf_policies.analysis(
             resource_group_name=resource_group.name,
             deployment_name="str",
+            waf_policy_name="str",
         )
 
         # please add some check logic here by yourself
