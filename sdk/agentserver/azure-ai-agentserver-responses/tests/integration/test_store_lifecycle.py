@@ -1,6 +1,90 @@
 """Integration tests for store and lifecycle behavior."""
 
+from __future__ import annotations
 
-def test_store_lifecycle_placeholder() -> None:
-    """Placeholder until lifecycle tests are implemented in Phase 4."""
-    assert True
+from typing import Any
+
+from starlette.applications import Starlette
+from starlette.testclient import TestClient
+
+from tests._helpers import poll_until
+
+from azure.ai.agentserver.responses._hosting import map_responses_server
+
+
+class _NoopResponseHandler:
+    """Minimal handler used to wire lifecycle integration tests."""
+
+    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
+        async def _events():
+            if False:  # pragma: no cover - keep async generator shape.
+                yield None
+
+        return _events()
+
+
+def _build_client() -> TestClient:
+    app = Starlette()
+    map_responses_server(app, _NoopResponseHandler())
+    return TestClient(app)
+
+
+def test_store_lifecycle__create_read_and_cleanup_behavior() -> None:
+    client = _build_client()
+
+    create_response = client.post(
+        "/responses",
+        json={
+            "model": "gpt-4o-mini",
+            "input": "hello",
+            "stream": False,
+            "store": True,
+            "background": False,
+        },
+    )
+    assert create_response.status_code == 200
+    response_id = create_response.json()["id"]
+
+    read_response = client.get(f"/responses/{response_id}")
+    assert read_response.status_code == 200
+
+    # Lifecycle cleanup contract: after explicit cancellation, read should still be stable or terminally unavailable.
+    cancel_response = client.post(f"/responses/{response_id}/cancel")
+    assert cancel_response.status_code in {200, 400}
+
+
+def test_store_lifecycle__background_completion_is_observed_deterministically() -> None:
+    client = _build_client()
+
+    create_response = client.post(
+        "/responses",
+        json={
+            "model": "gpt-4o-mini",
+            "input": "hello",
+            "stream": False,
+            "store": True,
+            "background": True,
+        },
+    )
+    assert create_response.status_code == 200
+    response_id = create_response.json()["id"]
+
+    terminal_states = {"completed", "failed", "incomplete", "cancelled"}
+    latest_status: str | None = None
+
+    def _is_terminal() -> bool:
+        nonlocal latest_status
+        get_response = client.get(f"/responses/{response_id}")
+        if get_response.status_code != 200:
+            return False
+        latest_status = get_response.json().get("status")
+        return latest_status in terminal_states
+
+    ok, failure = poll_until(
+        _is_terminal,
+        timeout_s=5.0,
+        interval_s=0.05,
+        context_provider=lambda: {"last_status": latest_status},
+        label="background completion polling",
+    )
+    assert ok, failure

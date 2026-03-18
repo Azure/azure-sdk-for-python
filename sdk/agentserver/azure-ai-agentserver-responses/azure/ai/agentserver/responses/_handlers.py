@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any, AsyncIterable, Awaitable, Callable, Mapping, Protocol, Sequence, runtime_checkable
 
-from ._generated import CreateResponse, OutputItem, ResponseStreamEvent
+from .models._generated import CreateResponse, OutputItem, ResponseStreamEvent
 from .models import ResponseModeFlags
 
 OutputItemsLoader = Callable[[], Awaitable[Sequence[OutputItem]]]
