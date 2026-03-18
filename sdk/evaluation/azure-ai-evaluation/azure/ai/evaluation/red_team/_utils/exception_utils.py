@@ -104,7 +104,9 @@ class ExceptionHandler:
         # HTTP status code specific errors
         if hasattr(exception, "response") and hasattr(exception.response, "status_code"):
             status_code = exception.response.status_code
-            if 500 <= status_code < 600:
+            if status_code == 400:
+                return ErrorCategory.CONFIGURATION
+            elif 500 <= status_code < 600:
                 return ErrorCategory.NETWORK
             elif status_code == 401:
                 return ErrorCategory.AUTHENTICATION

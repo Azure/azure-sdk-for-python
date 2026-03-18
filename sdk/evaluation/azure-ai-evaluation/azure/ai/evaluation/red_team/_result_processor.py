@@ -1654,10 +1654,65 @@ class ResultProcessor:
                     if not isinstance(details, dict):
                         continue
                     status = details.get("status", "").lower()
-                    if status in ("incomplete", "failed", "timeout", "pending", "running"):
+                    if status in (
+                        "incomplete",
+                        "failed",
+                        "timeout",
+                        "pending",
+                        "running",
+                    ):
                         return "failed"
 
         return "completed"
+
+    @staticmethod
+    def _aggregate_run_errors(
+        red_team_info: Optional[Dict],
+    ) -> Optional[Dict[str, Any]]:
+        """Collect error messages from failed risk categories into a run-level error.
+
+        Scans red_team_info for tasks with failed/incomplete/timeout status and
+        extracts their error messages. Deduplicates identical errors (common when
+        a config issue like an unavailable model affects all categories).
+
+        :param red_team_info: Dictionary of strategy -> risk_category -> tracking data
+        :return: Error dict with ``code`` and ``message``, or None if no errors found
+        """
+        errors: List[str] = []
+        if not isinstance(red_team_info, dict):
+            return None
+
+        for strategy_name, risk_data in red_team_info.items():
+            if not isinstance(risk_data, dict):
+                continue
+            for risk_value, details in risk_data.items():
+                if not isinstance(details, dict):
+                    continue
+                task_status = details.get("status", "").lower()
+                if task_status in (
+                    "failed",
+                    "incomplete",
+                    "timeout",
+                    "pending",
+                    "running",
+                ):
+                    error_msg = details.get("error")
+                    if error_msg:
+                        errors.append(f"{risk_value}: {error_msg}")
+
+        if not errors:
+            return {
+                "code": "scan_failed",
+                "message": "One or more risk categories failed during the scan.",
+            }
+
+        unique_errors = list(dict.fromkeys(errors))
+        if len(unique_errors) == 1:
+            return {"code": "scan_failed", "message": unique_errors[0]}
+        return {
+            "code": "scan_failed",
+            "message": f"{len(unique_errors)} risk categories failed. First error: {unique_errors[0]}",
+        }
 
     def _build_results_payload(
         self,
@@ -1753,6 +1808,7 @@ class ResultProcessor:
         data_source = self._build_data_source_section(parameters, red_team_info)
         status = self._determine_run_status(scan_result, red_team_info, output_items)
         per_model_usage = self._compute_per_model_usage(output_items)
+        error = self._aggregate_run_errors(red_team_info) if status == "failed" else None
 
         list_wrapper: OutputItemsList = {
             "object": "list",
@@ -1765,6 +1821,7 @@ class ResultProcessor:
             "eval_id": eval_id,
             "created_at": created_at,
             "status": status,
+            "error": error,
             "name": run_name,
             "report_url": scan_result.get("studio_url") or self.ai_studio_url,
             "data_source": data_source,

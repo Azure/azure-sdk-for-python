@@ -494,6 +494,9 @@ class RedTeamRun(TypedDict, total=False):
     :type created_at: int
     :param status: Status of the run (e.g., "completed", "failed", "in_progress")
     :type status: str
+    :param error: Run-level error information when the scan failed (e.g., target model unavailable,
+                  authentication failure). Contains ``code`` and ``message`` keys.
+    :type error: Optional[Dict[str, Any]]
     :param name: Display name for the run
     :type name: str
     :param report_url: URL to view the run report in Azure AI Studio
@@ -519,6 +522,7 @@ class RedTeamRun(TypedDict, total=False):
     eval_id: str
     created_at: int
     status: str
+    error: Optional[Dict[str, Any]]
     name: str
     report_url: Optional[str]
     data_source: DataSource

@@ -114,6 +114,8 @@ class FoundryExecutionManager:
         has_indirect = StrategyMapper.has_indirect_attack(attack_strategies)
 
         red_team_info: Dict[str, Dict[str, Any]] = {}
+        consecutive_config_failures = 0
+        _MAX_CONSECUTIVE_CONFIG_FAILURES = 2
 
         try:
             # Process each risk category
@@ -169,7 +171,11 @@ class FoundryExecutionManager:
                     try:
                         partial_results = orchestrator.get_attack_results()
                     except Exception:
-                        self.logger.debug("Failed to recover partial results for %s", risk_value, exc_info=True)
+                        self.logger.debug(
+                            "Failed to recover partial results for %s",
+                            risk_value,
+                            exc_info=True,
+                        )
 
                     if partial_results:
                         self.logger.warning(
@@ -198,6 +204,37 @@ class FoundryExecutionManager:
                             "error": str(e),
                             "asr": 0.0,
                         }
+
+                        # Track consecutive failures to detect systemic issues
+                        # (e.g., unavailable model, bad credentials)
+                        if self._is_configuration_error(e):
+                            consecutive_config_failures += 1
+                            if consecutive_config_failures >= _MAX_CONSECUTIVE_CONFIG_FAILURES:
+                                remaining = [
+                                    rc.value
+                                    for rc in risk_categories
+                                    if rc.value
+                                    not in {rv for rd in red_team_info.values() if isinstance(rd, dict) for rv in rd}
+                                ]
+                                if remaining:
+                                    abort_msg = (
+                                        f"Aborting remaining {len(remaining)} risk categories "
+                                        f"after {consecutive_config_failures} consecutive configuration errors. "
+                                        f"Root cause: {e}"
+                                    )
+                                    self.logger.error(abort_msg)
+                                    for rv in remaining:
+                                        if "Foundry" not in red_team_info:
+                                            red_team_info["Foundry"] = {}
+                                        red_team_info["Foundry"][rv] = {
+                                            "data_file": "",
+                                            "status": "failed",
+                                            "error": str(e),
+                                            "asr": 0.0,
+                                        }
+                                    break
+                        else:
+                            consecutive_config_failures = 0
                         continue
 
                 # Process results (handles both full success and partial recovery)
@@ -229,6 +266,9 @@ class FoundryExecutionManager:
                     if strategy_name not in red_team_info:
                         red_team_info[strategy_name] = {}
                     red_team_info[strategy_name][risk_value] = strategy_data
+
+                # Reset consecutive failure counter on success
+                consecutive_config_failures = 0
         finally:
             # Clean up all builder temp directories
             for builder in self._builders:
@@ -236,6 +276,31 @@ class FoundryExecutionManager:
             self._builders.clear()
 
         return red_team_info
+
+    @staticmethod
+    def _is_configuration_error(exception: Exception) -> bool:
+        """Check if an exception indicates a systemic configuration problem.
+
+        Configuration errors (bad model name, auth failures, etc.) will
+        affect all risk categories identically, so there is no value in
+        retrying subsequent categories.
+        """
+        # HTTP 400 / 401 / 403 from OpenAI / Azure
+        if hasattr(exception, "response") and hasattr(exception.response, "status_code"):
+            return exception.response.status_code in (400, 401, 403)
+
+        # Keyword heuristics for wrapped or chained errors
+        msg = str(exception).lower()
+        config_keywords = (
+            "unavailable_model",
+            "bad request",
+            "unauthorized",
+            "forbidden",
+            "authentication",
+            "permission denied",
+            "invalid_api_key",
+        )
+        return any(kw in msg for kw in config_keywords)
 
     def _build_dataset_config(
         self,
