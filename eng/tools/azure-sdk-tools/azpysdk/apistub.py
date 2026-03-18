@@ -69,7 +69,7 @@ class apistub(Check):
             dest="generate_md",
             default=False,
             action="store_true",
-            help="Additionally generate api.md from the JSON token file using Export-APIViewMarkdown.ps1.",
+            help="Generate api.md from the JSON token file using Export-APIViewMarkdown.ps1. Output directory for api.md is the same as the generated token file.",
         )
         p.set_defaults(func=self.run)
 
