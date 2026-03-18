@@ -7,7 +7,6 @@
 """ContentRange value type for specifying content ranges on AnalysisInput."""
 
 from datetime import timedelta
-from typing import Optional
 
 
 class ContentRange:
