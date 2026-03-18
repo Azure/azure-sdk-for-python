@@ -10,6 +10,8 @@
 ### Bugs Fixed
 
 ### Other Changes
+- Remove internal import from sample file
+  ([#45619](https://github.com/Azure/azure-sdk-for-python/pull/45619))
 
 ## 1.8.6 (2026-02-05)
 

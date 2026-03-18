@@ -117,7 +117,9 @@ def main() -> None:
             print(f"\nNumber of tables: {len(content.tables)}")
             table_counter = 1
             for table in content.tables:
-                print(f"  Table {table_counter}: {table.row_count} rows x {table.column_count} columns")
+                print(
+                    f"  Table {table_counter}: {table.row_count} rows x {table.column_count} columns"
+                )
                 table_counter += 1
     # [END access_document_properties]
 

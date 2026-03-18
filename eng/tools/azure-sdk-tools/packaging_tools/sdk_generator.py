@@ -213,6 +213,7 @@ def main(generate_input, generate_output):
                 Path(sdk_code_path).absolute(),
                 enable_changelog=data.get("enableChangelog", True),
                 package_result=result[package_name],
+                timeout=900 if data.get("runMode") in ["spec-pull-request"] else 7200,
             )
 
             # update version in _version.py and CHANGELOG.md
