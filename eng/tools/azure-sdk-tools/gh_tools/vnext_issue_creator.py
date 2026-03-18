@@ -181,7 +181,7 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE, check_version: 
         f"\n**{check_type.capitalize()} Build:** [Link to build ({today.strftime('%Y-%m-%d')})]({build_link})"
         f"\n**How to fix:** Run the `next-{check_type}` azpysdk command at the library package-level and resolve "
         f"the {error_type} errors.\n"
-        f"1) `{repo_root}>pip install -e ./eng/tools/azure-sdk-tools\n"
+        f"1) `{repo_root}>pip install -e ./eng/tools/azure-sdk-tools`\n"
         f"2) `../{package_name}>azpysdk next-{check_type} --isolate .`\n\n"
         f"See the {guide_link} for more information."
     )
