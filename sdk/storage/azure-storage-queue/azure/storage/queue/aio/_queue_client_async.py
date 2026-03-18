@@ -132,9 +132,7 @@ class QueueClient(  # type: ignore [misc]
 
         self._message_encode_policy = message_encode_policy or NoEncodePolicy()
         self._message_decode_policy = message_decode_policy or NoDecodePolicy()
-        self._client = AzureQueueStorage(
-            self.url, version=get_api_version(api_version), pipeline=self._pipeline
-        )
+        self._client = AzureQueueStorage(self.url, version=get_api_version(api_version), pipeline=self._pipeline)
         self._loop = loop
         self._configure_encryption(kwargs)
 
@@ -697,7 +695,9 @@ class QueueClient(  # type: ignore [misc]
                 **kwargs
             )
             wrapped_message = (
-                QueueMessage._from_generated(message.items_property[0]) if message.items_property else None  # pylint: disable=protected-access
+                QueueMessage._from_generated(message.items_property[0])
+                if message.items_property
+                else None  # pylint: disable=protected-access
             )
             return wrapped_message
         except HttpResponseError as error:
@@ -983,7 +983,7 @@ class QueueClient(  # type: ignore [misc]
                 number_of_messages=max_messages, timeout=timeout, cls=self._message_decode_policy, **kwargs
             )
             wrapped_messages = []
-            for peeked in (messages.items_property or []):
+            for peeked in messages.items_property or []:
                 wrapped_messages.append(QueueMessage._from_generated(peeked))  # pylint: disable=protected-access
             return wrapped_messages
         except HttpResponseError as error:

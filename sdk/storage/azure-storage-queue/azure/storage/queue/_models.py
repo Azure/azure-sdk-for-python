@@ -348,7 +348,7 @@ class AccessPolicy(GenAccessPolicy):
         expiry: Optional[Union["datetime", str]] = None,
         start: Optional[Union["datetime", str]] = None,
     ) -> None:
-        super().__init__(start=start, expiry=expiry, permission=permission)
+        super().__init__(start=start, expiry=expiry, permission=permission)  # type: ignore [arg-type]
 
 
 class QueueMessage(DictMixin):
@@ -453,7 +453,9 @@ class MessagesPaged(PageIterator):
             raise StopIteration("End of paging")
         if self._max_messages is not None:
             self._max_messages = self._max_messages - len(messages.items_property)
-        return "TOKEN_IGNORED", [QueueMessage._from_generated(q) for q in messages.items_property]  # pylint: disable=protected-access
+        return "TOKEN_IGNORED", [
+            QueueMessage._from_generated(q) for q in messages.items_property
+        ]  # pylint: disable=protected-access
 
 
 class QueueProperties(DictMixin):

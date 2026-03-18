@@ -115,9 +115,7 @@ class QueueServiceClient(  # type: ignore [misc]
             audience=audience,
             **kwargs,
         )
-        self._client = AzureQueueStorage(
-            self.url, version=get_api_version(api_version), pipeline=self._pipeline
-        )
+        self._client = AzureQueueStorage(self.url, version=get_api_version(api_version), pipeline=self._pipeline)
         self._loop = loop
         self._configure_encryption(kwargs)
 
