@@ -46,6 +46,8 @@ class TestSamples(AzureRecordedTestCase):
         get_sample_paths(
             "agents/tools",
             samples_to_skip=[
+                "sample_agent_file_search_structured_inputs.py",  # No issue to run. Just posepone recording.
+                "sample_agent_code_interpreter_structured_inputs.py",  # No issue to run. Just posepone recording.
                 "sample_agent_azure_function.py",  # In the list of additional sample tests above due to more parameters needed
                 "sample_agent_computer_use.py",  # 400 BadRequestError: Invalid URI (URI string too long)
                 "sample_agent_browser_automation.py",  # APITimeoutError: request timed out
@@ -96,8 +98,9 @@ class TestSamples(AzureRecordedTestCase):
         get_sample_paths(
             "agents",
             samples_to_skip=[
-                "sample_workflow_multi_agent.py"
-            ],  # I see in sample spew: "Event 10 type 'response.failed'" with error message in payload "The specified agent was not found. Please verify that the agent name and version are correct".
+                "sample_workflow_multi_agent.py",  # No issue to run.  Just posepone recording.
+                "sample_workflow_multi_agent_with_mcp_approval.py",  # No issue to run.  Just posepone recording.
+            ],
         ),
     )
     @servicePreparer()
