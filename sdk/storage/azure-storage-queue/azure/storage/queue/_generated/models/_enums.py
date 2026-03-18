@@ -10,7 +10,7 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class GeoReplicationStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class GeoReplicationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The geo replication status."""
 
     LIVE = "live"

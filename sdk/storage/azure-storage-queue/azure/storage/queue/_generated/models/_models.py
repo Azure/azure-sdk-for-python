@@ -21,22 +21,20 @@ class AccessPolicy(_Model):
     """Represents an access policy.
 
     :ivar start: The date-time the policy is active.
-    :vartype start: ~datetime.datetime
+    :vartype start: str
     :ivar expiry: The date-time the policy expires.
-    :vartype expiry: ~datetime.datetime
+    :vartype expiry: str
     :ivar permission: The permissions for acl the policy.
     :vartype permission: str
     """
 
-    start: Optional[datetime.datetime] = rest_field(
+    start: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        format="rfc3339",
         xml={"attribute": False, "name": "Start", "text": False, "unwrapped": False},
     )
     """The date-time the policy is active."""
-    expiry: Optional[datetime.datetime] = rest_field(
+    expiry: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        format="rfc3339",
         xml={"attribute": False, "name": "Expiry", "text": False, "unwrapped": False},
     )
     """The date-time the policy expires."""
@@ -52,8 +50,8 @@ class AccessPolicy(_Model):
     def __init__(
         self,
         *,
-        start: Optional[datetime.datetime] = None,
-        expiry: Optional[datetime.datetime] = None,
+        start: Optional[str] = None,
+        expiry: Optional[str] = None,
         permission: Optional[str] = None,
     ) -> None: ...
 
@@ -144,8 +142,6 @@ class CorsRule(_Model):
 class Error(_Model):
     """The error response.
 
-    This defines the wire format only. Language SDKs wrap this in idiomatic error types.
-
     :ivar code: The error code. Known values are: "AccountAlreadyExists", "AccountBeingCreated",
      "AccountIsDisabled", "AuthenticationFailed", "AuthorizationFailure",
      "ConditionHeadersNotSupported", "ConditionNotMet", "EmptyMetadataKey",
@@ -224,14 +220,14 @@ class GeoReplication(_Model):
 
     :ivar status: The status of the secondary location. Required. Known values are: "live",
      "bootstrap", and "unavailable".
-    :vartype status: str or ~azure.storage.queue._generated.models.GeoReplicationStatusType
+    :vartype status: str or ~azure.storage.queue._generated.models.GeoReplicationStatus
     :ivar last_sync_time: A GMT date/time value, to the second. All primary writes preceding this
      value are guaranteed to be available for read operations at the secondary. Primary writes after
      this point in time may or may not be available for reads. Required.
     :vartype last_sync_time: ~datetime.datetime
     """
 
-    status: Union[str, "_models.GeoReplicationStatusType"] = rest_field(
+    status: Union[str, "_models.GeoReplicationStatus"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Status", "text": False, "unwrapped": False},
     )
@@ -253,7 +249,7 @@ class GeoReplication(_Model):
     def __init__(
         self,
         *,
-        status: Union[str, "_models.GeoReplicationStatusType"],
+        status: Union[str, "_models.GeoReplicationStatus"],
         last_sync_time: datetime.datetime,
     ) -> None: ...
 
@@ -307,76 +303,6 @@ class KeyInfo(_Model):
         expiry: datetime.datetime,
         start: Optional[datetime.datetime] = None,
         delegated_user_tid: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ListOfPeekedMessage(_Model):
-    """List wrapper for PeekedMessageItem array.
-
-    :ivar items_property: The list of peeked messages. Required.
-    :vartype items_property: ~azure.storage.queue._generated.models.PeekedMessage
-    """
-
-    items_property: list["_models.PeekedMessage"] = rest_field(
-        name="items",
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "itemsName": "QueueMessage", "name": "QueueMessage", "text": False, "unwrapped": True},
-        original_tsp_name="items",
-    )
-    """The list of peeked messages. Required."""
-
-    _xml = {"attribute": False, "name": "QueueMessagesList", "text": False, "unwrapped": False}
-
-    @overload
-    def __init__(
-        self,
-        *,
-        items_property: list["_models.PeekedMessage"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ListOfReceivedMessage(_Model):
-    """List wrapper for DequeuedMessageItem array.
-
-    :ivar items_property: The list of dequeued messages. Required.
-    :vartype items_property: ~azure.storage.queue._generated.models.ReceivedMessage
-    """
-
-    items_property: list["_models.ReceivedMessage"] = rest_field(
-        name="items",
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "itemsName": "QueueMessage", "name": "QueueMessage", "text": False, "unwrapped": True},
-        original_tsp_name="items",
-    )
-    """The list of dequeued messages. Required."""
-
-    _xml = {"attribute": False, "name": "QueueMessagesList", "text": False, "unwrapped": False}
-
-    @overload
-    def __init__(
-        self,
-        *,
-        items_property: list["_models.ReceivedMessage"],
     ) -> None: ...
 
     @overload
@@ -700,6 +626,41 @@ class PeekedMessage(_Model):
         super().__init__(*args, **kwargs)
 
 
+class PeekedMessages(_Model):
+    """List wrapper for PeekedMessageItem array.
+
+    :ivar items_property: The list of peeked messages. Required.
+    :vartype items_property: ~azure.storage.queue._generated.models.PeekedMessage
+    """
+
+    items_property: list["_models.PeekedMessage"] = rest_field(
+        name="items",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "itemsName": "QueueMessage", "name": "QueueMessage", "text": False, "unwrapped": True},
+        original_tsp_name="items",
+    )
+    """The list of peeked messages. Required."""
+
+    _xml = {"attribute": False, "name": "QueueMessagesList", "text": False, "unwrapped": False}
+
+    @overload
+    def __init__(
+        self,
+        *,
+        items_property: list["_models.PeekedMessage"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class QueueItem(_Model):
     """An Azure Storage Queue.
 
@@ -950,6 +911,41 @@ class ReceivedMessage(_Model):
         time_next_visible: datetime.datetime,
         dequeue_count: int,
         message_text: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ReceivedMessages(_Model):
+    """List wrapper for DequeuedMessageItem array.
+
+    :ivar items_property: The list of dequeued messages. Required.
+    :vartype items_property: ~azure.storage.queue._generated.models.ReceivedMessage
+    """
+
+    items_property: list["_models.ReceivedMessage"] = rest_field(
+        name="items",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "itemsName": "QueueMessage", "name": "QueueMessage", "text": False, "unwrapped": True},
+        original_tsp_name="items",
+    )
+    """The list of dequeued messages. Required."""
+
+    _xml = {"attribute": False, "name": "QueueMessagesList", "text": False, "unwrapped": False}
+
+    @overload
+    def __init__(
+        self,
+        *,
+        items_property: list["_models.ReceivedMessage"],
     ) -> None: ...
 
     @overload

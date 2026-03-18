@@ -14,8 +14,8 @@ from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
 from ._encryption import StorageEncryptionMixin
-from ._generated.azure.storage.queues import QueuesClient as AzureQueueStorage
-from _generated.models import KeyInfo, QueueServiceProperties as StorageServiceProperties
+from ._generated import QueuesClient as AzureQueueStorage
+from ._generated.models import KeyInfo, QueueServiceProperties as StorageServiceProperties
 from ._models import (
     CorsRule,
     QueueProperties,

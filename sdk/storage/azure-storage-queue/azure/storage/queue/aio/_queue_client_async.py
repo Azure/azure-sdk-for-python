@@ -17,8 +17,8 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ._models import MessagesPaged
 from .._deserialize import deserialize_queue_creation, deserialize_queue_properties
 from .._encryption import modify_user_agent_for_encryption, StorageEncryptionMixin
-from ._generated.aio import QueuesClient as AzureQueueStorage
-from ._generated.models import QueueMessage as GenQueueMessage, SignedIdentifier, SignedIdentifiers
+from .._generated.aio import QueuesClient as AzureQueueStorage
+from .._generated.models import QueueMessage as GenQueueMessage, SignedIdentifier, SignedIdentifiers
 from .._message_encoding import NoDecodePolicy, NoEncodePolicy
 from .._models import AccessPolicy, QueueMessage
 from .._queue_client_helpers import _format_url, _from_queue_url, _parse_url
@@ -405,7 +405,7 @@ class QueueClient(  # type: ignore [misc]
         try:
             response = cast(
                 "QueueProperties",
-                await self._client.queue.get_metadata(timeout=timeout, cls=deserialize_queue_properties, **kwargs),
+                await self._client.queue.get_properties(timeout=timeout, cls=deserialize_queue_properties, **kwargs),
             )
         except HttpResponseError as error:
             process_storage_error(error)
@@ -899,7 +899,7 @@ class QueueClient(  # type: ignore [misc]
         try:
             response = cast(
                 QueueMessage,
-                await self._client.queue.update(
+                await self._client.queue.update_message(
                     queue_message=updated,
                     visibility_timeout=visibility_timeout or 0,
                     timeout=timeout,

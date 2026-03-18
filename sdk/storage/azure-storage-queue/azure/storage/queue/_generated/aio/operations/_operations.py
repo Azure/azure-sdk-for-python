@@ -34,13 +34,13 @@ from ...operations._operations import (
     build_queue_delete_message_request,
     build_queue_delete_request,
     build_queue_get_access_policy_request,
-    build_queue_get_metadata_request,
+    build_queue_get_properties_request,
     build_queue_peek_messages_request,
     build_queue_receive_messages_request,
     build_queue_send_message_request,
     build_queue_set_access_policy_request,
     build_queue_set_metadata_request,
-    build_queue_update_request,
+    build_queue_update_message_request,
     build_service_get_properties_request,
     build_service_get_queues_request,
     build_service_get_statistics_request,
@@ -509,8 +509,9 @@ class QueueOperations:
 
     @distributed_trace_async
     async def create(self, *, timeout: Optional[int] = None, metadata: Optional[str] = None, **kwargs: Any) -> None:
-        """Creates a new queue under the specified account. If the queue with the same name already
-        exists, the operation fails.
+        """Creates a new queue under the specified account. If a queue with the same name already exists,
+        the operation succeeds when the metadata is identical and returns 204; if the metadata differs,
+        the operation returns 409.
 
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
          href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
@@ -554,7 +555,7 @@ class QueueOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [201]:
+        if response.status_code not in [201, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize_xml(
                 _models.Error,
@@ -574,7 +575,7 @@ class QueueOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def get_metadata(self, *, timeout: Optional[int] = None, **kwargs: Any) -> None:
+    async def get_properties(self, *, timeout: Optional[int] = None, **kwargs: Any) -> None:
         """returns all user-defined metadata and system properties for the specified queue.
 
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
@@ -598,7 +599,7 @@ class QueueOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_queue_get_metadata_request(
+        _request = build_queue_get_properties_request(
             timeout=timeout,
             version=self._config.version,
             headers=_headers,
@@ -922,7 +923,7 @@ class QueueOperations:
         visibility_timeout: Optional[int] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
-    ) -> _models.ListOfReceivedMessage:
+    ) -> _models.ReceivedMessages:
         """The Dequeue operation retrieves one or more messages from the front of the queue.
 
         :keyword number_of_messages: Optional. A nonzero integer value that specifies the number of
@@ -941,8 +942,8 @@ class QueueOperations:
          href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
          Timeouts for Queue Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :return: ListOfReceivedMessage. The ListOfReceivedMessage is compatible with MutableMapping
-        :rtype: ~azure.storage.queue._generated.models.ListOfReceivedMessage
+        :return: ReceivedMessages. The ReceivedMessages is compatible with MutableMapping
+        :rtype: ~azure.storage.queue._generated.models.ReceivedMessages
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -956,7 +957,7 @@ class QueueOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ListOfReceivedMessage] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ReceivedMessages] = kwargs.pop("cls", None)
 
         _request = build_queue_receive_messages_request(
             number_of_messages=number_of_messages,
@@ -1004,7 +1005,7 @@ class QueueOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize_xml(_models.ListOfReceivedMessage, response.text())
+            deserialized = _deserialize_xml(_models.ReceivedMessages, response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1186,7 +1187,7 @@ class QueueOperations:
     @distributed_trace_async
     async def peek_messages(
         self, *, number_of_messages: Optional[int] = None, timeout: Optional[int] = None, **kwargs: Any
-    ) -> _models.ListOfPeekedMessage:
+    ) -> _models.PeekedMessages:
         """The Peek operation retrieves one or more messages from the front of the queue, but does not
         alter the visibility of the message.
 
@@ -1200,8 +1201,8 @@ class QueueOperations:
          href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
          Timeouts for Queue Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :return: ListOfPeekedMessage. The ListOfPeekedMessage is compatible with MutableMapping
-        :rtype: ~azure.storage.queue._generated.models.ListOfPeekedMessage
+        :return: PeekedMessages. The PeekedMessages is compatible with MutableMapping
+        :rtype: ~azure.storage.queue._generated.models.PeekedMessages
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1215,7 +1216,7 @@ class QueueOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ListOfPeekedMessage] = kwargs.pop("cls", None)
+        cls: ClsType[_models.PeekedMessages] = kwargs.pop("cls", None)
 
         _request = build_queue_peek_messages_request(
             number_of_messages=number_of_messages,
@@ -1262,7 +1263,7 @@ class QueueOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize_xml(_models.ListOfPeekedMessage, response.text())
+            deserialized = _deserialize_xml(_models.PeekedMessages, response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1270,7 +1271,7 @@ class QueueOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def update(
+    async def update_message(
         self,
         message_id: str,
         queue_message: Optional[_models.QueueMessage] = None,
@@ -1327,7 +1328,7 @@ class QueueOperations:
         else:
             _content = None
 
-        _request = build_queue_update_request(
+        _request = build_queue_update_message_request(
             message_id=message_id,
             pop_receipt=pop_receipt,
             visibility_timeout=visibility_timeout,
