@@ -41,6 +41,10 @@ _SUFFIX = str(uuid.uuid4())[:8]
 # 5. Querying items using a feed range derived from a partition key
 # 6. Consuming change feed scoped to a feed range
 # 7. Parallel change feed processing using feed ranges with asyncio.gather
+# 8. Getting the latest session token for a feed range
+# 9. Resumable change feed processing with continuation tokens
+#
+# For more advanced session token management patterns, see session_token_management_async.py
 # ----------------------------------------------------------------------------------------------------------
 # Note -
 #
@@ -324,7 +328,106 @@ async def parallel_change_feed_processing(container):
 
     total_changes = sum(results)
     print('\nTotal changes across all workers: {}'.format(total_changes))
+    # NOTE: In production, save the continuation token (etag) from response headers
+    # after each batch to enable resumable processing. Without this, workers restart
+    # from the beginning on every run. See change_feed_management_async.py for examples.
     print('Each item was processed by exactly one worker (no duplicates, no gaps)')
+
+
+async def get_session_token_for_feed_range(container):
+    """Demonstrates retrieving the latest session token for a specific feed range.
+
+    get_latest_session_token() consolidates one or more (feed_range, session_token) pairs
+    and returns the most recent session token that applies to a target feed range. This is
+    useful when multiple clients write to the same partition and you need to determine the
+    latest session token to pass to a subsequent read for session consistency.
+
+    For more advanced session token caching patterns, see session_token_management_async.py.
+    """
+    print('\n--- 8. Get latest session token for a feed range ---\n')
+
+    # Step 1: Pick a partition key and derive its feed range
+    pk_value = PARTITION_KEY_VALUES[0]
+    target_feed_range = await container.feed_range_from_partition_key(pk_value)
+    print('Target feed range for partition key \'{}\': {}'.format(pk_value, json.dumps(target_feed_range)))
+
+    # Step 2: Perform a write and capture the session token from the response
+    item = {'id': 'session-token-demo-' + str(uuid.uuid4())[:8], 'city': pk_value, 'note': 'session token demo'}
+    response = await container.create_item(item)
+    session_token = response.get_response_headers()['x-ms-session-token']
+    print('Session token from write: {}'.format(session_token))
+
+    # Step 3: Build a list of (feed_range, session_token) pairs
+    # In production, you would accumulate these from multiple writes or clients
+    feed_ranges_and_tokens = [(target_feed_range, session_token)]
+
+    # Step 4: Get the latest session token for the target feed range
+    latest_token = await container.get_latest_session_token(feed_ranges_and_tokens, target_feed_range)
+    print('Latest session token for feed range: {}'.format(latest_token))
+    print('This token can be passed as session_token= to a subsequent read for session consistency')
+
+
+async def resumable_change_feed_with_continuation(container):
+    """Demonstrates resumable change feed processing using continuation tokens with feed ranges.
+
+    In production, you should save the continuation token (etag) after processing each batch
+    of changes. If a worker crashes or restarts, it can resume from where it left off by
+    passing the saved continuation token to query_items_change_feed(). Without continuation
+    tokens, a restarted worker must re-read from the beginning.
+
+    This scenario shows the full checkpoint-and-resume pattern scoped to a single feed range.
+    """
+    print('\n--- 9. Resumable change feed with continuation tokens ---\n')
+
+    # Step 1: Pick a feed range to process
+    feed_ranges = [fr async for fr in container.read_feed_ranges()]
+    target_feed_range = feed_ranges[0]
+    print('Processing change feed for feed range: {}'.format(
+        (lambda s: s[:80] + '...' if len(s) > 80 else s)(json.dumps(target_feed_range))
+    ))
+
+    # Step 2: Read change feed from the beginning and save the continuation token
+    print('\n[Pass 1] Reading all existing changes from the beginning...')
+    response = container.query_items_change_feed(
+        feed_range=target_feed_range,
+        start_time="Beginning"
+    )
+
+    pass1_count = 0
+    async for item in response:
+        pass1_count += 1
+
+    # Save the continuation token (etag) — this is your checkpoint
+    continuation_token = container.client_connection.last_response_headers['etag']
+    print('Processed {} changes'.format(pass1_count))
+    print('Saved continuation token: {}...'.format(continuation_token[:60]))
+
+    # Step 3: Create new items to simulate changes arriving after the checkpoint
+    print('\nCreating 3 new items to simulate incoming changes...')
+    for i in range(3):
+        await container.create_item(body={
+            'id': 'resume-demo-{}-{}'.format(i, str(uuid.uuid4())[:8]),
+            'city': PARTITION_KEY_VALUES[0],
+            'name': 'New item {}'.format(i)
+        })
+
+    # Step 4: Resume from the saved continuation token — only new changes are returned
+    print('\n[Pass 2] Resuming change feed from saved continuation token...')
+    response = container.query_items_change_feed(
+        feed_range=target_feed_range,
+        continuation=continuation_token
+    )
+
+    pass2_count = 0
+    async for item in response:
+        pass2_count += 1
+        print('  New change: {} (city: {})'.format(item.get('id', 'N/A'), item.get('city', 'N/A')))
+
+    print('Processed {} new changes (skipped the {} already-processed items)'.format(
+        pass2_count, pass1_count
+    ))
+    print('\nIn production, you would persist the continuation token to durable storage')
+    print('(e.g., a database or blob) so workers can resume after restarts.')
 
 
 async def run_sample():
@@ -366,6 +469,12 @@ async def run_sample():
 
             # 7. Parallel change feed processing using feed ranges
             await parallel_change_feed_processing(container)
+
+            # 8. Get latest session token for a feed range
+            await get_session_token_for_feed_range(container)
+
+            # 9. Resumable change feed with continuation tokens
+            await resumable_change_feed_with_continuation(container)
 
         except exceptions.CosmosHttpResponseError as e:
             print('\nrun_sample has caught an error. {0}'.format(e.message))
