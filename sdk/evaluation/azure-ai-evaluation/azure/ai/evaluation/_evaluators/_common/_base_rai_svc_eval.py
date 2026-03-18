@@ -136,7 +136,6 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         When using the legacy endpoint, sends the entire conversation in a single call
         (matching pre-sync-migration behavior) via the sync wrapper for metric normalization.
         """
-        validate_conversation(conversation)
         messages = conversation["messages"]
 
         # Convert enum to string value
@@ -155,7 +154,8 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
             # Wrap as single-turn result and aggregate to produce evaluation_per_turn structure
             return self._aggregate_results([result])
 
-        # Sync path: evaluate each turn separately for per-turn granularity
+        # Sync path: validate multimodal conversation and evaluate each turn separately
+        validate_conversation(conversation)
         turns = self._extract_turns(messages)
 
         per_turn_results = []
