@@ -9,7 +9,7 @@ DESCRIPTION:
     using the asynchronous AIProjectClient. It uses API key authentication to
     connect to the Microsoft Foundry service.
 
-    Note that API key authentication is available starting with version 
+    Note that API key authentication is available starting with version
     2.0.2 of the client library.
 
     The OpenAI compatible Responses and Conversation calls in this sample are made using
