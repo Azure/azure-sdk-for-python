@@ -20,6 +20,7 @@ Tests cover:
 
 from typing import Any, Dict, List, Optional
 from pathlib import Path
+from unittest.mock import patch
 import pytest
 import asyncio
 
@@ -369,12 +370,34 @@ class TestRedTeamFoundry:
 
     # ==================== New target type tests ====================
 
+    @pytest.fixture
+    def deterministic_random(self):
+        """Make random selection deterministic for recording stability.
+
+        Patches random.sample and random.choice to always return the first N elements
+        instead of random ones. This ensures the same objectives are selected during
+        both recording and playback, preventing test proxy 404 mismatches.
+        """
+
+        def stable_sample(population, k, **kwargs):
+            return list(population[:k])
+
+        def stable_choice(seq):
+            return seq[0]
+
+        with patch("azure.ai.evaluation.red_team._red_team.random.sample", side_effect=stable_sample), patch(
+            "azure.ai.evaluation.red_team._red_team.random.choice", side_effect=stable_choice
+        ):
+            yield
+
     @pytest.mark.azuretest
     @pytest.mark.parametrize(
         ("proj_scope", "cred"),
         (("project_scope_onedp", "azure_cred_onedp"),),
     )
-    def test_foundry_with_model_config_target(self, request, proj_scope, cred, sanitized_model_config):
+    def test_foundry_with_model_config_target(
+        self, request, proj_scope, cred, sanitized_model_config, deterministic_random
+    ):
         """
         Test Foundry execution with AzureOpenAIModelConfiguration target.
 
