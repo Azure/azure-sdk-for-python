@@ -22,6 +22,7 @@ from typing import (
 from typing_extensions import Literal
 
 
+from . import described
 from .message import Message, Header, Properties
 
 if TYPE_CHECKING:
@@ -153,6 +154,7 @@ def _decode_binary_large(buffer: memoryview) -> Tuple[memoryview, bytes]:
     length_index = c_unsigned_long.unpack(buffer[:4])[0] + 4
     return buffer[length_index:], buffer[4:length_index].tobytes()
 
+
 def _decode_decimal128(buffer: memoryview) -> Tuple[memoryview, decimal.Decimal]:
     """
     Decode a Decimal128 value from the buffer.
@@ -254,11 +256,20 @@ def _decode_map_large(buffer: memoryview) -> Tuple[memoryview, Dict[Any, Any]]:
 def _decode_array_small(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
     count = buffer[1]  # Ignore first byte (size) and just rely on count
     if count:
-        subconstructor = buffer[2]
-        buffer = buffer[3:]
         values = [None] * count
-        for i in range(count):
-            buffer, values[i] = _DECODE_BY_CONSTRUCTOR[subconstructor](buffer)
+        subconstructor = buffer[2]
+
+        if subconstructor == 0:
+            composite_type = buffer[3]
+            buffer, descriptor = _DECODE_BY_CONSTRUCTOR[composite_type](buffer[4:])
+            subconstructor = buffer[0]
+            buffer = buffer[1:]
+            for i in range(count):
+                buffer, values[i] = _decode_described_array(buffer, subconstructor, descriptor)
+        else:
+            buffer = buffer[3:]
+            for i in range(count):
+                buffer, values[i] = _DECODE_BY_CONSTRUCTOR[subconstructor](buffer)
         return buffer, values
     return buffer[2:], []
 
@@ -266,11 +277,20 @@ def _decode_array_small(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
 def _decode_array_large(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
     count = c_unsigned_long.unpack(buffer[4:8])[0]
     if count:
-        subconstructor = buffer[8]
-        buffer = buffer[9:]
         values = [None] * count
-        for i in range(count):
-            buffer, values[i] = _DECODE_BY_CONSTRUCTOR[subconstructor](buffer)
+        subconstructor = buffer[8]
+
+        if subconstructor == 0:
+            composite_type = buffer[9]
+            buffer, descriptor = _DECODE_BY_CONSTRUCTOR[composite_type](buffer[9:])
+            subconstructor = buffer[0]
+            buffer = buffer[1:]
+            for i in range(count):
+                buffer, values[i] = _decode_described_array(buffer, subconstructor, descriptor)
+        else:
+            buffer = buffer[9:]
+            for i in range(count):
+                buffer, values[i] = _DECODE_BY_CONSTRUCTOR[subconstructor](buffer)
         return buffer, values
     return buffer[8:], []
 
@@ -280,7 +300,25 @@ def _decode_described(buffer: memoryview) -> Tuple[memoryview, object]:
     #  descriptor without decoding descriptor value
     composite_type = buffer[0]
     buffer, descriptor = _DECODE_BY_CONSTRUCTOR[composite_type](buffer[1:])
-    buffer, value = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:])
+    tp = buffer[0]
+    buffer, value = _DECODE_BY_CONSTRUCTOR[tp](buffer[1:])
+    try:
+        value = _DESCR_BY_CONSTRUCTOR[tp](value, descriptor=descriptor)
+    except KeyError:
+        pass
+    try:
+        composite_type = cast(int, _COMPOSITES[descriptor])
+        return buffer, {composite_type: value}
+    except KeyError:
+        return buffer, value
+
+
+def _decode_described_array(buffer: memoryview, tp, descriptor) -> Tuple[memoryview, object]:
+    buffer, value = _DECODE_BY_CONSTRUCTOR[tp](buffer)
+    try:
+        value = _DESCR_BY_CONSTRUCTOR[tp](value, descriptor=descriptor)
+    except KeyError:
+        pass
     try:
         composite_type = cast(int, _COMPOSITES[descriptor])
         return buffer, {composite_type: value}
@@ -394,3 +432,36 @@ _DECODE_BY_CONSTRUCTOR[208] = _decode_list_large
 _DECODE_BY_CONSTRUCTOR[209] = _decode_map_large
 _DECODE_BY_CONSTRUCTOR[224] = _decode_array_small
 _DECODE_BY_CONSTRUCTOR[240] = _decode_array_large
+
+_DESCR_BY_CONSTRUCTOR = {
+    67: described.DescribedInt,
+    68: described.DescribedInt,
+    69: described.DescribedList,
+    80: described.DescribedInt,
+    81: described.DescribedInt,
+    82: described.DescribedInt,
+    83: described.DescribedInt,
+    84: described.DescribedInt,
+    85: described.DescribedInt,
+    96: described.DescribedInt,
+    97: described.DescribedInt,
+    112: described.DescribedInt,
+    113: described.DescribedInt,
+    114: described.DescribedFloat,
+    128: described.DescribedInt,
+    129: described.DescribedInt,
+    130: described.DescribedFloat,
+    131: described.DescribedInt,
+    160: described.DescribedBytes,
+    161: described.DescribedStr,
+    163: described.DescribedStr,
+    176: described.DescribedBytes,
+    177: described.DescribedStr,
+    179: described.DescribedStr,
+    192: described.DescribedList,
+    193: described.DescribedDict,
+    208: described.DescribedList,
+    209: described.DescribedDict,
+    224: described.DescribedList,
+    240: described.DescribedList,
+}
