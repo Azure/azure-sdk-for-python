@@ -42,6 +42,7 @@ class RAIServiceScorer(TrueFalseScorer):
         risk_category: RiskCategory,
         logger: Optional[logging.Logger] = None,
         dataset_config: Optional[Any] = None,
+        use_legacy_endpoint: bool = False,
     ) -> None:
         """Initialize the RAI Service scorer.
 
@@ -56,6 +57,8 @@ class RAIServiceScorer(TrueFalseScorer):
         :type logger: Optional[logging.Logger]
         :param dataset_config: Optional DatasetConfiguration for context lookup
         :type dataset_config: Optional[Any]
+        :param use_legacy_endpoint: Whether to use the legacy evaluation endpoint. Defaults to False.
+        :type use_legacy_endpoint: bool
         """
         # Initialize with a default validator for text scoring
         super().__init__(validator=ScorerPromptValidator(supported_data_types=["text"]))
@@ -64,6 +67,7 @@ class RAIServiceScorer(TrueFalseScorer):
         self.risk_category = risk_category
         self.logger = logger or logging.getLogger(__name__)
         self.dataset_config = dataset_config
+        self._use_legacy_endpoint = use_legacy_endpoint
         self._context_lookup: Dict[str, Dict[str, Any]] = {}
 
         # Build context lookup from dataset config if provided
@@ -160,18 +164,17 @@ class RAIServiceScorer(TrueFalseScorer):
         metric_name = get_metric_from_risk_category(self.risk_category)
         annotation_task = get_annotation_task_from_risk_category(self.risk_category)
 
-        # The Sync API requires "hate_unfairness" instead of "hate_fairness"
-        if metric_name == "hate_fairness":
-            metric_name = "hate_unfairness"
+        # Metric name normalization (hate_fairness ↔ hate_unfairness) is handled by
+        # evaluate_with_rai_service_sync based on the use_legacy_endpoint flag.
 
         try:
-            # Call RAI service using sync_evals endpoint (matches legacy path behavior)
             eval_result = await evaluate_with_rai_service_sync(
                 eval_input,
                 metric_name=metric_name,
                 project_scope=self.azure_ai_project,
                 credential=self.credential,
                 annotation_task=annotation_task,
+                use_legacy_endpoint=self._use_legacy_endpoint,
             )
 
             self.logger.debug(f"RAI evaluation result: {eval_result}")
