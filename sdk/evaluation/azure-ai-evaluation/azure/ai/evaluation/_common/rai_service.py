@@ -43,6 +43,47 @@ from .utils import get_harm_severity_level, retrieve_content_type
 
 LOGGER = logging.getLogger(__name__)
 
+# Metric names that differ between the sync evals endpoint and the legacy annotation endpoint.
+# Key = sync endpoint metric name, Value = legacy annotation API metric name.
+# Used bidirectionally: forward lookup for sync→legacy, reverse for legacy→sync.
+# Note: only metrics where the API request metric name differs should be here.
+# For XPIA and ECI, the legacy API uses the annotation_task, not MetricList,
+# so the metric name doesn't need remapping — but the response key does.
+_SYNC_TO_LEGACY_METRIC_NAMES: Dict[str, str] = {
+    "hate_unfairness": "hate_fairness",
+    "groundedness": "generic_groundedness",
+}
+
+# Legacy response key lookup: the annotation API may return results under a different
+# key than the sync metric name. This is a superset of _SYNC_TO_LEGACY_METRIC_NAMES.
+_SYNC_TO_LEGACY_RESPONSE_KEYS: Dict[str, str] = {
+    **_SYNC_TO_LEGACY_METRIC_NAMES,
+    "indirect_attack": "xpia",
+    "election_critical_information": "eci",
+}
+
+# Reverse mapping: legacy metric name → sync metric name (built once at module level)
+_LEGACY_TO_SYNC_METRIC_NAMES: Dict[str, str] = {v: k for k, v in _SYNC_TO_LEGACY_METRIC_NAMES.items()}
+
+
+def _normalize_metric_for_endpoint(metric_name, use_legacy_endpoint, metric_display_name=None):
+    """Normalize metric name based on which endpoint is being used.
+
+    Returns (metric_name, metric_display_name) tuple with the correct metric name
+    for the target endpoint, and metric_display_name set to preserve output key names.
+    """
+    metric_name_str = metric_name.value if hasattr(metric_name, "value") else metric_name
+    if use_legacy_endpoint:
+        legacy_name = _SYNC_TO_LEGACY_METRIC_NAMES.get(metric_name_str)
+        if legacy_name:
+            return legacy_name, (metric_display_name or metric_name_str)
+    else:
+        sync_name = _LEGACY_TO_SYNC_METRIC_NAMES.get(metric_name_str)
+        if sync_name:
+            return sync_name, metric_display_name
+    return metric_name, metric_display_name
+
+
 USER_TEXT_TEMPLATE_DICT: Dict[str, Template] = {
     "DEFAULT": Template("<Human>{$query}</><System>{$response}</>"),
 }
@@ -453,9 +494,19 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
                 )
                 result[pm_metric_name + "_model"] = parsed_response["model"] if "model" in parsed_response else ""
             return result
+        # Check for metric_name in response; also check legacy response key name if different.
+        # Note: parse_response is only called from legacy endpoint functions (evaluate_with_rai_service
+        # and evaluate_with_rai_service_multimodal), so this fallback is inherently legacy-only.
+        response_key = metric_name
         if metric_name not in batch_response[0]:
-            return {}
-        response = batch_response[0][metric_name]
+            legacy_key = _SYNC_TO_LEGACY_RESPONSE_KEYS.get(
+                metric_name.value if hasattr(metric_name, "value") else metric_name
+            )
+            if legacy_key and legacy_key in batch_response[0]:
+                response_key = legacy_key
+            else:
+                return {}
+        response = batch_response[0][response_key]
         response = response.replace("false", "False")
         response = response.replace("true", "True")
         parsed_response = literal_eval(response)
@@ -547,13 +598,23 @@ def _parse_content_harm_response(
     }
 
     response = batch_response[0]
+    # Check for metric_name in response; also check legacy response key name if different.
+    # Note: _parse_content_harm_response is only called from parse_response, which is
+    # only called from legacy endpoint functions, so this fallback is inherently legacy-only.
+    response_key = metric_name
     if metric_name not in response:
-        return result
+        legacy_key = _SYNC_TO_LEGACY_RESPONSE_KEYS.get(
+            metric_name.value if hasattr(metric_name, "value") else metric_name
+        )
+        if legacy_key and legacy_key in response:
+            response_key = legacy_key
+        else:
+            return result
 
     try:
-        harm_response = literal_eval(response[metric_name])
+        harm_response = literal_eval(response[response_key])
     except Exception:  # pylint: disable=broad-exception-caught
-        harm_response = response[metric_name]
+        harm_response = response[response_key]
 
     total_tokens = 0
     prompt_tokens = 0
@@ -1044,6 +1105,10 @@ async def evaluate_with_rai_service_sync(
     :return: The EvalRunOutputItem containing the evaluation results (or parsed dict if legacy).
     :rtype: Union[EvalRunOutputItem, Dict[str, Union[str, float]]]
     """
+    metric_name, metric_display_name = _normalize_metric_for_endpoint(
+        metric_name, use_legacy_endpoint, metric_display_name
+    )
+
     # Route to legacy endpoint if requested
     if use_legacy_endpoint:
         return await evaluate_with_rai_service(
@@ -1261,6 +1326,8 @@ async def evaluate_with_rai_service_sync_multimodal(
     :return: The EvalRunOutputItem or legacy response payload.
     :rtype: Union[Dict, EvalRunOutputItem]
     """
+    metric_name, metric_display_name = _normalize_metric_for_endpoint(metric_name, use_legacy_endpoint)
+
     # Route to legacy endpoint if requested
     if use_legacy_endpoint:
         return await evaluate_with_rai_service_multimodal(
@@ -1268,6 +1335,7 @@ async def evaluate_with_rai_service_sync_multimodal(
             metric_name=metric_name,
             project_scope=project_scope,
             credential=credential,
+            metric_display_name=metric_display_name,
         )
 
     # Sync evals endpoint implementation (default)
@@ -1316,6 +1384,7 @@ async def evaluate_with_rai_service_multimodal(
     metric_name: str,
     project_scope: Union[str, AzureAIProject],
     credential: TokenCredential,
+    metric_display_name: Optional[str] = None,
 ):
     """Evaluate the content safety of the response using Responsible AI service (legacy endpoint)
     :param messages: The normalized list of messages.
@@ -1327,6 +1396,8 @@ async def evaluate_with_rai_service_multimodal(
     :type project_scope: Union[str, AzureAIProject]
     :param credential: The Azure authentication credential.
     :type credential: ~azure.core.credentials.TokenCredential
+    :param metric_display_name: The display name for the metric in output keys. If None, uses metric_name.
+    :type metric_display_name: Optional[str]
     :return: The parsed annotation result.
     :rtype: List[List[Dict]]
     """
@@ -1341,7 +1412,7 @@ async def evaluate_with_rai_service_multimodal(
         await ensure_service_availability_onedp(client, token, Tasks.CONTENT_HARM)
         operation_id = await submit_multimodal_request_onedp(client, messages, metric_name, token)
         annotation_response = cast(List[Dict], await fetch_result_onedp(client, operation_id, token))
-        result = parse_response(annotation_response, metric_name)
+        result = parse_response(annotation_response, metric_name, metric_display_name)
         return result
     else:
         token = await fetch_or_reuse_token(credential)
@@ -1350,5 +1421,5 @@ async def evaluate_with_rai_service_multimodal(
         # Submit annotation request and fetch result
         operation_id = await submit_multimodal_request(messages, metric_name, rai_svc_url, token)
         annotation_response = cast(List[Dict], await fetch_result(operation_id, rai_svc_url, credential, token))
-        result = parse_response(annotation_response, metric_name)
+        result = parse_response(annotation_response, metric_name, metric_display_name)
         return result

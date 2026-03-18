@@ -17,6 +17,8 @@
 * Enhanced error logging by attaching endpoint information to exceptions during database account retrieval. See [PR 44484](https://github.com/Azure/azure-sdk-for-python/pull/44484)
 
 ### 4.15.0 (2026-02-19)
+> [!IMPORTANT]
+> We strongly recommend that customers use at least version 4.15.0 of `azure-cosmos`.
 
 #### Features Added
 * GA support of Per Partition Automatic Failover and AvailabilityStrategy features.
