@@ -9,6 +9,7 @@ Provides a self-contained HR recruitment scenario with:
   scheduling, and communication
 """
 
+from pprint import pformat
 from typing import Annotated
 
 from agent_framework import tool
@@ -180,6 +181,11 @@ CALENDAR_SLOTS = {
 _booked_interviews = []
 
 
+def _to_structured_string(payload: object) -> str:
+    """Render tool output as a deterministic dict-like string."""
+    return pformat(payload, width=100, sort_dicts=False)
+
+
 # ============================================================================
 # Job Requisition Tools
 # ============================================================================
@@ -192,7 +198,7 @@ _booked_interviews = []
 )
 def get_job_details(
     job_id: Annotated[str, "The job ID to retrieve (e.g., JOB-SWE-2025-001)"],
-) -> dict:
+) -> str:
     """Get job posting details."""
     job = JOBS.get(job_id)
     if not job:
@@ -201,28 +207,30 @@ def get_job_details(
     if job["status"] != "open":
         raise ValueError(f"Job '{job_id}' is not open. Current status: {job['status']}")
 
-    return {
-        "status": "ok",
-        "job": {
-            "job_id": job_id,
-            "title": job["title"],
-            "department": job["department"],
-            "location": job["location"],
-            "remote_allowed": job["remote_allowed"],
-            "salary_range": {
-                "min": job["salary_range"][0],
-                "max": job["salary_range"][1],
+    return _to_structured_string(
+        {
+            "status": "ok",
+            "job": {
+                "job_id": job_id,
+                "title": job["title"],
+                "department": job["department"],
+                "location": job["location"],
+                "remote_allowed": job["remote_allowed"],
+                "salary_range": {
+                    "min": job["salary_range"][0],
+                    "max": job["salary_range"][1],
+                },
+                "hiring_manager": job["hiring_manager"],
+                "status": job["status"],
+                "urgency": job["urgency"],
+                "description": job["description"],
+                "requirements": {
+                    "must_have": list(job["requirements"]["must_have"]),
+                    "nice_to_have": list(job["requirements"]["nice_to_have"]),
+                },
             },
-            "hiring_manager": job["hiring_manager"],
-            "status": job["status"],
-            "urgency": job["urgency"],
-            "description": job["description"],
-            "requirements": {
-                "must_have": list(job["requirements"]["must_have"]),
-                "nice_to_have": list(job["requirements"]["nice_to_have"]),
-            },
-        },
-    }
+        }
+    )
 
 
 @tool(
@@ -232,27 +240,29 @@ def get_job_details(
 )
 def extract_requirements(
     job_id: Annotated[str, "The job ID to extract requirements from"],
-) -> dict:
+) -> str:
     """Extract structured requirements from job posting."""
     job = JOBS.get(job_id)
     if not job:
         raise ValueError(f"Job ID '{job_id}' not found.")
 
-    return {
-        "status": "ok",
-        "job_id": job_id,
-        "title": job["title"],
-        "requirements": {
-            "must_have": list(job["requirements"]["must_have"]),
-            "nice_to_have": list(job["requirements"]["nice_to_have"]),
+    return _to_structured_string(
+        {
+            "status": "ok",
+            "job_id": job_id,
+            "title": job["title"],
+            "requirements": {
+                "must_have": list(job["requirements"]["must_have"]),
+                "nice_to_have": list(job["requirements"]["nice_to_have"]),
+            },
+            "salary_range": {
+                "min": job["salary_range"][0],
+                "max": job["salary_range"][1],
+            },
+            "location": job["location"],
+            "remote_allowed": job["remote_allowed"],
         },
-        "salary_range": {
-            "min": job["salary_range"][0],
-            "max": job["salary_range"][1],
-        },
-        "location": job["location"],
-        "remote_allowed": job["remote_allowed"],
-    }
+    )
 
 
 # ============================================================================
@@ -268,7 +278,7 @@ def extract_requirements(
 def query_external_candidates(
     job_id: Annotated[str, "The job ID to find candidates for"],
     min_experience: Annotated[int, "Minimum years of experience required"] = 0,
-) -> dict:
+) -> str:
     """Query external candidates from job boards."""
     candidates = [
         (candidate_id, candidate)
@@ -276,12 +286,14 @@ def query_external_candidates(
         if job_id in candidate["applied_jobs"] and candidate["years_experience"] >= min_experience
     ]
     if not candidates:
-        return {
-            "status": "ok",
-            "job_id": job_id,
-            "candidate_count": 0,
-            "candidates": [],
-        }
+        return _to_structured_string(
+            {
+                "status": "ok",
+                "job_id": job_id,
+                "candidate_count": 0,
+                "candidates": [],
+            }
+        )
 
     result_candidates = []
     for candidate_id, c in candidates:
@@ -298,12 +310,14 @@ def query_external_candidates(
                 "salary_expectation": c["salary_expectation"],
             }
         )
-    return {
-        "status": "ok",
-        "job_id": job_id,
-        "candidate_count": len(result_candidates),
-        "candidates": result_candidates,
-    }
+    return _to_structured_string(
+        {
+            "status": "ok",
+            "job_id": job_id,
+            "candidate_count": len(result_candidates),
+            "candidates": result_candidates,
+        }
+    )
 
 
 @tool(
@@ -314,7 +328,7 @@ def query_external_candidates(
 def query_internal_employees(
     job_id: Annotated[str, "The job ID to find internal candidates for"],
     eligible_only: Annotated[bool, "Only return transfer-eligible employees"] = True,
-) -> dict:
+) -> str:
     """Query internal employees for mobility."""
     candidates = [
         (candidate_id, candidate)
@@ -325,12 +339,14 @@ def query_internal_employees(
         candidates = [(candidate_id, c) for candidate_id, c in candidates if c["transfer_eligible"]]
 
     if not candidates:
-        return {
-            "status": "ok",
-            "job_id": job_id,
-            "candidate_count": 0,
-            "candidates": [],
-        }
+        return _to_structured_string(
+            {
+                "status": "ok",
+                "job_id": job_id,
+                "candidate_count": 0,
+                "candidates": [],
+            }
+        )
 
     result_candidates = []
     for candidate_id, c in candidates:
@@ -347,13 +363,15 @@ def query_internal_employees(
                 "skills": list(c["skills"]),
             }
         )
-    return {
-        "status": "ok",
-        "job_id": job_id,
-        "eligible_only": eligible_only,
-        "candidate_count": len(result_candidates),
-        "candidates": result_candidates,
-    }
+    return _to_structured_string(
+        {
+            "status": "ok",
+            "job_id": job_id,
+            "eligible_only": eligible_only,
+            "candidate_count": len(result_candidates),
+            "candidates": result_candidates,
+        }
+    )
 
 
 # ============================================================================
@@ -369,7 +387,7 @@ def query_internal_employees(
 def score_candidate(
     candidate_id: Annotated[str, "The candidate ID to score"],
     job_id: Annotated[str, "The job ID to score against"],
-) -> dict:
+) -> str:
     """Score a candidate against job requirements."""
     job = JOBS.get(job_id)
     if not job:
@@ -394,23 +412,25 @@ def score_candidate(
     must_matched = [r for r in must_have if any(r.lower() in s for s in skills_lower)]
     must_gaps = [r for r in must_have if not any(r.lower() in s for s in skills_lower)]
 
-    return {
-        "status": "ok",
-        "candidate_id": candidate_id,
-        "candidate_name": candidate["name"],
-        "job_id": job_id,
-        "overall_score": score,
-        "must_have_matches": must_matched,
-        "must_have_gaps": must_gaps,
-        "nice_to_have_match_count": nice_matches,
-        "nice_to_have_total": len(nice_to_have),
-        "years_experience": candidate["years_experience"],
-        "salary_expectation": candidate.get("salary_expectation"),
-        "job_salary_range": {
-            "min": job["salary_range"][0],
-            "max": job["salary_range"][1],
+    return _to_structured_string(
+        {
+            "status": "ok",
+            "candidate_id": candidate_id,
+            "candidate_name": candidate["name"],
+            "job_id": job_id,
+            "overall_score": score,
+            "must_have_matches": must_matched,
+            "must_have_gaps": must_gaps,
+            "nice_to_have_match_count": nice_matches,
+            "nice_to_have_total": len(nice_to_have),
+            "years_experience": candidate["years_experience"],
+            "salary_expectation": candidate.get("salary_expectation"),
+            "job_salary_range": {
+                "min": job["salary_range"][0],
+                "max": job["salary_range"][1],
+            },
         },
-    }
+    )
 
 
 @tool(
@@ -421,7 +441,7 @@ def score_candidate(
 def rank_candidates(
     candidate_ids: Annotated[str, "Comma-separated candidate IDs to rank"],
     job_id: Annotated[str, "The job ID candidates are being ranked for"],
-) -> dict:
+) -> str:
     """Rank candidates and produce shortlist."""
     if isinstance(candidate_ids, list):
         ids = [str(candidate_id).strip() for candidate_id in candidate_ids if str(candidate_id).strip()]
@@ -467,12 +487,14 @@ def rank_candidates(
             }
         )
 
-    return {
-        "status": "ok",
-        "job_id": job_id,
-        "ranked_candidates": ranked_candidates,
-        "recommended_shortlist_candidate_ids": [s[0] for s in scored[:3]],
-    }
+    return _to_structured_string(
+        {
+            "status": "ok",
+            "job_id": job_id,
+            "ranked_candidates": ranked_candidates,
+            "recommended_shortlist_candidate_ids": [s[0] for s in scored[:3]],
+        }
+    )
 
 
 # ============================================================================
@@ -488,19 +510,21 @@ def rank_candidates(
 def check_compliance(
     candidate_ids: Annotated[str, "Comma-separated candidate IDs in the shortlist"],
     job_id: Annotated[str, "The job ID the shortlist is for"],
-) -> dict:
+) -> str:
     """Check shortlist for compliance."""
     ids = [c.strip() for c in candidate_ids.split(",")]
-    return {
-        "status": "ok",
-        "job_id": job_id,
-        "shortlist_candidate_ids": ids,
-        "shortlist_size": len(ids),
-        "eeoc_status": "PASS",
-        "adverse_impact": "No adverse impact detected (4/5ths rule satisfied)",
-        "demographic_distribution": "Diverse candidate pool",
-        "recommendation": "Shortlist is compliant — proceed to interviews.",
-    }
+    return _to_structured_string(
+        {
+            "status": "ok",
+            "job_id": job_id,
+            "shortlist_candidate_ids": ids,
+            "shortlist_size": len(ids),
+            "eeoc_status": "PASS",
+            "adverse_impact": "No adverse impact detected (4/5ths rule satisfied)",
+            "demographic_distribution": "Diverse candidate pool",
+            "recommendation": "Shortlist is compliant — proceed to interviews.",
+        }
+    )
 
 
 @tool(
@@ -511,20 +535,22 @@ def check_compliance(
 def detect_bias(
     candidate_ids: Annotated[str, "Comma-separated candidate IDs that were selected"],
     job_id: Annotated[str, "The job ID"],
-) -> dict:
+) -> str:
     """Detect potential bias in selection."""
     ids = [c.strip() for c in candidate_ids.split(",") if c.strip()]
-    return {
-        "status": "ok",
-        "job_id": job_id,
-        "selected_candidate_ids": ids,
-        "selection_criteria_analysis": "All criteria are job-related",
-        "geographic_bias": "Not detected",
-        "experience_bias": "Not detected (range 4-9 years in pool)",
-        "education_bias": "Not detected (mix of BS/MS/PhD)",
-        "overall_risk": "LOW",
-        "recommendation": "No corrective action needed.",
-    }
+    return _to_structured_string(
+        {
+            "status": "ok",
+            "job_id": job_id,
+            "selected_candidate_ids": ids,
+            "selection_criteria_analysis": "All criteria are job-related",
+            "geographic_bias": "Not detected",
+            "experience_bias": "Not detected (range 4-9 years in pool)",
+            "education_bias": "Not detected (mix of BS/MS/PhD)",
+            "overall_risk": "LOW",
+            "recommendation": "No corrective action needed.",
+        }
+    )
 
 
 # ============================================================================
@@ -539,7 +565,7 @@ def detect_bias(
 )
 def get_calendar_availability(
     hiring_manager_id: Annotated[str, "The hiring manager's employee ID"],
-) -> dict:
+) -> str:
     """Get calendar availability."""
     slots = CALENDAR_SLOTS.get(hiring_manager_id)
     if not slots:
@@ -549,11 +575,13 @@ def get_calendar_availability(
     if not available:
         raise ValueError(f"No available slots found for manager {hiring_manager_id}.")
 
-    return {
-        "status": "ok",
-        "hiring_manager_id": hiring_manager_id,
-        "available_slots": available,
-    }
+    return _to_structured_string(
+        {
+            "status": "ok",
+            "hiring_manager_id": hiring_manager_id,
+            "available_slots": available,
+        }
+    )
 
 
 @tool(
@@ -566,7 +594,7 @@ def book_interview(
     hiring_manager_id: Annotated[str, "The hiring manager's employee ID"],
     date: Annotated[str, "Interview date (YYYY-MM-DD)"],
     time: Annotated[str, "Interview time (e.g., '10:00 AM')"],
-) -> dict:
+) -> str:
     """Book an interview slot."""
     cand = EXTERNAL_CANDIDATES.get(candidate_id) or INTERNAL_CANDIDATES.get(candidate_id)
     if not cand:
@@ -582,15 +610,17 @@ def book_interview(
         }
     )
 
-    return {
-        "status": "ok",
-        "booking": {
-            "candidate_id": candidate_id,
-            "candidate_name": name,
-            "hiring_manager_id": hiring_manager_id,
-            "date": date,
-            "time": time,
-            "format": "Video Conference",
-            "confirmation": "Sent to all participants.",
+    return _to_structured_string(
+        {
+            "status": "ok",
+            "booking": {
+                "candidate_id": candidate_id,
+                "candidate_name": name,
+                "hiring_manager_id": hiring_manager_id,
+                "date": date,
+                "time": time,
+                "format": "Video Conference",
+                "confirmation": "Sent to all participants.",
+            },
         },
-    }
+    )

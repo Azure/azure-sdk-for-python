@@ -8,6 +8,7 @@ Agents are designed for an HR recruitment workflow scenario.
 """
 
 import os
+from typing import Any
 
 from agent_framework.azure import AzureAIClient
 from azure.identity import DefaultAzureCredential
@@ -101,13 +102,12 @@ async def _create_client(agent_name: str) -> AzureAIClient:
     Each agent gets its own client to ensure proper message isolation
     in group chat and other multi-agent workflows.
     """
+    _ = agent_name
     client = AzureAIClient(
         project_endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-        model_deployment_name=os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME"),
+        deployment_name=os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME"),
         credential=DefaultAzureCredential(),
-        agent_name=agent_name,
     )
-    await client.__aenter__()
     _created_clients.append(client)
     return client
 
@@ -115,8 +115,11 @@ async def _create_client(agent_name: str) -> AzureAIClient:
 async def cleanup_clients():
     """Close all created clients. Call this when done with the agents."""
     for client in _created_clients:
-        if hasattr(client, "__aexit__"):
-            await client.__aexit__(None, None, None)
+        close_method = getattr(client, "close", None)
+        if callable(close_method):
+            close_result: Any = close_method()
+            if hasattr(close_result, "__await__"):
+                await close_result
     _created_clients.clear()
 
 

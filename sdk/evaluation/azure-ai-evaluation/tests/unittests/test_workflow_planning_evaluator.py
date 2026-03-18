@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from azure.ai.evaluation._evaluators._workflow_planning import _WorkflowPlanningEvaluator
-from azure.ai.evaluation._evaluators._workflow_planning._utils import format_workflow_trace_for_eval
+from azure.ai.evaluation._workflows._utils import format_workflow_trace_for_eval
 from azure.ai.evaluation._exceptions import ErrorCategory, EvaluationException
 
 
@@ -48,8 +48,17 @@ def _build_trace_with_repeated_history(repeated_assistant_text: str, second_invo
                             "role": "assistant",
                             "parts": [
                                 {"type": "text", "content": second_invocation_assistant_text},
-                                {"type": "tool_call", "name": "search_docs", "arguments": '{"topic":"dedup"}'},
-                                {"type": "tool_call_response", "response": "doc snippet from tool"},
+                                {
+                                    "type": "tool_call",
+                                    "tool_call_id": "call_search_docs",
+                                    "name": "search_docs",
+                                    "arguments": '{"topic":"dedup"}',
+                                },
+                                {
+                                    "type": "tool_call_response",
+                                    "tool_call_id": "call_search_docs",
+                                    "response": "doc snippet from tool",
+                                },
                             ],
                         },
                         {"role": "user", "parts": [{"type": "text", "content": "Please continue with the plan."}]},
@@ -64,6 +73,23 @@ def _build_trace_with_repeated_history(repeated_assistant_text: str, second_invo
                     ]
                 },
             },
+        ],
+        "errors": [],
+    }
+
+
+def _build_minimal_workflow_trace():
+    return {
+        "topology": {"executors": [{"id": "agent", "type": "assistant"}], "edges": []},
+        "agents": {"agent": {"agent_id": "agent-1", "model": "test", "system_instructions": "", "tool_definitions": []}},
+        "invocations": [
+            {
+                "agent_name": "Agent",
+                "sequence": 1,
+                "system_instructions": ["sys"],
+                "input_messages": {"value": [{"role": "user", "parts": [{"type": "text", "content": "hello"}]}]},
+                "output_messages": {"value": [{"role": "assistant", "parts": [{"type": "text", "content": "world"}]}]},
+            }
         ],
         "errors": [],
     }
@@ -106,8 +132,9 @@ class TestWorkflowPlanningFormatter:
         assert repeated_text not in invocation_two
         assert "[Conversation History: prior-agent context included]" in invocation_two
         assert "Please continue with the plan." in invocation_two
-        assert '[Tool Call] search_docs({"topic":"dedup"})' in invocation_two
-        assert "[Tool Result] doc snippet from tool" in invocation_two
+        assert "[TOOL_CALL]" in invocation_two or "[Tool Call]" in invocation_two
+        assert "search_docs" in invocation_two
+        assert "[TOOL_RESULT] doc snippet from tool" in invocation_two or "[Tool Result] doc snippet from tool" in invocation_two
 
     def test_dedup_enabled_without_duplicate_removal_keeps_default_history_label(self):
         repeated_text = "I already answered this exact sentence."
@@ -121,6 +148,49 @@ class TestWorkflowPlanningFormatter:
 
         assert "[Conversation History: prior-agent context included]" not in invocation_two
         assert "[Conversation History]" in invocation_two
+
+    def test_dedup_removes_repeated_user_prompt_blocks(self):
+        repeated_prompt = "Below I will present you a request."
+        trace = {
+            "topology": {"executors": [{"id": "manager", "type": "assistant"}], "edges": []},
+            "invocations": [
+                {
+                    "agent_name": "Manager",
+                    "sequence": 1,
+                    "system_instructions": ["manager sys"],
+                    "input_messages": {
+                        "value": [
+                            {"role": "user", "parts": [{"type": "text", "content": repeated_prompt}]},
+                            {"role": "user", "parts": [{"type": "text", "content": "Primary hiring request"}]},
+                        ]
+                    },
+                    "output_messages": {
+                        "value": [{"role": "assistant", "parts": [{"type": "text", "content": "Initial manager output"}]}]
+                    },
+                },
+                {
+                    "agent_name": "Manager",
+                    "sequence": 2,
+                    "system_instructions": ["manager sys"],
+                    "input_messages": {
+                        "value": [
+                            {"role": "user", "parts": [{"type": "text", "content": repeated_prompt}]},
+                            {"role": "user", "parts": [{"type": "text", "content": "Continue the workflow"}]},
+                        ]
+                    },
+                    "output_messages": {
+                        "value": [{"role": "assistant", "parts": [{"type": "text", "content": "Second manager output"}]}]
+                    },
+                },
+            ],
+            "errors": [],
+        }
+
+        formatted = format_workflow_trace_for_eval(trace)
+        invocation_two = formatted.split("[Manager - Invocation 2]", maxsplit=1)[1]
+
+        assert repeated_prompt not in invocation_two
+        assert "Continue the workflow" in invocation_two
 
     def test_dedup_removes_tool_calls_and_results_from_prior_agent(self):
         """Tool calls and tool results produced by Agent A should be stripped from Agent B's input."""
@@ -144,13 +214,22 @@ class TestWorkflowPlanningFormatter:
                             {
                                 "role": "assistant",
                                 "parts": [
-                                    {"type": "tool_call", "name": "lookup", "arguments": '{"q":"info"}'},
+                                    {
+                                        "type": "tool_call",
+                                        "tool_call_id": "call_lookup",
+                                        "name": "lookup",
+                                        "arguments": '{"q":"info"}',
+                                    },
                                 ],
                             },
                             {
                                 "role": "tool",
                                 "parts": [
-                                    {"type": "tool_call_response", "response": "lookup result data"},
+                                    {
+                                        "type": "tool_call_response",
+                                        "tool_call_id": "call_lookup",
+                                        "response": "lookup result data",
+                                    },
                                 ],
                             },
                             {
@@ -171,13 +250,22 @@ class TestWorkflowPlanningFormatter:
                             {
                                 "role": "assistant",
                                 "parts": [
-                                    {"type": "tool_call", "name": "lookup", "arguments": '{"q":"info"}'},
+                                    {
+                                        "type": "tool_call",
+                                        "tool_call_id": "call_lookup",
+                                        "name": "lookup",
+                                        "arguments": '{"q":"info"}',
+                                    },
                                 ],
                             },
                             {
                                 "role": "tool",
                                 "parts": [
-                                    {"type": "tool_call_response", "response": "lookup result data"},
+                                    {
+                                        "type": "tool_call_response",
+                                        "tool_call_id": "call_lookup",
+                                        "response": "lookup result data",
+                                    },
                                 ],
                             },
                             {
@@ -204,7 +292,9 @@ class TestWorkflowPlanningFormatter:
         invocation_two = formatted.split("[AgentB - Invocation 2]", maxsplit=1)[1]
 
         # AgentA's tool call, tool result, and text response should all be stripped
-        assert '[Tool Call] lookup({"q":"info"})' not in invocation_two
+        assert "[TOOL_CALL] lookup" not in invocation_two
+        assert "[Tool Call] lookup" not in invocation_two
+        assert "[TOOL_RESULT] lookup result data" not in invocation_two
         assert "[Tool Result] lookup result data" not in invocation_two
         assert "AgentA final answer" not in invocation_two
         # AgentB's own content and user messages should remain
@@ -295,7 +385,7 @@ class TestWorkflowPlanningEvaluator:
             return {"llm_output": {"success": True, "explanation": "ok", "details": {}}}
 
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
-        workflow_trace = {"topology": {}, "invocations": [], "errors": []}
+        workflow_trace = _build_minimal_workflow_trace()
 
         with patch(
             "azure.ai.evaluation._evaluators._workflow_planning._workflow_planning.format_workflow_trace_for_eval",
@@ -364,7 +454,7 @@ class TestWorkflowPlanningEvaluator:
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
         import json
 
-        trace_dict = {"topology": {}, "invocations": [], "errors": []}
+        trace_dict = _build_minimal_workflow_trace()
 
         result = evaluator(workflow_trace=json.dumps(trace_dict))
         assert result[_WorkflowPlanningEvaluator._RESULT_KEY] == 1
@@ -376,7 +466,7 @@ class TestWorkflowPlanningEvaluator:
             return {"llm_output": "unexpected string"}
 
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
-        workflow_trace = {"topology": {}, "invocations": [], "errors": []}
+        workflow_trace = _build_minimal_workflow_trace()
 
         with patch(
             "azure.ai.evaluation._evaluators._workflow_planning._workflow_planning.format_workflow_trace_for_eval",
@@ -394,7 +484,7 @@ class TestWorkflowPlanningEvaluator:
             return {"llm_output": {"success": "true", "explanation": "ok", "details": {}}}
 
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
-        workflow_trace = {"topology": {}, "invocations": [], "errors": []}
+        workflow_trace = _build_minimal_workflow_trace()
 
         with patch(
             "azure.ai.evaluation._evaluators._workflow_planning._workflow_planning.format_workflow_trace_for_eval",
@@ -412,7 +502,7 @@ class TestWorkflowPlanningEvaluator:
             return {"llm_output": {"success": "false", "explanation": "bad", "details": {}}}
 
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
-        workflow_trace = {"topology": {}, "invocations": [], "errors": []}
+        workflow_trace = _build_minimal_workflow_trace()
 
         with patch(
             "azure.ai.evaluation._evaluators._workflow_planning._workflow_planning.format_workflow_trace_for_eval",
@@ -422,6 +512,38 @@ class TestWorkflowPlanningEvaluator:
 
         assert result[_WorkflowPlanningEvaluator._RESULT_KEY] == 0
         assert result["workflow_planning_result"] == "fail"
+
+    def test_empty_workflow_trace_raises_missing_field(self, mock_model_config):
+        evaluator = _WorkflowPlanningEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock()
+
+        workflow_trace = {"topology": {"executors": [], "edges": []}, "agents": {}, "invocations": [], "errors": []}
+
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(workflow_trace=workflow_trace)
+
+        assert exc_info.value.category == ErrorCategory.MISSING_FIELD
+        assert "No traces found" in str(exc_info.value)
+        evaluator._flow.assert_not_called()
+
+    def test_empty_invocations_raises_even_if_other_trace_sections_exist(self, mock_model_config):
+        evaluator = _WorkflowPlanningEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock()
+
+        workflow_trace = {
+            "topology": {"executors": [{"id": "planner", "type": "assistant"}], "edges": []},
+            "agents": {"planner": {"agent_id": "a1", "model": "m", "system_instructions": "sys", "tool_definitions": []}},
+            "raw_traces": [{"target": "invoke_agent", "custom_dimensions": {"gen_ai.agent.name": "planner"}}],
+            "invocations": [],
+            "errors": [],
+        }
+
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(workflow_trace=workflow_trace)
+
+        assert exc_info.value.category == ErrorCategory.MISSING_FIELD
+        assert "No traces found" in str(exc_info.value)
+        evaluator._flow.assert_not_called()
 
 
 @pytest.mark.unittest
@@ -492,7 +614,12 @@ class TestWorkflowPlanningFormatterEdgeCases:
                             {
                                 "role": "assistant",
                                 "parts": [
-                                    {"type": "tool_call", "name": "search", "arguments": '{"q":"test"}'},
+                                    {
+                                        "type": "tool_call",
+                                        "tool_call_id": "call_search",
+                                        "name": "search",
+                                        "arguments": '{"q":"test"}',
+                                    },
                                     # No tool_call_response part
                                 ],
                             }
@@ -503,8 +630,88 @@ class TestWorkflowPlanningFormatterEdgeCases:
             "errors": [],
         }
         formatted = format_workflow_trace_for_eval(trace)
-        assert '[Tool Call] search({"q":"test"})' in formatted
+        assert "[TOOL_CALL]" in formatted or "[Tool Call]" in formatted
+        assert "search(" in formatted
+        assert "[TOOL_RESULT]" not in formatted
         assert "[Tool Result]" not in formatted
+
+    def test_tool_call_with_id_field_is_supported(self):
+        trace = {
+            "topology": {"executors": [], "edges": []},
+            "invocations": [
+                {
+                    "agent_name": "Agent",
+                    "sequence": 1,
+                    "system_instructions": ["sys"],
+                    "input_messages": {"value": [{"role": "user", "parts": [{"type": "text", "content": "search"}]}]},
+                    "output_messages": {
+                        "value": [
+                            {
+                                "role": "assistant",
+                                "parts": [
+                                    {
+                                        "type": "tool_call",
+                                        "id": "call_search_by_id",
+                                        "name": "search",
+                                        "arguments": '{"q":"test"}',
+                                    },
+                                ],
+                            }
+                        ]
+                    },
+                }
+            ],
+            "errors": [],
+        }
+        formatted = format_workflow_trace_for_eval(trace)
+        assert "[TOOL_CALL]" in formatted or "[Tool Call]" in formatted
+        assert "search(" in formatted
+
+    def test_tool_role_part_level_id_is_supported(self):
+        trace = {
+            "topology": {"executors": [], "edges": []},
+            "invocations": [
+                {
+                    "agent_name": "Agent",
+                    "sequence": 1,
+                    "system_instructions": ["sys"],
+                    "input_messages": {"value": [{"role": "user", "parts": [{"type": "text", "content": "search"}]}]},
+                    "output_messages": {
+                        "value": [
+                            {
+                                "role": "assistant",
+                                "parts": [
+                                    {
+                                        "type": "tool_call",
+                                        "id": "call_score_candidate",
+                                        "name": "score_candidate",
+                                        "arguments": '{"candidate_id":"Frank Liu","job_id":"JOB-SWE-2025-001"}',
+                                    },
+                                ],
+                            },
+                            {
+                                "role": "tool",
+                                "parts": [
+                                    {
+                                        "type": "tool_call_response",
+                                        "id": "call_score_candidate",
+                                        "response": "Error: Candidate 'Frank Liu' not found.",
+                                    }
+                                ],
+                            },
+                        ]
+                    },
+                }
+            ],
+            "errors": [],
+        }
+        formatted = format_workflow_trace_for_eval(trace)
+        assert "[TOOL_CALL]" in formatted or "[Tool Call]" in formatted
+        assert "score_candidate(" in formatted
+        assert (
+            "[TOOL_RESULT] Error: Candidate 'Frank Liu' not found." in formatted
+            or "[Tool Result] Error: Candidate 'Frank Liu' not found." in formatted
+        )
 
     def test_multiple_user_inputs_in_single_invocation(self):
         trace = {

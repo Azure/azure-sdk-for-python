@@ -24,7 +24,7 @@ class _WorkflowPlanningEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     planning quality across four dimensions:
 
     - Task Decomposition (dynamic patterns only)
-    - Agent Selection & Routing (dynamic patterns only)
+    - Agent Selection & Routing (dynamic patterns)/Pre-planned Structure Quality (fixed patterns)
     - Progress Tracking & Adaptation
     - Error & Failure Handling
 
@@ -123,6 +123,16 @@ class _WorkflowPlanningEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 message=f"Workflow ended with errors: {workflow_errors}. Workflow Planning evaluation is not applicable.",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.NOT_APPLICABLE,
+                target=ErrorTarget.EVALUATE,
+            )
+
+        has_invocations = bool(workflow_trace.get("invocations"))
+        if not has_invocations:
+            raise EvaluationException(
+                message="No traces found. Workflow Planning evaluation requires non-empty workflow trace evidence.",
+                internal_message="workflow_trace contains no invocations.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.MISSING_FIELD,
                 target=ErrorTarget.EVALUATE,
             )
 

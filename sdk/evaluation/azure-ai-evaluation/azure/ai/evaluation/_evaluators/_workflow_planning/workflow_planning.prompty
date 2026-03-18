@@ -137,13 +137,13 @@ OUTPUT FORMAT
 =============
 Output a JSON object with these keys:
 {
-  "explanation": "<30-80 words summarizing the overall planning quality>",
   "details": {
     "task_decomposition": "<15-40 words, or 'N/A' if not applicable based on trace evidence>",
     "agent_selection": "<15-40 words, or 'N/A' if not applicable based on trace evidence>",
     "progress_tracking": "<15-40 words>",
     "error_handling": "<15-40 words>"
   },
+  "explanation": "<30-80 words summarizing the overall planning quality>",
   "success": <TRUE or FALSE>
 }
 

@@ -87,19 +87,18 @@ def _wf_convert(spans: List[Dict]) -> Dict:
     metadata = _wf_extract_workflow_metadata(build_spans, run_span)
     workflow_def = metadata.get("workflow_definition", {})
 
-    _ = _wf_detect_workflow_type(workflow_def, executor_spans)
     topology = _wf_build_topology(workflow_def)
     agents = _wf_extract_agents(invoke_spans, chat_spans, executor_spans)
     invocations = _wf_extract_invocations(invoke_spans)
 
     return {
-        "parse_failed": False,
         "workflow_id": metadata.get("workflow_id"),
         "workflow_name": metadata.get("workflow_name"),
         "topology": topology,
         "agents": agents,
         "invocations": invocations,
         "errors": errors,
+        "parse_failed": False,
     }
 
 
@@ -232,55 +231,6 @@ def _wf_extract_workflow_metadata(
     return result
 
 
-def _wf_detect_workflow_type(workflow_definition: Dict, executor_spans: List[Dict]) -> str:
-    executor_types: set = set()
-    for exec_info in workflow_definition.get("executors", {}).values():
-        t = exec_info.get("type", "")
-        if t:
-            executor_types.add(t)
-    for span in executor_spans:
-        t = span.get("custom_dimensions", {}).get("executor.type", "")
-        if t:
-            executor_types.add(t)
-    lower_executor_types = {str(t).lower() for t in executor_types if t}
-
-    if any("magentic" in t and "orchestrator" in t for t in lower_executor_types):
-        return "magentic"
-    if any("groupchat" in t or "group_chat" in t for t in lower_executor_types):
-        return "group_chat"
-    if any("handoff" in t for t in lower_executor_types):
-        return "handoff"
-    if any("dispatchtoallparticipants" in t or "dispatch_to_all_participants" in t for t in lower_executor_types):
-        return "concurrent"
-    if any("fanout" in t or "fanin" in t for t in lower_executor_types):
-        return "workflow_dag"
-    for eg in workflow_definition.get("edge_groups", []):
-        if eg.get("type") == "SwitchCaseEdgeGroup":
-            return "workflow_dag"
-    if any(
-        "inputtoconversation" in t or "responsetoconversation" in t or "endwithconversation" in t
-        for t in lower_executor_types
-    ):
-        return "sequential"
-    edges = []
-    for eg in workflow_definition.get("edge_groups", []):
-        if eg.get("type") == "InternalEdgeGroup":
-            continue
-        for e in eg.get("edges", []):
-            edges.append((e.get("source_id"), e.get("target_id")))
-    edge_set = set(edges)
-    has_cycle = any((t, s) in edge_set for s, t in edges)
-    if has_cycle:
-        return "workflow_dag"
-    if {t for t in lower_executor_types if t} <= {"agentexecutor"}:
-        return "workflow_dag"
-    logger.warning(
-        "Could not detect workflow type. Executor types found: %s",
-        executor_types,
-    )
-    return "workflow_dag"
-
-
 def _wf_build_topology(workflow_definition: Dict) -> Dict:
     executors_dict = workflow_definition.get("executors", {})
     edge_groups = workflow_definition.get("edge_groups", [])
@@ -398,13 +348,6 @@ def _wf_merge_chat_span_data(
                         if name and name not in existing:
                             agent["tool_definitions"].append(tool)
                             existing.add(name)
-            if not agent["system_instructions"]:
-                raw_si = cd.get("gen_ai.system_instructions")
-                if raw_si:
-                    parsed_si = _wf_safe_parse_json(raw_si)
-                    text = _wf_extract_text_from_parts(parsed_si)
-                    if text:
-                        agent["system_instructions"] = text
 
 
 def _wf_extract_text_from_parts(value: Any) -> str:
