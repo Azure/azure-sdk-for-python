@@ -1273,7 +1273,7 @@ class ContainerOperations:
     @distributed_trace_async
     async def set_access_policy(
         self,
-        container_acl: _models.SignedIdentifiers,
+        container_acl: Optional[_models.SignedIdentifiers] = None,
         *,
         timeout: Optional[int] = None,
         lease_id: Optional[str] = None,
@@ -1285,7 +1285,7 @@ class ContainerOperations:
         """sets the permissions for the specified container. The permissions indicate whether blobs in a
         container may be accessed publicly.
 
-        :param container_acl: The access control list for the container. Required.
+        :param container_acl: The access control list for the container. Default value is None.
         :type container_acl: ~azure.storage.blob._generated.models.SignedIdentifiers
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -1318,10 +1318,14 @@ class ContainerOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        content_type = content_type if container_acl else None
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = _get_element(container_acl)
+        if container_acl is not None:
+            _content = _get_element(container_acl)
+        else:
+            _content = None
 
         _request = build_container_set_access_policy_request(
             timeout=timeout,
@@ -6494,6 +6498,9 @@ class BlockBlobOperations:
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
         response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
+        response_headers["x-ms-content-crc64"] = self._deserialize(
+            "bytearray", response.headers.get("x-ms-content-crc64")
+        )
         response_headers["x-ms-version-id"] = self._deserialize("str", response.headers.get("x-ms-version-id"))
         response_headers["x-ms-request-server-encrypted"] = self._deserialize(
             "bool", response.headers.get("x-ms-request-server-encrypted")

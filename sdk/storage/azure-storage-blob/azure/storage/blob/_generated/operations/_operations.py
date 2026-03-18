@@ -403,7 +403,7 @@ def build_container_set_access_policy_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
     _url = "?restype=container&comp=acl"
@@ -414,7 +414,8 @@ def build_container_set_access_policy_request(  # pylint: disable=name-too-long
 
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
     if access is not None:
@@ -836,7 +837,7 @@ def build_blob_download_request(
     accept = _headers.pop("Accept", "application/octet-stream")
 
     # Construct URL
-    _url = ""
+    _url = "/"
 
     # Construct parameters
     if snapshot is not None:
@@ -908,7 +909,7 @@ def build_blob_get_properties_request(
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = ""
+    _url = "/"
 
     # Construct parameters
     if snapshot is not None:
@@ -968,7 +969,7 @@ def build_blob_delete_request(
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = ""
+    _url = "/"
 
     # Construct parameters
     if snapshot is not None:
@@ -1584,7 +1585,7 @@ def build_blob_start_copy_from_url_request(  # pylint: disable=too-many-locals
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = ""
+    _url = "/"
 
     # Construct parameters
     if timeout is not None:
@@ -1678,7 +1679,7 @@ def build_blob_copy_from_url_request(  # pylint: disable=too-many-locals
     requires_sync: Literal["true"] = kwargs.pop("requires_sync", _headers.pop("x-ms-requires-sync", "true"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = ""
+    _url = "/"
 
     # Construct parameters
     if timeout is not None:
@@ -1971,7 +1972,7 @@ def build_append_blob_create_request(  # pylint: disable=too-many-locals
     blob_type: Literal["AppendBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "AppendBlob"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = ""
+    _url = "/"
 
     # Construct parameters
     if timeout is not None:
@@ -2327,7 +2328,7 @@ def build_block_blob_upload_request(  # pylint: disable=too-many-locals,too-many
     blob_type: Literal["BlockBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = ""
+    _url = "/"
 
     # Construct parameters
     if timeout is not None:
@@ -2460,7 +2461,7 @@ def build_block_blob_put_blob_from_url_request(  # pylint: disable=name-too-long
     blob_type: Literal["BlockBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = ""
+    _url = "/"
 
     # Construct parameters
     if timeout is not None:
@@ -2972,7 +2973,7 @@ def build_page_blob_create_request(  # pylint: disable=too-many-locals
     blob_type: Literal["PageBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "PageBlob"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = ""
+    _url = "/"
 
     # Construct parameters
     if timeout is not None:
@@ -4783,7 +4784,7 @@ class ContainerOperations:
     @distributed_trace
     def set_access_policy(  # pylint: disable=inconsistent-return-statements
         self,
-        container_acl: _models.SignedIdentifiers,
+        container_acl: Optional[_models.SignedIdentifiers] = None,
         *,
         timeout: Optional[int] = None,
         lease_id: Optional[str] = None,
@@ -4795,7 +4796,7 @@ class ContainerOperations:
         """sets the permissions for the specified container. The permissions indicate whether blobs in a
         container may be accessed publicly.
 
-        :param container_acl: The access control list for the container. Required.
+        :param container_acl: The access control list for the container. Default value is None.
         :type container_acl: ~azure.storage.blob._generated.models.SignedIdentifiers
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -4828,10 +4829,14 @@ class ContainerOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        content_type = content_type if container_acl else None
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = _get_element(container_acl)
+        if container_acl is not None:
+            _content = _get_element(container_acl)
+        else:
+            _content = None
 
         _request = build_container_set_access_policy_request(
             timeout=timeout,
@@ -10010,6 +10015,9 @@ class BlockBlobOperations:
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
         response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
+        response_headers["x-ms-content-crc64"] = self._deserialize(
+            "bytearray", response.headers.get("x-ms-content-crc64")
+        )
         response_headers["x-ms-version-id"] = self._deserialize("str", response.headers.get("x-ms-version-id"))
         response_headers["x-ms-request-server-encrypted"] = self._deserialize(
             "bool", response.headers.get("x-ms-request-server-encrypted")

@@ -755,14 +755,14 @@ class BlobProperties(_Model):
     )
     """The number of tags for the blob."""
     expires_on: Optional[datetime.datetime] = rest_field(
-        name="ExpiresOn",
+        name="expiresOn",
         visibility=["read", "create", "update", "delete", "query"],
         format="rfc7231",
         xml={"attribute": False, "name": "Expiry-Time", "text": False, "unwrapped": False},
     )
     """The expire time of the blob."""
     is_sealed: Optional[bool] = rest_field(
-        name="IsSealed",
+        name="isSealed",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Sealed", "text": False, "unwrapped": False},
     )
@@ -774,14 +774,14 @@ class BlobProperties(_Model):
     )
     """The rehydrate priority of the blob. Known values are: \"High\" and \"Standard\"."""
     last_accessed_on: Optional[datetime.datetime] = rest_field(
-        name="LastAccessedOn",
+        name="lastAccessedOn",
         visibility=["read", "create", "update", "delete", "query"],
         format="rfc7231",
         xml={"attribute": False, "name": "LastAccessTime", "text": False, "unwrapped": False},
     )
     """The last access time of the blob."""
     immutability_policy_expires_on: Optional[datetime.datetime] = rest_field(
-        name="ImmutabilityPolicyExpiresOn",
+        name="immutabilityPolicyExpiresOn",
         visibility=["read", "create", "update", "delete", "query"],
         format="rfc7231",
         xml={"attribute": False, "name": "ImmutabilityPolicyUntilDate", "text": False, "unwrapped": False},
@@ -1269,7 +1269,7 @@ class ContainerProperties(_Model):
     )
     """The default encryption scope of the container."""
     prevent_encryption_scope_override: Optional[bool] = rest_field(
-        name="PreventEncryptionScopeOverride",
+        name="preventEncryptionScopeOverride",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "DenyEncryptionScopeOverride", "text": False, "unwrapped": False},
     )
@@ -1288,7 +1288,7 @@ class ContainerProperties(_Model):
     )
     """The remaining retention days of the container."""
     is_immutable_storage_with_versioning_enabled: Optional[bool] = rest_field(
-        name="IsImmutableStorageWithVersioningEnabled",
+        name="isImmutableStorageWithVersioningEnabled",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "ImmutableStorageWithVersioningEnabled", "text": False, "unwrapped": False},
     )
