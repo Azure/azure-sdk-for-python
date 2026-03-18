@@ -34,7 +34,8 @@ def parse_page_list(page_list: "PageList") -> List["PageRange"]:
     page_ranges = page_list.page_range
     clear_ranges = page_list.clear_range
 
-    # Change in TypeSpec model_base generation, optional properties that are empty will not be set to an empty list but to None
+    # Change in TypeSpec model_base generation
+    # optional properties that are empty will not be set to an empty list but to None
     if page_ranges is None:
         page_ranges = []
     if clear_ranges is None:
