@@ -18,10 +18,7 @@ steps:
         --check="pyright"
         --disable-compatibility-filter
         ${{ parameters.AdditionalTestArgs }}
-    env:
-      TOX_PIP_IMPL: "uv"
-      VIRTUAL_ENV: ""
-      PYTHONHOME: ""
+
     condition: and(succeededOrFailed(), ne(variables['Skip.Pyright'],'true'))
 
   - task: PythonScript@0
@@ -34,8 +31,5 @@ steps:
         --check="verifytypes"
         --disable-compatibility-filter
         ${{ parameters.AdditionalTestArgs }}
-    env:
-      TOX_PIP_IMPL: "uv"
-      VIRTUAL_ENV: ""
-      PYTHONHOME: ""
+
     condition: and(succeededOrFailed(), ne(variables['Skip.Verifytypes'],'true'))
