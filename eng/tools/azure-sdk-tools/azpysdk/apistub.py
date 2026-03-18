@@ -133,7 +133,7 @@ class apistub(Check):
 
             dest_dir = getattr(args, "dest_dir", None)
             if dest_dir:
-                out_token_path = os.path.join(dest_dir, package_name)
+                out_token_path = os.path.join(os.path.abspath(dest_dir), package_name)
                 os.makedirs(out_token_path, exist_ok=True)
             else:
                 out_token_path = os.path.abspath(staging_directory)
