@@ -110,14 +110,9 @@ if "azure-sdk-tools" in content_packages:
     content_packages.remove("azure-sdk-tools")
 content_packages.insert(1, "azure-sdk-tools")
 
-# Put azure-common in front of content package
-if "azure-common" in content_packages:
-    content_packages.remove("azure-common")
-content_packages.insert(2, "azure-common")
-
 if 'azure-core' in content_packages:
     content_packages.remove('azure-core')
-content_packages.insert(3, 'azure-core')
+content_packages.insert(2, 'azure-core')
 
 
 print("Running dev setup...")
