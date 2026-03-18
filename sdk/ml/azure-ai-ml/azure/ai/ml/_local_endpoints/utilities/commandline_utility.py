@@ -12,11 +12,7 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException
 
 
 def _print_command_results(test_passed, time_taken, output):
-    print(
-        "Command {} in {} seconds.".format(
-            "successful" if test_passed else "failed", time_taken
-        )
-    )
+    print("Command {} in {} seconds.".format("successful" if test_passed else "failed", time_taken))
     print("Output: \n{}\n".format(output))
 
 
@@ -37,9 +33,7 @@ def run_cli_command(
     if not custom_environment:
         custom_environment = os.environ
 
-    if (
-        not do_not_print
-    ):  # Avoid printing the az login service principal password, for example
+    if not do_not_print:  # Avoid printing the az login service principal password, for example
         print("Preparing to run CLI command: \n{}\n".format(" ".join(cmd_arguments)))
         print("Current directory: {}".format(os.getcwd()))
 
@@ -63,9 +57,7 @@ def run_cli_command(
         if sys.version_info[0] != 2:
             subprocess_args["timeout"] = timeout
 
-        output = subprocess.check_output(cmd_arguments, **subprocess_args).decode(
-            encoding="UTF-8"
-        )
+        output = subprocess.check_output(cmd_arguments, **subprocess_args).decode(encoding="UTF-8")
 
         time_taken = time.time() - start_time
         if not do_not_print:
