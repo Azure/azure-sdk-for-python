@@ -65,6 +65,25 @@ _SYNC_TO_LEGACY_RESPONSE_KEYS: Dict[str, str] = {
 # Reverse mapping: legacy metric name → sync metric name (built once at module level)
 _LEGACY_TO_SYNC_METRIC_NAMES: Dict[str, str] = {v: k for k, v in _SYNC_TO_LEGACY_METRIC_NAMES.items()}
 
+
+def _normalize_metric_for_endpoint(metric_name, use_legacy_endpoint, metric_display_name=None):
+    """Normalize metric name based on which endpoint is being used.
+
+    Returns (metric_name, metric_display_name) tuple with the correct metric name
+    for the target endpoint, and metric_display_name set to preserve output key names.
+    """
+    metric_name_str = metric_name.value if hasattr(metric_name, "value") else metric_name
+    if use_legacy_endpoint:
+        legacy_name = _SYNC_TO_LEGACY_METRIC_NAMES.get(metric_name_str)
+        if legacy_name:
+            return legacy_name, (metric_display_name or metric_name_str)
+    else:
+        sync_name = _LEGACY_TO_SYNC_METRIC_NAMES.get(metric_name_str)
+        if sync_name:
+            return sync_name, metric_display_name
+    return metric_name, metric_display_name
+
+
 USER_TEXT_TEMPLATE_DICT: Dict[str, Template] = {
     "DEFAULT": Template("<Human>{$query}</><System>{$response}</>"),
 }
@@ -475,7 +494,9 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
                 )
                 result[pm_metric_name + "_model"] = parsed_response["model"] if "model" in parsed_response else ""
             return result
-        # Check for metric_name in response; also check legacy key name if different
+        # Check for metric_name in response; also check legacy response key name if different.
+        # Note: parse_response is only called from legacy endpoint functions (evaluate_with_rai_service
+        # and evaluate_with_rai_service_multimodal), so this fallback is inherently legacy-only.
         response_key = metric_name
         if metric_name not in batch_response[0]:
             legacy_key = _SYNC_TO_LEGACY_RESPONSE_KEYS.get(
@@ -577,7 +598,9 @@ def _parse_content_harm_response(
     }
 
     response = batch_response[0]
-    # Check for metric_name in response; also check legacy key name if different
+    # Check for metric_name in response; also check legacy response key name if different.
+    # Note: _parse_content_harm_response is only called from parse_response, which is
+    # only called from legacy endpoint functions, so this fallback is inherently legacy-only.
     response_key = metric_name
     if metric_name not in response:
         legacy_key = _SYNC_TO_LEGACY_RESPONSE_KEYS.get(
@@ -1082,18 +1105,9 @@ async def evaluate_with_rai_service_sync(
     :return: The EvalRunOutputItem containing the evaluation results (or parsed dict if legacy).
     :rtype: Union[EvalRunOutputItem, Dict[str, Union[str, float]]]
     """
-    # Normalize metric name: the sync evals endpoint and legacy annotation API use different
-    # names for some metrics. Apply the mapping based on which endpoint we're targeting.
-    metric_name_str = metric_name.value if hasattr(metric_name, "value") else metric_name
-    if use_legacy_endpoint:
-        legacy_name = _SYNC_TO_LEGACY_METRIC_NAMES.get(metric_name_str)
-        if legacy_name:
-            metric_display_name = metric_display_name or metric_name_str
-            metric_name = legacy_name
-    else:
-        sync_name = _LEGACY_TO_SYNC_METRIC_NAMES.get(metric_name_str)
-        if sync_name:
-            metric_name = sync_name
+    metric_name, metric_display_name = _normalize_metric_for_endpoint(
+        metric_name, use_legacy_endpoint, metric_display_name
+    )
 
     # Route to legacy endpoint if requested
     if use_legacy_endpoint:
@@ -1312,16 +1326,7 @@ async def evaluate_with_rai_service_sync_multimodal(
     :return: The EvalRunOutputItem or legacy response payload.
     :rtype: Union[Dict, EvalRunOutputItem]
     """
-    # Normalize metric name (same mapping as evaluate_with_rai_service_sync)
-    metric_name_str = metric_name.value if hasattr(metric_name, "value") else metric_name
-    if use_legacy_endpoint:
-        legacy_name = _SYNC_TO_LEGACY_METRIC_NAMES.get(metric_name_str)
-        if legacy_name:
-            metric_name = legacy_name
-    else:
-        sync_name = _LEGACY_TO_SYNC_METRIC_NAMES.get(metric_name_str)
-        if sync_name:
-            metric_name = sync_name
+    metric_name, _ = _normalize_metric_for_endpoint(metric_name, use_legacy_endpoint)
 
     # Route to legacy endpoint if requested
     if use_legacy_endpoint:

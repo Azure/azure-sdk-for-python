@@ -134,9 +134,9 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         # Convert enum to string value
         metric_value = self._eval_metric.value if hasattr(self._eval_metric, "value") else self._eval_metric
 
-        # Legacy path: send entire conversation in a single call (pre-sync-migration behavior)
-        # Route through evaluate_with_rai_service_sync_multimodal so metric name normalization applies.
         if self._use_legacy_endpoint:
+            # Legacy path: send entire conversation in a single call (pre-sync-migration behavior)
+            # Route through evaluate_with_rai_service_sync_multimodal for metric normalization.
             result = await evaluate_with_rai_service_sync_multimodal(
                 messages=messages,
                 metric_name=metric_value,
@@ -144,7 +144,8 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
                 credential=self._credential,
                 use_legacy_endpoint=True,
             )
-            return result
+            # Wrap as single-turn result and aggregate to produce evaluation_per_turn structure
+            return self._aggregate_results([result])
 
         # Sync path: evaluate each turn separately for per-turn granularity
         turns = self._extract_turns(messages)
