@@ -84,4 +84,4 @@ extends:
                     parameters:
                       targetFolder: $(Pipeline.Workspace)/esrp-release/
                       owners: ${{ coalesce(variables['Build.RequestedForEmail'], 'azuresdk@microsoft.com') }}
-                      aprovers: ${{ coalesce(variables['Build.RequestedForEmail'], 'azuresdk@microsoft.com') }}
+                      approvers: ${{ coalesce(variables['Build.RequestedForEmail'], 'azuresdk@microsoft.com') }}
