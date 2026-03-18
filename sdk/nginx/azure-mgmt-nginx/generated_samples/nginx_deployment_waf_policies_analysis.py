@@ -15,7 +15,7 @@ from azure.mgmt.nginx import NginxManagementClient
     pip install azure-identity
     pip install azure-mgmt-nginx
 # USAGE
-    python configurations_create_or_update.py
+    python nginx_deployment_waf_policies_analysis.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.configurations.begin_create_or_update(
+    response = client.nginx_deployment_waf_policies.analysis(
         resource_group_name="myResourceGroup",
         deployment_name="myDeployment",
-        configuration_name="default",
-    ).result()
+        waf_policy_name="myWafPolicy",
+    )
     print(response)
 
 
-# x-ms-original-file: 2025-11-01/Configurations_CreateOrUpdate.json
+# x-ms-original-file: 2025-11-01/NginxDeploymentWafPolicies_Analysis.json
 if __name__ == "__main__":
     main()
