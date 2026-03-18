@@ -73,6 +73,32 @@ _SERVICE_PARAMS = {
     "file": {"primary": "FILEENDPOINT", "secondary": "FILESECONDARYENDPOINT"},
     "dfs": {"primary": "BLOBENDPOINT", "secondary": "BLOBENDPOINT"},
 }
+_ACCOUNT_NAME_SUFFIXES = (
+    "-secondary-dualstack",
+    "-secondary-ipv6",
+    "-secondary",
+    "-dualstack",
+    "-ipv6",
+)
+
+
+def _strip_account_name_suffix(account_name: str) -> str:
+    """Strip any well-known storage endpoint suffix from `account_name`.
+
+    Azure Storage endpoints may include suffixes such as `-secondary`,
+    `-dualstack` or `-ipv6` after the real account name.  This function
+    removes those suffixes so callers always get back the base account name.
+
+    :param account_name: The raw account name segment extracted from a storage
+        endpoint hostname (i.e. everything before the first `.blob.core.`).
+    :type account_name: str
+    :return: The account name with any recognized suffix removed.
+    :rtype: str
+    """
+    for suffix in _ACCOUNT_NAME_SUFFIXES:
+        if account_name.endswith(suffix):
+            return account_name[: -len(suffix)]
+    return account_name
 
 
 class StorageAccountHostsMixin(object):
@@ -106,7 +132,7 @@ class StorageAccountHostsMixin(object):
         service_name = service.split("-")[0]
         account = parsed_url.netloc.split(f".{service_name}.core.")
 
-        self.account_name = account[0] if len(account) > 1 else None
+        self.account_name = _strip_account_name_suffix(account[0]) if len(account) > 1 else None
         if (
             not self.account_name
             and parsed_url.netloc.startswith("localhost")

@@ -299,12 +299,33 @@ class TestStorageClient(StorageRecordedTestCase):
             assert service._client._client._pipeline._transport.connection_config.timeout == 22
             assert default_service._client._client._pipeline._transport.connection_config.timeout in [20, (20, 2000)]
 
+    @pytest.mark.parametrize(
+        "account_url", [
+            "https://my-account.blob.core.windows.net/",
+            "https://my-account-secondary.blob.core.windows.net/",
+            "https://my-account-dualstack.blob.core.windows.net/",
+            "https://my-account-ipv6.blob.core.windows.net/",
+            "https://my-account-secondary-dualstack.blob.core.windows.net/",
+            "https://my-account-secondary-ipv6.blob.core.windows.net/",
+        ]
+    )
     @BlobPreparer()
-    def test_create_service_ipv6(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
+    def test_create_service_ipv6(self, account_url, **kwargs):
+        storage_account_name = "my-account"
         storage_account_key = kwargs.pop("storage_account_key")
 
+        for service_type in SERVICES.keys():
+            service = service_type(
+                account_url,
+                credential=storage_account_key.secret,
+                container_name='foo',
+                blob_name='bar'
+            )
 
+            assert service is not None
+            assert service.scheme == "https"
+            assert service.account_name == storage_account_name
+            assert service.credential.account_key == storage_account_key.secret
 
     # --Connection String Test Cases --------------------------------------------
 

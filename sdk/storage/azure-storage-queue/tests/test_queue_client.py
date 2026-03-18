@@ -235,6 +235,30 @@ class TestStorageQueueClient(StorageRecordedTestCase):
             assert service._client._client._pipeline._transport.connection_config.timeout == 22
             assert default_service._client._client._pipeline._transport.connection_config.timeout in [20, (20, 2000)]
 
+    @pytest.mark.parametrize(
+        "account_url",
+        [
+            "https://my-account.queue.core.windows.net/",
+            "https://my-account-secondary.queue.core.windows.net/",
+            "https://my-account-dualstack.queue.core.windows.net/",
+            "https://my-account-ipv6.queue.core.windows.net/",
+            "https://my-account-secondary-dualstack.queue.core.windows.net/",
+            "https://my-account-secondary-ipv6.queue.core.windows.net/",
+        ],
+    )
+    @QueuePreparer()
+    def test_create_service_ipv6(self, account_url, **kwargs):
+        storage_account_name = "my-account"
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        for service_type in SERVICES.keys():
+            service = service_type(account_url, credential=storage_account_key.secret, queue_name="foo")
+
+            assert service is not None
+            assert service.scheme == "https"
+            assert service.account_name == storage_account_name
+            assert service.credential.account_key == storage_account_key.secret
+
     # --Connection String Test Cases --------------------------------------------
     @QueuePreparer()
     def test_create_service_with_connection_string_key(self, **kwargs):
