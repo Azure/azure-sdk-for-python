@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b49 (2026-03-09)
+## 1.0.0b49 (2026-03-19)
 
 ### Features Added
 - Added a 256kb custom properties truncation limit on specific GenAI attributes
