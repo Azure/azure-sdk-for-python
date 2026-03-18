@@ -8,8 +8,6 @@
 - Add Browser SDK loader SDK Stats feature bit 
   ([#42904](https://github.com/Azure/azure-sdk-for-python/pull/42904))
 
-### Breaking Changes
-
 ### Bugs Fixed
 - Exempt specific GenAI attributes values from custom properties truncation
   ([#45596](https://github.com/Azure/azure-sdk-for-python/pull/45596))
