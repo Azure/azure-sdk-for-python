@@ -159,15 +159,23 @@ class apistub(Check):
                     md_script = os.path.join(REPO_ROOT, "eng", "common", "scripts", "Export-APIViewMarkdown.ps1")
                     logger.info(f"Generating api.md for {package_name}")
                     try:
-                        subprocess.run(
+                        result = subprocess.run(
                             ["pwsh", md_script, "-TokenJsonPath", token_json_path, "-OutputPath", out_token_path],
                             check=True,
+                            capture_output=True,
+                            text=True,
                         )
-                    except (CalledProcessError, FileNotFoundError) as e:
-                        logger.error(f"Failed to generate api.md: {e}")
+                    except FileNotFoundError:
+                        logger.error("Failed to generate api.md: pwsh (PowerShell) is not installed or not on PATH.")
+                    except CalledProcessError as e:
+                        logger.error(f"Failed to generate api.md (exit code {e.returncode}):")
+                        if e.stderr:
+                            logger.error(e.stderr)
+                        if e.stdout:
+                            logger.error(e.stdout)
                         results.append(1)
             except CalledProcessError as e:
-                logger.error(f"{package_name} exited with error {e.returncode}")
+                logger.error(f"{package_name} exited with error {e.returncode}: {e}")
                 results.append(e.returncode)
 
         return max(results) if results else 0
