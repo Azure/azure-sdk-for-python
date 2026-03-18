@@ -46,8 +46,8 @@ class ContentRange:
         :type value: str
         :raises ValueError: If value is None or empty.
         """
-        if value is None:
-            raise ValueError("value cannot be None.")
+        if not value:
+            raise ValueError("value cannot be None or empty.")
         self._value = value
 
     @classmethod
