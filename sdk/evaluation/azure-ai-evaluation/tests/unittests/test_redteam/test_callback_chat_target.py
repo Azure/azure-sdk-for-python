@@ -609,3 +609,139 @@ class TestCallbackResponseValidation:
 
             with pytest.raises(ValueError, match="invalid response"):
                 await target.send_prompt_async(message=mock_request)
+
+
+@pytest.mark.unittest
+class TestCallbackChatTargetBinaryPath:
+    """Tests for binary_path resolution via _resolve_content helper."""
+
+    def test_resolve_content_reads_binary_path_file(self, tmp_path):
+        """binary_path piece with a valid temp file returns file contents."""
+        file = tmp_path / "xpia_context.txt"
+        file.write_text("injected XPIA payload", encoding="utf-8")
+
+        piece = MagicMock()
+        piece.converted_value = str(file)
+        piece.original_value = str(file)
+        piece.converted_value_data_type = "binary_path"
+
+        target = _CallbackChatTarget(callback=AsyncMock())
+        assert target._resolve_content(piece) == "injected XPIA payload"
+
+    def test_resolve_content_falls_back_on_missing_file(self):
+        """Missing binary_path file logs warning and returns the path string."""
+        piece = MagicMock()
+        piece.converted_value = "/nonexistent/path/to/file.txt"
+        piece.original_value = "/nonexistent/path/to/file.txt"
+        piece.converted_value_data_type = "binary_path"
+
+        target = _CallbackChatTarget(callback=AsyncMock())
+        result = target._resolve_content(piece)
+        assert result == "/nonexistent/path/to/file.txt"
+
+    def test_resolve_content_returns_text_as_is(self):
+        """Text data type pieces are returned without file I/O."""
+        piece = MagicMock()
+        piece.converted_value = "plain text prompt"
+        piece.original_value = "plain text prompt"
+        piece.converted_value_data_type = "text"
+
+        target = _CallbackChatTarget(callback=AsyncMock())
+        assert target._resolve_content(piece) == "plain text prompt"
+
+    @pytest.mark.asyncio
+    async def test_binary_path_content_sent_to_callback(self, tmp_path):
+        """Callback receives file *contents* (not the path) for binary_path requests."""
+        file = tmp_path / "context.txt"
+        file.write_text("file content for callback", encoding="utf-8")
+
+        mock_callback = AsyncMock(
+            return_value={
+                "messages": [{"role": "assistant", "content": "ok"}],
+                "stream": False,
+                "session_state": None,
+                "context": {},
+            }
+        )
+
+        target = _CallbackChatTarget(callback=mock_callback, retry_enabled=False)
+
+        mock_piece = MagicMock()
+        mock_piece.id = "piece-1"
+        mock_piece.converted_value = str(file)
+        mock_piece.original_value = str(file)
+        mock_piece.converted_value_data_type = "binary_path"
+        mock_piece.conversation_id = "conv-bp"
+        mock_piece.api_role = "user"
+        mock_piece.role = "user"
+        mock_piece.labels = {}
+
+        mock_request = MagicMock()
+        mock_request.message_pieces = [mock_piece]
+        mock_request.get_piece.return_value = mock_piece
+
+        with patch.object(target, "_memory") as mock_memory, patch(
+            "azure.ai.evaluation.red_team._callback_chat_target.construct_response_from_request"
+        ) as mock_construct:
+            mock_memory.get_conversation.return_value = []
+            mock_construct.return_value = mock_request
+            await target.send_prompt_async(message=mock_request)
+
+        sent_messages = mock_callback.call_args.kwargs["messages"]
+        assert sent_messages[-1]["content"] == "file content for callback"
+
+    @pytest.mark.asyncio
+    async def test_binary_path_in_conversation_history_resolved(self, tmp_path):
+        """Conversation history pieces with binary_path are also resolved to file contents."""
+        file = tmp_path / "history_context.txt"
+        file.write_text("history file content", encoding="utf-8")
+
+        mock_callback = AsyncMock(
+            return_value={
+                "messages": [{"role": "assistant", "content": "ok"}],
+                "stream": False,
+                "session_state": None,
+                "context": {},
+            }
+        )
+
+        target = _CallbackChatTarget(callback=mock_callback, retry_enabled=False)
+
+        # Build a history message with binary_path piece
+        history_piece = MagicMock()
+        history_piece.converted_value = str(file)
+        history_piece.original_value = str(file)
+        history_piece.converted_value_data_type = "binary_path"
+        history_piece.api_role = "user"
+        history_piece.role = "user"
+
+        history_msg = MagicMock()
+        history_msg.message_pieces = [history_piece]
+
+        # Current request (plain text)
+        mock_piece = MagicMock()
+        mock_piece.id = "piece-2"
+        mock_piece.converted_value = "follow-up question"
+        mock_piece.original_value = "follow-up question"
+        mock_piece.converted_value_data_type = "text"
+        mock_piece.conversation_id = "conv-bp-hist"
+        mock_piece.api_role = "user"
+        mock_piece.role = "user"
+        mock_piece.labels = {}
+
+        mock_request = MagicMock()
+        mock_request.message_pieces = [mock_piece]
+        mock_request.get_piece.return_value = mock_piece
+
+        with patch.object(target, "_memory") as mock_memory, patch(
+            "azure.ai.evaluation.red_team._callback_chat_target.construct_response_from_request"
+        ) as mock_construct:
+            mock_memory.get_conversation.return_value = [history_msg]
+            mock_construct.return_value = mock_request
+            await target.send_prompt_async(message=mock_request)
+
+        sent_messages = mock_callback.call_args.kwargs["messages"]
+        # First message is from history — should contain file content, not path
+        assert sent_messages[0]["content"] == "history file content"
+        # Second message is the current plain-text request
+        assert sent_messages[1]["content"] == "follow-up question"
