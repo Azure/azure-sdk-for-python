@@ -78,11 +78,6 @@ with (
             model=os.environ["FOUNDRY_MODEL_NAME"],
             instructions="""You are a student who answers questions from the teacher.
                             When the teacher gives you a question, you answer it using mcp tool.""",
-            # Note: MCP tools in workflows are not currently supported by the service
-            # The service returns: "Runtime type 'Microsoft.Extensions.AI.McpServerToolApprovalRequestContent'
-            # is not supported by polymorphic type 'Microsoft.Extensions.AI.AIContent'"
-            # Keeping this sample for future use when workflow MCP support is added
-            # MCP tool enabled to access Azure REST API specifications via GitHub
             tools=[mcp_tool],
         ),
     )

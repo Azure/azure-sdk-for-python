@@ -59,21 +59,23 @@ with (
 
     tool = CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=["{{analysis_file_id}}"]))
 
+    agent_definition = PromptAgentDefinition(
+        model=os.environ["FOUNDRY_MODEL_NAME"],
+        instructions="You are a helpful assistant.",
+        tools=[tool],
+        structured_inputs={
+            "analysis_file_id": StructuredInputDefinition(
+                description="File id available to the code interpreter",
+                required=True,
+                schema={"type": "string"},
+            ),
+        },
+    )
+
     # Create agent with code interpreter tool
     agent = project_client.agents.create_version(
         agent_name="MyAgent",
-        definition=PromptAgentDefinition(
-            model=os.environ["FOUNDRY_MODEL_NAME"],
-            instructions="You are a helpful assistant.",
-            tools=[tool],
-            structured_inputs={
-                "analysis_file_id": StructuredInputDefinition(
-                    description="File id available to the code interpreter",
-                    required=True,
-                    schema={"type": "string"},
-                ),
-            },
-        ),
+        definition=agent_definition,
         description="Code interpreter agent for data analysis and visualization.",
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
@@ -98,11 +100,9 @@ with (
     print(f"Response completed (id: {response.id})")
 
     # Print code executed by the code interpreter tool.
-    # [START code_output_extraction]
     code = next((output.code for output in response.output if output.type == "code_interpreter_call"), "")
     print("Code Interpreter code:")
     print(code)
-    # [END code_output_extraction]
 
     # Print final assistant text output.
     print(f"Agent response: {response.output_text}")

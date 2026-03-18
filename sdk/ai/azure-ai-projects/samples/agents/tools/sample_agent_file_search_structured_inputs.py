@@ -60,29 +60,31 @@ with (
     # Tool resources are templated and resolved at runtime via structured inputs.
     tool = FileSearchTool(vector_store_ids=["{{vector_store_id}}"])
 
+    agent_definition = PromptAgentDefinition(
+        model=os.environ["FOUNDRY_MODEL_NAME"],
+        instructions=(
+            "You are a helpful assistant that can search through product information. "
+            "The indexed source file id is {{vector_store_file_id}}."
+        ),
+        tools=[tool],
+        structured_inputs={
+            "vector_store_id": StructuredInputDefinition(
+                description="Vector store id used by the file_search tool",
+                required=True,
+                schema={"type": "string"},
+            ),
+            "vector_store_file_id": StructuredInputDefinition(
+                description="File id uploaded into the vector store",
+                required=True,
+                schema={"type": "string"},
+            ),
+        },
+    )
+
     # Create agent with file search tool
     agent = project_client.agents.create_version(
         agent_name="MyAgent",
-        definition=PromptAgentDefinition(
-            model=os.environ["FOUNDRY_MODEL_NAME"],
-            instructions=(
-                "You are a helpful assistant that can search through product information. "
-                "The indexed source file id is {{vector_store_file_id}}."
-            ),
-            tools=[tool],
-            structured_inputs={
-                "vector_store_id": StructuredInputDefinition(
-                    description="Vector store id used by the file_search tool",
-                    required=True,
-                    schema={"type": "string"},
-                ),
-                "vector_store_file_id": StructuredInputDefinition(
-                    description="File id uploaded into the vector store",
-                    required=True,
-                    schema={"type": "string"},
-                ),
-            },
-        ),
+        definition=agent_definition,
         description="File search agent for product information queries.",
     )
 
