@@ -265,7 +265,10 @@ class TestSampleAnalyzeBinary(ContentUnderstandingClientTestBase):
         tests_dir = os.path.dirname(os.path.dirname(__file__))
         file_path = os.path.join(tests_dir, "test_data", "mixed_financial_invoices.pdf")
         if not os.path.exists(file_path):
-            file_path = os.path.join(tests_dir, "test_data", "sample_invoice.pdf")
+            pytest.skip(
+                f"Required multi-page test file not found: {file_path}. "
+                "This test requires 'mixed_financial_docs.pdf' to validate ContentRange scenarios."
+            )
 
         with open(file_path, "rb") as f:
             file_bytes = f.read()
