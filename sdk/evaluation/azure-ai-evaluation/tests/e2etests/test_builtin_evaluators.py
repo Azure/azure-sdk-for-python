@@ -490,8 +490,9 @@ class TestBuiltInEvaluators:
         assert "violence_score" in score
         assert "violence_reason" in score
         assert "evaluation_per_turn" in score
-        assert len(score["evaluation_per_turn"]["violence"]) == 2
-        assert len(score["evaluation_per_turn"]["violence_score"]) == 2
+        # Legacy path sends entire conversation as a single call, so per-turn lists have length 1
+        assert len(score["evaluation_per_turn"]["violence"]) == 1
+        assert len(score["evaluation_per_turn"]["violence_score"]) == 1
         assert score["violence_score"] == 0
         assert all(s == 0 for s in score["evaluation_per_turn"]["violence_score"])
 

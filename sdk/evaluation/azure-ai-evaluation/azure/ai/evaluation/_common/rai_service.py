@@ -1326,7 +1326,7 @@ async def evaluate_with_rai_service_sync_multimodal(
     :return: The EvalRunOutputItem or legacy response payload.
     :rtype: Union[Dict, EvalRunOutputItem]
     """
-    metric_name, _ = _normalize_metric_for_endpoint(metric_name, use_legacy_endpoint)
+    metric_name, metric_display_name = _normalize_metric_for_endpoint(metric_name, use_legacy_endpoint)
 
     # Route to legacy endpoint if requested
     if use_legacy_endpoint:
@@ -1335,6 +1335,7 @@ async def evaluate_with_rai_service_sync_multimodal(
             metric_name=metric_name,
             project_scope=project_scope,
             credential=credential,
+            metric_display_name=metric_display_name,
         )
 
     # Sync evals endpoint implementation (default)
@@ -1383,6 +1384,7 @@ async def evaluate_with_rai_service_multimodal(
     metric_name: str,
     project_scope: Union[str, AzureAIProject],
     credential: TokenCredential,
+    metric_display_name: Optional[str] = None,
 ):
     """Evaluate the content safety of the response using Responsible AI service (legacy endpoint)
     :param messages: The normalized list of messages.
@@ -1394,6 +1396,8 @@ async def evaluate_with_rai_service_multimodal(
     :type project_scope: Union[str, AzureAIProject]
     :param credential: The Azure authentication credential.
     :type credential: ~azure.core.credentials.TokenCredential
+    :param metric_display_name: The display name for the metric in output keys. If None, uses metric_name.
+    :type metric_display_name: Optional[str]
     :return: The parsed annotation result.
     :rtype: List[List[Dict]]
     """
@@ -1408,7 +1412,7 @@ async def evaluate_with_rai_service_multimodal(
         await ensure_service_availability_onedp(client, token, Tasks.CONTENT_HARM)
         operation_id = await submit_multimodal_request_onedp(client, messages, metric_name, token)
         annotation_response = cast(List[Dict], await fetch_result_onedp(client, operation_id, token))
-        result = parse_response(annotation_response, metric_name)
+        result = parse_response(annotation_response, metric_name, metric_display_name)
         return result
     else:
         token = await fetch_or_reuse_token(credential)
@@ -1417,5 +1421,5 @@ async def evaluate_with_rai_service_multimodal(
         # Submit annotation request and fetch result
         operation_id = await submit_multimodal_request(messages, metric_name, rai_svc_url, token)
         annotation_response = cast(List[Dict], await fetch_result(operation_id, rai_svc_url, credential, token))
-        result = parse_response(annotation_response, metric_name)
+        result = parse_response(annotation_response, metric_name, metric_display_name)
         return result
