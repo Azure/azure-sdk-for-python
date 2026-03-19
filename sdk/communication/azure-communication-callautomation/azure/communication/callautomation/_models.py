@@ -1120,7 +1120,7 @@ class TeamsPhoneCallerDetails:
     All required parameters must be populated in order to send to server.
 
     :keyword caller: Caller's ID. Required.
-    :paramtype caller: ~azure.communication.callautomation.models.CommunicationIdentifierModel
+    :paramtype caller: ~azure.communication.callautomation.CommunicationIdentifier
     :keyword name: Caller's name. Required.
     :paramtype name: str
     :keyword phone_number: Caller's phone number. Required.

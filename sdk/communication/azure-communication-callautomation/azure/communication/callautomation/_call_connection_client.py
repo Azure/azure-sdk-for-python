@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines, disable=line-too-long, disable=too-many-locals
+# pylint: disable=too-many-lines,line-too-long,too-many-locals
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
