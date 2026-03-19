@@ -692,7 +692,11 @@ def parse_pyproject(
     include_package_data = get_value_from_dict(toml_dict, "tool.setuptools.include-package-data", True)
     classifiers = project_config.get("classifiers", [])
     keywords = project_config.get("keywords", [])
-    metapackage = False
+
+    # A metapackage has no actual Python source packages (mirroring parse_setup_py behavior).
+    # Detect by checking if there's no packages.find config AND no discoverable namespace with source files.
+    packages_find = get_value_from_dict(toml_dict, "tool.setuptools.packages.find", None)
+    metapackage = packages_find is None and not discovered_namespace
 
     # as of setuptools 74.1 ext_packages and ext_modules are now present in tool.setuptools config namespace
     ext_package = get_value_from_dict(toml_dict, "tool.setuptools.ext-package", None)

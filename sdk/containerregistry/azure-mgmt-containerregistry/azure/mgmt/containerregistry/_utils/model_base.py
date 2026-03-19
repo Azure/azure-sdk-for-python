@@ -515,8 +515,6 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):
         return self._data.setdefault(key, default)
 
     def __eq__(self, other: typing.Any) -> bool:
-        if isinstance(other, _MyMutableMapping):
-            return self._data == other._data
         try:
             other_model = self.__class__(other)
         except Exception:
@@ -630,9 +628,6 @@ class Model(_MyMutableMapping):
                         if len(items) > 0:
                             existed_attr_keys.append(xml_name)
                             dict_to_pass[rf._rest_name] = _deserialize(rf._type, items)
-                        elif not rf._is_optional:
-                            existed_attr_keys.append(xml_name)
-                            dict_to_pass[rf._rest_name] = []
                         continue
 
                     # text element is primitive type
@@ -693,10 +688,6 @@ class Model(_MyMutableMapping):
                 if not rf._rest_name_input:
                     rf._rest_name_input = attr
             cls._attr_to_rest_field: dict[str, _RestField] = dict(attr_to_rest_field.items())
-            cls._backcompat_attr_to_rest_field: dict[str, _RestField] = {
-                Model._get_backcompat_attribute_name(cls._attr_to_rest_field, attr): rf
-                for attr, rf in cls._attr_to_rest_field.items()
-            }
             cls._calculated.add(f"{cls.__module__}.{cls.__qualname__}")
 
         return super().__new__(cls)
@@ -705,16 +696,6 @@ class Model(_MyMutableMapping):
         for base in cls.__bases__:
             if hasattr(base, "__mapping__"):
                 base.__mapping__[discriminator or cls.__name__] = cls  # type: ignore
-
-    @classmethod
-    def _get_backcompat_attribute_name(cls, attr_to_rest_field: dict[str, "_RestField"], attr_name: str) -> str:
-        rest_field_obj = attr_to_rest_field.get(attr_name)  # pylint: disable=protected-access
-        if rest_field_obj is None:
-            return attr_name
-        original_tsp_name = getattr(rest_field_obj, "_original_tsp_name", None)  # pylint: disable=protected-access
-        if original_tsp_name:
-            return original_tsp_name
-        return attr_name
 
     @classmethod
     def _get_discriminator(cls, exist_discriminators) -> typing.Optional["_RestField"]:
@@ -827,14 +808,6 @@ def _deserialize_multiple_sequence(
     return type(obj)(_deserialize(deserializer, entry, module) for entry, deserializer in zip(obj, entry_deserializers))
 
 
-def _is_array_encoded_deserializer(deserializer: functools.partial) -> bool:
-    return (
-        isinstance(deserializer, functools.partial)
-        and isinstance(deserializer.args[0], functools.partial)
-        and deserializer.args[0].func == _deserialize_array_encoded  # pylint: disable=comparison-with-callable
-    )
-
-
 def _deserialize_sequence(
     deserializer: typing.Optional[typing.Callable],
     module: typing.Optional[str],
@@ -844,19 +817,17 @@ def _deserialize_sequence(
         return obj
     if isinstance(obj, ET.Element):
         obj = list(obj)
-
-    # encoded string may be deserialized to sequence
-    if isinstance(obj, str) and isinstance(deserializer, functools.partial):
-        # for list[str]
-        if _is_array_encoded_deserializer(deserializer):
+    try:
+        if (
+            isinstance(obj, str)
+            and isinstance(deserializer, functools.partial)
+            and isinstance(deserializer.args[0], functools.partial)
+            and deserializer.args[0].func == _deserialize_array_encoded  # pylint: disable=comparison-with-callable
+        ):
+            # encoded string may be deserialized to sequence
             return deserializer(obj)
-
-        # for list[Union[...]]
-        if isinstance(deserializer.args[0], list):
-            for sub_deserializer in deserializer.args[0]:
-                if _is_array_encoded_deserializer(sub_deserializer):
-                    return sub_deserializer(obj)
-
+    except:  # pylint: disable=bare-except
+        pass
     return type(obj)(_deserialize(deserializer, entry, module) for entry in obj)
 
 
@@ -908,8 +879,6 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-retur
     # is it optional?
     try:
         if any(a is _NONE_TYPE for a in annotation.__args__):  # pyright: ignore
-            if rf:
-                rf._is_optional = True
             if len(annotation.__args__) <= 2:  # pyright: ignore
                 if_obj_deserializer = _get_deserialize_callable_from_annotation(
                     next(a for a in annotation.__args__ if a is not _NONE_TYPE), module, rf  # pyright: ignore
@@ -1002,20 +971,16 @@ def _deserialize_with_callable(
                 return float(value.text) if value.text else None
             if deserializer is bool:
                 return value.text == "true" if value.text else None
-            if deserializer and deserializer in _DESERIALIZE_MAPPING.values():
-                return deserializer(value.text) if value.text else None
-            if deserializer and deserializer in _DESERIALIZE_MAPPING_WITHFORMAT.values():
-                return deserializer(value.text) if value.text else None
         if deserializer is None:
             return value
         if deserializer in [int, float, bool]:
             return deserializer(value)
         if isinstance(deserializer, CaseInsensitiveEnumMeta):
             try:
-                return deserializer(value.text if isinstance(value, ET.Element) else value)
+                return deserializer(value)
             except ValueError:
                 # for unknown value, return raw value
-                return value.text if isinstance(value, ET.Element) else value
+                return value
         if isinstance(deserializer, type) and issubclass(deserializer, Model):
             return deserializer._deserialize(value, [])
         return typing.cast(typing.Callable[[typing.Any], typing.Any], deserializer)(value)
@@ -1048,7 +1013,7 @@ def _failsafe_deserialize(
 ) -> typing.Any:
     try:
         return _deserialize(deserializer, response.json(), module, rf, format)
-    except Exception:  # pylint: disable=broad-except
+    except DeserializationError:
         _LOGGER.warning(
             "Ran into a deserialization error. Ignoring since this is failsafe deserialization", exc_info=True
         )
@@ -1061,14 +1026,13 @@ def _failsafe_deserialize_xml(
 ) -> typing.Any:
     try:
         return _deserialize_xml(deserializer, response.text())
-    except Exception:  # pylint: disable=broad-except
+    except DeserializationError:
         _LOGGER.warning(
             "Ran into a deserialization error. Ignoring since this is failsafe deserialization", exc_info=True
         )
         return None
 
 
-# pylint: disable=too-many-instance-attributes
 class _RestField:
     def __init__(
         self,
@@ -1081,7 +1045,6 @@ class _RestField:
         format: typing.Optional[str] = None,
         is_multipart_file_input: bool = False,
         xml: typing.Optional[dict[str, typing.Any]] = None,
-        original_tsp_name: typing.Optional[str] = None,
     ):
         self._type = type
         self._rest_name_input = name
@@ -1089,12 +1052,10 @@ class _RestField:
         self._is_discriminator = is_discriminator
         self._visibility = visibility
         self._is_model = False
-        self._is_optional = False
         self._default = default
         self._format = format
         self._is_multipart_file_input = is_multipart_file_input
         self._xml = xml if xml is not None else {}
-        self._original_tsp_name = original_tsp_name
 
     @property
     def _class_type(self) -> typing.Any:
@@ -1173,7 +1134,6 @@ def rest_field(
     format: typing.Optional[str] = None,
     is_multipart_file_input: bool = False,
     xml: typing.Optional[dict[str, typing.Any]] = None,
-    original_tsp_name: typing.Optional[str] = None,
 ) -> typing.Any:
     return _RestField(
         name=name,
@@ -1183,7 +1143,6 @@ def rest_field(
         format=format,
         is_multipart_file_input=is_multipart_file_input,
         xml=xml,
-        original_tsp_name=original_tsp_name,
     )
 
 
