@@ -3,7 +3,8 @@
 ## 1.8.7 (2026-03-20)
 
 ### Features Added
-- Add Browser SDK loader feature ([#42904](https://github.com/Azure/azure-sdk-for-python/pull/44162))
+- Add Browser SDK loader feature
+  ([#42904](https://github.com/Azure/azure-sdk-for-python/pull/42904))
 
 ### Other Changes
 - Change import path for `LoggingHandler` to accommodate upstream breaking changes
