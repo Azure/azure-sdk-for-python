@@ -39,6 +39,7 @@ from ._projects_operations import ProjectsOperations  # type: ignore
 from ._account_connections_operations import AccountConnectionsOperations  # type: ignore
 from ._project_connections_operations import ProjectConnectionsOperations  # type: ignore
 from ._account_capability_hosts_operations import AccountCapabilityHostsOperations  # type: ignore
+from ._computes_operations import ComputesOperations  # type: ignore
 from ._project_capability_hosts_operations import ProjectCapabilityHostsOperations  # type: ignore
 from ._quota_tiers_operations import QuotaTiersOperations  # type: ignore
 
@@ -72,6 +73,7 @@ __all__ = [
     "AccountConnectionsOperations",
     "ProjectConnectionsOperations",
     "AccountCapabilityHostsOperations",
+    "ComputesOperations",
     "ProjectCapabilityHostsOperations",
     "QuotaTiersOperations",
 ]

@@ -26,6 +26,7 @@ from .operations import (
     AccountsOperations,
     CommitmentPlansOperations,
     CommitmentTiersOperations,
+    ComputesOperations,
     DefenderForAISettingsOperations,
     DeletedAccountsOperations,
     DeploymentsOperations,
@@ -92,6 +93,8 @@ class CognitiveServicesManagementClient(
     :vartype commitment_plans: azure.mgmt.cognitiveservices.operations.CommitmentPlansOperations
     :ivar encryption_scopes: EncryptionScopesOperations operations
     :vartype encryption_scopes: azure.mgmt.cognitiveservices.operations.EncryptionScopesOperations
+    :ivar computes: ComputesOperations operations
+    :vartype computes: azure.mgmt.cognitiveservices.operations.ComputesOperations
     :ivar rai_policies: RaiPoliciesOperations operations
     :vartype rai_policies: azure.mgmt.cognitiveservices.operations.RaiPoliciesOperations
     :ivar rai_blocklists: RaiBlocklistsOperations operations
@@ -219,6 +222,7 @@ class CognitiveServicesManagementClient(
         self.encryption_scopes = EncryptionScopesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.computes = ComputesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.rai_policies = RaiPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.rai_blocklists = RaiBlocklistsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.rai_blocklist_items = RaiBlocklistItemsOperations(

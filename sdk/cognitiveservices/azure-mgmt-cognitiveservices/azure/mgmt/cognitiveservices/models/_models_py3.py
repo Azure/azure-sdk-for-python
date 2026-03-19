@@ -2815,6 +2815,178 @@ class CommitmentTierListResult(_serialization.Model):
         self.value: Optional[list["_models.CommitmentTier"]] = None
 
 
+class Compute(ProxyResource):
+    """Cognitive Services compute cluster resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
+    :ivar properties: Properties of Cognitive Services compute.
+    :vartype properties: ~azure.mgmt.cognitiveservices.models.ComputeProperties
+    :ivar etag: Resource Etag.
+    :vartype etag: str
+    :ivar location: The location of the compute resource.
+    :vartype location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar kind: The kind (type) of compute resource.
+    :vartype kind: str
+    :ivar identity: Identity for the resource.
+    :vartype identity: ~azure.mgmt.cognitiveservices.models.Identity
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "etag": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "ComputeProperties"},
+        "etag": {"key": "etag", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "kind": {"key": "kind", "type": "str"},
+        "identity": {"key": "identity", "type": "Identity"},
+    }
+
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ComputeProperties"] = None,
+        location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
+        kind: Optional[str] = None,
+        identity: Optional["_models.Identity"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword properties: Properties of Cognitive Services compute.
+        :paramtype properties: ~azure.mgmt.cognitiveservices.models.ComputeProperties
+        :keyword location: The location of the compute resource.
+        :paramtype location: str
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword kind: The kind (type) of compute resource.
+        :paramtype kind: str
+        :keyword identity: Identity for the resource.
+        :paramtype identity: ~azure.mgmt.cognitiveservices.models.Identity
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+        self.etag: Optional[str] = None
+        self.location = location
+        self.tags = tags
+        self.kind = kind
+        self.identity = identity
+
+
+class ComputeListResult(_serialization.Model):
+    """The list of cognitive services computes operation response.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar next_link: The link used to get the next page of compute resources.
+    :vartype next_link: str
+    :ivar value: Gets the list of Cognitive Services computes and their properties.
+    :vartype value: list[~azure.mgmt.cognitiveservices.models.Compute]
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[Compute]"},
+    }
+
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: The link used to get the next page of compute resources.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.next_link = next_link
+        self.value: Optional[list["_models.Compute"]] = None
+
+
+class ComputeProperties(_serialization.Model):
+    """Properties of a compute resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar pools: Pools attached to this compute cluster. Required.
+    :vartype pools: list[~azure.mgmt.cognitiveservices.models.Pool]
+    :ivar subnet_arm_id: ARM ID of the subnet used for compute.
+    :vartype subnet_arm_id: str
+    :ivar location: Location of the compute resource. Required.
+    :vartype location: str
+    :ivar provisioning_state: Provisioning state of the compute resource. Known values are:
+     "Accepted", "Succeeded", "Failed", "Canceled", "Deleting", "Scaling", and "Disabled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.cognitiveservices.models.ComputeProvisioningState
+    :ivar errors: Error details for the compute resource.
+    :vartype errors: list[~azure.mgmt.cognitiveservices.models.RootError]
+    :ivar creation_time: Creation time of the compute resource.
+    :vartype creation_time: ~datetime.datetime
+    """
+
+    _validation = {
+        "pools": {"required": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "errors": {"readonly": True},
+        "creation_time": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "pools": {"key": "pools", "type": "[Pool]"},
+        "subnet_arm_id": {"key": "subnetArmId", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "errors": {"key": "errors", "type": "[RootError]"},
+        "creation_time": {"key": "creationTime", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self, *, pools: list["_models.Pool"], location: str, subnet_arm_id: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword pools: Pools attached to this compute cluster. Required.
+        :paramtype pools: list[~azure.mgmt.cognitiveservices.models.Pool]
+        :keyword subnet_arm_id: ARM ID of the subnet used for compute.
+        :paramtype subnet_arm_id: str
+        :keyword location: Location of the compute resource. Required.
+        :paramtype location: str
+        """
+        super().__init__(**kwargs)
+        self.pools = pools
+        self.subnet_arm_id = subnet_arm_id
+        self.location = location
+        self.provisioning_state: Optional[Union[str, "_models.ComputeProvisioningState"]] = None
+        self.errors: Optional[list["_models.RootError"]] = None
+        self.creation_time: Optional[datetime.datetime] = None
+
+
 class ConnectionAccessKey(_serialization.Model):
     """ConnectionAccessKey.
 
@@ -6491,6 +6663,62 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
         self.actions_required = actions_required
 
 
+class Pool(_serialization.Model):
+    """Compute pool configuration.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar name: Pool name identifier. Required.
+    :vartype name: str
+    :ivar vm_priority: Priority of VM instances in this pool. Known values are: "Regular" and
+     "Spot".
+    :vartype vm_priority: str or ~azure.mgmt.cognitiveservices.models.VmPriority
+    :ivar instance_type: VM size for this pool. Required.
+    :vartype instance_type: str
+    :ivar node_count: Number of nodes in this pool. Required.
+    :vartype node_count: int
+    """
+
+    _validation = {
+        "name": {"required": True},
+        "instance_type": {"required": True},
+        "node_count": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "vm_priority": {"key": "vmPriority", "type": "str"},
+        "instance_type": {"key": "instanceType", "type": "str"},
+        "node_count": {"key": "nodeCount", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        instance_type: str,
+        node_count: int,
+        vm_priority: Optional[Union[str, "_models.VmPriority"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: Pool name identifier. Required.
+        :paramtype name: str
+        :keyword vm_priority: Priority of VM instances in this pool. Known values are: "Regular" and
+         "Spot".
+        :paramtype vm_priority: str or ~azure.mgmt.cognitiveservices.models.VmPriority
+        :keyword instance_type: VM size for this pool. Required.
+        :paramtype instance_type: str
+        :keyword node_count: Number of nodes in this pool. Required.
+        :paramtype node_count: int
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.vm_priority = vm_priority
+        self.instance_type = instance_type
+        self.node_count = node_count
+
+
 class Project(AzureEntityResource):
     """Cognitive Services project is an Azure resource representing the provisioned account's project,
     it's type, location and SKU.
@@ -8050,6 +8278,32 @@ class ResourceSkuRestrictions(_serialization.Model):
         self.values = values
         self.restriction_info = restriction_info
         self.reason_code = reason_code
+
+
+class RootError(_serialization.Model):
+    """Error details associated with compute resource operations.
+
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message.
+    :vartype message: str
+    """
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+    }
+
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword code: Error code.
+        :paramtype code: str
+        :keyword message: Error message.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
+        self.code = code
+        self.message = message
 
 
 class SASAuthTypeConnectionProperties(ConnectionPropertiesV2):

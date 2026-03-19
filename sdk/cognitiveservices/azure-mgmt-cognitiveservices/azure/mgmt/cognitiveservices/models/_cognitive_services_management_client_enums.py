@@ -59,6 +59,18 @@ class CommitmentPlanProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMe
     CANCELED = "Canceled"
 
 
+class ComputeProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of a compute resource."""
+
+    ACCEPTED = "Accepted"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    DELETING = "Deleting"
+    SCALING = "Scaling"
+    DISABLED = "Disabled"
+
+
 class ConnectionAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Authentication type of the connection target."""
 
@@ -514,3 +526,10 @@ class UpgradeAvailabilityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AVAILABLE = "Available"
     NOT_AVAILABLE = "NotAvailable"
+
+
+class VmPriority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """VM priority for a compute pool."""
+
+    REGULAR = "Regular"
+    SPOT = "Spot"
