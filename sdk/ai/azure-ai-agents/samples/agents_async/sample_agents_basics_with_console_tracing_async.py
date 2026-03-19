@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -37,6 +38,7 @@ from azure.ai.agents.models import ListSortOrder
 from azure.identity.aio import DefaultAzureCredential
 
 from azure.core.settings import settings
+
 settings.tracing_implementation = "opentelemetry"
 
 # Install opentelemetry with command "pip install azure-ai-projects opentelemetry-sdk".
@@ -53,6 +55,7 @@ trace.set_tracer_provider(tracer_provider)
 tracer = trace.get_tracer(__name__)
 
 from azure.ai.agents.telemetry import AIAgentsInstrumentor
+
 AIAgentsInstrumentor().instrument()
 
 
@@ -80,7 +83,9 @@ async def main() -> None:
                 thread = await project_client.agents.threads.create()
                 print(f"Created thread, thread ID: {thread.id}")
 
-                message = await project_client.agents.messages.create(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+                message = await project_client.agents.messages.create(
+                    thread_id=thread.id, role="user", content="Hello, tell me a joke"
+                )
                 print(f"Created message, message ID: {message.id}")
 
                 run = await project_client.agents.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)

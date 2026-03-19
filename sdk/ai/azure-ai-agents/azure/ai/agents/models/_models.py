@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -131,13 +132,12 @@ class Agent(_Model):
     :ivar tools: The collection of tools enabled for the agent. Required.
     :vartype tools: list[~azure.ai.agents.models.ToolDefinition]
     :ivar tool_resources: A set of resources that are used by the agent's tools. The resources are
-     specific to the type of tool. For example, the ``code_interpreter``
-     tool requires a list of file IDs, while the ``file_search`` tool requires a list of vector
-     store IDs. Required.
+     specific to the type of tool. For example, the ``code_interpreter`` tool requires a list of
+     file IDs, while the ``file_search`` tool requires a list of vector store IDs. Required.
     :vartype tool_resources: ~azure.ai.agents.models.ToolResources
     :ivar temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
-     will make the output more random,
-     while lower values like 0.2 will make it more focused and deterministic. Required.
+     will make the output more random, while lower values like 0.2 will make it more focused and
+     deterministic. Required.
     :vartype temperature: float
     :ivar top_p: An alternative to sampling with temperature, called nucleus sampling, where the
      model considers the results of the tokens with top_p probability mass.
@@ -177,13 +177,11 @@ class Agent(_Model):
     """The collection of tools enabled for the agent. Required."""
     tool_resources: "_models.ToolResources" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A set of resources that are used by the agent's tools. The resources are specific to the type
-     of tool. For example, the ``code_interpreter``
-     tool requires a list of file IDs, while the ``file_search`` tool requires a list of vector
-     store IDs. Required."""
+     of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while the
+     ``file_search`` tool requires a list of vector store IDs. Required."""
     temperature: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output
-     more random,
-     while lower values like 0.2 will make it more focused and deterministic. Required."""
+     more random, while lower values like 0.2 will make it more focused and deterministic. Required."""
     top_p: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An alternative to sampling with temperature, called nucleus sampling, where the model considers
      the results of the tokens with top_p probability mass.
@@ -357,8 +355,8 @@ class AgentsNamedToolChoice(_Model):
 
 class AgentsResponseFormat(_Model):
     """An object describing the expected output of the model. If ``json_object`` only ``function``
-    type ``tools`` are allowed to be passed to the Run.
-    If ``text`` the model can return text or any value needed.
+    type ``tools`` are allowed to be passed to the Run. If ``text`` the model can return text or
+    any value needed.
 
     :ivar type: Must be one of ``text`` or ``json_object``. Known values are: "text" and
      "json_object".
@@ -399,10 +397,9 @@ class AgentThread(_Model):
      Required.
     :vartype created_at: ~datetime.datetime
     :ivar tool_resources: A set of resources that are made available to the agent's tools in this
-     thread. The resources are specific to the type
-     of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while the
-     ``file_search`` tool requires a list
-     of vector store IDs. Required.
+     thread. The resources are specific to the type of tool. For example, the ``code_interpreter``
+     tool requires a list of file IDs, while the ``file_search`` tool requires a list of vector
+     store IDs. Required.
     :vartype tool_resources: ~azure.ai.agents.models.ToolResources
     :ivar metadata: A set of up to 16 key/value pairs that can be attached to an object, used for
      storing additional information about that object in a structured format. Keys may be up to 64
@@ -420,10 +417,8 @@ class AgentThread(_Model):
     """The Unix timestamp, in seconds, representing when this object was created. Required."""
     tool_resources: "_models.ToolResources" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A set of resources that are made available to the agent's tools in this thread. The resources
-     are specific to the type
-     of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while the
-     ``file_search`` tool requires a list
-     of vector store IDs. Required."""
+     are specific to the type of tool. For example, the ``code_interpreter`` tool requires a list of
+     file IDs, while the ``file_search`` tool requires a list of vector store IDs. Required."""
     metadata: dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A set of up to 16 key/value pairs that can be attached to an object, used for storing
      additional information about that object in a structured format. Keys may be up to 64
@@ -457,10 +452,9 @@ class AgentThreadCreationOptions(_Model):
     :ivar messages: The initial messages to associate with the new thread.
     :vartype messages: list[~azure.ai.agents.models.ThreadMessageOptions]
     :ivar tool_resources: A set of resources that are made available to the agent's tools in this
-     thread. The resources are specific to the
-     type of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while the
-     ``file_search`` tool requires
-     a list of vector store IDs.
+     thread. The resources are specific to the type of tool. For example, the ``code_interpreter``
+     tool requires a list of file IDs, while the ``file_search`` tool requires a list of vector
+     store IDs.
     :vartype tool_resources: ~azure.ai.agents.models.ToolResources
     :ivar metadata: A set of up to 16 key/value pairs that can be attached to an object, used for
      storing additional information about that object in a structured format. Keys may be up to 64
@@ -476,10 +470,8 @@ class AgentThreadCreationOptions(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """A set of resources that are made available to the agent's tools in this thread. The resources
-     are specific to the
-     type of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while the
-     ``file_search`` tool requires
-     a list of vector store IDs."""
+     are specific to the type of tool. For example, the ``code_interpreter`` tool requires a list of
+     file IDs, while the ``file_search`` tool requires a list of vector store IDs."""
     metadata: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A set of up to 16 key/value pairs that can be attached to an object, used for storing
      additional information about that object in a structured format. Keys may be up to 64
@@ -666,8 +658,8 @@ class AzureAISearchToolResource(_Model):
     index_list: Optional[list["_models.AISearchIndexResource"]] = rest_field(
         name="indexes", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The indices attached to this agent. There can be a maximum of 1 index
-     resource attached to the agent."""
+    """The indices attached to this agent. There can be a maximum of 1 index resource attached to the
+     agent."""
 
     @overload
     def __init__(
@@ -808,8 +800,7 @@ class AzureFunctionStorageQueue(_Model):
 
 class AzureFunctionToolCallDetails(_Model):
     """The Azure function call description. All the fields are present in the completed run step,
-    however
-    only some fields are present in the RunStepDeltaAzureFunctionToolCall.
+    however only some fields are present in the RunStepDeltaAzureFunctionToolCall.
 
     :ivar name: The Azure function name.
     :vartype name: str
@@ -905,29 +896,27 @@ class BingCustomSearchConfiguration(_Model):
      subject to change.
     :vartype market: str
     :ivar set_lang: The language to use for user interface strings. You may specify the language
-     using either a 2-letter or 4-letter code. Using 4-letter codes is preferred.
-     For a list of supported language codes, see `Bing supported languages
+     using either a 2-letter or 4-letter code. Using 4-letter codes is preferred. For a list of
+     supported language codes, see `Bing supported languages
      <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/market-codes#bing-supported-language-codes>`_.
      Bing loads the localized strings if this parameter contains a valid 2-letter neutral culture
      code (for example ``fr``) or a valid 4-letter specific culture code (``fr-ca``). For example,
-     for ``fr-ca``, Bing loads the ``fr`` neutral culture code strings.
-     If the parameter is not valid (for example, ``zh``) or Bing doesn’t support the language (for
-     example, ``af``, ``af-na``), Bing defaults to ``en`` (English).
-     To specify the 2-letter code, set this parameter to an ISO 639-1 language code.
-     To specify the 4-letter code, use the form ``<language>-<country/region>`` where ``<language>``
-     is an ISO 639-1 language code (neutral culture) and ``<country/region>`` is an ISO 3166
-     country/region (specific culture) code. For example, use ``en-US`` for United States English.
-     Although optional, you should always specify the language. Typically, you set this parameter to
-     the same language specified by the market value unless the user wants the user interface
-     strings displayed in a different language.
+     for ``fr-ca``, Bing loads the ``fr`` neutral culture code strings. If the parameter is not
+     valid (for example, ``zh``) or Bing doesn’t support the language (for example, ``af``,
+     ``af-na``), Bing defaults to ``en`` (English). To specify the 2-letter code, set this parameter
+     to an ISO 639-1 language code. To specify the 4-letter code, use the form
+     ``<language>-<country/region>`` where ``<language>`` is an ISO 639-1 language code (neutral
+     culture) and ``<country/region>`` is an ISO 3166 country/region (specific culture) code. For
+     example, use ``en-US`` for United States English. Although optional, you should always specify
+     the language. Typically, you set this parameter to the same language specified by the market
+     value unless the user wants the user interface strings displayed in a different language.
     :vartype set_lang: str
     :ivar count: The number of search results to return in the response. The default is 5 and the
      maximum value is 50. The actual number delivered may be less than requested.
 
      * It is possible for multiple pages to include some overlap in results.
-     * This parameter affects only web page results. It's possible that AI model might not use all
-       search results returned by Bing.
-
+     * This parameter affects only web page results. It's possible that AI model might not use
+       all search results returned by Bing.
     :vartype count: int
     :ivar freshness: Filter search results by the following case-insensitive age values:
 
@@ -937,7 +926,6 @@ class BingCustomSearchConfiguration(_Model):
        discovered by Bing during a specific timeframe, specify a date range in the form:
        `YYYY-MM-DD..YYYY-MM-DD`. For example, `freshness=2019-02-01..2019-05-30. To limit the results
        to a single date, set this parameter to a specific date. For example, freshness=2019-02-04`.
-
     :vartype freshness: str
     """
 
@@ -960,39 +948,36 @@ class BingCustomSearchConfiguration(_Model):
      subject to change."""
     set_lang: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The language to use for user interface strings. You may specify the language using either a
-     2-letter or 4-letter code. Using 4-letter codes is preferred.
-     For a list of supported language codes, see `Bing supported languages
+     2-letter or 4-letter code. Using 4-letter codes is preferred. For a list of supported language
+     codes, see `Bing supported languages
      <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/market-codes#bing-supported-language-codes>`_.
      Bing loads the localized strings if this parameter contains a valid 2-letter neutral culture
      code (for example ``fr``) or a valid 4-letter specific culture code (``fr-ca``). For example,
-     for ``fr-ca``, Bing loads the ``fr`` neutral culture code strings.
-     If the parameter is not valid (for example, ``zh``) or Bing doesn’t support the language (for
-     example, ``af``, ``af-na``), Bing defaults to ``en`` (English).
-     To specify the 2-letter code, set this parameter to an ISO 639-1 language code.
-     To specify the 4-letter code, use the form ``<language>-<country/region>`` where ``<language>``
-     is an ISO 639-1 language code (neutral culture) and ``<country/region>`` is an ISO 3166
-     country/region (specific culture) code. For example, use ``en-US`` for United States English.
-     Although optional, you should always specify the language. Typically, you set this parameter to
-     the same language specified by the market value unless the user wants the user interface
-     strings displayed in a different language."""
+     for ``fr-ca``, Bing loads the ``fr`` neutral culture code strings. If the parameter is not
+     valid (for example, ``zh``) or Bing doesn’t support the language (for example, ``af``,
+     ``af-na``), Bing defaults to ``en`` (English). To specify the 2-letter code, set this parameter
+     to an ISO 639-1 language code. To specify the 4-letter code, use the form
+     ``<language>-<country/region>`` where ``<language>`` is an ISO 639-1 language code (neutral
+     culture) and ``<country/region>`` is an ISO 3166 country/region (specific culture) code. For
+     example, use ``en-US`` for United States English. Although optional, you should always specify
+     the language. Typically, you set this parameter to the same language specified by the market
+     value unless the user wants the user interface strings displayed in a different language."""
     count: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of search results to return in the response. The default is 5 and the maximum value
-     is 50. The actual number delivered may be less than requested.
-     
-     * It is possible for multiple pages to include some overlap in results.
-     * This parameter affects only web page results. It's possible that AI model might not use all
-       search results returned by Bing.
-    """
+      is 50. The actual number delivered may be less than requested.
+ 
+      * It is possible for multiple pages to include some overlap in results.
+      * This parameter affects only web page results. It's possible that AI model might not use
+        all search results returned by Bing."""
     freshness: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Filter search results by the following case-insensitive age values:
-     
-     * Day: Return webpages that Bing discovered within the last 24 hours.
-     * Week: Return webpages that Bing discovered within the last 7 days.
-     * Month: Return webpages that Bing discovered within the last 30 days. To get articles
-       discovered by Bing during a specific timeframe, specify a date range in the form:
-       `YYYY-MM-DD..YYYY-MM-DD`. For example, `freshness=2019-02-01..2019-05-30. To limit the results
-       to a single date, set this parameter to a specific date. For example, freshness=2019-02-04`.
-    """
+ 
+      * Day: Return webpages that Bing discovered within the last 24 hours.
+      * Week: Return webpages that Bing discovered within the last 7 days.
+      * Month: Return webpages that Bing discovered within the last 30 days. To get articles
+        discovered by Bing during a specific timeframe, specify a date range in the form:
+        `YYYY-MM-DD..YYYY-MM-DD`. For example, `freshness=2019-02-01..2019-05-30. To limit the results
+        to a single date, set this parameter to a specific date. For example, freshness=2019-02-04`."""
 
     @overload
     def __init__(
@@ -1058,16 +1043,15 @@ class BingCustomSearchToolParameters(_Model):
     """The bing custom search tool parameters.
 
     :ivar search_configurations: The connections attached to this tool. There can be a maximum of 1
-     connection
-     resource attached to the tool. Required.
+     connection resource attached to the tool. Required.
     :vartype search_configurations: list[~azure.ai.agents.models.BingCustomSearchConfiguration]
     """
 
     search_configurations: list["_models.BingCustomSearchConfiguration"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The connections attached to this tool. There can be a maximum of 1 connection
-     resource attached to the tool. Required."""
+    """The connections attached to this tool. There can be a maximum of 1 connection resource attached
+     to the tool. Required."""
 
     @overload
     def __init__(
@@ -1106,29 +1090,27 @@ class BingGroundingSearchConfiguration(_Model):
      subject to change.
     :vartype market: str
     :ivar set_lang: The language to use for user interface strings. You may specify the language
-     using either a 2-letter or 4-letter code. Using 4-letter codes is preferred.
-     For a list of supported language codes, see `Bing supported languages
+     using either a 2-letter or 4-letter code. Using 4-letter codes is preferred. For a list of
+     supported language codes, see `Bing supported languages
      <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/market-codes#bing-supported-language-codes>`_.
      Bing loads the localized strings if this parameter contains a valid 2-letter neutral culture
      code (for example ``fr``) or a valid 4-letter specific culture code (``fr-ca``). For example,
-     for ``fr-ca``, Bing loads the ``fr`` neutral culture code strings.
-     If the parameter is not valid (for example, ``zh``) or Bing doesn’t support the language (for
-     example, ``af``, ``af-na``), Bing defaults to ``en`` (English).
-     To specify the 2-letter code, set this parameter to an ISO 639-1 language code.
-     To specify the 4-letter code, use the form ``<language>-<country/region>`` where ``<language>``
-     is an ISO 639-1 language code (neutral culture) and ``<country/region>`` is an ISO 3166
-     country/region (specific culture) code. For example, use ``en-US`` for United States English.
-     Although optional, you should always specify the language. Typically, you set this parameter to
-     the same language specified by the market value unless the user wants the user interface
-     strings displayed in a different language.
+     for ``fr-ca``, Bing loads the ``fr`` neutral culture code strings. If the parameter is not
+     valid (for example, ``zh``) or Bing doesn’t support the language (for example, ``af``,
+     ``af-na``), Bing defaults to ``en`` (English). To specify the 2-letter code, set this parameter
+     to an ISO 639-1 language code. To specify the 4-letter code, use the form
+     ``<language>-<country/region>`` where ``<language>`` is an ISO 639-1 language code (neutral
+     culture) and ``<country/region>`` is an ISO 3166 country/region (specific culture) code. For
+     example, use ``en-US`` for United States English. Although optional, you should always specify
+     the language. Typically, you set this parameter to the same language specified by the market
+     value unless the user wants the user interface strings displayed in a different language.
     :vartype set_lang: str
     :ivar count: The number of search results to return in the response. The default is 5 and the
      maximum value is 50. The actual number delivered may be less than requested.
 
      * It is possible for multiple pages to include some overlap in results.
-     * This parameter affects only web page results. It's possible that AI model might not use all
-       search results returned by Bing.
-
+     * This parameter affects only web page results. It's possible that AI model might not use
+       all search results returned by Bing.
     :vartype count: int
     :ivar freshness: Filter search results by the following case-insensitive age values:
 
@@ -1138,7 +1120,6 @@ class BingGroundingSearchConfiguration(_Model):
        discovered by Bing during a specific timeframe, specify a date range in the form:
        `YYYY-MM-DD..YYYY-MM-DD`. For example, `freshness=2019-02-01..2019-05-30. To limit the results
        to a single date, set this parameter to a specific date. For example, freshness=2019-02-04`.
-
     :vartype freshness: str
     """
 
@@ -1159,39 +1140,36 @@ class BingGroundingSearchConfiguration(_Model):
      subject to change."""
     set_lang: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The language to use for user interface strings. You may specify the language using either a
-     2-letter or 4-letter code. Using 4-letter codes is preferred.
-     For a list of supported language codes, see `Bing supported languages
+     2-letter or 4-letter code. Using 4-letter codes is preferred. For a list of supported language
+     codes, see `Bing supported languages
      <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/market-codes#bing-supported-language-codes>`_.
      Bing loads the localized strings if this parameter contains a valid 2-letter neutral culture
      code (for example ``fr``) or a valid 4-letter specific culture code (``fr-ca``). For example,
-     for ``fr-ca``, Bing loads the ``fr`` neutral culture code strings.
-     If the parameter is not valid (for example, ``zh``) or Bing doesn’t support the language (for
-     example, ``af``, ``af-na``), Bing defaults to ``en`` (English).
-     To specify the 2-letter code, set this parameter to an ISO 639-1 language code.
-     To specify the 4-letter code, use the form ``<language>-<country/region>`` where ``<language>``
-     is an ISO 639-1 language code (neutral culture) and ``<country/region>`` is an ISO 3166
-     country/region (specific culture) code. For example, use ``en-US`` for United States English.
-     Although optional, you should always specify the language. Typically, you set this parameter to
-     the same language specified by the market value unless the user wants the user interface
-     strings displayed in a different language."""
+     for ``fr-ca``, Bing loads the ``fr`` neutral culture code strings. If the parameter is not
+     valid (for example, ``zh``) or Bing doesn’t support the language (for example, ``af``,
+     ``af-na``), Bing defaults to ``en`` (English). To specify the 2-letter code, set this parameter
+     to an ISO 639-1 language code. To specify the 4-letter code, use the form
+     ``<language>-<country/region>`` where ``<language>`` is an ISO 639-1 language code (neutral
+     culture) and ``<country/region>`` is an ISO 3166 country/region (specific culture) code. For
+     example, use ``en-US`` for United States English. Although optional, you should always specify
+     the language. Typically, you set this parameter to the same language specified by the market
+     value unless the user wants the user interface strings displayed in a different language."""
     count: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of search results to return in the response. The default is 5 and the maximum value
-     is 50. The actual number delivered may be less than requested.
-     
-     * It is possible for multiple pages to include some overlap in results.
-     * This parameter affects only web page results. It's possible that AI model might not use all
-       search results returned by Bing.
-    """
+      is 50. The actual number delivered may be less than requested.
+ 
+      * It is possible for multiple pages to include some overlap in results.
+      * This parameter affects only web page results. It's possible that AI model might not use
+        all search results returned by Bing."""
     freshness: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Filter search results by the following case-insensitive age values:
-     
-     * Day: Return webpages that Bing discovered within the last 24 hours.
-     * Week: Return webpages that Bing discovered within the last 7 days.
-     * Month: Return webpages that Bing discovered within the last 30 days. To get articles
-       discovered by Bing during a specific timeframe, specify a date range in the form:
-       `YYYY-MM-DD..YYYY-MM-DD`. For example, `freshness=2019-02-01..2019-05-30. To limit the results
-       to a single date, set this parameter to a specific date. For example, freshness=2019-02-04`.
-    """
+ 
+      * Day: Return webpages that Bing discovered within the last 24 hours.
+      * Week: Return webpages that Bing discovered within the last 7 days.
+      * Month: Return webpages that Bing discovered within the last 30 days. To get articles
+        discovered by Bing during a specific timeframe, specify a date range in the form:
+        `YYYY-MM-DD..YYYY-MM-DD`. For example, `freshness=2019-02-01..2019-05-30. To limit the results
+        to a single date, set this parameter to a specific date. For example, freshness=2019-02-04`."""
 
     @overload
     def __init__(
@@ -1219,16 +1197,15 @@ class BingGroundingSearchToolParameters(_Model):
     """The bing grounding search tool parameters.
 
     :ivar search_configurations: The search configurations attached to this tool. There can be a
-     maximum of 1
-     search configuration resource attached to the tool. Required.
+     maximum of 1 search configuration resource attached to the tool. Required.
     :vartype search_configurations: list[~azure.ai.agents.models.BingGroundingSearchConfiguration]
     """
 
     search_configurations: list["_models.BingGroundingSearchConfiguration"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The search configurations attached to this tool. There can be a maximum of 1
-     search configuration resource attached to the tool. Required."""
+    """The search configurations attached to this tool. There can be a maximum of 1 search
+     configuration resource attached to the tool. Required."""
 
     @overload
     def __init__(
@@ -1573,8 +1550,7 @@ class CodeInterpreterToolResource(_Model):
     """A set of resources that are used by the ``code_interpreter`` tool.
 
     :ivar file_ids: A list of file IDs made available to the ``code_interpreter`` tool. There can
-     be a maximum of 20 files
-     associated with the tool.
+     be a maximum of 20 files associated with the tool.
     :vartype file_ids: list[str]
     :ivar data_sources: The data sources to be used. This option is mutually exclusive with the
      ``fileIds`` property.
@@ -1583,8 +1559,7 @@ class CodeInterpreterToolResource(_Model):
 
     file_ids: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of file IDs made available to the ``code_interpreter`` tool. There can be a maximum of
-     20 files
-     associated with the tool."""
+     20 files associated with the tool."""
     data_sources: Optional[list["_models.VectorStoreDataSource"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2108,16 +2083,15 @@ class FabricDataAgentToolParameters(_Model):
     """The fabric data agent tool parameters.
 
     :ivar connection_list: The connections attached to this tool. There can be a maximum of 1
-     connection
-     resource attached to the tool.
+     connection resource attached to the tool.
     :vartype connection_list: list[~azure.ai.agents.models.ToolConnection]
     """
 
     connection_list: Optional[list["_models.ToolConnection"]] = rest_field(
         name="connections", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The connections attached to this tool. There can be a maximum of 1 connection
-     resource attached to the tool."""
+    """The connections attached to this tool. There can be a maximum of 1 connection resource attached
+     to the tool."""
 
     @overload
     def __init__(
@@ -2433,23 +2407,21 @@ class FileSearchToolResource(_Model):
     """A set of resources that are used by the ``file_search`` tool.
 
     :ivar vector_store_ids: The ID of the vector store attached to this agent. There can be a
-     maximum of 1 vector
-     store attached to the agent.
+     maximum of 1 vector store attached to the agent.
     :vartype vector_store_ids: list[str]
-    :ivar vector_stores: The list of vector store configuration objects from Azure.
-     This list is limited to one element.
-     The only element of this list contains the list of azure asset IDs used by the search tool.
+    :ivar vector_stores: The list of vector store configuration objects from Azure. This list is
+     limited to one element. The only element of this list contains the list of azure asset IDs used
+     by the search tool.
     :vartype vector_stores: list[~azure.ai.agents.models.VectorStoreConfigurations]
     """
 
     vector_store_ids: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ID of the vector store attached to this agent. There can be a maximum of 1 vector
-     store attached to the agent."""
+    """The ID of the vector store attached to this agent. There can be a maximum of 1 vector store
+     attached to the agent."""
     vector_stores: Optional[list["_models.VectorStoreConfigurations"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The list of vector store configuration objects from Azure.
-     This list is limited to one element.
+    """The list of vector store configuration objects from Azure. This list is limited to one element.
      The only element of this list contains the list of azure asset IDs used by the search tool."""
 
     @overload
@@ -2655,7 +2627,9 @@ class KeyPressAction(ComputerUseAction, discriminator="keypress"):
     type: Literal["keypress"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Specifies the event type. For a keypress action, this property is always set to keypress.
      Required. Default value is \"keypress\"."""
-    keys_property: list[str] = rest_field(name="keys", visibility=["read", "create", "update", "delete", "query"])
+    keys_property: list[str] = rest_field(
+        name="keys", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="keys"
+    )
     """The combination of keys the model is requesting to be pressed. This is an array of strings,
      each representing a key. Required."""
 
@@ -3920,8 +3894,7 @@ class MessageTextFileCitationAnnotation(MessageTextAnnotation, discriminator="fi
      "file_citation".
     :vartype type: str
     :ivar file_citation: A citation within the message that points to a specific quote from a
-     specific file.
-     Generated when the agent uses the "file_search" tool to search files. Required.
+     specific file. Generated when the agent uses the "file_search" tool to search files. Required.
     :vartype file_citation: ~azure.ai.agents.models.MessageTextFileCitationDetails
     :ivar start_index: The first text index associated with this text annotation.
     :vartype start_index: int
@@ -3934,8 +3907,8 @@ class MessageTextFileCitationAnnotation(MessageTextAnnotation, discriminator="fi
     file_citation: "_models.MessageTextFileCitationDetails" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """A citation within the message that points to a specific quote from a specific file.
-     Generated when the agent uses the \"file_search\" tool to search files. Required."""
+    """A citation within the message that points to a specific quote from a specific file. Generated
+     when the agent uses the \"file_search\" tool to search files. Required."""
     start_index: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The first text index associated with this text annotation."""
     end_index: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -4273,12 +4246,12 @@ class OpenApiAuthDetails(_Model):
 class OpenApiAnonymousAuthDetails(OpenApiAuthDetails, discriminator="anonymous"):
     """Security details for OpenApi anonymous authentication.
 
-    :ivar type: The object type, which is always 'anonymous'. Required.
+    :ivar type: The object type, which is always 'anonymous'. Required. ANONYMOUS.
     :vartype type: str or ~azure.ai.agents.models.ANONYMOUS
     """
 
     type: Literal[OpenApiAuthType.ANONYMOUS] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The object type, which is always 'anonymous'. Required."""
+    """The object type, which is always 'anonymous'. Required. ANONYMOUS."""
 
     @overload
     def __init__(
@@ -4300,14 +4273,14 @@ class OpenApiAnonymousAuthDetails(OpenApiAuthDetails, discriminator="anonymous")
 class OpenApiConnectionAuthDetails(OpenApiAuthDetails, discriminator="connection"):
     """Security details for OpenApi connection authentication.
 
-    :ivar type: The object type, which is always 'connection'. Required.
+    :ivar type: The object type, which is always 'connection'. Required. CONNECTION.
     :vartype type: str or ~azure.ai.agents.models.CONNECTION
     :ivar security_scheme: Connection auth security details. Required.
     :vartype security_scheme: ~azure.ai.agents.models.OpenApiConnectionSecurityScheme
     """
 
     type: Literal[OpenApiAuthType.CONNECTION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The object type, which is always 'connection'. Required."""
+    """The object type, which is always 'connection'. Required. CONNECTION."""
     security_scheme: "_models.OpenApiConnectionSecurityScheme" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -4417,14 +4390,14 @@ class OpenApiFunctionDefinition(_Model):
 class OpenApiManagedAuthDetails(OpenApiAuthDetails, discriminator="managed_identity"):
     """Security details for OpenApi managed_identity authentication.
 
-    :ivar type: The object type, which is always 'managed_identity'. Required.
+    :ivar type: The object type, which is always 'managed_identity'. Required. MANAGED_IDENTITY.
     :vartype type: str or ~azure.ai.agents.models.MANAGED_IDENTITY
     :ivar security_scheme: Connection auth security details. Required.
     :vartype security_scheme: ~azure.ai.agents.models.OpenApiManagedSecurityScheme
     """
 
     type: Literal[OpenApiAuthType.MANAGED_IDENTITY] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The object type, which is always 'managed_identity'. Required."""
+    """The object type, which is always 'managed_identity'. Required. MANAGED_IDENTITY."""
     security_scheme: "_models.OpenApiManagedSecurityScheme" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5190,8 +5163,7 @@ class RunStepToolCall(_Model):
 
 class RunStepAzureAISearchToolCall(RunStepToolCall, discriminator="azure_ai_search"):
     """A record of a call to an Azure AI Search tool, issued by the model in evaluation of a defined
-    tool, that represents
-    executed Azure AI search.
+    tool, that represents executed Azure AI search.
 
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
@@ -5272,8 +5244,7 @@ class RunStepAzureFunctionToolCall(RunStepToolCall, discriminator="azure_functio
 
 class RunStepBingCustomSearchToolCall(RunStepToolCall, discriminator="bing_custom_search"):
     """A record of a call to a Bing Custom Search tool, issued by the model in evaluation of a defined
-    tool, that represents
-    executed search with Bing Custom Search.
+    tool, that represents executed search with Bing Custom Search.
 
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
@@ -5314,8 +5285,7 @@ class RunStepBingCustomSearchToolCall(RunStepToolCall, discriminator="bing_custo
 
 class RunStepBingGroundingToolCall(RunStepToolCall, discriminator="bing_grounding"):
     """A record of a call to a bing grounding tool, issued by the model in evaluation of a defined
-    tool, that represents
-    executed search with bing grounding.
+    tool, that represents executed search with bing grounding.
 
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
@@ -5527,8 +5497,7 @@ class RunStepCodeInterpreterLogOutput(RunStepCodeInterpreterToolCallOutput, disc
 
 class RunStepCodeInterpreterToolCall(RunStepToolCall, discriminator="code_interpreter"):
     """A record of a call to a code interpreter tool, issued by the model in evaluation of a defined
-    tool, that
-    represents inputs and outputs consumed and emitted by the code interpreter.
+    tool, that represents inputs and outputs consumed and emitted by the code interpreter.
 
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
@@ -5646,8 +5615,7 @@ class RunStepCompletionUsage(_Model):
 
 class RunStepComputerUseToolCall(RunStepToolCall, discriminator="computer_use_preview"):
     """A record of a call to a Computer Use tool, issued by the model in evaluation of a defined tool,
-    that represents
-    executed computer automation actions.
+    that represents executed computer automation actions.
 
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
@@ -5834,8 +5802,7 @@ class RunStepConnectedAgentToolCall(RunStepToolCall, discriminator="connected_ag
 
 class RunStepDeepResearchToolCall(RunStepToolCall, discriminator="deep_research"):
     """A record of a call to a Deep Research tool, issued by the model in evaluation of a defined
-    tool, that represents
-    executed deep research operations.
+    tool, that represents executed deep research operations.
 
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
@@ -6161,9 +6128,8 @@ class RunStepDeltaCodeInterpreterDetailItemObject(_Model):  # pylint: disable=na
     :ivar input: The input into the Code Interpreter tool call.
     :vartype input: str
     :ivar outputs: The outputs from the Code Interpreter tool call. Code Interpreter can output one
-     or more
-     items, including text (``logs``) or images (``image``). Each of these are represented by a
-     different object type.
+     or more items, including text (``logs``) or images (``image``). Each of these are represented
+     by a different object type.
     :vartype outputs: list[~azure.ai.agents.models.RunStepDeltaCodeInterpreterOutput]
     """
 
@@ -6172,9 +6138,9 @@ class RunStepDeltaCodeInterpreterDetailItemObject(_Model):  # pylint: disable=na
     outputs: Optional[list["_models.RunStepDeltaCodeInterpreterOutput"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The outputs from the Code Interpreter tool call. Code Interpreter can output one or more
-     items, including text (``logs``) or images (``image``). Each of these are represented by a
-     different object type."""
+    """The outputs from the Code Interpreter tool call. Code Interpreter can output one or more items,
+     including text (``logs``) or images (``image``). Each of these are represented by a different
+     object type."""
 
     @overload
     def __init__(
@@ -7185,8 +7151,7 @@ class RunStepError(_Model):
 
 class RunStepFileSearchToolCall(RunStepToolCall, discriminator="file_search"):
     """A record of a call to a file search tool, issued by the model in evaluation of a defined tool,
-    that represents
-    executed file search.
+    that represents executed file search.
 
     :ivar type: The object type, which is always 'file_search'. Required. Default value is
      "file_search".
@@ -7312,8 +7277,7 @@ class RunStepFileSearchToolCallResults(_Model):
 
 class RunStepFunctionToolCall(RunStepToolCall, discriminator="function"):
     """A record of a call to a function tool, issued by the model in evaluation of a defined tool,
-    that represents the inputs
-    and output consumed and emitted by the specified function.
+    that represents the inputs and output consumed and emitted by the specified function.
 
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
@@ -7387,8 +7351,7 @@ class RunStepFunctionToolCallDetails(_Model):
 
 class RunStepMcpToolCall(RunStepToolCall, discriminator="mcp"):
     """A record of a call to a MCP tool, issued by the model in evaluation of a defined tool, that
-    represents
-    executed MCP actions.
+    represents executed MCP actions.
 
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
@@ -7509,8 +7472,7 @@ class RunStepMessageCreationReference(_Model):
 
 class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="fabric_dataagent"):
     """A record of a call to a Microsoft Fabric tool, issued by the model in evaluation of a defined
-    tool, that represents
-    executed Microsoft Fabric operations.
+    tool, that represents executed Microsoft Fabric operations.
 
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
@@ -7552,8 +7514,7 @@ class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="fabric_data
 
 class RunStepOpenAPIToolCall(RunStepToolCall, discriminator="openapi"):
     """A record of a call to an OpenAPI tool, issued by the model in evaluation of a defined tool,
-    that represents
-    executed OpenAPI operations.
+    that represents executed OpenAPI operations.
 
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
@@ -7591,8 +7552,7 @@ class RunStepOpenAPIToolCall(RunStepToolCall, discriminator="openapi"):
 
 class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint_grounding"):
     """A record of a call to a SharePoint tool, issued by the model in evaluation of a defined tool,
-    that represents
-    executed SharePoint actions.
+    that represents executed SharePoint actions.
 
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
@@ -7788,16 +7748,15 @@ class SharepointGroundingToolParameters(_Model):
     """The sharepoint grounding tool parameters.
 
     :ivar connection_list: The connections attached to this tool. There can be a maximum of 1
-     connection
-     resource attached to the tool.
+     connection resource attached to the tool.
     :vartype connection_list: list[~azure.ai.agents.models.ToolConnection]
     """
 
     connection_list: Optional[list["_models.ToolConnection"]] = rest_field(
         name="connections", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The connections attached to this tool. There can be a maximum of 1 connection
-     resource attached to the tool."""
+    """The connections attached to this tool. There can be a maximum of 1 connection resource attached
+     to the tool."""
 
     @overload
     def __init__(
@@ -8153,19 +8112,18 @@ class ThreadMessage(_Model):
 
 
 class ThreadMessageOptions(_Model):
-    """A single message within an agent thread,
-    as provided during that thread's creation for its initial state.
+    """A single message within an agent thread, as provided during that thread's creation for its
+    initial state.
 
     :ivar role: The role of the entity that is creating the message. Allowed values include:
-     ``user``, which indicates the message is sent by an actual user (and should be
-     used in most cases to represent user-generated messages), and ``assistant``,
-     which indicates the message is generated by the agent (use this value to insert
-     messages from the agent into the conversation). Required. Known values are: "user" and
-     "assistant".
+     ``user``, which indicates the message is sent by an actual user (and should be used in most
+     cases to represent user-generated messages), and ``assistant``, which indicates the message is
+     generated by the agent (use this value to insert messages from the agent into the
+     conversation). Required. Known values are: "user" and "assistant".
     :vartype role: str or ~azure.ai.agents.models.MessageRole
-    :ivar content: The content of the initial message. This may be a basic string (if you only
-     need text) or an array of typed content blocks (for example, text, image_file,
-     image_url, and so on). Required. Is either a str type or a [MessageInputContentBlock] type.
+    :ivar content: The content of the initial message. This may be a basic string (if you only need
+     text) or an array of typed content blocks (for example, text, image_file, image_url, and so
+     on). Required. Is either a str type or a [MessageInputContentBlock] type.
     :vartype content: str or list[~azure.ai.agents.models.MessageInputContentBlock]
     :ivar attachments: A list of files attached to the message, and the tools they should be added
      to.
@@ -8177,16 +8135,15 @@ class ThreadMessageOptions(_Model):
     """
 
     role: Union[str, "_models.MessageRole"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The role of the entity that is creating the message. Allowed values include:
-     ``user``, which indicates the message is sent by an actual user (and should be
-     used in most cases to represent user-generated messages), and ``assistant``,
-     which indicates the message is generated by the agent (use this value to insert
-     messages from the agent into the conversation). Required. Known values are: \"user\" and
-     \"assistant\"."""
+    """The role of the entity that is creating the message. Allowed values include: ``user``, which
+     indicates the message is sent by an actual user (and should be used in most cases to represent
+     user-generated messages), and ``assistant``, which indicates the message is generated by the
+     agent (use this value to insert messages from the agent into the conversation). Required. Known
+     values are: \"user\" and \"assistant\"."""
     content: "_types.MessageInputContent" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The content of the initial message. This may be a basic string (if you only
-     need text) or an array of typed content blocks (for example, text, image_file,
-     image_url, and so on). Required. Is either a str type or a [MessageInputContentBlock] type."""
+    """The content of the initial message. This may be a basic string (if you only need text) or an
+     array of typed content blocks (for example, text, image_file, image_url, and so on). Required.
+     Is either a str type or a [MessageInputContentBlock] type."""
     attachments: Optional[list["_models.MessageAttachment"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -8549,10 +8506,8 @@ class ToolOutput(StructuredToolOutput, discriminator="function_call_output"):
 
 class ToolResources(_Model):
     """A set of resources that are used by the agent's tools. The resources are specific to the type
-    of
-    tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while the
-    ``file_search``
-    tool requires a list of vector store IDs.
+    of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while the
+    ``file_search`` tool requires a list of vector store IDs.
 
     :ivar code_interpreter: Resources to be used by the ``code_interpreter`` tool consisting of
      file IDs.
@@ -8610,11 +8565,10 @@ class TruncationObject(_Model):
     context window of the run.
 
     :ivar type: The truncation strategy to use for the thread. The default is ``auto``. If set to
-     ``last_messages``, the thread will
-     be truncated to the ``lastMessages`` count most recent messages in the thread. When set to
-     ``auto``, messages in the middle of the thread
-     will be dropped to fit the context length of the model, ``max_prompt_tokens``. Required. Known
-     values are: "auto" and "last_messages".
+     ``last_messages``, the thread will be truncated to the ``lastMessages`` count most recent
+     messages in the thread. When set to ``auto``, messages in the middle of the thread will be
+     dropped to fit the context length of the model, ``max_prompt_tokens``. Required. Known values
+     are: "auto" and "last_messages".
     :vartype type: str or ~azure.ai.agents.models.TruncationStrategy
     :ivar last_messages: The number of most recent messages from the thread when constructing the
      context for the run.
@@ -8625,11 +8579,10 @@ class TruncationObject(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The truncation strategy to use for the thread. The default is ``auto``. If set to
-     ``last_messages``, the thread will
-     be truncated to the ``lastMessages`` count most recent messages in the thread. When set to
-     ``auto``, messages in the middle of the thread
-     will be dropped to fit the context length of the model, ``max_prompt_tokens``. Required. Known
-     values are: \"auto\" and \"last_messages\"."""
+     ``last_messages``, the thread will be truncated to the ``lastMessages`` count most recent
+     messages in the thread. When set to ``auto``, messages in the middle of the thread will be
+     dropped to fit the context length of the model, ``max_prompt_tokens``. Required. Known values
+     are: \"auto\" and \"last_messages\"."""
     last_messages: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of most recent messages from the thread when constructing the context for the run."""
 
@@ -8868,12 +8821,12 @@ class VectorStoreAutoChunkingStrategyRequest(VectorStoreChunkingStrategyRequest,
     """The default strategy. This strategy currently uses a max_chunk_size_tokens of 800 and
     chunk_overlap_tokens of 400.
 
-    :ivar type: The object type, which is always 'auto'. Required.
+    :ivar type: The object type, which is always 'auto'. Required. AUTO.
     :vartype type: str or ~azure.ai.agents.models.AUTO
     """
 
     type: Literal[VectorStoreChunkingStrategyRequestType.AUTO] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The object type, which is always 'auto'. Required."""
+    """The object type, which is always 'auto'. Required. AUTO."""
 
     @overload
     def __init__(
@@ -8928,12 +8881,12 @@ class VectorStoreAutoChunkingStrategyResponse(VectorStoreChunkingStrategyRespons
     """This is returned when the chunking strategy is unknown. Typically, this is because the file was
     indexed before the chunking_strategy concept was introduced in the API.
 
-    :ivar type: The object type, which is always 'other'. Required.
+    :ivar type: The object type, which is always 'other'. Required. OTHER.
     :vartype type: str or ~azure.ai.agents.models.OTHER
     """
 
     type: Literal[VectorStoreChunkingStrategyResponseType.OTHER] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The object type, which is always 'other'. Required."""
+    """The object type, which is always 'other'. Required. OTHER."""
 
     @overload
     def __init__(
@@ -8953,8 +8906,8 @@ class VectorStoreAutoChunkingStrategyResponse(VectorStoreChunkingStrategyRespons
 
 
 class VectorStoreConfiguration(_Model):
-    """Vector storage configuration is the list of data sources, used when multiple
-    files can be used for the enterprise file search.
+    """Vector storage configuration is the list of data sources, used when multiple files can be used
+    for the enterprise file search.
 
     :ivar data_sources: Data sources. Required.
     :vartype data_sources: list[~azure.ai.agents.models.VectorStoreDataSource]
@@ -9021,8 +8974,7 @@ class VectorStoreConfigurations(_Model):
 
 class VectorStoreDataSource(_Model):
     """The structure, containing Azure asset URI path and the asset type of the file used as a data
-    source
-    for the enterprise file search.
+    source for the enterprise file search.
 
     :ivar asset_identifier: Asset URI. Required.
     :vartype asset_identifier: str
@@ -9142,8 +9094,7 @@ class VectorStoreFile(_Model):
      is "vector_store.file".
     :vartype object: str
     :ivar usage_bytes: The total vector store usage in bytes. Note that this may be different from
-     the original file
-     size. Required.
+     the original file size. Required.
     :vartype usage_bytes: int
     :ivar created_at: The Unix timestamp (in seconds) for when the vector store file was created.
      Required.
@@ -9415,8 +9366,7 @@ class VectorStoreStaticChunkingStrategyOptions(_Model):
      800. The minimum value is 100 and the maximum value is 4096. Required.
     :vartype max_chunk_size_tokens: int
     :ivar chunk_overlap_tokens: The number of tokens that overlap between chunks. The default value
-     is 400.
-     Note that the overlap must not exceed half of max_chunk_size_tokens. Required.
+     is 400. Note that the overlap must not exceed half of max_chunk_size_tokens. Required.
     :vartype chunk_overlap_tokens: int
     """
 
@@ -9424,8 +9374,8 @@ class VectorStoreStaticChunkingStrategyOptions(_Model):
     """The maximum number of tokens in each chunk. The default value is 800. The minimum value is 100
      and the maximum value is 4096. Required."""
     chunk_overlap_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The number of tokens that overlap between chunks. The default value is 400.
-     Note that the overlap must not exceed half of max_chunk_size_tokens. Required."""
+    """The number of tokens that overlap between chunks. The default value is 400. Note that the
+     overlap must not exceed half of max_chunk_size_tokens. Required."""
 
     @overload
     def __init__(
@@ -9449,14 +9399,14 @@ class VectorStoreStaticChunkingStrategyOptions(_Model):
 class VectorStoreStaticChunkingStrategyRequest(VectorStoreChunkingStrategyRequest, discriminator="static"):
     """A statically configured chunking strategy.
 
-    :ivar type: The object type, which is always 'static'. Required.
+    :ivar type: The object type, which is always 'static'. Required. STATIC.
     :vartype type: str or ~azure.ai.agents.models.STATIC
     :ivar static: The options for the static chunking strategy. Required.
     :vartype static: ~azure.ai.agents.models.VectorStoreStaticChunkingStrategyOptions
     """
 
     type: Literal[VectorStoreChunkingStrategyRequestType.STATIC] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The object type, which is always 'static'. Required."""
+    """The object type, which is always 'static'. Required. STATIC."""
     static: "_models.VectorStoreStaticChunkingStrategyOptions" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -9486,14 +9436,14 @@ class VectorStoreStaticChunkingStrategyResponse(
 ):  # pylint: disable=name-too-long
     """A statically configured chunking strategy.
 
-    :ivar type: The object type, which is always 'static'. Required.
+    :ivar type: The object type, which is always 'static'. Required. STATIC.
     :vartype type: str or ~azure.ai.agents.models.STATIC
     :ivar static: The options for the static chunking strategy. Required.
     :vartype static: ~azure.ai.agents.models.VectorStoreStaticChunkingStrategyOptions
     """
 
     type: Literal[VectorStoreChunkingStrategyResponseType.STATIC] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The object type, which is always 'static'. Required."""
+    """The object type, which is always 'static'. Required. STATIC."""
     static: "_models.VectorStoreStaticChunkingStrategyOptions" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
