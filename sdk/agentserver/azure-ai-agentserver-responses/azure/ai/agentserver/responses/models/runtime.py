@@ -7,7 +7,9 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any, Literal, Mapping
 
-from ._generated import Response, ResponseStreamEvent
+from ._generated import Response, ResponseStreamEvent, ResponseStreamEventType
+
+EVENT_TYPE = ResponseStreamEventType
 
 ResponseStatus = Literal["queued", "in_progress", "completed", "failed", "cancelled", "incomplete"]
 TerminalResponseStatus = Literal["completed", "failed", "cancelled", "incomplete"]
@@ -35,10 +37,10 @@ class StreamEventRecord:
     def terminal(self) -> bool:
         """Return True when this event is one of the terminal response events."""
         return self.event_type in {
-            "response.completed",
-            "response.failed",
-            "response.cancelled",
-            "response.incomplete",
+            EVENT_TYPE.RESPONSE_COMPLETED.value,
+            EVENT_TYPE.RESPONSE_FAILED.value,
+            EVENT_TYPE.RESPONSE_CANCELLED.value,
+            EVENT_TYPE.RESPONSE_INCOMPLETE.value,
         }
 
     @classmethod

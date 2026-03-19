@@ -34,7 +34,7 @@ def parse_create_response(payload: Mapping[str, Any]) -> CreateResponse:
     :raises RequestValidationError: If payload is not an object or cannot be parsed.
     """
     if not isinstance(payload, Mapping):
-        raise RequestValidationError("request body must be a JSON object", code="invalid_json")
+        raise RequestValidationError("request body must be a JSON object", code="invalid_request")
 
     validator = getattr(_generated_validators, "validate_CreateResponse", None) if _generated_validators else None
     if callable(validator):
@@ -88,7 +88,7 @@ def validate_create_response(request: CreateResponse) -> None:
         raise RequestValidationError(
             "stream_options requires stream=true",
             code="invalid_mode",
-            param="stream_options",
+            param="stream",
         )
 
     if request.model is None:
@@ -131,10 +131,46 @@ def build_api_error_response(
     )
 
 
+def build_not_found_error_response(
+    resource_id: str,
+    *,
+    param: str = "response_id",
+    resource_name: str = "response",
+) -> ApiErrorResponse:
+    """Build a canonical generated not-found error envelope."""
+    return build_api_error_response(
+        message=f"{resource_name} '{resource_id}' was not found",
+        code="not_found",
+        param=param,
+        error_type="not_found_error",
+    )
+
+
+def build_invalid_mode_error_response(
+    message: str,
+    *,
+    param: str | None = None,
+) -> ApiErrorResponse:
+    """Build a canonical generated invalid-mode error envelope."""
+    return build_api_error_response(
+        message=message,
+        code="invalid_mode",
+        param=param,
+        error_type="invalid_request_error",
+    )
+
+
 def to_api_error_response(error: Exception) -> ApiErrorResponse:
     """Map a Python exception to a generated API error envelope."""
     if isinstance(error, RequestValidationError):
         return error.to_api_error_response()
+
+    if isinstance(error, ValueError):
+        return build_api_error_response(
+            message=str(error) or "invalid request",
+            code="invalid_request",
+            error_type="invalid_request_error",
+        )
 
     return build_api_error_response(
         message="internal server error",

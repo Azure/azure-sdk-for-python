@@ -1,14 +1,14 @@
 # Python TypeSpec Code Generation Tooling
 # Targets: generate-models, clean, install-typespec-deps
 
-OUTPUT_DIR  ?= azure/ai/responses/server/models/_generated
+OUTPUT_DIR  ?= azure/ai/agentserver/responses/models/_generated
 TYPESPEC_DIR ?= type_spec
 OPENAPI_SPEC ?= type_spec/TempTypeSpecFiles/Foundry/openapi3/v1/microsoft-foundry-openapi3.yaml
 VALIDATORS_OUTPUT ?= $(OUTPUT_DIR)/_validators.py
 ROOT_SCHEMAS ?= CreateResponse
 LOCAL_TYPESPEC_PACKAGES := @typespec/compiler @typespec/http @typespec/openapi @typespec/openapi3 @typespec/versioning @typespec/events @typespec/sse @azure-tools/typespec-python @azure-tools/typespec-azure-core @azure-tools/typespec-client-generator-core @azure-tools/openai-typespec
 TEMP_OUTPUT_DIR := $(OUTPUT_DIR)/.tmp_codegen
-MODEL_PACKAGE_DIR := $(TEMP_OUTPUT_DIR)/azure/ai/responses/server/sdk/models
+MODEL_PACKAGE_DIR := $(TEMP_OUTPUT_DIR)/azure/ai/agentserver/responses/sdk/models
 MODEL_SHIMS_DIR := scripts/generated_shims
 
 .PHONY: generate-models generate-validators generate-contracts clean install-typespec-deps

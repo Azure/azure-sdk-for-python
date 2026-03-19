@@ -6,11 +6,11 @@ import asyncio
 from copy import deepcopy
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
-from typing import Dict
+from typing import Any, Dict, Iterable
 
 from ..models._generated import Response
-from ..models import ResponseExecution, ResponseStatus, StreamEventRecord, StreamReplayState
-from ._base import ResponseStore
+from ..models.runtime import ResponseExecution, ResponseModeFlags, ResponseStatus, StreamEventRecord, StreamReplayState
+from ._base import ResponseProviderProtocol
 
 
 @dataclass(slots=True)
@@ -20,15 +20,162 @@ class _StoreEntry:
     execution: ResponseExecution
     replay: StreamReplayState
     expires_at: datetime | None = None
+    response: Response | None = None
+    input_item_ids: list[str] | None = None
+    history_item_ids: list[str] | None = None
+    deleted: bool = False
 
 
-class InMemoryResponseStore(ResponseStore):
-    """In-memory response store with TTL and lifecycle-safe mutation APIs."""
+class InMemoryResponseProvider(ResponseProviderProtocol):
+    """In-memory provider aligned to ``ResponseProviderProtocol``."""
 
     def __init__(self) -> None:
         """Initialize in-memory state and an async mutation lock."""
         self._entries: Dict[str, _StoreEntry] = {}
         self._lock = asyncio.Lock()
+        self._item_store: Dict[str, Any] = {}
+        self._conversation_responses: Dict[str, list[str]] = {}
+
+    async def create_response_async(
+        self,
+        response: Response,
+        input_items: Iterable[Any] | None,
+        history_item_ids: Iterable[str] | None,
+    ) -> None:
+        """Persist a new response envelope and optional input/history references."""
+        response_id = str(getattr(response, "id"))
+        async with self._lock:
+            self._purge_expired_unlocked()
+
+            entry = self._entries.get(response_id)
+            if entry is not None and not entry.deleted:
+                raise ValueError(f"response '{response_id}' already exists")
+
+            input_ids: list[str] = []
+            if input_items is not None:
+                for item in input_items:
+                    item_id = self._extract_item_id(item)
+                    if item_id is None:
+                        continue
+                    self._item_store[item_id] = deepcopy(item)
+                    input_ids.append(item_id)
+
+            history_ids = list(history_item_ids) if history_item_ids is not None else []
+            self._entries[response_id] = _StoreEntry(
+                execution=ResponseExecution(
+                    response_id=response_id,
+                    mode_flags=self._resolve_mode_flags_from_response(response),
+                ),
+                replay=StreamReplayState(response_id=response_id),
+                response=deepcopy(response),
+                input_item_ids=input_ids,
+                history_item_ids=history_ids,
+                deleted=False,
+            )
+
+            conversation_id = self._extract_conversation_id(response)
+            if conversation_id is not None:
+                self._conversation_responses.setdefault(conversation_id, []).append(response_id)
+
+    async def get_response_async(self, response_id: str) -> Response:
+        """Retrieve one response envelope by identifier."""
+        async with self._lock:
+            self._purge_expired_unlocked()
+            entry = self._entries.get(response_id)
+            if entry is None or entry.deleted or entry.response is None:
+                raise KeyError(f"response '{response_id}' not found")
+            return deepcopy(entry.response)
+
+    async def update_response_async(self, response: Response) -> None:
+        """Update a stored response envelope."""
+        response_id = str(getattr(response, "id"))
+        async with self._lock:
+            self._purge_expired_unlocked()
+            entry = self._entries.get(response_id)
+            if entry is None or entry.deleted:
+                raise KeyError(f"response '{response_id}' not found")
+
+            entry.response = deepcopy(response)
+            entry.execution.set_response_snapshot(deepcopy(response))
+
+    async def delete_response_async(self, response_id: str) -> None:
+        """Delete a stored response envelope by identifier."""
+        async with self._lock:
+            self._purge_expired_unlocked()
+            entry = self._entries.get(response_id)
+            if entry is None or entry.deleted:
+                raise KeyError(f"response '{response_id}' not found")
+            entry.deleted = True
+            entry.response = None
+
+    async def get_input_items_async(
+        self,
+        response_id: str,
+        limit: int = 20,
+        ascending: bool = False,
+        after: str | None = None,
+        before: str | None = None,
+    ) -> list[Any]:
+        """Retrieve input/history items for a response with basic cursor paging."""
+        async with self._lock:
+            self._purge_expired_unlocked()
+            entry = self._entries.get(response_id)
+            if entry is None:
+                raise KeyError(f"response '{response_id}' not found")
+            if entry.deleted:
+                raise ValueError(f"response '{response_id}' has been deleted")
+
+            item_ids = [
+                *(entry.history_item_ids or []),
+                *(entry.input_item_ids or []),
+            ]
+            ordered_ids = item_ids if ascending else list(reversed(item_ids))
+
+            if after is not None:
+                try:
+                    ordered_ids = ordered_ids[ordered_ids.index(after) + 1 :]
+                except ValueError:
+                    pass
+            if before is not None:
+                try:
+                    ordered_ids = ordered_ids[: ordered_ids.index(before)]
+                except ValueError:
+                    pass
+
+            safe_limit = max(1, min(100, int(limit)))
+            return [deepcopy(self._item_store[item_id]) for item_id in ordered_ids[:safe_limit] if item_id in self._item_store]
+
+    async def get_items_async(self, item_ids: Iterable[str]) -> list[Any | None]:
+        """Retrieve items by ID, preserving request order."""
+        async with self._lock:
+            return [deepcopy(self._item_store[item_id]) if item_id in self._item_store else None for item_id in item_ids]
+
+    async def get_history_item_ids_async(
+        self,
+        previous_response_id: str | None,
+        conversation_id: str | None,
+        limit: int,
+    ) -> list[str]:
+        """Resolve history item IDs from previous response and/or conversation scope."""
+        async with self._lock:
+            self._purge_expired_unlocked()
+            resolved: list[str] = []
+
+            if previous_response_id is not None:
+                entry = self._entries.get(previous_response_id)
+                if entry is not None and not entry.deleted:
+                    resolved.extend(entry.history_item_ids or [])
+
+            if conversation_id is not None:
+                for response_id in self._conversation_responses.get(conversation_id, []):
+                    entry = self._entries.get(response_id)
+                    if entry is None or entry.deleted:
+                        continue
+                    resolved.extend(entry.history_item_ids or [])
+
+            if limit <= 0:
+                return []
+            return resolved[:limit]
 
     async def create_execution(self, execution: ResponseExecution, *, ttl_seconds: int | None = None) -> None:
         """Create a new execution and replay container for ``execution.response_id``."""
@@ -90,17 +237,38 @@ class InMemoryResponseStore(ResponseStore):
             return True
 
     async def set_cancel_requested(self, response_id: str, *, ttl_seconds: int | None = None) -> bool:
-        """Mark cancellation requested for an existing execution record."""
+        """Mark cancellation requested and enforce lifecycle-safe cancel transitions.
+
+        :raises ValueError: If the execution is already terminal in a non-cancelled state.
+        """
         async with self._lock:
             self._purge_expired_unlocked()
             entry = self._entries.get(response_id)
             if entry is None:
                 return False
 
-            entry.execution.cancel_requested = True
-            entry.execution.updated_at = datetime.now(timezone.utc)
+            self._apply_cancel_transition_unlocked(entry)
             self._apply_ttl_unlocked(entry, ttl_seconds)
             return True
+
+    @staticmethod
+    def _apply_cancel_transition_unlocked(entry: _StoreEntry) -> None:
+        """Apply deterministic and lifecycle-safe cancellation status updates."""
+        status = entry.execution.status
+
+        if status == "cancelled":
+            entry.execution.cancel_requested = True
+            entry.execution.updated_at = datetime.now(timezone.utc)
+            return
+
+        if status in {"completed", "failed", "incomplete"}:
+            raise ValueError(f"cannot cancel terminal execution in status '{status}'")
+
+        if status == "queued":
+            entry.execution.transition_to("in_progress")
+
+        entry.execution.transition_to("cancelled")
+        entry.execution.cancel_requested = True
 
     async def append_stream_event(
         self,
@@ -167,3 +335,34 @@ class InMemoryResponseStore(ResponseStore):
             del self._entries[response_id]
 
         return len(expired_ids)
+
+    @staticmethod
+    def _extract_item_id(item: Any) -> str | None:
+        """Extract item identifier from object-like or mapping-like values."""
+        if item is None:
+            return None
+        if isinstance(item, dict):
+            value = item.get("id")
+            return str(value) if value is not None else None
+        value = getattr(item, "id", None)
+        return str(value) if value is not None else None
+
+    @staticmethod
+    def _extract_conversation_id(response: Response) -> str | None:
+        """Extract conversation identifier if present on the response envelope."""
+        value = getattr(response, "conversation_id", None)
+        if value is None:
+            return None
+        return str(value)
+
+    @staticmethod
+    def _resolve_mode_flags_from_response(response: Response) -> ResponseModeFlags:
+        """Build mode flags from a response snapshot where available."""
+        return ResponseModeFlags(
+            stream=bool(getattr(response, "stream", False)),
+            store=bool(getattr(response, "store", True)),
+            background=bool(getattr(response, "background", False)),
+        )
+
+
+# Backward compatibility aliases for pre-refactor Python naming.

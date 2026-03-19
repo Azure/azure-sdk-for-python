@@ -21,6 +21,7 @@ classifiers = [
 ]
 dependencies = [
     "azure-core>=1.30.0",
+    "isodate>=0.6.1",
     "starlette>=0.45.0",
     "uvicorn>=0.31.0",
 ]
@@ -29,6 +30,7 @@ dependencies = [
 dev = [
     "pytest>=7.0",
     "pytest-asyncio>=0.21",
+    "httpx>=0.27",
     "ruff>=0.4",
     "mypy>=1.0",
 ]

@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
+from typing import Any, Mapping
 
 
 @dataclass(slots=True)
@@ -21,6 +23,55 @@ class ResponsesServerOptions:
     default_model: str | None = None
     default_fetch_history_count: int = default_fetch_history_count_value
     sse_keep_alive_interval_seconds: int | None = None
+    create_span_hook: Any | None = None
+
+    @classmethod
+    def from_env(cls, environ: Mapping[str, str] | None = None) -> "ResponsesServerOptions":
+        """Create options from environment variables.
+
+        Mirrors .NET environment-based configuration:
+        - ``AZURE_AI_RESPONSES_SERVER_SSE_KEEPALIVE_INTERVAL`` (seconds)
+        - ``AZURE_AI_RESPONSES_SERVER_DEFAULT_FETCH_HISTORY_ITEM_COUNT`` (integer)
+        """
+
+        source: Mapping[str, str] = os.environ if environ is None else environ
+
+        def _first_non_empty(*keys: str) -> str | None:
+            for key in keys:
+                raw = source.get(key)
+                if raw is None:
+                    continue
+                normalized = raw.strip()
+                if normalized:
+                    return normalized
+            return None
+
+        def _parse_positive_int(*keys: str) -> int | None:
+            raw = _first_non_empty(*keys)
+            if raw is None:
+                return None
+            try:
+                value = int(raw)
+            except ValueError as exc:
+                raise ValueError(f"{keys[0]} must be a positive integer") from exc
+            if value <= 0:
+                raise ValueError(f"{keys[0]} must be > 0")
+            return value
+
+        default_fetch_history_count = _parse_positive_int(
+            "AZURE_AI_RESPONSES_SERVER_DEFAULT_FETCH_HISTORY_ITEM_COUNT",
+        )
+        sse_keep_alive_interval_seconds = _parse_positive_int(
+            "AZURE_AI_RESPONSES_SERVER_SSE_KEEPALIVE_INTERVAL",
+        )
+
+        kwargs: dict[str, Any] = {}
+        if default_fetch_history_count is not None:
+            kwargs["default_fetch_history_count"] = default_fetch_history_count
+        if sse_keep_alive_interval_seconds is not None:
+            kwargs["sse_keep_alive_interval_seconds"] = sse_keep_alive_interval_seconds
+
+        return cls(**kwargs)
 
     def __post_init__(self) -> None:
         """Validate and normalize option values."""
