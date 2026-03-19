@@ -66,16 +66,53 @@ _MyMutableMapping.__getattribute__ = _model_getattribute
 
 
 # ---------------------------------------------------------------------------
-# Eagerly resolve rest_field forward references while _module still points at
-# the correct generated-models module.  Model.__new__ caches rf._type on
-# shared _RestField descriptors; the *first* subclass whose __new__ fires
-# wins.  Creating throwaway instances here locks in the correct types so
-# external packages (e.g. azure-storage-file-datalake) can't corrupt them.
+# Fix Model.__new__ to resolve _RestField forward references against the
+# module that *defined* the field, not whichever subclass is instantiated
+# first.  The original code does ``rf._module = cls.__module__`` which lets
+# an external subclass (e.g. from azure-storage-file-datalake) overwrite
+# _module on the shared descriptor, corrupting type resolution for everyone.
 # ---------------------------------------------------------------------------
-_GenRetentionPolicy(enabled=False)
-_GenLogging(version="1.0", delete=False, read=False, write=False, retention_policy=_GenRetentionPolicy(enabled=False))
-_GenMetrics(enabled=False, retention_policy=_GenRetentionPolicy(enabled=False))
-_GenStorageServiceProperties()
+_orig_model_new = _Model.__new__
+
+
+def _patched_model_new(cls, *args, **kwargs):
+    if f"{cls.__module__}.{cls.__qualname__}" not in cls._calculated:
+        mros = cls.__mro__[:-9][::-1]
+        attr_to_rest_field = {}
+        # Track which MRO class defined each rest_field so we resolve
+        # forward references against the *defining* module, not cls.
+        attr_to_defining_class = {}
+        for mro_class in mros:
+            for k, v in mro_class.__dict__.items():
+                if k[0] != "_" and hasattr(v, "_type"):
+                    attr_to_rest_field[k] = v
+                    attr_to_defining_class[k] = mro_class
+
+        annotations = {
+            k: v
+            for mro_class in mros
+            if hasattr(mro_class, "__annotations__")
+            for k, v in mro_class.__annotations__.items()
+        }
+        for attr, rf in attr_to_rest_field.items():
+            # Use the defining class's module for forward-ref resolution
+            defining_cls = attr_to_defining_class[attr]
+            rf._module = defining_cls.__module__
+            if not rf._type:
+                rf._type = rf._get_deserialize_callable_from_annotation(annotations.get(attr, None))
+            if not rf._rest_name_input:
+                rf._rest_name_input = attr
+        cls._attr_to_rest_field = dict(attr_to_rest_field.items())
+        cls._backcompat_attr_to_rest_field = {
+            _Model._get_backcompat_attribute_name(cls._attr_to_rest_field, attr): rf
+            for attr, rf in cls._attr_to_rest_field.items()
+        }
+        cls._calculated.add(f"{cls.__module__}.{cls.__qualname__}")
+
+    return object.__new__(cls)
+
+
+_Model.__new__ = _patched_model_new
 
 
 # ---------------------------------------------------------------------------
