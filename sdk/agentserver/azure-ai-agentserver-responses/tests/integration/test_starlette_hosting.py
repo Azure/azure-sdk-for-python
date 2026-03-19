@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import asyncio
+import threading
 from typing import Any
 
 from starlette.applications import Starlette
@@ -10,6 +12,7 @@ from starlette.testclient import TestClient
 from azure.ai.agentserver.responses._hosting import map_responses_server
 from azure.ai.agentserver.responses._observability import InMemoryCreateSpanHook
 from azure.ai.agentserver.responses._options import ResponsesServerOptions
+from tests._helpers import EventGate
 
 
 class _NoopResponseHandler:
@@ -233,3 +236,84 @@ def test_hosting__non_stream_mode_returns_completed_response_with_output_items()
     assert payload["output"][0]["type"] == "output_message"
     assert payload["output"][0]["content"][0]["type"] == "output_text"
     assert payload["output"][0]["content"][0]["text"] == "hello"
+
+
+def test_hosting__shutdown_signals_inflight_background_execution() -> None:
+    class _ShutdownAwareHandler:
+        def __init__(self, started_gate: EventGate, cancelled_gate: EventGate, shutdown_gate: EventGate) -> None:
+            self._started_gate = started_gate
+            self._cancelled_gate = cancelled_gate
+            self._shutdown_gate = shutdown_gate
+
+        def create_async(self, request: Any, context: Any, cancellation_signal: Any):
+            async def _events():
+                yield {
+                    "type": "response.created",
+                    "payload": {
+                        "status": "in_progress",
+                        "output": [],
+                    },
+                }
+                self._started_gate.signal(True)
+
+                while True:
+                    if context.is_shutdown_requested:
+                        self._shutdown_gate.signal(True)
+                    if cancellation_signal.is_set():
+                        self._cancelled_gate.signal(True)
+                        return
+                    await asyncio.sleep(0.01)
+
+            return _events()
+
+    started_gate = EventGate()
+    cancelled_gate = EventGate()
+    shutdown_gate = EventGate()
+
+    app = Starlette()
+    map_responses_server(
+        app,
+        _ShutdownAwareHandler(started_gate, cancelled_gate, shutdown_gate),
+        options=ResponsesServerOptions(shutdown_grace_period_seconds=2),
+    )
+
+    create_result: dict[str, Any] = {}
+    get_result: dict[str, Any] = {}
+
+    with TestClient(app) as client:
+        create_response = client.post(
+            "/responses",
+            json={
+                "model": "gpt-4o-mini",
+                "input": "hello",
+                "stream": False,
+                "store": True,
+                "background": True,
+            },
+        )
+        assert create_response.status_code == 200
+        response_id = create_response.json()["id"]
+        create_result["response_id"] = response_id
+
+        def _issue_get() -> None:
+            try:
+                get_result["response"] = client.get(f"/responses/{response_id}")
+            except Exception as exc:  # pragma: no cover - surfaced via assertion below.
+                get_result["error"] = exc
+
+        get_thread = threading.Thread(target=_issue_get, daemon=True)
+        get_thread.start()
+
+        started, _ = started_gate.wait(timeout_s=2.0)
+        assert started, "Expected background handler execution to start before shutdown"
+        assert client.portal is not None
+        client.portal.call(app.router.shutdown)
+
+        cancelled, _ = cancelled_gate.wait(timeout_s=2.0)
+        shutdown_seen, _ = shutdown_gate.wait(timeout_s=2.0)
+        assert cancelled, "Expected shutdown to trigger cancellation_signal for in-flight execution"
+        assert shutdown_seen, "Expected shutdown to set context.is_shutdown_requested"
+
+        get_thread.join(timeout=2.0)
+        assert not get_thread.is_alive(), "Expected in-flight GET request to finish after shutdown"
+        assert get_result.get("error") is None, str(get_result.get("error"))

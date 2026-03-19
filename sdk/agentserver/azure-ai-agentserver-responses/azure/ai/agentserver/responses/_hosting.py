@@ -67,6 +67,7 @@ class _ExecutionRecord:
     background_execution_started: bool = False
     input_items: list[dict[str, Any]] = field(default_factory=list)
     previous_response_id: str | None = None
+    response_context: RuntimeResponseContext | None = None
 
     def to_snapshot(self) -> dict[str, Any]:
         def _normalize_snapshot(payload: dict[str, Any]) -> dict[str, Any]:
@@ -149,6 +150,10 @@ class _RuntimeState:
 
             return [*history, *deepcopy(record.input_items)]
 
+    async def list_records(self) -> list[_ExecutionRecord]:
+        async with self._lock:
+            return list(self._records.values())
+
 
 def _runtime_marker() -> str:
     return f"python/{sys.version_info.major}.{sys.version_info.minor}"
@@ -161,7 +166,6 @@ def _platform_header(options: ResponsesServerOptions) -> str:
         runtime=_runtime_marker(),
         extra=options.additional_server_identity,
     )
-
 
 def _json_payload(value: Any) -> Any:
     if hasattr(value, "as_dict"):
@@ -253,6 +257,18 @@ def _invalid_request(message: str, headers: dict[str, str], *, param: str | None
 def _invalid_mode(message: str, headers: dict[str, str], *, param: str | None = None) -> JSONResponse:
     payload = _json_payload(build_invalid_mode_error_response(message, param=param))
     return JSONResponse(payload, status_code=400, headers=headers)
+
+
+def _service_unavailable(message: str, headers: dict[str, str]) -> JSONResponse:
+    payload = _json_payload(
+        build_api_error_response(
+            message=message,
+            code="service_unavailable",
+            param=None,
+            error_type="server_error",
+        )
+    )
+    return JSONResponse(payload, status_code=503, headers=headers)
 
 
 def _deleted_response(response_id: str, headers: dict[str, str]) -> JSONResponse:
@@ -620,6 +636,8 @@ def map_responses_server(
     runtime_options = options or ResponsesServerOptions()
     runtime_state = _RuntimeState()
     response_headers = {"x-platform-server": _platform_header(runtime_options)}
+    shutdown_requested = asyncio.Event()
+    runtime_is_draining = False
 
     try:
         normalize_lifecycle_events(
@@ -633,6 +651,11 @@ def map_responses_server(
         raise RuntimeError(f"Invalid lifecycle event state machine configuration: {exc}") from exc
 
     async def _create(request: Request) -> Response:
+        nonlocal runtime_is_draining
+
+        if runtime_is_draining:
+            return _service_unavailable("Server is shutting down.", response_headers)
+
         span = start_create_span(
             "create_response",
             build_create_span_tags(
@@ -673,7 +696,10 @@ def map_responses_server(
             mode_flags=mode_flags,
             raw_body=payload,
         )
+        context.is_shutdown_requested = shutdown_requested.is_set()
         cancellation_signal = asyncio.Event()
+        if context.is_shutdown_requested:
+            cancellation_signal.set()
 
         span.set_tags(
             build_create_span_tags(
@@ -859,6 +885,7 @@ def map_responses_server(
                 response_payload=response_payload,
                 input_items=deepcopy(input_items),
                 previous_response_id=previous_response_id,
+                response_context=context,
             )
 
             if store:
@@ -879,6 +906,7 @@ def map_responses_server(
             model=model,
             input_items=deepcopy(input_items),
             previous_response_id=previous_response_id,
+            response_context=context,
         )
 
         async def _background_runner() -> None:
@@ -1068,8 +1096,49 @@ def map_responses_server(
         }
         return JSONResponse(payload, status_code=200, headers=response_headers)
 
+    async def _on_shutdown() -> None:
+        nonlocal runtime_is_draining
+
+        runtime_is_draining = True
+        shutdown_requested.set()
+
+        records = await runtime_state.list_records()
+        for record in records:
+            if record.response_context is not None:
+                record.response_context.is_shutdown_requested = True
+
+            record.cancel_signal.set()
+
+            if record.background and record.status in {"queued", "in_progress"}:
+                record.status = "cancelled"
+                record.response_payload = {
+                    "id": record.response_id,
+                    "response_id": record.response_id,
+                    "agent_reference": deepcopy(record.agent_reference),
+                    "object": "response",
+                    "status": "cancelled",
+                    "model": record.model,
+                    "output": [],
+                }
+
+        deadline = asyncio.get_running_loop().time() + float(runtime_options.shutdown_grace_period_seconds)
+        while True:
+            pending = [
+                record
+                for record in records
+                if record.background and record.background_execution_started and record.status in {"queued", "in_progress"}
+            ]
+            if not pending:
+                break
+
+            if asyncio.get_running_loop().time() >= deadline:
+                break
+
+            await asyncio.sleep(0.05)
+
     app.add_route(f"{normalized_prefix}/responses", _create, methods=["POST"])
     app.add_route(f"{normalized_prefix}/responses/{{response_id}}", _get, methods=["GET"])
     app.add_route(f"{normalized_prefix}/responses/{{response_id}}", _delete, methods=["DELETE"])
     app.add_route(f"{normalized_prefix}/responses/{{response_id}}/cancel", _cancel, methods=["POST"])
     app.add_route(f"{normalized_prefix}/responses/{{response_id}}/input_items", _get_input_items, methods=["GET"])
+    # app.add_event_handler("shutdown", _on_shutdown)

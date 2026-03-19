@@ -23,6 +23,7 @@ class ResponsesServerOptions:
     default_model: str | None = None
     default_fetch_history_count: int = default_fetch_history_count_value
     sse_keep_alive_interval_seconds: int | None = None
+    shutdown_grace_period_seconds: int = 10
     create_span_hook: Any | None = None
 
     @classmethod
@@ -88,6 +89,9 @@ class ResponsesServerOptions:
 
         if self.default_fetch_history_count <= 0:
             raise ValueError("default_fetch_history_count must be > 0")
+
+        if self.shutdown_grace_period_seconds <= 0:
+            raise ValueError("shutdown_grace_period_seconds must be > 0")
 
     @property
     def sse_keep_alive_enabled(self) -> bool:

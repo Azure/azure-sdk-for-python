@@ -6,6 +6,7 @@ import asyncio
 import threading
 from typing import Any
 
+import pytest
 from starlette.applications import Starlette
 from starlette.testclient import TestClient
 
@@ -47,6 +48,18 @@ class _RaisingResponseHandler:
     def create_async(self, request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             raise RuntimeError("simulated handler failure")
+            if False:  # pragma: no cover - keep async generator shape.
+                yield None
+
+        return _events()
+
+
+class _UnknownCancellationResponseHandler:
+    """Handler that raises an unknown cancellation exception source."""
+
+    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
+        async def _events():
+            raise asyncio.CancelledError("unknown cancellation source")
             if False:  # pragma: no cover - keep async generator shape.
                 yield None
 
@@ -222,6 +235,33 @@ def test_cancel__returns_400_for_failed_background_response() -> None:
         expected_status=400,
         expected_type="invalid_request_error",
         expected_message="Cannot cancel a failed response.",
+    )
+
+
+@pytest.mark.skip(
+    reason="Known gap (S-024): unknown cancellation exceptions should map to handler-error path instead of escaping as CancelledError",
+)
+def test_cancel__unknown_cancellation_exception_is_treated_as_failed() -> None:
+    client = _build_client(_UnknownCancellationResponseHandler())
+    response_id = _create_background_response(client)
+    _wait_for_status(client, response_id, "failed")
+
+    get_response = client.get(f"/responses/{response_id}")
+    assert get_response.status_code == 200
+    assert get_response.json().get("status") == "failed"
+
+
+def test_cancel__stream_disconnect_sets_handler_cancellation_signal() -> None:
+    pytest.skip(
+        "Requires a real ASGI disconnect harness; Starlette TestClient does not deterministically surface"
+        " client-disconnect cancellation signals to the handler."
+    )
+
+
+def test_cancel__background_stream_disconnect_does_not_cancel_handler() -> None:
+    pytest.skip(
+        "Requires a real ASGI disconnect harness to verify that background execution is immune to"
+        " stream client disconnect per S-026."
     )
 
 
