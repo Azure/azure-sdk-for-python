@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 from typing import Any
 
@@ -153,3 +154,44 @@ def test_streaming__identity_fields_are_consistent_across_events() -> None:
         assert payload.get("response_id") == response_id
         assert payload.get("id") == response_id
         assert payload.get("agent_reference") == first_payload.get("agent_reference")
+
+
+def test_streaming__forwards_emitted_event_before_late_handler_failure() -> None:
+    class _FailAfterFirstEventHandler:
+        def create_async(self, request: Any, context: Any, cancellation_signal: Any):
+            async def _events():
+                yield {
+                    "type": "response.created",
+                    "payload": {
+                        "status": "in_progress",
+                    },
+                }
+                await asyncio.sleep(0)
+                raise RuntimeError("late stream failure")
+
+            return _events()
+
+    app = Starlette()
+    map_responses_server(app, _FailAfterFirstEventHandler())
+    client = TestClient(app)
+
+    with client.stream(
+        "POST",
+        "/responses",
+        json={
+            "model": "gpt-4o-mini",
+            "input": "hello",
+            "stream": True,
+            "store": True,
+            "background": False,
+        },
+    ) as response:
+        assert response.status_code == 200
+        assert response.headers.get("content-type", "").startswith("text/event-stream")
+        first_event_line = ""
+        for line in response.iter_lines():
+            if line.startswith("event:"):
+                first_event_line = line
+                break
+
+    assert first_event_line == "event: response.created"

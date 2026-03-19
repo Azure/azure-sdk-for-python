@@ -1,32 +1,21 @@
 """Canonical non-generated model types for the response server."""
 
 from .errors import RequestValidationError
-try:
-    from .runtime import (
-        ResponseExecution,
-        ResponseModeFlags,
-        ResponseSession,
-        ResponseStatus,
-        StreamEventRecord,
-        StreamReplayState,
-        TerminalResponseStatus,
-    )
-except Exception:  # pragma: no cover - allows importing lightweight model errors in isolated test envs.
-    pass
+from .runtime import (
+    ResponseExecution,
+    ResponseModeFlags,
+    ResponseStatus,
+    StreamEventRecord,
+    StreamReplayState,
+    TerminalResponseStatus,
+)
 
 __all__ = [
     "RequestValidationError",
+    "ResponseExecution",
+    "ResponseModeFlags",
+    "ResponseStatus",
+    "StreamEventRecord",
+    "StreamReplayState",
+    "TerminalResponseStatus",
 ]
-
-if "ResponseExecution" in globals():
-    __all__.extend(
-        [
-            "ResponseExecution",
-            "ResponseModeFlags",
-            "ResponseSession",
-            "ResponseStatus",
-            "StreamEventRecord",
-            "StreamReplayState",
-            "TerminalResponseStatus",
-        ]
-    )

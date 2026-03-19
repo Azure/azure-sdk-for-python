@@ -3,21 +3,29 @@
 from __future__ import annotations
 
 from copy import deepcopy
-from typing import Any, Mapping
+from typing import Any, Mapping, MutableMapping, Sequence, cast
 
+from .models import _generated as generated_models
 
-_TERMINAL_EVENT_TYPES = {"response.completed", "response.failed", "response.incomplete"}
+EVENT_TYPE = generated_models.ResponseStreamEventType
+OUTPUT_ITEM_DELTA_EVENT_TYPE = "response.output_item.delta"
+
+_TERMINAL_EVENT_TYPES = {
+    EVENT_TYPE.RESPONSE_COMPLETED.value,
+    EVENT_TYPE.RESPONSE_FAILED.value,
+    EVENT_TYPE.RESPONSE_INCOMPLETE.value,
+}
 _OUTPUT_ITEM_EVENT_TYPES = {
-    "response.output_item.added",
-    "response.output_item.delta",
-    "response.output_item.done",
+    EVENT_TYPE.RESPONSE_OUTPUT_ITEM_ADDED.value,
+    OUTPUT_ITEM_DELTA_EVENT_TYPE,
+    EVENT_TYPE.RESPONSE_OUTPUT_ITEM_DONE.value,
 }
 _EVENT_STAGES = {
-    "response.created": 0,
-    "response.in_progress": 1,
-    "response.completed": 2,
-    "response.failed": 2,
-    "response.incomplete": 2,
+    EVENT_TYPE.RESPONSE_CREATED.value: 0,
+    EVENT_TYPE.RESPONSE_IN_PROGRESS.value: 1,
+    EVENT_TYPE.RESPONSE_COMPLETED.value: 2,
+    EVENT_TYPE.RESPONSE_FAILED.value: 2,
+    EVENT_TYPE.RESPONSE_INCOMPLETE.value: 2,
 }
 
 
@@ -25,13 +33,13 @@ class LifecycleStateMachineError(ValueError):
     """Raised when lifecycle events violate ordering constraints."""
 
 
-def validate_response_event_stream(events: list[Mapping[str, Any]]) -> None:
+def validate_response_event_stream(events: Sequence[Mapping[str, Any]]) -> None:
     """Validate lifecycle and output-item event ordering for a response stream."""
     if not events:
         raise LifecycleStateMachineError("event stream cannot be empty")
 
     first_type = events[0].get("type")
-    if first_type != "response.created":
+    if first_type != EVENT_TYPE.RESPONSE_CREATED.value:
         raise LifecycleStateMachineError("first lifecycle event must be response.created")
 
     terminal_count = 0
@@ -70,7 +78,7 @@ def validate_response_event_stream(events: list[Mapping[str, Any]]) -> None:
         output_index_raw = payload_mapping.get("output_index", 0)
         output_index = output_index_raw if isinstance(output_index_raw, int) and output_index_raw >= 0 else 0
 
-        if event_type == "response.output_item.added":
+        if event_type == EVENT_TYPE.RESPONSE_OUTPUT_ITEM_ADDED.value:
             if output_index in done_indexes:
                 raise LifecycleStateMachineError("cannot add output item after it has been marked done")
             added_indexes.add(output_index)
@@ -79,16 +87,16 @@ def validate_response_event_stream(events: list[Mapping[str, Any]]) -> None:
         if output_index not in added_indexes:
             raise LifecycleStateMachineError("output item delta/done requires a preceding output_item.added")
 
-        if event_type == "response.output_item.done":
+        if event_type == EVENT_TYPE.RESPONSE_OUTPUT_ITEM_DONE.value:
             done_indexes.add(output_index)
             continue
 
-        if event_type == "response.output_item.delta" and output_index in done_indexes:
+        if event_type == OUTPUT_ITEM_DELTA_EVENT_TYPE and output_index in done_indexes:
             raise LifecycleStateMachineError("output item delta cannot appear after output_item.done")
 
 
 def normalize_lifecycle_events(
-    *, response_id: str, events: list[Mapping[str, Any]], default_model: str | None = None
+    *, response_id: str, events: Sequence[Mapping[str, Any]], default_model: str | None = None
 ) -> list[dict[str, Any]]:
     """Normalize lifecycle events with ordering and terminal-state guarantees."""
     normalized: list[dict[str, Any]] = []
@@ -99,7 +107,8 @@ def normalize_lifecycle_events(
             raise LifecycleStateMachineError("each lifecycle event must include a non-empty type")
 
         payload_raw = raw_event.get("payload")
-        payload = deepcopy(payload_raw) if isinstance(payload_raw, Mapping) else {}
+        payload_raw_dict = deepcopy(payload_raw) if isinstance(payload_raw, Mapping) else {}
+        payload = cast(MutableMapping[str, Any], payload_raw_dict)
 
         payload.setdefault("id", response_id)
         payload.setdefault("object", "response")
@@ -111,7 +120,7 @@ def normalize_lifecycle_events(
     if not normalized:
         normalized = [
             {
-                "type": "response.created",
+                "type": EVENT_TYPE.RESPONSE_CREATED.value,
                 "payload": {
                     "id": response_id,
                     "object": "response",
@@ -128,7 +137,7 @@ def normalize_lifecycle_events(
     if terminal_count == 0:
         normalized.append(
             {
-                "type": "response.failed",
+                "type": EVENT_TYPE.RESPONSE_FAILED.value,
                 "payload": {
                     "id": response_id,
                     "object": "response",

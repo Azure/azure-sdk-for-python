@@ -2,80 +2,60 @@
 
 from __future__ import annotations
 
-from datetime import datetime
-from typing import Protocol
+from typing import Any, Iterable, Protocol, runtime_checkable
 
 from ..models._generated import Response
-from ..models import ResponseExecution, ResponseStatus, StreamEventRecord
 
 
-class ResponseStore(Protocol):
-    """Protocol implemented by response persistence backends.
+@runtime_checkable
+class ResponseProviderProtocol(Protocol):
+    """Protocol aligned with the .NET ``IResponsesProvider`` contract.
 
-    Store implementations must be concurrency-safe for async request handling.
+    Implementations provide response envelope storage plus input/history item lookup.
     """
 
-    async def create_execution(self, execution: ResponseExecution, *, ttl_seconds: int | None = None) -> None:
-        """Create a new execution entry.
-
-        :raises ValueError: If an entry for ``execution.response_id`` already exists.
-        """
-
-    async def get_execution(self, response_id: str) -> ResponseExecution | None:
-        """Load execution state by response ID, or ``None`` when not found/expired."""
-
-    async def set_response_snapshot(
+    async def create_response_async(
         self,
-        response_id: str,
         response: Response,
-        *,
-        ttl_seconds: int | None = None,
-    ) -> bool:
-        """Set latest response snapshot for an existing execution.
+        input_items: Iterable[Any] | None,
+        history_item_ids: Iterable[str] | None,
+    ) -> None:
+        """Persist a new response envelope and optional input/history references."""
 
-        Returns ``True`` when updated and ``False`` when the response ID does not exist.
+    async def get_response_async(self, response_id: str) -> Response:
+        """Load one response envelope by ID.
+
+        :raises KeyError: If the response does not exist.
         """
 
-    async def transition_execution_status(
+    async def update_response_async(self, response: Response) -> None:
+        """Persist an updated response envelope."""
+
+    async def delete_response_async(self, response_id: str) -> None:
+        """Delete a response envelope by ID.
+
+        :raises KeyError: If the response does not exist.
+        """
+
+    async def get_input_items_async(
         self,
         response_id: str,
-        next_status: ResponseStatus,
-        *,
-        ttl_seconds: int | None = None,
-    ) -> bool:
-        """Transition execution lifecycle status for an existing entry.
+        limit: int = 20,
+        ascending: bool = False,
+        after: str | None = None,
+        before: str | None = None,
+    ) -> list[Any]:
+        """Get response input/history items for one response ID using cursor pagination."""
 
-        Returns ``True`` when updated and ``False`` when the response ID does not exist.
-        :raises ValueError: If the transition is invalid.
-        """
+    async def get_items_async(self, item_ids: Iterable[str]) -> list[Any | None]:
+        """Get items by ID (missing IDs produce ``None`` entries)."""
 
-    async def set_cancel_requested(self, response_id: str, *, ttl_seconds: int | None = None) -> bool:
-        """Mark execution cancel intent for an existing entry.
-
-        Returns ``True`` when updated and ``False`` when the response ID does not exist.
-        """
-
-    async def append_stream_event(
+    async def get_history_item_ids_async(
         self,
-        response_id: str,
-        event: StreamEventRecord,
-        *,
-        ttl_seconds: int | None = None,
-    ) -> bool:
-        """Append one stream event to replay history.
+        previous_response_id: str | None,
+        conversation_id: str | None,
+        limit: int,
+    ) -> list[str]:
+        """Get history item IDs for a conversation chain scope."""
 
-        Returns ``True`` when appended and ``False`` when the response ID does not exist.
-        :raises ValueError: If replay sequence integrity is violated.
-        """
 
-    async def get_stream_events(self, response_id: str) -> list[StreamEventRecord] | None:
-        """Get replay events for a response ID, or ``None`` when not found/expired."""
-
-    async def delete(self, response_id: str) -> bool:
-        """Delete an execution entry and replay history.
-
-        Returns ``True`` when deleted and ``False`` when not found.
-        """
-
-    async def purge_expired(self, *, now: datetime | None = None) -> int:
-        """Purge expired entries and return the number of removed records."""

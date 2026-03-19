@@ -2,12 +2,16 @@
 
 from __future__ import annotations
 
+import asyncio
+import threading
 from typing import Any
 
 from starlette.applications import Starlette
 from starlette.testclient import TestClient
 
 from azure.ai.agentserver.responses._hosting import map_responses_server
+from azure.ai.agentserver.responses._id_generator import IdGenerator
+from tests._helpers import EventGate, poll_until
 
 
 class _NoopResponseHandler:
@@ -21,58 +25,220 @@ class _NoopResponseHandler:
         return _events()
 
 
-def _build_client() -> TestClient:
+class _DelayedResponseHandler:
+    """Handler that keeps background execution cancellable for a short period."""
+
+    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
+        async def _events():
+            if cancellation_signal.is_set():
+                return
+            await asyncio.sleep(0.25)
+            if cancellation_signal.is_set():
+                return
+            if False:  # pragma: no cover - keep async generator shape.
+                yield None
+
+        return _events()
+
+
+class _RaisingResponseHandler:
+    """Handler that raises to transition a background response into failed."""
+
+    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
+        async def _events():
+            raise RuntimeError("simulated handler failure")
+            if False:  # pragma: no cover - keep async generator shape.
+                yield None
+
+        return _events()
+
+
+class _IncompleteResponseHandler:
+    """Handler that emits an explicit incomplete terminal response event."""
+
+    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
+        async def _events():
+            yield {
+                "type": "response.created",
+                "payload": {
+                    "status": "queued",
+                    "output": [],
+                },
+            }
+            yield {
+                "type": "response.in_progress",
+                "payload": {
+                    "status": "in_progress",
+                    "output": [],
+                },
+            }
+            yield {
+                "type": "response.incomplete",
+                "payload": {
+                    "status": "incomplete",
+                    "output": [],
+                },
+            }
+
+        return _events()
+
+
+class _BlockingSyncResponseHandler:
+    """Handler that holds a sync request in-flight for deterministic concurrent cancel checks."""
+
+    def __init__(self, started_gate: EventGate, release_gate: threading.Event) -> None:
+        self._started_gate = started_gate
+        self._release_gate = release_gate
+
+    def create_async(self, request: Any, context: Any, cancellation_signal: Any):
+        async def _events():
+            self._started_gate.signal(True)
+            while not self._release_gate.is_set():
+                if cancellation_signal.is_set():
+                    return
+                await asyncio.sleep(0.01)
+            if False:  # pragma: no cover - keep async generator shape.
+                yield None
+
+        return _events()
+
+
+def _build_client(handler: Any | None = None) -> TestClient:
     app = Starlette()
-    map_responses_server(app, _NoopResponseHandler())
+    map_responses_server(app, handler or _NoopResponseHandler())
     return TestClient(app)
 
 
-def test_cancel__cancels_background_in_progress_response() -> None:
-    client = _build_client()
+def _create_background_response(client: TestClient, *, response_id: str | None = None) -> str:
+    payload: dict[str, Any] = {
+        "model": "gpt-4o-mini",
+        "input": "hello",
+        "stream": False,
+        "store": True,
+        "background": True,
+    }
+    if response_id is not None:
+        payload["response_id"] = response_id
 
-    create_response = client.post(
-        "/responses",
-        json={
-            "model": "gpt-4o-mini",
-            "input": "hello",
-            "stream": False,
-            "store": True,
-            "background": True,
-        },
-    )
+    create_response = client.post("/responses", json=payload)
     assert create_response.status_code == 200
-    response_id = create_response.json()["id"]
+    created_id = create_response.json().get("id")
+    assert isinstance(created_id, str)
+    return created_id
+
+
+def _wait_for_status(client: TestClient, response_id: str, expected_status: str, *, timeout_s: float = 5.0) -> None:
+    latest_status: str | None = None
+
+    def _has_expected_status() -> bool:
+        nonlocal latest_status
+        get_response = client.get(f"/responses/{response_id}")
+        if get_response.status_code != 200:
+            return False
+        latest_status = get_response.json().get("status")
+        return latest_status == expected_status
+
+    ok, failure = poll_until(
+        _has_expected_status,
+        timeout_s=timeout_s,
+        interval_s=0.05,
+        context_provider=lambda: {"response_id": response_id, "last_status": latest_status},
+        label=f"wait for status={expected_status}",
+    )
+    assert ok, failure
+
+
+def _assert_error(
+    response: Any,
+    *,
+    expected_status: int,
+    expected_type: str,
+    expected_message: str | None = None,
+) -> None:
+    assert response.status_code == expected_status
+    payload = response.json()
+    assert isinstance(payload.get("error"), dict)
+    assert payload["error"].get("type") == expected_type
+    if expected_message is not None:
+        assert payload["error"].get("message") == expected_message
+
+
+def test_cancel__cancels_background_response_and_clears_output() -> None:
+    client = _build_client(_DelayedResponseHandler())
+
+    response_id = _create_background_response(client)
 
     cancel_response = client.post(f"/responses/{response_id}/cancel")
     assert cancel_response.status_code == 200
     payload = cancel_response.json()
     assert payload.get("status") == "cancelled"
+    assert payload.get("output") == []
+
+    get_response = client.get(f"/responses/{response_id}")
+    assert get_response.status_code == 200
+    snapshot = get_response.json()
+    assert snapshot.get("status") == "cancelled"
+    assert snapshot.get("output") == []
 
 
 def test_cancel__is_idempotent_for_already_cancelled_response() -> None:
-    client = _build_client()
+    client = _build_client(_DelayedResponseHandler())
 
-    create_response = client.post(
-        "/responses",
-        json={
-            "model": "gpt-4o-mini",
-            "input": "hello",
-            "stream": False,
-            "store": True,
-            "background": True,
-        },
-    )
-    assert create_response.status_code == 200
-    response_id = create_response.json()["id"]
+    response_id = _create_background_response(client)
 
     first_cancel = client.post(f"/responses/{response_id}/cancel")
     assert first_cancel.status_code == 200
+    assert first_cancel.json().get("status") == "cancelled"
+    assert first_cancel.json().get("output") == []
+
     second_cancel = client.post(f"/responses/{response_id}/cancel")
     assert second_cancel.status_code == 200
     assert second_cancel.json().get("status") == "cancelled"
+    assert second_cancel.json().get("output") == []
 
 
-def test_cancel__returns_error_for_terminal_response() -> None:
+def test_cancel__returns_400_for_completed_background_response() -> None:
+    client = _build_client()
+    response_id = _create_background_response(client)
+    _wait_for_status(client, response_id, "completed")
+
+    cancel_response = client.post(f"/responses/{response_id}/cancel")
+    _assert_error(
+        cancel_response,
+        expected_status=400,
+        expected_type="invalid_request_error",
+        expected_message="Cannot cancel a completed response.",
+    )
+
+
+def test_cancel__returns_400_for_failed_background_response() -> None:
+    client = _build_client(_RaisingResponseHandler())
+    response_id = _create_background_response(client)
+    _wait_for_status(client, response_id, "failed")
+
+    cancel_response = client.post(f"/responses/{response_id}/cancel")
+    _assert_error(
+        cancel_response,
+        expected_status=400,
+        expected_type="invalid_request_error",
+        expected_message="Cannot cancel a failed response.",
+    )
+
+
+def test_cancel__returns_400_for_incomplete_background_response() -> None:
+    client = _build_client(_IncompleteResponseHandler())
+    response_id = _create_background_response(client)
+    _wait_for_status(client, response_id, "incomplete")
+
+    cancel_response = client.post(f"/responses/{response_id}/cancel")
+    _assert_error(
+        cancel_response,
+        expected_status=400,
+        expected_type="invalid_request_error",
+    )
+
+
+def test_cancel__returns_400_for_synchronous_response() -> None:
     client = _build_client()
 
     create_response = client.post(
@@ -89,16 +255,68 @@ def test_cancel__returns_error_for_terminal_response() -> None:
     response_id = create_response.json()["id"]
 
     cancel_response = client.post(f"/responses/{response_id}/cancel")
-    assert cancel_response.status_code == 400
-    payload = cancel_response.json()
-    assert isinstance(payload.get("error"), dict)
-    assert payload["error"].get("type") == "invalid_request_error"
+    _assert_error(
+        cancel_response,
+        expected_status=400,
+        expected_type="invalid_request_error",
+        expected_message="Cannot cancel a synchronous response.",
+    )
+
+
+def test_cancel__returns_404_for_in_flight_synchronous_response() -> None:
+    started_gate = EventGate()
+    release_gate = threading.Event()
+    client = _build_client(_BlockingSyncResponseHandler(started_gate, release_gate))
+    response_id = IdGenerator.new_response_id()
+
+    create_result: dict[str, Any] = {}
+
+    def _issue_sync_create() -> None:
+        try:
+            create_result["response"] = client.post(
+                "/responses",
+                json={
+                    "response_id": response_id,
+                    "model": "gpt-4o-mini",
+                    "input": "hello",
+                    "stream": False,
+                    "store": True,
+                    "background": False,
+                },
+            )
+        except Exception as exc:  # pragma: no cover - surfaced by assertions below.
+            create_result["error"] = exc
+
+    create_thread = threading.Thread(target=_issue_sync_create, daemon=True)
+    create_thread.start()
+
+    started, _ = started_gate.wait(timeout_s=2.0)
+    assert started, "Expected sync create request to enter handler before cancel call"
+
+    cancel_response = client.post(f"/responses/{response_id}/cancel")
+    _assert_error(
+        cancel_response,
+        expected_status=404,
+        expected_type="invalid_request_error",
+    )
+
+    release_gate.set()
+    create_thread.join(timeout=2.0)
+    assert not create_thread.is_alive(), "Expected in-flight sync request to finish after release"
+
+    thread_error = create_result.get("error")
+    assert thread_error is None, str(thread_error)
+    create_response = create_result.get("response")
+    assert create_response is not None
+    assert create_response.status_code == 200
 
 
 def test_cancel__returns_404_for_unknown_response_id() -> None:
     client = _build_client()
 
     cancel_response = client.post("/responses/resp_does_not_exist/cancel")
-    assert cancel_response.status_code == 404
-    payload = cancel_response.json()
-    assert isinstance(payload.get("error"), dict)
+    _assert_error(
+        cancel_response,
+        expected_status=404,
+        expected_type="invalid_request_error",
+    )

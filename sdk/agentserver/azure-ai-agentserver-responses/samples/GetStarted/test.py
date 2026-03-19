@@ -84,11 +84,91 @@ def _background_mode() -> None:
         time.sleep(0.2)
 
 
+def _background_stream_mode() -> None:
+    _print_header("Background + Streaming mode (SSE then GET)")
+    payload = {"model": "gpt-4o-mini", "input": "hello", "background": True, "stream": True}
+    with requests.post(f"{BASE_URL}/responses", json=payload, stream=True, timeout=30) as response:
+        _assert_ok(response)
+        raw_lines: list[str] = []
+        response_id: str | None = None
+
+        for line in response.iter_lines(decode_unicode=True):
+            if line is None:
+                continue
+            if line:
+                raw_lines.append(line)
+                print(line)
+
+                if response_id is None and line.startswith("data:"):
+                    data_str = line.split(":", 1)[1].strip()
+                    try:
+                        data_payload = json.loads(data_str)
+                    except json.JSONDecodeError:
+                        continue
+
+                    candidate = data_payload.get("id")
+                    if isinstance(candidate, str) and candidate:
+                        response_id = candidate
+
+        if response_id is None:
+            raise RuntimeError(
+                "Could not extract response id from background+stream SSE output. "
+                f"Collected lines: {raw_lines}"
+            )
+
+    get_response = requests.get(f"{BASE_URL}/responses/{response_id}", timeout=10)
+    _assert_ok(get_response)
+    _pretty_print(get_response.json())
+
+
+def _get_replay_mode() -> None:
+    _print_header("GET replay mode (background+stream response)")
+    payload = {"model": "gpt-4o-mini", "input": "hello", "background": True, "stream": True}
+
+    with requests.post(f"{BASE_URL}/responses", json=payload, stream=True, timeout=30) as create_response:
+        _assert_ok(create_response)
+        response_id: str | None = None
+
+        for line in create_response.iter_lines(decode_unicode=True):
+            if not line:
+                continue
+            if line.startswith("data:"):
+                data_str = line.split(":", 1)[1].strip()
+                try:
+                    data_payload = json.loads(data_str)
+                except json.JSONDecodeError:
+                    continue
+
+                candidate = data_payload.get("id")
+                if isinstance(candidate, str) and candidate:
+                    response_id = candidate
+                    break
+
+    if response_id is None:
+        raise RuntimeError("Replay test could not find response id from create stream")
+
+    replay_response = requests.get(f"{BASE_URL}/responses/{response_id}?stream=true", stream=True, timeout=30)
+    _assert_ok(replay_response)
+    try:
+        saw_event = False
+        for line in replay_response.iter_lines(decode_unicode=True):
+            if line:
+                saw_event = True
+                print(line)
+
+        if not saw_event:
+            raise RuntimeError("Replay stream returned no SSE lines")
+    finally:
+        replay_response.close()
+
+
 def main() -> None:
     _ready()
     _default_mode()
     _stream_mode()
     _background_mode()
+    _background_stream_mode()
+    _get_replay_mode()
 
 
 if __name__ == "__main__":

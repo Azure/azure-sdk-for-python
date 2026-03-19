@@ -46,12 +46,14 @@ def test_create__returns_json_response_for_non_streaming_success() -> None:
     assert response.status_code == 200
     payload = response.json()
     assert isinstance(payload.get("id"), str)
+    assert payload["id"].startswith("caresp_")
     assert payload.get("response_id") == payload.get("id")
     assert isinstance(payload.get("agent_reference"), dict)
     assert payload["agent_reference"].get("type") == "agent_reference"
     assert isinstance(payload["agent_reference"].get("name"), str)
     assert payload.get("object") == "response"
     assert payload.get("status") in {"completed", "in_progress", "queued"}
+    assert "sequence_number" not in payload
 
 
 def test_create__preserves_client_supplied_identity_fields() -> None:
@@ -62,7 +64,7 @@ def test_create__preserves_client_supplied_identity_fields() -> None:
         json={
             "model": "gpt-4o-mini",
             "input": "hello",
-            "response_id": "resp_custom_identity_12345",
+            "response_id": "caresp_1234567890abcdef00ABCDEFGHIJKLMNOPQRSTUVWXYZ012345",
             "agent_reference": {
                 "type": "agent_reference",
                 "name": "custom-agent",
@@ -76,8 +78,8 @@ def test_create__preserves_client_supplied_identity_fields() -> None:
 
     assert response.status_code == 200
     payload = response.json()
-    assert payload.get("id") == "resp_custom_identity_12345"
-    assert payload.get("response_id") == "resp_custom_identity_12345"
+    assert payload.get("id") == "caresp_1234567890abcdef00ABCDEFGHIJKLMNOPQRSTUVWXYZ012345"
+    assert payload.get("response_id") == "caresp_1234567890abcdef00ABCDEFGHIJKLMNOPQRSTUVWXYZ012345"
     assert payload.get("agent_reference") == {
         "type": "agent_reference",
         "name": "custom-agent",
@@ -203,3 +205,126 @@ def test_create__background_mode_returns_immediate_then_reaches_terminal_state()
         label="background create terminal transition",
     )
     assert ok, failure
+
+
+def test_create__non_stream_returns_completed_response_with_output_items() -> None:
+    class _OutputProducingHandler:
+        def create_async(self, request: Any, context: Any, cancellation_signal: Any):
+            async def _events():
+                from azure.ai.agentserver.responses._event_stream import ResponseEventStream
+
+                stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
+                yield stream.emit_created()
+                yield stream.emit_in_progress()
+
+                message_item = stream.add_output_item_message()
+                yield message_item.emit_added()
+
+                text_content = message_item.add_text_content()
+                yield text_content.emit_added()
+                yield text_content.emit_delta("hello")
+                yield text_content.emit_done()
+                yield message_item.emit_content_done(text_content)
+                yield message_item.emit_done()
+
+                yield stream.emit_completed()
+
+            return _events()
+
+    app = Starlette()
+    map_responses_server(app, _OutputProducingHandler())
+    client = TestClient(app)
+
+    response = client.post(
+        "/responses",
+        json={
+            "model": "gpt-4o-mini",
+            "input": "hello",
+            "stream": False,
+            "store": True,
+            "background": False,
+        },
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload.get("status") == "completed"
+    assert "sequence_number" not in payload
+    assert isinstance(payload.get("output"), list)
+    assert len(payload["output"]) == 1
+    assert payload["output"][0].get("type") == "output_message"
+    assert payload["output"][0].get("content", [])[0].get("type") == "output_text"
+    assert payload["output"][0].get("content", [])[0].get("text") == "hello"
+
+
+def test_create__background_non_stream_get_eventually_returns_output_items() -> None:
+    class _OutputProducingHandler:
+        def create_async(self, request: Any, context: Any, cancellation_signal: Any):
+            async def _events():
+                from azure.ai.agentserver.responses._event_stream import ResponseEventStream
+
+                stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
+                yield stream.emit_created()
+                yield stream.emit_in_progress()
+
+                message_item = stream.add_output_item_message()
+                yield message_item.emit_added()
+
+                text_content = message_item.add_text_content()
+                yield text_content.emit_added()
+                yield text_content.emit_delta("hello")
+                yield text_content.emit_done()
+                yield message_item.emit_content_done(text_content)
+                yield message_item.emit_done()
+
+                yield stream.emit_completed()
+
+            return _events()
+
+    app = Starlette()
+    map_responses_server(app, _OutputProducingHandler())
+    client = TestClient(app)
+
+    create_response = client.post(
+        "/responses",
+        json={
+            "model": "gpt-4o-mini",
+            "input": "hello",
+            "stream": False,
+            "store": True,
+            "background": True,
+        },
+    )
+
+    assert create_response.status_code == 200
+    response_id = create_response.json()["id"]
+
+    latest_snapshot: dict[str, Any] = {}
+
+    def _is_completed_with_output() -> bool:
+        nonlocal latest_snapshot
+        snapshot_response = client.get(f"/responses/{response_id}")
+        if snapshot_response.status_code != 200:
+            return False
+        latest_snapshot = snapshot_response.json()
+        output = latest_snapshot.get("output")
+        return latest_snapshot.get("status") == "completed" and isinstance(output, list) and len(output) == 1
+
+    ok, failure = poll_until(
+        _is_completed_with_output,
+        timeout_s=5.0,
+        interval_s=0.05,
+        context_provider=lambda: {
+            "last_status": latest_snapshot.get("status"),
+            "last_output_count": len(latest_snapshot.get("output", []))
+            if isinstance(latest_snapshot.get("output"), list)
+            else None,
+        },
+        label="background non-stream output availability",
+    )
+    assert ok, failure
+
+    assert latest_snapshot["output"][0].get("type") == "output_message"
+    assert latest_snapshot["output"][0].get("content", [])[0].get("type") == "output_text"
+    assert latest_snapshot["output"][0].get("content", [])[0].get("text") == "hello"
+    assert "sequence_number" not in latest_snapshot

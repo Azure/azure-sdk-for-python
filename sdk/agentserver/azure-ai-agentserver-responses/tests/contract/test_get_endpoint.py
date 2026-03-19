@@ -76,6 +76,28 @@ def _create_streaming_and_get_response_id(client: TestClient) -> str:
     return response_id
 
 
+def _create_background_streaming_and_get_response_id(client: TestClient) -> str:
+    with client.stream(
+        "POST",
+        "/responses",
+        json={
+            "model": "gpt-4o-mini",
+            "input": "hello",
+            "stream": True,
+            "store": True,
+            "background": True,
+        },
+    ) as create_response:
+        assert create_response.status_code == 200
+        assert create_response.headers.get("content-type", "").startswith("text/event-stream")
+        events = _collect_replay_events(create_response)
+
+    assert events, "Expected background streaming create to emit at least one event"
+    response_id = events[0]["data"].get("id")
+    assert isinstance(response_id, str)
+    return response_id
+
+
 def test_get__returns_latest_snapshot_for_existing_response() -> None:
     client = _build_client()
 
@@ -96,7 +118,13 @@ def test_get__returns_latest_snapshot_for_existing_response() -> None:
     assert get_response.status_code == 200
     payload = get_response.json()
     assert payload.get("id") == response_id
+    assert payload.get("response_id") == response_id
     assert payload.get("object") == "response"
+    assert isinstance(payload.get("agent_reference"), dict)
+    assert payload["agent_reference"].get("type") == "agent_reference"
+    assert payload.get("status") in {"queued", "in_progress", "completed", "failed", "incomplete", "cancelled"}
+    assert payload.get("model") == "gpt-4o-mini"
+    assert "sequence_number" not in payload
 
 
 def test_get__returns_404_for_unknown_response_id() -> None:
@@ -108,13 +136,16 @@ def test_get__returns_404_for_unknown_response_id() -> None:
     assert isinstance(payload.get("error"), dict)
 
 
-def test_get__returns_404_for_non_background_in_flight_response() -> None:
+def test_get__returns_snapshot_for_stored_non_background_stream_response_after_completion() -> None:
     client = _build_client()
 
     response_id = _create_streaming_and_get_response_id(client)
 
     get_response = client.get(f"/responses/{response_id}")
-    assert get_response.status_code == 404
+    assert get_response.status_code == 200
+    payload = get_response.json()
+    assert payload.get("id") == response_id
+    assert payload.get("status") in {"completed", "failed", "incomplete", "cancelled"}
 
 
 def test_get_replay__rejects_request_when_replay_preconditions_are_not_met() -> None:
@@ -126,23 +157,26 @@ def test_get_replay__rejects_request_when_replay_preconditions_are_not_met() -> 
     assert replay_response.status_code == 400
     payload = replay_response.json()
     assert isinstance(payload.get("error"), dict)
+    assert payload["error"].get("type") == "invalid_request_error"
+    assert payload["error"].get("param") == "stream"
+
+
+def test_get_replay__rejects_invalid_starting_after_cursor_type() -> None:
+    client = _build_client()
+
+    response_id = _create_background_streaming_and_get_response_id(client)
+
+    replay_response = client.get(f"/responses/{response_id}?stream=true&starting_after=not-an-int")
+    assert replay_response.status_code == 400
+    payload = replay_response.json()
+    assert payload["error"].get("type") == "invalid_request_error"
+    assert payload["error"].get("param") == "starting_after"
 
 
 def test_get_replay__starting_after_returns_events_after_cursor() -> None:
     client = _build_client()
 
-    create_response = client.post(
-        "/responses",
-        json={
-            "model": "gpt-4o-mini",
-            "input": "hello",
-            "stream": True,
-            "store": True,
-            "background": True,
-        },
-    )
-    assert create_response.status_code == 200
-    response_id = create_response.json()["id"]
+    response_id = _create_background_streaming_and_get_response_id(client)
 
     with client.stream("GET", f"/responses/{response_id}?stream=true&starting_after=0") as replay_response:
         assert replay_response.status_code == 200
@@ -153,3 +187,9 @@ def test_get_replay__starting_after_returns_events_after_cursor() -> None:
     sequence_numbers = [event["data"].get("sequence_number") for event in replay_events]
     assert all(isinstance(sequence_number, int) for sequence_number in sequence_numbers)
     assert min(sequence_numbers) > 0
+    terminal_events = {
+        "response.completed",
+        "response.failed",
+        "response.incomplete",
+    }
+    assert any(event["type"] in terminal_events for event in replay_events)

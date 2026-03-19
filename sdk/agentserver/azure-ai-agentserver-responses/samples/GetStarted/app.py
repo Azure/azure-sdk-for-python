@@ -24,13 +24,19 @@ class EchoHandler:
         async def _events() -> AsyncIterable[dict[str, Any]]:
             stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
 
-            yield stream.emit_created(status="in_progress")
+            yield stream.emit_created()
             yield stream.emit_in_progress()
 
-            output_item = stream.add_output_item(output_index=0)
-            yield output_item.emit_added(item={"id": "item-1", "type": "message", "status": "in_progress"})
-            yield output_item.emit_delta(item={"delta": "Hello from the Python GettingStarted sample!"})
-            yield output_item.emit_done(item={"id": "item-1", "type": "message", "status": "completed"})
+            message_item = stream.add_output_item_message()
+            yield message_item.emit_added()
+
+            text_content = message_item.add_text_content()
+            yield text_content.emit_added()
+            yield text_content.emit_delta("Hello from the Python GettingStarted sample!")
+            yield text_content.emit_done()
+            yield message_item.emit_content_done(text_content)
+
+            yield message_item.emit_done()
 
             yield stream.emit_completed()
 
@@ -44,10 +50,8 @@ def create_app() -> Starlette:
     return app
 
 
-app = create_app()
-
-
 def main() -> None:
+    app = create_app()
     uvicorn.run(app, host="127.0.0.1", port=5100)
 
 

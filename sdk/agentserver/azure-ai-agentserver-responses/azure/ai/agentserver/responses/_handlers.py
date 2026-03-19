@@ -41,15 +41,15 @@ class ResponseContext(Protocol):
     def raw_body(self) -> RawBodyType:
         """Get the raw request body payload for extension field access."""
 
-    async def get_input_items(self) -> Sequence[OutputItem]:
+    async def get_input_items_async(self) -> Sequence[OutputItem]:
         """Resolve and return request input items."""
 
-    async def get_history(self) -> Sequence[OutputItem]:
+    async def get_history_async(self) -> Sequence[OutputItem]:
         """Resolve and return conversation history items."""
 
 
 @dataclass(slots=True)
-class RuntimeResponseContext(ResponseContext):
+class RuntimeResponseContext:
     """Default runtime context implementation used by hosting orchestration."""
 
     response_id: str
@@ -72,7 +72,7 @@ class RuntimeResponseContext(ResponseContext):
         """Set whether shutdown has been requested by the host."""
         self._is_shutdown_requested = value
 
-    async def get_input_items(self) -> Sequence[OutputItem]:
+    async def get_input_items_async(self) -> Sequence[OutputItem]:
         """Resolve and cache request input items."""
         if self._input_items_cache is not None:
             return self._input_items_cache
@@ -85,7 +85,7 @@ class RuntimeResponseContext(ResponseContext):
         self._input_items_cache = tuple(loaded)
         return self._input_items_cache
 
-    async def get_history(self) -> Sequence[OutputItem]:
+    async def get_history_async(self) -> Sequence[OutputItem]:
         """Resolve and cache conversation history items."""
         if self._history_cache is not None:
             return self._history_cache

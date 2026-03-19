@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Any
 
 
 @dataclass(slots=True)
@@ -21,6 +22,7 @@ class ResponsesServerOptions:
     default_model: str | None = None
     default_fetch_history_count: int = default_fetch_history_count_value
     sse_keep_alive_interval_seconds: int | None = None
+    create_span_hook: Any | None = None
 
     def __post_init__(self) -> None:
         """Validate and normalize option values."""

@@ -88,3 +88,43 @@ def test_store_lifecycle__background_completion_is_observed_deterministically() 
         label="background completion polling",
     )
     assert ok, failure
+
+
+def test_store_lifecycle__background_cancel_transition_is_deterministic() -> None:
+    client = _build_client()
+
+    create_response = client.post(
+        "/responses",
+        json={
+            "model": "gpt-4o-mini",
+            "input": "hello",
+            "stream": False,
+            "store": True,
+            "background": True,
+        },
+    )
+    assert create_response.status_code == 200
+    response_id = create_response.json()["id"]
+
+    cancel_response = client.post(f"/responses/{response_id}/cancel")
+    assert cancel_response.status_code == 200
+    assert cancel_response.json().get("status") == "cancelled"
+
+    latest_status: str | None = None
+
+    def _is_cancelled() -> bool:
+        nonlocal latest_status
+        get_response = client.get(f"/responses/{response_id}")
+        if get_response.status_code != 200:
+            return False
+        latest_status = get_response.json().get("status")
+        return latest_status == "cancelled"
+
+    ok, failure = poll_until(
+        _is_cancelled,
+        timeout_s=5.0,
+        interval_s=0.05,
+        context_provider=lambda: {"last_status": latest_status},
+        label="background cancel transition polling",
+    )
+    assert ok, failure
