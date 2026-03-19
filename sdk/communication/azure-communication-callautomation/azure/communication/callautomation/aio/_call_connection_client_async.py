@@ -398,7 +398,7 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
     @distributed_trace_async
     async def move_participants(
         self,
-        target_participants: List["CommunicationIdentifier"],
+        target_participants: Sequence["CommunicationIdentifier"],
         from_call: str,
         *,
         operation_context: Optional[str] = None,
