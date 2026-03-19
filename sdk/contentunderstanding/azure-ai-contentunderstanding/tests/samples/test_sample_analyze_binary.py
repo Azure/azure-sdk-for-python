@@ -277,13 +277,19 @@ class TestSampleAnalyzeBinary(ContentUnderstandingClientTestBase):
         assert range_result.contents is not None
         range_doc = range_result.contents[0]
         assert isinstance(range_doc, DocumentContent)
+        expected_range_page_count = full_page_count - 2
         range_page_count = len(range_doc.pages) if range_doc.pages else 0
-        assert range_doc.start_page_number == 3, f"'3-' should start at page 3, got {range_doc.start_page_number}"
-        assert range_doc.end_page_number == full_page_count, (
-            f"'3-' should end at last page ({full_page_count}), got {range_doc.end_page_number}"
+        assert range_page_count == expected_range_page_count, (
+            f"'3-' should return exactly {expected_range_page_count} pages, got {range_page_count}"
         )
-        assert range_page_count == full_page_count - 2, (
-            f"'3-' should return {full_page_count - 2} pages, got {range_page_count}"
+        assert range_doc.start_page_number == 3, f"'3-' should start at page 3, got {range_doc.start_page_number}"
+        assert range_doc.end_page_number == full_doc.end_page_number, (
+            f"'3-' should end at page {full_doc.end_page_number}, got {range_doc.end_page_number}"
+        )
+        expected_range_pages = list(range(3, full_doc.end_page_number + 1))
+        actual_range_pages = sorted([p.page_number for p in range_doc.pages])
+        assert actual_range_pages == expected_range_pages, (
+            f"'3-' page numbers should be {expected_range_pages}, got {actual_range_pages}"
         )
         print(f"[PASS] '3-': {range_page_count} pages (pages {range_doc.start_page_number}-{range_doc.end_page_number})")
 
@@ -298,15 +304,24 @@ class TestSampleAnalyzeBinary(ContentUnderstandingClientTestBase):
         assert combine_result.contents is not None
         combine_doc = combine_result.contents[0]
         assert isinstance(combine_doc, DocumentContent)
+        # Expected pages: 1, 2, 3, 5, 9, 10, ..., N => count = 3 + 1 + (N - 8) = N - 4
+        expected_combine_page_count = full_page_count - 4
         combine_page_count = len(combine_doc.pages) if combine_doc.pages else 0
-        assert combine_doc.start_page_number == 1, f"'1-3,5,9-' should start at page 1, got {combine_doc.start_page_number}"
-        assert combine_doc.end_page_number == full_page_count, (
-            f"'1-3,5,9-' should end at last page ({full_page_count}), got {combine_doc.end_page_number}"
+        assert combine_page_count == expected_combine_page_count, (
+            f"'1-3,5,9-' should return exactly {expected_combine_page_count} pages, got {combine_page_count}"
         )
-        assert len(full_doc.markdown or '') >= len(combine_doc.markdown or ''), (
-            f"Full document ({len(full_doc.markdown or '')} chars) should be >= combine ({len(combine_doc.markdown or '')} chars)"
+        expected_combine_pages = [1, 2, 3, 5] + list(range(9, full_doc.end_page_number + 1))
+        actual_combine_pages = sorted([p.page_number for p in combine_doc.pages])
+        assert actual_combine_pages == expected_combine_pages, (
+            f"'1-3,5,9-' page numbers should be {expected_combine_pages}, got {actual_combine_pages}"
         )
-        print(f"[PASS] '1-3,5,9-': {combine_page_count} pages")
+        assert combine_doc.start_page_number == 1, (
+            f"'1-3,5,9-' should start at page 1, got {combine_doc.start_page_number}"
+        )
+        assert combine_doc.end_page_number == full_doc.end_page_number, (
+            f"'1-3,5,9-' should end at page {full_doc.end_page_number}, got {combine_doc.end_page_number}"
+        )
+        print(f"[PASS] '1-3,5,9-': {combine_page_count} pages, page numbers: {actual_combine_pages}")
 
         # "2" — single page
         print("\nAnalyzing page 2 only with content range '2'...")
@@ -323,7 +338,10 @@ class TestSampleAnalyzeBinary(ContentUnderstandingClientTestBase):
         assert page2_page_count == 1, f"'2' should return exactly 1 page, got {page2_page_count}"
         assert page2_doc.start_page_number == 2, f"'2' should start at page 2, got {page2_doc.start_page_number}"
         assert page2_doc.end_page_number == 2, f"'2' should end at page 2, got {page2_doc.end_page_number}"
-        print(f"[PASS] '2': {page2_page_count} page, {len(page2_doc.markdown or '')} chars")
+        assert page2_doc.pages[0].page_number == 2, (
+            f"'2' page[0].page_number should be 2, got {page2_doc.pages[0].page_number}"
+        )
+        print(f"[PASS] '2': {page2_page_count} page, page number: {page2_doc.pages[0].page_number}")
 
         # "1-3" — page range
         print("\nAnalyzing pages 1-3 with content range '1-3'...")
@@ -340,7 +358,11 @@ class TestSampleAnalyzeBinary(ContentUnderstandingClientTestBase):
         assert pages13_page_count == 3, f"'1-3' should return exactly 3 pages, got {pages13_page_count}"
         assert pages13_doc.start_page_number == 1, f"'1-3' should start at page 1, got {pages13_doc.start_page_number}"
         assert pages13_doc.end_page_number == 3, f"'1-3' should end at page 3, got {pages13_doc.end_page_number}"
-        print(f"[PASS] '1-3': {pages13_page_count} pages, {len(pages13_doc.markdown or '')} chars")
+        actual_pages13 = sorted([p.page_number for p in pages13_doc.pages])
+        assert actual_pages13 == [1, 2, 3], (
+            f"'1-3' page numbers should be [1, 2, 3], got {actual_pages13}"
+        )
+        print(f"[PASS] '1-3': {pages13_page_count} pages, page numbers: {actual_pages13}")
 
         # "1,3-4" — combined page ranges
         print("\nAnalyzing combined pages (1, 3-4) with content range '1,3-4'...")
@@ -354,9 +376,15 @@ class TestSampleAnalyzeBinary(ContentUnderstandingClientTestBase):
         combine2_doc = combine2_result.contents[0]
         assert isinstance(combine2_doc, DocumentContent)
         combine2_page_count = len(combine2_doc.pages) if combine2_doc.pages else 0
-        assert combine2_page_count == 3, f"'1,3-4' should return exactly 3 pages, got {combine2_page_count}"
+        assert combine2_page_count == 3, (
+            f"'1,3-4' should return exactly 3 pages, got {combine2_page_count}"
+        )
         assert combine2_doc.start_page_number == 1, f"'1,3-4' should start at page 1, got {combine2_doc.start_page_number}"
         assert combine2_doc.end_page_number == 4, f"'1,3-4' should end at page 4, got {combine2_doc.end_page_number}"
-        print(f"[PASS] '1,3-4': {combine2_page_count} pages, {len(combine2_doc.markdown or '')} chars")
+        actual_combine2_pages = sorted([p.page_number for p in combine2_doc.pages])
+        assert actual_combine2_pages == [1, 3, 4], (
+            f"'1,3-4' page numbers should be [1, 3, 4], got {actual_combine2_pages}"
+        )
+        print(f"[PASS] '1,3-4': {combine2_page_count} pages, page numbers: {actual_combine2_pages}")
 
         print("\n[SUCCESS] All content range binary test assertions passed")
