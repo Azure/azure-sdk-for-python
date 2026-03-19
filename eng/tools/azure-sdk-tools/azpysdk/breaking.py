@@ -176,9 +176,12 @@ class breaking(Check):
         cmd = [
             sys.executable,
             os.path.join(BREAKING_CHECKER_PATH, "detect_breaking_changes.py"),
-            "--target", pkg_dir,
-            "--source-report", source,
-            "--target-report", target,
+            "--target",
+            pkg_dir,
+            "--source-report",
+            source,
+            "--target-report",
+            target,
         ]
         if getattr(args, "changelog", False):
             cmd.append("--changelog")
