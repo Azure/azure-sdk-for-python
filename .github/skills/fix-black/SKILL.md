@@ -23,12 +23,12 @@ Intelligently fixes black formatting issues by:
 
 **Command for entire package:**
 ```powershell
-python -m azpysdk black --pkg-path <package-path>
+python -m azpysdk --isolate black --pkg-path <package-path>
 ```
 
 **Command for specific file/module:**
 ```powershell
-python -m azpysdk black --pkg-path <package-path> -- path/to/file.py
+python -m azpysdk --isolate black --pkg-path <package-path> -- path/to/file.py
 ```
 
 ## Reference Documentation
@@ -92,13 +92,13 @@ Black is an auto-formatter — it rewrites files to comply with the style. Simpl
 **Format entire package:**
 ```powershell
 # Run black on the entire package (within activated venv)
-python -m azpysdk black --pkg-path <package-path>
+python -m azpysdk --isolate black --pkg-path <package-path>
 ```
 
 **Format specific files (if issue mentions specific files):**
 ```powershell
 # Run black on specific files (within activated venv)
-python -m azpysdk black --pkg-path <package-path> -- path/to/specific_file.py
+python -m azpysdk --isolate black --pkg-path <package-path> -- path/to/specific_file.py
 ```
 
 ### Step 4: Review Changes
@@ -119,7 +119,7 @@ Re-run black in check mode to confirm all files are now properly formatted:
 
 ```powershell
 # Verify formatting (within activated venv)
-python -m azpysdk black --pkg-path <package-path>
+python -m azpysdk --isolate black --pkg-path <package-path>
 ```
 
 If black reports no files were changed, all formatting issues are resolved.
@@ -194,7 +194,7 @@ The Azure SDK for Python uses a repo-wide black configuration located at `eng/bl
 - Line length: 120 characters
 - Target Python versions: 3.8+
 
-The `python -m azpysdk black` command automatically uses this configuration, so no manual configuration is needed.
+The `python -m azpysdk --isolate black` command automatically uses this configuration, so no manual configuration is needed.
 
 ## Common Black Formatting Changes
 
@@ -225,14 +225,14 @@ pip install -r dev_requirements.txt
 pip install -e .
 
 # 2. Run black to auto-format the package
-python -m azpysdk black --pkg-path sdk/storage/azure-storage-blob
+python -m azpysdk --isolate black --pkg-path sdk/storage/azure-storage-blob
 
 # 3. Review what changed
 git diff --name-only
 git diff
 
 # 4. Verify no remaining issues
-python -m azpysdk black --pkg-path sdk/storage/azure-storage-blob
+python -m azpysdk --isolate black --pkg-path sdk/storage/azure-storage-blob
 
 # 5. Create PR referencing the issue
 $branchName = "style/azure-storage-blob-black-99999"

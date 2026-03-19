@@ -26,12 +26,12 @@ Intelligently fixes mypy issues by:
 
 **Command for entire package:**
 ```powershell
-python -m azpysdk mypy --pkg-path <package-path>
+python -m azpysdk --isolate mypy --pkg-path <package-path>
 ```
 
 **Command for specific file/module:**
 ```powershell
-python -m azpysdk mypy --pkg-path <package-path> -- path/to/file.py
+python -m azpysdk --isolate mypy --pkg-path <package-path> -- path/to/file.py
 ```
 
 ## Reference Documentation
@@ -98,13 +98,13 @@ Based on the GitHub issue details, determine which files to check:
 **Option A - Issue specifies files:**
 ```powershell
 # Run mypy on specific files mentioned in the issue (within activated venv)
-python -m azpysdk mypy --pkg-path <package-path> -- path/to/specific_file.py
+python -m azpysdk --isolate mypy --pkg-path <package-path> -- path/to/specific_file.py
 ```
 
 **Option B - Issue mentions module/directory:**
 ```powershell
 # Run mypy on entire package (within activated venv)
-python -m azpysdk mypy --pkg-path <package-path> -- azure/specific/module/
+python -m azpysdk --isolate mypy --pkg-path <package-path> -- azure/specific/module/
 ```
 
 **Option C - Check modified files (if no specific target):**
@@ -119,7 +119,7 @@ git diff --cached --name-only | Select-String "<package-path>"
 
 ```powershell
 # Run mypy targeting the specific area from the issue (within activated venv)
-python -m azpysdk mypy --pkg-path <package-path> -- <target-from-issue>
+python -m azpysdk --isolate mypy --pkg-path <package-path> -- <target-from-issue>
 ```
 
 ### Step 5: Analyze Type Errors
@@ -342,7 +342,7 @@ pip install -e .
 $targetFile = "azure/storage/blob/_blob_client.py"
 
 # 3. Run mypy on specific file
-python -m azpysdk mypy --pkg-path sdk/storage/azure-storage-blob -- $targetFile
+python -m azpysdk --isolate mypy --pkg-path sdk/storage/azure-storage-blob -- $targetFile
 
 # 4. Analyze output and identify fixable issues
 # Cross-reference with GitHub issue #67890
@@ -353,7 +353,7 @@ grep -r "from typing import" azure/storage/blob/ | findstr "_blob_client"
 # 6. Apply fixes to identified files
 
 # 7. Re-run mypy to verify
-python -m azpysdk mypy --pkg-path sdk/storage/azure-storage-blob -- $targetFile
+python -m azpysdk --isolate mypy --pkg-path sdk/storage/azure-storage-blob -- $targetFile
 
 # 8. Report results
 
