@@ -130,58 +130,6 @@ async def main() -> None:
             )
         # [END analyze_binary_with_combined_content_range]
 
-        # [START analyze_binary_with_raw_content_range]
-        # Content range is passed as a plain string. Document ranges use 1-based page numbers.
-
-        # "1-3" — pages 1 through 3
-        print("\nAnalyzing pages 1-3 with raw string '1-3'...")
-        raw_pages_poller = await client.begin_analyze_binary(
-            analyzer_id="prebuilt-documentSearch",
-            binary_input=multi_page_bytes,
-            content_range="1-3",
-        )
-        raw_pages_result: AnalysisResult = await raw_pages_poller.result()
-
-        if isinstance(raw_pages_result.contents[0], DocumentContent):
-            raw_pages_doc = raw_pages_result.contents[0]
-            print(
-                f"Raw '1-3' returned pages"
-                f" {raw_pages_doc.start_page_number} - {raw_pages_doc.end_page_number}"
-            )
-
-        # "9-" — pages 9 onward
-        print("\nAnalyzing pages 9 onward with raw string '9-'...")
-        raw_from_poller = await client.begin_analyze_binary(
-            analyzer_id="prebuilt-documentSearch",
-            binary_input=multi_page_bytes,
-            content_range="9-",
-        )
-        raw_from_result: AnalysisResult = await raw_from_poller.result()
-
-        if isinstance(raw_from_result.contents[0], DocumentContent):
-            raw_from_doc = raw_from_result.contents[0]
-            print(
-                f"Raw '9-' returned pages"
-                f" {raw_from_doc.start_page_number} - {raw_from_doc.end_page_number}"
-            )
-
-        # "1-3,5,9-" — combined ranges
-        print("\nAnalyzing combined pages (1-3, 5, 9-) with raw string '1-3,5,9-'...")
-        raw_combine_poller = await client.begin_analyze_binary(
-            analyzer_id="prebuilt-documentSearch",
-            binary_input=multi_page_bytes,
-            content_range="1-3,5,9-",
-        )
-        raw_combine_result: AnalysisResult = await raw_combine_poller.result()
-
-        if isinstance(raw_combine_result.contents[0], DocumentContent):
-            raw_combine_doc = raw_combine_result.contents[0]
-            print(
-                f"Raw '1-3,5,9-' returned pages"
-                f" {raw_combine_doc.start_page_number} - {raw_combine_doc.end_page_number}"
-            )
-        # [END analyze_binary_with_raw_content_range]
-
         # [START extract_markdown]
         print("\nMarkdown Content:")
         print("=" * 50)

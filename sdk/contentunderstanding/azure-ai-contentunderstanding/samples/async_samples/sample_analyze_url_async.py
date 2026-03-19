@@ -246,29 +246,6 @@ async def main() -> None:
             )
         # [END analyze_video_url_with_additional_content_ranges]
 
-        # [START analyze_video_url_with_raw_content_range]
-        # Content range is passed as a plain string. Time ranges use milliseconds.
-        # "0-5000" — analyze the first 5 seconds
-        print("\nAnalyzing first 5 seconds of video with raw string '0-5000'...")
-        raw_video_range_poller = await client.begin_analyze(
-            analyzer_id="prebuilt-videoSearch",
-            inputs=[
-                AnalysisInput(
-                    url=video_url,
-                    content_range="0-5000",
-                )
-            ],
-        )
-        raw_video_range_result = await raw_video_range_poller.result()
-
-        for raw_media in raw_video_range_result.contents:
-            raw_video_content = cast(AudioVisualContent, raw_media)
-            print(
-                f"Raw '0-5000' segment:"
-                f" {raw_video_content.start_time_ms} ms - {raw_video_content.end_time_ms} ms"
-            )
-        # [END analyze_video_url_with_raw_content_range]
-
         # [START analyze_audio_from_url]
         print("\n" + "=" * 60)
         print("AUDIO ANALYSIS FROM URL")
@@ -368,28 +345,6 @@ async def main() -> None:
             f" {audio_subsec_content.start_time_ms} ms - {audio_subsec_content.end_time_ms} ms"
         )
         # [END analyze_audio_url_with_additional_content_ranges]
-
-        # [START analyze_audio_url_with_raw_content_range]
-        # Content range is passed as a plain string. Time ranges use milliseconds.
-        # "5000-" — analyze from 5 seconds onward
-        print("\nAnalyzing audio from 5 seconds onward with raw string '5000-'...")
-        raw_audio_range_poller = await client.begin_analyze(
-            analyzer_id="prebuilt-audioSearch",
-            inputs=[
-                AnalysisInput(
-                    url=audio_url,
-                    content_range="5000-",
-                )
-            ],
-        )
-        raw_audio_range_result = await raw_audio_range_poller.result()
-
-        raw_audio_content = cast(AudioVisualContent, raw_audio_range_result.contents[0])
-        print(
-            f"Raw '5000-' audio analysis:"
-            f" {raw_audio_content.start_time_ms} ms onward"
-        )
-        # [END analyze_audio_url_with_raw_content_range]
 
         # [START analyze_image_from_url]
         print("\n" + "=" * 60)
