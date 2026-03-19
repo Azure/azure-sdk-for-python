@@ -262,18 +262,16 @@ async def main() -> None:
         # [END analyze_video_url_with_additional_content_ranges]
 
         # [START analyze_video_url_with_raw_content_range]
-        # You can also pass a range string directly to the ContentRange constructor.
-        # Time ranges use milliseconds on the wire. This is useful for dynamically
-        # constructed or user-supplied ranges.
-        # Analyze the first 5 seconds using a raw range string (milliseconds).
-        # This is equivalent to: ContentRange.time_range(timedelta(0), timedelta(seconds=5))
-        print("\nAnalyzing first 5 seconds of video with raw ContentRange string '0-5000'...")
+        # You can also pass content range as a plain string directly for video time ranges.
+        # Time ranges use milliseconds. This is useful for dynamically constructed or user-supplied ranges.
+        # "0-5000" — analyze the first 5 seconds (equivalent to ContentRange.time_range(timedelta(0), timedelta(seconds=5)))
+        print("\nAnalyzing first 5 seconds of video with raw string '0-5000'...")
         raw_video_range_poller = await client.begin_analyze(
             analyzer_id="prebuilt-videoSearch",
             inputs=[
                 AnalysisInput(
                     url=video_url,
-                    content_range=str(ContentRange("0-5000")),
+                    content_range="0-5000",
                 )
             ],
         )
@@ -282,7 +280,7 @@ async def main() -> None:
         for raw_media in raw_video_range_result.contents:
             raw_video_content = cast(AudioVisualContent, raw_media)
             print(
-                f"Raw ContentRange segment:"
+                f"Raw '0-5000' segment:"
                 f" {raw_video_content.start_time_ms} ms - {raw_video_content.end_time_ms} ms"
             )
         # [END analyze_video_url_with_raw_content_range]
@@ -398,16 +396,16 @@ async def main() -> None:
         # [END analyze_audio_url_with_additional_content_ranges]
 
         # [START analyze_audio_url_with_raw_content_range]
-        # You can also pass a range string directly for audio time ranges.
-        # Analyze audio from 5 seconds onward using a raw range string (milliseconds).
-        # This is equivalent to: ContentRange.time_range_from(timedelta(seconds=5))
-        print("\nAnalyzing audio from 5 seconds onward with raw ContentRange string '5000-'...")
+        # You can also pass content range as a plain string directly for audio time ranges.
+        # Time ranges use milliseconds. This is useful for dynamically constructed or user-supplied ranges.
+        # "5000-" — analyze from 5 seconds onward (equivalent to ContentRange.time_range_from(timedelta(seconds=5)))
+        print("\nAnalyzing audio from 5 seconds onward with raw string '5000-'...")
         raw_audio_range_poller = await client.begin_analyze(
             analyzer_id="prebuilt-audioSearch",
             inputs=[
                 AnalysisInput(
                     url=audio_url,
-                    content_range=str(ContentRange("5000-")),
+                    content_range="5000-",
                 )
             ],
         )
@@ -415,7 +413,7 @@ async def main() -> None:
 
         raw_audio_content = cast(AudioVisualContent, raw_audio_range_result.contents[0])
         print(
-            f"Raw ContentRange audio analysis:"
+            f"Raw '5000-' audio analysis:"
             f" {raw_audio_content.start_time_ms} ms onward"
         )
         # [END analyze_audio_url_with_raw_content_range]

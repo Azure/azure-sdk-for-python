@@ -136,24 +136,55 @@ async def main() -> None:
         # [END analyze_binary_with_combined_content_range]
 
         # [START analyze_binary_with_raw_content_range]
-        # You can also pass a range string directly to the ContentRange constructor.
-        # This is equivalent to using the factory methods and is useful for dynamically
-        # constructed or user-supplied ranges.
-        # Analyze pages 1-3, page 5, and pages 9 onward using a raw range string.
-        # This is equivalent to: ContentRange.combine(ContentRange.pages(1, 3), ContentRange.page(5), ContentRange.pages_from(9))
-        print("\nAnalyzing with raw ContentRange string '1-3,5,9-'...")
-        raw_range_poller = await client.begin_analyze_binary(
+        # You can also pass content range as a plain string directly, without using
+        # ContentRange factory methods. The wire format is the same as what the factory methods produce.
+
+        # "1-3" — pages 1 through 3 (equivalent to ContentRange.pages(1, 3))
+        print("\nAnalyzing pages 1-3 with raw string '1-3'...")
+        raw_pages_poller = await client.begin_analyze_binary(
             analyzer_id="prebuilt-documentSearch",
             binary_input=multi_page_bytes,
-            content_range=ContentRange("1-3,5,9-"),
+            content_range="1-3",
         )
-        raw_range_result: AnalysisResult = await raw_range_poller.result()
+        raw_pages_result: AnalysisResult = await raw_pages_poller.result()
 
-        if isinstance(raw_range_result.contents[0], DocumentContent):
-            raw_doc = raw_range_result.contents[0]
+        if isinstance(raw_pages_result.contents[0], DocumentContent):
+            raw_pages_doc = raw_pages_result.contents[0]
             print(
-                f"Raw ContentRange analysis returned pages"
-                f" {raw_doc.start_page_number} - {raw_doc.end_page_number}"
+                f"Raw '1-3' returned pages"
+                f" {raw_pages_doc.start_page_number} - {raw_pages_doc.end_page_number}"
+            )
+
+        # "9-" — pages 9 onward (equivalent to ContentRange.pages_from(9))
+        print("\nAnalyzing pages 9 onward with raw string '9-'...")
+        raw_from_poller = await client.begin_analyze_binary(
+            analyzer_id="prebuilt-documentSearch",
+            binary_input=multi_page_bytes,
+            content_range="9-",
+        )
+        raw_from_result: AnalysisResult = await raw_from_poller.result()
+
+        if isinstance(raw_from_result.contents[0], DocumentContent):
+            raw_from_doc = raw_from_result.contents[0]
+            print(
+                f"Raw '9-' returned pages"
+                f" {raw_from_doc.start_page_number} - {raw_from_doc.end_page_number}"
+            )
+
+        # "1-3,5,9-" — combined ranges (equivalent to ContentRange.combine(pages(1,3), page(5), pages_from(9)))
+        print("\nAnalyzing combined pages (1-3, 5, 9-) with raw string '1-3,5,9-'...")
+        raw_combine_poller = await client.begin_analyze_binary(
+            analyzer_id="prebuilt-documentSearch",
+            binary_input=multi_page_bytes,
+            content_range="1-3,5,9-",
+        )
+        raw_combine_result: AnalysisResult = await raw_combine_poller.result()
+
+        if isinstance(raw_combine_result.contents[0], DocumentContent):
+            raw_combine_doc = raw_combine_result.contents[0]
+            print(
+                f"Raw '1-3,5,9-' returned pages"
+                f" {raw_combine_doc.start_page_number} - {raw_combine_doc.end_page_number}"
             )
         # [END analyze_binary_with_raw_content_range]
 

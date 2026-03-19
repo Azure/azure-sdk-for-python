@@ -641,13 +641,13 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
 
         # --- Raw string ContentRange test for video ---
         # Raw string "0-5000" — equivalent to ContentRange.time_range(0, 5s)
-        print("\nVerifying raw ContentRange('0-5000') matches TimeRange(0, 5s)...")
+        print("\nVerifying raw string '0-5000' matches TimeRange(0, 5s)...")
         raw_video_poller = client.begin_analyze(
             analyzer_id="prebuilt-videoSearch",
             inputs=[
                 AnalysisInput(
                     url=url,
-                    content_range=str(ContentRange("0-5000")),
+                    content_range="0-5000",
                 )
             ],
             polling_interval=10,
@@ -655,19 +655,19 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
         raw_video_result = raw_video_poller.result()
         assert raw_video_result.contents is not None
         raw_video_segments = [cast(AudioVisualContent, c) for c in raw_video_result.contents]
-        assert len(raw_video_segments) > 0, "Raw ContentRange('0-5000') should return segments"
+        assert len(raw_video_segments) > 0, "Raw '0-5000' should return segments"
         assert len(raw_video_segments) == len(range_segments), (
-            f"Raw ContentRange('0-5000') should return same segment count as TimeRange equivalent "
+            f"Raw '0-5000' should return same segment count as TimeRange equivalent "
             f"({len(raw_video_segments)} vs {len(range_segments)})"
         )
         for seg in raw_video_segments:
             assert (seg.start_time_ms or 0) >= 0, (
-                f"Raw Range(0-5000) segment StartTime ({seg.start_time_ms} ms) should be >= 0 ms"
+                f"Raw '0-5000' segment StartTime ({seg.start_time_ms} ms) should be >= 0 ms"
             )
             assert (seg.end_time_ms or 0) <= 5000, (
-                f"Raw Range(0-5000) segment EndTime ({seg.end_time_ms} ms) should be <= 5000 ms"
+                f"Raw '0-5000' segment EndTime ({seg.end_time_ms} ms) should be <= 5000 ms"
             )
-        print(f"[PASS] Raw ContentRange('0-5000'): {len(raw_video_segments)} segment(s), matches TimeRange result")
+        print(f"[PASS] Raw '0-5000': {len(raw_video_segments)} segment(s), matches TimeRange result")
 
         print("\n[SUCCESS] All video URL ContentRange assertions passed")
 
@@ -800,13 +800,13 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
 
         # --- Raw string ContentRange test for audio ---
         # Raw string "5000-" — equivalent to ContentRange.time_range_from(5s)
-        print("\nVerifying raw ContentRange('5000-') matches TimeRangeFrom(5s)...")
+        print("\nVerifying raw string '5000-' matches TimeRangeFrom(5s)...")
         raw_audio_poller = client.begin_analyze(
             analyzer_id="prebuilt-audioSearch",
             inputs=[
                 AnalysisInput(
                     url=url,
-                    content_range=str(ContentRange("5000-")),
+                    content_range="5000-",
                 )
             ],
             polling_interval=10,
@@ -815,12 +815,12 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
         assert raw_audio_result.contents is not None
         raw_audio = cast(AudioVisualContent, raw_audio_result.contents[0])
         assert (raw_audio.start_time_ms or 0) >= 5000, (
-            f"Raw ContentRange('5000-') audio StartTime ({raw_audio.start_time_ms} ms) should be >= 5000 ms"
+            f"Raw '5000-' audio StartTime ({raw_audio.start_time_ms} ms) should be >= 5000 ms"
         )
         assert len(from_audio.markdown or '') == len(raw_audio.markdown or ''), (
-            f"Raw ContentRange('5000-') should return same markdown length as TimeRangeFrom(5s) "
+            f"Raw '5000-' should return same markdown length as TimeRangeFrom(5s) "
             f"({len(from_audio.markdown or '')} vs {len(raw_audio.markdown or '')})"
         )
-        print(f"[PASS] Raw ContentRange('5000-'): {len(raw_audio.markdown or '')} chars, matches TimeRangeFrom(5s) result")
+        print(f"[PASS] Raw '5000-': {len(raw_audio.markdown or '')} chars, matches TimeRangeFrom(5s) result")
 
         print("\n[SUCCESS] All audio URL ContentRange assertions passed")
