@@ -108,7 +108,6 @@ with (
         name=evaluator_name,
         evaluator_version=evaluator_version,
         folder=local_upload_folder,
-        overwrite=True,
     )
 
     print(f"Evaluator created: name={code_evaluator.name}, version={code_evaluator.version}")

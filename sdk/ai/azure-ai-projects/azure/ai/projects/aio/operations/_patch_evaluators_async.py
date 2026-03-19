@@ -136,7 +136,7 @@ class EvaluatorsOperations(EvaluatorsOperationsGenerated):
         logger.info("[upload] Auto-resolved version to '%s'.", version)
 
         # Get SAS URI via startPendingUpload
-        container_client, output_version, blob_uri = await self._start_pending_upload_and_get_container_client(
+        container_client, _, blob_uri = await self._start_pending_upload_and_get_container_client(
             name=name,
             version=version,
             connection_name=connection_name,

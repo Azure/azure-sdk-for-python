@@ -127,7 +127,6 @@ with (
         name=evaluator_name,
         evaluator_version=evaluator_version,
         folder=local_upload_folder,
-        overwrite=True,
     )
 
     print(f"\nEvaluator created: name={friendly_evaluator.name}, version={friendly_evaluator.version}")
