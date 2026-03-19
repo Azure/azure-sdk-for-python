@@ -3,7 +3,7 @@ import json
 import tempfile
 import shutil
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 
 MODULE = "packaging_tools.sdk_generator"
