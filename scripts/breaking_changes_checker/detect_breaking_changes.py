@@ -443,9 +443,14 @@ def build_library_report(target_module: str) -> Dict:
 def test_compare_reports(pkg_dir: str, changelog: bool, source_report: str = "stable.json", target_report: str = "current.json") -> None:
     package_name = os.path.basename(pkg_dir)
 
-    with open(os.path.join(pkg_dir, source_report), "r") as fd:
+    if not os.path.isabs(source_report):
+        source_report = os.path.join(pkg_dir, source_report)
+    if not os.path.isabs(target_report):
+        target_report = os.path.join(pkg_dir, target_report)
+
+    with open(source_report, "r") as fd:
         stable = json.load(fd)
-    with open(os.path.join(pkg_dir, target_report), "r") as fd:
+    with open(target_report, "r") as fd:
         current = json.load(fd)
 
     if "azure-mgmt-" in package_name:
