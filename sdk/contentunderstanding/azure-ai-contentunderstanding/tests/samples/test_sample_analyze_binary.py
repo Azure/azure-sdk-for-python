@@ -106,70 +106,47 @@ class TestSampleAnalyzeBinary(ContentUnderstandingClientTestBase):
         assert len(result.contents) == 1, "PDF file should have exactly one content element"
 
         content = result.contents[0]
-        assert content is not None, "Content should not be null"
+        assert isinstance(content, DocumentContent), f"Expected DocumentContent, got {type(content).__name__}"
 
-        # Assertion: Verify markdown content
-        markdown = getattr(content, "markdown", None)
-        if markdown:
-            assert isinstance(markdown, str), "Markdown should be a string"
-            assert len(markdown) > 0, "Markdown content should not be empty"
-            assert markdown.strip(), "Markdown content should not be just whitespace"
-            print(f"[PASS] Markdown content extracted successfully ({len(markdown)} characters)")
-        else:
-            print("[WARN]  No markdown content available")
+        # Assertion: Verify markdown content (prebuilt-documentSearch always returns markdown)
+        assert content.markdown, "DocumentContent should have non-empty markdown"
+        assert isinstance(content.markdown, str), "Markdown should be a string"
+        assert content.markdown.strip(), "Markdown content should not be just whitespace"
+        print(f"[PASS] Markdown content extracted successfully ({len(content.markdown)} characters)")
 
     def _test_document_properties(self, result):
         """Test document property access."""
+        assert len(result.contents) > 0, "Result should have at least one content"
         content = result.contents[0]
-        assert content is not None, "Content should not be null for document properties validation"
+        assert isinstance(content, DocumentContent), f"Expected DocumentContent, got {type(content).__name__}"
 
-        # Check if this is DocumentContent
-        content_type = type(content).__name__
-        print(f"[INFO] Content type: {content_type}")
+        # Validate MIME type (Required field)
+        assert content.mime_type == "application/pdf", f"MIME type should be application/pdf, but was {content.mime_type}"
+        print(f"[PASS] MIME type verified: {content.mime_type}")
 
-        # Validate this is document content (should have document-specific properties)
-        is_document_content = hasattr(content, "mime_type") and hasattr(content, "start_page_number")
-        if not is_document_content:
-            print(f"[WARN] Expected DocumentContent but got {content_type}, skipping document-specific validations")
-            return
+        # Validate page numbers (Required fields)
+        assert content.start_page_number >= 1, f"Start page should be >= 1, but was {content.start_page_number}"
+        assert content.end_page_number >= content.start_page_number, (
+            f"End page {content.end_page_number} should be >= start page {content.start_page_number}"
+        )
+        total_pages = content.end_page_number - content.start_page_number + 1
+        assert total_pages > 0, f"Total pages should be positive, but was {total_pages}"
+        print(f"[PASS] Page range verified: {content.start_page_number} to {content.end_page_number} ({total_pages} pages)")
 
-        # Validate MIME type
-        mime_type = getattr(content, "mime_type", None)
-        if mime_type:
-            assert isinstance(mime_type, str), "MIME type should be a string"
-            assert mime_type.strip(), "MIME type should not be empty"
-            assert mime_type == "application/pdf", f"MIME type should be application/pdf, but was {mime_type}"
-            print(f"[PASS] MIME type verified: {mime_type}")
+        # Validate pages collection (Optional but expected for prebuilt-documentSearch)
+        pages = content.pages
+        if pages:
+            assert (
+                len(pages) == total_pages
+            ), f"Pages collection count {len(pages)} should match calculated total pages {total_pages}"
+            print(f"[PASS] Pages collection verified: {len(pages)} pages")
+            self._validate_pages(pages, content.start_page_number, content.end_page_number, content)
+        else:
+            print("[WARN] No pages collection available in document content")
 
-        # Validate page numbers
-        start_page = getattr(content, "start_page_number", None)
-        if start_page is not None:
-            assert start_page >= 1, f"Start page should be >= 1, but was {start_page}"
-
-            end_page = getattr(content, "end_page_number", None)
-            if end_page is not None:
-                assert end_page >= start_page, f"End page {end_page} should be >= start page {start_page}"
-                total_pages = end_page - start_page + 1
-                assert total_pages > 0, f"Total pages should be positive, but was {total_pages}"
-                print(f"[PASS] Page range verified: {start_page} to {end_page} ({total_pages} pages)")
-
-                # Validate pages collection
-                pages = getattr(content, "pages", None)
-                if pages and len(pages) > 0:
-                    assert len(pages) > 0, "Pages collection should not be empty when not null"
-                    assert (
-                        len(pages) == total_pages
-                    ), f"Pages collection count {len(pages)} should match calculated total pages {total_pages}"
-                    print(f"[PASS] Pages collection verified: {len(pages)} pages")
-
-                    # Validate individual pages
-                    self._validate_pages(pages, start_page, end_page, content)
-                else:
-                    print("[WARN] No pages collection available in document content")
-
-        # Validate tables collection
-        tables = getattr(content, "tables", None)
-        if tables and len(tables) > 0:
+        # Validate tables collection (Optional)
+        tables = content.tables
+        if tables:
             self._validate_tables(tables)
         else:
             print("No tables found in document content")
@@ -281,7 +258,12 @@ class TestSampleAnalyzeBinary(ContentUnderstandingClientTestBase):
         assert full_result.contents is not None
         full_doc = full_result.contents[0]
         assert isinstance(full_doc, DocumentContent)
-        full_page_count = len(full_doc.pages) if full_doc.pages else 0
+        assert full_doc.start_page_number == 1, f"Full document should start at page 1, got {full_doc.start_page_number}"
+        assert full_doc.pages, "Full document should have a non-empty pages collection"
+        full_page_count = len(full_doc.pages)
+        assert full_page_count == full_doc.end_page_number, (
+            f"Full page count ({full_page_count}) should equal end_page_number ({full_doc.end_page_number})"
+        )
         print(f"[PASS] Full document: {full_page_count} pages, {len(full_doc.markdown or '')} chars")
 
         # "3-" — pages 3 onward

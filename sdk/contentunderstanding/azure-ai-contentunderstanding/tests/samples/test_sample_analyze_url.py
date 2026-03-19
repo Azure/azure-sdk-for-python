@@ -209,63 +209,47 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
         assert len(result.contents) == 1, "PDF file should have exactly one content element"
 
         content = result.contents[0]
-        assert content is not None, "Content should not be null"
+        assert isinstance(content, DocumentContent), f"Expected DocumentContent, got {type(content).__name__}"
 
-        markdown = getattr(content, "markdown", None)
-        if markdown:
-            assert isinstance(markdown, str), "Markdown should be a string"
-            assert len(markdown) > 0, "Markdown content should not be empty"
-            assert markdown.strip(), "Markdown content should not be just whitespace"
-            print(f"[PASS] Markdown content extracted successfully ({len(markdown)} characters)")
-        else:
-            print("[WARN] No markdown content available")
+        # Verify markdown (prebuilt-documentSearch always returns markdown)
+        assert content.markdown, "DocumentContent should have non-empty markdown"
+        assert isinstance(content.markdown, str), "Markdown should be a string"
+        assert content.markdown.strip(), "Markdown content should not be just whitespace"
+        print(f"[PASS] Markdown content extracted successfully ({len(content.markdown)} characters)")
 
     def _test_document_properties(self, result):
         """Test document property access."""
+        assert len(result.contents) > 0, "Result should have at least one content"
         content = result.contents[0]
-        assert content is not None, "Content should not be null for document properties validation"
+        assert isinstance(content, DocumentContent), f"Expected DocumentContent, got {type(content).__name__}"
 
-        content_type = type(content).__name__
-        print(f"[INFO] Content type: {content_type}")
+        # Validate MIME type (Required field)
+        assert content.mime_type == "application/pdf", f"MIME type should be application/pdf, but was {content.mime_type}"
+        print(f"[PASS] MIME type verified: {content.mime_type}")
 
-        is_document_content = hasattr(content, "mime_type") and hasattr(content, "start_page_number")
-        if not is_document_content:
-            print(f"[WARN] Expected DocumentContent but got {content_type}, skipping document-specific validations")
-            return
+        # Validate page numbers (Required fields)
+        assert content.start_page_number >= 1, f"Start page should be >= 1, but was {content.start_page_number}"
+        assert content.end_page_number >= content.start_page_number, (
+            f"End page {content.end_page_number} should be >= start page {content.start_page_number}"
+        )
+        total_pages = content.end_page_number - content.start_page_number + 1
+        assert total_pages > 0, f"Total pages should be positive, but was {total_pages}"
+        print(f"[PASS] Page range verified: {content.start_page_number} to {content.end_page_number} ({total_pages} pages)")
 
-        # Validate MIME type
-        mime_type = getattr(content, "mime_type", None)
-        if mime_type:
-            assert isinstance(mime_type, str), "MIME type should be a string"
-            assert mime_type.strip(), "MIME type should not be empty"
-            assert mime_type == "application/pdf", f"MIME type should be application/pdf, but was {mime_type}"
-            print(f"[PASS] MIME type verified: {mime_type}")
+        # Validate pages collection (Optional but expected for prebuilt-documentSearch)
+        pages = content.pages
+        if pages:
+            assert (
+                len(pages) == total_pages
+            ), f"Pages collection count {len(pages)} should match calculated total pages {total_pages}"
+            print(f"[PASS] Pages collection verified: {len(pages)} pages")
+            self._validate_pages(pages, content.start_page_number, content.end_page_number, content)
+        else:
+            print("[WARN] No pages collection available in document content")
 
-        # Validate page numbers
-        start_page = getattr(content, "start_page_number", None)
-        if start_page is not None:
-            assert start_page >= 1, f"Start page should be >= 1, but was {start_page}"
-
-            end_page = getattr(content, "end_page_number", None)
-            if end_page is not None:
-                assert end_page >= start_page, f"End page {end_page} should be >= start page {start_page}"
-                total_pages = end_page - start_page + 1
-                assert total_pages > 0, f"Total pages should be positive, but was {total_pages}"
-                print(f"[PASS] Page range verified: {start_page} to {end_page} ({total_pages} pages)")
-
-                pages = getattr(content, "pages", None)
-                if pages and len(pages) > 0:
-                    assert len(pages) > 0, "Pages collection should not be empty when not null"
-                    assert (
-                        len(pages) == total_pages
-                    ), f"Pages collection count {len(pages)} should match calculated total pages {total_pages}"
-                    print(f"[PASS] Pages collection verified: {len(pages)} pages")
-                    self._validate_pages(pages, start_page, end_page, content)
-                else:
-                    print("[WARN] No pages collection available in document content")
-
-        tables = getattr(content, "tables", None)
-        if tables and len(tables) > 0:
+        # Validate tables collection (Optional)
+        tables = content.tables
+        if tables:
             self._validate_tables(tables)
         else:
             print("No tables found in document content")
@@ -274,39 +258,33 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
 
     def _test_audiovisual_properties(self, result):
         """Test audio/visual content properties for video."""
+        assert len(result.contents) > 0, "Result should have at least one content"
         content = result.contents[0]
-        assert content is not None, "Content should not be null"
+        assert isinstance(content, AudioVisualContent), f"Expected AudioVisualContent, got {type(content).__name__}"
 
-        # Verify markdown
-        markdown = getattr(content, "markdown", None)
-        if markdown:
-            assert isinstance(markdown, str), "Markdown should be a string"
-            assert len(markdown) > 0, "Markdown content should not be empty"
-            print(f"[PASS] Video markdown content extracted ({len(markdown)} characters)")
+        # Verify markdown (expected for prebuilt-videoSearch)
+        assert content.markdown, "Video content should have non-empty markdown"
+        assert isinstance(content.markdown, str), "Markdown should be a string"
+        print(f"[PASS] Video markdown content extracted ({len(content.markdown)} characters)")
 
-        # Verify timing properties
-        start_time = getattr(content, "start_time_ms", None)
-        if start_time is not None:
-            assert start_time >= 0, f"Start time should be >= 0, but was {start_time}"
-            print(f"[PASS] Video start time verified: {start_time} ms")
+        # Verify timing properties (Required fields)
+        assert content.start_time_ms >= 0, f"Start time should be >= 0, but was {content.start_time_ms}"
+        print(f"[PASS] Video start time verified: {content.start_time_ms} ms")
 
-        end_time = getattr(content, "end_time_ms", None)
-        if end_time is not None:
-            assert end_time >= 0, f"End time should be >= 0, but was {end_time}"
-            print(f"[PASS] Video end time verified: {end_time} ms")
+        assert content.end_time_ms > content.start_time_ms, (
+            f"End time ({content.end_time_ms}) should be > start time ({content.start_time_ms})"
+        )
+        print(f"[PASS] Video end time verified: {content.end_time_ms} ms")
 
-        # Verify frame size
-        width = getattr(content, "width", None)
-        height = getattr(content, "height", None)
-        if width is not None and height is not None:
-            assert width > 0, f"Video width should be > 0, but was {width}"
-            assert height > 0, f"Video height should be > 0, but was {height}"
-            print(f"[PASS] Video frame size verified: {width} x {height}")
+        # Verify frame size (Optional — applicable to video only)
+        if content.width is not None and content.height is not None:
+            assert content.width > 0, f"Video width should be > 0, but was {content.width}"
+            assert content.height > 0, f"Video height should be > 0, but was {content.height}"
+            print(f"[PASS] Video frame size verified: {content.width} x {content.height}")
 
-        # Verify summary field
-        fields = getattr(content, "fields", None)
-        if fields:
-            summary = fields.get("Summary")
+        # Verify summary field (Optional)
+        if content.fields:
+            summary = content.fields.get("Summary")
             if summary:
                 print("[PASS] Summary field available in video content")
 
@@ -314,34 +292,29 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
 
     def _test_audio_properties(self, result):
         """Test audio content properties including transcript phrases."""
+        assert len(result.contents) > 0, "Result should have at least one content"
         content = result.contents[0]
-        assert content is not None, "Content should not be null"
+        assert isinstance(content, AudioVisualContent), f"Expected AudioVisualContent, got {type(content).__name__}"
 
-        # Verify markdown
-        markdown = getattr(content, "markdown", None)
-        if markdown:
-            assert isinstance(markdown, str), "Markdown should be a string"
-            assert len(markdown) > 0, "Markdown content should not be empty"
-            print(f"[PASS] Audio markdown content extracted ({len(markdown)} characters)")
+        # Verify markdown (expected for prebuilt-audioSearch)
+        assert content.markdown, "Audio content should have non-empty markdown"
+        assert isinstance(content.markdown, str), "Markdown should be a string"
+        print(f"[PASS] Audio markdown content extracted ({len(content.markdown)} characters)")
 
-        # Verify timing properties
-        start_time = getattr(content, "start_time_ms", None)
-        if start_time is not None:
-            assert start_time >= 0, f"Start time should be >= 0, but was {start_time}"
-            print(f"[PASS] Audio start time verified: {start_time} ms")
+        # Verify start time (Required field)
+        assert content.start_time_ms >= 0, f"Start time should be >= 0, but was {content.start_time_ms}"
+        print(f"[PASS] Audio start time verified: {content.start_time_ms} ms")
 
-        # Verify summary field
-        fields = getattr(content, "fields", None)
-        if fields:
-            summary = fields.get("Summary")
+        # Verify summary field (Optional)
+        if content.fields:
+            summary = content.fields.get("Summary")
             if summary:
                 print("[PASS] Summary field available in audio content")
 
-        # Verify transcript phrases
-        transcript_phrases = getattr(content, "transcript_phrases", None)
-        if transcript_phrases and len(transcript_phrases) > 0:
-            print(f"[PASS] Transcript phrases found: {len(transcript_phrases)} phrases")
-            for phrase in transcript_phrases[:2]:
+        # Verify transcript phrases (Optional)
+        if content.transcript_phrases:
+            print(f"[PASS] Transcript phrases found: {len(content.transcript_phrases)} phrases")
+            for phrase in content.transcript_phrases[:2]:
                 speaker = getattr(phrase, "speaker", None)
                 text = getattr(phrase, "text", None)
                 start_ms = getattr(phrase, "start_time_ms", None)
