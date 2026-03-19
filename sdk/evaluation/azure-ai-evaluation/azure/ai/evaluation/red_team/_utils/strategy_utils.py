@@ -218,13 +218,24 @@ def get_chat_target(
     chat_target = None
     if not isinstance(target, Callable):
         if "azure_deployment" in target and "azure_endpoint" in target:  # Azure OpenAI
-            # Fix Foundry-style endpoints for PyRIT compatibility
-            # Foundry endpoints (*.services.ai.azure.com) need /openai/v1 appended
-            # because PyRIT's OpenAIChatTarget passes the URL directly to AsyncOpenAI(base_url=)
+            # Normalize Azure endpoint for PyRIT compatibility.
+            # PyRIT 0.11+ uses AsyncOpenAI(base_url=endpoint) which appends /chat/completions
+            # directly, so Azure endpoints need the /openai/v1 path prefix.
             endpoint = target["azure_endpoint"].rstrip("/")
             parsed = urlparse(endpoint)
             hostname = (parsed.hostname or "").lower()
-            if hostname.endswith(".services.ai.azure.com"):
+
+            _AZURE_OPENAI_HOST_SUFFIXES = (
+                ".openai.azure.com",
+                ".services.ai.azure.com",
+                ".cognitiveservices.azure.com",
+                ".openai.azure.us",
+                ".cognitiveservices.azure.us",
+                ".openai.azure.cn",
+                ".cognitiveservices.azure.cn",
+            )
+
+            if any(hostname.endswith(sfx) for sfx in _AZURE_OPENAI_HOST_SUFFIXES):
                 if endpoint.endswith("/openai"):
                     endpoint = endpoint + "/v1"
                 elif not endpoint.endswith("/openai/v1"):
