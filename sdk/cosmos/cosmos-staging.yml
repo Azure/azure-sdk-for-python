@@ -24,6 +24,13 @@ jobs:
     displayName: Use Python 3.x
     condition: succeededOrFailed()
   - task: Bash@3
+    displayName: Install azpysdk
+    condition: succeededOrFailed()
+    inputs:
+      targetType: inline
+      script: |
+        python -m pip install ./eng/tools/azure-sdk-tools
+  - task: Bash@3
     displayName: Bash Script
     inputs:
       targetType: inline
