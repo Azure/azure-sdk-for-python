@@ -1,0 +1,23 @@
+name: Chronus Verify
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "sdk/*/*/pyproject.toml"
+
+jobs:
+  chronus-verify:
+    name: Verify Chronus Change Descriptions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # needed so chronus can diff against base branch
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Run chronus verify
+        run: npx chronus verify
