@@ -179,4 +179,4 @@ Example output:
 ===== changelog end =====
 ```
 
-> **Note:** When `--source-report` and `--target-report` are both specified, no package directory argument is needed. The `--changelog` flag is optional — omitting it will report only breaking changes and exit with code 1 if any are found.
+> **Note:** When `--source-report` and `--target-report` are both specified, you do not need to pass a positional package directory argument, but you should still run the command from the package's root directory so that the package name is inferred correctly for opt-in and ignore-rule behavior. The `--changelog` flag is optional — omitting it will report only breaking changes and exit with code 1 if any are found.
