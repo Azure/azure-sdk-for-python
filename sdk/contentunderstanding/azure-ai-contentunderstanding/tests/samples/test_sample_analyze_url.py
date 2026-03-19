@@ -24,7 +24,7 @@ import os
 import pytest
 from devtools_testutils import recorded_by_proxy
 from testpreparer import ContentUnderstandingPreparer, ContentUnderstandingClientTestBase
-from azure.ai.contentunderstanding.models import AnalysisInput, AudioVisualContent, ContentRange, DocumentContent
+from azure.ai.contentunderstanding.models import AnalysisInput, AudioVisualContent, DocumentContent
 
 
 class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
@@ -445,10 +445,10 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
     def test_sample_analyze_document_url_with_content_range(self, contentunderstanding_endpoint: str) -> None:
-        """Test analyzing a document URL with ContentRange.
+        """Test analyzing a document URL with a content range string.
 
         This test validates:
-        1. ContentRange.page(1) — single page extraction
+        1. "1" — single page extraction
         2. Comparison between full document and range-limited result
 
         02_AnalyzeUrl.AnalyzeUrlWithPageContentRangesAsync()
@@ -469,18 +469,18 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
         assert full_page_count == 4, f"Full document should return all 4 pages, got {full_page_count}"
         print(f"[PASS] Full document: {full_page_count} pages, {len(full_doc.markdown or '')} chars")
 
-        # ContentRange.page(1) — single page (wire format: "1")
-        print("\nAnalyzing page 1 only with ContentRange.page(1)...")
+        # "1" — single page
+        print("\nAnalyzing page 1 only with content range '1'...")
         range_poller = client.begin_analyze(
             analyzer_id="prebuilt-documentSearch",
-            inputs=[AnalysisInput(url=url, content_range=str(ContentRange.page(1)))],
+            inputs=[AnalysisInput(url=url, content_range="1")],
         )
         range_result = range_poller.result()
         range_doc = cast(DocumentContent, range_result.contents[0])
         range_page_count = len(range_doc.pages) if range_doc.pages else 0
-        assert range_page_count == 1, f"Page(1) should return only 1 page, got {range_page_count}"
-        assert range_doc.start_page_number == 1, f"Page(1) should start at page 1, got {range_doc.start_page_number}"
-        assert range_doc.end_page_number == 1, f"Page(1) should end at page 1, got {range_doc.end_page_number}"
+        assert range_page_count == 1, f"'1' should return only 1 page, got {range_page_count}"
+        assert range_doc.start_page_number == 1, f"'1' should start at page 1, got {range_doc.start_page_number}"
+        assert range_doc.end_page_number == 1, f"'1' should end at page 1, got {range_doc.end_page_number}"
 
         # Compare full vs range-limited
         assert full_page_count > range_page_count, (
@@ -489,23 +489,22 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
         assert len(full_doc.markdown or '') > len(range_doc.markdown or ''), (
             f"Full document markdown ({len(full_doc.markdown or '')} chars) should exceed range-limited ({len(range_doc.markdown or '')} chars)"
         )
-        print(f"[PASS] Page(1): {range_page_count} page, {len(range_doc.markdown or '')} chars")
-        print("\n[SUCCESS] All document URL ContentRange assertions passed")
+        print(f"[PASS] '1': {range_page_count} page, {len(range_doc.markdown or '')} chars")
+        print("\n[SUCCESS] All document URL content range assertions passed")
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
     def test_sample_analyze_video_url_with_content_ranges(self, contentunderstanding_endpoint: str) -> None:
-        """Test analyzing a video URL with various ContentRange options.
+        """Test analyzing a video URL with various content range string options.
 
         This test validates:
-        1. ContentRange.time_range(0, 5s) — first 5 seconds
-        2. ContentRange.time_range_from(10s) — from 10 seconds onward
-        3. ContentRange.time_range(1200ms, 3651ms) — sub-second precision
-        4. ContentRange.combine() — combined time ranges
+        1. "0-5000" — first 5 seconds
+        2. "10000-" — from 10 seconds onward
+        3. "1200-3651" — sub-second precision
+        4. "0-3000,30000-" — combined time ranges
 
         02_AnalyzeUrl.AnalyzeVideoUrlWithTimeContentRangesAsync()
         """
-        from datetime import timedelta
         from typing import cast
 
         client = self.create_client(endpoint=contentunderstanding_endpoint)
@@ -527,14 +526,14 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
         )
         print(f"[PASS] Full video: {len(full_segments)} segment(s), {full_total_duration} ms")
 
-        # ContentRange.time_range(0, 5s) — first 5 seconds (wire format: "0-5000")
-        print("\nAnalyzing first 5 seconds with ContentRange.time_range(0, 5s)...")
+        # "0-5000" — first 5 seconds
+        print("\nAnalyzing first 5 seconds with content range '0-5000'...")
         range_poller = client.begin_analyze(
             analyzer_id="prebuilt-videoSearch",
             inputs=[
                 AnalysisInput(
                     url=url,
-                    content_range=str(ContentRange.time_range(timedelta(0), timedelta(seconds=5))),
+                    content_range="0-5000",
                 )
             ],
             polling_interval=10,
@@ -542,25 +541,25 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
         range_result = range_poller.result()
         assert range_result.contents is not None
         range_segments = [cast(AudioVisualContent, c) for c in range_result.contents]
-        assert len(range_segments) > 0, "TimeRange(0, 5s) should return segments"
+        assert len(range_segments) > 0, "'0-5000' should return segments"
         for seg in range_segments:
             assert (seg.end_time_ms or 0) > (seg.start_time_ms or 0), "Segment should have EndTime > StartTime"
             assert (seg.start_time_ms or 0) >= 0, (
-                f"Range(0-5s) segment StartTime ({seg.start_time_ms} ms) should be >= 0 ms"
+                f"'0-5000' segment StartTime ({seg.start_time_ms} ms) should be >= 0 ms"
             )
             assert (seg.end_time_ms or 0) <= 5000, (
-                f"Range(0-5s) segment EndTime ({seg.end_time_ms} ms) should be <= 5000 ms"
+                f"'0-5000' segment EndTime ({seg.end_time_ms} ms) should be <= 5000 ms"
             )
-        print(f"[PASS] TimeRange(0, 5s): {len(range_segments)} segment(s)")
+        print(f"[PASS] '0-5000': {len(range_segments)} segment(s)")
 
-        # ContentRange.time_range_from(10s) — from 10 seconds onward (wire format: "10000-")
-        print("\nAnalyzing from 10 seconds onward with ContentRange.time_range_from(10s)...")
+        # "10000-" — from 10 seconds onward
+        print("\nAnalyzing from 10 seconds onward with content range '10000-'...")
         from_poller = client.begin_analyze(
             analyzer_id="prebuilt-videoSearch",
             inputs=[
                 AnalysisInput(
                     url=url,
-                    content_range=str(ContentRange.time_range_from(timedelta(seconds=10))),
+                    content_range="10000-",
                 )
             ],
             polling_interval=10,
@@ -568,25 +567,23 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
         from_result = from_poller.result()
         assert from_result.contents is not None
         from_segments = [cast(AudioVisualContent, c) for c in from_result.contents]
-        assert len(from_segments) > 0, "TimeRangeFrom(10s) should return segments"
+        assert len(from_segments) > 0, "'10000-' should return segments"
         for seg in from_segments:
             assert (seg.end_time_ms or 0) > (seg.start_time_ms or 0), "Segment should have EndTime > StartTime"
             assert seg.markdown, "Segment should have markdown"
             assert (seg.start_time_ms or 0) >= 10000, (
-                f"TimeRangeFrom(10s) segment StartTime ({seg.start_time_ms} ms) should be >= 10000 ms"
+                f"'10000-' segment StartTime ({seg.start_time_ms} ms) should be >= 10000 ms"
             )
-        print(f"[PASS] TimeRangeFrom(10s): {len(from_segments)} segment(s)")
+        print(f"[PASS] '10000-': {len(from_segments)} segment(s)")
 
-        # ContentRange.time_range(1200ms, 3651ms) — sub-second precision (wire format: "1200-3651")
-        print("\nAnalyzing with sub-second precision (1.2s to 3.651s)...")
+        # "1200-3651" — sub-second precision
+        print("\nAnalyzing with sub-second precision (1.2s to 3.651s) with content range '1200-3651'...")
         subsec_poller = client.begin_analyze(
             analyzer_id="prebuilt-videoSearch",
             inputs=[
                 AnalysisInput(
                     url=url,
-                    content_range=str(
-                        ContentRange.time_range(timedelta(milliseconds=1200), timedelta(milliseconds=3651))
-                    ),
+                    content_range="1200-3651",
                 )
             ],
             polling_interval=10,
@@ -594,30 +591,25 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
         subsec_result = subsec_poller.result()
         assert subsec_result.contents is not None
         subsec_segments = [cast(AudioVisualContent, c) for c in subsec_result.contents]
-        assert len(subsec_segments) > 0, "Sub-second TimeRange should return segments"
+        assert len(subsec_segments) > 0, "'1200-3651' should return segments"
         for seg in subsec_segments:
             assert (seg.end_time_ms or 0) > (seg.start_time_ms or 0), "Segment should have EndTime > StartTime"
             assert (seg.start_time_ms or 0) >= 1200, (
-                f"Range(1200-3651ms) segment StartTime ({seg.start_time_ms} ms) should be >= 1200 ms"
+                f"'1200-3651' segment StartTime ({seg.start_time_ms} ms) should be >= 1200 ms"
             )
             assert (seg.end_time_ms or 0) <= 3651, (
-                f"Range(1200-3651ms) segment EndTime ({seg.end_time_ms} ms) should be <= 3651 ms"
+                f"'1200-3651' segment EndTime ({seg.end_time_ms} ms) should be <= 3651 ms"
             )
-        print(f"[PASS] TimeRange(1.2s, 3.651s): {len(subsec_segments)} segment(s)")
+        print(f"[PASS] '1200-3651': {len(subsec_segments)} segment(s)")
 
-        # ContentRange.combine() — combined time ranges (wire format: "0-3000,30000-")
-        print("\nAnalyzing with combined time ranges (0-3s and 30s onward)...")
+        # "0-3000,30000-" — combined time ranges
+        print("\nAnalyzing with combined time ranges (0-3s and 30s onward) with content range '0-3000,30000-'...")
         combine_poller = client.begin_analyze(
             analyzer_id="prebuilt-videoSearch",
             inputs=[
                 AnalysisInput(
                     url=url,
-                    content_range=str(
-                        ContentRange.combine(
-                            ContentRange.time_range(timedelta(0), timedelta(seconds=3)),
-                            ContentRange.time_range_from(timedelta(seconds=30)),
-                        )
-                    ),
+                    content_range="0-3000,30000-",
                 )
             ],
             polling_interval=10,
@@ -625,7 +617,7 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
         combine_result = combine_poller.result()
         assert combine_result.contents is not None
         combine_segments = [cast(AudioVisualContent, c) for c in combine_result.contents]
-        assert len(combine_segments) > 0, "Combine time range should return segments"
+        assert len(combine_segments) > 0, "'0-3000,30000-' should return segments"
         for seg in combine_segments:
             assert (seg.end_time_ms or 0) > (seg.start_time_ms or 0), "Segment should have EndTime > StartTime"
             assert seg.markdown, "Segment should have markdown"
@@ -635,55 +627,24 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
             in_first_range = seg_start >= 0 and seg_end <= 3000
             in_second_range = seg_start >= 30000
             assert in_first_range or in_second_range, (
-                f"Combine(0-3s, 30s-) segment ({seg_start}-{seg_end} ms) should fall within 0-3000 ms or >= 30000 ms"
+                f"'0-3000,30000-' segment ({seg_start}-{seg_end} ms) should fall within 0-3000 ms or >= 30000 ms"
             )
-        print(f"[PASS] Combine(0-3s, 30s-): {len(combine_segments)} segment(s)")
+        print(f"[PASS] '0-3000,30000-': {len(combine_segments)} segment(s)")
 
-        # --- Raw string ContentRange test for video ---
-        # Raw string "0-5000" — equivalent to ContentRange.time_range(0, 5s)
-        print("\nVerifying raw ContentRange('0-5000') matches TimeRange(0, 5s)...")
-        raw_video_poller = client.begin_analyze(
-            analyzer_id="prebuilt-videoSearch",
-            inputs=[
-                AnalysisInput(
-                    url=url,
-                    content_range=str(ContentRange("0-5000")),
-                )
-            ],
-            polling_interval=10,
-        )
-        raw_video_result = raw_video_poller.result()
-        assert raw_video_result.contents is not None
-        raw_video_segments = [cast(AudioVisualContent, c) for c in raw_video_result.contents]
-        assert len(raw_video_segments) > 0, "Raw ContentRange('0-5000') should return segments"
-        assert len(raw_video_segments) == len(range_segments), (
-            f"Raw ContentRange('0-5000') should return same segment count as TimeRange equivalent "
-            f"({len(raw_video_segments)} vs {len(range_segments)})"
-        )
-        for seg in raw_video_segments:
-            assert (seg.start_time_ms or 0) >= 0, (
-                f"Raw Range(0-5000) segment StartTime ({seg.start_time_ms} ms) should be >= 0 ms"
-            )
-            assert (seg.end_time_ms or 0) <= 5000, (
-                f"Raw Range(0-5000) segment EndTime ({seg.end_time_ms} ms) should be <= 5000 ms"
-            )
-        print(f"[PASS] Raw ContentRange('0-5000'): {len(raw_video_segments)} segment(s), matches TimeRange result")
-
-        print("\n[SUCCESS] All video URL ContentRange assertions passed")
+        print("\n[SUCCESS] All video URL content range assertions passed")
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
     def test_sample_analyze_audio_url_with_content_ranges(self, contentunderstanding_endpoint: str) -> None:
-        """Test analyzing an audio URL with various ContentRange options.
+        """Test analyzing an audio URL with various content range string options.
 
         This test validates:
-        1. ContentRange.time_range_from(5s) — from 5 seconds onward
-        2. ContentRange.time_range(2s, 8s) — specific time window
-        3. ContentRange.time_range(1200ms, 3651ms) — sub-second precision
+        1. "5000-" — from 5 seconds onward
+        2. "2000-8000" — specific time window
+        3. "1200-3651" — sub-second precision
 
         02_AnalyzeUrl.AnalyzeAudioUrlWithTimeContentRangesAsync()
         """
-        from datetime import timedelta
         from typing import cast
 
         client = self.create_client(endpoint=contentunderstanding_endpoint)
@@ -703,14 +664,14 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
         full_phrase_count = len(full_audio.transcript_phrases) if full_audio.transcript_phrases else 0
         print(f"[PASS] Full audio: {len(full_audio.markdown or '')} chars, {full_phrase_count} phrases, {full_duration} ms")
 
-        # ContentRange.time_range_from(5s) — from 5 seconds onward (wire format: "5000-")
-        print("\nAnalyzing audio from 5 seconds onward with ContentRange.time_range_from(5s)...")
+        # "5000-" — from 5 seconds onward
+        print("\nAnalyzing audio from 5 seconds onward with content range '5000-'...")
         from_poller = client.begin_analyze(
             analyzer_id="prebuilt-audioSearch",
             inputs=[
                 AnalysisInput(
                     url=url,
-                    content_range=str(ContentRange.time_range_from(timedelta(seconds=5))),
+                    content_range="5000-",
                 )
             ],
             polling_interval=10,
@@ -719,7 +680,7 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
         assert from_result.contents is not None
         from_audio = cast(AudioVisualContent, from_result.contents[0])
         assert (from_audio.start_time_ms or 0) >= 5000, (
-            f"TimeRangeFrom(5s) audio StartTime ({from_audio.start_time_ms} ms) should be >= 5000 ms"
+            f"'5000-' audio StartTime ({from_audio.start_time_ms} ms) should be >= 5000 ms"
         )
         assert len(full_audio.markdown or '') >= len(from_audio.markdown or ''), (
             f"Full audio markdown ({len(full_audio.markdown or '')} chars) should be >= range-limited ({len(from_audio.markdown or '')} chars)"
@@ -728,18 +689,16 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
         assert full_phrase_count >= from_phrase_count, (
             f"Full audio ({full_phrase_count} phrases) should have >= phrases than range-limited ({from_phrase_count})"
         )
-        print(f"[PASS] TimeRangeFrom(5s): {len(from_audio.markdown or '')} chars, {from_phrase_count} phrases")
+        print(f"[PASS] '5000-': {len(from_audio.markdown or '')} chars, {from_phrase_count} phrases")
 
-        # ContentRange.time_range(2s, 8s) — specific time window (wire format: "2000-8000")
-        print("\nAnalyzing audio from 2s to 8s with ContentRange.time_range(2s, 8s)...")
+        # "2000-8000" — specific time window from 2s to 8s
+        print("\nAnalyzing audio from 2s to 8s with content range '2000-8000'...")
         window_poller = client.begin_analyze(
             analyzer_id="prebuilt-audioSearch",
             inputs=[
                 AnalysisInput(
                     url=url,
-                    content_range=str(
-                        ContentRange.time_range(timedelta(seconds=2), timedelta(seconds=8))
-                    ),
+                    content_range="2000-8000",
                 )
             ],
             polling_interval=10,
@@ -748,32 +707,30 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
         assert window_result.contents is not None
         window_audio = cast(AudioVisualContent, window_result.contents[0])
         assert (window_audio.end_time_ms or 0) > (window_audio.start_time_ms or 0), (
-            "TimeRange(2s, 8s) should have EndTime > StartTime"
+            "'2000-8000' should have EndTime > StartTime"
         )
         assert (window_audio.start_time_ms or 0) >= 2000, (
-            f"TimeRange(2s, 8s) audio StartTime ({window_audio.start_time_ms} ms) should be >= 2000 ms"
+            f"'2000-8000' audio StartTime ({window_audio.start_time_ms} ms) should be >= 2000 ms"
         )
         assert (window_audio.end_time_ms or 0) <= 8000, (
-            f"TimeRange(2s, 8s) audio EndTime ({window_audio.end_time_ms} ms) should be <= 8000 ms"
+            f"'2000-8000' audio EndTime ({window_audio.end_time_ms} ms) should be <= 8000 ms"
         )
-        assert window_audio.markdown, "TimeRange(2s, 8s) should have markdown"
-        assert len(window_audio.markdown) > 0, "TimeRange(2s, 8s) markdown should not be empty"
+        assert window_audio.markdown, "'2000-8000' should have markdown"
+        assert len(window_audio.markdown) > 0, "'2000-8000' markdown should not be empty"
         window_duration = (window_audio.end_time_ms or 0) - (window_audio.start_time_ms or 0)
         assert full_duration >= window_duration, (
             f"Full audio duration ({full_duration} ms) should be >= time-windowed duration ({window_duration} ms)"
         )
-        print(f"[PASS] TimeRange(2s, 8s): {len(window_audio.markdown)} chars, {window_duration} ms")
+        print(f"[PASS] '2000-8000': {len(window_audio.markdown)} chars, {window_duration} ms")
 
-        # ContentRange.time_range(1200ms, 3651ms) — sub-second precision (wire format: "1200-3651")
-        print("\nAnalyzing audio with sub-second precision (1.2s to 3.651s)...")
+        # "1200-3651" — sub-second precision
+        print("\nAnalyzing audio with sub-second precision (1.2s to 3.651s) with content range '1200-3651'...")
         subsec_poller = client.begin_analyze(
             analyzer_id="prebuilt-audioSearch",
             inputs=[
                 AnalysisInput(
                     url=url,
-                    content_range=str(
-                        ContentRange.time_range(timedelta(milliseconds=1200), timedelta(milliseconds=3651))
-                    ),
+                    content_range="1200-3651",
                 )
             ],
             polling_interval=10,
@@ -782,45 +739,20 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
         assert subsec_result.contents is not None
         subsec_audio = cast(AudioVisualContent, subsec_result.contents[0])
         assert (subsec_audio.end_time_ms or 0) > (subsec_audio.start_time_ms or 0), (
-            "TimeRange(1.2s, 3.651s) should have EndTime > StartTime"
+            "'1200-3651' should have EndTime > StartTime"
         )
         assert (subsec_audio.start_time_ms or 0) >= 1200, (
-            f"TimeRange(1.2s, 3.651s) audio StartTime ({subsec_audio.start_time_ms} ms) should be >= 1200 ms"
+            f"'1200-3651' audio StartTime ({subsec_audio.start_time_ms} ms) should be >= 1200 ms"
         )
         assert (subsec_audio.end_time_ms or 0) <= 3651, (
-            f"TimeRange(1.2s, 3.651s) audio EndTime ({subsec_audio.end_time_ms} ms) should be <= 3651 ms"
+            f"'1200-3651' audio EndTime ({subsec_audio.end_time_ms} ms) should be <= 3651 ms"
         )
-        assert subsec_audio.markdown, "TimeRange(1.2s, 3.651s) should have markdown"
-        assert len(subsec_audio.markdown) > 0, "TimeRange(1.2s, 3.651s) markdown should not be empty"
+        assert subsec_audio.markdown, "'1200-3651' should have markdown"
+        assert len(subsec_audio.markdown) > 0, "'1200-3651' markdown should not be empty"
         subsec_duration = (subsec_audio.end_time_ms or 0) - (subsec_audio.start_time_ms or 0)
         assert full_duration >= subsec_duration, (
             f"Full audio duration ({full_duration} ms) should be >= sub-second duration ({subsec_duration} ms)"
         )
-        print(f"[PASS] TimeRange(1.2s, 3.651s): {len(subsec_audio.markdown)} chars, {subsec_duration} ms")
+        print(f"[PASS] '1200-3651': {len(subsec_audio.markdown)} chars, {subsec_duration} ms")
 
-        # --- Raw string ContentRange test for audio ---
-        # Raw string "5000-" — equivalent to ContentRange.time_range_from(5s)
-        print("\nVerifying raw ContentRange('5000-') matches TimeRangeFrom(5s)...")
-        raw_audio_poller = client.begin_analyze(
-            analyzer_id="prebuilt-audioSearch",
-            inputs=[
-                AnalysisInput(
-                    url=url,
-                    content_range=str(ContentRange("5000-")),
-                )
-            ],
-            polling_interval=10,
-        )
-        raw_audio_result = raw_audio_poller.result()
-        assert raw_audio_result.contents is not None
-        raw_audio = cast(AudioVisualContent, raw_audio_result.contents[0])
-        assert (raw_audio.start_time_ms or 0) >= 5000, (
-            f"Raw ContentRange('5000-') audio StartTime ({raw_audio.start_time_ms} ms) should be >= 5000 ms"
-        )
-        assert len(from_audio.markdown or '') == len(raw_audio.markdown or ''), (
-            f"Raw ContentRange('5000-') should return same markdown length as TimeRangeFrom(5s) "
-            f"({len(from_audio.markdown or '')} vs {len(raw_audio.markdown or '')})"
-        )
-        print(f"[PASS] Raw ContentRange('5000-'): {len(raw_audio.markdown or '')} chars, matches TimeRangeFrom(5s) result")
-
-        print("\n[SUCCESS] All audio URL ContentRange assertions passed")
+        print("\n[SUCCESS] All audio URL content range assertions passed")

@@ -58,7 +58,6 @@ from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import (
     AnalysisResult,
-    ContentRange,
     DocumentContent,
 )
 from azure.core.credentials import AzureKeyCredential
@@ -91,71 +90,45 @@ async def main() -> None:
         # [END analyze_document_from_binary]
 
         # [START analyze_binary_with_content_range]
-        # Use a multi-page document for ContentRange demonstrations.
+        # Use a multi-page document for content range demonstrations.
         multi_page_path = "sample_files/mixed_financial_invoices.pdf"
         with open(multi_page_path, "rb") as f:
             multi_page_bytes = f.read()
 
         # Analyze only pages 3 onward.
-        print("\nAnalyzing pages 3 onward with ContentRange...")
+        print("\nAnalyzing pages 3 onward with content range '3-'...")
         range_poller = await client.begin_analyze_binary(
             analyzer_id="prebuilt-documentSearch",
             binary_input=multi_page_bytes,
-            content_range=ContentRange.pages_from(3),
+            content_range="3-",
         )
         range_result: AnalysisResult = await range_poller.result()
 
         if isinstance(range_result.contents[0], DocumentContent):
             range_doc = range_result.contents[0]
             print(
-                f"ContentRange analysis returned pages"
+                f"Content range analysis returned pages"
                 f" {range_doc.start_page_number} - {range_doc.end_page_number}"
             )
         # [END analyze_binary_with_content_range]
 
         # [START analyze_binary_with_combined_content_range]
         # Analyze pages 1-3, page 5, and pages 9 onward.
-        print("\nAnalyzing combined pages (1-3, 5, 9-) with ContentRange...")
+        print("\nAnalyzing combined pages (1-3, 5, 9-) with content range '1-3,5,9-'...")
         combine_range_poller = await client.begin_analyze_binary(
             analyzer_id="prebuilt-documentSearch",
             binary_input=multi_page_bytes,
-            content_range=ContentRange.combine(
-                ContentRange.pages(1, 3),
-                ContentRange.page(5),
-                ContentRange.pages_from(9),
-            ),
+            content_range="1-3,5,9-",
         )
         combine_range_result: AnalysisResult = await combine_range_poller.result()
 
         if isinstance(combine_range_result.contents[0], DocumentContent):
             combine_doc = combine_range_result.contents[0]
             print(
-                f"Combined ContentRange analysis returned pages"
+                f"Combined content range analysis returned pages"
                 f" {combine_doc.start_page_number} - {combine_doc.end_page_number}"
             )
         # [END analyze_binary_with_combined_content_range]
-
-        # [START analyze_binary_with_raw_content_range]
-        # You can also pass a range string directly to the ContentRange constructor.
-        # This is equivalent to using the factory methods and is useful for dynamically
-        # constructed or user-supplied ranges.
-        # Analyze pages 1-3, page 5, and pages 9 onward using a raw range string.
-        # This is equivalent to: ContentRange.combine(ContentRange.pages(1, 3), ContentRange.page(5), ContentRange.pages_from(9))
-        print("\nAnalyzing with raw ContentRange string '1-3,5,9-'...")
-        raw_range_poller = await client.begin_analyze_binary(
-            analyzer_id="prebuilt-documentSearch",
-            binary_input=multi_page_bytes,
-            content_range=ContentRange("1-3,5,9-"),
-        )
-        raw_range_result: AnalysisResult = await raw_range_poller.result()
-
-        if isinstance(raw_range_result.contents[0], DocumentContent):
-            raw_doc = raw_range_result.contents[0]
-            print(
-                f"Raw ContentRange analysis returned pages"
-                f" {raw_doc.start_page_number} - {raw_doc.end_page_number}"
-            )
-        # [END analyze_binary_with_raw_content_range]
 
         # [START extract_markdown]
         print("\nMarkdown Content:")
