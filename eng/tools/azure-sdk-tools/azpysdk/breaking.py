@@ -172,8 +172,15 @@ class breaking(Check):
         source = os.path.abspath(args.source_report)
         target = os.path.abspath(args.target_report)
 
-        # Use a temporary directory as the target package directory to avoid deleting input reports.
-        with tempfile.TemporaryDirectory() as tmp_pkg_dir:
+        # Use a temporary root directory, but create a subdirectory whose basename is derived
+        # from the source report path so detect_breaking_changes.py can infer the package name
+        # correctly from os.path.basename(pkg_dir).
+        with tempfile.TemporaryDirectory() as tmp_root:
+            # Heuristic: use the parent directory name of the source report as the package name.
+            pkg_name = os.path.basename(os.path.dirname(source))
+            tmp_pkg_dir = os.path.join(tmp_root, pkg_name)
+            os.makedirs(tmp_pkg_dir, exist_ok=True)
+
             cmd = [
                 sys.executable,
                 os.path.join(BREAKING_CHECKER_PATH, "detect_breaking_changes.py"),
