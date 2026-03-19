@@ -9,8 +9,6 @@
 ### Bugs Fixed
 - Fixed adversarial chat target incorrectly using user's callback instead of RAI service, causing callback response to appear as user message in red team scan results when using converter strategies (e.g., `DIFFICULT`, `Tense`).
 
-### Other Changes
-
 ## 1.16.1 (2026-03-18)
 
 ### Features Added
