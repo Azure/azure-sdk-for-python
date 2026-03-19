@@ -1,10 +1,9 @@
 import argparse
 import os
-import subprocess
 import sys
 
 from typing import Optional, List
-from subprocess import CalledProcessError
+from subprocess import CalledProcessError, run
 
 from .Check import Check
 from ci_tools.functions import install_into_venv, find_whl
@@ -159,14 +158,18 @@ class apistub(Check):
                     md_script = os.path.join(REPO_ROOT, "eng", "common", "scripts", "Export-APIViewMarkdown.ps1")
                     logger.info(f"Generating api.md for {package_name}")
                     try:
-                        result = subprocess.run(
+                        result = run(
                             ["pwsh", md_script, "-TokenJsonPath", token_json_path, "-OutputPath", out_token_path],
                             check=True,
                             capture_output=True,
                             text=True,
                         )
+                        # pwsh script logs the api.md location
+                        if result.stdout:
+                            logger.info(result.stdout)
                     except FileNotFoundError:
                         logger.error("Failed to generate api.md: pwsh (PowerShell) is not installed or not on PATH.")
+                        results.append(1)
                     except CalledProcessError as e:
                         logger.error(f"Failed to generate api.md (exit code {e.returncode}):")
                         if e.stderr:
