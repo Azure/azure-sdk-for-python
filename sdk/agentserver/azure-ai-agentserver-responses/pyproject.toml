@@ -1,11 +1,8 @@
-[build-system]
-requires = ["setuptools>=64"]
-
 [project]
 name = "azure-ai-agentserver-responses"
-version = "0.1.0"
+dynamic = ["version", "readme"]
 description = "Python SDK for building servers implementing the Azure AI Responses protocol"
-readme = "README.md"
+
 requires-python = ">=3.10"
 license = "MIT"
 authors = [
@@ -26,6 +23,13 @@ dependencies = [
     "uvicorn>=0.31.0",
 ]
 
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
+
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0",
@@ -34,6 +38,10 @@ dev = [
     "ruff>=0.4",
     "mypy>=1.0",
 ]
+
+[tool.setuptools.dynamic]
+version = { attr = "azure.ai.agentserver.core._version.VERSION" }
+readme = { file = ["README.md"], content-type = "text/markdown" }
 
 [tool.setuptools.packages.find]
 exclude = [
@@ -45,6 +53,9 @@ exclude = [
     "azure",
     "azure.ai",
 ]
+
+[tool.setuptools.package-data]
+pytyped = ["py.typed"]
 
 [tool.ruff]
 target-version = "py310"
