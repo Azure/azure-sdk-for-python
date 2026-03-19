@@ -60,7 +60,7 @@ To report an issue with the client library, or request additional features, plea
   * An appropriate role assignment. See [Role-based access control in Microsoft Foundry portal](https://learn.microsoft.com/azure/foundry/concepts/rbac-foundry). Role assignment can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
   * [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) installed.
   * You are logged into your Azure account by running `az login`.
-
+Default Default In some scenarios you may use the special `_default` project name. Given your Foundry account name in `foundry_account_name`, you can construct the endpoint URL as shown below.
 ### Install the package
 
 ```bash
@@ -74,6 +74,20 @@ pip show azure-ai-projects
 ```
 
 ## Key concepts
+
+### Construct an endpoint for the `_default` project
+
+As an alternative to specifying a project name in the URL, you can use the special `_default` project segment. Given your Foundry account name in `foundry_account_name`, construct the endpoint URL as shown below.
+
+To confirm which project is configured as the default for your Foundry resource, go to the Azure portal, open the Foundry resource Overview page, and view the resource JSON. Look for the `defaultProject` property, which contains the default project name.
+
+<!-- SNIPPET:sample_agent_with_default_endpoint.default_endpoint -->
+
+```python
+endpoint = f"https://{foundry_account_name}.services.ai.azure.com/api/projects/_default"
+```
+
+<!-- END SNIPPET -->
 
 ### Create and authenticate the client with API key
 
