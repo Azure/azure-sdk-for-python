@@ -66,6 +66,7 @@ class TestTagIsStableForTypeSpec:
         # get_package_names returns our controlled list
         mocks["get_package_names"].return_value = package_names
         mocks["judge_tag_preview"].return_value = judge_return
+
         # create_package needs a dist folder with a .whl
         def fake_create_package(folder, pkg):
             dist = Path(".", folder, pkg, "dist")
@@ -76,6 +77,7 @@ class TestTagIsStableForTypeSpec:
 
         try:
             from packaging_tools.sdk_generator import main
+
             main(input_path, output_path)
         finally:
             for p in patches.values():
