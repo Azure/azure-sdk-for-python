@@ -92,8 +92,11 @@ class TestRunOutputDirectory:
     @patch("azpysdk.apistub.create_package_and_install")
     @patch("azpysdk.apistub.install_into_venv")
     @patch("azpysdk.apistub.set_envvar_defaults")
-    def test_dest_dir_creates_package_subfolder(self, _env, _install, _create, _get_whl, _get_mapping, tmp_path):
+    def test_dest_dir_creates_package_subfolder(
+        self, _env, _install, _create, _get_whl, _get_mapping, tmp_path, monkeypatch
+    ):
         """When --dest-dir is given, output should go to <dest_dir>/<package_name>/."""
+        monkeypatch.chdir(os.getcwd())
         dest = tmp_path / "output"
         dest.mkdir()
 
@@ -142,8 +145,9 @@ class TestRunOutputDirectory:
     @patch("azpysdk.apistub.create_package_and_install")
     @patch("azpysdk.apistub.install_into_venv")
     @patch("azpysdk.apistub.set_envvar_defaults")
-    def test_no_dest_dir_uses_staging(self, _env, _install, _create, _get_whl, _get_mapping, tmp_path):
+    def test_no_dest_dir_uses_staging(self, _env, _install, _create, _get_whl, _get_mapping, tmp_path, monkeypatch):
         """When --dest-dir is not given, output path should be the staging directory."""
+        monkeypatch.chdir(os.getcwd())
         stub = apistub()
         staging = str(tmp_path / "staging")
         os.makedirs(staging, exist_ok=True)
