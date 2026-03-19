@@ -443,6 +443,10 @@ def build_library_report(target_module: str) -> Dict:
 def test_compare_reports(pkg_dir: str, changelog: bool, source_report: str = "stable.json", target_report: str = "current.json") -> None:
     package_name = os.path.basename(pkg_dir)
 
+    # Preserve the original argument values so we can decide later whether cleanup is safe.
+    original_source_report = source_report
+    original_target_report = target_report
+
     if not os.path.isabs(source_report):
         source_report = os.path.join(pkg_dir, source_report)
     if not os.path.isabs(target_report):
@@ -466,10 +470,25 @@ def test_compare_reports(pkg_dir: str, changelog: bool, source_report: str = "st
         post_processing_checkers = POST_PROCESSING_CHECKERS
     )
     if changelog:
-        checker = ChangelogTracker(stable, current, package_name, checkers = CHECKERS, ignore = IGNORE_BREAKING_CHANGES, post_processing_checkers = POST_PROCESSING_CHECKERS)
+        checker = ChangelogTracker(
+            stable,
+            current,
+            package_name,
+            checkers = CHECKERS,
+            ignore = IGNORE_BREAKING_CHANGES,
+            post_processing_checkers = POST_PROCESSING_CHECKERS,
+        )
     checker.run_checks()
 
-    remove_json_files(pkg_dir)
+    # Only clean up reports that were generated into pkg_dir with default, non-absolute names.
+    cleanup_default_reports = (
+        original_source_report == "stable.json"
+        and original_target_report == "current.json"
+        and not os.path.isabs(original_source_report)
+        and not os.path.isabs(original_target_report)
+    )
+    if cleanup_default_reports:
+        remove_json_files(pkg_dir)
 
     print(checker.report_changes())
 
