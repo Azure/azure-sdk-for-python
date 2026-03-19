@@ -729,6 +729,27 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
 
     @DataLakePreparer()
     @recorded_by_proxy_async
+    async def test_upload_data_with_none_max_concurrency(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+
+        # Create a directory to put the file under
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory()
+
+        file_client = directory_client.get_file_client('filename')
+        data = self.get_random_bytes(100)
+        # max_concurrency=None should not raise TypeError
+        await file_client.upload_data(data, overwrite=True, max_concurrency=None)
+
+        downloaded_data = await (await file_client.download_file()).readall()
+        assert data == downloaded_data
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_read_file(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -743,6 +764,24 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
 
         # download the data and make sure it is the same as uploaded data
         downloaded_data = await (await file_client.download_file()).readall()
+        assert data == downloaded_data
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
+    async def test_read_file_with_none_max_concurrency(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        file_client = await self._create_file_and_return_client()
+        data = self.get_random_bytes(1024)
+
+        # upload data to file
+        await file_client.append_data(data, 0, len(data))
+        await file_client.flush_data(len(data))
+
+        # max_concurrency=None should not raise TypeError
+        downloaded_data = await (await file_client.download_file(max_concurrency=None)).readall()
         assert data == downloaded_data
 
     @pytest.mark.live_test_only

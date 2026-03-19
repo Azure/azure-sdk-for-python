@@ -438,6 +438,140 @@ class TestChatTargetFunctions:
         # Verify we get a callback target
         assert isinstance(result, _CallbackChatTarget)
 
+    @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
+    def test_get_chat_target_foundry_endpoint_appends_openai_v1(self, mock_openai_chat_target):
+        """Test that Foundry-style endpoints get /openai/v1 appended."""
+        mock_instance = MagicMock()
+        mock_openai_chat_target.return_value = mock_instance
+
+        config = {
+            "azure_deployment": "gpt-4o",
+            "azure_endpoint": "https://my-resource.services.ai.azure.com",
+            "api_key": "test-key",
+        }
+
+        result = get_chat_target(config)
+
+        call_kwargs = mock_openai_chat_target.call_args[1]
+        assert (
+            call_kwargs["endpoint"] == "https://my-resource.services.ai.azure.com/openai/v1"
+        ), f"Foundry endpoint should have /openai/v1 appended, got: {call_kwargs['endpoint']}"
+        assert call_kwargs["model_name"] == "gpt-4o"
+
+    @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
+    def test_get_chat_target_foundry_endpoint_openai_without_v1(self, mock_openai_chat_target):
+        """Test that Foundry endpoint ending in /openai (without /v1) gets upgraded."""
+        mock_instance = MagicMock()
+        mock_openai_chat_target.return_value = mock_instance
+
+        config = {
+            "azure_deployment": "gpt-4o",
+            "azure_endpoint": "https://my-resource.services.ai.azure.com/openai",
+            "api_key": "test-key",
+        }
+
+        result = get_chat_target(config)
+
+        call_kwargs = mock_openai_chat_target.call_args[1]
+        assert (
+            call_kwargs["endpoint"] == "https://my-resource.services.ai.azure.com/openai/v1"
+        ), f"Endpoint ending in /openai should be upgraded to /openai/v1, got: {call_kwargs['endpoint']}"
+
+    @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
+    def test_get_chat_target_foundry_endpoint_no_double_append(self, mock_openai_chat_target):
+        """Test that already-normalized Foundry endpoints don't get /openai/v1 doubled."""
+        mock_instance = MagicMock()
+        mock_openai_chat_target.return_value = mock_instance
+
+        config = {
+            "azure_deployment": "gpt-4o",
+            "azure_endpoint": "https://my-resource.services.ai.azure.com/openai/v1",
+            "api_key": "test-key",
+        }
+
+        result = get_chat_target(config)
+
+        call_kwargs = mock_openai_chat_target.call_args[1]
+        assert (
+            call_kwargs["endpoint"] == "https://my-resource.services.ai.azure.com/openai/v1"
+        ), f"Already-normalized endpoint should not be modified, got: {call_kwargs['endpoint']}"
+
+    @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
+    def test_get_chat_target_foundry_endpoint_with_trailing_slash(self, mock_openai_chat_target):
+        """Test that Foundry endpoint with trailing slash is handled correctly."""
+        mock_instance = MagicMock()
+        mock_openai_chat_target.return_value = mock_instance
+
+        config = {
+            "azure_deployment": "gpt-4o",
+            "azure_endpoint": "https://my-resource.services.ai.azure.com/",
+            "api_key": "test-key",
+        }
+
+        result = get_chat_target(config)
+
+        call_kwargs = mock_openai_chat_target.call_args[1]
+        assert (
+            call_kwargs["endpoint"] == "https://my-resource.services.ai.azure.com/openai/v1"
+        ), f"Trailing slash should be stripped before appending, got: {call_kwargs['endpoint']}"
+
+    @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
+    def test_get_chat_target_traditional_aoai_not_modified(self, mock_openai_chat_target):
+        """Test that traditional Azure OpenAI endpoints are NOT modified."""
+        mock_instance = MagicMock()
+        mock_openai_chat_target.return_value = mock_instance
+
+        config = {
+            "azure_deployment": "gpt-4o",
+            "azure_endpoint": "https://my-resource.openai.azure.com",
+            "api_key": "test-key",
+        }
+
+        result = get_chat_target(config)
+
+        call_kwargs = mock_openai_chat_target.call_args[1]
+        assert (
+            call_kwargs["endpoint"] == "https://my-resource.openai.azure.com"
+        ), f"Traditional AOAI endpoint should not be modified, got: {call_kwargs['endpoint']}"
+
+    @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
+    def test_get_chat_target_foundry_endpoint_case_insensitive(self, mock_openai_chat_target):
+        """Test that Foundry hostname detection is case-insensitive (RFC 4343)."""
+        mock_instance = MagicMock()
+        mock_openai_chat_target.return_value = mock_instance
+
+        config = {
+            "azure_deployment": "gpt-4o",
+            "azure_endpoint": "https://my-resource.SERVICES.AI.AZURE.COM",
+            "api_key": "test-key",
+        }
+
+        result = get_chat_target(config)
+
+        call_kwargs = mock_openai_chat_target.call_args[1]
+        assert (
+            call_kwargs["endpoint"] == "https://my-resource.SERVICES.AI.AZURE.COM/openai/v1"
+        ), f"Case-insensitive hostname should be detected, got: {call_kwargs['endpoint']}"
+
+    @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
+    def test_get_chat_target_non_foundry_url_with_matching_substring_not_modified(self, mock_openai_chat_target):
+        """Test that non-Foundry URLs containing .services.ai.azure.com in the path are NOT modified."""
+        mock_instance = MagicMock()
+        mock_openai_chat_target.return_value = mock_instance
+
+        config = {
+            "azure_deployment": "gpt-4o",
+            "azure_endpoint": "https://my-resource.openai.azure.com",
+            "api_key": "test-key",
+        }
+
+        result = get_chat_target(config)
+
+        call_kwargs = mock_openai_chat_target.call_args[1]
+        assert (
+            call_kwargs["endpoint"] == "https://my-resource.openai.azure.com"
+        ), f"Non-Foundry endpoint should not be modified, got: {call_kwargs['endpoint']}"
+
 
 @pytest.mark.unittest
 class TestHttpxTimeoutConfiguration:
@@ -458,7 +592,10 @@ class TestHttpxTimeoutConfiguration:
         call_kwargs = mock_openai_chat_target.call_args[1]
         assert call_kwargs["httpx_client_kwargs"] == {
             "timeout": httpx.Timeout(
-                connect=DEFAULT_CONNECT_TIMEOUT, read=300, write=DEFAULT_WRITE_TIMEOUT, pool=DEFAULT_POOL_TIMEOUT
+                connect=DEFAULT_CONNECT_TIMEOUT,
+                read=300,
+                write=DEFAULT_WRITE_TIMEOUT,
+                pool=DEFAULT_POOL_TIMEOUT,
             )
         }
 

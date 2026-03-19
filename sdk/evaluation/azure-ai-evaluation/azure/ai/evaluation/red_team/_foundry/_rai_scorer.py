@@ -42,6 +42,7 @@ class RAIServiceScorer(TrueFalseScorer):
         risk_category: RiskCategory,
         logger: Optional[logging.Logger] = None,
         dataset_config: Optional[Any] = None,
+        use_legacy_endpoint: bool = False,
     ) -> None:
         """Initialize the RAI Service scorer.
 
@@ -56,6 +57,8 @@ class RAIServiceScorer(TrueFalseScorer):
         :type logger: Optional[logging.Logger]
         :param dataset_config: Optional DatasetConfiguration for context lookup
         :type dataset_config: Optional[Any]
+        :param use_legacy_endpoint: Whether to use the legacy evaluation endpoint. Defaults to False.
+        :type use_legacy_endpoint: bool
         """
         # Initialize with a default validator for text scoring
         super().__init__(validator=ScorerPromptValidator(supported_data_types=["text"]))
@@ -64,6 +67,7 @@ class RAIServiceScorer(TrueFalseScorer):
         self.risk_category = risk_category
         self.logger = logger or logging.getLogger(__name__)
         self.dataset_config = dataset_config
+        self._use_legacy_endpoint = use_legacy_endpoint
         self._context_lookup: Dict[str, Dict[str, Any]] = {}
 
         # Build context lookup from dataset config if provided
@@ -160,18 +164,17 @@ class RAIServiceScorer(TrueFalseScorer):
         metric_name = get_metric_from_risk_category(self.risk_category)
         annotation_task = get_annotation_task_from_risk_category(self.risk_category)
 
-        # The Sync API requires "hate_unfairness" instead of "hate_fairness"
-        if metric_name == "hate_fairness":
-            metric_name = "hate_unfairness"
+        # Metric name normalization (hate_fairness ↔ hate_unfairness) is handled by
+        # evaluate_with_rai_service_sync based on the use_legacy_endpoint flag.
 
         try:
-            # Call RAI service using sync_evals endpoint (matches legacy path behavior)
             eval_result = await evaluate_with_rai_service_sync(
                 eval_input,
                 metric_name=metric_name,
                 project_scope=self.azure_ai_project,
                 credential=self.credential,
                 annotation_task=annotation_task,
+                use_legacy_endpoint=self._use_legacy_endpoint,
             )
 
             self.logger.debug(f"RAI evaluation result: {eval_result}")
@@ -182,6 +185,8 @@ class RAIServiceScorer(TrueFalseScorer):
             threshold = None
             result_label = ""
             passed = None
+
+            matched_result_dict = None
 
             if hasattr(eval_result, "results") or (isinstance(eval_result, dict) and "results" in eval_result):
                 results = eval_result.results if hasattr(eval_result, "results") else eval_result.get("results", [])
@@ -197,7 +202,21 @@ class RAIServiceScorer(TrueFalseScorer):
                         threshold = result_dict.get("threshold")
                         passed = result_dict.get("passed")
                         result_label = result_dict.get("label") or ""
+                        matched_result_dict = result_dict
                         break
+
+            # Check for evaluation service errors (e.g. ServiceInvocationException).
+            # These return score=0.0 and passed=False but with properties.outcome="error",
+            # meaning the evaluation didn't actually run.  Raising here lets the existing
+            # except block re-raise so PyRIT marks the score as UNDETERMINED.
+            if matched_result_dict is not None:
+                result_properties = matched_result_dict.get("properties", {})
+                if isinstance(result_properties, dict) and result_properties.get("outcome") == "error":
+                    error_detail = result_properties.get("error", "Unknown evaluation error")
+                    raise RuntimeError(
+                        f"RAI evaluation service returned an error for {metric_name}: {error_detail}. "
+                        f"Score will be treated as undetermined."
+                    )
 
             if raw_score is None:
                 self.logger.warning(f"No matching result found for metric '{metric_name}' in evaluation response.")
