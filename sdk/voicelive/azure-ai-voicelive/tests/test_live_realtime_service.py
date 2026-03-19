@@ -810,14 +810,15 @@ class TestRealtimeService(AzureRecordedTestCase):
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-realtime-mini"])
     @pytest.mark.parametrize(
-        "transcription_model", [
+        "transcription_model",
+        [
             "whisper-1",
             "gpt-4o-transcribe",
             "gpt-4o-mini-transcribe",
             "gpt-4o-transcribe-diarize",
             "azure-speech",
             "mai-transcribe-1",
-        ]
+        ],
     )
     @pytest.mark.parametrize("api_version", ["2025-05-01-preview", "2026-01-01-preview"])
     async def test_realtime_service_input_audio_transcription(
