@@ -35,6 +35,7 @@ class TestAppConfigurationProviderWatchAll(AppConfigTestCase, unittest.TestCase)
             refresh_interval=1,
             on_refresh_success=mock_callback,
             feature_flag_enabled=True,
+            refresh_enabled=True,
         )
         assert client["refresh_message"] == "original value"
         assert client["non_refreshed_message"] == "Static"
@@ -77,6 +78,7 @@ class TestAppConfigurationProviderWatchAll(AppConfigTestCase, unittest.TestCase)
             refresh_interval=1,
             on_refresh_success=mock_callback,
             feature_flag_enabled=True,
+            refresh_enabled=True,
         )
         assert client["refresh_message"] == "original value"
         assert client["non_refreshed_message"] == "Static"
@@ -101,6 +103,7 @@ class TestAppConfigurationProviderWatchAll(AppConfigTestCase, unittest.TestCase)
             refresh_interval=10,
             on_refresh_success=mock_callback,
             feature_flag_enabled=True,
+            refresh_enabled=True,
         )
         assert client["refresh_message"] == "original value"
 
@@ -164,6 +167,7 @@ class TestAppConfigurationProviderWatchAll(AppConfigTestCase, unittest.TestCase)
             refresh_interval=1,
             on_refresh_success=mock_callback,
             feature_flag_enabled=True,
+            refresh_enabled=True,
         )
         assert client["refresh_message"] == "original value"
         assert client["non_refreshed_message"] == "Static"
@@ -212,6 +216,7 @@ class TestAppConfigurationProviderWatchAll(AppConfigTestCase, unittest.TestCase)
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
             on_refresh_success=mock_callback,
             feature_flag_enabled=True,
+            refresh_enabled=True,
         )
         assert client["refresh_message"] == "original value"
         assert client["non_refreshed_message"] == "Static"

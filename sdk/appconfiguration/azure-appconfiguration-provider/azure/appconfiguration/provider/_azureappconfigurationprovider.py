@@ -58,7 +58,7 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
     refresh_on: Optional[List[Tuple[str, str]]] = None,
     refresh_interval: int = 30,
-    refresh_enabled: bool = True,
+    refresh_enabled: bool = False,
     on_refresh_success: Optional[Callable] = None,
     on_refresh_error: Optional[Callable[[Exception], None]] = None,
     feature_flag_enabled: bool = False,
@@ -129,7 +129,7 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
     refresh_on: Optional[List[Tuple[str, str]]] = None,
     refresh_interval: int = 30,
-    refresh_enabled: bool = True,
+    refresh_enabled: bool = False,
     on_refresh_success: Optional[Callable] = None,
     on_refresh_error: Optional[Callable[[Exception], None]] = None,
     feature_flag_enabled: bool = False,
@@ -300,7 +300,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     self._page_etags = page_etags
                     settings_refreshed = True
 
-            elif self._watched_settings and self._refresh_timer.needs_refresh():
+            elif self._refresh_enabled and self._watched_settings and self._refresh_timer.needs_refresh():
                 configuration_refresh_attempted = True
 
                 updated_watched_settings = client.get_updated_watched_settings(
@@ -352,7 +352,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             raise e
 
     def refresh(self, **kwargs) -> None:
-        if not self._refresh_enabled:
+        if not self._refresh_enabled and not self._feature_flag_refresh_enabled:
             logger.debug("Refresh called but refresh is not enabled.")
             return
         if not self._refresh_lock.acquire(blocking=False):  # pylint: disable= consider-using-with
