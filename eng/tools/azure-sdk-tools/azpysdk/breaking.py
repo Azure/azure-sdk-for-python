@@ -1,6 +1,7 @@
 import argparse
 import os
 import sys
+import tempfile
 
 from typing import Optional, List
 from subprocess import CalledProcessError, check_call
@@ -170,25 +171,25 @@ class breaking(Check):
         """Compare two pre-built code reports directly, skipping package build and install."""
         source = os.path.abspath(args.source_report)
         target = os.path.abspath(args.target_report)
-        # pkg_dir is required by detect_breaking_changes.py; use the directory of the source report.
-        pkg_dir = os.path.dirname(source)
 
-        cmd = [
-            sys.executable,
-            os.path.join(BREAKING_CHECKER_PATH, "detect_breaking_changes.py"),
-            "--target",
-            pkg_dir,
-            "--source-report",
-            source,
-            "--target-report",
-            target,
-        ]
-        if getattr(args, "changelog", False):
-            cmd.append("--changelog")
+        # Use a temporary directory as the target package directory to avoid deleting input reports.
+        with tempfile.TemporaryDirectory() as tmp_pkg_dir:
+            cmd = [
+                sys.executable,
+                os.path.join(BREAKING_CHECKER_PATH, "detect_breaking_changes.py"),
+                "--target",
+                tmp_pkg_dir,
+                "--source-report",
+                source,
+                "--target-report",
+                target,
+            ]
+            if getattr(args, "changelog", False):
+                cmd.append("--changelog")
 
-        try:
-            check_call(cmd)
-        except CalledProcessError as e:
-            logger.error(f"Breaking change report generation failed: {e}")
-            return 1
+            try:
+                check_call(cmd)
+            except CalledProcessError as e:
+                logger.error(f"Breaking change report generation failed: {e}")
+                return 1
         return 0
