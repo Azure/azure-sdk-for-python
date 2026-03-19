@@ -1,5 +1,6 @@
 include *.md
 include LICENSE
+include azure/storage/queue/py.typed
 include azure/storage/queue/_generated/py.typed
 recursive-include tests *.py
 recursive-include samples *.py *.md
