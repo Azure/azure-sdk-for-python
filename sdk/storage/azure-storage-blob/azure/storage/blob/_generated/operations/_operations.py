@@ -837,7 +837,7 @@ def build_blob_download_request(
     accept = _headers.pop("Accept", "application/octet-stream")
 
     # Construct URL
-    _url = "/"
+    _url = ""
 
     # Construct parameters
     if snapshot is not None:
@@ -909,7 +909,7 @@ def build_blob_get_properties_request(
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/"
+    _url = ""
 
     # Construct parameters
     if snapshot is not None:
@@ -969,7 +969,7 @@ def build_blob_delete_request(
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/"
+    _url = ""
 
     # Construct parameters
     if snapshot is not None:
@@ -1585,7 +1585,7 @@ def build_blob_start_copy_from_url_request(  # pylint: disable=too-many-locals
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/"
+    _url = ""
 
     # Construct parameters
     if timeout is not None:
@@ -1679,7 +1679,7 @@ def build_blob_copy_from_url_request(  # pylint: disable=too-many-locals
     requires_sync: Literal["true"] = kwargs.pop("requires_sync", _headers.pop("x-ms-requires-sync", "true"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/"
+    _url = ""
 
     # Construct parameters
     if timeout is not None:
@@ -1972,7 +1972,7 @@ def build_append_blob_create_request(  # pylint: disable=too-many-locals
     blob_type: Literal["AppendBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "AppendBlob"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/"
+    _url = ""
 
     # Construct parameters
     if timeout is not None:
@@ -2328,7 +2328,7 @@ def build_block_blob_upload_request(  # pylint: disable=too-many-locals,too-many
     blob_type: Literal["BlockBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/"
+    _url = ""
 
     # Construct parameters
     if timeout is not None:
@@ -2461,7 +2461,7 @@ def build_block_blob_put_blob_from_url_request(  # pylint: disable=name-too-long
     blob_type: Literal["BlockBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/"
+    _url = ""
 
     # Construct parameters
     if timeout is not None:
@@ -2973,7 +2973,7 @@ def build_page_blob_create_request(  # pylint: disable=too-many-locals
     blob_type: Literal["PageBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "PageBlob"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/"
+    _url = ""
 
     # Construct parameters
     if timeout is not None:
