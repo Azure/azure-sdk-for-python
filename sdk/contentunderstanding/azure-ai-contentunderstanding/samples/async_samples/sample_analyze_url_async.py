@@ -283,48 +283,46 @@ async def main() -> None:
         # [END analyze_audio_from_url]
 
         # [START analyze_audio_url_with_content_range]
-        # Restrict to a time range with a content range string.
-        # Analyze audio from 5 seconds onward (milliseconds: "5000-").
-        print("\nAnalyzing audio from 5 seconds onward with content range '5000-'...")
+        # Restrict to a time window with a content range string.
+        # Analyze only the first 5 seconds of the audio (milliseconds: "0-5000").
+        print("\nAnalyzing first 5 seconds of audio with content range '0-5000'...")
         audio_range_poller = await client.begin_analyze(
             analyzer_id="prebuilt-audioSearch",
             inputs=[
                 AnalysisInput(
                     url=audio_url,
-                    content_range="5000-",
+                    content_range="0-5000",
                 )
             ],
         )
         audio_range_result = await audio_range_poller.result()
 
         range_audio_content = cast(AudioVisualContent, audio_range_result.contents[0])
-        print(f"Content range audio analysis: {range_audio_content.start_time_ms} ms onward")
-        range_summary = (
-            range_audio_content.fields.get("Summary") if range_audio_content.fields else None
+        print(
+            f"Content range audio segment:"
+            f" {range_audio_content.start_time_ms} ms - {range_audio_content.end_time_ms} ms"
         )
-        if range_summary and hasattr(range_summary, "value"):
-            print(f"Summary: {range_summary.value}")
         # [END analyze_audio_url_with_content_range]
 
         # [START analyze_audio_url_with_additional_content_ranges]
         # Additional content range examples for audio (time ranges use milliseconds):
 
-        # "2000-8000" — analyze a specific time window from 2s to 8s
-        print("\nAnalyzing audio from 2s to 8s with content range '2000-8000'...")
-        audio_window_poller = await client.begin_analyze(
+        # "10000-" — analyze from 10 seconds onward
+        print("\nAnalyzing audio from 10 seconds onward with content range '10000-'...")
+        audio_from_poller = await client.begin_analyze(
             analyzer_id="prebuilt-audioSearch",
             inputs=[
                 AnalysisInput(
                     url=audio_url,
-                    content_range="2000-8000",
+                    content_range="10000-",
                 )
             ],
         )
-        audio_window_result = await audio_window_poller.result()
-        audio_window_content = cast(AudioVisualContent, audio_window_result.contents[0])
+        audio_from_result = await audio_from_poller.result()
+        audio_from_content = cast(AudioVisualContent, audio_from_result.contents[0])
         print(
-            f"'2000-8000':"
-            f" {audio_window_content.start_time_ms} ms - {audio_window_content.end_time_ms} ms"
+            f"'10000-':"
+            f" {audio_from_content.start_time_ms} ms - {audio_from_content.end_time_ms} ms"
         )
 
         # "1200-3651" — sub-second precision (1.2s to 3.651s)
@@ -343,6 +341,24 @@ async def main() -> None:
         print(
             f"'1200-3651':"
             f" {audio_subsec_content.start_time_ms} ms - {audio_subsec_content.end_time_ms} ms"
+        )
+
+        # "0-3000,30000-" — multiple disjoint time ranges (0-3s and 30s onward)
+        print("\nAnalyzing audio with combined time ranges (0-3s and 30s onward) with content range '0-3000,30000-'...")
+        audio_combine_poller = await client.begin_analyze(
+            analyzer_id="prebuilt-audioSearch",
+            inputs=[
+                AnalysisInput(
+                    url=audio_url,
+                    content_range="0-3000,30000-",
+                )
+            ],
+        )
+        audio_combine_result = await audio_combine_poller.result()
+        audio_combine_content = cast(AudioVisualContent, audio_combine_result.contents[0])
+        print(
+            f"'0-3000,30000-':"
+            f" {audio_combine_content.start_time_ms} ms - {audio_combine_content.end_time_ms} ms"
         )
         # [END analyze_audio_url_with_additional_content_ranges]
 
