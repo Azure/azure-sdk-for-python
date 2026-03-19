@@ -1,5 +1,11 @@
 # Release History
 
+## 14.0.0 (2026-03-18)
+
+### Breaking Changes
+
+  - Deleted or renamed model `ManagedHsmResource`
+
 ## 13.0.0 (2025-12-11)
 
 ### Features Added
