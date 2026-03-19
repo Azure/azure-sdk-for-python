@@ -444,7 +444,7 @@ class ExecuteCreateContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExecuteCreateFlexRequest(_Model):
+class ExecuteCreateFlexContent(_Model):
     """The ExecuteCreateFlexRequest request for executeCreateFlex operations.
 
     :ivar resource_config_parameters: Resource creation payload with flex properties. Required.

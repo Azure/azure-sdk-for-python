@@ -1,6 +1,6 @@
 # Release History
 
-## 1.2.0b2 (2026-03-17)
+## 1.2.0b2 (2026-03-19)
 
 ### Features Added
 
@@ -14,7 +14,7 @@
   - Added model `CreateFlexResourceOperationResponse`
   - Added enum `DistributionStrategy`
   - Added model `ExecuteCreateContent`
-  - Added model `ExecuteCreateFlexRequest`
+  - Added model `ExecuteCreateFlexContent`
   - Added model `ExecuteDeallocateContent`
   - Added model `ExecuteDeleteContent`
   - Added model `ExecuteHibernateContent`

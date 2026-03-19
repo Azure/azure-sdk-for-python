@@ -13,7 +13,7 @@
         "azure.mgmt.computeschedule.models.ErrorDetail": "Azure.ResourceManager.CommonTypes.ErrorDetail",
         "azure.mgmt.computeschedule.models.ErrorResponse": "Azure.ResourceManager.CommonTypes.ErrorResponse",
         "azure.mgmt.computeschedule.models.ExecuteCreateContent": "Microsoft.ComputeSchedule.ExecuteCreateRequest",
-        "azure.mgmt.computeschedule.models.ExecuteCreateFlexRequest": "Microsoft.ComputeSchedule.ExecuteCreateFlexRequest",
+        "azure.mgmt.computeschedule.models.ExecuteCreateFlexContent": "Microsoft.ComputeSchedule.ExecuteCreateFlexRequest",
         "azure.mgmt.computeschedule.models.ExecuteDeallocateContent": "Microsoft.ComputeSchedule.ExecuteDeallocateRequest",
         "azure.mgmt.computeschedule.models.ExecuteDeleteContent": "Microsoft.ComputeSchedule.ExecuteDeleteRequest",
         "azure.mgmt.computeschedule.models.ExecuteHibernateContent": "Microsoft.ComputeSchedule.ExecuteHibernateRequest",

@@ -2049,7 +2049,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     def virtual_machines_execute_create_flex(
         self,
         locationparameter: str,
-        body: _models.ExecuteCreateFlexRequest,
+        body: _models.ExecuteCreateFlexContent,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2060,7 +2060,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param locationparameter: The location name. Required.
         :type locationparameter: str
         :param body: The request body. Required.
-        :type body: ~azure.mgmt.computeschedule.models.ExecuteCreateFlexRequest
+        :type body: ~azure.mgmt.computeschedule.models.ExecuteCreateFlexContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2119,16 +2119,16 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         api_versions_list=["2026-03-01-preview"],
     )
     def virtual_machines_execute_create_flex(
-        self, locationparameter: str, body: Union[_models.ExecuteCreateFlexRequest, JSON, IO[bytes]], **kwargs: Any
+        self, locationparameter: str, body: Union[_models.ExecuteCreateFlexContent, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.CreateFlexResourceOperationResponse:
         """VirtualMachinesExecuteCreateFlex: Execute create operation for a batch of virtual machines with
         flex properties, this operation is triggered as soon as Computeschedule receives it.
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
-        :param body: The request body. Is one of the following types: ExecuteCreateFlexRequest, JSON,
+        :param body: The request body. Is one of the following types: ExecuteCreateFlexContent, JSON,
          IO[bytes] Required.
-        :type body: ~azure.mgmt.computeschedule.models.ExecuteCreateFlexRequest or JSON or IO[bytes]
+        :type body: ~azure.mgmt.computeschedule.models.ExecuteCreateFlexContent or JSON or IO[bytes]
         :return: CreateFlexResourceOperationResponse. The CreateFlexResourceOperationResponse is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.computeschedule.models.CreateFlexResourceOperationResponse
