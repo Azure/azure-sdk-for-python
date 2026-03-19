@@ -20,14 +20,13 @@ class TestCognitiveServicesManagementAccountCapabilityHostsOperations(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_account_capability_hosts_begin_delete(self, resource_group):
-        response = self.client.account_capability_hosts.begin_delete(
+    def test_account_capability_hosts_list(self, resource_group):
+        response = self.client.account_capability_hosts.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            capability_host_name="str",
-            api_version="2025-09-01",
-        ).result()  # call '.result()' to poll until service return final result
-
+            api_version="2026-01-15-preview",
+        )
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
@@ -38,7 +37,7 @@ class TestCognitiveServicesManagementAccountCapabilityHostsOperations(AzureMgmtR
             resource_group_name=resource_group.name,
             account_name="str",
             capability_host_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-15-preview",
         )
 
         # please add some check logic here by yourself
@@ -57,6 +56,7 @@ class TestCognitiveServicesManagementAccountCapabilityHostsOperations(AzureMgmtR
                     "capabilityHostKind": "str",
                     "customerSubnet": "str",
                     "description": "str",
+                    "enablePublicHostingEnvironment": bool,
                     "provisioningState": "str",
                     "storageConnections": ["str"],
                     "tags": {"str": "str"},
@@ -75,7 +75,20 @@ class TestCognitiveServicesManagementAccountCapabilityHostsOperations(AzureMgmtR
                 },
                 "type": "str",
             },
-            api_version="2025-09-01",
+            api_version="2026-01-15-preview",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_account_capability_hosts_begin_delete(self, resource_group):
+        response = self.client.account_capability_hosts.begin_delete(
+            resource_group_name=resource_group.name,
+            account_name="str",
+            capability_host_name="str",
+            api_version="2026-01-15-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

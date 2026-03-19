@@ -60,7 +60,7 @@ class CommitmentTiersOperations:
     def list(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.CommitmentTier"]:
         """List Commitment Tiers.
 
-        :param location: Resource location. Required.
+        :param location: The name of Azure region. Required.
         :type location: str
         :return: An iterator like instance of either CommitmentTier or the result of cls(response)
         :rtype:

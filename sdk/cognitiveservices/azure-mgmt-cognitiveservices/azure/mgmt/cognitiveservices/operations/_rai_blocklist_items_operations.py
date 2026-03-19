@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -35,7 +35,6 @@ from .. import models as _models
 from .._configuration import CognitiveServicesManagementClientConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 List = list
@@ -44,13 +43,95 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
+def build_batch_add_request(
+    resource_group_name: str, account_name: str, rai_blocklist_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-15-preview"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/raiBlocklists/{raiBlocklistName}/addRaiBlocklistItems",
+    )
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "accountName": _SERIALIZER.url(
+            "account_name", account_name, "str", max_length=64, min_length=2, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
+        ),
+        "raiBlocklistName": _SERIALIZER.url(
+            "rai_blocklist_name", rai_blocklist_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_delete_request(
+    resource_group_name: str, account_name: str, rai_blocklist_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-15-preview"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/raiBlocklists/{raiBlocklistName}/deleteRaiBlocklistItems",
+    )
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "accountName": _SERIALIZER.url(
+            "account_name", account_name, "str", max_length=64, min_length=2, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
+        ),
+        "raiBlocklistName": _SERIALIZER.url(
+            "rai_blocklist_name", rai_blocklist_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_list_request(
     resource_group_name: str, account_name: str, rai_blocklist_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -59,13 +140,13 @@ def build_list_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/raiBlocklists/{raiBlocklistName}/raiBlocklistItems",
     )
     path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "accountName": _SERIALIZER.url(
             "account_name", account_name, "str", max_length=64, min_length=2, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
         ),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "raiBlocklistName": _SERIALIZER.url(
             "rai_blocklist_name", rai_blocklist_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
         ),
@@ -93,7 +174,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -102,13 +183,13 @@ def build_get_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/raiBlocklists/{raiBlocklistName}/raiBlocklistItems/{raiBlocklistItemName}",
     )
     path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "accountName": _SERIALIZER.url(
             "account_name", account_name, "str", max_length=64, min_length=2, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
         ),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "raiBlocklistName": _SERIALIZER.url(
             "rai_blocklist_name", rai_blocklist_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
         ),
@@ -139,7 +220,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-15-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -149,13 +230,13 @@ def build_create_or_update_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/raiBlocklists/{raiBlocklistName}/raiBlocklistItems/{raiBlocklistItemName}",
     )
     path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "accountName": _SERIALIZER.url(
             "account_name", account_name, "str", max_length=64, min_length=2, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
         ),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "raiBlocklistName": _SERIALIZER.url(
             "rai_blocklist_name", rai_blocklist_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
         ),
@@ -188,7 +269,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -197,13 +278,13 @@ def build_delete_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/raiBlocklists/{raiBlocklistName}/raiBlocklistItems/{raiBlocklistItemName}",
     )
     path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "accountName": _SERIALIZER.url(
             "account_name", account_name, "str", max_length=64, min_length=2, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
         ),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "raiBlocklistName": _SERIALIZER.url(
             "rai_blocklist_name", rai_blocklist_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
         ),
@@ -221,94 +302,6 @@ def build_delete_request(
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_batch_add_request(
-    resource_group_name: str, account_name: str, rai_blocklist_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/raiBlocklists/{raiBlocklistName}/addRaiBlocklistItems",
-    )
-    path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", max_length=64, min_length=2, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
-        ),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
-        "raiBlocklistName": _SERIALIZER.url(
-            "rai_blocklist_name", rai_blocklist_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
-        ),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_batch_delete_request(
-    resource_group_name: str,
-    account_name: str,
-    rai_blocklist_name: str,
-    subscription_id: str,
-    *,
-    json: JSON,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/raiBlocklists/{raiBlocklistName}/deleteRaiBlocklistItems",
-    )
-    path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", max_length=64, min_length=2, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
-        ),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
-        "raiBlocklistName": _SERIALIZER.url(
-            "rai_blocklist_name", rai_blocklist_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
-        ),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, **kwargs)
 
 
 class RaiBlocklistItemsOperations:
@@ -331,6 +324,292 @@ class RaiBlocklistItemsOperations:
         )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @overload
+    def batch_add(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        rai_blocklist_name: str,
+        rai_blocklist_items: List[_models.RaiBlocklistItemBulkRequest],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.RaiBlocklist:
+        """Batch operation to add blocklist items.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param rai_blocklist_name: The name of the RaiBlocklist associated with the Cognitive Services
+         Account. Required.
+        :type rai_blocklist_name: str
+        :param rai_blocklist_items: Properties describing the custom blocklist items. Required.
+        :type rai_blocklist_items:
+         list[~azure.mgmt.cognitiveservices.models.RaiBlocklistItemBulkRequest]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: RaiBlocklist or the result of cls(response)
+        :rtype: ~azure.mgmt.cognitiveservices.models.RaiBlocklist
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def batch_add(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        rai_blocklist_name: str,
+        rai_blocklist_items: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.RaiBlocklist:
+        """Batch operation to add blocklist items.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param rai_blocklist_name: The name of the RaiBlocklist associated with the Cognitive Services
+         Account. Required.
+        :type rai_blocklist_name: str
+        :param rai_blocklist_items: Properties describing the custom blocklist items. Required.
+        :type rai_blocklist_items: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: RaiBlocklist or the result of cls(response)
+        :rtype: ~azure.mgmt.cognitiveservices.models.RaiBlocklist
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def batch_add(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        rai_blocklist_name: str,
+        rai_blocklist_items: Union[List[_models.RaiBlocklistItemBulkRequest], IO[bytes]],
+        **kwargs: Any
+    ) -> _models.RaiBlocklist:
+        """Batch operation to add blocklist items.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param rai_blocklist_name: The name of the RaiBlocklist associated with the Cognitive Services
+         Account. Required.
+        :type rai_blocklist_name: str
+        :param rai_blocklist_items: Properties describing the custom blocklist items. Is either a
+         [RaiBlocklistItemBulkRequest] type or a IO[bytes] type. Required.
+        :type rai_blocklist_items:
+         list[~azure.mgmt.cognitiveservices.models.RaiBlocklistItemBulkRequest] or IO[bytes]
+        :return: RaiBlocklist or the result of cls(response)
+        :rtype: ~azure.mgmt.cognitiveservices.models.RaiBlocklist
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RaiBlocklist] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(rai_blocklist_items, (IOBase, bytes)):
+            _content = rai_blocklist_items
+        else:
+            _json = self._serialize.body(rai_blocklist_items, "[RaiBlocklistItemBulkRequest]")
+
+        _request = build_batch_add_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            rai_blocklist_name=rai_blocklist_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("RaiBlocklist", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def batch_delete(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        rai_blocklist_name: str,
+        rai_blocklist_items_names: List[str],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> None:
+        """Batch operation to delete blocklist items.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param rai_blocklist_name: The name of the RaiBlocklist associated with the Cognitive Services
+         Account. Required.
+        :type rai_blocklist_name: str
+        :param rai_blocklist_items_names: List of RAI Blocklist Items Names. Required.
+        :type rai_blocklist_items_names: list[str]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def batch_delete(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        rai_blocklist_name: str,
+        rai_blocklist_items_names: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> None:
+        """Batch operation to delete blocklist items.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param rai_blocklist_name: The name of the RaiBlocklist associated with the Cognitive Services
+         Account. Required.
+        :type rai_blocklist_name: str
+        :param rai_blocklist_items_names: List of RAI Blocklist Items Names. Required.
+        :type rai_blocklist_items_names: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def batch_delete(  # pylint: disable=inconsistent-return-statements
+        self,
+        resource_group_name: str,
+        account_name: str,
+        rai_blocklist_name: str,
+        rai_blocklist_items_names: Union[List[str], IO[bytes]],
+        **kwargs: Any
+    ) -> None:
+        """Batch operation to delete blocklist items.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param rai_blocklist_name: The name of the RaiBlocklist associated with the Cognitive Services
+         Account. Required.
+        :type rai_blocklist_name: str
+        :param rai_blocklist_items_names: List of RAI Blocklist Items Names. Is either a [str] type or
+         a IO[bytes] type. Required.
+        :type rai_blocklist_items_names: list[str] or IO[bytes]
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(rai_blocklist_items_names, (IOBase, bytes)):
+            _content = rai_blocklist_items_names
+        else:
+            _json = self._serialize.body(rai_blocklist_items_names, "[str]")
+
+        _request = build_batch_delete_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            rai_blocklist_name=rai_blocklist_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def list(
@@ -701,6 +980,7 @@ class RaiBlocklistItemsOperations:
 
         response_headers = {}
         if response.status_code == 202:
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
             response_headers["location"] = self._deserialize("str", response.headers.get("location"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -779,219 +1059,3 @@ class RaiBlocklistItemsOperations:
                 deserialization_callback=get_long_running_output,
             )
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    @overload
-    def batch_add(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        rai_blocklist_name: str,
-        rai_blocklist_items: List[_models.RaiBlocklistItemBulkRequest],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.RaiBlocklist:
-        """Batch operation to add blocklist items.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param account_name: The name of Cognitive Services account. Required.
-        :type account_name: str
-        :param rai_blocklist_name: The name of the RaiBlocklist associated with the Cognitive Services
-         Account. Required.
-        :type rai_blocklist_name: str
-        :param rai_blocklist_items: Properties describing the custom blocklist items. Required.
-        :type rai_blocklist_items:
-         list[~azure.mgmt.cognitiveservices.models.RaiBlocklistItemBulkRequest]
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: RaiBlocklist or the result of cls(response)
-        :rtype: ~azure.mgmt.cognitiveservices.models.RaiBlocklist
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def batch_add(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        rai_blocklist_name: str,
-        rai_blocklist_items: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.RaiBlocklist:
-        """Batch operation to add blocklist items.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param account_name: The name of Cognitive Services account. Required.
-        :type account_name: str
-        :param rai_blocklist_name: The name of the RaiBlocklist associated with the Cognitive Services
-         Account. Required.
-        :type rai_blocklist_name: str
-        :param rai_blocklist_items: Properties describing the custom blocklist items. Required.
-        :type rai_blocklist_items: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: RaiBlocklist or the result of cls(response)
-        :rtype: ~azure.mgmt.cognitiveservices.models.RaiBlocklist
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def batch_add(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        rai_blocklist_name: str,
-        rai_blocklist_items: Union[List[_models.RaiBlocklistItemBulkRequest], IO[bytes]],
-        **kwargs: Any
-    ) -> _models.RaiBlocklist:
-        """Batch operation to add blocklist items.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param account_name: The name of Cognitive Services account. Required.
-        :type account_name: str
-        :param rai_blocklist_name: The name of the RaiBlocklist associated with the Cognitive Services
-         Account. Required.
-        :type rai_blocklist_name: str
-        :param rai_blocklist_items: Properties describing the custom blocklist items. Is either a
-         [RaiBlocklistItemBulkRequest] type or a IO[bytes] type. Required.
-        :type rai_blocklist_items:
-         list[~azure.mgmt.cognitiveservices.models.RaiBlocklistItemBulkRequest] or IO[bytes]
-        :return: RaiBlocklist or the result of cls(response)
-        :rtype: ~azure.mgmt.cognitiveservices.models.RaiBlocklist
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.RaiBlocklist] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(rai_blocklist_items, (IOBase, bytes)):
-            _content = rai_blocklist_items
-        else:
-            _json = self._serialize.body(rai_blocklist_items, "[RaiBlocklistItemBulkRequest]")
-
-        _request = build_batch_add_request(
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            rai_blocklist_name=rai_blocklist_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("RaiBlocklist", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def batch_delete(  # pylint: disable=inconsistent-return-statements
-        self,
-        resource_group_name: str,
-        account_name: str,
-        rai_blocklist_name: str,
-        rai_blocklist_items_names: JSON,
-        **kwargs: Any
-    ) -> None:
-        """Batch operation to delete blocklist items.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param account_name: The name of Cognitive Services account. Required.
-        :type account_name: str
-        :param rai_blocklist_name: The name of the RaiBlocklist associated with the Cognitive Services
-         Account. Required.
-        :type rai_blocklist_name: str
-        :param rai_blocklist_items_names: List of RAI Blocklist Items Names. Required.
-        :type rai_blocklist_items_names: JSON
-        :return: None or the result of cls(response)
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _json = self._serialize.body(rai_blocklist_items_names, "object")
-
-        _request = build_batch_delete_request(
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            rai_blocklist_name=rai_blocklist_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore

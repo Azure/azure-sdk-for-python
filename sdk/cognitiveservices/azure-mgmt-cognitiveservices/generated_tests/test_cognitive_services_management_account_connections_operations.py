@@ -20,14 +20,13 @@ class TestCognitiveServicesManagementAccountConnectionsOperations(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_account_connections_delete(self, resource_group):
-        response = self.client.account_connections.delete(
+    def test_account_connections_list(self, resource_group):
+        response = self.client.account_connections.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            connection_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-15-preview",
         )
-
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
@@ -38,20 +37,7 @@ class TestCognitiveServicesManagementAccountConnectionsOperations(AzureMgmtRecor
             resource_group_name=resource_group.name,
             account_name="str",
             connection_name="str",
-            api_version="2025-09-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_account_connections_update(self, resource_group):
-        response = self.client.account_connections.update(
-            resource_group_name=resource_group.name,
-            account_name="str",
-            connection_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-15-preview",
         )
 
         # please add some check logic here by yourself
@@ -64,7 +50,7 @@ class TestCognitiveServicesManagementAccountConnectionsOperations(AzureMgmtRecor
             resource_group_name=resource_group.name,
             account_name="str",
             connection_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-15-preview",
         )
 
         # please add some check logic here by yourself
@@ -72,12 +58,26 @@ class TestCognitiveServicesManagementAccountConnectionsOperations(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_account_connections_list(self, resource_group):
-        response = self.client.account_connections.list(
+    def test_account_connections_update(self, resource_group):
+        response = self.client.account_connections.update(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-09-01",
+            connection_name="str",
+            api_version="2026-01-15-preview",
         )
-        result = [r for r in response]
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_account_connections_delete(self, resource_group):
+        response = self.client.account_connections.delete(
+            resource_group_name=resource_group.name,
+            account_name="str",
+            connection_name="str",
+            api_version="2026-01-15-preview",
+        )
+
         # please add some check logic here by yourself
         # ...

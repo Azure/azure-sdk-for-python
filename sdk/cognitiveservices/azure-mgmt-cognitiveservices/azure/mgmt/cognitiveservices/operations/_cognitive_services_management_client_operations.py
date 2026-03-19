@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Optional, TypeVar
+from io import IOBase
+from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -37,71 +38,11 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_check_sku_availability_request(location: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/providers/Microsoft.CognitiveServices/locations/{location}/checkSkuAvailability",
-    )
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
-        "location": _SERIALIZER.url("location", location, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_check_domain_availability_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.CognitiveServices/checkDomainAvailability"
-    )
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_calculate_model_capacity_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-15-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -126,26 +67,118 @@ def build_calculate_model_capacity_request(subscription_id: str, **kwargs: Any) 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_check_domain_availability_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-15-preview"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.CognitiveServices/checkDomainAvailability"
+    )
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_check_sku_availability_request(location: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-15-preview"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/providers/Microsoft.CognitiveServices/locations/{location}/checkSkuAvailability",
+    )
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "location": _SERIALIZER.url("location", location, "str", min_length=1),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 class _CognitiveServicesManagementClientOperationsMixin(
     ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], CognitiveServicesManagementClientConfiguration]
 ):
 
-    @distributed_trace
-    def check_sku_availability(
-        self, location: str, skus: List[str], kind: str, type: str, **kwargs: Any
-    ) -> _models.SkuAvailabilityListResult:
-        """Check available SKUs.
+    @overload
+    def calculate_model_capacity(
+        self,
+        parameters: _models.CalculateModelCapacityParameter,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.CalculateModelCapacityResult:
+        """Model capacity calculator.
 
-        :param location: Resource location. Required.
-        :type location: str
-        :param skus: The SKU of the resource. Required.
-        :type skus: list[str]
-        :param kind: The kind (type) of cognitive service account. Required.
-        :type kind: str
-        :param type: The Type of the resource. Required.
-        :type type: str
-        :return: SkuAvailabilityListResult or the result of cls(response)
-        :rtype: ~azure.mgmt.cognitiveservices.models.SkuAvailabilityListResult
+        :param parameters: The request body. Required.
+        :type parameters: ~azure.mgmt.cognitiveservices.models.CalculateModelCapacityParameter
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: CalculateModelCapacityResult or the result of cls(response)
+        :rtype: ~azure.mgmt.cognitiveservices.models.CalculateModelCapacityResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def calculate_model_capacity(
+        self, parameters: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.CalculateModelCapacityResult:
+        """Model capacity calculator.
+
+        :param parameters: The request body. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: CalculateModelCapacityResult or the result of cls(response)
+        :rtype: ~azure.mgmt.cognitiveservices.models.CalculateModelCapacityResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def calculate_model_capacity(
+        self, parameters: Union[_models.CalculateModelCapacityParameter, IO[bytes]], **kwargs: Any
+    ) -> _models.CalculateModelCapacityResult:
+        """Model capacity calculator.
+
+        :param parameters: The request body. Is either a CalculateModelCapacityParameter type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.cognitiveservices.models.CalculateModelCapacityParameter or
+         IO[bytes]
+        :return: CalculateModelCapacityResult or the result of cls(response)
+        :rtype: ~azure.mgmt.cognitiveservices.models.CalculateModelCapacityResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -160,18 +193,23 @@ class _CognitiveServicesManagementClientOperationsMixin(
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
-        cls: ClsType[_models.SkuAvailabilityListResult] = kwargs.pop("cls", None)
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.CalculateModelCapacityResult] = kwargs.pop("cls", None)
 
-        _parameters = _models.CheckSkuAvailabilityParameter(kind=kind, skus=skus, type=type)
-        _json = self._serialize.body(_parameters, "CheckSkuAvailabilityParameter")
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "CalculateModelCapacityParameter")
 
-        _request = build_check_sku_availability_request(
-            location=location,
+        _request = build_calculate_model_capacity_request(
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
+            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -189,25 +227,59 @@ class _CognitiveServicesManagementClientOperationsMixin(
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SkuAvailabilityListResult", pipeline_response.http_response)
+        deserialized = self._deserialize("CalculateModelCapacityResult", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    @distributed_trace
+    @overload
     def check_domain_availability(
-        self, subdomain_name: str, type: str, kind: Optional[str] = None, **kwargs: Any
+        self,
+        parameters: _models.CheckDomainAvailabilityParameter,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.DomainAvailability:
         """Check whether a domain is available.
 
-        :param subdomain_name: The subdomain name to use. Required.
-        :type subdomain_name: str
-        :param type: The Type of the resource. Required.
-        :type type: str
-        :param kind: The Kind of the resource. Default value is None.
-        :type kind: str
+        :param parameters: The request body. Required.
+        :type parameters: ~azure.mgmt.cognitiveservices.models.CheckDomainAvailabilityParameter
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: DomainAvailability or the result of cls(response)
+        :rtype: ~azure.mgmt.cognitiveservices.models.DomainAvailability
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def check_domain_availability(
+        self, parameters: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.DomainAvailability:
+        """Check whether a domain is available.
+
+        :param parameters: The request body. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: DomainAvailability or the result of cls(response)
+        :rtype: ~azure.mgmt.cognitiveservices.models.DomainAvailability
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def check_domain_availability(
+        self, parameters: Union[_models.CheckDomainAvailabilityParameter, IO[bytes]], **kwargs: Any
+    ) -> _models.DomainAvailability:
+        """Check whether a domain is available.
+
+        :param parameters: The request body. Is either a CheckDomainAvailabilityParameter type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.cognitiveservices.models.CheckDomainAvailabilityParameter or
+         IO[bytes]
         :return: DomainAvailability or the result of cls(response)
         :rtype: ~azure.mgmt.cognitiveservices.models.DomainAvailability
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -224,17 +296,23 @@ class _CognitiveServicesManagementClientOperationsMixin(
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DomainAvailability] = kwargs.pop("cls", None)
 
-        _parameters = _models.CheckDomainAvailabilityParameter(kind=kind, subdomain_name=subdomain_name, type=type)
-        _json = self._serialize.body(_parameters, "CheckDomainAvailabilityParameter")
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "CheckDomainAvailabilityParameter")
 
         _request = build_check_domain_availability_request(
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
+            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -259,24 +337,61 @@ class _CognitiveServicesManagementClientOperationsMixin(
 
         return deserialized  # type: ignore
 
-    @distributed_trace
-    def calculate_model_capacity(
+    @overload
+    def check_sku_availability(
         self,
-        model: Optional[_models.DeploymentModel] = None,
-        sku_name: Optional[str] = None,
-        workloads: Optional[List[_models.ModelCapacityCalculatorWorkload]] = None,
+        location: str,
+        parameters: _models.CheckSkuAvailabilityParameter,
+        *,
+        content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.CalculateModelCapacityResult:
-        """Model capacity calculator.
+    ) -> _models.SkuAvailabilityListResult:
+        """Check available SKUs.
 
-        :param model: Properties of Cognitive Services account deployment model. Default value is None.
-        :type model: ~azure.mgmt.cognitiveservices.models.DeploymentModel
-        :param sku_name: The name of SKU. Default value is None.
-        :type sku_name: str
-        :param workloads: List of Model Capacity Calculator Workload. Default value is None.
-        :type workloads: list[~azure.mgmt.cognitiveservices.models.ModelCapacityCalculatorWorkload]
-        :return: CalculateModelCapacityResult or the result of cls(response)
-        :rtype: ~azure.mgmt.cognitiveservices.models.CalculateModelCapacityResult
+        :param location: The name of Azure region. Required.
+        :type location: str
+        :param parameters: The request body. Required.
+        :type parameters: ~azure.mgmt.cognitiveservices.models.CheckSkuAvailabilityParameter
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SkuAvailabilityListResult or the result of cls(response)
+        :rtype: ~azure.mgmt.cognitiveservices.models.SkuAvailabilityListResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def check_sku_availability(
+        self, location: str, parameters: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.SkuAvailabilityListResult:
+        """Check available SKUs.
+
+        :param location: The name of Azure region. Required.
+        :type location: str
+        :param parameters: The request body. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SkuAvailabilityListResult or the result of cls(response)
+        :rtype: ~azure.mgmt.cognitiveservices.models.SkuAvailabilityListResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def check_sku_availability(
+        self, location: str, parameters: Union[_models.CheckSkuAvailabilityParameter, IO[bytes]], **kwargs: Any
+    ) -> _models.SkuAvailabilityListResult:
+        """Check available SKUs.
+
+        :param location: The name of Azure region. Required.
+        :type location: str
+        :param parameters: The request body. Is either a CheckSkuAvailabilityParameter type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.cognitiveservices.models.CheckSkuAvailabilityParameter or
+         IO[bytes]
+        :return: SkuAvailabilityListResult or the result of cls(response)
+        :rtype: ~azure.mgmt.cognitiveservices.models.SkuAvailabilityListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -291,17 +406,24 @@ class _CognitiveServicesManagementClientOperationsMixin(
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
-        cls: ClsType[_models.CalculateModelCapacityResult] = kwargs.pop("cls", None)
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SkuAvailabilityListResult] = kwargs.pop("cls", None)
 
-        _parameters = _models.CalculateModelCapacityParameter(model=model, sku_name=sku_name, workloads=workloads)
-        _json = self._serialize.body(_parameters, "CalculateModelCapacityParameter")
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "CheckSkuAvailabilityParameter")
 
-        _request = build_calculate_model_capacity_request(
+        _request = build_check_sku_availability_request(
+            location=location,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
+            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -319,7 +441,7 @@ class _CognitiveServicesManagementClientOperationsMixin(
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("CalculateModelCapacityResult", pipeline_response.http_response)
+        deserialized = self._deserialize("SkuAvailabilityListResult", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

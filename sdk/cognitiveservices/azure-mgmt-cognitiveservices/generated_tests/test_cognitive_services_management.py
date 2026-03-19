@@ -20,13 +20,37 @@ class TestCognitiveServicesManagement(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_check_sku_availability(self, resource_group):
-        response = self.client.check_sku_availability(
-            location="str",
-            skus=["str"],
-            kind="str",
-            type="str",
-            api_version="2025-09-01",
+    def test_calculate_model_capacity(self, resource_group):
+        response = self.client.calculate_model_capacity(
+            parameters={
+                "model": {
+                    "callRateLimit": {
+                        "count": 0.0,
+                        "renewalPeriod": 0.0,
+                        "rules": [
+                            {
+                                "count": 0.0,
+                                "dynamicThrottlingEnabled": bool,
+                                "key": "str",
+                                "matchPatterns": [{"method": "str", "path": "str"}],
+                                "minCount": 0.0,
+                                "renewalPeriod": 0.0,
+                            }
+                        ],
+                    },
+                    "format": "str",
+                    "name": "str",
+                    "publisher": "str",
+                    "source": "str",
+                    "sourceAccount": "str",
+                    "version": "str",
+                },
+                "skuName": "str",
+                "workloads": [
+                    {"requestParameters": {"avgGeneratedTokens": 0, "avgPromptTokens": 0}, "requestPerMinute": 0}
+                ],
+            },
+            api_version="2026-01-15-preview",
         )
 
         # please add some check logic here by yourself
@@ -36,9 +60,8 @@ class TestCognitiveServicesManagement(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_check_domain_availability(self, resource_group):
         response = self.client.check_domain_availability(
-            subdomain_name="str",
-            type="str",
-            api_version="2025-09-01",
+            parameters={"subdomainName": "str", "type": "str", "kind": "str"},
+            api_version="2026-01-15-preview",
         )
 
         # please add some check logic here by yourself
@@ -46,9 +69,11 @@ class TestCognitiveServicesManagement(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_calculate_model_capacity(self, resource_group):
-        response = self.client.calculate_model_capacity(
-            api_version="2025-09-01",
+    def test_check_sku_availability(self, resource_group):
+        response = self.client.check_sku_availability(
+            location="str",
+            parameters={"kind": "str", "skus": ["str"], "type": "str"},
+            api_version="2026-01-15-preview",
         )
 
         # please add some check logic here by yourself

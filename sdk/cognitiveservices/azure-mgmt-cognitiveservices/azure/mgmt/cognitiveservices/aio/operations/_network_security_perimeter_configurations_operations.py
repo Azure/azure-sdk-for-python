@@ -260,6 +260,7 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
 
         response_headers = {}
         if response.status_code == 202:
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
             response_headers["location"] = self._deserialize("str", response.headers.get("location"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)

@@ -61,7 +61,7 @@ class RaiContentFiltersOperations:
     def list(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.RaiContentFilter"]:
         """List Content Filters types.
 
-        :param location: Resource location. Required.
+        :param location: The name of Azure region. Required.
         :type location: str
         :return: An iterator like instance of either RaiContentFilter or the result of cls(response)
         :rtype:
@@ -140,7 +140,7 @@ class RaiContentFiltersOperations:
     async def get(self, location: str, filter_name: str, **kwargs: Any) -> _models.RaiContentFilter:
         """Get Content Filters by Name.
 
-        :param location: Resource location. Required.
+        :param location: The name of Azure region. Required.
         :type location: str
         :param filter_name: The name of the RAI Content Filter. Required.
         :type filter_name: str

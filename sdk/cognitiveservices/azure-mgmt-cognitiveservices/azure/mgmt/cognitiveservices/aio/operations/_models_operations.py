@@ -60,7 +60,7 @@ class ModelsOperations:
     def list(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.Model"]:
         """List Models.
 
-        :param location: Resource location. Required.
+        :param location: The name of Azure region. Required.
         :type location: str
         :return: An iterator like instance of either Model or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cognitiveservices.models.Model]

@@ -21,6 +21,31 @@ class TestCognitiveServicesManagementProjectsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
+    async def test_projects_list(self, resource_group):
+        response = self.client.projects.list(
+            resource_group_name=resource_group.name,
+            account_name="str",
+            api_version="2026-01-15-preview",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_projects_get(self, resource_group):
+        response = await self.client.projects.get(
+            resource_group_name=resource_group.name,
+            account_name="str",
+            project_name="str",
+            api_version="2026-01-15-preview",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
     async def test_projects_begin_create(self, resource_group):
         response = await (
             await self.client.projects.begin_create(
@@ -56,7 +81,7 @@ class TestCognitiveServicesManagementProjectsOperationsAsync(AzureMgmtRecordedTe
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-09-01",
+                api_version="2026-01-15-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -100,7 +125,7 @@ class TestCognitiveServicesManagementProjectsOperationsAsync(AzureMgmtRecordedTe
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-09-01",
+                api_version="2026-01-15-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -115,34 +140,9 @@ class TestCognitiveServicesManagementProjectsOperationsAsync(AzureMgmtRecordedTe
                 resource_group_name=resource_group.name,
                 account_name="str",
                 project_name="str",
-                api_version="2025-09-01",
+                api_version="2026-01-15-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_projects_get(self, resource_group):
-        response = await self.client.projects.get(
-            resource_group_name=resource_group.name,
-            account_name="str",
-            project_name="str",
-            api_version="2025-09-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_projects_list(self, resource_group):
-        response = self.client.projects.list(
-            resource_group_name=resource_group.name,
-            account_name="str",
-            api_version="2025-09-01",
-        )
-        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

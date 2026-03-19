@@ -13,67 +13,91 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
-from ._accounts_operations import AccountsOperations  # type: ignore
-from ._deleted_accounts_operations import DeletedAccountsOperations  # type: ignore
-from ._resource_skus_operations import ResourceSkusOperations  # type: ignore
-from ._usages_operations import UsagesOperations  # type: ignore
 from ._operations import Operations  # type: ignore
+from ._accounts_operations import AccountsOperations  # type: ignore
 from ._cognitive_services_management_client_operations import _CognitiveServicesManagementClientOperationsMixin  # type: ignore # pylint: disable=unused-import
+from ._commitment_plans_operations import CommitmentPlansOperations  # type: ignore
+from ._deleted_accounts_operations import DeletedAccountsOperations  # type: ignore
 from ._commitment_tiers_operations import CommitmentTiersOperations  # type: ignore
-from ._models_operations import ModelsOperations  # type: ignore
 from ._location_based_model_capacities_operations import LocationBasedModelCapacitiesOperations  # type: ignore
+from ._models_operations import ModelsOperations  # type: ignore
+from ._rai_content_filters_operations import RaiContentFiltersOperations  # type: ignore
+from ._usages_operations import UsagesOperations  # type: ignore
 from ._model_capacities_operations import ModelCapacitiesOperations  # type: ignore
+from ._quota_tiers_operations import QuotaTiersOperations  # type: ignore
+from ._rai_external_safety_providers_operations import RaiExternalSafetyProvidersOperations  # type: ignore
+from ._rai_external_safety_provider_operations import RaiExternalSafetyProviderOperations  # type: ignore
+from ._subscription_rai_policy_operations import SubscriptionRaiPolicyOperations  # type: ignore
+from ._resource_skus_operations import ResourceSkusOperations  # type: ignore
+from ._account_capability_hosts_operations import AccountCapabilityHostsOperations  # type: ignore
+from ._account_connections_operations import AccountConnectionsOperations  # type: ignore
+from ._computes_operations import ComputesOperations  # type: ignore
+from ._defender_for_ai_settings_operations import DefenderForAISettingsOperations  # type: ignore
+from ._deployments_operations import DeploymentsOperations  # type: ignore
+from ._encryption_scopes_operations import EncryptionScopesOperations  # type: ignore
+from ._managed_network_settings_operations import ManagedNetworkSettingsOperations  # type: ignore
+from ._outbound_rules_operations import OutboundRulesOperations  # type: ignore
+from ._outbound_rule_operations import OutboundRuleOperations  # type: ignore
+from ._network_security_perimeter_configurations_operations import NetworkSecurityPerimeterConfigurationsOperations  # type: ignore
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations  # type: ignore
 from ._private_link_resources_operations import PrivateLinkResourcesOperations  # type: ignore
-from ._deployments_operations import DeploymentsOperations  # type: ignore
-from ._commitment_plans_operations import CommitmentPlansOperations  # type: ignore
-from ._encryption_scopes_operations import EncryptionScopesOperations  # type: ignore
-from ._rai_policies_operations import RaiPoliciesOperations  # type: ignore
+from ._projects_operations import ProjectsOperations  # type: ignore
+from ._agent_applications_operations import AgentApplicationsOperations  # type: ignore
+from ._agent_deployments_operations import AgentDeploymentsOperations  # type: ignore
+from ._project_capability_hosts_operations import ProjectCapabilityHostsOperations  # type: ignore
+from ._project_connections_operations import ProjectConnectionsOperations  # type: ignore
+from ._managed_network_provisions_operations import ManagedNetworkProvisionsOperations  # type: ignore
 from ._rai_blocklists_operations import RaiBlocklistsOperations  # type: ignore
 from ._rai_blocklist_items_operations import RaiBlocklistItemsOperations  # type: ignore
+from ._rai_policies_operations import RaiPoliciesOperations  # type: ignore
+from ._rai_tool_labels_operations import RaiToolLabelsOperations  # type: ignore
 from ._rai_topics_operations import RaiTopicsOperations  # type: ignore
-from ._rai_content_filters_operations import RaiContentFiltersOperations  # type: ignore
-from ._network_security_perimeter_configurations_operations import NetworkSecurityPerimeterConfigurationsOperations  # type: ignore
-from ._defender_for_ai_settings_operations import DefenderForAISettingsOperations  # type: ignore
-from ._projects_operations import ProjectsOperations  # type: ignore
-from ._account_connections_operations import AccountConnectionsOperations  # type: ignore
-from ._project_connections_operations import ProjectConnectionsOperations  # type: ignore
-from ._account_capability_hosts_operations import AccountCapabilityHostsOperations  # type: ignore
-from ._project_capability_hosts_operations import ProjectCapabilityHostsOperations  # type: ignore
-from ._quota_tiers_operations import QuotaTiersOperations  # type: ignore
+from ._test_rai_external_safety_provider_operations import TestRaiExternalSafetyProviderOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "AccountsOperations",
-    "DeletedAccountsOperations",
-    "ResourceSkusOperations",
-    "UsagesOperations",
     "Operations",
+    "AccountsOperations",
+    "CommitmentPlansOperations",
+    "DeletedAccountsOperations",
     "CommitmentTiersOperations",
-    "ModelsOperations",
     "LocationBasedModelCapacitiesOperations",
+    "ModelsOperations",
+    "RaiContentFiltersOperations",
+    "UsagesOperations",
     "ModelCapacitiesOperations",
+    "QuotaTiersOperations",
+    "RaiExternalSafetyProvidersOperations",
+    "RaiExternalSafetyProviderOperations",
+    "SubscriptionRaiPolicyOperations",
+    "ResourceSkusOperations",
+    "AccountCapabilityHostsOperations",
+    "AccountConnectionsOperations",
+    "ComputesOperations",
+    "DefenderForAISettingsOperations",
+    "DeploymentsOperations",
+    "EncryptionScopesOperations",
+    "ManagedNetworkSettingsOperations",
+    "OutboundRulesOperations",
+    "OutboundRuleOperations",
+    "NetworkSecurityPerimeterConfigurationsOperations",
     "PrivateEndpointConnectionsOperations",
     "PrivateLinkResourcesOperations",
-    "DeploymentsOperations",
-    "CommitmentPlansOperations",
-    "EncryptionScopesOperations",
-    "RaiPoliciesOperations",
+    "ProjectsOperations",
+    "AgentApplicationsOperations",
+    "AgentDeploymentsOperations",
+    "ProjectCapabilityHostsOperations",
+    "ProjectConnectionsOperations",
+    "ManagedNetworkProvisionsOperations",
     "RaiBlocklistsOperations",
     "RaiBlocklistItemsOperations",
+    "RaiPoliciesOperations",
+    "RaiToolLabelsOperations",
     "RaiTopicsOperations",
-    "RaiContentFiltersOperations",
-    "NetworkSecurityPerimeterConfigurationsOperations",
-    "DefenderForAISettingsOperations",
-    "ProjectsOperations",
-    "AccountConnectionsOperations",
-    "ProjectConnectionsOperations",
-    "AccountCapabilityHostsOperations",
-    "ProjectCapabilityHostsOperations",
-    "QuotaTiersOperations",
+    "TestRaiExternalSafetyProviderOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

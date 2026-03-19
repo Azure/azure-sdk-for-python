@@ -39,6 +39,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2025-09-01/examples/GetNetworkSecurityPerimeterConfigurations.json
+# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/preview/2026-01-15-preview/examples/GetNetworkSecurityPerimeterConfigurations.json
 if __name__ == "__main__":
     main()

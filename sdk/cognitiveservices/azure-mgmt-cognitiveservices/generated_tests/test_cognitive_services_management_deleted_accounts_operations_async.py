@@ -21,12 +21,22 @@ class TestCognitiveServicesManagementDeletedAccountsOperationsAsync(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
+    async def test_deleted_accounts_list(self, resource_group):
+        response = self.client.deleted_accounts.list(
+            api_version="2026-01-15-preview",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
     async def test_deleted_accounts_get(self, resource_group):
         response = await self.client.deleted_accounts.get(
             location="str",
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-15-preview",
         )
 
         # please add some check logic here by yourself
@@ -40,19 +50,9 @@ class TestCognitiveServicesManagementDeletedAccountsOperationsAsync(AzureMgmtRec
                 location="str",
                 resource_group_name=resource_group.name,
                 account_name="str",
-                api_version="2025-09-01",
+                api_version="2026-01-15-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_deleted_accounts_list(self, resource_group):
-        response = self.client.deleted_accounts.list(
-            api_version="2025-09-01",
-        )
-        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

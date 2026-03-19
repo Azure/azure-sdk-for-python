@@ -20,6 +20,31 @@ class TestCognitiveServicesManagementProjectsOperations(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
+    def test_projects_list(self, resource_group):
+        response = self.client.projects.list(
+            resource_group_name=resource_group.name,
+            account_name="str",
+            api_version="2026-01-15-preview",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_projects_get(self, resource_group):
+        response = self.client.projects.get(
+            resource_group_name=resource_group.name,
+            account_name="str",
+            project_name="str",
+            api_version="2026-01-15-preview",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_projects_begin_create(self, resource_group):
         response = self.client.projects.begin_create(
             resource_group_name=resource_group.name,
@@ -54,7 +79,7 @@ class TestCognitiveServicesManagementProjectsOperations(AzureMgmtRecordedTestCas
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-09-01",
+            api_version="2026-01-15-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -96,7 +121,7 @@ class TestCognitiveServicesManagementProjectsOperations(AzureMgmtRecordedTestCas
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-09-01",
+            api_version="2026-01-15-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -109,33 +134,8 @@ class TestCognitiveServicesManagementProjectsOperations(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             account_name="str",
             project_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-15-preview",
         ).result()  # call '.result()' to poll until service return final result
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_projects_get(self, resource_group):
-        response = self.client.projects.get(
-            resource_group_name=resource_group.name,
-            account_name="str",
-            project_name="str",
-            api_version="2025-09-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_projects_list(self, resource_group):
-        response = self.client.projects.list(
-            resource_group_name=resource_group.name,
-            account_name="str",
-            api_version="2025-09-01",
-        )
-        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
