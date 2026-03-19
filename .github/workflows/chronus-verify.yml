@@ -21,8 +21,11 @@ jobs:
         with:
           node-version: lts/*
 
-      - name: Install chronus
-        run: npm install -g @chronus/chronus
-
       - name: Run chronus verify
-        run: chronus verify
+        run: npx -y @chronus/chronus verify
+
+      - name: Chronus verification failed – see docs
+        if: failure()
+        run: |
+          echo "::error::Chronus verification failed. Add a change description with 'npx chronus add'."
+          echo "::error::See https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/changelog_updates.md for instructions."
