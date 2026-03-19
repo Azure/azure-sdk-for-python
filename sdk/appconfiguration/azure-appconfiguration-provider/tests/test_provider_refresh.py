@@ -44,7 +44,7 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
         assert FEATURE_MANAGEMENT_KEY in client
         assert has_feature_flag(client, "Alpha")
 
-        appconfig_client = self.create_aad_sdk_client(appconfiguration_endpoint_string)
+        appconfig_client = self.create_appconfig_client(appconfiguration_endpoint_string)
 
         setting = appconfig_client.get_configuration_setting(key="refresh_message")
         setting.value = "updated value"
@@ -96,7 +96,7 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
     @recorded_by_proxy
     def test_no_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
 
-        appconfig_client = self.create_aad_sdk_client(appconfiguration_endpoint_string)
+        appconfig_client = self.create_appconfig_client(appconfiguration_endpoint_string)
 
         watch_key = ConfigurationSetting(key="watch key", value="0")
         appconfig_client.set_configuration_setting(watch_key)
@@ -157,7 +157,7 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
         assert FEATURE_MANAGEMENT_KEY in client
         assert has_feature_flag(client, "Alpha")
 
-        appconfig_client = self.create_aad_sdk_client(appconfiguration_endpoint_string)
+        appconfig_client = self.create_appconfig_client(appconfiguration_endpoint_string)
 
         setting = appconfig_client.get_configuration_setting(key="refresh_message")
         setting.value = "updated value"

@@ -11,9 +11,10 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import os
 import re
 import logging
-from typing import List, Any
+from typing import List, Any, Union
 import httpx  # pylint: disable=networking-import-outside-azure-core-transport
 from openai import OpenAI
+from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import TokenCredential
 from azure.identity import get_bearer_token_provider
@@ -46,8 +47,10 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
      the form "https://{ai-services-account-name}.services.ai.azure.com/api/projects/_project".
      Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Required.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :param credential: Credential used to authenticate requests to the service. Is either a key
+     credential type or a token credential type. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or
+     ~azure.core.credentials.TokenCredential
     :param allow_preview: Whether to enable preview features. Optional, default is False.
      Set this to True to create a Hosted Agent (using :class:`~azure.ai.projects.models.HostedAgentDefinition`)
      or a Workflow Agent (using :class:`~azure.ai.projects.models.WorkflowAgentDefinition`).
@@ -64,7 +67,12 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     """
 
     def __init__(
-        self, endpoint: str, credential: TokenCredential, *, allow_preview: bool = False, **kwargs: Any
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "TokenCredential"],
+        *,
+        allow_preview: bool = False,
+        **kwargs: Any,
     ) -> None:
 
         self._console_logging_enabled: bool = (
@@ -78,7 +86,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
             azure_logger = logging.getLogger("azure")
             azure_logger.setLevel(logging.DEBUG)
             console_handler = logging.StreamHandler(stream=sys.stdout)
-            console_handler.addFilter(_BearerTokenRedactionFilter())
+            console_handler.addFilter(_AuthSecretsFilter())
             azure_logger.addHandler(console_handler)
             # Exclude detailed logs for network calls associated with getting Entra ID token.
             logging.getLogger("azure.identity").setLevel(logging.ERROR)
@@ -105,8 +113,12 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         The OpenAI client constructor is called with:
         * ``base_url`` set to the endpoint provided to the AIProjectClient constructor, with "/openai/v1" appended.
         Can be overridden by passing ``base_url`` as a keyword argument.
-        * ``api_key`` set to a get_bearer_token_provider() callable that uses the TokenCredential provided to the
-        AIProjectClient constructor, with scope "https://ai.azure.com/.default".
+        * If :class:`~azure.ai.projects.AIProjectClient` was constructed with a bearer token, ``api_key`` is set
+        to a get_bearer_token_provider() callable that uses the TokenCredential provided to the AIProjectClient
+        constructor, with scope ``https://ai.azure.com/.default``.
+        Can be overridden by passing ``api_key`` as a keyword argument.
+        * If :class:`~azure.ai.projects.AIProjectClient` was constructed with ``api-key``, it is passed to the
+        OpenAI constructor as is.
         Can be overridden by passing ``api_key`` as a keyword argument.
 
         .. note:: The packages ``openai`` and ``azure.identity`` must be installed prior to calling this method.
@@ -130,13 +142,17 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
             base_url,
         )
 
-        # Allow caller to override api_key, otherwise use token provider
+        # Allow caller to override api_key, otherwise use api-key or token provider given during AIProjectClient constructor
         if "api_key" in kwargs:
             api_key = kwargs.pop("api_key")
         else:
-            api_key = get_bearer_token_provider(
-                self._config.credential,  # pylint: disable=protected-access
-                "https://ai.azure.com/.default",
+            api_key = (
+                self._config.credential.key  # pylint: disable=protected-access
+                if isinstance(self._config.credential, AzureKeyCredential)
+                else get_bearer_token_provider(
+                    self._config.credential,  # pylint: disable=protected-access
+                    "https://ai.azure.com/.default",
+                )
             )
 
         if "http_client" in kwargs:
@@ -178,16 +194,21 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         return client
 
 
-class _BearerTokenRedactionFilter(logging.Filter):
-    """Redact bearer tokens in azure.core log messages before they are emitted to console."""
+class _AuthSecretsFilter(logging.Filter):
+    """Redact bearer tokens and api-key values in azure.core log messages before they are emitted to console."""
 
     _AUTH_HEADER_DICT_PATTERN = re.compile(
-        r"(?i)(['\"]authorization['\"]\s*:\s*['\"])bearer\s+[^'\"]+(['\"])",
+        r"(?i)(['\"]authorization['\"]\ *:\ *['\"])bearer\s+[^'\"]+(['\"])",
+    )
+
+    _API_KEY_HEADER_DICT_PATTERN = re.compile(
+        r"(?i)(['\"]api-key['\"]\ *:\ *['\"])[^'\"]+(['\"])",
     )
 
     def filter(self, record: logging.LogRecord) -> bool:
         rendered = record.getMessage()
         redacted = self._AUTH_HEADER_DICT_PATTERN.sub(r"\1Bearer <REDACTED>\2", rendered)
+        redacted = self._API_KEY_HEADER_DICT_PATTERN.sub(r"\1<REDACTED>\2", redacted)
         if redacted != rendered:
             # Replace the pre-formatted content so handlers emit sanitized output.
             record.msg = redacted
@@ -208,7 +229,7 @@ class OpenAILoggingTransport(httpx.HTTPTransport):
     """
 
     def _sanitize_auth_header(self, headers) -> None:
-        """Sanitize authorization header by redacting sensitive information.
+        """Sanitize authorization and api-key headers by redacting sensitive information.
 
         :param headers: Dictionary of HTTP headers to sanitize
         :type headers: dict

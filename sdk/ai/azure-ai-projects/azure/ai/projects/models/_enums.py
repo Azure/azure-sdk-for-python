@@ -373,6 +373,8 @@ class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MEMORY_STORES_V1_PREVIEW."""
     TOOLSET_V1_PREVIEW = "Toolsets=V1Preview"
     """TOOLSET_V1_PREVIEW."""
+    AGENT_ENDPOINT_V1_PREVIEW = "AgentEndpoints=V1Preview"
+    """AGENT_ENDPOINT_V1_PREVIEW."""
 
 
 class FunctionShellToolParamEnvironmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

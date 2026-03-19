@@ -92,6 +92,23 @@ class TestNetAppManagementAccountsOperationsAsync(AzureMgmtRecordedTestCase):
                                 "status": "str",
                             },
                         },
+                        "entraIdConfig": {
+                            "applicationId": "str",
+                            "domain": "str",
+                            "serverNamePrefix": "str",
+                            "entraIdAkvConfig": {
+                                "azureKeyVaultUri": "str",
+                                "certificateName": "str",
+                                "userAssignedIdentity": "str",
+                            },
+                        },
+                        "ldapConfiguration": {
+                            "certificateCNHost": "str",
+                            "domain": "str",
+                            "ldapOverTLS": bool,
+                            "ldapServers": ["str"],
+                            "serverCACertificate": "str",
+                        },
                         "multiAdStatus": "str",
                         "nfsV4IDDomain": "str",
                         "provisioningState": "str",
@@ -158,7 +175,6 @@ class TestNetAppManagementAccountsOperationsAsync(AzureMgmtRecordedTestCase):
                                 "username": "str",
                             }
                         ],
-                        "disableShowmount": bool,
                         "encryption": {
                             "identity": {
                                 "federatedClientId": "str",
@@ -174,9 +190,25 @@ class TestNetAppManagementAccountsOperationsAsync(AzureMgmtRecordedTestCase):
                                 "status": "str",
                             },
                         },
+                        "entraIdConfig": {
+                            "applicationId": "str",
+                            "domain": "str",
+                            "entraIdAkvConfig": {
+                                "azureKeyVaultUri": "str",
+                                "certificateName": "str",
+                                "userAssignedIdentity": "str",
+                            },
+                            "serverNamePrefix": "str",
+                        },
+                        "ldapConfiguration": {
+                            "certificateCNHost": "str",
+                            "domain": "str",
+                            "ldapOverTLS": bool,
+                            "ldapServers": ["str"],
+                            "serverCACertificate": "str",
+                        },
                         "multiAdStatus": "str",
                         "nfsV4IDDomain": "str",
-                        "provisioningState": "str",
                     },
                     "tags": {"str": "str"},
                     "type": "str",

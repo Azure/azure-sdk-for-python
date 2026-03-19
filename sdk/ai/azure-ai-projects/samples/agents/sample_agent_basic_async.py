@@ -6,7 +6,8 @@
 """
 DESCRIPTION:
     This sample demonstrates how to run basic Prompt Agent operations
-    using the asynchronous AIProjectClient.
+    using the asynchronous AIProjectClient. It uses Entra ID authentication to
+    connect to the Microsoft Foundry service.
 
     The OpenAI compatible Responses and Conversation calls in this sample are made using
     the OpenAI client from the `openai` package. See https://platform.openai.com/docs/api-reference

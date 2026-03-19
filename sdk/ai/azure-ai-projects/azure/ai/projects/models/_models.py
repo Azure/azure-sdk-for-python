@@ -2792,7 +2792,7 @@ class ContainerNetworkPolicyAllowlistParam(ContainerNetworkPolicyParam, discrimi
     allowed_domains: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of allowed domains when type is ``allowlist``. Required."""
     domain_secrets: Optional[list["_models.ContainerNetworkPolicyDomainSecretParam"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
+        visibility=["create"]
     )
     """Optional domain-scoped secrets for allowlisted domains."""
 
