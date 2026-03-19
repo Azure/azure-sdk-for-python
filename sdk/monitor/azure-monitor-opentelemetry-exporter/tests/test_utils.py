@@ -54,8 +54,8 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(filtered["short"], "ok")
         self.assertNotIn("k" * 151, filtered)
 
-    def test_custom_properties_gen_ai_attributes_not_truncated(self):
-        # All values in _GEN_AI_ATTRIBUTES should not be truncated even when > 64KiB
+    def test_custom_properties_gen_ai_attributes_not_truncated_at_64kb(self):
+        # All values in _GEN_AI_ATTRIBUTES should not be truncated at > 64kb but at > 256kb
         large_value = "x" * (64 * 1024 + 1000)
         properties = {key: large_value for key in _GEN_AI_ATTRIBUTES}
         filtered = _utils._filter_custom_properties(properties)
@@ -65,7 +65,7 @@ class TestUtils(unittest.TestCase):
                 self.assertEqual(len(filtered[key]), 64 * 1024 + 1000)
 
     def test_filter_custom_properties_non_gen_ai_truncated_at_64kb(self):
-        # Regular properties exceeding 64KiB should be truncated
+        # Regular properties exceeding 64kb should be truncated
         max_length = 64 * 1024
         large_value = "y" * (max_length + 2000)
         properties = {
@@ -81,9 +81,10 @@ class TestUtils(unittest.TestCase):
                 self.assertEqual(len(filtered[key]), max_length)
 
     def test_filter_custom_properties_mixed_gen_ai_and_regular(self):
-        # Gen AI attributes keep full value, regular ones are truncated
+        # Gen AI attributes truncated at 256kb, regular ones are truncated at 64kb
         max_length = 64 * 1024
-        large_value = "z" * (max_length + 3000)
+        max_length_for_gen_ai_attributes = 256 * 1024
+        large_value = "z" * (1024 * 1024 + 3000)
         properties = {
             "gen_ai.input.messages": large_value,
             "gen_ai.output.messages": large_value,
@@ -92,13 +93,24 @@ class TestUtils(unittest.TestCase):
             "db.statement": large_value,
         }
         filtered = _utils._filter_custom_properties(properties)
-        # Gen AI attributes — not truncated
-        self.assertEqual(len(filtered["gen_ai.input.messages"]), max_length + 3000)
-        self.assertEqual(len(filtered["gen_ai.output.messages"]), max_length + 3000)
-        # Regular attributes — truncated
+
+        self.assertEqual(len(filtered["gen_ai.input.messages"]), max_length_for_gen_ai_attributes)
+        self.assertEqual(len(filtered["gen_ai.output.messages"]), max_length_for_gen_ai_attributes)
+
         self.assertEqual(len(filtered["gen_ai.agent.version"]), max_length)
         self.assertEqual(len(filtered["span_kind"]), max_length)
         self.assertEqual(len(filtered["db.statement"]), max_length)
+
+    def test_custom_properties_gen_ai_attributes_truncated_at_256kb(self):
+        # All values in _GEN_AI_ATTRIBUTES should be truncated when > 256kb
+        max_length_for_gen_ai_attributes = 256 * 1024
+        large_value = "x" * (256 * 1024 + 1000)
+        properties = {key: large_value for key in _GEN_AI_ATTRIBUTES}
+        filtered = _utils._filter_custom_properties(properties)
+        for key in _GEN_AI_ATTRIBUTES:
+            with self.subTest(key=key):
+                self.assertIn(key, filtered)
+                self.assertEqual(len(filtered[key]), max_length_for_gen_ai_attributes)
 
     def test_nanoseconds_to_duration(self):
         ns_to_duration = _utils.ns_to_duration

@@ -1,10 +1,12 @@
 # Release History
 
-## 1.38.3 (Unreleased)
-
-### Features Added
+## 1.39.0 (2026-03-18)
 
 ### Breaking Changes
+
+- Changed the previously undocumented `azure_cloud` setting environment variable from `AZURE_CLOUD` to `AZURE_SDK_CLOUD_CONF`.
+
+## 1.38.3 (2026-03-12)
 
 ### Bugs Fixed
 
