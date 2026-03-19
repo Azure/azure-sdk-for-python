@@ -321,7 +321,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
 
                         # Extract details from scoreProperties
                         if score_properties:
-                            parsed_result[f"{self._eval_metric. value}_details"] = _prepare_details(score_properties)
+                            parsed_result[f"{self._eval_metric.value}_details"] = _prepare_details(score_properties)
 
                         # Extract token counts from metrics
                         metrics = properties.get("metrics", {})
@@ -339,7 +339,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
                             total_tokens = ""
 
                         # Add token metadata (matching old format)
-                        parsed_result[f"{self._eval_metric. value}_total_tokens"] = total_tokens
+                        parsed_result[f"{self._eval_metric.value}_total_tokens"] = total_tokens
                         parsed_result[f"{self._eval_metric.value}_prompt_tokens"] = prompt_tokens
                         parsed_result[f"{self._eval_metric.value}_completion_tokens"] = completion_tokens
 
