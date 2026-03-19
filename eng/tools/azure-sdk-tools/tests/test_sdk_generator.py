@@ -69,7 +69,9 @@ class TestTagIsStableForTypeSpec:
 
         # create_package needs a dist folder with a .whl
         def fake_create_package(folder, pkg):
-            dist = Path(".", folder, pkg, "dist")
+            # Use a temporary base directory to avoid polluting the repo workspace
+            base_dir = Path(tempfile.mkdtemp())
+            dist = base_dir / folder / pkg / "dist"
             dist.mkdir(parents=True, exist_ok=True)
             (dist / f"{pkg}-0.0.0-py3-none-any.whl").touch()
 
