@@ -689,7 +689,7 @@ def test_compare_reports_with_absolute_paths(capsys):
     tests_dir = os.path.dirname(__file__)
     source_report = os.path.abspath(os.path.join(tests_dir, "examples", "code-reports", "content-safety", "stable.json"))
     target_report = os.path.abspath(os.path.join(tests_dir, "examples", "code-reports", "content-safety", "current.json"))
-    pkg_dir = tests_dir  # pkg_dir must exist but is not used when paths are absolute
+    pkg_dir = tests_dir  # pkg_dir must exist and is still used (e.g., for package_name and cleanup); its value is independent of using absolute report paths
 
     # Should not raise; changelog=True means no SystemExit(1) even if breaking changes exist
     compare_reports(pkg_dir, changelog=True, source_report=source_report, target_report=target_report)
