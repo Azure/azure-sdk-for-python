@@ -17,15 +17,15 @@ def test_options__defaults_match_public_contract() -> None:
 
 
 def test_options__environment_values_override_defaults() -> None:
-    options = ResponsesServerOptions.from_env(  # type: ignore[attr-defined]
+    options = ResponsesServerOptions.from_env(
         {
-            "RESPONSES_DEFAULT_MODEL": "gpt-4o",
-            "RESPONSES_FETCH_HISTORY_COUNT": "42",
+            "AZURE_AI_RESPONSES_SERVER_DEFAULT_FETCH_HISTORY_ITEM_COUNT": "42",
+            "AZURE_AI_RESPONSES_SERVER_SSE_KEEPALIVE_INTERVAL": "12",
         }
     )
 
-    assert options.default_model == "gpt-4o"
     assert options.default_fetch_history_count == 42
+    assert options.sse_keep_alive_interval_seconds == 12
 
 
 def test_options__invalid_boundary_values_fail_fast() -> None:
@@ -36,6 +36,31 @@ def test_options__invalid_boundary_values_fail_fast() -> None:
         ResponsesServerOptions(sse_keep_alive_interval_seconds=0)
 
     with pytest.raises(ValueError):
-        ResponsesServerOptions.from_env(  # type: ignore[attr-defined]
-            {"RESPONSES_FETCH_HISTORY_COUNT": "-1"}
+        ResponsesServerOptions.from_env(
+            {"AZURE_AI_RESPONSES_SERVER_DEFAULT_FETCH_HISTORY_ITEM_COUNT": "-1"}
         )
+
+
+def test_options__dotnet_environment_variable_names_are_supported() -> None:
+    options = ResponsesServerOptions.from_env(
+        {
+            "AZURE_AI_RESPONSES_SERVER_DEFAULT_FETCH_HISTORY_ITEM_COUNT": "55",
+            "AZURE_AI_RESPONSES_SERVER_SSE_KEEPALIVE_INTERVAL": "15",
+        }
+    )
+
+    assert options.default_fetch_history_count == 55
+    assert options.sse_keep_alive_interval_seconds == 15
+
+
+def test_options__legacy_environment_variable_names_are_ignored() -> None:
+    options = ResponsesServerOptions.from_env(
+        {
+            "RESPONSES_FETCH_HISTORY_COUNT": "42",
+            "RESPONSES_SSE_KEEP_ALIVE_INTERVAL_SECONDS": "9",
+        }
+    )
+
+    assert options.default_model is None
+    assert options.default_fetch_history_count == 100
+    assert options.sse_keep_alive_interval_seconds is None

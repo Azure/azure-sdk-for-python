@@ -65,6 +65,8 @@ class _ExecutionRecord:
     cancel_signal: asyncio.Event = field(default_factory=asyncio.Event)
     background_runner: Any | None = None
     background_execution_started: bool = False
+    input_items: list[dict[str, Any]] = field(default_factory=list)
+    previous_response_id: str | None = None
 
     def to_snapshot(self) -> dict[str, Any]:
         def _normalize_snapshot(payload: dict[str, Any]) -> dict[str, Any]:
@@ -122,6 +124,31 @@ class _RuntimeState:
             self._deleted_response_ids.add(response_id)
             return True
 
+    async def get_input_items(self, response_id: str) -> list[dict[str, Any]]:
+        async with self._lock:
+            record = self._records.get(response_id)
+            if record is None:
+                if response_id in self._deleted_response_ids:
+                    raise ValueError(f"response '{response_id}' has been deleted")
+                raise KeyError(f"response '{response_id}' not found")
+
+            if not record.visible_via_get:
+                raise KeyError(f"response '{response_id}' not found")
+
+            history: list[dict[str, Any]] = []
+            cursor = record.previous_response_id
+            visited: set[str] = set()
+
+            while isinstance(cursor, str) and cursor and cursor not in visited:
+                visited.add(cursor)
+                previous = self._records.get(cursor)
+                if previous is None:
+                    break
+                history = [*deepcopy(previous.input_items), *history]
+                cursor = previous.previous_response_id
+
+            return [*history, *deepcopy(record.input_items)]
+
 
 def _runtime_marker() -> str:
     return f"python/{sys.version_info.major}.{sys.version_info.minor}"
@@ -140,6 +167,49 @@ def _json_payload(value: Any) -> Any:
     if hasattr(value, "as_dict"):
         return value.as_dict()  # type: ignore[no-any-return]
     return value
+
+
+def _extract_input_items(raw_payload: Any) -> list[dict[str, Any]]:
+    if not isinstance(raw_payload, dict):
+        return []
+
+    value = raw_payload.get("input")
+    if not isinstance(value, list):
+        return []
+
+    extracted: list[dict[str, Any]] = []
+    for item in value:
+        if isinstance(item, dict):
+            extracted.append(deepcopy(item))
+    return extracted
+
+
+def _extract_previous_response_id(raw_payload: Any) -> str | None:
+    if not isinstance(raw_payload, dict):
+        return None
+    value = raw_payload.get("previous_response_id")
+    return value if isinstance(value, str) and value else None
+
+
+def _extract_item_id(item: dict[str, Any]) -> str | None:
+    value = item.get("id")
+    return str(value) if value is not None else None
+
+
+def _apply_item_cursors(items: list[dict[str, Any]], *, after: str | None, before: str | None) -> list[dict[str, Any]]:
+    scoped = items
+
+    if after is not None:
+        after_index = next((index for index, item in enumerate(scoped) if _extract_item_id(item) == after), None)
+        if after_index is not None:
+            scoped = scoped[after_index + 1 :]
+
+    if before is not None:
+        before_index = next((index for index, item in enumerate(scoped) if _extract_item_id(item) == before), None)
+        if before_index is not None:
+            scoped = scoped[:before_index]
+
+    return scoped
 
 
 def _error_response(error: Exception, headers: dict[str, str]) -> JSONResponse:
@@ -595,6 +665,8 @@ def map_responses_server(
         store = True if getattr(parsed, "store", None) is None else bool(parsed.store)
         background = bool(getattr(parsed, "background", False))
         model = getattr(parsed, "model", None)
+        input_items = _extract_input_items(payload)
+        previous_response_id = _extract_previous_response_id(payload)
         mode_flags = ResponseModeFlags(stream=stream, store=store, background=background)
         context = RuntimeResponseContext(
             response_id=response_id,
@@ -656,6 +728,8 @@ def map_responses_server(
                                 model=model,
                                 response_payload=response_payload,
                                 events=deepcopy(events) if background else [],
+                                input_items=deepcopy(input_items),
+                                previous_response_id=previous_response_id,
                             )
                             await runtime_state.add(stream_record)
 
@@ -729,6 +803,8 @@ def map_responses_server(
                             model=model,
                             response_payload=response_payload,
                             events=deepcopy(events) if background else [],
+                            input_items=deepcopy(input_items),
+                            previous_response_id=previous_response_id,
                         )
                         await runtime_state.add(stream_record)
 
@@ -781,6 +857,8 @@ def map_responses_server(
                 status=status,
                 model=model,
                 response_payload=response_payload,
+                input_items=deepcopy(input_items),
+                previous_response_id=previous_response_id,
             )
 
             if store:
@@ -799,6 +877,8 @@ def map_responses_server(
             visible_via_get=store,
             status="queued",
             model=model,
+            input_items=deepcopy(input_items),
+            previous_response_id=previous_response_id,
         )
 
         async def _background_runner() -> None:
@@ -944,7 +1024,52 @@ def map_responses_server(
         }
         return JSONResponse(record.to_snapshot(), status_code=200, headers=response_headers)
 
+    async def _get_input_items(request: Request) -> Response:
+        response_id = request.path_params["response_id"]
+
+        limit_raw = request.query_params.get("limit", "20")
+        try:
+            limit = int(limit_raw)
+        except ValueError:
+            return _invalid_request("limit must be an integer between 1 and 100", response_headers, param="limit")
+
+        if limit < 1 or limit > 100:
+            return _invalid_request("limit must be between 1 and 100", response_headers, param="limit")
+
+        order = request.query_params.get("order", "desc").lower()
+        if order not in {"asc", "desc"}:
+            return _invalid_request("order must be 'asc' or 'desc'", response_headers, param="order")
+
+        after = request.query_params.get("after")
+        before = request.query_params.get("before")
+
+        try:
+            items = await runtime_state.get_input_items(response_id)
+        except ValueError:
+            return _deleted_response(response_id, response_headers)
+        except KeyError:
+            return _not_found(response_id, response_headers)
+
+        ordered_items = items if order == "asc" else list(reversed(items))
+        scoped_items = _apply_item_cursors(ordered_items, after=after, before=before)
+
+        page = scoped_items[:limit]
+        has_more = len(scoped_items) > limit
+
+        first_id = _extract_item_id(page[0]) if page else None
+        last_id = _extract_item_id(page[-1]) if page else None
+
+        payload = {
+            "object": "list",
+            "data": page,
+            "first_id": first_id,
+            "last_id": last_id,
+            "has_more": has_more,
+        }
+        return JSONResponse(payload, status_code=200, headers=response_headers)
+
     app.add_route(f"{normalized_prefix}/responses", _create, methods=["POST"])
     app.add_route(f"{normalized_prefix}/responses/{{response_id}}", _get, methods=["GET"])
     app.add_route(f"{normalized_prefix}/responses/{{response_id}}", _delete, methods=["DELETE"])
     app.add_route(f"{normalized_prefix}/responses/{{response_id}}/cancel", _cancel, methods=["POST"])
+    app.add_route(f"{normalized_prefix}/responses/{{response_id}}/input_items", _get_input_items, methods=["GET"])
