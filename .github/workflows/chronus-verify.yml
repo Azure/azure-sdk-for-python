@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [main]
     paths:
-      - "sdk/*/*/pyproject.toml"
+      - "sdk/*/*/**"
 
 jobs:
   chronus-verify:
