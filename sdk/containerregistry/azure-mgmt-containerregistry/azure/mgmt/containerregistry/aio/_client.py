@@ -20,10 +20,15 @@ from azure.mgmt.core.tools import get_arm_endpoints
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import ContainerRegistryManagementClientConfiguration
 from .operations import (
+    ArchiveVersionsOperations,
+    ArchivesOperations,
     CacheRulesOperations,
     ConnectedRegistriesOperations,
     CredentialSetsOperations,
+    ExportPipelinesOperations,
+    ImportPipelinesOperations,
     Operations,
+    PipelineRunsOperations,
     PrivateEndpointConnectionsOperations,
     RegistriesOperations,
     ReplicationsOperations,
@@ -46,6 +51,11 @@ class ContainerRegistryManagementClient:  # pylint: disable=too-many-instance-at
     :vartype operations: azure.mgmt.containerregistry.aio.operations.Operations
     :ivar registries: RegistriesOperations operations
     :vartype registries: azure.mgmt.containerregistry.aio.operations.RegistriesOperations
+    :ivar archives: ArchivesOperations operations
+    :vartype archives: azure.mgmt.containerregistry.aio.operations.ArchivesOperations
+    :ivar archive_versions: ArchiveVersionsOperations operations
+    :vartype archive_versions:
+     azure.mgmt.containerregistry.aio.operations.ArchiveVersionsOperations
     :ivar cache_rules: CacheRulesOperations operations
     :vartype cache_rules: azure.mgmt.containerregistry.aio.operations.CacheRulesOperations
     :ivar credential_sets: CredentialSetsOperations operations
@@ -62,6 +72,14 @@ class ContainerRegistryManagementClient:  # pylint: disable=too-many-instance-at
     :vartype scope_maps: azure.mgmt.containerregistry.aio.operations.ScopeMapsOperations
     :ivar tokens: TokensOperations operations
     :vartype tokens: azure.mgmt.containerregistry.aio.operations.TokensOperations
+    :ivar export_pipelines: ExportPipelinesOperations operations
+    :vartype export_pipelines:
+     azure.mgmt.containerregistry.aio.operations.ExportPipelinesOperations
+    :ivar import_pipelines: ImportPipelinesOperations operations
+    :vartype import_pipelines:
+     azure.mgmt.containerregistry.aio.operations.ImportPipelinesOperations
+    :ivar pipeline_runs: PipelineRunsOperations operations
+    :vartype pipeline_runs: azure.mgmt.containerregistry.aio.operations.PipelineRunsOperations
     :ivar webhooks: WebhooksOperations operations
     :vartype webhooks: azure.mgmt.containerregistry.aio.operations.WebhooksOperations
     :param credential: Credential used to authenticate requests to the service. Required.
@@ -73,8 +91,9 @@ class ContainerRegistryManagementClient:  # pylint: disable=too-many-instance-at
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Default value is "2025-11-01".
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-01-01-preview" and None. Default value is "2026-01-01-preview". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -131,6 +150,10 @@ class ContainerRegistryManagementClient:  # pylint: disable=too-many-instance-at
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.registries = RegistriesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.archives = ArchivesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.archive_versions = ArchiveVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.cache_rules = CacheRulesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.credential_sets = CredentialSetsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.connected_registries = ConnectedRegistriesOperations(
@@ -142,6 +165,13 @@ class ContainerRegistryManagementClient:  # pylint: disable=too-many-instance-at
         self.replications = ReplicationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.scope_maps = ScopeMapsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.tokens = TokensOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.export_pipelines = ExportPipelinesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.import_pipelines = ImportPipelinesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.pipeline_runs = PipelineRunsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.webhooks = WebhooksOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
