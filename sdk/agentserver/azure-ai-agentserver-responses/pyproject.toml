@@ -19,7 +19,7 @@ classifiers = [
 dependencies = [
     "azure-core>=1.30.0",
     "isodate>=0.6.1",
-    "starlette>=0.45.0",
+    "starlette>=1.0.0rc1,<2.0.0",
     "uvicorn>=0.31.0",
 ]
 
@@ -40,7 +40,7 @@ dev = [
 ]
 
 [tool.setuptools.dynamic]
-version = { attr = "azure.ai.agentserver.core._version.VERSION" }
+version = { attr = "azure.ai.agentserver.responses._version.VERSION" }
 readme = { file = ["README.md"], content-type = "text/markdown" }
 
 [tool.setuptools.packages.find]
