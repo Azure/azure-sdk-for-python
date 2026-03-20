@@ -24,6 +24,7 @@
 * Added structured inputs + Code Interpreter sample (`sample_agent_code_interpreter_structured_inputs.py`) demonstrating passing an uploaded file ID to Code Interpreter via structured inputs.
 * Added CSV evaluation sample (`sample_evaluations_builtin_with_csv.py`) demonstrating evaluation with an uploaded CSV dataset.
 * Added synthetic data evaluation samples (`sample_synthetic_data_agent_evaluation.py`) and (`sample_synthetic_data_model_evaluation.py`).
+* Added Chat Completions basic samples (`sample_chat_completions_basic.py`, `sample_chat_completions_basic_async.py`) demonstrating chat completions calls using `AIProjectClient` + the OpenAI-compatible client.
 
 ### Other Changes
 

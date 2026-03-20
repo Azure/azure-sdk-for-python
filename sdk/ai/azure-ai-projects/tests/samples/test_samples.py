@@ -16,6 +16,7 @@ from sample_executor import (
 from test_samples_helpers import (
     agent_tools_instructions,
     agents_instructions,
+    chat_completions_instructions,
     memories_instructions,
     resource_management_instructions,
     get_sample_env_vars,
@@ -64,8 +65,6 @@ class TestSamples(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=resource_management_instructions,
-            project_endpoint=kwargs["foundry_project_endpoint"],
-            model=kwargs["foundry_model_name"],
         )
 
     @pytest.mark.parametrize(
@@ -89,8 +88,6 @@ class TestSamples(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=memories_instructions,
-            project_endpoint=kwargs["foundry_project_endpoint"],
-            model=kwargs["foundry_model_name"],
         )
 
     @pytest.mark.parametrize(
@@ -112,8 +109,6 @@ class TestSamples(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=agents_instructions,
-            project_endpoint=kwargs["foundry_project_endpoint"],
-            model=kwargs["foundry_model_name"],
         )
 
     @pytest.mark.parametrize(
@@ -134,8 +129,6 @@ class TestSamples(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=resource_management_instructions,
-            project_endpoint=kwargs["foundry_project_endpoint"],
-            model=kwargs["foundry_model_name"],
         )
 
     @pytest.mark.parametrize(
@@ -154,8 +147,6 @@ class TestSamples(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=resource_management_instructions,
-            project_endpoint=kwargs["foundry_project_endpoint"],
-            model=kwargs["foundry_model_name"],
         )
 
     @pytest.mark.parametrize(
@@ -174,8 +165,6 @@ class TestSamples(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=resource_management_instructions,
-            project_endpoint=kwargs["foundry_project_endpoint"],
-            model=kwargs["foundry_model_name"],
         )
 
     @pytest.mark.parametrize(
@@ -194,8 +183,24 @@ class TestSamples(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=resource_management_instructions,
-            project_endpoint=kwargs["foundry_project_endpoint"],
-            model=kwargs["foundry_model_name"],
+        )
+
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_sample_paths(
+            "chat_completions",
+            samples_to_skip=[],
+        ),
+    )
+    @servicePreparer()
+    @SamplePathPasser()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_chat_completions_samples(self, sample_path: str, **kwargs) -> None:
+        env_vars = get_sample_env_vars(kwargs)
+        executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
+        executor.execute()
+        executor.validate_print_calls_by_llm(
+            instructions=chat_completions_instructions,
         )
 
     @pytest.mark.parametrize(
@@ -217,6 +222,4 @@ class TestSamples(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=fine_tuning_instructions,
-            project_endpoint=kwargs["foundry_project_endpoint"],
-            model=kwargs["foundry_model_name"],
         )
