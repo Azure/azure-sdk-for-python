@@ -24,31 +24,19 @@ USAGE:
 """
 
 import os
-from pprint import pprint
-from typing import Literal, TypedDict, Required
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 from openai.types.graders import (
     LabelModelGraderParam,
     ScoreModelGraderParam,
     StringCheckGraderParam,
     TextSimilarityGraderParam,
 )
-from openai.types.eval_create_params import DataSourceConfigCustom, TestingCriterion
+from openai.types.eval_create_params import DataSourceConfigCustom
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
+from azure.ai.projects._patch import AzureAIGraderCoherenceParam
 
-# We need to define this TypedDict and others somewhere...
-class AzureAIGraderCoherenceParam(TypedDict, total=False):
-    type: Required[Literal["azure_ai_evaluator"]]
-    """The object type, which is always `azure_ai_evaluator`."""
-    name: Required[str]
-    """The name of the grader."""
-    evaluator_name: str
-    initialization_parameters: dict
-    data_mapping: dict
-
-
-load_dotenv()
+load_dotenv(find_dotenv())
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_deployment_name = os.environ.get("FOUNDRY_MODEL_NAME", "")
@@ -77,7 +65,7 @@ with (
     )
 
     # Specified using TypedDict:
-    testing_criteria: list[TestingCriterion] = [
+    testing_criteria = [
         LabelModelGraderParam( # We whave both this one in openai, as TypedDict, to be used as input. We also have LabelModelGrader as a "normal" class derived from base model with utils (to_dict, to_json) to be used as output. Don't use it here.
             type="label_model",
             model=model_deployment_name,
@@ -192,6 +180,18 @@ with (
         name="OpenAI graders test",
         data_source_config=data_source_config,
         testing_criteria=testing_criteria,
+    )
+    eval_object = client.evals.create(
+        name="OpenAI graders test",
+        data_source_config=data_source_config,
+        testing_criteria=[
+            AzureAIGraderCoherenceParam(
+            type="azure_ai_evaluator",
+            name="coherence",
+            evaluator_name="builtin.coherence",
+            initialization_parameters={"deployment_name": f"{model_deployment_name}"},
+            data_mapping={"query": "{{item.query}}", "response": "{{item.response}}"},
+        )],
     )
     print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 
