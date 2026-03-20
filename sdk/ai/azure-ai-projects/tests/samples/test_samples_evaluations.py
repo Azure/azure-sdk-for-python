@@ -188,8 +188,6 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=evaluations_instructions,
-            project_endpoint=kwargs["foundry_project_endpoint"],
-            model=kwargs["foundry_model_name"],
         )
 
     # To run this test with a specific sample, use:
@@ -220,8 +218,6 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=evaluations_instructions,
-            project_endpoint=kwargs["foundry_project_endpoint"],
-            model=kwargs["foundry_model_name"],
         )
 
     # To run this test, use:
@@ -251,6 +247,4 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=evaluations_instructions,
-            project_endpoint=kwargs["foundry_project_endpoint"],
-            model=kwargs["foundry_model_name"],
         )

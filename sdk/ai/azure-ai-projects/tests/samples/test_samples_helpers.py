@@ -91,6 +91,26 @@ agent behavior, including reasonable correspondence between input prompt(s) and 
 Always include `reason` with a concise explanation tied to the observed print output.
 """.strip()
 
+chat_completions_instructions = """
+We just ran Python code and captured print/log output in an attached log file (TXT).
+Validate whether sample execution/output is correct for Chat Completions scenarios.
+
+Successful output typically shows one or more of:
+- A user prompt and a corresponding assistant response.
+- Reasonable, on-topic completion content.
+
+Mark `correct = false` for:
+- Exceptions, stack traces, explicit error/failure messages.
+- Timeout/auth/connection/service errors that prevent normal completion.
+- Malformed/corrupted output indicating broken processing.
+- Output that clearly does not answer the prompt in the sample.
+
+Mark `correct = true` when execution succeeds and the assistant output is coherent and
+responds to the printed prompt, even if the exact wording varies.
+
+Always include `reason` with a concise explanation tied to the observed print output.
+""".strip()
+
 resource_management_instructions = """
 We just ran Python code and captured print/log output in an attached log file (TXT).
 Validate whether sample execution/output is correct for resource-management samples (for example
