@@ -909,7 +909,7 @@ class TestRedTeamFoundry:
                 skip_upload=True,
             )
         )
-        
+
         assert isinstance(result, RedTeamResult)
         assert result.attack_details is not None
         assert len(result.attack_details) > 0
