@@ -8,7 +8,9 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Any, List
+from functools import wraps
+import inspect
+from typing import Any, Callable, Dict, Final, List
 from ._patch_agents import AgentsOperations
 from ._patch_datasets import DatasetsOperations
 from ._patch_evaluation_rules import EvaluationRulesOperations
@@ -24,6 +26,78 @@ from ._operations import (
     BetaSchedulesOperations,
     BetaToolsetsOperations,
 )
+
+
+_FOUNDRY_FEATURES_HEADER_NAME: Final[str] = "Foundry-Features"
+_BETA_OPERATION_FEATURE_HEADERS: Final[Dict[str, str]] = {
+    "evaluation_taxonomies": "Evaluations=V1Preview",
+    "evaluators": "Evaluations=V1Preview",
+    "insights": "Insights=V1Preview",
+    "memory_stores": "MemoryStores=V1Preview",
+    "red_teams": "RedTeams=V1Preview",
+    "schedules": "Schedules=V1Preview",
+    "toolsets": "Toolsets=V1Preview",
+}
+
+def _has_header_case_insensitive(headers: Any, header_name: str) -> bool:
+    """Return True if headers already contains the provided header name."""
+    try:
+        header_name_lower = header_name.lower()
+        return any(str(key).lower() == header_name_lower for key in headers)
+    except Exception:  # pylint: disable=broad-except
+        return False
+
+
+def _method_accepts_keyword_headers(method: Callable[..., Any]) -> bool:
+    try:
+        signature = inspect.signature(method)
+    except (TypeError, ValueError):
+        return False
+
+    for parameter in signature.parameters.values():
+        if parameter.name == "headers":
+            return True
+        if parameter.kind == inspect.Parameter.VAR_KEYWORD:
+            return True
+
+    return False
+
+
+class _OperationMethodHeaderProxy:
+    """Proxy that injects the Foundry-Features header into public operation method calls."""
+
+    def __init__(self, operation: Any, foundry_features_value: str):
+        object.__setattr__(self, "_operation", operation)
+        object.__setattr__(self, "_foundry_features_value", foundry_features_value)
+
+    def __getattr__(self, name: str) -> Any:
+        attribute = getattr(self._operation, name)
+
+        if name.startswith("_") or not callable(attribute) or not _method_accepts_keyword_headers(attribute):
+            return attribute
+
+        @wraps(attribute)
+        def _wrapped(*args: Any, **kwargs: Any) -> Any:
+            headers = kwargs.get("headers")
+            if headers is None:
+                kwargs["headers"] = {
+                    _FOUNDRY_FEATURES_HEADER_NAME: self._foundry_features_value
+                }
+            elif not _has_header_case_insensitive(headers, _FOUNDRY_FEATURES_HEADER_NAME):
+                try:
+                    headers[_FOUNDRY_FEATURES_HEADER_NAME] = self._foundry_features_value
+                except Exception:  # pylint: disable=broad-except
+                    # Fall back to replacing invalid/immutable header containers.
+                    kwargs["headers"] = {
+                        _FOUNDRY_FEATURES_HEADER_NAME: self._foundry_features_value,
+                    }
+
+            return attribute(*args, **kwargs)
+
+        return _wrapped
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        setattr(self._operation, name, value)
 
 
 class BetaOperations(GeneratedBetaOperations):
@@ -55,6 +129,13 @@ class BetaOperations(GeneratedBetaOperations):
         super().__init__(*args, **kwargs)
         # Replace with patched class that includes begin_update_memories
         self.memory_stores = BetaMemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
+
+        for property_name, foundry_features_value in _BETA_OPERATION_FEATURE_HEADERS.items():
+            setattr(
+                self,
+                property_name,
+                _OperationMethodHeaderProxy(getattr(self, property_name), foundry_features_value),
+            )
 
 
 __all__: List[str] = [

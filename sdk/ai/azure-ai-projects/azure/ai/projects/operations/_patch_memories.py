@@ -22,7 +22,6 @@ from ..models import (
     UpdateMemoriesLROPoller,
 )
 from ..models._patch import _UpdateMemoriesLROPollingMethod
-from ..models._enums import _FoundryFeaturesOptInKeys
 from ._operations import JSON, _Unset, ClsType, BetaMemoryStoresOperations as GenerateBetaMemoryStoresOperations
 from .._validation import api_version_validation
 from .._utils.model_base import _deserialize, _serialize
@@ -385,11 +384,16 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
+        # Import here to avoid circular import at module load time.
+        from ._patch import _BETA_OPERATION_FEATURE_HEADERS, _FOUNDRY_FEATURES_HEADER_NAME
+
         if polling:
             polling_method: _UpdateMemoriesLROPollingMethod = _UpdateMemoriesLROPollingMethod(
                 lro_delay,
                 path_format_arguments=path_format_arguments,
-                headers={"Foundry-Features": _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW.value},
+                headers={
+                    _FOUNDRY_FEATURES_HEADER_NAME: _BETA_OPERATION_FEATURE_HEADERS["memory_stores"]
+                },
                 **kwargs,
             )
         else:

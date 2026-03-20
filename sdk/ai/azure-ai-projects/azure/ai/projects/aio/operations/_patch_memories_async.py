@@ -22,7 +22,7 @@ from ...models import (
     AsyncUpdateMemoriesLROPoller,
 )
 from ...models._patch import _AsyncUpdateMemoriesLROPollingMethod
-from ...models._enums import _FoundryFeaturesOptInKeys
+#from ...models._enums import _FoundryFeaturesOptInKeys
 from ._operations import JSON, _Unset, ClsType, BetaMemoryStoresOperations as GenerateBetaMemoryStoresOperations
 from ...operations._patch_memories import _serialize_memory_input_items
 from ..._validation import api_version_validation
@@ -354,7 +354,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
             polling_method: _AsyncUpdateMemoriesLROPollingMethod = _AsyncUpdateMemoriesLROPollingMethod(
                 lro_delay,
                 path_format_arguments=path_format_arguments,
-                headers={"Foundry-Features": _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW.value},
+                #headers={"Foundry-Features": _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW.value},
                 **kwargs,
             )
         else:
