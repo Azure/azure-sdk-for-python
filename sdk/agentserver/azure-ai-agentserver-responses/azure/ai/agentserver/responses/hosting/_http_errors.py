@@ -19,6 +19,27 @@ def _json_payload(value: Any) -> Any:
     return value
 
 
+def _api_error(
+    *,
+    message: str,
+    code: str,
+    param: str | None = None,
+    error_type: str = "invalid_request_error",
+    status_code: int,
+    headers: dict[str, str],
+) -> JSONResponse:
+    """Build a standard API error ``JSONResponse`` from individual fields."""
+    payload = _json_payload(
+        build_api_error_response(
+            message=message,
+            code=code,
+            param=param,
+            error_type=error_type,
+        )
+    )
+    return JSONResponse(payload, status_code=status_code, headers=headers)
+
+
 def _error_response(error: Exception, headers: dict[str, str]) -> JSONResponse:
     envelope = to_api_error_response(error)
     payload = _json_payload(envelope)
@@ -34,27 +55,25 @@ def _error_response(error: Exception, headers: dict[str, str]) -> JSONResponse:
 
 
 def _not_found(response_id: str, headers: dict[str, str]) -> JSONResponse:
-    payload = _json_payload(
-        build_api_error_response(
-            message=f"Response with id '{response_id}' not found.",
-            code="invalid_request",
-            param="response_id",
-            error_type="invalid_request_error",
-        )
+    return _api_error(
+        message=f"Response with id '{response_id}' not found.",
+        code="invalid_request",
+        param="response_id",
+        error_type="invalid_request_error",
+        status_code=404,
+        headers=headers,
     )
-    return JSONResponse(payload, status_code=404, headers=headers)
 
 
 def _invalid_request(message: str, headers: dict[str, str], *, param: str | None = None) -> JSONResponse:
-    payload = _json_payload(
-        build_api_error_response(
-            message=message,
-            code="invalid_request",
-            param=param,
-            error_type="invalid_request_error",
-        )
+    return _api_error(
+        message=message,
+        code="invalid_request",
+        param=param,
+        error_type="invalid_request_error",
+        status_code=400,
+        headers=headers,
     )
-    return JSONResponse(payload, status_code=400, headers=headers)
 
 
 def _invalid_mode(message: str, headers: dict[str, str], *, param: str | None = None) -> JSONResponse:
@@ -63,15 +82,14 @@ def _invalid_mode(message: str, headers: dict[str, str], *, param: str | None = 
 
 
 def _service_unavailable(message: str, headers: dict[str, str]) -> JSONResponse:
-    payload = _json_payload(
-        build_api_error_response(
-            message=message,
-            code="service_unavailable",
-            param=None,
-            error_type="server_error",
-        )
+    return _api_error(
+        message=message,
+        code="service_unavailable",
+        param=None,
+        error_type="server_error",
+        status_code=503,
+        headers=headers,
     )
-    return JSONResponse(payload, status_code=503, headers=headers)
 
 
 def _deleted_response(response_id: str, headers: dict[str, str]) -> JSONResponse:

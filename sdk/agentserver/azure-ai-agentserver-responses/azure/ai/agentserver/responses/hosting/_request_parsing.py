@@ -5,8 +5,8 @@ from __future__ import annotations
 from copy import deepcopy
 from typing import Any
 
-from ._id_generator import IdGenerator
-from .models.errors import RequestValidationError
+from .._id_generator import IdGenerator
+from ..models.errors import RequestValidationError
 
 _DEFAULT_AGENT_REFERENCE_NAME = "server-default-agent"
 

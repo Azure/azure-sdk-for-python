@@ -7,7 +7,7 @@ from typing import Any, AsyncIterator
 
 from ._event_stream import ResponseEventStream
 from ._sse import encode_sse_payload
-from .models import _generated as generated_models
+from ..models import _generated as generated_models
 
 EVENT_TYPE = generated_models.ResponseStreamEventType
 _RESPONSE_SNAPSHOT_EVENT_TYPES = {

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from azure.ai.agentserver.responses._observability import (
+from azure.ai.agentserver.responses.hosting._observability import (
     InMemoryCreateSpanHook,
     build_create_span_tags,
     build_platform_server_header,

@@ -9,7 +9,7 @@ from starlette.testclient import TestClient
 
 from tests._helpers import poll_until
 
-from azure.ai.agentserver.responses._hosting import map_responses_server
+from azure.ai.agentserver.responses.hosting import map_responses_server
 
 
 class _NoopResponseHandler:
@@ -211,7 +211,7 @@ def test_create__non_stream_returns_completed_response_with_output_items() -> No
     class _OutputProducingHandler:
         def create_async(self, request: Any, context: Any, cancellation_signal: Any):
             async def _events():
-                from azure.ai.agentserver.responses._event_stream import ResponseEventStream
+                from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
                 stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
                 yield stream.emit_created()
@@ -261,7 +261,7 @@ def test_create__background_non_stream_get_eventually_returns_output_items() -> 
     class _OutputProducingHandler:
         def create_async(self, request: Any, context: Any, cancellation_signal: Any):
             async def _events():
-                from azure.ai.agentserver.responses._event_stream import ResponseEventStream
+                from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
                 stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
                 yield stream.emit_created()

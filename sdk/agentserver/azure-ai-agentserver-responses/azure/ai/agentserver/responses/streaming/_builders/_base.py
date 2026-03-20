@@ -6,7 +6,7 @@ from copy import deepcopy
 from enum import Enum
 from typing import TYPE_CHECKING, Any
 
-from ..models import _generated as generated_models
+from ...models import _generated as generated_models
 
 EVENT_TYPE = generated_models.ResponseStreamEventType
 

@@ -7,8 +7,8 @@ from pathlib import Path
 
 import pytest
 
-from azure.ai.agentserver.responses import _validation
-from azure.ai.agentserver.responses._validation import parse_create_response
+from azure.ai.agentserver.responses.hosting import _validation
+from azure.ai.agentserver.responses.hosting._validation import parse_create_response
 from azure.ai.agentserver.responses.models import RequestValidationError
 
 

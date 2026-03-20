@@ -13,7 +13,7 @@ import pytest
 from starlette.applications import Starlette
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.responses._hosting import map_responses_server
+from azure.ai.agentserver.responses.hosting import map_responses_server
 
 
 class _NoopResponseHandler:

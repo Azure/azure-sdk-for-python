@@ -11,17 +11,17 @@ from typing import TYPE_CHECKING, Any, AsyncIterator
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
-from ._handlers import RuntimeResponseContext
+from .._handlers import RuntimeResponseContext
 from ._observability import build_create_span_tags, build_platform_server_header, start_create_span
-from ._options import ResponsesServerOptions
-from ._sse import encode_sse_payload
-from ._state_machine import LifecycleStateMachineError, normalize_lifecycle_events
+from .._options import ResponsesServerOptions
+from ..streaming._sse import encode_sse_payload
+from ..streaming._state_machine import LifecycleStateMachineError, normalize_lifecycle_events
 from ._validation import parse_and_validate_create_response
-from .models import ResponseModeFlags
-from .models import _generated as generated_models
+from ..models import ResponseModeFlags
+from ..models import _generated as generated_models
 
 from ._background import _refresh_background_status, _run_background_non_stream, _try_execute_background_runner
-from ._event_helpers import (
+from ..streaming._helpers import (
     EVENT_TYPE,
     _apply_stream_event_defaults,
     _build_events,
@@ -50,7 +50,7 @@ from ._runtime_state import _ExecutionRecord, _RuntimeState
 if TYPE_CHECKING:
     from starlette.applications import Starlette
 
-    from ._handlers import ResponseHandler
+    from .._handlers import ResponseHandler
 
 
 _SDK_NAME = "azure-ai-agentserver-responses"

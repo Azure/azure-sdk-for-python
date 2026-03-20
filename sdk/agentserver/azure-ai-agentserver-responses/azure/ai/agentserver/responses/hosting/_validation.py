@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from typing import Any, Mapping
 
-from ._options import ResponsesServerOptions
-from .models.errors import RequestValidationError
+from .._options import ResponsesServerOptions
+from ..models.errors import RequestValidationError
 
 try:
-    from .models._generated import ApiErrorResponse, CreateResponse, Error
+    from ..models._generated import ApiErrorResponse, CreateResponse, Error
 except Exception:  # pragma: no cover - allows isolated unit testing when generated deps are unavailable.
     class _GeneratedUnavailable:
         def __init__(self, *_args: Any, **_kwargs: Any) -> None:
@@ -21,7 +21,7 @@ except Exception:  # pragma: no cover - allows isolated unit testing when genera
     Error = _GeneratedUnavailable  # type: ignore[assignment]
 
 try:
-    from .models._generated import _validators as _generated_validators
+    from ..models._generated import _validators as _generated_validators
 except Exception:  # pragma: no cover - optional until validator generation is integrated in all environments.
     _generated_validators = None
 

@@ -11,8 +11,8 @@ import pytest
 from starlette.applications import Starlette
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.responses._hosting import map_responses_server
-from azure.ai.agentserver.responses._observability import InMemoryCreateSpanHook
+from azure.ai.agentserver.responses.hosting import map_responses_server
+from azure.ai.agentserver.responses.hosting._observability import InMemoryCreateSpanHook
 from azure.ai.agentserver.responses._options import ResponsesServerOptions
 from tests._helpers import EventGate
 
@@ -143,7 +143,7 @@ def test_hosting__stream_mode_surfaces_handler_output_item_and_content_events() 
     class _StreamingHandler:
         def create_async(self, request: Any, context: Any, cancellation_signal: Any):
             async def _events():
-                from azure.ai.agentserver.responses._event_stream import ResponseEventStream
+                from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
                 stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
                 yield stream.emit_created()
@@ -194,7 +194,7 @@ def test_hosting__non_stream_mode_returns_completed_response_with_output_items()
     class _NonStreamHandler:
         def create_async(self, request: Any, context: Any, cancellation_signal: Any):
             async def _events():
-                from azure.ai.agentserver.responses._event_stream import ResponseEventStream
+                from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
                 stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
                 yield stream.emit_created()

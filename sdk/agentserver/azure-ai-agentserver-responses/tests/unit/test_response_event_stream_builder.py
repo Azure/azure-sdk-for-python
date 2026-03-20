@@ -5,8 +5,8 @@ from __future__ import annotations
 import pytest
 
 from azure.ai.agentserver.responses._id_generator import IdGenerator
-from azure.ai.agentserver.responses._event_stream import ResponseEventStream
-from azure.ai.agentserver.responses._state_machine import LifecycleStateMachineError
+from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
+from azure.ai.agentserver.responses.streaming._state_machine import LifecycleStateMachineError
 from azure.ai.agentserver.responses.models import _generated as generated_models
 
 

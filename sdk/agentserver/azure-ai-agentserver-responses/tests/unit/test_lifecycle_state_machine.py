@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from azure.ai.agentserver.responses._state_machine import (
+from azure.ai.agentserver.responses.streaming._state_machine import (
     LifecycleStateMachineError,
     normalize_lifecycle_events,
 )

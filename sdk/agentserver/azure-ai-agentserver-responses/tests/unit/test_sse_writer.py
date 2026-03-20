@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from azure.ai.agentserver.responses import _sse
+from azure.ai.agentserver.responses.streaming import _sse
 
 
 @dataclass

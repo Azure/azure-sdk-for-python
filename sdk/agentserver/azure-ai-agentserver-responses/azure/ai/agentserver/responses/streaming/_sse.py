@@ -6,7 +6,7 @@ import itertools
 import json
 from typing import Any, Mapping
 
-from .models._generated import ResponseStreamEvent
+from ..models._generated import ResponseStreamEvent
 
 
 _sequence_counter = itertools.count()

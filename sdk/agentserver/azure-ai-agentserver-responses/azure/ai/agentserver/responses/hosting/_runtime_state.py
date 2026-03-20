@@ -7,8 +7,8 @@ from copy import deepcopy
 from dataclasses import dataclass, field
 from typing import Any
 
-from ._handlers import RuntimeResponseContext
-from .models import _generated as generated_models
+from .._handlers import RuntimeResponseContext
+from ..models import _generated as generated_models
 
 
 @dataclass(slots=True)

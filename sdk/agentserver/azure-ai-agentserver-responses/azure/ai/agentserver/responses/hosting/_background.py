@@ -6,8 +6,8 @@ import asyncio
 from copy import deepcopy
 from typing import Any
 
-from ._handlers import RuntimeResponseContext
-from ._event_helpers import (
+from .._handlers import RuntimeResponseContext
+from ..streaming._helpers import (
     _build_events,
     _coerce_handler_event,
     _apply_stream_event_defaults,

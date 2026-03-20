@@ -6,7 +6,7 @@ from dataclasses import dataclass
 
 import pytest
 
-from azure.ai.agentserver.responses._validation import parse_create_response, to_api_error_response, validate_create_response
+from azure.ai.agentserver.responses.hosting._validation import parse_create_response, to_api_error_response, validate_create_response
 from azure.ai.agentserver.responses.models import RequestValidationError
 
 

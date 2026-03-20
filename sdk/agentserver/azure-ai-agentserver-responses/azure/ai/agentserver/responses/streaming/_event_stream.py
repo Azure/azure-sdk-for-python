@@ -6,7 +6,7 @@ from copy import deepcopy
 from datetime import datetime, timezone
 from typing import Any
 
-from . import _event_stream_internals as _internals
+from . import _internals
 from ._builders import (
     OutputItemCodeInterpreterCallBuilder,
     OutputItemBuilder,
@@ -21,9 +21,9 @@ from ._builders import (
     OutputItemReasoningItemBuilder,
     OutputItemWebSearchCallBuilder,
 )
-from ._id_generator import IdGenerator
+from .._id_generator import IdGenerator
 from ._state_machine import normalize_lifecycle_events, validate_response_event_stream
-from .models import _generated as generated_models
+from ..models import _generated as generated_models
 
 EVENT_TYPE = generated_models.ResponseStreamEventType
 

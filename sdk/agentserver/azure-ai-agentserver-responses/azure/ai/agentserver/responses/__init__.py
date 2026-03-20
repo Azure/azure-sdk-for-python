@@ -1,6 +1,6 @@
 """Public API surface for the Azure AI Agent Server Responses package."""
 
-from ._builders import (
+from .streaming._builders import (
     OutputItemCodeInterpreterCallBuilder,
     OutputItemBuilder,
     OutputItemCustomToolCallBuilder,
@@ -17,7 +17,7 @@ from ._builders import (
     RefusalContentBuilder,
     TextContentBuilder,
 )
-from ._event_stream import ResponseEventStream
+from .streaming._event_stream import ResponseEventStream
 from ._handlers import ResponseContext, ResponseHandler, RuntimeResponseContext
 from ._options import ResponsesServerOptions
 from .store._base import ResponseProviderProtocol

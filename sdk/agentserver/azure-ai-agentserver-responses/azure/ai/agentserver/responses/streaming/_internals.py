@@ -11,7 +11,7 @@ from datetime import datetime, timezone
 from types import GeneratorType
 from typing import Any
 
-from .models import _generated as generated_models
+from ..models import _generated as generated_models
 
 EVENT_TYPE = generated_models.ResponseStreamEventType
 

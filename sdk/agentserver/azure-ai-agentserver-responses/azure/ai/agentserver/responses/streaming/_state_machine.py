@@ -5,7 +5,7 @@ from __future__ import annotations
 from copy import deepcopy
 from typing import Any, Mapping, MutableMapping, Sequence, cast
 
-from .models import _generated as generated_models
+from ..models import _generated as generated_models
 
 EVENT_TYPE = generated_models.ResponseStreamEventType
 OUTPUT_ITEM_DELTA_EVENT_TYPE = "response.output_item.delta"

@@ -13,8 +13,8 @@ import uvicorn
 from starlette.applications import Starlette
 from starlette.responses import JSONResponse
 
-from azure.ai.agentserver.responses._event_stream import ResponseEventStream
-from azure.ai.agentserver.responses._hosting import map_responses_server
+from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
+from azure.ai.agentserver.responses.hosting import map_responses_server
 
 
 class EchoHandler:

@@ -9,7 +9,7 @@ from starlette.testclient import TestClient
 
 from tests._helpers import poll_until
 
-from azure.ai.agentserver.responses._hosting import map_responses_server
+from azure.ai.agentserver.responses.hosting import map_responses_server
 
 
 class _NoopResponseHandler:
