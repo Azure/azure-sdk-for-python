@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import functools
 import logging
 import uuid
 from typing import (
@@ -55,6 +56,7 @@ from .policies import (
     StorageLoggingPolicy,
     StorageRequestHook,
     StorageResponseHook,
+    StorageTrailingSlashPolicy,
 )
 from .request_handlers import serialize_batch_body, _get_batch_request_delimiter
 from .response_handlers import PartialBatchErrorException, process_storage_error
@@ -73,6 +75,75 @@ _SERVICE_PARAMS = {
     "file": {"primary": "FILEENDPOINT", "secondary": "FILESECONDARYENDPOINT"},
     "dfs": {"primary": "BLOBENDPOINT", "secondary": "BLOBENDPOINT"},
 }
+
+
+class _NoOpCredential:
+    """No-op credential for the generated client when auth is handled by the convenience layer pipeline."""
+
+    def get_token(self, *args, **kwargs):
+        raise RuntimeError("This credential should not be used to get tokens directly.")
+
+
+def _patch_generated_client(client):
+    """Apply workarounds to the generated client after construction.
+
+    Wraps operation group methods to inject per-operation params from config.
+    """
+    # Wrap operation group methods to inject per-operation params from config
+    # (allow_trailing_dot, allow_source_trailing_dot, file_request_intent, sharesnapshot)
+    # These were config-level in AutoRest but are per-operation in TypeSpec.
+    # For operations that accept sharesnapshot as a parameter, it's injected via kwargs.
+    # For operations that DON'T (e.g. download), it's injected via raw_request_hook.
+    import inspect
+    from urllib.parse import quote as _url_quote
+
+    _per_op_params = ("allow_trailing_dot", "allow_source_trailing_dot", "file_request_intent", "sharesnapshot")
+    for group_name in ["service", "share", "directory", "file"]:
+        group = getattr(client, group_name)
+        for name in list(vars(type(group))):
+            if name.startswith("_"):
+                continue
+            method = getattr(group, name)
+            if not callable(method):
+                continue
+
+            sig_params = set(inspect.signature(method).parameters.keys())
+            inject = [p for p in _per_op_params if p in sig_params]
+            has_snapshot_param = "sharesnapshot" in sig_params
+
+            # Skip methods that need no injection at all
+            if not inject and has_snapshot_param:
+                continue
+            if not inject and not has_snapshot_param:
+                # Only needs snapshot URL injection
+                pass
+
+            def _make_wrapper(original, config, inject_params, _needs_snapshot_hook):
+                @functools.wraps(original)
+                def wrapper(*args, **kwargs):
+                    for p in inject_params:
+                        kwargs.setdefault(p, getattr(config, p, None))
+                    # For operations without sharesnapshot param, inject via URL hook
+                    if _needs_snapshot_hook:
+                        snapshot = getattr(config, "sharesnapshot", None)
+                        if snapshot:
+                            existing_hook = kwargs.get("raw_request_hook")
+
+                            def _snapshot_hook(request, _orig=existing_hook, _snap=snapshot):
+                                url = request.http_request.url
+                                if "sharesnapshot=" not in url:
+                                    sep = "&" if "?" in url else "?"
+                                    request.http_request.url = f'{url}{sep}sharesnapshot={_url_quote(_snap, safe="")}'
+                                if _orig:
+                                    _orig(request)
+
+                            kwargs["raw_request_hook"] = _snapshot_hook
+                    return original(*args, **kwargs)
+
+                return wrapper
+
+            needs_snapshot_hook = not has_snapshot_param
+            setattr(group, name, _make_wrapper(method, client._config, inject, needs_snapshot_hook))
 
 
 class StorageAccountHostsMixin(object):
@@ -145,7 +216,25 @@ class StorageAccountHostsMixin(object):
         :return: The full endpoint URL to this entity, including SAS token if used.
         :rtype: str
         """
-        return self._format_url(self._hosts[self._location_mode])   # type: ignore
+        return self._format_url(self._hosts[self._location_mode])  # type: ignore
+
+    @property
+    def _base_url(self) -> str:
+        """The endpoint URL without snapshot query parameters (for the generated client base URL).
+
+        SAS credentials are preserved in the URL because the generated client's
+        operations include them in every request. Only ``sharesnapshot`` and
+        ``snapshot`` params are stripped — they are injected per-operation via
+        ``_patch_generated_client`` or by ``_InjectSnapshotPolicy``.
+        """
+        full_url = self.url
+        if "?" not in full_url:
+            return full_url
+        base, qs = full_url.split("?", 1)
+        filtered = "&".join(
+            part for part in qs.split("&") if not part.startswith("sharesnapshot=") and not part.startswith("snapshot=")
+        )
+        return f"{base}?{filtered}" if filtered else base
 
     @property
     def primary_endpoint(self) -> str:
@@ -178,7 +267,7 @@ class StorageAccountHostsMixin(object):
         """
         if not self._hosts[LocationMode.SECONDARY]:
             raise ValueError("No secondary host configured.")
-        return self._format_url(self._hosts[LocationMode.SECONDARY])    # type: ignore
+        return self._format_url(self._hosts[LocationMode.SECONDARY])  # type: ignore
 
     @property
     def secondary_hostname(self) -> Optional[str]:
@@ -208,7 +297,7 @@ class StorageAccountHostsMixin(object):
     def location_mode(self, value):
         if self._hosts.get(value):
             self._location_mode = value
-            self._client._config.url = self.url  # pylint: disable=protected-access
+            self._client._config.url = self._base_url  # pylint: disable=protected-access
         else:
             raise ValueError(f"No host URL for location mode: {value}")
 
@@ -280,6 +369,7 @@ class StorageAccountHostsMixin(object):
             transport = RequestsTransport(**kwargs)
         policies = [
             QueueMessagePolicy(),
+            StorageTrailingSlashPolicy(),
             config.proxy_policy,
             config.user_agent_policy,
             StorageContentValidation(),
@@ -416,7 +506,7 @@ def parse_connection_str(
     if any(len(tup) != 2 for tup in conn_settings_list):
         raise ValueError("Connection string is either blank or malformed.")
     conn_settings = dict((key.upper(), val) for key, val in conn_settings_list)
-    if conn_settings.get('USEDEVELOPMENTSTORAGE') == 'true':
+    if conn_settings.get("USEDEVELOPMENTSTORAGE") == "true":
         return _get_development_storage_endpoint(service), None, DEVSTORE_ACCOUNT_KEY
     endpoints = _SERVICE_PARAMS[service]
     primary = None

@@ -15,8 +15,10 @@ from devtools_testutils import (
     add_header_regex_sanitizer,
     add_oauth_response_sanitizer,
     add_uri_string_sanitizer,
-    test_proxy
+    set_custom_default_matcher,
+    test_proxy,
 )
+
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
@@ -33,3 +35,6 @@ def add_sanitizers(test_proxy):
     add_body_regex_sanitizer(regex=r"<ClientIp>.*?</ClientIp>", value="<ClientIp>0.0.0.0:0</ClientIp>")
 
     add_uri_string_sanitizer(target=".preprod.", value=".")
+
+    # TypeSpec-generated code may order query parameters differently than AutoRest
+    set_custom_default_matcher(ignore_query_ordering=True)

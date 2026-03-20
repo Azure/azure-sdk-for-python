@@ -126,6 +126,30 @@ class QueueMessagePolicy(SansIOHTTPPolicy):
             request.http_request.url = urljoin(request.http_request.url, message_id)
 
 
+class StorageTrailingSlashPolicy(SansIOHTTPPolicy):
+    """Normalizes request URLs and headers for compatibility with test recordings.
+
+    The TypeSpec-generated operations produce paths like ``/`` which, when
+    combined with the base URL, create a trailing slash that does not match
+    test-proxy recordings made with the old generated code. Also renames
+    the ``Range`` header to ``x-ms-range`` to match old recordings.
+    """
+
+    def on_request(self, request):
+        url = request.http_request.url
+        parsed = urlparse(url)
+        path = parsed.path
+        if len(path) > 1 and path.endswith("/"):
+            cleaned = parsed._replace(path=path.rstrip("/"))
+            request.http_request.url = urlunparse(cleaned)
+
+        # The TypeSpec emitter uses the standard Range header, but the old
+        # generated code used x-ms-range. Rename for recording compatibility.
+        headers = request.http_request.headers
+        if "Range" in headers and "x-ms-range" not in headers:
+            headers["x-ms-range"] = headers.pop("Range")
+
+
 class StorageHeadersPolicy(HeadersPolicy):
     request_id_header_name = "x-ms-client-request-id"
 
@@ -133,6 +157,10 @@ class StorageHeadersPolicy(HeadersPolicy):
         super(StorageHeadersPolicy, self).on_request(request)
         current_time = format_date_time(time())
         request.http_request.headers["x-ms-date"] = current_time
+
+        # Ensure Accept header defaults to application/xml for Storage APIs
+        if "Accept" not in request.http_request.headers:
+            request.http_request.headers["Accept"] = "application/xml"
 
         custom_id = request.context.options.pop("client_request_id", None)
         request.http_request.headers["x-ms-client-request-id"] = custom_id or str(uuid.uuid1())
@@ -438,7 +466,7 @@ class StorageRetryPolicy(HTTPPolicy):
     def configure_retries(self, request: "PipelineRequest") -> Dict[str, Any]:
         """
         Configure the retry settings for the request.
-        
+
         :param request: A pipeline request object.
         :type request: ~azure.core.pipeline.PipelineRequest
         :return: A dictionary containing the retry settings.
@@ -478,7 +506,7 @@ class StorageRetryPolicy(HTTPPolicy):
 
     def sleep(self, settings, transport):
         """Sleep for the backoff time.
-        
+
         :param Dict[str, Any] settings: The configurable values pertaining to the sleep operation.
         :param transport: The transport to use for sleeping.
         :type transport:
@@ -552,7 +580,7 @@ class StorageRetryPolicy(HTTPPolicy):
 
     def send(self, request):
         """Send the request with retry logic.
-        
+
         :param request: A pipeline request object.
         :type request: ~azure.core.pipeline.PipelineRequest
         :return: A pipeline response object.
@@ -713,11 +741,11 @@ class StorageBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
 
     def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
         """Handle the challenge from the service and authorize the request.
-        
+
         :param request: The request object.
         :type request: ~azure.core.pipeline.PipelineRequest
         :param response: The response object.
-        :type response: ~azure.core.pipeline.PipelineResponse        
+        :type response: ~azure.core.pipeline.PipelineResponse
         :return: True if the request was authorized, False otherwise.
         :rtype: bool
         """

@@ -27,9 +27,9 @@ class UploadFromFileTest(_FileTest):
         await super().global_cleanup()
 
     def run_sync(self):
-        with open(UploadFromFileTest.temp_file, 'rb') as fp:
+        with open(UploadFromFileTest.temp_file, "rb") as fp:
             self.sharefile_client.upload_file(fp, max_concurrency=self.args.max_concurrency)
 
     async def run_async(self):
-        with open(UploadFromFileTest.temp_file, 'rb') as fp:
+        with open(UploadFromFileTest.temp_file, "rb") as fp:
             await self.async_sharefile_client.upload_file(fp, max_concurrency=self.args.max_concurrency)

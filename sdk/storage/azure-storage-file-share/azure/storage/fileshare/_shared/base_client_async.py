@@ -40,6 +40,7 @@ from .policies import (
     StorageHeadersPolicy,
     StorageHosts,
     StorageRequestHook,
+    StorageTrailingSlashPolicy,
 )
 from .policies_async import AsyncStorageBearerTokenCredentialPolicy, AsyncStorageResponseHook
 from .response_handlers import PartialBatchErrorException, process_storage_error
@@ -128,6 +129,7 @@ class AsyncStorageAccountHostsMixin(object):
         hosts = self._hosts
         policies = [
             QueueMessagePolicy(),
+            StorageTrailingSlashPolicy(),
             config.proxy_policy,
             config.user_agent_policy,
             StorageContentValidation(),
@@ -210,7 +212,7 @@ def parse_connection_str(
     if any(len(tup) != 2 for tup in conn_settings_list):
         raise ValueError("Connection string is either blank or malformed.")
     conn_settings = dict((key.upper(), val) for key, val in conn_settings_list)
-    if conn_settings.get('USEDEVELOPMENTSTORAGE') == 'true':
+    if conn_settings.get("USEDEVELOPMENTSTORAGE") == "true":
         return _get_development_storage_endpoint(service), None, DEVSTORE_ACCOUNT_KEY
     endpoints = _SERVICE_PARAMS[service]
     primary = None
