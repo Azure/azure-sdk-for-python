@@ -17,9 +17,9 @@ from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import AIProjectClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
-from .beta.operations import BetaOperations
 from .operations import (
     AgentsOperations,
+    BetaOperations,
     ConnectionsOperations,
     DatasetsOperations,
     DeploymentsOperations,
