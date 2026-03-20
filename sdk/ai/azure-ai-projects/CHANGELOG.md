@@ -8,7 +8,7 @@
 
 ### Breaking Changes
 
-* Placeholder
+* Tracing: trace context propagation is enabled by default when tracing is enabled.
 
 ### Bugs Fixed
 
