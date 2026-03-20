@@ -682,7 +682,6 @@ class RedTeam:
                         target="model",
                         client_id=client_id,
                     )
-
                     if isinstance(objectives_response, list):
                         self.logger.debug(f"Fallback API returned {len(objectives_response)} model-type objectives")
 
@@ -756,7 +755,16 @@ class RedTeam:
                     target=target_type_str,
                 )
 
-            xpia_prompts = await get_xpia_prompts_with_retry()
+            xpia_prompts = None
+            try:
+                xpia_prompts = await get_xpia_prompts_with_retry()
+            except Exception as agent_error:
+                if target_type_str == "agent":
+                    self.logger.debug(
+                        f"Agent-type XPIA prompt fetch failed ({agent_error}), falling back to model-type"
+                    )
+                else:
+                    raise
 
             # If no agent XPIA prompts and we're trying agent, fallback to model
             if (not xpia_prompts or len(xpia_prompts) == 0) and target_type_str == "agent":

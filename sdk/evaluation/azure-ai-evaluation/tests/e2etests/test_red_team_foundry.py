@@ -78,14 +78,19 @@ class TestRedTeamFoundry:
                 len(conversation) >= min_conversation_length
             ), f"Expected at least {min_conversation_length} messages in conversation, got {len(conversation)}"
 
-            # Validate role alternation: first message should be user, then alternating
+            # Validate first message is from user
             assert (
                 conversation[0]["role"] == "user"
             ), f"First conversation message should have role 'user', got '{conversation[0]['role']}'"
-            if len(conversation) >= 2:
-                assert (
-                    conversation[1]["role"] == "assistant"
-                ), f"Second conversation message should have role 'assistant', got '{conversation[1]['role']}'"
+            # Validate conversation contains at least one assistant response.
+            # Note: strict user/assistant alternation is NOT enforced because some strategies
+            # (e.g., IndirectJailbreak/XPIA) send context as a second user message before
+            # the assistant responds, producing user→user→assistant sequences.
+            assistant_msgs = [m for m in conversation if m.get("role") == "assistant"]
+            assert len(assistant_msgs) > 0, (
+                f"Conversation should contain at least one assistant message, "
+                f"got roles: {[m.get('role') for m in conversation]}"
+            )
 
     @pytest.mark.azuretest
     @pytest.mark.parametrize(
@@ -572,7 +577,6 @@ class TestRedTeamFoundry:
                 is_agent_target=True,
             )
         )
-
         assert isinstance(result, RedTeamResult)
         assert result.attack_details is not None
 
@@ -905,7 +909,7 @@ class TestRedTeamFoundry:
                 skip_upload=True,
             )
         )
-
+        
         assert isinstance(result, RedTeamResult)
         assert result.attack_details is not None
         assert len(result.attack_details) > 0
