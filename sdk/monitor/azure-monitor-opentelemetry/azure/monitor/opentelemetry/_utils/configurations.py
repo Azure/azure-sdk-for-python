@@ -186,8 +186,8 @@ def _default_sampler(configurations):
     if sampler in SUPPORTED_OTEL_SAMPLERS:
         configurations[SAMPLER_TYPE] = sampler
     elif sampler is not None:
-        _logger.error(  # pylint: disable=C
-            "Invalid value: %s, provided for the sampler to be used for tracing. "
+        _logger.error(  # pylint: disable=C0301
+            "Invalid value '%s' for the sampler. "
             "Supported values are %s. Defaulting to %s: %s",
             sampler, SUPPORTED_OTEL_SAMPLERS, RATE_LIMITED_SAMPLER, "5.0 traces per second",
         )
@@ -199,7 +199,7 @@ def _default_sampler(configurations):
         configurations[SAMPLER_TYPE] = RATE_LIMITED_SAMPLER
         configurations[SAMPLING_TRACES_PER_SECOND_ARG] = configurations["traces_per_second"]
     else:
-        _logger.info(  # pylint: disable=C
+        _logger.info(  # pylint: disable=C0301
             "No sampler specified. Defaulting to %s: %s", RATE_LIMITED_SAMPLER, "5.0 traces per second",
         )
         configurations[SAMPLER_TYPE] = RATE_LIMITED_SAMPLER
@@ -325,3 +325,4 @@ def _get_sampler_from_name(sampler_type):
         else:
             _logger.info("Using sampling value: %s", sampler_value)
         return ParentBased(TraceIdRatioBased(sampler_value))
+    return ParentBased(ALWAYS_ON) 

@@ -30,7 +30,8 @@ from azure.monitor.opentelemetry.exporter.export.trace._utils import (
     parent_context_sampling,
 )
 
-_INVALID_TRACES_PER_SECOND_MESSAGE = "Value of %s must be a positive number for traces per second. Defaulting to %s."
+_INVALID_TRACES_PER_SECOND_MESSAGE = "Invalid value '%s' for traces per second. Expected a float. Defaulting to %s."
+_INVALID_TRACES_PER_SECOND_MESSAGE_NEGATIVE_VALUE = "Invalid value '%s' for traces per second. It should be a non-negative number. Defaulting to %s"
 
 _logger = getLogger(__name__)
 
@@ -96,19 +97,19 @@ class RateLimitedSampler(Sampler):
         if traces_per_second is not None:
             try:
                 if traces_per_second < 0.0:
-                    _logger.error("Invalid value %s, for traces per second. It should be a non-negative number.", traces_per_second)
+                    _logger.error(_INVALID_TRACES_PER_SECOND_MESSAGE_NEGATIVE_VALUE, traces_per_second, default_traces_per_second)
                     traces_per_second = default_traces_per_second
                 else:
                     _logger.info("Using rate limited sampler: %s traces per second", traces_per_second)
             except TypeError:
-                _logger.error("Invalid value %s, for traces per second. Defaulting to %s", traces_per_second, default_traces_per_second)
+                _logger.error(_INVALID_TRACES_PER_SECOND_MESSAGE, traces_per_second, default_traces_per_second)
                 traces_per_second = default_traces_per_second
         else:
             sampling_arg = os.environ.get(OTEL_TRACES_SAMPLER_ARG)
             try:
                 sampler_value = float(sampling_arg) if sampling_arg is not None else default_traces_per_second
                 if sampler_value < 0.0:
-                    _logger.error("Invalid value %s, for OTEL_TRACES_SAMPLER_ARG. It should be a non-negative number.", sampler_value)
+                    _logger.error(_INVALID_TRACES_PER_SECOND_MESSAGE_NEGATIVE_VALUE, sampler_value, default_traces_per_second)
                     traces_per_second = default_traces_per_second
                 else:
                     _logger.info("Using rate limited sampler: %s traces per second", sampler_value)
@@ -116,7 +117,7 @@ class RateLimitedSampler(Sampler):
             except ValueError as e:  # pylint: disable=unused-variable
                 _logger.error(  # pylint: disable=C0301
                     _INVALID_TRACES_PER_SECOND_MESSAGE,
-                    OTEL_TRACES_SAMPLER_ARG,
+                    sampling_arg,
                     default_traces_per_second,
                 )
                 traces_per_second = default_traces_per_second

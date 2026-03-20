@@ -44,14 +44,14 @@ class ApplicationInsightsSampler(Sampler):
                     _logger.error("Sampling ratio must be in the range [0.0, 1.0]. Defaulting to %s.", default_sampling_ratio)
                     sampling_ratio = default_sampling_ratio
             except TypeError:
-                _logger.error("Invalid value %s, for sampling ratio. Defaulting to %s.", sampling_ratio, default_sampling_ratio)
+                _logger.error("Invalid value '%s' for sampling ratio. Defaulting to %s.", sampling_ratio, default_sampling_ratio)
                 sampling_ratio = default_sampling_ratio
         else:
             sampling_arg = os.environ.get(OTEL_TRACES_SAMPLER_ARG)
             try:
                 sampler_value = float(sampling_arg) if sampling_arg is not None else default_sampling_ratio
                 if sampler_value < 0.0 or sampler_value > 1.0:
-                    _logger.error("Invalid value for OTEL_TRACES_SAMPLER_ARG. It should be a value between 0 and 1. Defaulting to %s.", default_sampling_ratio)
+                    _logger.error("Invalid value '%s' for OTEL_TRACES_SAMPLER_ARG. It should be a value between 0 and 1. Defaulting to %s.", sampling_arg, default_sampling_ratio)
                     sampling_ratio = default_sampling_ratio
                 else:
                     _logger.info("Using sampling ratio: %s", sampler_value)

@@ -170,7 +170,7 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
     resource: Resource = configurations[RESOURCE_ARG]  # type: ignore
     enable_performance_counters_config = configurations[ENABLE_PERFORMANCE_COUNTERS_ARG]
     sampler_type = configurations.get(SAMPLER_TYPE, RATE_LIMITED_SAMPLER)
-    if sampler_type == RATE_LIMITED_SAMPLER:
+    if sampler_type == RATE_LIMITED_SAMPLER or sampler_type == "microsoft.fixed.percentage":
         traces_per_second = configurations.get(SAMPLING_TRACES_PER_SECOND_ARG)
         sampler = RateLimitedSampler() if traces_per_second is None else RateLimitedSampler(traces_per_second=traces_per_second)
     elif sampler_type == FIXED_PERCENTAGE_SAMPLER:
