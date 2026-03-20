@@ -25,7 +25,7 @@ key = os.environ["AZURE_SEARCH_API_KEY"]
 
 map1 = "hotels-sample-synonym-map"
 map2 = "hotels-sample-synonym-map-file"
-file_path = Path(__file__).resolve().parents[1] / "data" / "synonym_map.txt"
+file_path = Path(__file__).resolve().parent / "data" / "synonym_map.txt"
 
 
 async def create_synonym_map_async(name):

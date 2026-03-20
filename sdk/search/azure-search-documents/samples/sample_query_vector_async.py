@@ -53,7 +53,7 @@ key = os.environ["AZURE_SEARCH_API_KEY"]
 
 index_name = "hotels-sample-index-query-vector"
 
-data_dir = Path(__file__).resolve().parents[1] / "data"
+data_dir = Path(__file__).resolve().parent / "data"
 documents_path = data_dir / "hotels_with_description_vector.json"
 query_vector_path = data_dir / "query_vector.json"
 

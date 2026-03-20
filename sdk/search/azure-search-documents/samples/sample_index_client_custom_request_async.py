@@ -29,7 +29,7 @@ async def sample_send_request_async():
     from azure.core.rest import HttpRequest
     from azure.search.documents.indexes.aio import SearchIndexClient
 
-    sys.path.append(str(Path(__file__).resolve().parents[1]))
+    sys.path.append(str(Path(__file__).resolve().parent))
     from sample_utils import AZURE_SEARCH_API_VERSION
 
     endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
