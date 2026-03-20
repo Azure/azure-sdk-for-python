@@ -27,7 +27,7 @@ powershell -Command "(Get-Content azure\ai\projects\models\_models.py) -replace 
 REM Rename DEFAULT2024_11_15 to DEFAULT_2024_11_15
 powershell -Command "(Get-Content azure\ai\projects\models\_enums.py) -replace 'DEFAULT2024_11_15', 'DEFAULT_2024_11_15' | Set-Content azure\ai\projects\models\_enums.py"
 
-REM exit /b
+exit /b
 
 REM Remove required 'foundry_features' from public API surface, and instead set them internally in the relevant methods
 copy agent-scripts\auto_set_foundry_features.py .
