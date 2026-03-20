@@ -227,19 +227,42 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
             assert default_service._client._client._pipeline._transport.connection_config.timeout in [20, (20, 2000)]
 
     @pytest.mark.parametrize(
-        "account_url",
-        [
-            "https://my-account.queue.core.windows.net/",
-            "https://my-account-secondary.queue.core.windows.net/",
-            "https://my-account-dualstack.queue.core.windows.net/",
-            "https://my-account-ipv6.queue.core.windows.net/",
-            "https://my-account-secondary-dualstack.queue.core.windows.net/",
-            "https://my-account-secondary-ipv6.queue.core.windows.net/",
-        ],
+        "account_url, expected_primary, expected_secondary", [
+            (
+                "https://myaccount.queue.core.windows.net/",
+                "myaccount.queue.core.windows.net",
+                "myaccount-secondary.queue.core.windows.net",
+            ),
+            (
+                "https://myaccount-secondary.queue.core.windows.net/",
+                "myaccount.queue.core.windows.net",
+                "myaccount-secondary.queue.core.windows.net",
+            ),
+            (
+                "https://myaccount-dualstack.queue.core.windows.net/",
+                "myaccount-dualstack.queue.core.windows.net",
+                "myaccount-secondary-dualstack.queue.core.windows.net",
+            ),
+            (
+                "https://myaccount-ipv6.queue.core.windows.net/",
+                "myaccount-ipv6.queue.core.windows.net",
+                "myaccount-secondary-ipv6.queue.core.windows.net",
+            ),
+            (
+                "https://myaccount-secondary-dualstack.queue.core.windows.net/",
+                "myaccount-dualstack.queue.core.windows.net",
+                "myaccount-secondary-dualstack.queue.core.windows.net",
+            ),
+            (
+                "https://myaccount-secondary-ipv6.queue.core.windows.net/",
+                "myaccount-ipv6.queue.core.windows.net",
+                "myaccount-secondary-ipv6.queue.core.windows.net",
+            ),
+        ]
     )
     @QueuePreparer()
-    def test_create_service_ipv6(self, account_url, **kwargs):
-        storage_account_name = "my-account"
+    def test_create_service_ipv6(self, account_url, expected_primary, expected_secondary, **kwargs):
+        storage_account_name = "myaccount"
         storage_account_key = kwargs.pop("storage_account_key")
 
         for service_type in SERVICES.keys():
@@ -249,6 +272,8 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
             assert service.scheme == "https"
             assert service.account_name == storage_account_name
             assert service.credential.account_key == storage_account_key.secret
+            assert service._hosts["primary"] == expected_primary
+            assert service._hosts["secondary"] == expected_secondary
 
     # --Connection String Test Cases --------------------------------------------
     @QueuePreparer()

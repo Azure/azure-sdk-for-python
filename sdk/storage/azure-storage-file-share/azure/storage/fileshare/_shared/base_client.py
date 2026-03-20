@@ -73,32 +73,32 @@ _SERVICE_PARAMS = {
     "file": {"primary": "FILEENDPOINT", "secondary": "FILESECONDARYENDPOINT"},
     "dfs": {"primary": "BLOBENDPOINT", "secondary": "BLOBENDPOINT"},
 }
-_ACCOUNT_NAME_SUFFIXES = (
-    "-secondary-dualstack",
-    "-secondary-ipv6",
-    "-secondary",
-    "-dualstack",
-    "-ipv6",
-)
+_SECONDARY_SUFFIX = "-secondary"
+_KNOWN_FEATURE_SUFFIXES = {"-ipv6", "-dualstack"}
 
 
-def _strip_account_name_suffix(account_name: str) -> str:
-    """Strip any well-known storage endpoint suffix from `account_name`.
+def _construct_endpoints(netloc: str, account_part: str) -> Tuple[str, str, str]:
+    """Construct primary and secondary hostnames from a storage account URL's netloc."""
+    domain_suffix = netloc[len(account_part):]
+    idx = account_part.find(_SECONDARY_SUFFIX)
 
-    Azure Storage endpoints may include suffixes such as `-secondary`,
-    `-dualstack` or `-ipv6` after the real account name.  This function
-    removes those suffixes so callers always get back the base account name.
+    if idx >= 0:
+        base_name = account_part[:idx]
+        feature_suffix = account_part[idx + len(_SECONDARY_SUFFIX):]
+        primary_hostname = f"{base_name}{feature_suffix}{domain_suffix}"
+        secondary_hostname = f"{base_name}{_SECONDARY_SUFFIX}{feature_suffix}{domain_suffix}"
+    else:
+        feature_suffix = ""
+        base_name = account_part
+        for suffix in _KNOWN_FEATURE_SUFFIXES:
+            if base_name.endswith(suffix):
+                feature_suffix = suffix
+                base_name = base_name[: -len(suffix)]
+                break
+        primary_hostname = f"{account_part}{domain_suffix}"
+        secondary_hostname = f"{base_name}{_SECONDARY_SUFFIX}{feature_suffix}{domain_suffix}"
 
-    :param account_name: The raw account name segment extracted from a storage
-        endpoint hostname (i.e. everything before the first `.blob.core.`).
-    :type account_name: str
-    :return: The account name with any recognized suffix removed.
-    :rtype: str
-    """
-    for suffix in _ACCOUNT_NAME_SUFFIXES:
-        if account_name.endswith(suffix):
-            return account_name[: -len(suffix)]
-    return account_name
+    return base_name, primary_hostname, secondary_hostname
 
 
 class StorageAccountHostsMixin(object):
@@ -132,7 +132,7 @@ class StorageAccountHostsMixin(object):
         service_name = service.split("-")[0]
         account = parsed_url.netloc.split(f".{service_name}.core.")
 
-        self.account_name = _strip_account_name_suffix(account[0]) if len(account) > 1 else None
+        self.account_name = account[0] if len(account) > 1 else None
         if (
             not self.account_name
             and parsed_url.netloc.startswith("localhost")
@@ -152,10 +152,15 @@ class StorageAccountHostsMixin(object):
 
         if not self._hosts:
             if len(account) > 1:
-                secondary_hostname = parsed_url.netloc.replace(account[0], account[0] + "-secondary")
+                self.account_name, primary_hostname, secondary_hostname = _construct_endpoints(
+                    parsed_url.netloc, account[0]
+                )
+            else:
+                primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip("/")
             if kwargs.get("secondary_hostname"):
                 secondary_hostname = kwargs["secondary_hostname"]
-            primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip("/")
+            if not primary_hostname:
+                primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip("/")
             self._hosts = {LocationMode.PRIMARY: primary_hostname, LocationMode.SECONDARY: secondary_hostname}
 
         self._sdk_moniker = f"storage-{service}/{VERSION}"
