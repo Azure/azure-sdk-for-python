@@ -26,19 +26,19 @@ class BlobQueryStringConstants(object):
 
 
 class BlobSharedAccessSignature(SharedAccessSignature):
-    '''
+    """
     Provides a factory for creating blob and container access
     signature tokens with a common account name and account key.  Users can either
     use the factory or can construct the appropriate service and use the
-    generate_*_shared_access_signature method directly.
-    '''
+    generate_*_sas method directly.
+    """
 
     def __init__(
         self, account_name: str,
         account_key: Optional[str] = None,
         user_delegation_key: Optional[UserDelegationKey] = None
     ) -> None:
-        '''
+        """
         :param str account_name:
             The storage account name used to generate the shared access signatures.
         :param Optional[str] account_key:
@@ -47,7 +47,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
             Instead of an account key, the user could pass in a user delegation key.
             A user delegation key can be obtained from the service by authenticating with an AAD identity;
             this can be accomplished by calling get_user_delegation_key on any Blob service object.
-        '''
+        """
         super(BlobSharedAccessSignature, self).__init__(account_name, account_key, x_ms_version=X_MS_VERSION)
         self.user_delegation_key = user_delegation_key
 
@@ -74,7 +74,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         sts_hook: Optional[Callable[[str], None]] = None,
         **kwargs: Any
     ) -> str:
-        '''
+        """
         Generates a shared access signature for the blob or one of its snapshots.
         Use the returned signature with the sas_token parameter of any BlobService.
 
@@ -160,7 +160,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         :type sts_hook: Optional[Callable[[str], None]]
         :return: A Shared Access Signature (sas) token.
         :rtype: str
-        '''
+        """
         resource_path = container_name + '/' + blob_name
 
         sas = _BlobSharedAccessHelper()
@@ -212,7 +212,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         sts_hook: Optional[Callable[[str], None]] = None,
         **kwargs: Any
     ) -> str:
-        '''
+        """
         Generates a shared access signature for the container.
         Use the returned signature with the sas_token parameter of any BlobService.
 
@@ -284,7 +284,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         :type sts_hook: Optional[Callable[[str], None]]
         :return: A Shared Access Signature (sas) token.
         :rtype: str
-        '''
+        """
         sas = _BlobSharedAccessHelper()
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)
         sas.add_id(policy_id)
