@@ -31,6 +31,7 @@ from .whl import whl
 from .sdist import sdist
 from .whl_no_aio import whl_no_aio
 from .verify_whl import verify_whl
+from .build_tests import build_tests
 from .bandit import bandit
 from .verify_keywords import verify_keywords
 from .generate import generate
@@ -38,6 +39,7 @@ from .breaking import breaking
 from .mindependency import mindependency
 from .latestdependency import latestdependency
 from .samples import samples
+from .create_samples import create_samples
 from .devtest import devtest
 from .optional import optional
 from .update_snippet import update_snippet
@@ -107,6 +109,7 @@ def build_parser() -> argparse.ArgumentParser:
     sdist().register(subparsers, [common])
     whl_no_aio().register(subparsers, [common])
     verify_whl().register(subparsers, [common])
+    build_tests().register(subparsers, [common])
     bandit().register(subparsers, [common])
     verify_keywords().register(subparsers, [common])
     generate().register(subparsers, [common])
@@ -114,6 +117,7 @@ def build_parser() -> argparse.ArgumentParser:
     mindependency().register(subparsers, [common])
     latestdependency().register(subparsers, [common])
     samples().register(subparsers, [common])
+    create_samples().register(subparsers, [common])
     devtest().register(subparsers, [common])
     optional().register(subparsers, [common])
     update_snippet().register(subparsers, [common])
