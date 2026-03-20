@@ -47,6 +47,8 @@ class DeletedSecretBundle(_Model):
     :ivar managed: True if the secret's lifetime is managed by key vault. If this is a secret
      backing a certificate, then managed will be true.
     :vartype managed: bool
+    :ivar previous_version: The version of the previous secret.
+    :vartype previous_version: str
     :ivar recovery_id: The url of the recovery object, used to identify and recover the deleted
      secret.
     :vartype recovery_id: str
@@ -76,6 +78,8 @@ class DeletedSecretBundle(_Model):
     managed: Optional[bool] = rest_field(visibility=["read"])
     """True if the secret's lifetime is managed by key vault. If this is a secret backing a
      certificate, then managed will be true."""
+    previous_version: Optional[str] = rest_field(name="previousVersion", visibility=["read"])
+    """The version of the previous secret."""
     recovery_id: Optional[str] = rest_field(
         name="recoveryId", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -306,6 +310,8 @@ class SecretBundle(_Model):
     :ivar managed: True if the secret's lifetime is managed by key vault. If this is a secret
      backing a certificate, then managed will be true.
     :vartype managed: bool
+    :ivar previous_version: The version of the previous secret.
+    :vartype previous_version: str
     """
 
     value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -328,6 +334,8 @@ class SecretBundle(_Model):
     managed: Optional[bool] = rest_field(visibility=["read"])
     """True if the secret's lifetime is managed by key vault. If this is a secret backing a
      certificate, then managed will be true."""
+    previous_version: Optional[str] = rest_field(name="previousVersion", visibility=["read"])
+    """The version of the previous secret."""
 
     @overload
     def __init__(
