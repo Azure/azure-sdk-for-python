@@ -14,7 +14,7 @@ from starlette.responses import JSONResponse, Response, StreamingResponse
 from .._handlers import RuntimeResponseContext
 from ._observability import build_create_span_tags, build_platform_server_header, start_create_span
 from .._options import ResponsesServerOptions
-from ..streaming._sse import encode_sse_payload
+from ..streaming._sse import encode_keep_alive_comment, encode_sse_payload
 from ..streaming._state_machine import LifecycleStateMachineError, normalize_lifecycle_events
 from ._validation import parse_and_validate_create_response
 from ..models import ResponseModeFlags
@@ -46,6 +46,7 @@ from ._request_parsing import (
     _resolve_identity_fields,
 )
 from ._runtime_state import _ExecutionRecord, _RuntimeState
+from .._version import VERSION
 
 if TYPE_CHECKING:
     from starlette.applications import Starlette
@@ -54,7 +55,7 @@ if TYPE_CHECKING:
 
 
 _SDK_NAME = "azure-ai-agentserver-responses"
-_SDK_VERSION = "0.0.0"
+_SDK_VERSION = VERSION
 
 
 def _runtime_marker() -> str:
@@ -201,23 +202,128 @@ def map_responses_server(
         async def _live_stream() -> AsyncIterator[str]:
             nonlocal captured_error
 
-            try:
-                yield encode_sse_payload(first_normalized["type"], first_normalized["payload"])
-                async for handler_event in handler_iterator:
-                    coerced = _coerce_handler_event(handler_event)
-                    normalized = _apply_stream_event_defaults(
-                        coerced,
+            if not runtime_options.sse_keep_alive_enabled:
+                # Fast path: no keep-alive, iterate handler directly.
+                try:
+                    yield encode_sse_payload(first_normalized["type"], first_normalized["payload"])
+                    async for handler_event in handler_iterator:
+                        coerced = _coerce_handler_event(handler_event)
+                        normalized = _apply_stream_event_defaults(
+                            coerced,
+                            response_id=response_id,
+                            agent_reference=agent_reference,
+                            model=model,
+                            sequence_number=len(handler_events),
+                        )
+                        handler_events.append(normalized)
+                        yield encode_sse_payload(normalized["type"], normalized["payload"])
+                except Exception as exc:
+                    captured_error = exc
+                    return
+                finally:
+                    events = handler_events if handler_events else _build_events(
+                        response_id,
+                        include_progress=True,
+                        agent_reference=agent_reference,
+                        model=model,
+                    )
+
+                    response_payload = _extract_response_snapshot_from_events(
+                        events,
                         response_id=response_id,
                         agent_reference=agent_reference,
                         model=model,
-                        sequence_number=len(handler_events),
                     )
-                    handler_events.append(normalized)
-                    yield encode_sse_payload(normalized["type"], normalized["payload"])
+                    resolved_status = response_payload.get("status")
+                    status = (
+                        resolved_status
+                        if isinstance(resolved_status, str)
+                        else ("in_progress" if background else "completed")
+                    )
+
+                    if store:
+                        stream_record = _ExecutionRecord(
+                            response_id=response_id,
+                            agent_reference=deepcopy(agent_reference),
+                            stream=True,
+                            store=True,
+                            background=background,
+                            replay_enabled=background,
+                            visible_via_get=True,
+                            status=status,
+                            model=model,
+                            response_payload=response_payload,
+                            events=deepcopy(events) if background else [],
+                            input_items=deepcopy(input_items),
+                            previous_response_id=previous_response_id,
+                        )
+                        await runtime_state.add(stream_record)
+
+                    span.end(captured_error)
+                return
+
+            # Keep-alive path: merge handler events with periodic keep-alive comments
+            # via a shared queue so comments are sent even while the handler is idle.
+            _SENTINEL = object()
+            merge_queue: asyncio.Queue[str | object] = asyncio.Queue()
+            handler_error: list[Exception] = []
+
+            async def _handler_producer() -> None:
+                try:
+                    async for handler_event in handler_iterator:
+                        coerced = _coerce_handler_event(handler_event)
+                        normalized = _apply_stream_event_defaults(
+                            coerced,
+                            response_id=response_id,
+                            agent_reference=agent_reference,
+                            model=model,
+                            sequence_number=len(handler_events),
+                        )
+                        handler_events.append(normalized)
+                        await merge_queue.put(encode_sse_payload(normalized["type"], normalized["payload"]))
+                except Exception as exc:
+                    handler_error.append(exc)
+                finally:
+                    await merge_queue.put(_SENTINEL)
+
+            async def _keep_alive_producer(interval: int) -> None:
+                try:
+                    while True:
+                        await asyncio.sleep(interval)
+                        await merge_queue.put(encode_keep_alive_comment())
+                except asyncio.CancelledError:
+                    return
+
+            handler_task = asyncio.create_task(_handler_producer())
+            keep_alive_task = asyncio.create_task(
+                _keep_alive_producer(runtime_options.sse_keep_alive_interval_seconds)  # type: ignore[arg-type]
+            )
+
+            try:
+                yield encode_sse_payload(first_normalized["type"], first_normalized["payload"])
+                while True:
+                    item = await merge_queue.get()
+                    if item is _SENTINEL:
+                        break
+                    yield item  # type: ignore[misc]
+                if handler_error:
+                    captured_error = handler_error[0]
             except Exception as exc:
                 captured_error = exc
-                return
             finally:
+                keep_alive_task.cancel()
+                try:
+                    await keep_alive_task
+                except asyncio.CancelledError:
+                    pass
+                # Ensure the handler task has finished
+                if not handler_task.done():
+                    handler_task.cancel()
+                    try:
+                        await handler_task
+                    except asyncio.CancelledError:
+                        pass
+
                 events = handler_events if handler_events else _build_events(
                     response_id,
                     include_progress=True,
