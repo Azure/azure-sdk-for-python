@@ -59,13 +59,14 @@ with (
         )
     ]
 
-    toolset = project_client.beta.toolsets.create(
+    created = project_client.beta.toolsets.create(
         name=toolset_name,
         description="Example toolset created by the azure-ai-projects sample.",
-        metadata={"sample": "true"},
+        metadata={"status": "created"},
         tools=tools,
     )
-    print(f"Created toolset: {toolset.name} ({toolset.id})")
+    status = created.metadata.get("status", "unknown status") if created.metadata else "unknown status"
+    print(f"Toolset: {created.name} (tools: {len(created.tools)}) (status: {status})")
 
     fetched = project_client.beta.toolsets.get(toolset_name)
     print(f"Retrieved toolset: {fetched.name} ({fetched.id})")
@@ -73,10 +74,11 @@ with (
     updated = project_client.beta.toolsets.update(
         toolset_name,
         description="Updated description for the sample toolset.",
-        metadata={"sample": "true", "updated": "true"},
+        metadata={"status": "updated"},
         tools=tools,
     )
-    print(f"Updated toolset: {updated.name} (tools: {len(updated.tools)})")
+    status = updated.metadata.get("status", "unknown status") if updated.metadata else "unknown status"
+    print(f"Toolset: {updated.name} (tools: {len(updated.tools)}) (status: {status})")
 
     toolsets = list(project_client.beta.toolsets.list(limit=10))
     print(f"Found {len(toolsets)} toolsets")
