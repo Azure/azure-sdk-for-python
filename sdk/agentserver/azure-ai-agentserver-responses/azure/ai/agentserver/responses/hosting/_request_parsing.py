@@ -14,6 +14,13 @@ _DEFAULT_AGENT_REFERENCE_NAME = "server-default-agent"
 
 
 def _extract_input_items(raw_payload: Any) -> list[dict[str, Any]]:
+    """Extract and deep-copy the ``input`` items array from a raw request payload.
+
+    :param raw_payload: Raw decoded JSON request body.
+    :type raw_payload: Any
+    :return: List of deep-copied input item dictionaries, or empty list if absent.
+    :rtype: list[dict[str, Any]]
+    """
     if not isinstance(raw_payload, dict):
         return []
 
@@ -29,6 +36,13 @@ def _extract_input_items(raw_payload: Any) -> list[dict[str, Any]]:
 
 
 def _extract_previous_response_id(raw_payload: Any) -> str | None:
+    """Extract the ``previous_response_id`` string from a raw request payload.
+
+    :param raw_payload: Raw decoded JSON request body.
+    :type raw_payload: Any
+    :return: The previous response ID string, or ``None`` if absent or invalid.
+    :rtype: str | None
+    """
     if not isinstance(raw_payload, dict):
         return None
     value = raw_payload.get("previous_response_id")
@@ -36,11 +50,29 @@ def _extract_previous_response_id(raw_payload: Any) -> str | None:
 
 
 def _extract_item_id(item: dict[str, Any]) -> str | None:
+    """Extract the ``id`` field from an input item dictionary.
+
+    :param item: An input item dictionary.
+    :type item: dict[str, Any]
+    :return: The item ID as a string, or ``None`` if not present.
+    :rtype: str | None
+    """
     value = item.get("id")
     return str(value) if value is not None else None
 
 
 def _apply_item_cursors(items: list[dict[str, Any]], *, after: str | None, before: str | None) -> list[dict[str, Any]]:
+    """Apply cursor-based pagination to a list of input items.
+
+    :param items: Ordered list of input item dictionaries.
+    :type items: list[dict[str, Any]]
+    :param after: Item ID to start after (exclusive lower bound), or ``None``.
+    :type after: str | None
+    :param before: Item ID to stop before (exclusive upper bound), or ``None``.
+    :type before: str | None
+    :return: The subset of items within the cursor window.
+    :rtype: list[dict[str, Any]]
+    """
     scoped = items
 
     if after is not None:
@@ -57,6 +89,14 @@ def _apply_item_cursors(items: list[dict[str, Any]], *, after: str | None, befor
 
 
 def _validate_response_id(response_id: str) -> None:
+    """Validate that a response ID matches the expected canonical format.
+
+    :param response_id: The response ID string to validate.
+    :type response_id: str
+    :return: None
+    :rtype: None
+    :raises RequestValidationError: If the ID format is invalid.
+    """
     is_valid_id, _ = IdGenerator.is_valid(response_id)
     if not is_valid_id:
         raise RequestValidationError(
@@ -67,6 +107,16 @@ def _validate_response_id(response_id: str) -> None:
 
 
 def _normalize_agent_reference(value: Any) -> dict[str, Any]:
+    """Normalize an agent reference value into a validated dictionary.
+
+    If *value* is ``None``, a default agent reference is returned.
+
+    :param value: Raw agent reference from the request (dict, model, or ``None``).
+    :type value: Any
+    :return: Normalized agent reference dictionary with ``type`` and ``name`` keys.
+    :rtype: dict[str, Any]
+    :raises RequestValidationError: If the value is not a valid agent reference.
+    """
     if value is None:
         return {
             "type": "agent_reference",
@@ -107,6 +157,17 @@ def _normalize_agent_reference(value: Any) -> dict[str, Any]:
 
 
 def _prevalidate_identity_payload(payload: Any) -> None:
+    """Pre-validate identity-related fields in the raw request payload.
+
+    Checks ``response_id`` format and ``agent_reference`` structure before full
+    model parsing, so that identity errors surface early.
+
+    :param payload: Raw decoded JSON request body.
+    :type payload: Any
+    :return: None
+    :rtype: None
+    :raises RequestValidationError: If identity fields are malformed.
+    """
     if not isinstance(payload, dict):
         return
 
@@ -148,6 +209,16 @@ def _prevalidate_identity_payload(payload: Any) -> None:
 
 
 def _resolve_identity_fields(parsed: Any) -> tuple[str, dict[str, Any]]:
+    """Resolve the response ID and agent reference from a parsed create request.
+
+    Generates a new response ID if one is not explicitly provided.
+
+    :param parsed: Parsed ``CreateResponse`` model instance.
+    :type parsed: Any
+    :return: A tuple of ``(response_id, agent_reference)``.
+    :rtype: tuple[str, dict[str, Any]]
+    :raises RequestValidationError: If the resolved response ID is invalid.
+    """
     parsed_mapping = parsed.as_dict() if hasattr(parsed, "as_dict") else {}
     explicit_response_id = parsed_mapping.get("response_id") or getattr(parsed, "response_id", None)
     if isinstance(explicit_response_id, str) and explicit_response_id.strip():

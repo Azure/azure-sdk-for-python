@@ -61,10 +61,22 @@ _SDK_VERSION = VERSION
 
 
 def _runtime_marker() -> str:
+    """Build the Python runtime version marker string.
+
+    :return: A string like ``"python/3.12"``.
+    :rtype: str
+    """
     return f"python/{sys.version_info.major}.{sys.version_info.minor}"
 
 
 def _platform_header(options: ResponsesServerOptions) -> str:
+    """Build the ``x-platform-server`` header value from runtime options.
+
+    :param options: Server runtime options.
+    :type options: ResponsesServerOptions
+    :return: Formatted platform server identity header string.
+    :rtype: str
+    """
     return build_platform_server_header(
         sdk_name=_SDK_NAME,
         version=_SDK_VERSION,
@@ -136,6 +148,38 @@ def map_responses_server(
         span: Any,
         captured_error: Exception | None,
     ) -> Response:
+        """Handle a streaming create-response request.
+
+        Invokes the handler's async generator and returns an SSE
+        ``StreamingResponse``, optionally storing the execution record.
+
+        :param parsed: Parsed ``CreateResponse`` model instance.
+        :type parsed: Any
+        :param context: Runtime response context for this request.
+        :type context: RuntimeResponseContext
+        :param cancellation_signal: Event signalling cancellation.
+        :type cancellation_signal: asyncio.Event
+        :param response_id: The assigned response ID.
+        :type response_id: str
+        :param agent_reference: Normalized agent reference dictionary.
+        :type agent_reference: Any
+        :param model: Model name, or ``None``.
+        :type model: str | None
+        :param store: Whether to persist the execution record.
+        :type store: bool
+        :param background: Whether this is a background request.
+        :type background: bool
+        :param input_items: Extracted input items from the request.
+        :type input_items: list[Any]
+        :param previous_response_id: Previous response ID for chaining, or ``None``.
+        :type previous_response_id: str | None
+        :param span: Active observability span.
+        :type span: Any
+        :param captured_error: Pre-captured error, or ``None``.
+        :type captured_error: Exception | None
+        :return: An SSE ``StreamingResponse`` or error ``JSONResponse``.
+        :rtype: Response
+        """
         handler_events: list[dict[str, Any]] = []
         try:
             handler_iterator = create_async(parsed, context, cancellation_signal)
@@ -382,6 +426,36 @@ def map_responses_server(
         span: Any,
         captured_error: Exception | None,
     ) -> Response:
+        """Handle a synchronous (non-stream, non-background) create-response request.
+
+        Collects all handler events, builds the response snapshot, and returns
+        a ``JSONResponse``.
+
+        :param parsed: Parsed ``CreateResponse`` model instance.
+        :type parsed: Any
+        :param context: Runtime response context for this request.
+        :type context: RuntimeResponseContext
+        :param cancellation_signal: Event signalling cancellation.
+        :type cancellation_signal: asyncio.Event
+        :param response_id: The assigned response ID.
+        :type response_id: str
+        :param agent_reference: Normalized agent reference dictionary.
+        :type agent_reference: Any
+        :param model: Model name, or ``None``.
+        :type model: str | None
+        :param store: Whether to persist the execution record.
+        :type store: bool
+        :param input_items: Extracted input items from the request.
+        :type input_items: list[Any]
+        :param previous_response_id: Previous response ID for chaining, or ``None``.
+        :type previous_response_id: str | None
+        :param span: Active observability span.
+        :type span: Any
+        :param captured_error: Pre-captured error, or ``None``.
+        :type captured_error: Exception | None
+        :return: A ``JSONResponse`` containing the response snapshot.
+        :rtype: Response
+        """
         handler_events: list[dict[str, Any]] = []
         try:
             async for handler_event in create_async(parsed, context, cancellation_signal):
@@ -451,6 +525,36 @@ def map_responses_server(
         span: Any,
         captured_error: Exception | None,
     ) -> Response:
+        """Handle a background (non-stream) create-response request.
+
+        Creates a queued execution record with an attached background runner,
+        and returns the initial snapshot immediately.
+
+        :param parsed: Parsed ``CreateResponse`` model instance.
+        :type parsed: Any
+        :param context: Runtime response context for this request.
+        :type context: RuntimeResponseContext
+        :param cancellation_signal: Event signalling cancellation.
+        :type cancellation_signal: asyncio.Event
+        :param response_id: The assigned response ID.
+        :type response_id: str
+        :param agent_reference: Normalized agent reference dictionary.
+        :type agent_reference: Any
+        :param model: Model name, or ``None``.
+        :type model: str | None
+        :param store: Whether to persist the execution record.
+        :type store: bool
+        :param input_items: Extracted input items from the request.
+        :type input_items: list[Any]
+        :param previous_response_id: Previous response ID for chaining, or ``None``.
+        :type previous_response_id: str | None
+        :param span: Active observability span.
+        :type span: Any
+        :param captured_error: Pre-captured error, or ``None``.
+        :type captured_error: Exception | None
+        :return: A ``JSONResponse`` containing the queued response snapshot.
+        :rtype: Response
+        """
         record = _ExecutionRecord(
             response_id=response_id,
             agent_reference=deepcopy(agent_reference),
@@ -487,6 +591,16 @@ def map_responses_server(
         return JSONResponse(record.to_snapshot(), status_code=200, headers=response_headers)
 
     async def _create(request: Request) -> Response:
+        """Route handler for ``POST /responses``.
+
+        Parses and validates the create request, then dispatches to the
+        appropriate stream, sync, or background handler.
+
+        :param request: The incoming Starlette request.
+        :type request: Request
+        :return: The HTTP response for the create operation.
+        :rtype: Response
+        """
         nonlocal runtime_is_draining
 
         if runtime_is_draining:
@@ -592,6 +706,16 @@ def map_responses_server(
         )
 
     async def _get(request: Request) -> Response:
+        """Route handler for ``GET /responses/{response_id}``.
+
+        Returns the response snapshot or replays SSE events if ``stream=true``
+        is specified in the query parameters.
+
+        :param request: The incoming Starlette request.
+        :type request: Request
+        :return: A ``JSONResponse`` with the snapshot or an SSE ``StreamingResponse``.
+        :rtype: Response
+        """
         response_id = request.path_params["response_id"]
         record = await runtime_state.get(response_id)
         if record is None:
@@ -624,6 +748,15 @@ def map_responses_server(
         return JSONResponse(record.to_snapshot(), status_code=200, headers=response_headers)
 
     async def _delete(request: Request) -> Response:
+        """Route handler for ``DELETE /responses/{response_id}``.
+
+        Deletes the response record if it exists and is not in-flight.
+
+        :param request: The incoming Starlette request.
+        :type request: Request
+        :return: A ``JSONResponse`` confirming deletion or an error response.
+        :rtype: Response
+        """
         response_id = request.path_params["response_id"]
         record = await runtime_state.get(response_id)
         if record is None:
@@ -650,6 +783,16 @@ def map_responses_server(
         return JSONResponse(payload, status_code=200, headers=response_headers)
 
     async def _cancel(request: Request) -> Response:
+        """Route handler for ``POST /responses/{response_id}/cancel``.
+
+        Cancels a background response by setting the cancellation signal and
+        updating the record status.
+
+        :param request: The incoming Starlette request.
+        :type request: Request
+        :return: A ``JSONResponse`` with the cancelled snapshot or an error response.
+        :rtype: Response
+        """
         response_id = request.path_params["response_id"]
         record = await runtime_state.get(response_id)
         if record is None:
@@ -715,6 +858,16 @@ def map_responses_server(
         return JSONResponse(record.to_snapshot(), status_code=200, headers=response_headers)
 
     async def _get_input_items(request: Request) -> Response:
+        """Route handler for ``GET /responses/{response_id}/input_items``.
+
+        Returns a paginated list of input items for the given response,
+        including items from the ancestor chain.
+
+        :param request: The incoming Starlette request.
+        :type request: Request
+        :return: A ``JSONResponse`` with the paginated input items list.
+        :rtype: Response
+        """
         response_id = request.path_params["response_id"]
 
         limit_raw = request.query_params.get("limit", "20")
@@ -759,6 +912,14 @@ def map_responses_server(
         return JSONResponse(payload, status_code=200, headers=response_headers)
 
     async def _on_shutdown() -> None:
+        """Graceful shutdown handler.
+
+        Signals all active responses to cancel, waits for in-flight background
+        executions to complete within the configured grace period.
+
+        :return: None
+        :rtype: None
+        """
         nonlocal runtime_is_draining
 
         runtime_is_draining = True

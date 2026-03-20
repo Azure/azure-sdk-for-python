@@ -29,6 +29,30 @@ async def _run_background_non_stream(
     agent_reference: dict[str, Any],
     model: str | None,
 ) -> None:
+    """Execute a non-stream handler in the background and update the execution record.
+
+    Collects handler events, builds the response payload, and transitions the
+    record status to ``completed``, ``failed``, or ``cancelled``.
+
+    :param create_async: The handler's async generator callable.
+    :type create_async: Any
+    :param parsed: Parsed ``CreateResponse`` model instance.
+    :type parsed: Any
+    :param context: Runtime response context for this request.
+    :type context: RuntimeResponseContext
+    :param cancellation_signal: Event signalling that cancellation was requested.
+    :type cancellation_signal: asyncio.Event
+    :param record: The mutable execution record to update.
+    :type record: _ExecutionRecord
+    :param response_id: The response ID for this execution.
+    :type response_id: str
+    :param agent_reference: Normalized agent reference dictionary.
+    :type agent_reference: dict[str, Any]
+    :param model: Model name, or ``None``.
+    :type model: str | None
+    :return: None
+    :rtype: None
+    """
     record.status = "in_progress"
     handler_events: list[dict[str, Any]] = []
 
@@ -86,6 +110,16 @@ async def _run_background_non_stream(
 
 
 async def _try_execute_background_runner(record: _ExecutionRecord) -> None:
+    """Attempt to execute the background runner attached to an execution record.
+
+    This is a one-shot operation: once the runner has been started, subsequent
+    calls are no-ops.
+
+    :param record: The execution record whose background runner may be invoked.
+    :type record: _ExecutionRecord
+    :return: None
+    :rtype: None
+    """
     if not record.background or record.status in {"completed", "failed", "incomplete", "cancelled"}:
         return
 
@@ -105,6 +139,16 @@ async def _try_execute_background_runner(record: _ExecutionRecord) -> None:
 
 
 def _refresh_background_status(record: _ExecutionRecord) -> None:
+    """Refresh the status of a background execution record.
+
+    Transitions the record from ``queued`` to ``in_progress`` or ``cancelled``
+    based on the current cancellation signal and runner state.
+
+    :param record: The execution record to refresh.
+    :type record: _ExecutionRecord
+    :return: None
+    :rtype: None
+    """
     if not record.background or record.status in {"completed", "failed", "incomplete", "cancelled"}:
         return
 

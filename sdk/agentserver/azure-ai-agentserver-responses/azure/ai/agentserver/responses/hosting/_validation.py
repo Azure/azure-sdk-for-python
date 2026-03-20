@@ -44,7 +44,15 @@ def normalize_create_response(
     request: CreateResponse,
     options: ResponsesServerOptions | None,
 ) -> CreateResponse:
-    """Apply server-side defaults to a parsed create request model."""
+    """Apply server-side defaults to a parsed create request model.
+
+    :param request: The parsed create response model to normalize.
+    :type request: CreateResponse
+    :param options: Server runtime options containing defaults, or ``None``.
+    :type options: ResponsesServerOptions | None
+    :return: The same model instance with defaults applied.
+    :rtype: CreateResponse
+    """
     if (request.model is None or (isinstance(request.model, str) and not request.model.strip())) and options:
         request.model = options.default_model
 
@@ -88,7 +96,16 @@ def parse_and_validate_create_response(
     *,
     options: ResponsesServerOptions | None = None,
 ) -> CreateResponse:
-    """Parse, normalize, and validate a create request using generated models."""
+    """Parse, normalize, and validate a create request using generated models.
+
+    :param payload: Raw request payload mapping.
+    :type payload: Mapping[str, Any]
+    :param options: Server runtime options for defaults, or ``None``.
+    :type options: ResponsesServerOptions | None
+    :return: A fully validated ``CreateResponse`` model.
+    :rtype: CreateResponse
+    :raises RequestValidationError: If parsing or validation fails.
+    """
     request = parse_create_response(payload)
     request = normalize_create_response(request, options)
     validate_create_response(request)
@@ -103,7 +120,21 @@ def build_api_error_response(
     error_type: str = "invalid_request_error",
     debug_info: dict[str, Any] | None = None,
 ) -> ApiErrorResponse:
-    """Build a generated ``ApiErrorResponse`` envelope for client-visible failures."""
+    """Build a generated ``ApiErrorResponse`` envelope for client-visible failures.
+
+    :param message: Human-readable error message.
+    :type message: str
+    :param code: Machine-readable error code.
+    :type code: str
+    :param param: The request parameter that caused the error, or ``None``.
+    :type param: str | None
+    :param error_type: Error type category (default ``"invalid_request_error"``).
+    :type error_type: str
+    :param debug_info: Optional debug information dictionary.
+    :type debug_info: dict[str, Any] | None
+    :return: A generated ``ApiErrorResponse`` envelope.
+    :rtype: ApiErrorResponse
+    """
     return ApiErrorResponse(
         error=Error(
             code=code,
@@ -121,7 +152,17 @@ def build_not_found_error_response(
     param: str = "response_id",
     resource_name: str = "response",
 ) -> ApiErrorResponse:
-    """Build a canonical generated not-found error envelope."""
+    """Build a canonical generated not-found error envelope.
+
+    :param resource_id: The ID of the resource that was not found.
+    :type resource_id: str
+    :param param: The parameter name to include in the error (default ``"response_id"``).
+    :type param: str
+    :param resource_name: Display name for the resource type (default ``"response"``).
+    :type resource_name: str
+    :return: A generated ``ApiErrorResponse`` envelope with not-found error.
+    :rtype: ApiErrorResponse
+    """
     return build_api_error_response(
         message=f"{resource_name} '{resource_id}' was not found",
         code="not_found",
@@ -135,7 +176,15 @@ def build_invalid_mode_error_response(
     *,
     param: str | None = None,
 ) -> ApiErrorResponse:
-    """Build a canonical generated invalid-mode error envelope."""
+    """Build a canonical generated invalid-mode error envelope.
+
+    :param message: Human-readable error message.
+    :type message: str
+    :param param: The request parameter that caused the error, or ``None``.
+    :type param: str | None
+    :return: A generated ``ApiErrorResponse`` envelope with invalid-mode error.
+    :rtype: ApiErrorResponse
+    """
     return build_api_error_response(
         message=message,
         code="invalid_mode",
@@ -145,7 +194,13 @@ def build_invalid_mode_error_response(
 
 
 def to_api_error_response(error: Exception) -> ApiErrorResponse:
-    """Map a Python exception to a generated API error envelope."""
+    """Map a Python exception to a generated API error envelope.
+
+    :param error: The exception to convert.
+    :type error: Exception
+    :return: A generated ``ApiErrorResponse`` envelope.
+    :rtype: ApiErrorResponse
+    """
     if isinstance(error, RequestValidationError):
         return error.to_api_error_response()
 

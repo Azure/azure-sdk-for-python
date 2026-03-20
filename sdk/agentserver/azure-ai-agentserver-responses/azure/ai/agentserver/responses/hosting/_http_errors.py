@@ -16,6 +16,16 @@ from ._validation import (
 
 
 def _json_payload(value: Any) -> Any:
+    """Convert a value to a JSON-serializable form.
+
+    If the value has an ``as_dict`` method (e.g. generated models), it is called;
+    otherwise the value is returned as-is.
+
+    :param value: The value to convert.
+    :type value: Any
+    :return: A JSON-serializable representation of the value.
+    :rtype: Any
+    """
     if hasattr(value, "as_dict"):
         return value.as_dict()  # type: ignore[no-any-return]
     return value
@@ -30,7 +40,23 @@ def _api_error(
     status_code: int,
     headers: dict[str, str],
 ) -> JSONResponse:
-    """Build a standard API error ``JSONResponse`` from individual fields."""
+    """Build a standard API error ``JSONResponse`` from individual fields.
+
+    :param message: Human-readable error message.
+    :type message: str
+    :param code: Machine-readable error code.
+    :type code: str
+    :param param: The request parameter that caused the error, or ``None``.
+    :type param: str | None
+    :param error_type: Error type category (default ``"invalid_request_error"``).
+    :type error_type: str
+    :param status_code: HTTP status code for the response.
+    :type status_code: int
+    :param headers: Response headers to include.
+    :type headers: dict[str, str]
+    :return: A ``JSONResponse`` with the error envelope.
+    :rtype: JSONResponse
+    """
     payload = _json_payload(
         build_api_error_response(
             message=message,
@@ -43,6 +69,17 @@ def _api_error(
 
 
 def _error_response(error: Exception, headers: dict[str, str]) -> JSONResponse:
+    """Map an exception to an appropriate HTTP error ``JSONResponse``.
+
+    The HTTP status code is inferred from the error type field in the envelope.
+
+    :param error: The exception to convert.
+    :type error: Exception
+    :param headers: Response headers to include.
+    :type headers: dict[str, str]
+    :return: A ``JSONResponse`` with the mapped error and status code.
+    :rtype: JSONResponse
+    """
     envelope = to_api_error_response(error)
     payload = _json_payload(envelope)
     error_type = payload.get("error", {}).get("type") if isinstance(payload, dict) else None
@@ -57,6 +94,15 @@ def _error_response(error: Exception, headers: dict[str, str]) -> JSONResponse:
 
 
 def _not_found(response_id: str, headers: dict[str, str]) -> JSONResponse:
+    """Build a 404 Not Found error response for a missing response ID.
+
+    :param response_id: The response ID that was not found.
+    :type response_id: str
+    :param headers: Response headers to include.
+    :type headers: dict[str, str]
+    :return: A 404 ``JSONResponse``.
+    :rtype: JSONResponse
+    """
     return _api_error(
         message=f"Response with id '{response_id}' not found.",
         code="invalid_request",
@@ -68,6 +114,17 @@ def _not_found(response_id: str, headers: dict[str, str]) -> JSONResponse:
 
 
 def _invalid_request(message: str, headers: dict[str, str], *, param: str | None = None) -> JSONResponse:
+    """Build a 400 Bad Request error response for an invalid request.
+
+    :param message: Human-readable error message.
+    :type message: str
+    :param headers: Response headers to include.
+    :type headers: dict[str, str]
+    :param param: The request parameter that caused the error, or ``None``.
+    :type param: str | None
+    :return: A 400 ``JSONResponse``.
+    :rtype: JSONResponse
+    """
     return _api_error(
         message=message,
         code="invalid_request",
@@ -79,11 +136,31 @@ def _invalid_request(message: str, headers: dict[str, str], *, param: str | None
 
 
 def _invalid_mode(message: str, headers: dict[str, str], *, param: str | None = None) -> JSONResponse:
+    """Build a 400 Bad Request error response for an invalid mode combination.
+
+    :param message: Human-readable error message.
+    :type message: str
+    :param headers: Response headers to include.
+    :type headers: dict[str, str]
+    :param param: The request parameter that caused the error, or ``None``.
+    :type param: str | None
+    :return: A 400 ``JSONResponse`` with an ``invalid_mode`` error code.
+    :rtype: JSONResponse
+    """
     payload = _json_payload(build_invalid_mode_error_response(message, param=param))
     return JSONResponse(payload, status_code=400, headers=headers)
 
 
 def _service_unavailable(message: str, headers: dict[str, str]) -> JSONResponse:
+    """Build a 503 Service Unavailable error response.
+
+    :param message: Human-readable error message.
+    :type message: str
+    :param headers: Response headers to include.
+    :type headers: dict[str, str]
+    :return: A 503 ``JSONResponse``.
+    :rtype: JSONResponse
+    """
     return _api_error(
         message=message,
         code="service_unavailable",
@@ -95,6 +172,15 @@ def _service_unavailable(message: str, headers: dict[str, str]) -> JSONResponse:
 
 
 def _deleted_response(response_id: str, headers: dict[str, str]) -> JSONResponse:
+    """Build a 400 error response indicating the response has been deleted.
+
+    :param response_id: The response ID that was deleted.
+    :type response_id: str
+    :param headers: Response headers to include.
+    :type headers: dict[str, str]
+    :return: A 400 ``JSONResponse``.
+    :rtype: JSONResponse
+    """
     return _invalid_request(
         f"Response with id '{response_id}' has been deleted.",
         headers,

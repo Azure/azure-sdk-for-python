@@ -34,6 +34,11 @@ class _ExecutionRecord:
     response_context: RuntimeResponseContext | None = None
 
     def to_snapshot(self) -> dict[str, Any]:
+        """Build a normalized response snapshot dictionary from this record.
+
+        :return: A deep-copied, normalized response payload dictionary.
+        :rtype: dict[str, Any]
+        """
         def _normalize_snapshot(payload: dict[str, Any]) -> dict[str, Any]:
             normalized = generated_models.Response(payload).as_dict()
             if isinstance(normalized, dict):
@@ -63,25 +68,56 @@ class _ExecutionRecord:
 
 
 class _RuntimeState:
+    """In-memory store for response execution records."""
+
     def __init__(self) -> None:
+        """Initialize the runtime state with empty record and deletion sets."""
         self._records: dict[str, _ExecutionRecord] = {}
         self._deleted_response_ids: set[str] = set()
         self._lock = asyncio.Lock()
 
     async def add(self, record: _ExecutionRecord) -> None:
+        """Add or replace an execution record in the store.
+
+        :param record: The execution record to store.
+        :type record: _ExecutionRecord
+        :return: None
+        :rtype: None
+        """
         async with self._lock:
             self._records[record.response_id] = record
             self._deleted_response_ids.discard(record.response_id)
 
     async def get(self, response_id: str) -> _ExecutionRecord | None:
+        """Look up an execution record by response ID.
+
+        :param response_id: The response ID to look up.
+        :type response_id: str
+        :return: The matching execution record, or ``None`` if not found.
+        :rtype: _ExecutionRecord | None
+        """
         async with self._lock:
             return self._records.get(response_id)
 
     async def is_deleted(self, response_id: str) -> bool:
+        """Check whether a response ID has been deleted.
+
+        :param response_id: The response ID to check.
+        :type response_id: str
+        :return: ``True`` if the response was previously deleted.
+        :rtype: bool
+        """
         async with self._lock:
             return response_id in self._deleted_response_ids
 
     async def delete(self, response_id: str) -> bool:
+        """Delete an execution record by response ID.
+
+        :param response_id: The response ID to delete.
+        :type response_id: str
+        :return: ``True`` if the record was found and deleted, ``False`` otherwise.
+        :rtype: bool
+        """
         async with self._lock:
             record = self._records.pop(response_id, None)
             if record is None:
@@ -90,6 +126,18 @@ class _RuntimeState:
             return True
 
     async def get_input_items(self, response_id: str) -> list[dict[str, Any]]:
+        """Retrieve the full input item chain for a response, including ancestors.
+
+        Walks the ``previous_response_id`` chain to build the complete ordered
+        list of input items.
+
+        :param response_id: The response ID whose input items to retrieve.
+        :type response_id: str
+        :return: Ordered list of deep-copied input item dictionaries.
+        :rtype: list[dict[str, Any]]
+        :raises ValueError: If the response has been deleted.
+        :raises KeyError: If the response is not found or not visible.
+        """
         async with self._lock:
             record = self._records.get(response_id)
             if record is None:
@@ -115,5 +163,10 @@ class _RuntimeState:
             return [*history, *deepcopy(record.input_items)]
 
     async def list_records(self) -> list[_ExecutionRecord]:
+        """Return a snapshot list of all execution records in the store.
+
+        :return: List of all current execution records.
+        :rtype: list[_ExecutionRecord]
+        """
         async with self._lock:
             return list(self._records.values())

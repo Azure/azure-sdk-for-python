@@ -27,10 +27,28 @@ class CreateSpanHook(Protocol):
     """Hook contract for one-root-span-per-create observability."""
 
     def on_span_start(self, name: str, tags: dict[str, Any]) -> None:
-        """Called when a create span starts."""
+        """Called when a create span starts.
+
+        :param name: Span name.
+        :type name: str
+        :param tags: Initial span tags.
+        :type tags: dict[str, Any]
+        :return: None
+        :rtype: None
+        """
 
     def on_span_end(self, name: str, tags: dict[str, Any], error: Exception | None) -> None:
-        """Called when a create span ends."""
+        """Called when a create span ends.
+
+        :param name: Span name.
+        :type name: str
+        :param tags: Final span tags.
+        :type tags: dict[str, Any]
+        :param error: The exception if the span ended with an error, or ``None``.
+        :type error: Exception | None
+        :return: None
+        :rtype: None
+        """
 
 
 @dataclass(slots=True)
@@ -43,15 +61,37 @@ class CreateSpan:
     _ended: bool = False
 
     def set_tag(self, key: str, value: Any) -> None:
-        """Set or overwrite one span tag."""
+        """Set or overwrite one span tag.
+
+        :param key: Tag key.
+        :type key: str
+        :param value: Tag value.
+        :type value: Any
+        :return: None
+        :rtype: None
+        """
         self.tags[key] = value
 
     def set_tags(self, values: dict[str, Any]) -> None:
-        """Merge a set of tags into this span."""
+        """Merge a set of tags into this span.
+
+        :param values: Dictionary of tags to merge.
+        :type values: dict[str, Any]
+        :return: None
+        :rtype: None
+        """
         self.tags.update(values)
 
     def end(self, error: Exception | None = None) -> None:
-        """Complete the span exactly once."""
+        """Complete the span exactly once.
+
+        Subsequent calls are no-ops.
+
+        :param error: The exception if the span ended with an error, or ``None``.
+        :type error: Exception | None
+        :return: None
+        :rtype: None
+        """
         if self._ended:
             return
 
@@ -62,7 +102,17 @@ class CreateSpan:
 
 
 def start_create_span(name: str, tags: dict[str, Any], hook: CreateSpanHook | None = None) -> CreateSpan:
-    """Start a create span and notify hook subscribers."""
+    """Start a create span and notify hook subscribers.
+
+    :param name: Span name.
+    :type name: str
+    :param tags: Initial span tags.
+    :type tags: dict[str, Any]
+    :param hook: Optional hook to receive span lifecycle events.
+    :type hook: CreateSpanHook | None
+    :return: The started ``CreateSpan`` instance.
+    :rtype: CreateSpan
+    """
     span = CreateSpan(name=name, tags=dict(tags), _hook=hook)
     if hook is not None:
         hook.on_span_start(name, dict(span.tags))
@@ -76,7 +126,19 @@ def build_create_span_tags(
     agent_reference: dict[str, Any] | None,
     service_name: str,
 ) -> dict[str, Any]:
-    """Build a baseline GenAI tag set for create spans."""
+    """Build a baseline GenAI tag set for create spans.
+
+    :param response_id: The response ID, or ``None`` if not yet assigned.
+    :type response_id: str | None
+    :param model: Model name, or ``None``.
+    :type model: str | None
+    :param agent_reference: Agent reference dictionary, or ``None``.
+    :type agent_reference: dict[str, Any] | None
+    :param service_name: Logical service name for the span.
+    :type service_name: str
+    :return: Dictionary of OpenTelemetry-style GenAI span tags.
+    :rtype: dict[str, Any]
+    """
     agent_name = None
     agent_id = None
     if agent_reference is not None:
@@ -114,6 +176,15 @@ class InMemoryCreateSpanHook:
     spans: list[RecordedSpan] = field(default_factory=list)
 
     def on_span_start(self, name: str, tags: dict[str, Any]) -> None:
+        """Record a span start event.
+
+        :param name: Span name.
+        :type name: str
+        :param tags: Span tags at start time.
+        :type tags: dict[str, Any]
+        :return: None
+        :rtype: None
+        """
         self.spans.append(
             RecordedSpan(
                 name=name,
@@ -123,6 +194,17 @@ class InMemoryCreateSpanHook:
         )
 
     def on_span_end(self, name: str, tags: dict[str, Any], error: Exception | None) -> None:
+        """Record a span end event.
+
+        :param name: Span name.
+        :type name: str
+        :param tags: Final span tags.
+        :type tags: dict[str, Any]
+        :param error: The exception if the span ended with an error, or ``None``.
+        :type error: Exception | None
+        :return: None
+        :rtype: None
+        """
         if not self.spans:
             self.on_span_start(name, tags)
 
