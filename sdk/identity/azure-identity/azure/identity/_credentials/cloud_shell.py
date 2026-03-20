@@ -6,7 +6,7 @@ import functools
 import os
 from typing import Any, Optional, Dict, Mapping
 
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.rest import HttpRequest
 
 from .._constants import EnvironmentVariables
 from .._internal import within_dac
@@ -43,5 +43,4 @@ class CloudShellCredential(ManagedIdentityBase):
 
 
 def _get_request(url: str, scope: str, identity_config: Dict) -> HttpRequest:
-    request = HttpRequest("POST", url, data=dict({"resource": scope}, **identity_config))
-    return request
+    return HttpRequest("POST", url, data=dict({"resource": scope}, **identity_config))

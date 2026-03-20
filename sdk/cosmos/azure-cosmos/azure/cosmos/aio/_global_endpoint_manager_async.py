@@ -178,7 +178,9 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     # in background
                     self.refresh_task = asyncio.create_task(self._refresh_database_account_and_health())
                 else:
-                    if not self._aenter_used:
+                    # Fetch database account if not provided via async with pattern OR if explicitly None
+                    # This ensures callers can pass None and still get correct behavior
+                    if not self._aenter_used or database_account is None:
                         database_account = await self._GetDatabaseAccount(**kwargs)
                     self.location_cache.perform_on_database_account_read(database_account)
                     # this will perform only calls to check endpoint health
@@ -232,14 +234,18 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         # specified (by creating a locational endpoint) and keeping eating the exception
         # until we get the database account and return None at the end, if we are not able
         # to get that info from any endpoints
-        except (exceptions.CosmosHttpResponseError, AzureError):
+        except (exceptions.CosmosHttpResponseError, AzureError) as e:
+            if isinstance(e, exceptions.CosmosHttpResponseError):
+                e.endpoint = self.DefaultEndpoint
             for location_name in self.PreferredLocations:
                 locational_endpoint = LocationCache.GetLocationalEndpoint(self.DefaultEndpoint, location_name)
                 try:
                     database_account = await self._GetDatabaseAccountStub(locational_endpoint, **kwargs)
                     self._database_account_cache = database_account
                     return database_account
-                except (exceptions.CosmosHttpResponseError, AzureError):
+                except (exceptions.CosmosHttpResponseError, AzureError) as ex:
+                    if isinstance(ex, exceptions.CosmosHttpResponseError):
+                        ex.endpoint = locational_endpoint
                     self._mark_endpoint_unavailable(locational_endpoint,"_GetDatabaseAccount")
             raise
 

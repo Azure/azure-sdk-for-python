@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Literal, Optional, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -39,6 +39,7 @@ def build_update_request(
     *,
     pop_receipt: str,
     visibilitytimeout: int,
+    version: str,
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     content: Any = None,
@@ -48,7 +49,6 @@ def build_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -82,6 +82,7 @@ def build_delete_request(
     url: str,
     *,
     pop_receipt: str,
+    version: str,
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     **kwargs: Any
@@ -89,7 +90,6 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -196,10 +196,10 @@ class MessageIdOperations:
             url=self._config.url,
             pop_receipt=pop_receipt,
             visibilitytimeout=visibilitytimeout,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -270,9 +270,9 @@ class MessageIdOperations:
         _request = build_delete_request(
             url=self._config.url,
             pop_receipt=pop_receipt,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )

@@ -34,17 +34,16 @@ class AzureQueueStorage:  # pylint: disable=client-accepts-api-version-keyword
     :param url: The URL of the service account, queue or message that is the target of the desired
      operation. Required.
     :type url: str
+    :param version: Specifies the version of the operation to use for this request. Required.
+    :type version: str
     :param base_url: Service URL. Required. Default value is "".
     :type base_url: str
-    :keyword version: Specifies the version of the operation to use for this request. Default value
-     is "2026-02-06". Note that overriding this default value may result in unsupported behavior.
-    :paramtype version: str
     """
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
-        self, url: str, base_url: str = "", **kwargs: Any
+        self, url: str, version: str, base_url: str = "", **kwargs: Any
     ) -> None:
-        self._config = AzureQueueStorageConfiguration(url=url, **kwargs)
+        self._config = AzureQueueStorageConfiguration(url=url, version=version, **kwargs)
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:

@@ -1815,4 +1815,19 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         result += await stream.readall()
         assert result == data
 
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_get_blob_to_bytes_with_none_concurrency(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
+
+        # max_concurrency=None should not raise TypeError
+        stream = await blob.download_blob(max_concurrency=None)
+        content = await stream.readall()
+
+        assert self.byte_data == content
+
 # ------------------------------------------------------------------------------

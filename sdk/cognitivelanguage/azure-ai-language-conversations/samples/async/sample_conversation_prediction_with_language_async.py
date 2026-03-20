@@ -46,7 +46,7 @@ from azure.ai.language.conversations.models import (
 )
 
 
-async def sample_conversation_prediction_with_language_async():
+async def sample_conv_prediction_language_async():
     # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     project_name = os.environ["AZURE_CONVERSATIONS_PROJECT_NAME"]
@@ -113,7 +113,7 @@ async def sample_conversation_prediction_with_language_async():
 
 
 async def main():
-    await sample_conversation_prediction_with_language_async()
+    await sample_conv_prediction_language_async()
 
 
 if __name__ == "__main__":

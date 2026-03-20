@@ -1904,10 +1904,9 @@ class TestStorageShare(StorageRecordedTestCase):
 
     @pytest.mark.live_test_only
     @FileSharePreparer()
-    def test_share_user_delegation_oid(self, **kwargs):
+    def test_share_cross_tenant_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-        data = b"abc123"
 
         self._setup(storage_account_name, storage_account_key)
         token_credential = self.get_credential(ShareServiceClient)
@@ -1918,15 +1917,25 @@ class TestStorageShare(StorageRecordedTestCase):
         )
         start = datetime.utcnow()
         expiry = datetime.utcnow() + timedelta(hours=1)
-        user_delegation_key = service.get_user_delegation_key(start=start, expiry=expiry)
         token = token_credential.get_token("https://storage.azure.com/.default")
-        user_delegation_oid = jwt.decode(token.token, options={"verify_signature": False}).get("oid")
+        decoded = jwt.decode(token.token, options={"verify_signature": False})
+        user_delegation_oid = decoded.get("oid")
+        delegated_user_tid = decoded.get("tid")
+        user_delegation_key = service.get_user_delegation_key(
+            start=start,
+            expiry=expiry,
+            delegated_user_tid=delegated_user_tid
+        )
+
+        assert user_delegation_key is not None
+        assert user_delegation_key.signed_delegated_user_tid == delegated_user_tid
 
         share_name = self.get_resource_name("oauthshare")
         directory_name = self.get_resource_name("oauthdir")
         file_name = self.get_resource_name("oauthfile")
         share = service.create_share(share_name)
         directory = share.create_directory(directory_name)
+        data = b"abc123"
         file = directory.upload_file(file_name, data, length=len(data))
 
         share_token = self.generate_sas(
@@ -1939,7 +1948,9 @@ class TestStorageShare(StorageRecordedTestCase):
             user_delegation_key=user_delegation_key,
             user_delegation_oid=user_delegation_oid
         )
+
         assert "sduoid=" + user_delegation_oid in share_token
+        assert "skdutid=" + delegated_user_tid in share_token
 
         share_client = ShareClient.from_share_url(
             f"{share.url}?{share_token}",
@@ -1960,7 +1971,9 @@ class TestStorageShare(StorageRecordedTestCase):
             user_delegation_key=user_delegation_key,
             user_delegation_oid=user_delegation_oid
         )
+
         assert "sduoid=" + user_delegation_oid in file_token
+        assert "skdutid=" + delegated_user_tid in file_token
 
         file_client = ShareFileClient.from_file_url(
             f"{file.url}?{file_token}",

@@ -13,9 +13,13 @@ from opentelemetry.environment_variables import (
     OTEL_METRICS_EXPORTER,
     OTEL_TRACES_EXPORTER,
 )
-from opentelemetry.instrumentation.environment_variables import (
-    OTEL_PYTHON_DISABLED_INSTRUMENTATIONS,
-)
+
+try:
+    from opentelemetry.instrumentation.environment_variables import (  # type: ignore
+        OTEL_PYTHON_DISABLED_INSTRUMENTATIONS,
+    )
+except ImportError:  # pragma: no cover
+    OTEL_PYTHON_DISABLED_INSTRUMENTATIONS = ""
 from opentelemetry.sdk.environment_variables import (
     OTEL_EXPERIMENTAL_RESOURCE_DETECTORS,
     OTEL_TRACES_SAMPLER_ARG,
@@ -35,6 +39,8 @@ from azure.monitor.opentelemetry._constants import (
     _AZURE_VM_RESOURCE_DETECTOR_NAME,
     _FULLY_SUPPORTED_INSTRUMENTED_LIBRARIES,
     _PREVIEW_INSTRUMENTED_LIBRARIES,
+    BROWSER_SDK_LOADER_CONFIG_ARG,
+    CONNECTION_STRING_ARG,
     DISABLE_LOGGING_ARG,
     DISABLE_METRICS_ARG,
     DISABLE_TRACING_ARG,
@@ -90,6 +96,7 @@ def _get_configurations(**kwargs) -> Dict[str, ConfigurationValue]:
     _default_disable_logging(configurations)
     _default_disable_metrics(configurations)
     _default_disable_tracing(configurations)
+    _default_connection_string(configurations)
     _default_logger_name(configurations)
     _default_logging_formatter(configurations)
     _default_resource(configurations)
@@ -102,6 +109,7 @@ def _get_configurations(**kwargs) -> Dict[str, ConfigurationValue]:
     _default_enable_performance_counters(configurations)
     _default_views(configurations)
     _default_enable_trace_based_sampling(configurations)
+    _default_browser_sdk_loader(configurations)
 
     return configurations
 
@@ -128,6 +136,14 @@ def _default_disable_tracing(configurations):
         if environ[OTEL_TRACES_EXPORTER].lower().strip() == "none":
             default = True
     configurations[DISABLE_TRACING_ARG] = default
+
+
+def _default_connection_string(configurations):
+    if CONNECTION_STRING_ARG in configurations:
+        return
+    env_connection_string = environ.get("APPLICATIONINSIGHTS_CONNECTION_STRING")
+    if env_connection_string is not None:
+        configurations[CONNECTION_STRING_ARG] = env_connection_string
 
 
 def _default_logger_name(configurations):
@@ -168,16 +184,17 @@ def _default_resource(configurations):
 # pylint: disable=too-many-statements,too-many-branches
 def _default_sampling_ratio(configurations):
     default_value = 1.0
+    default_value_for_rate_limited_sampler = 5.0
     sampler_type = environ.get(OTEL_TRACES_SAMPLER)
     sampler_arg = environ.get(OTEL_TRACES_SAMPLER_ARG)
 
     # Handle rate-limited sampler
     if sampler_type == RATE_LIMITED_SAMPLER:
         try:
-            sampler_value = float(sampler_arg) if sampler_arg is not None else default_value
+            sampler_value = float(sampler_arg) if sampler_arg is not None else default_value_for_rate_limited_sampler
             if sampler_value < 0.0:
                 _logger.error("Invalid value for OTEL_TRACES_SAMPLER_ARG. It should be a non-negative number.")
-                sampler_value = default_value
+                sampler_value = default_value_for_rate_limited_sampler
             else:
                 _logger.info("Using rate limited sampler: %s traces per second", sampler_value)
             configurations[SAMPLING_TRACES_PER_SECOND_ARG] = sampler_value
@@ -185,10 +202,10 @@ def _default_sampling_ratio(configurations):
             _logger.error(  # pylint: disable=C
                 _INVALID_TRACES_PER_SECOND_MESSAGE,
                 OTEL_TRACES_SAMPLER_ARG,
-                default_value,
+                default_value_for_rate_limited_sampler,
                 e,
             )
-            configurations[SAMPLING_TRACES_PER_SECOND_ARG] = default_value
+            configurations[SAMPLING_TRACES_PER_SECOND_ARG] = default_value_for_rate_limited_sampler
 
     # Handle fixed percentage sampler
     elif sampler_type in (FIXED_PERCENTAGE_SAMPLER, "microsoft.fixed.percentage"):  # to support older string
@@ -271,15 +288,15 @@ def _default_sampling_ratio(configurations):
 
     # Handle all other cases (no sampler type specified or unsupported sampler type)
     else:
-        if configurations.get(SAMPLING_RATIO_ARG) is None:
-            configurations[SAMPLING_RATIO_ARG] = default_value
+        if configurations.get(SAMPLING_TRACES_PER_SECOND_ARG) is None:
+            configurations[SAMPLING_TRACES_PER_SECOND_ARG] = default_value_for_rate_limited_sampler
         if sampler_type is not None:
             _logger.error(  # pylint: disable=C
                 "Invalid argument for the sampler to be used for tracing. "
                 "Supported values are %s. Defaulting to %s: %s",
                 SUPPORTED_OTEL_SAMPLERS,
-                FIXED_PERCENTAGE_SAMPLER,
-                configurations[SAMPLING_RATIO_ARG],
+                RATE_LIMITED_SAMPLER,
+                configurations[SAMPLING_TRACES_PER_SECOND_ARG],
             )
 
 
@@ -314,7 +331,7 @@ def _default_metric_readers(configurations):
 
 
 def _default_enable_live_metrics(configurations):
-    configurations.setdefault(ENABLE_LIVE_METRICS_ARG, False)
+    configurations.setdefault(ENABLE_LIVE_METRICS_ARG, True)
 
 
 def _default_enable_performance_counters(configurations):
@@ -323,6 +340,18 @@ def _default_enable_performance_counters(configurations):
 
 def _default_views(configurations):
     configurations.setdefault(VIEWS_ARG, [])
+
+
+def _default_browser_sdk_loader(configurations):
+    """Set default browser SDK loader configuration.
+
+    :param configurations: Configuration dictionary to update.
+    :type configurations: dict
+    """
+    # Use cast to Dict[str, Any] to avoid MyPy ConfigurationValue Union type issues
+    from typing import cast, Any
+
+    configurations.setdefault(BROWSER_SDK_LOADER_CONFIG_ARG, cast(Dict[str, Any], {}))
 
 
 def _get_otel_disabled_instrumentations():
@@ -337,7 +366,7 @@ def _is_instrumentation_enabled(configurations, lib_name):
     if INSTRUMENTATION_OPTIONS_ARG not in configurations:
         return False
     instrumentation_options = configurations[INSTRUMENTATION_OPTIONS_ARG]
-    if not lib_name in instrumentation_options:
+    if lib_name not in instrumentation_options:
         return False
     library_options = instrumentation_options[lib_name]
     if "enabled" not in library_options:

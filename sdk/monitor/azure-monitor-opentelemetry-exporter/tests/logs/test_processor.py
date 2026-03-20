@@ -16,7 +16,7 @@ from azure.monitor.opentelemetry.exporter.export.logs._processor import (
 )
 
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access, line-too-long
 class TestAzureBatchLogRecordProcessor(unittest.TestCase):
     """Test cases for the Azure Monitor Batch Log Record Processor with trace-based sampling."""
 

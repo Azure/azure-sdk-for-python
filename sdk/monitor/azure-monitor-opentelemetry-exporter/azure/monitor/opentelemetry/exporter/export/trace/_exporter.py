@@ -4,7 +4,7 @@ from os import environ
 import json
 import logging
 from time import time_ns
-from typing import no_type_check, Any, Dict, List, Sequence
+from typing import no_type_check, Any, Dict, List, Sequence, Optional
 from urllib.parse import urlparse
 
 from opentelemetry.semconv.attributes.client_attributes import CLIENT_ADDRESS
@@ -31,6 +31,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _AZURE_SDK_NAMESPACE_NAME,
     _AZURE_SDK_OPENTELEMETRY_NAME,
     _AZURE_AI_SDK_NAME,
+    _EXPORTER_DOMAIN_SCHEMA_VERSION,
     _INSTRUMENTATION_SUPPORTING_METRICS_LIST,
     _SAMPLE_RATE_KEY,
     _METRIC_ENVELOPE_NAME,
@@ -38,9 +39,10 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _REQUEST_ENVELOPE_NAME,
     _EXCEPTION_ENVELOPE_NAME,
     _REMOTE_DEPENDENCY_ENVELOPE_NAME,
+    _APPLICATION_ID_RESOURCE_KEY,
 )
 from azure.monitor.opentelemetry.exporter import _utils
-from azure.monitor.opentelemetry.exporter._generated.models import (
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     ContextTagKeys,
     MessageData,
     MetricDataPoint,
@@ -124,6 +126,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
     def __init__(self, **kwargs: Any):
         self._tracer_provider = kwargs.pop("tracer_provider", None)
         super().__init__(**kwargs)
+        self.application_id = _utils._get_application_id(self._connection_string)
 
     def export(self, spans: Sequence[ReadableSpan], **_kwargs: Any) -> SpanExportResult:
         """Export span data.
@@ -134,12 +137,13 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
         :rtype: ~opentelemetry.sdk.trace.export.SpanExportResult
         """
         envelopes = []
+
         if spans and self._should_collect_otel_resource_metric():
             resource = None
             try:
                 tracer_provider = self._tracer_provider or get_tracer_provider()
                 resource = tracer_provider.resource  # type: ignore
-                envelopes.append(self._get_otel_resource_envelope(resource))
+                envelopes.append(self._get_otel_resource_envelope(resource, self.application_id))
             except AttributeError as e:
                 _logger.exception("Failed to derive Resource from Tracer Provider: %s", e)  # pylint: disable=C4769
         for span in spans:
@@ -162,22 +166,29 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
             self.storage.close()
 
     # pylint: disable=protected-access
-    def _get_otel_resource_envelope(self, resource: Resource) -> TelemetryItem:
+    def _get_otel_resource_envelope(self, resource: Resource, application_id: Optional[str]) -> TelemetryItem:
+        # Convert resource attributes to a plain, serializable dict; BoundedAttributes
+        # coming from the SDK are not JSON-serializable as-is.
         attributes: Dict[str, str] = {}
         if resource:
-            attributes = resource.attributes
+            attributes = _utils._filter_custom_properties(dict(resource.attributes))  # type: ignore[arg-type]
         envelope = _utils._create_telemetry_item(time_ns())
         envelope.name = _METRIC_ENVELOPE_NAME
         envelope.tags.update(_utils._populate_part_a_fields(resource))  # pylint: disable=W0212
         envelope.instrumentation_key = self._instrumentation_key
+
+        if application_id and attributes.get(_APPLICATION_ID_RESOURCE_KEY) is None:
+            attributes[_APPLICATION_ID_RESOURCE_KEY] = application_id
+
         data_point = MetricDataPoint(
             name="_OTELRESOURCE_"[:1024],
             value=0,
         )
 
         data = MetricsData(
-            properties=attributes,
+            version=_EXPORTER_DOMAIN_SCHEMA_VERSION,
             metrics=[data_point],
+            properties=attributes,
         )
 
         envelope.data = MonitorBase(base_data=data, base_type="MetricData")
@@ -249,6 +260,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
     if span.kind in (SpanKind.CONSUMER, SpanKind.SERVER):
         envelope.name = _REQUEST_ENVELOPE_NAME
         data = RequestData(
+            version=_EXPORTER_DOMAIN_SCHEMA_VERSION,
             name=span.name,
             id="{:016x}".format(span.context.span_id),
             duration=_utils.ns_to_duration(duration),
@@ -343,7 +355,8 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
         time = 0
         if span.end_time and span.start_time:
             time = span.end_time - span.start_time
-        data = RemoteDependencyData(  # type: ignore
+        data = RemoteDependencyData(
+            version=_EXPORTER_DOMAIN_SCHEMA_VERSION,
             name=span.name,
             id="{:016x}".format(span.context.span_id),
             result_code="0",
@@ -555,13 +568,15 @@ def _convert_span_events_to_envelopes(span: ReadableSpan) -> Sequence[TelemetryI
                 stack=str(stack_trace)[:32768],
             )
             data = TelemetryExceptionData(
+                version=_EXPORTER_DOMAIN_SCHEMA_VERSION,
                 properties=properties,
                 exceptions=[exc_details],
             )
             envelope.data = MonitorBase(base_data=data, base_type="ExceptionData")
         else:
             envelope.name = _MESSAGE_ENVELOPE_NAME
-            data = MessageData(  # type: ignore
+            data = MessageData(
+                version=_EXPORTER_DOMAIN_SCHEMA_VERSION,
                 message=str(event.name)[:32768],
                 properties=properties,
             )

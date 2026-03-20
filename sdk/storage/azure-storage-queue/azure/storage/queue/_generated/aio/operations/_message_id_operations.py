@@ -114,10 +114,10 @@ class MessageIdOperations:
             url=self._config.url,
             pop_receipt=pop_receipt,
             visibilitytimeout=visibilitytimeout,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -188,9 +188,9 @@ class MessageIdOperations:
         _request = build_delete_request(
             url=self._config.url,
             pop_receipt=pop_receipt,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )

@@ -126,11 +126,15 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
         self.allow_trailing_dot = kwargs.pop('allow_trailing_dot', None)
         self.allow_source_trailing_dot = kwargs.pop('allow_source_trailing_dot', None)
         self.file_request_intent = token_intent
-        self._client = AzureFileStorage(url=self.url, base_url=self.url, pipeline=self._pipeline,
-                                        allow_trailing_dot=self.allow_trailing_dot,
-                                        allow_source_trailing_dot=self.allow_source_trailing_dot,
-                                        file_request_intent=self.file_request_intent)
-        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
+        self._client = AzureFileStorage(
+            version=get_api_version(kwargs),
+            url=self.url,
+            base_url=self.url,
+            pipeline=self._pipeline,
+            allow_trailing_dot=self.allow_trailing_dot,
+            allow_source_trailing_dot=self.allow_source_trailing_dot,
+            file_request_intent=self.file_request_intent
+        )
 
     def __enter__(self) -> Self:
         self._client.__enter__()

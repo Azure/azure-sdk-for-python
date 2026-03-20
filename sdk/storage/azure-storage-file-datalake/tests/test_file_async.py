@@ -8,6 +8,7 @@ import tempfile
 import unittest
 from datetime import datetime, timedelta
 from math import ceil
+from urllib.parse import quote, urlencode
 
 import pytest
 from azure.core import MatchConditions
@@ -728,6 +729,27 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
 
     @DataLakePreparer()
     @recorded_by_proxy_async
+    async def test_upload_data_with_none_max_concurrency(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+
+        # Create a directory to put the file under
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory()
+
+        file_client = directory_client.get_file_client('filename')
+        data = self.get_random_bytes(100)
+        # max_concurrency=None should not raise TypeError
+        await file_client.upload_data(data, overwrite=True, max_concurrency=None)
+
+        downloaded_data = await (await file_client.download_file()).readall()
+        assert data == downloaded_data
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_read_file(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -742,6 +764,24 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
 
         # download the data and make sure it is the same as uploaded data
         downloaded_data = await (await file_client.download_file()).readall()
+        assert data == downloaded_data
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
+    async def test_read_file_with_none_max_concurrency(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        file_client = await self._create_file_and_return_client()
+        data = self.get_random_bytes(1024)
+
+        # upload data to file
+        await file_client.append_data(data, 0, len(data))
+        await file_client.flush_data(len(data))
+
+        # max_concurrency=None should not raise TypeError
+        downloaded_data = await (await file_client.download_file(max_concurrency=None)).readall()
         assert data == downloaded_data
 
     @pytest.mark.live_test_only
@@ -1682,6 +1722,62 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
 
         result = await (await file_client.download_file(decompress=False)).readall()
         assert result == compressed_data
+
+    @pytest.mark.live_test_only
+    @DataLakePreparer()
+    async def test_datalake_dynamic_user_delegation_sas(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+
+        token_credential = self.get_credential(DataLakeServiceClient, is_async=True)
+        dsc = DataLakeServiceClient(self.account_url(datalake_storage_account_name, "dfs"), credential=token_credential)
+        fs_name, file_name = self.get_resource_name('filesystem'), self.get_resource_name('file')
+        fs = await dsc.create_file_system(fs_name)
+        file = await fs.create_file(file_name)
+        await file.upload_data(b"abc", overwrite=True)
+
+        user_delegation_key = await dsc.get_user_delegation_key(
+            key_start_time=datetime.utcnow(),
+            key_expiry_time=datetime.utcnow() + timedelta(hours=1),
+        )
+
+        request_headers = {
+            "foo$": "bar!",
+            "company": "msft",
+            "city": "redmond,atlanta,reston",
+        }
+
+        request_query_params = {
+            "hello$": "world!",
+            "check": "spelling",
+            "firstName": "john,Tim",
+        }
+
+        sas_token = generate_file_sas(
+            file.account_name,
+            file.file_system_name,
+            None,
+            file.path_name,
+            user_delegation_key,
+            permission=FileSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            request_headers=request_headers,
+            request_query_params=request_query_params
+        )
+
+        def callback(request):
+            for k, v in request_headers.items():
+                request.http_request.headers[k] = v
+            extra = urlencode(request_query_params, quote_via=quote, safe="")
+            request.http_request.url = request.http_request.url + "&" + extra
+
+        identity_file = DataLakeFileClient(
+            self.account_url(datalake_storage_account_name, 'dfs'),
+            file.file_system_name,
+            file.path_name,
+            credential=sas_token
+        )
+        props = identity_file.get_file_properties(raw_request_hook=callback)
+        assert props is not None
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

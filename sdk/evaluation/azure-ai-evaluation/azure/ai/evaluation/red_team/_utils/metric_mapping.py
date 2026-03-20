@@ -7,7 +7,11 @@ from .._attack_objective_generator import _InternalRiskCategory, RiskCategory
 from azure.ai.evaluation._constants import EvaluationMetrics, _InternalEvaluationMetrics
 from azure.ai.evaluation._common.constants import Tasks, _InternalAnnotationTasks
 
-# Mapping of risk categories to their corresponding evaluation metrics
+# Mapping of risk categories to their corresponding evaluation metrics.
+# Note: HateUnfairness maps to HATE_FAIRNESS because that is the metric name the legacy
+# annotation endpoint recognizes. The bidirectional mapping between hate_fairness and
+# hate_unfairness is handled at the routing layer in evaluate_with_rai_service_sync(),
+# which normalizes the metric name based on the endpoint being used (legacy vs sync).
 RISK_CATEGORY_METRIC_MAP = {
     RiskCategory.Violence: EvaluationMetrics.VIOLENCE,
     RiskCategory.HateUnfairness: EvaluationMetrics.HATE_FAIRNESS,

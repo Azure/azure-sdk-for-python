@@ -1,3 +1,52 @@
+[build-system]
+requires = ["setuptools>=77.0.3", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "corehttp"
+authors = [
+    {name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com"},
+]
+description = "CoreHTTP Library for Python"
+keywords = ["typespec", "core"]
+requires-python = ">=3.9"
+license = "MIT"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+dependencies = [
+    "typing-extensions>=4.6.0",
+]
+dynamic = ["version", "readme"]
+
+[project.optional-dependencies]
+requests = ["requests>=2.18.4"]
+aiohttp = ["aiohttp>=3.0"]
+httpx = ["httpx>=0.25.0"]
+tracing = ["opentelemetry-api~=1.26"]
+
+[project.urls]
+Repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/corehttp"
+
+[tool.setuptools.dynamic]
+version = {attr = "corehttp._version.VERSION"}
+readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
+
+[tool.setuptools.packages.find]
+include = ["corehttp*"]
+
+[tool.setuptools.package-data]
+pytyped = ["py.typed"]
+
 [tool.azure-sdk-build]
 pyright = false
 verify_keywords = false

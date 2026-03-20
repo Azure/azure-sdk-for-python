@@ -59,7 +59,7 @@ async def create_collection(client: PlanetaryComputerProClient, collection_id):
     """Create a new STAC collection with item assets."""
     # Check if collection already exists
     logging.info(f"Checking if collection '{collection_id}' exists...")
-    get_all_collections_response = await client.stac.list_collections()
+    get_all_collections_response = await client.stac.get_collections()
 
     if any(c.id == collection_id for c in get_all_collections_response["collections"]):
         logging.info(f"Collection '{collection_id}' already exists, deleting it...")
@@ -483,7 +483,7 @@ async def main():
     await credential.get_token("https://geocatalog.spatio.azure.com/.default")
 
     # List all collections
-    await client.stac.list_collections()
+    await client.stac.get_collections()
 
     # Create and configure collection
     await create_collection(client, collection_id)

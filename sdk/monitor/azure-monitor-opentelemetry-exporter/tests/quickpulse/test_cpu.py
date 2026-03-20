@@ -2,10 +2,10 @@
 # Licensed under the MIT License.
 # cSpell:disable
 import collections
-import psutil
 import unittest
 from datetime import datetime, timedelta
 from unittest import mock
+import psutil
 
 from azure.monitor.opentelemetry.exporter._quickpulse._cpu import (
     _get_process_memory,
@@ -48,7 +48,32 @@ class TestCpu(unittest.TestCase):
             time = _get_process_time_normalized_old(None)
         obs = next(time)
         num_cpus = psutil.cpu_count()
-        self.assertAlmostEqual(obs.value, 1.2 / num_cpus, delta=1)
+        expected_value = (1.2 / num_cpus) * 100
+        self.assertAlmostEqual(obs.value, expected_value, delta=1)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._cpu._get_quickpulse_process_elapsed_time")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._cpu._get_quickpulse_last_process_time")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._cpu.PROCESS")
+    def test_process_time_capped_at_100(self, process_mock, process_time_mock, elapsed_time_mock):
+        """Test that CPU percentage is capped at 100% even when raw calculation exceeds it."""
+        current = datetime.now()
+        cpu = collections.namedtuple("cpu", ["user", "system"])
+        # Simulate extreme CPU usage that would calculate > 100%
+        # Total CPU time: 200 seconds
+        cpu_times = cpu(user=100.0, system=100.0)
+        process_mock.cpu_times.return_value = cpu_times
+        # Previous total was 0 (first measurement)
+        process_time_mock.return_value = 0.0
+        # Only 1 second elapsed
+        elapsed_time_mock.return_value = current - timedelta(seconds=1)
+        with mock.patch("datetime.datetime") as datetime_mock:
+            datetime_mock.now.return_value = current
+            time = _get_process_time_normalized_old(None)
+        obs = next(time)
+        _num_cpus = psutil.cpu_count()
+        # Without cap: (200 / 1 / _num_cpus) * 100 = (200 / 16) * 100 = 1250%
+        # With cap: Should be 100%
+        self.assertEqual(obs.value, 100)
 
 
 # cSpell:enable

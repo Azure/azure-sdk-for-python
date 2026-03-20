@@ -22,7 +22,7 @@ Follow the instructions [here](https://docs.conda.io/projects/conda-build/en/lat
 
 ```bash
 # cd <repo root>
-pip install "eng/tools/azure-sdk-tools[build,conda]"
+pip install "eng/tools/azure-sdk-tools[conda]"
 ```
 
 ### Get the configuration blob

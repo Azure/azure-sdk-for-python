@@ -24,7 +24,8 @@ from ._generated.models import (
     DeleteSnapshotsOptionType,
     ModifiedAccessConditions,
     QueryRequest,
-    SequenceNumberAccessConditions
+    SequenceNumberAccessConditions,
+    SourceCpkInfo
 )
 from ._models import (
     BlobBlock,
@@ -47,6 +48,7 @@ from ._serialize import (
 )
 from ._shared import encode_base64
 from ._shared.base_client import parse_query
+from ._shared.constants import DEFAULT_MAX_CONCURRENCY
 from ._shared.request_handlers import (
     add_metadata_headers,
     get_length,
@@ -136,7 +138,9 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
     validate_content = kwargs.pop('validate_content', False)
     content_settings = kwargs.pop('content_settings', None)
     overwrite = kwargs.pop('overwrite', False)
-    max_concurrency = kwargs.pop('max_concurrency', 1)
+    max_concurrency = kwargs.pop('max_concurrency', None)
+    if max_concurrency is None:
+        max_concurrency = DEFAULT_MAX_CONCURRENCY
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
@@ -214,6 +218,14 @@ def _upload_blob_from_url_options(source_url: str, **kwargs: Any) -> Dict[str, A
     if cpk:
         cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                             encryption_algorithm=cpk.algorithm)
+    source_cpk = kwargs.pop('source_cpk', None)
+    source_cpk_info = None
+    if source_cpk:
+        source_cpk_info = SourceCpkInfo(
+            source_encryption_key=source_cpk.key_value,
+            source_encryption_key_sha256=source_cpk.key_hash,
+            source_encryption_algorithm=source_cpk.algorithm
+        )
 
     options = {
         'copy_source_authorization': source_authorization,
@@ -230,6 +242,7 @@ def _upload_blob_from_url_options(source_url: str, **kwargs: Any) -> Dict[str, A
         'source_modified_access_conditions': get_source_conditions(kwargs),
         'cpk_info': cpk_info,
         'cpk_scope_info': get_cpk_scope_info(kwargs),
+        'source_cpk_info': source_cpk_info,
         'headers': headers,
     }
     options.update(kwargs)
@@ -313,7 +326,7 @@ def _download_blob_options(
         'modified_access_conditions': mod_conditions,
         'cpk_info': cpk_info,
         'download_cls': kwargs.pop('cls', None) or deserialize_blob_stream,
-        'max_concurrency':kwargs.pop('max_concurrency', 1),
+        'max_concurrency': kwargs.pop('max_concurrency', None) or DEFAULT_MAX_CONCURRENCY,
         'encoding': encoding,
         'timeout': kwargs.pop('timeout', None),
         'name': blob_name,
@@ -393,7 +406,8 @@ def _generic_delete_blob_options(delete_snapshots: Optional[str] = None, **kwarg
         'snapshot': kwargs.pop('snapshot', None),  # this is added for delete_blobs
         'delete_snapshots': delete_snapshots or None,
         'lease_access_conditions': access_conditions,
-        'modified_access_conditions': mod_conditions}
+        'modified_access_conditions': mod_conditions
+    }
     options.update(kwargs)
     return options
 
@@ -757,6 +771,15 @@ def _stage_block_from_url_options(
     if cpk:
         cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                             encryption_algorithm=cpk.algorithm)
+    source_cpk = kwargs.pop('source_cpk', None)
+    source_cpk_info = None
+    if source_cpk:
+        source_cpk_info = SourceCpkInfo(
+            source_encryption_key=source_cpk.key_value,
+            source_encryption_key_sha256=source_cpk.key_hash,
+            source_encryption_algorithm=source_cpk.algorithm
+        )
+
     options = {
         'copy_source_authorization': source_authorization,
         'file_request_intent': source_token_intent,
@@ -769,6 +792,7 @@ def _stage_block_from_url_options(
         'lease_access_conditions': access_conditions,
         'cpk_scope_info': cpk_scope_info,
         'cpk_info': cpk_info,
+        'source_cpk_info': source_cpk_info,
         'cls': return_response_headers,
     }
     options.update(kwargs)
@@ -1040,6 +1064,14 @@ def _upload_pages_from_url_options(
     if cpk:
         cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                             encryption_algorithm=cpk.algorithm)
+    source_cpk = kwargs.pop('source_cpk', None)
+    source_cpk_info = None
+    if source_cpk:
+        source_cpk_info = SourceCpkInfo(
+            source_encryption_key=source_cpk.key_value,
+            source_encryption_key_sha256=source_cpk.key_hash,
+            source_encryption_algorithm=source_cpk.algorithm
+        )
 
     options = {
         'copy_source_authorization': source_authorization,
@@ -1056,7 +1088,9 @@ def _upload_pages_from_url_options(
         'source_modified_access_conditions': source_mod_conditions,
         'cpk_scope_info': cpk_scope_info,
         'cpk_info': cpk_info,
-        'cls': return_response_headers}
+        'source_cpk_info': source_cpk_info,
+        'cls': return_response_headers
+    }
     options.update(kwargs)
     return options
 
@@ -1181,8 +1215,19 @@ def _append_block_from_url_options(
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
-        cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                            encryption_algorithm=cpk.algorithm)
+        cpk_info = CpkInfo(
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            encryption_algorithm=cpk.algorithm
+        )
+    source_cpk = kwargs.pop('source_cpk', None)
+    source_cpk_info = None
+    if source_cpk:
+        source_cpk_info = SourceCpkInfo(
+            source_encryption_key=source_cpk.key_value,
+            source_encryption_key_sha256=source_cpk.key_hash,
+            source_encryption_algorithm=source_cpk.algorithm
+        )
 
     options = {
         'copy_source_authorization': source_authorization,
@@ -1198,8 +1243,10 @@ def _append_block_from_url_options(
         'source_modified_access_conditions': source_mod_conditions,
         'cpk_scope_info': cpk_scope_info,
         'cpk_info': cpk_info,
+        'source_cpk_info': source_cpk_info,
         'cls': return_response_headers,
-        'timeout': kwargs.pop('timeout', None)}
+        'timeout': kwargs.pop('timeout', None)
+    }
     options.update(kwargs)
     return options
 

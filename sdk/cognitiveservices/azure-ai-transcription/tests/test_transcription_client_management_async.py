@@ -18,8 +18,8 @@ class TestTranscriptionClientManagementAsync(TranscriptionClientTestBase):
         # Test creating and using client with context manager
         async with self.create_async_client(endpoint=transcription_endpoint) as client:
             audio_url = transcription_test_audio_url
-            
+
             result = await client.transcribe_from_url(audio_url)
-            
+
             assert result is not None
             assert result.combined_phrases is not None

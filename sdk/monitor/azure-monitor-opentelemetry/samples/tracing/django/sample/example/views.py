@@ -8,10 +8,10 @@ from django.http import HttpResponse
 
 
 # Requests sent to the django application will be automatically captured
-def index(request):
+def index(_request):
     return HttpResponse("Hello, world.")
 
 
 # Exceptions that are raised within the request are automatically captured
-def exception(request):
-    raise Exception("Exception was raised.")
+def exception(_request):
+    raise Exception("Exception was raised.")  # pylint: disable=broad-exception-raised

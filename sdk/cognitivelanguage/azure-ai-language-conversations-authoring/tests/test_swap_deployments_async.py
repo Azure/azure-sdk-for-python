@@ -7,7 +7,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
-from azure.ai.language.conversations.authoring.models import SwapDeploymentsDetails, SwapDeploymentsState
+from azure.ai.language.conversations.authoring.models import SwapDeploymentsDetails
 
 ConversationsPreparer = functools.partial(
     EnvironmentVariableLoader,

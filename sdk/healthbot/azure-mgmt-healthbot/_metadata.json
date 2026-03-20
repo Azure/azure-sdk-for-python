@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-11-01",
+  "commit": "a4bb4c9d53be7676abb18587019ecb73205a8ecc",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/healthbot/HealthBot.Management",
+  "emitterVersion": "0.56.1"
+}

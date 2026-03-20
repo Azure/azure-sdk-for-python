@@ -7,7 +7,7 @@ import time
 from unittest.mock import Mock, patch
 
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.rest import HttpRequest
 from azure.identity.aio._internal.managed_identity_client import AsyncManagedIdentityClient
 import pytest
 

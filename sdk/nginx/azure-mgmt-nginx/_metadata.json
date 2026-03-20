@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2025-11-01",
+  "apiVersions": {
+    "Nginx.NginxPlus": "2025-11-01"
+  },
+  "commit": "747cf4e0938b84f2790eaabd8760bd97d8998aa1",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/nginx/Nginx.Management",
+  "emitterVersion": "0.60.2"
+}

@@ -108,18 +108,19 @@ if __name__ == "__main__":
                 )
                 exit_code = max(exit_code, e.returncode)
             
-        # Run samples with main pylintrc
+        # Run samples with samples_pylintrc
         logging.info(f"Checking samples directory: {samples_dir}")
         logging.info(f"Samples directory exists: {os.path.exists(samples_dir)}")
         if os.path.exists(samples_dir):
             try:
-                logging.info(f"Running pylint on samples with config: {rcFileLocation}")
+                samples_rcfile = os.path.join(root_dir, "eng/samples_pylintrc")
+                logging.info(f"Running pylint on samples with config: {samples_rcfile}")
                 check_call(
                     [
                         sys.executable,
                         "-m",
                         "pylint",
-                        "--rcfile={}".format(rcFileLocation),
+                        "--rcfile={}".format(samples_rcfile),
                         "--output-format=parseable",
                         samples_dir
                     ]

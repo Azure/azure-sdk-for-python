@@ -46,7 +46,7 @@ class TestNetAppManagementCachesOperationsAsync(AzureMgmtRecordedTestCase):
                     "properties": {
                         "cacheSubnetResourceId": "str",
                         "encryptionKeySource": "str",
-                        "filepath": "str",
+                        "filePath": "str",
                         "originClusterInformation": {
                             "peerAddresses": ["str"],
                             "peerClusterName": "str",
@@ -91,7 +91,7 @@ class TestNetAppManagementCachesOperationsAsync(AzureMgmtRecordedTestCase):
                         "protocolTypes": ["str"],
                         "provisioningState": "str",
                         "smbSettings": {
-                            "smbAccessBasedEnumerations": "str",
+                            "smbAccessBasedEnumeration": "str",
                             "smbEncryption": "str",
                             "smbNonBrowsable": "str",
                         },
@@ -156,7 +156,7 @@ class TestNetAppManagementCachesOperationsAsync(AzureMgmtRecordedTestCase):
                         "protocolTypes": ["str"],
                         "size": 0,
                         "smbSettings": {
-                            "smbAccessBasedEnumerations": "str",
+                            "smbAccessBasedEnumeration": "str",
                             "smbEncryption": "str",
                             "smbNonBrowsable": "str",
                         },
@@ -221,6 +221,21 @@ class TestNetAppManagementCachesOperationsAsync(AzureMgmtRecordedTestCase):
                 pool_name="str",
                 cache_name="str",
                 body={"newPoolResourceId": "str"},
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_caches_begin_reset_smb_password(self, resource_group):
+        response = await (
+            await self.client.caches.begin_reset_smb_password(
+                resource_group_name=resource_group.name,
+                account_name="str",
+                pool_name="str",
+                cache_name="str",
             )
         ).result()  # call '.result()' to poll until service return final result
 

@@ -6,22 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from .managedapplications import ApplicationClient
-from .features import FeatureClient
-from .links import ManagementLinkClient
-from .locks import ManagementLockClient
-from .policy import PolicyClient
 from .resources import ResourceManagementClient
-from .subscriptions import SubscriptionClient
-from .databoundaries import DataBoundaryMgmtClient
 
 __all__ = [
-    "ApplicationClient",
-    "FeatureClient",
-    "PolicyClient",
-    "ManagementLinkClient",
-    "ManagementLockClient",
     "ResourceManagementClient",
-    "SubscriptionClient",
-    "DataBoundaryMgmtClient",
 ]
