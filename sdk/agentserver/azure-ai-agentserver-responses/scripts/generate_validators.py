@@ -10,12 +10,8 @@ import json
 from pathlib import Path
 from typing import Any
 
-try:
-    from scripts.validator_emitter import build_validator_module
-    from scripts.validator_schema_walker import SchemaWalker, discover_post_request_roots
-except ModuleNotFoundError:
-    from validator_emitter import build_validator_module
-    from validator_schema_walker import SchemaWalker, discover_post_request_roots
+from validator_emitter import build_validator_module
+from validator_schema_walker import SchemaWalker, discover_post_request_roots
 
 
 def _load_spec(input_path: Path) -> dict[str, Any]:
