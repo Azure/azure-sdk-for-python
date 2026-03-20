@@ -118,6 +118,266 @@ def map_responses_server(
     except LifecycleStateMachineError as exc:
         raise RuntimeError(f"Invalid lifecycle event state machine configuration: {exc}") from exc
 
+    async def _create_stream(
+        *,
+        parsed: Any,
+        context: RuntimeResponseContext,
+        cancellation_signal: asyncio.Event,
+        response_id: str,
+        agent_reference: Any,
+        model: str | None,
+        store: bool,
+        background: bool,
+        input_items: list[Any],
+        previous_response_id: str | None,
+        span: Any,
+        captured_error: Exception | None,
+    ) -> Response:
+        handler_events: list[dict[str, Any]] = []
+        try:
+            handler_iterator = create_async(parsed, context, cancellation_signal)
+            first_handler_event = await handler_iterator.__anext__()
+        except StopAsyncIteration:
+            events = _build_events(
+                response_id,
+                include_progress=True,
+                agent_reference=agent_reference,
+                model=model,
+            )
+
+            async def _fallback_stream() -> AsyncIterator[str]:
+                try:
+                    for event in events:
+                        yield encode_sse_payload(event["type"], event["payload"])
+                finally:
+                    response_payload = _extract_response_snapshot_from_events(
+                        events,
+                        response_id=response_id,
+                        agent_reference=agent_reference,
+                        model=model,
+                    )
+                    resolved_status = response_payload.get("status")
+                    status = (
+                        resolved_status
+                        if isinstance(resolved_status, str)
+                        else ("in_progress" if background else "completed")
+                    )
+
+                    if store:
+                        stream_record = _ExecutionRecord(
+                            response_id=response_id,
+                            agent_reference=deepcopy(agent_reference),
+                            stream=True,
+                            store=True,
+                            background=background,
+                            replay_enabled=background,
+                            visible_via_get=True,
+                            status=status,
+                            model=model,
+                            response_payload=response_payload,
+                            events=deepcopy(events) if background else [],
+                            input_items=deepcopy(input_items),
+                            previous_response_id=previous_response_id,
+                        )
+                        await runtime_state.add(stream_record)
+
+                    span.end(captured_error)
+
+            return StreamingResponse(_fallback_stream(), media_type="text/event-stream", headers=response_headers)
+        except Exception as exc:
+            captured_error = exc
+            span.end(captured_error)
+            return _error_response(exc, response_headers)
+
+        first_normalized = _apply_stream_event_defaults(
+            _coerce_handler_event(first_handler_event),
+            response_id=response_id,
+            agent_reference=agent_reference,
+            model=model,
+            sequence_number=0,
+        )
+        handler_events.append(first_normalized)
+
+        async def _live_stream() -> AsyncIterator[str]:
+            nonlocal captured_error
+
+            try:
+                yield encode_sse_payload(first_normalized["type"], first_normalized["payload"])
+                async for handler_event in handler_iterator:
+                    coerced = _coerce_handler_event(handler_event)
+                    normalized = _apply_stream_event_defaults(
+                        coerced,
+                        response_id=response_id,
+                        agent_reference=agent_reference,
+                        model=model,
+                        sequence_number=len(handler_events),
+                    )
+                    handler_events.append(normalized)
+                    yield encode_sse_payload(normalized["type"], normalized["payload"])
+            except Exception as exc:
+                captured_error = exc
+                return
+            finally:
+                events = handler_events if handler_events else _build_events(
+                    response_id,
+                    include_progress=True,
+                    agent_reference=agent_reference,
+                    model=model,
+                )
+
+                response_payload = _extract_response_snapshot_from_events(
+                    events,
+                    response_id=response_id,
+                    agent_reference=agent_reference,
+                    model=model,
+                )
+                resolved_status = response_payload.get("status")
+                status = (
+                    resolved_status
+                    if isinstance(resolved_status, str)
+                    else ("in_progress" if background else "completed")
+                )
+
+                if store:
+                    stream_record = _ExecutionRecord(
+                        response_id=response_id,
+                        agent_reference=deepcopy(agent_reference),
+                        stream=True,
+                        store=True,
+                        background=background,
+                        replay_enabled=background,
+                        visible_via_get=True,
+                        status=status,
+                        model=model,
+                        response_payload=response_payload,
+                        events=deepcopy(events) if background else [],
+                        input_items=deepcopy(input_items),
+                        previous_response_id=previous_response_id,
+                    )
+                    await runtime_state.add(stream_record)
+
+                span.end(captured_error)
+
+        return StreamingResponse(_live_stream(), media_type="text/event-stream", headers=response_headers)
+
+    async def _create_sync(
+        *,
+        parsed: Any,
+        context: RuntimeResponseContext,
+        cancellation_signal: asyncio.Event,
+        response_id: str,
+        agent_reference: Any,
+        model: str | None,
+        store: bool,
+        input_items: list[Any],
+        previous_response_id: str | None,
+        span: Any,
+        captured_error: Exception | None,
+    ) -> Response:
+        handler_events: list[dict[str, Any]] = []
+        try:
+            async for handler_event in create_async(parsed, context, cancellation_signal):
+                coerced = _coerce_handler_event(handler_event)
+                normalized = _apply_stream_event_defaults(
+                    coerced,
+                    response_id=response_id,
+                    agent_reference=agent_reference,
+                    model=model,
+                    sequence_number=None,
+                )
+                handler_events.append(normalized)
+        except Exception as exc:
+            captured_error = exc
+            span.end(captured_error)
+            return _error_response(exc, response_headers)
+
+        events = handler_events if handler_events else _build_events(
+            response_id,
+            include_progress=True,
+            agent_reference=agent_reference,
+            model=model,
+        )
+        response_payload = _extract_response_snapshot_from_events(
+            events,
+            response_id=response_id,
+            agent_reference=agent_reference,
+            model=model,
+            remove_sequence_number=True,
+        )
+        resolved_status = response_payload.get("status")
+        status = resolved_status if isinstance(resolved_status, str) else "completed"
+
+        record = _ExecutionRecord(
+            response_id=response_id,
+            agent_reference=deepcopy(agent_reference),
+            stream=False,
+            store=store,
+            background=False,
+            replay_enabled=False,
+            visible_via_get=store,
+            status=status,
+            model=model,
+            response_payload=response_payload,
+            input_items=deepcopy(input_items),
+            previous_response_id=previous_response_id,
+            response_context=context,
+        )
+
+        if store:
+            await runtime_state.add(record)
+
+        span.end(captured_error)
+        return JSONResponse(record.to_snapshot(), status_code=200, headers=response_headers)
+
+    async def _create_background(
+        *,
+        parsed: Any,
+        context: RuntimeResponseContext,
+        cancellation_signal: asyncio.Event,
+        response_id: str,
+        agent_reference: Any,
+        model: str | None,
+        store: bool,
+        input_items: list[Any],
+        previous_response_id: str | None,
+        span: Any,
+        captured_error: Exception | None,
+    ) -> Response:
+        record = _ExecutionRecord(
+            response_id=response_id,
+            agent_reference=deepcopy(agent_reference),
+            stream=False,
+            store=store,
+            background=True,
+            replay_enabled=False,
+            visible_via_get=store,
+            status="queued",
+            model=model,
+            input_items=deepcopy(input_items),
+            previous_response_id=previous_response_id,
+            response_context=context,
+        )
+
+        async def _background_runner() -> None:
+            await _run_background_non_stream(
+                create_async=create_async,
+                parsed=parsed,
+                context=context,
+                cancellation_signal=cancellation_signal,
+                record=record,
+                response_id=response_id,
+                agent_reference=agent_reference,
+                model=model,
+            )
+
+        record.background_runner = _background_runner
+
+        if store:
+            await runtime_state.add(record)
+
+        span.end(captured_error)
+        return JSONResponse(record.to_snapshot(), status_code=200, headers=response_headers)
+
     async def _create(request: Request) -> Response:
         nonlocal runtime_is_draining
 
@@ -179,223 +439,49 @@ def map_responses_server(
         )
 
         if stream:
-            handler_events: list[dict[str, Any]] = []
-            try:
-                handler_iterator = create_async(parsed, context, cancellation_signal)
-                first_handler_event = await handler_iterator.__anext__()
-            except StopAsyncIteration:
-                events = _build_events(
-                    response_id,
-                    include_progress=True,
-                    agent_reference=agent_reference,
-                    model=model,
-                )
-
-                async def _fallback_stream() -> AsyncIterator[str]:
-                    try:
-                        for event in events:
-                            yield encode_sse_payload(event["type"], event["payload"])
-                    finally:
-                        response_payload = _extract_response_snapshot_from_events(
-                            events,
-                            response_id=response_id,
-                            agent_reference=agent_reference,
-                            model=model,
-                        )
-                        resolved_status = response_payload.get("status")
-                        status = (
-                            resolved_status
-                            if isinstance(resolved_status, str)
-                            else ("in_progress" if background else "completed")
-                        )
-
-                        if store:
-                            stream_record = _ExecutionRecord(
-                                response_id=response_id,
-                                agent_reference=deepcopy(agent_reference),
-                                stream=True,
-                                store=True,
-                                background=background,
-                                replay_enabled=background,
-                                visible_via_get=True,
-                                status=status,
-                                model=model,
-                                response_payload=response_payload,
-                                events=deepcopy(events) if background else [],
-                                input_items=deepcopy(input_items),
-                                previous_response_id=previous_response_id,
-                            )
-                            await runtime_state.add(stream_record)
-
-                        span.end(captured_error)
-
-                return StreamingResponse(_fallback_stream(), media_type="text/event-stream", headers=response_headers)
-            except Exception as exc:
-                captured_error = exc
-                span.end(captured_error)
-                return _error_response(exc, response_headers)
-
-            first_normalized = _apply_stream_event_defaults(
-                _coerce_handler_event(first_handler_event),
-                response_id=response_id,
-                agent_reference=agent_reference,
-                model=model,
-                sequence_number=0,
-            )
-            handler_events.append(first_normalized)
-
-            async def _live_stream() -> AsyncIterator[str]:
-                nonlocal captured_error
-
-                try:
-                    yield encode_sse_payload(first_normalized["type"], first_normalized["payload"])
-                    async for handler_event in handler_iterator:
-                        coerced = _coerce_handler_event(handler_event)
-                        normalized = _apply_stream_event_defaults(
-                            coerced,
-                            response_id=response_id,
-                            agent_reference=agent_reference,
-                            model=model,
-                            sequence_number=len(handler_events),
-                        )
-                        handler_events.append(normalized)
-                        yield encode_sse_payload(normalized["type"], normalized["payload"])
-                except Exception as exc:
-                    captured_error = exc
-                    return
-                finally:
-                    events = handler_events if handler_events else _build_events(
-                        response_id,
-                        include_progress=True,
-                        agent_reference=agent_reference,
-                        model=model,
-                    )
-
-                    response_payload = _extract_response_snapshot_from_events(
-                        events,
-                        response_id=response_id,
-                        agent_reference=agent_reference,
-                        model=model,
-                    )
-                    resolved_status = response_payload.get("status")
-                    status = (
-                        resolved_status
-                        if isinstance(resolved_status, str)
-                        else ("in_progress" if background else "completed")
-                    )
-
-                    if store:
-                        stream_record = _ExecutionRecord(
-                            response_id=response_id,
-                            agent_reference=deepcopy(agent_reference),
-                            stream=True,
-                            store=True,
-                            background=background,
-                            replay_enabled=background,
-                            visible_via_get=True,
-                            status=status,
-                            model=model,
-                            response_payload=response_payload,
-                            events=deepcopy(events) if background else [],
-                            input_items=deepcopy(input_items),
-                            previous_response_id=previous_response_id,
-                        )
-                        await runtime_state.add(stream_record)
-
-                    span.end(captured_error)
-
-            return StreamingResponse(_live_stream(), media_type="text/event-stream", headers=response_headers)
-
-        if not stream and not background:
-            handler_events: list[dict[str, Any]] = []
-            try:
-                async for handler_event in create_async(parsed, context, cancellation_signal):
-                    coerced = _coerce_handler_event(handler_event)
-                    normalized = _apply_stream_event_defaults(
-                        coerced,
-                        response_id=response_id,
-                        agent_reference=agent_reference,
-                        model=model,
-                        sequence_number=None,
-                    )
-                    handler_events.append(normalized)
-            except Exception as exc:
-                captured_error = exc
-                span.end(captured_error)
-                return _error_response(exc, response_headers)
-
-            events = handler_events if handler_events else _build_events(
-                response_id,
-                include_progress=True,
-                agent_reference=agent_reference,
-                model=model,
-            )
-            response_payload = _extract_response_snapshot_from_events(
-                events,
-                response_id=response_id,
-                agent_reference=agent_reference,
-                model=model,
-                remove_sequence_number=True,
-            )
-            resolved_status = response_payload.get("status")
-            status = resolved_status if isinstance(resolved_status, str) else "completed"
-
-            record = _ExecutionRecord(
-                response_id=response_id,
-                agent_reference=deepcopy(agent_reference),
-                stream=False,
-                store=store,
-                background=False,
-                replay_enabled=False,
-                visible_via_get=store,
-                status=status,
-                model=model,
-                response_payload=response_payload,
-                input_items=deepcopy(input_items),
-                previous_response_id=previous_response_id,
-                response_context=context,
-            )
-
-            if store:
-                await runtime_state.add(record)
-
-            span.end(captured_error)
-            return JSONResponse(record.to_snapshot(), status_code=200, headers=response_headers)
-
-        record = _ExecutionRecord(
-            response_id=response_id,
-            agent_reference=deepcopy(agent_reference),
-            stream=False,
-            store=store,
-            background=True,
-            replay_enabled=False,
-            visible_via_get=store,
-            status="queued",
-            model=model,
-            input_items=deepcopy(input_items),
-            previous_response_id=previous_response_id,
-            response_context=context,
-        )
-
-        async def _background_runner() -> None:
-            await _run_background_non_stream(
-                create_async=create_async,
+            return await _create_stream(
                 parsed=parsed,
                 context=context,
                 cancellation_signal=cancellation_signal,
-                record=record,
                 response_id=response_id,
                 agent_reference=agent_reference,
                 model=model,
+                store=store,
+                background=background,
+                input_items=input_items,
+                previous_response_id=previous_response_id,
+                span=span,
+                captured_error=captured_error,
             )
 
-        record.background_runner = _background_runner
+        if not background:
+            return await _create_sync(
+                parsed=parsed,
+                context=context,
+                cancellation_signal=cancellation_signal,
+                response_id=response_id,
+                agent_reference=agent_reference,
+                model=model,
+                store=store,
+                input_items=input_items,
+                previous_response_id=previous_response_id,
+                span=span,
+                captured_error=captured_error,
+            )
 
-        if store:
-            await runtime_state.add(record)
-
-        span.end(captured_error)
-        return JSONResponse(record.to_snapshot(), status_code=200, headers=response_headers)
+        return await _create_background(
+            parsed=parsed,
+            context=context,
+            cancellation_signal=cancellation_signal,
+            response_id=response_id,
+            agent_reference=agent_reference,
+            model=model,
+            store=store,
+            input_items=input_items,
+            previous_response_id=previous_response_id,
+            span=span,
+            captured_error=captured_error,
+        )
 
     async def _get(request: Request) -> Response:
         response_id = request.path_params["response_id"]

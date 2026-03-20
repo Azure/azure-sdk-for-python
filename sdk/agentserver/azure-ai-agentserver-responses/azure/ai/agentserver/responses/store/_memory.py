@@ -363,6 +363,3 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
             store=bool(getattr(response, "store", True)),
             background=bool(getattr(response, "background", False)),
         )
-
-
-# Backward compatibility aliases for pre-refactor Python naming.
