@@ -33,7 +33,7 @@ async def sample_send_request_async():
     import sys
     from pathlib import Path
 
-    sys.path.append(str(Path(__file__).resolve().parents[1]))
+    sys.path.append(str(Path(__file__).resolve().parent))
     from sample_utils import AZURE_SEARCH_API_VERSION
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
