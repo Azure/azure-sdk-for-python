@@ -64,11 +64,11 @@
   - Added enum `SyncTrigger`
   - Added enum `TriggerStatus`
   - Model `ConnectedRegistriesOperations` added method `resync`
-  - Added model `ArchiveVersionsOperations`
-  - Added model `ArchivesOperations`
-  - Added model `ExportPipelinesOperations`
-  - Added model `ImportPipelinesOperations`
-  - Added model `PipelineRunsOperations`
+  - Added operation group class `ArchiveVersionsOperations`
+  - Added operation group class `ArchivesOperations`
+  - Added operation group class `ExportPipelinesOperations`
+  - Added operation group class `ImportPipelinesOperations`
+  - Added operation group class `PipelineRunsOperations`
 
 ## 15.0.0 (2026-03-17)
 
