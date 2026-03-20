@@ -17,12 +17,23 @@ jobs:
         with:
           fetch-depth: 0  # needed so chronus can diff against base branch
 
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
+          cache: pnpm
+          cache-dependency-path: .github/pnpm-lock.yaml
+
+      - name: Install pinned dependencies
+        run: pnpm install --frozen-lockfile
+        working-directory: .github
 
       - name: Run chronus verify
-        run: npx -y @chronus/chronus verify
+        run: pnpm chronus verify
+        working-directory: .github
 
       - name: Chronus verification failed – see docs
         if: failure()
