@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Unit tests for validation helpers."""
 
 from __future__ import annotations

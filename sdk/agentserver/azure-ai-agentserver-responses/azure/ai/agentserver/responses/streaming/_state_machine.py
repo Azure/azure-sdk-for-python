@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Lifecycle event state machine for Responses streaming."""
 
 from __future__ import annotations

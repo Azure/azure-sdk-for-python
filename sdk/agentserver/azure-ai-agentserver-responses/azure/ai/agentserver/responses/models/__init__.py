@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Canonical non-generated model types for the response server."""
 
 from .errors import RequestValidationError

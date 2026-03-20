@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Smoke-test script for the GetStarted sample.
 
 Usage:

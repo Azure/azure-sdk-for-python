@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Phase E Part D stream builder parity tests."""
 
 from __future__ import annotations

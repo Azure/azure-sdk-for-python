@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Tests for OpenAPI schema walker behavior used by validator generation."""
 
 from __future__ import annotations

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Runtime state management for the Responses server."""
 
 from __future__ import annotations

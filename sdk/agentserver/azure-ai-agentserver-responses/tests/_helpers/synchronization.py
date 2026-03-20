@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Deterministic synchronization helpers used by contract and integration tests."""
 
 from __future__ import annotations

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Base builder infrastructure: lifecycle state, base class, and generic builder."""
 
 from __future__ import annotations

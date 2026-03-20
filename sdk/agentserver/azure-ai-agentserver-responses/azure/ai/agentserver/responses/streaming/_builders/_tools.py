@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Tool call builders: file search, web search, code interpreter, image gen, MCP, and custom tools."""
 
 from __future__ import annotations

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Contract tests for DELETE /responses/{response_id} endpoint behavior."""
 
 from __future__ import annotations

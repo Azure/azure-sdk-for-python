@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """HTTP error response factory functions for the Responses server."""
 
 from __future__ import annotations

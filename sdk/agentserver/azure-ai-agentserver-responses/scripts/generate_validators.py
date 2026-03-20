@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 #!/usr/bin/env python3
 """Generate Python payload validators from an OpenAPI document."""
 

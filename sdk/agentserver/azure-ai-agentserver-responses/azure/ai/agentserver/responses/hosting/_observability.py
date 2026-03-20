@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Observability and identity header helpers."""
 
 from __future__ import annotations

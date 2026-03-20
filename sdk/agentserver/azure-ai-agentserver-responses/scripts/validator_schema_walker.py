@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Schema walking helpers for validator generation."""
 
 from __future__ import annotations

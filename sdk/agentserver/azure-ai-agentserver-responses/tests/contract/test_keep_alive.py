@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Contract tests for SSE keep-alive comment frames during streaming."""
 
 from __future__ import annotations

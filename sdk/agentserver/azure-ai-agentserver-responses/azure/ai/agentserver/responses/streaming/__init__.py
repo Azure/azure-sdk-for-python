@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Event streaming, SSE encoding, and output item builders."""
 
 from ._builders import (

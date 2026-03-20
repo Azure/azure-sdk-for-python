@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Background execution helpers for non-stream responses."""
 
 from __future__ import annotations

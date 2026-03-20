@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Function call builders: function-call and function-call-output output items."""
 
 from __future__ import annotations

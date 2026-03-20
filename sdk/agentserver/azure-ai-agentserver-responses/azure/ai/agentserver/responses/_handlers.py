@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Handler and context contracts for user-defined response execution."""
 
 from __future__ import annotations

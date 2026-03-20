@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Integration tests for store and lifecycle behavior."""
 
 from __future__ import annotations

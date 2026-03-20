@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Reasoning-related builders: summary parts and reasoning output items."""
 
 from __future__ import annotations

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Contract matrix tests for POST /responses store/background/stream combinations.
 
 These cases mirror C1-C8 in docs/api-behaviour-contract.md.

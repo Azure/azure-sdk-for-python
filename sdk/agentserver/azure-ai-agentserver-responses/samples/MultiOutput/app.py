@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """MultiOutput sample for azure-ai-agentserver-responses.
 
 Run:

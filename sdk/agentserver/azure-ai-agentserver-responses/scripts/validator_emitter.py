@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Emitter that builds deterministic Python validator modules from schemas."""
 
 from __future__ import annotations

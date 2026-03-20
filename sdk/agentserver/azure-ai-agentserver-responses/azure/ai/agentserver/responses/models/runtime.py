@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Runtime domain models for response sessions and stream events."""
 
 from __future__ import annotations

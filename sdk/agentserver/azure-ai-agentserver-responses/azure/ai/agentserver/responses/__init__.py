@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Public API surface for the Azure AI Agent Server Responses package."""
 
 from .streaming._builders import (

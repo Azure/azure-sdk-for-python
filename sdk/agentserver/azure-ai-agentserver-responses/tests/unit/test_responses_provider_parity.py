@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Parity checks for provider naming alignment with .NET contracts."""
 
 from __future__ import annotations

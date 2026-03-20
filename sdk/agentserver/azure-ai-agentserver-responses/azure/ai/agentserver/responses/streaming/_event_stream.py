@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Response event stream builders for lifecycle and output item events."""
 
 from __future__ import annotations

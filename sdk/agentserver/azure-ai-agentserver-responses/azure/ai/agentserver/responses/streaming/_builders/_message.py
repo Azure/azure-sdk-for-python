@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Message-related builders: text content, refusal content, and message output item."""
 
 from __future__ import annotations

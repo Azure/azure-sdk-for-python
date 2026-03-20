@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """FunctionCalling sample for azure-ai-agentserver-responses.
 
 Run:

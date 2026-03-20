@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Contract tests for GET /responses/{response_id}/input_items behavior."""
 
 from __future__ import annotations

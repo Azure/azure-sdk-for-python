@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Starlette hosting integration for the Responses server package."""
 
 from __future__ import annotations

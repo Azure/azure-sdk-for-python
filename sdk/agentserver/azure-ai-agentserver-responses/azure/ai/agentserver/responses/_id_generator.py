@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """ID generation utilities aligned with the .NET IdGenerator implementation."""
 
 from __future__ import annotations

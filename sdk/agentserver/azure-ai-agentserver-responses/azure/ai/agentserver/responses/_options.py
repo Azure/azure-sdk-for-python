@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Typed options for configuring the Responses server runtime."""
 
 from __future__ import annotations

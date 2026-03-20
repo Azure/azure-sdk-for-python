@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """ConversationHistory sample for azure-ai-agentserver-responses.
 
 Run:

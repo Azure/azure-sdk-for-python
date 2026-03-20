@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Requests-based test client for the ConversationHistory sample.
 
 Usage:

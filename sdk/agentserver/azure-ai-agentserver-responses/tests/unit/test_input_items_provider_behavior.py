@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Unit tests for input-items provider paging and error semantics."""
 
 from __future__ import annotations

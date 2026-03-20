@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Contract tests for POST /responses endpoint behavior."""
 
 from __future__ import annotations

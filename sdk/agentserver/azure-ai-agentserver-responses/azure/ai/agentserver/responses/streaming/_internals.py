@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Internal helper functions extracted from ResponseEventStream.
 
 These are pure or near-pure functions that operate on event dicts

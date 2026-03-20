@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Persistence abstraction for response execution and replay state."""
 
 from __future__ import annotations

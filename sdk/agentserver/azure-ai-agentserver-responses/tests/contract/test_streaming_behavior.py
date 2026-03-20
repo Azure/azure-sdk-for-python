@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Contract tests for SSE streaming behavior."""
 
 from __future__ import annotations

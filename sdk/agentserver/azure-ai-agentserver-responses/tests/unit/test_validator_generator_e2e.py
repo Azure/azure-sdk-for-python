@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """End-to-end tests for validator generator CLI output."""
 
 from __future__ import annotations

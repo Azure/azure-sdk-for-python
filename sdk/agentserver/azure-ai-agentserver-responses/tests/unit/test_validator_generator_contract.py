@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Tests for validator generator contract behavior."""
 
 from __future__ import annotations

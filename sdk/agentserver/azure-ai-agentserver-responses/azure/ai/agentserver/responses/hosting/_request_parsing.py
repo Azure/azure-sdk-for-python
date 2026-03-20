@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Request pre-validation, identity resolution, and input extraction helpers."""
 
 from __future__ import annotations

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Integration tests for Starlette host registration and wiring."""
 
 from __future__ import annotations

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """In-memory response store implementation."""
 
 from __future__ import annotations

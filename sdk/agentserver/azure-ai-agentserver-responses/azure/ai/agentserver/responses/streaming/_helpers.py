@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
 """Event coercion, defaults application, and snapshot extraction helpers."""
 
 from __future__ import annotations
