@@ -29,25 +29,49 @@ class ResponseContext(Protocol):
 
     @property
     def response_id(self) -> str:
-        """Get the unique response identifier."""
+        """Get the unique response identifier.
+
+        :returns: The unique response identifier string.
+        :rtype: str
+        """
 
     @property
     def is_shutdown_requested(self) -> bool:
-        """Get whether shutdown has been requested by the host."""
+        """Get whether shutdown has been requested by the host.
+
+        :returns: True if shutdown has been requested, False otherwise.
+        :rtype: bool
+        """
 
     @is_shutdown_requested.setter
     def is_shutdown_requested(self, value: bool) -> None:
-        """Set whether shutdown has been requested by the host."""
+        """Set whether shutdown has been requested by the host.
+
+        :param value: Whether shutdown has been requested.
+        :type value: bool
+        """
 
     @property
     def raw_body(self) -> RawBodyType:
-        """Get the raw request body payload for extension field access."""
+        """Get the raw request body payload for extension field access.
+
+        :returns: The raw request body, which may be a mapping, sequence, scalar, or None.
+        :rtype: RawBodyType
+        """
 
     async def get_input_items_async(self) -> Sequence[OutputItem]:
-        """Resolve and return request input items."""
+        """Resolve and return request input items.
+
+        :returns: A sequence of input items from the request.
+        :rtype: Sequence[OutputItem]
+        """
 
     async def get_history_async(self) -> Sequence[OutputItem]:
-        """Resolve and return conversation history items."""
+        """Resolve and return conversation history items.
+
+        :returns: A sequence of conversation history items.
+        :rtype: Sequence[OutputItem]
+        """
 
 
 @dataclass(slots=True)
@@ -66,16 +90,31 @@ class RuntimeResponseContext:
 
     @property
     def is_shutdown_requested(self) -> bool:
-        """Get whether shutdown has been requested by the host."""
+        """Get whether shutdown has been requested by the host.
+
+        :returns: True if shutdown has been requested, False otherwise.
+        :rtype: bool
+        """
         return self._is_shutdown_requested
 
     @is_shutdown_requested.setter
     def is_shutdown_requested(self, value: bool) -> None:
-        """Set whether shutdown has been requested by the host."""
+        """Set whether shutdown has been requested by the host.
+
+        :param value: Whether shutdown has been requested.
+        :type value: bool
+        """
         self._is_shutdown_requested = value
 
     async def get_input_items_async(self) -> Sequence[OutputItem]:
-        """Resolve and cache request input items."""
+        """Resolve and cache request input items.
+
+        If items have already been loaded, returns the cached result.
+        Otherwise, invokes the input items loader and caches the result.
+
+        :returns: A tuple of input items from the request.
+        :rtype: Sequence[OutputItem]
+        """
         if self._input_items_cache is not None:
             return self._input_items_cache
 
@@ -88,7 +127,14 @@ class RuntimeResponseContext:
         return self._input_items_cache
 
     async def get_history_async(self) -> Sequence[OutputItem]:
-        """Resolve and cache conversation history items."""
+        """Resolve and cache conversation history items.
+
+        If history has already been loaded, returns the cached result.
+        Otherwise, invokes the history loader and caches the result.
+
+        :returns: A tuple of conversation history items.
+        :rtype: Sequence[OutputItem]
+        """
         if self._history_cache is not None:
             return self._history_cache
 
@@ -114,4 +160,14 @@ class ResponseHandler(Protocol):
         context: ResponseContext,
         cancellation_signal: asyncio.Event,
     ) -> AsyncIterable[ResponseStreamEvent]:
-        """Yield the full response event stream for one create request."""
+        """Yield the full response event stream for one create request.
+
+        :param request: The create response request payload.
+        :type request: CreateResponse
+        :param context: The runtime context for this response execution.
+        :type context: ResponseContext
+        :param cancellation_signal: An event that is set when cancellation is requested.
+        :type cancellation_signal: asyncio.Event
+        :returns: An async iterable of response stream events.
+        :rtype: AsyncIterable[ResponseStreamEvent]
+        """

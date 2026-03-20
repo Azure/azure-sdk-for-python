@@ -42,6 +42,20 @@ class ResponseEventStream:
         request: generated_models.CreateResponse | dict[str, Any] | None = None,
         response: generated_models.Response | dict[str, Any] | None = None,
     ) -> None:
+        """Initialize a new response event stream.
+
+        :param response_id: Unique identifier for the response. Inferred from *response* if omitted.
+        :type response_id: str | None
+        :param agent_reference: Optional agent reference metadata dict.
+        :type agent_reference: dict[str, Any] | None
+        :param model: Optional model identifier to stamp on the response.
+        :type model: str | None
+        :param request: Optional create-response request to seed the response envelope from.
+        :type request: ~azure.ai.agentserver.responses.models._generated.CreateResponse | dict[str, Any] | None
+        :param response: Optional pre-existing response envelope to build upon.
+        :type response: ~azure.ai.agentserver.responses.models._generated.Response | dict[str, Any] | None
+        :raises ValueError: If both *request* and *response* are provided, or if *response_id* cannot be resolved.
+        """
         if request is not None and response is not None:
             raise ValueError("request and response cannot both be provided")
 
@@ -98,9 +112,19 @@ class ResponseEventStream:
 
     @property
     def response(self) -> generated_models.Response:
+        """Return the current response envelope.
+
+        :returns: The mutable response envelope being built by this stream.
+        :rtype: ~azure.ai.agentserver.responses.models._generated.Response
+        """
         return self._response
 
     def emit_queued(self) -> dict[str, Any]:
+        """Emit a ``response.queued`` lifecycle event.
+
+        :returns: The emitted event dict with type and payload.
+        :rtype: dict[str, Any]
+        """
         self._response.status = "queued"
         return self._emit_event(
             {
@@ -110,6 +134,13 @@ class ResponseEventStream:
         )
 
     def emit_created(self, *, status: str = "in_progress") -> dict[str, Any]:
+        """Emit a ``response.created`` lifecycle event.
+
+        :param status: Initial status to set on the response. Defaults to ``"in_progress"``.
+        :type status: str
+        :returns: The emitted event dict with type and payload.
+        :rtype: dict[str, Any]
+        """
         self._response.status = status
         return self._emit_event(
             {
@@ -119,6 +150,11 @@ class ResponseEventStream:
         )
 
     def emit_in_progress(self) -> dict[str, Any]:
+        """Emit a ``response.in_progress`` lifecycle event.
+
+        :returns: The emitted event dict with type and payload.
+        :rtype: dict[str, Any]
+        """
         self._response.status = "in_progress"
         return self._emit_event(
             {
@@ -128,6 +164,13 @@ class ResponseEventStream:
         )
 
     def emit_completed(self, *, usage: generated_models.ResponseUsage | dict[str, Any] | None = None) -> dict[str, Any]:
+        """Emit a ``response.completed`` terminal lifecycle event.
+
+        :param usage: Optional usage statistics to attach to the response.
+        :type usage: ~azure.ai.agentserver.responses.models._generated.ResponseUsage | dict[str, Any] | None
+        :returns: The emitted event dict with type and payload.
+        :rtype: dict[str, Any]
+        """
         self._response.status = "completed"
         self._response.error = None
         self._response.incomplete_details = None
@@ -146,6 +189,17 @@ class ResponseEventStream:
         message: str = "An internal server error occurred.",
         usage: generated_models.ResponseUsage | dict[str, Any] | None = None,
     ) -> dict[str, Any]:
+        """Emit a ``response.failed`` terminal lifecycle event.
+
+        :param code: Error code describing the failure.
+        :type code: str | ~azure.ai.agentserver.responses.models._generated.ResponseErrorCode
+        :param message: Human-readable error message.
+        :type message: str
+        :param usage: Optional usage statistics to attach to the response.
+        :type usage: ~azure.ai.agentserver.responses.models._generated.ResponseUsage | dict[str, Any] | None
+        :returns: The emitted event dict with type and payload.
+        :rtype: dict[str, Any]
+        """
         self._response.status = "failed"
         self._response.incomplete_details = None
         self._response.error = generated_models.ResponseError(
@@ -168,6 +222,15 @@ class ResponseEventStream:
         reason: str | generated_models.ResponseIncompleteDetailsReason | None = None,
         usage: generated_models.ResponseUsage | dict[str, Any] | None = None,
     ) -> dict[str, Any]:
+        """Emit a ``response.incomplete`` terminal lifecycle event.
+
+        :param reason: Optional reason for incompleteness.
+        :type reason: str | ~azure.ai.agentserver.responses.models._generated.ResponseIncompleteDetailsReason | None
+        :param usage: Optional usage statistics to attach to the response.
+        :type usage: ~azure.ai.agentserver.responses.models._generated.ResponseUsage | dict[str, Any] | None
+        :returns: The emitted event dict with type and payload.
+        :rtype: dict[str, Any]
+        """
         self._response.status = "incomplete"
         self._response.error = None
         if reason is None:
@@ -187,6 +250,15 @@ class ResponseEventStream:
         )
 
     def add_output_item(self, item_id: str) -> OutputItemBuilder:
+        """Add a generic output item and return its builder.
+
+        :param item_id: Unique identifier for the output item.
+        :type item_id: str
+        :returns: A builder for emitting added/done events for the output item.
+        :rtype: OutputItemBuilder
+        :raises TypeError: If *item_id* is None.
+        :raises ValueError: If *item_id* is empty or has an invalid format.
+        """
         if item_id is None:
             raise TypeError("item_id must not be None")
         if not isinstance(item_id, str) or not item_id.strip():
@@ -201,12 +273,26 @@ class ResponseEventStream:
         return OutputItemBuilder(self, output_index=output_index, item_id=item_id)
 
     def add_output_item_message(self) -> OutputItemMessageBuilder:
+        """Add a message output item and return its scoped builder.
+
+        :returns: A builder for emitting message content, text deltas, and lifecycle events.
+        :rtype: OutputItemMessageBuilder
+        """
         output_index = self._output_index
         self._output_index += 1
         item_id = IdGenerator.new_message_item_id(self._response_id)
         return OutputItemMessageBuilder(self, output_index=output_index, item_id=item_id)
 
     def add_output_item_function_call(self, name: str, call_id: str) -> OutputItemFunctionCallBuilder:
+        """Add a function-call output item and return its scoped builder.
+
+        :param name: The function name being called.
+        :type name: str
+        :param call_id: Unique identifier for this function call.
+        :type call_id: str
+        :returns: A builder for emitting function-call argument deltas and lifecycle events.
+        :rtype: OutputItemFunctionCallBuilder
+        """
         output_index = self._output_index
         self._output_index += 1
         item_id = IdGenerator.new_function_call_item_id(self._response_id)
@@ -219,6 +305,13 @@ class ResponseEventStream:
         )
 
     def add_output_item_function_call_output(self, call_id: str) -> OutputItemFunctionCallOutputBuilder:
+        """Add a function-call-output item and return its scoped builder.
+
+        :param call_id: The call ID of the function call this output belongs to.
+        :type call_id: str
+        :returns: A builder for emitting function-call output lifecycle events.
+        :rtype: OutputItemFunctionCallOutputBuilder
+        """
         output_index = self._output_index
         self._output_index += 1
         item_id = IdGenerator.new_function_call_output_item_id(self._response_id)
@@ -230,36 +323,70 @@ class ResponseEventStream:
         )
 
     def add_output_item_reasoning_item(self) -> OutputItemReasoningItemBuilder:
+        """Add a reasoning output item and return its scoped builder.
+
+        :returns: A builder for emitting reasoning summary parts and lifecycle events.
+        :rtype: OutputItemReasoningItemBuilder
+        """
         output_index = self._output_index
         self._output_index += 1
         item_id = IdGenerator.new_reasoning_item_id(self._response_id)
         return OutputItemReasoningItemBuilder(self, output_index=output_index, item_id=item_id)
 
     def add_output_item_file_search_call(self) -> OutputItemFileSearchCallBuilder:
+        """Add a file-search tool call output item and return its scoped builder.
+
+        :returns: A builder for emitting file-search call lifecycle events.
+        :rtype: OutputItemFileSearchCallBuilder
+        """
         output_index = self._output_index
         self._output_index += 1
         item_id = IdGenerator.new_file_search_call_item_id(self._response_id)
         return OutputItemFileSearchCallBuilder(self, output_index=output_index, item_id=item_id)
 
     def add_output_item_web_search_call(self) -> OutputItemWebSearchCallBuilder:
+        """Add a web-search tool call output item and return its scoped builder.
+
+        :returns: A builder for emitting web-search call lifecycle events.
+        :rtype: OutputItemWebSearchCallBuilder
+        """
         output_index = self._output_index
         self._output_index += 1
         item_id = IdGenerator.new_web_search_call_item_id(self._response_id)
         return OutputItemWebSearchCallBuilder(self, output_index=output_index, item_id=item_id)
 
     def add_output_item_code_interpreter_call(self) -> OutputItemCodeInterpreterCallBuilder:
+        """Add a code-interpreter tool call output item and return its scoped builder.
+
+        :returns: A builder for emitting code-interpreter call lifecycle events.
+        :rtype: OutputItemCodeInterpreterCallBuilder
+        """
         output_index = self._output_index
         self._output_index += 1
         item_id = IdGenerator.new_code_interpreter_call_item_id(self._response_id)
         return OutputItemCodeInterpreterCallBuilder(self, output_index=output_index, item_id=item_id)
 
     def add_output_item_image_gen_call(self) -> OutputItemImageGenCallBuilder:
+        """Add an image-generation tool call output item and return its scoped builder.
+
+        :returns: A builder for emitting image-generation call lifecycle events.
+        :rtype: OutputItemImageGenCallBuilder
+        """
         output_index = self._output_index
         self._output_index += 1
         item_id = IdGenerator.new_image_gen_call_item_id(self._response_id)
         return OutputItemImageGenCallBuilder(self, output_index=output_index, item_id=item_id)
 
     def add_output_item_mcp_call(self, server_label: str, name: str) -> OutputItemMcpCallBuilder:
+        """Add an MCP tool call output item and return its scoped builder.
+
+        :param server_label: Label identifying the MCP server.
+        :type server_label: str
+        :param name: Name of the MCP tool being called.
+        :type name: str
+        :returns: A builder for emitting MCP call argument deltas and lifecycle events.
+        :rtype: OutputItemMcpCallBuilder
+        """
         output_index = self._output_index
         self._output_index += 1
         item_id = IdGenerator.new_mcp_call_item_id(self._response_id)
@@ -272,6 +399,13 @@ class ResponseEventStream:
         )
 
     def add_output_item_mcp_list_tools(self, server_label: str) -> OutputItemMcpListToolsBuilder:
+        """Add an MCP list-tools output item and return its scoped builder.
+
+        :param server_label: Label identifying the MCP server.
+        :type server_label: str
+        :returns: A builder for emitting MCP list-tools lifecycle events.
+        :rtype: OutputItemMcpListToolsBuilder
+        """
         output_index = self._output_index
         self._output_index += 1
         item_id = IdGenerator.new_mcp_list_tools_item_id(self._response_id)
@@ -283,6 +417,15 @@ class ResponseEventStream:
         )
 
     def add_output_item_custom_tool_call(self, call_id: str, name: str) -> OutputItemCustomToolCallBuilder:
+        """Add a custom tool call output item and return its scoped builder.
+
+        :param call_id: Unique identifier for this tool call.
+        :type call_id: str
+        :param name: Name of the custom tool being called.
+        :type name: str
+        :returns: A builder for emitting custom tool call input deltas and lifecycle events.
+        :rtype: OutputItemCustomToolCallBuilder
+        """
         output_index = self._output_index
         self._output_index += 1
         item_id = IdGenerator.new_custom_tool_call_item_id(self._response_id)
@@ -295,6 +438,13 @@ class ResponseEventStream:
         )
 
     def build(self) -> list[dict[str, Any]]:
+        """Build the finalized event list with lifecycle normalization and sequence numbers.
+
+        Applies common defaults, assigns sequence numbers, and validates event ordering.
+
+        :returns: A list of deep-copied, fully normalized event dicts.
+        :rtype: list[dict[str, Any]]
+        """
         events = [deepcopy(event) for event in self._events]
 
         if not events:
@@ -330,9 +480,21 @@ class ResponseEventStream:
         return events
 
     def events(self) -> list[dict[str, Any]]:
+        """Return a deep copy of all events emitted so far (before finalization).
+
+        :returns: A list of deep-copied event dicts.
+        :rtype: list[dict[str, Any]]
+        """
         return [deepcopy(event) for event in self._events]
 
     def _emit_event(self, event: dict[str, Any]) -> dict[str, Any]:
+        """Emit a single event, applying defaults and validating the stream.
+
+        :param event: The raw event dict to emit.
+        :type event: dict[str, Any]
+        :returns: A deep copy of the normalized and validated event.
+        :rtype: dict[str, Any]
+        """
         candidate = deepcopy(event)
         _internals.apply_common_defaults([candidate], response_id=self._response_id, agent_reference=self._agent_reference, model=self._model)
         _internals.track_completed_output_item(self._response, candidate)
@@ -347,9 +509,21 @@ class ResponseEventStream:
         return deepcopy(candidate)
 
     def _response_payload(self) -> dict[str, Any]:
+        """Serialize the current response envelope to a plain dict.
+
+        :returns: A materialized dict representation of the response.
+        :rtype: dict[str, Any]
+        """
         return _internals.materialize_generated_payload(self._response.as_dict())
 
     def _with_output_item_defaults(self, item: dict[str, Any]) -> dict[str, Any]:
+        """Stamp an output item dict with response-level defaults.
+
+        :param item: The item dict to stamp.
+        :type item: dict[str, Any]
+        :returns: A deep copy of the item with ``response_id`` and ``agent_reference`` defaults applied.
+        :rtype: dict[str, Any]
+        """
         stamped_item = deepcopy(item)
         stamped_item.setdefault("response_id", self._response_id)
         if self._agent_reference is not None:
@@ -357,6 +531,12 @@ class ResponseEventStream:
         return stamped_item
 
     def _set_terminal_fields(self, *, usage: generated_models.ResponseUsage | dict[str, Any] | None) -> None:
+        """Set terminal fields on the response envelope (completed_at, usage, output_text).
+
+        :param usage: Optional usage statistics to attach.
+        :type usage: ~azure.ai.agentserver.responses.models._generated.ResponseUsage | dict[str, Any] | None
+        :rtype: None
+        """
         self._response.completed_at = datetime.now(timezone.utc)
         self._response.usage = _internals.coerce_usage(usage)
         self._response.output_text = _internals.compute_output_text(self._response)

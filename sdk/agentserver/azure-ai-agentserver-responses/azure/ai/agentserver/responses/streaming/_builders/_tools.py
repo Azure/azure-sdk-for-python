@@ -16,6 +16,11 @@ class OutputItemFileSearchCallBuilder(BaseOutputItemBuilder):
     """Scoped builder for file search tool call events."""
 
     def emit_added(self) -> dict[str, Any]:
+        """Emit an ``output_item.added`` event for a file search call.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_added(
             {
                 "type": "file_search_call",
@@ -26,15 +31,35 @@ class OutputItemFileSearchCallBuilder(BaseOutputItemBuilder):
         )
 
     def emit_in_progress(self) -> dict[str, Any]:
+        """Emit a file-search in-progress state event.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_item_state_event(EVENT_TYPE.RESPONSE_FILE_SEARCH_CALL_IN_PROGRESS.value)
 
     def emit_searching(self) -> dict[str, Any]:
+        """Emit a file-search searching state event.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_item_state_event(EVENT_TYPE.RESPONSE_FILE_SEARCH_CALL_SEARCHING.value)
 
     def emit_completed(self) -> dict[str, Any]:
+        """Emit a file-search completed state event.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_item_state_event(EVENT_TYPE.RESPONSE_FILE_SEARCH_CALL_COMPLETED.value)
 
     def emit_done(self) -> dict[str, Any]:
+        """Emit an ``output_item.done`` event for this file search call.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_done({"type": "file_search_call", "id": self._item_id, "status": "completed", "queries": []})
 
 
@@ -42,18 +67,43 @@ class OutputItemWebSearchCallBuilder(BaseOutputItemBuilder):
     """Scoped builder for web search tool call events."""
 
     def emit_added(self) -> dict[str, Any]:
+        """Emit an ``output_item.added`` event for a web search call.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_added({"type": "web_search_call", "id": self._item_id, "status": "in_progress", "action": {}})
 
     def emit_in_progress(self) -> dict[str, Any]:
+        """Emit a web-search in-progress state event.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_item_state_event(EVENT_TYPE.RESPONSE_WEB_SEARCH_CALL_IN_PROGRESS.value)
 
     def emit_searching(self) -> dict[str, Any]:
+        """Emit a web-search searching state event.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_item_state_event(EVENT_TYPE.RESPONSE_WEB_SEARCH_CALL_SEARCHING.value)
 
     def emit_completed(self) -> dict[str, Any]:
+        """Emit a web-search completed state event.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_item_state_event(EVENT_TYPE.RESPONSE_WEB_SEARCH_CALL_COMPLETED.value)
 
     def emit_done(self) -> dict[str, Any]:
+        """Emit an ``output_item.done`` event for this web search call.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_done({"type": "web_search_call", "id": self._item_id, "status": "completed", "action": {}})
 
 
@@ -61,10 +111,24 @@ class OutputItemCodeInterpreterCallBuilder(BaseOutputItemBuilder):
     """Scoped builder for code interpreter tool call events."""
 
     def __init__(self, stream: "ResponseEventStream", output_index: int, item_id: str) -> None:
+        """Initialize the code-interpreter call builder.
+
+        :param stream: The parent event stream.
+        :type stream: ResponseEventStream
+        :param output_index: Zero-based index of this output item.
+        :type output_index: int
+        :param item_id: Unique identifier for this output item.
+        :type item_id: str
+        """
         super().__init__(stream=stream, output_index=output_index, item_id=item_id)
         self._final_code: str | None = None
 
     def emit_added(self) -> dict[str, Any]:
+        """Emit an ``output_item.added`` event for a code interpreter call.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_added(
             {
                 "type": "code_interpreter_call",
@@ -77,18 +141,42 @@ class OutputItemCodeInterpreterCallBuilder(BaseOutputItemBuilder):
         )
 
     def emit_in_progress(self) -> dict[str, Any]:
+        """Emit a code-interpreter in-progress state event.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_item_state_event(EVENT_TYPE.RESPONSE_CODE_INTERPRETER_CALL_IN_PROGRESS.value)
 
     def emit_interpreting(self) -> dict[str, Any]:
+        """Emit a code-interpreter interpreting state event.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_item_state_event(EVENT_TYPE.RESPONSE_CODE_INTERPRETER_CALL_INTERPRETING.value)
 
     def emit_code_delta(self, delta: str) -> dict[str, Any]:
+        """Emit a code-interpreter code delta event.
+
+        :param delta: The incremental code fragment.
+        :type delta: str
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_item_state_event(
             EVENT_TYPE.RESPONSE_CODE_INTERPRETER_CALL_CODE_DELTA.value,
             extra_payload={"delta": delta},
         )
 
     def emit_code_done(self, code: str) -> dict[str, Any]:
+        """Emit a code-interpreter code done event.
+
+        :param code: The final, complete code string.
+        :type code: str
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         self._final_code = code
         return self._emit_item_state_event(
             EVENT_TYPE.RESPONSE_CODE_INTERPRETER_CALL_CODE_DONE.value,
@@ -96,9 +184,19 @@ class OutputItemCodeInterpreterCallBuilder(BaseOutputItemBuilder):
         )
 
     def emit_completed(self) -> dict[str, Any]:
+        """Emit a code-interpreter completed state event.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_item_state_event(EVENT_TYPE.RESPONSE_CODE_INTERPRETER_CALL_COMPLETED.value)
 
     def emit_done(self) -> dict[str, Any]:
+        """Emit an ``output_item.done`` event for this code interpreter call.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_done(
             {
                 "type": "code_interpreter_call",
@@ -115,10 +213,24 @@ class OutputItemImageGenCallBuilder(BaseOutputItemBuilder):
     """Scoped builder for image generation tool call events."""
 
     def __init__(self, stream: "ResponseEventStream", output_index: int, item_id: str) -> None:
+        """Initialize the image-generation call builder.
+
+        :param stream: The parent event stream.
+        :type stream: ResponseEventStream
+        :param output_index: Zero-based index of this output item.
+        :type output_index: int
+        :param item_id: Unique identifier for this output item.
+        :type item_id: str
+        """
         super().__init__(stream=stream, output_index=output_index, item_id=item_id)
         self._partial_image_index = 0
 
     def emit_added(self) -> dict[str, Any]:
+        """Emit an ``output_item.added`` event for an image generation call.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_added(
             {
                 "type": "image_generation_call",
@@ -129,12 +241,29 @@ class OutputItemImageGenCallBuilder(BaseOutputItemBuilder):
         )
 
     def emit_in_progress(self) -> dict[str, Any]:
+        """Emit an image-generation in-progress state event.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_item_state_event(EVENT_TYPE.RESPONSE_IMAGE_GENERATION_CALL_IN_PROGRESS.value)
 
     def emit_generating(self) -> dict[str, Any]:
+        """Emit an image-generation generating state event.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_item_state_event(EVENT_TYPE.RESPONSE_IMAGE_GENERATION_CALL_GENERATING.value)
 
     def emit_partial_image(self, partial_image_b64: str) -> dict[str, Any]:
+        """Emit a partial image event with base64-encoded image data.
+
+        :param partial_image_b64: Base64-encoded partial image data.
+        :type partial_image_b64: str
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         partial_index = self._partial_image_index
         self._partial_image_index += 1
         return self._emit_item_state_event(
@@ -143,9 +272,19 @@ class OutputItemImageGenCallBuilder(BaseOutputItemBuilder):
         )
 
     def emit_completed(self) -> dict[str, Any]:
+        """Emit an image-generation completed state event.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_item_state_event(EVENT_TYPE.RESPONSE_IMAGE_GENERATION_CALL_COMPLETED.value)
 
     def emit_done(self) -> dict[str, Any]:
+        """Emit an ``output_item.done`` event for this image generation call.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_done(
             {
                 "type": "image_generation_call",
@@ -167,6 +306,19 @@ class OutputItemMcpCallBuilder(BaseOutputItemBuilder):
         server_label: str,
         name: str,
     ) -> None:
+        """Initialize the MCP call builder.
+
+        :param stream: The parent event stream.
+        :type stream: ResponseEventStream
+        :param output_index: Zero-based index of this output item.
+        :type output_index: int
+        :param item_id: Unique identifier for this output item.
+        :type item_id: str
+        :param server_label: Label identifying the MCP server.
+        :type server_label: str
+        :param name: Name of the MCP tool being called.
+        :type name: str
+        """
         super().__init__(stream=stream, output_index=output_index, item_id=item_id)
         self._server_label = _require_non_empty(server_label, "server_label")
         self._name = _require_non_empty(name, "name")
@@ -174,13 +326,28 @@ class OutputItemMcpCallBuilder(BaseOutputItemBuilder):
 
     @property
     def server_label(self) -> str:
+        """Return the MCP server label.
+
+        :returns: The server label.
+        :rtype: str
+        """
         return self._server_label
 
     @property
     def name(self) -> str:
+        """Return the MCP tool name.
+
+        :returns: The tool name.
+        :rtype: str
+        """
         return self._name
 
     def emit_added(self) -> dict[str, Any]:
+        """Emit an ``output_item.added`` event for an MCP call.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_added(
             {
                 "type": "mcp_call",
@@ -193,15 +360,34 @@ class OutputItemMcpCallBuilder(BaseOutputItemBuilder):
         )
 
     def emit_in_progress(self) -> dict[str, Any]:
+        """Emit an MCP call in-progress state event.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_item_state_event(EVENT_TYPE.RESPONSE_MCP_CALL_IN_PROGRESS.value)
 
     def emit_arguments_delta(self, delta: str) -> dict[str, Any]:
+        """Emit an MCP call arguments delta event.
+
+        :param delta: The incremental arguments text fragment.
+        :type delta: str
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_item_state_event(
             EVENT_TYPE.RESPONSE_MCP_CALL_ARGUMENTS_DELTA.value,
             extra_payload={"delta": delta},
         )
 
     def emit_arguments_done(self, arguments: str) -> dict[str, Any]:
+        """Emit an MCP call arguments done event.
+
+        :param arguments: The final, complete arguments string.
+        :type arguments: str
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         self._final_arguments = arguments
         return self._emit_item_state_event(
             EVENT_TYPE.RESPONSE_MCP_CALL_ARGUMENTS_DONE.value,
@@ -209,12 +395,27 @@ class OutputItemMcpCallBuilder(BaseOutputItemBuilder):
         )
 
     def emit_completed(self) -> dict[str, Any]:
+        """Emit an MCP call completed state event.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_item_state_event(EVENT_TYPE.RESPONSE_MCP_CALL_COMPLETED.value)
 
     def emit_failed(self) -> dict[str, Any]:
+        """Emit an MCP call failed state event.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_item_state_event(EVENT_TYPE.RESPONSE_MCP_CALL_FAILED.value)
 
     def emit_done(self) -> dict[str, Any]:
+        """Emit an ``output_item.done`` event for this MCP call.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_done(
             {
                 "type": "mcp_call",
@@ -231,14 +432,35 @@ class OutputItemMcpListToolsBuilder(BaseOutputItemBuilder):
     """Scoped builder for MCP list-tools lifecycle events."""
 
     def __init__(self, stream: "ResponseEventStream", output_index: int, item_id: str, server_label: str) -> None:
+        """Initialize the MCP list-tools builder.
+
+        :param stream: The parent event stream.
+        :type stream: ResponseEventStream
+        :param output_index: Zero-based index of this output item.
+        :type output_index: int
+        :param item_id: Unique identifier for this output item.
+        :type item_id: str
+        :param server_label: Label identifying the MCP server.
+        :type server_label: str
+        """
         super().__init__(stream=stream, output_index=output_index, item_id=item_id)
         self._server_label = _require_non_empty(server_label, "server_label")
 
     @property
     def server_label(self) -> str:
+        """Return the MCP server label.
+
+        :returns: The server label.
+        :rtype: str
+        """
         return self._server_label
 
     def emit_added(self) -> dict[str, Any]:
+        """Emit an ``output_item.added`` event for MCP list-tools.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_added(
             {
                 "type": "mcp_list_tools",
@@ -249,15 +471,35 @@ class OutputItemMcpListToolsBuilder(BaseOutputItemBuilder):
         )
 
     def emit_in_progress(self) -> dict[str, Any]:
+        """Emit an MCP list-tools in-progress state event.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_item_state_event(EVENT_TYPE.RESPONSE_MCP_LIST_TOOLS_IN_PROGRESS.value)
 
     def emit_completed(self) -> dict[str, Any]:
+        """Emit an MCP list-tools completed state event.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_item_state_event(EVENT_TYPE.RESPONSE_MCP_LIST_TOOLS_COMPLETED.value)
 
     def emit_failed(self) -> dict[str, Any]:
+        """Emit an MCP list-tools failed state event.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_item_state_event(EVENT_TYPE.RESPONSE_MCP_LIST_TOOLS_FAILED.value)
 
     def emit_done(self) -> dict[str, Any]:
+        """Emit an ``output_item.done`` event for MCP list-tools.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_done(
             {
                 "type": "mcp_list_tools",
@@ -279,6 +521,19 @@ class OutputItemCustomToolCallBuilder(BaseOutputItemBuilder):
         call_id: str,
         name: str,
     ) -> None:
+        """Initialize the custom tool call builder.
+
+        :param stream: The parent event stream.
+        :type stream: ResponseEventStream
+        :param output_index: Zero-based index of this output item.
+        :type output_index: int
+        :param item_id: Unique identifier for this output item.
+        :type item_id: str
+        :param call_id: Unique identifier for this tool call.
+        :type call_id: str
+        :param name: Name of the custom tool being called.
+        :type name: str
+        """
         super().__init__(stream=stream, output_index=output_index, item_id=item_id)
         self._call_id = _require_non_empty(call_id, "call_id")
         self._name = _require_non_empty(name, "name")
@@ -286,13 +541,28 @@ class OutputItemCustomToolCallBuilder(BaseOutputItemBuilder):
 
     @property
     def call_id(self) -> str:
+        """Return the tool call identifier.
+
+        :returns: The call ID.
+        :rtype: str
+        """
         return self._call_id
 
     @property
     def name(self) -> str:
+        """Return the custom tool name.
+
+        :returns: The tool name.
+        :rtype: str
+        """
         return self._name
 
     def emit_added(self) -> dict[str, Any]:
+        """Emit an ``output_item.added`` event for a custom tool call.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_added(
             {
                 "type": "custom_tool_call",
@@ -304,12 +574,26 @@ class OutputItemCustomToolCallBuilder(BaseOutputItemBuilder):
         )
 
     def emit_input_delta(self, delta: str) -> dict[str, Any]:
+        """Emit a custom tool call input delta event.
+
+        :param delta: The incremental input text fragment.
+        :type delta: str
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_item_state_event(
             EVENT_TYPE.RESPONSE_CUSTOM_TOOL_CALL_INPUT_DELTA.value,
             extra_payload={"delta": delta},
         )
 
     def emit_input_done(self, input_text: str) -> dict[str, Any]:
+        """Emit a custom tool call input done event.
+
+        :param input_text: The final, complete input text.
+        :type input_text: str
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         self._final_input = input_text
         return self._emit_item_state_event(
             EVENT_TYPE.RESPONSE_CUSTOM_TOOL_CALL_INPUT_DONE.value,
@@ -317,6 +601,11 @@ class OutputItemCustomToolCallBuilder(BaseOutputItemBuilder):
         )
 
     def emit_done(self) -> dict[str, Any]:
+        """Emit an ``output_item.done`` event for this custom tool call.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_done(
             {
                 "type": "custom_tool_call",

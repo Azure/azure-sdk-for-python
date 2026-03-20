@@ -35,6 +35,13 @@ class ResponsesServerOptions:
         Mirrors .NET environment-based configuration:
         - ``AZURE_AI_RESPONSES_SERVER_SSE_KEEPALIVE_INTERVAL`` (seconds)
         - ``AZURE_AI_RESPONSES_SERVER_DEFAULT_FETCH_HISTORY_ITEM_COUNT`` (integer)
+
+        :param environ: Optional mapping to read environment variables from.
+            Defaults to ``os.environ`` when None.
+        :type environ: Mapping[str, str] | None
+        :returns: A new options instance populated from the environment.
+        :rtype: ResponsesServerOptions
+        :raises ValueError: If an environment variable value is not a valid positive integer.
         """
 
         source: Mapping[str, str] = os.environ if environ is None else environ
@@ -77,7 +84,13 @@ class ResponsesServerOptions:
         return cls(**kwargs)
 
     def __post_init__(self) -> None:
-        """Validate and normalize option values."""
+        """Validate and normalize option values.
+
+        Strips whitespace from string fields and enforces positive-integer
+        constraints on numeric fields.
+
+        :raises ValueError: If any numeric option is not positive.
+        """
         if self.additional_server_identity is not None:
             normalized = self.additional_server_identity.strip()
             self.additional_server_identity = normalized or None
@@ -97,5 +110,9 @@ class ResponsesServerOptions:
 
     @property
     def sse_keep_alive_enabled(self) -> bool:
-        """Return whether periodic SSE keep-alive comments are enabled."""
+        """Return whether periodic SSE keep-alive comments are enabled.
+
+        :returns: True if ``sse_keep_alive_interval_seconds`` is set, False otherwise.
+        :rtype: bool
+        """
         return self.sse_keep_alive_interval_seconds is not None

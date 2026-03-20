@@ -29,6 +29,19 @@ def _build_events(
     agent_reference: dict[str, Any],
     model: str | None,
 ) -> list[dict[str, Any]]:
+    """Build a minimal lifecycle event sequence for a response.
+
+    :param response_id: Unique identifier for the response.
+    :type response_id: str
+    :param include_progress: Whether to include an ``in_progress`` event.
+    :type include_progress: bool
+    :param agent_reference: Agent reference metadata dict.
+    :type agent_reference: dict[str, Any]
+    :param model: Optional model identifier.
+    :type model: str | None
+    :returns: A list of event dicts containing created and completed (and optionally in_progress) events.
+    :rtype: list[dict[str, Any]]
+    """
     stream = ResponseEventStream(
         response_id=response_id,
         agent_reference=agent_reference,
@@ -42,11 +55,27 @@ def _build_events(
 
 
 async def _encode_sse(events: list[dict[str, Any]]) -> AsyncIterator[str]:
+    """Encode a list of event dicts as SSE-formatted strings.
+
+    :param events: The event dicts to encode.
+    :type events: list[dict[str, Any]]
+    :returns: An async iterator yielding SSE-formatted strings.
+    :rtype: AsyncIterator[str]
+    """
     for event in events:
         yield encode_sse_payload(event["type"], event["payload"])
 
 
 def _coerce_handler_event(handler_event: Any) -> dict[str, Any]:
+    """Coerce a handler event to a normalized ``{"type": ..., "payload": ...}`` dict.
+
+    :param handler_event: The event to normalize (dict or model with ``as_dict()``).
+    :type handler_event: Any
+    :returns: A normalized event dict with ``type`` and ``payload`` keys.
+    :rtype: dict[str, Any]
+    :raises TypeError: If the event is not a dict or a model with ``as_dict()``.
+    :raises ValueError: If the event does not include a non-empty ``type``.
+    """
     if isinstance(handler_event, dict):
         event_data = deepcopy(handler_event)
     elif hasattr(handler_event, "as_dict"):
@@ -75,6 +104,21 @@ def _apply_stream_event_defaults(
     model: str | None,
     sequence_number: int | None,
 ) -> dict[str, Any]:
+    """Apply response-level defaults to an event payload.
+
+    :param event: The event dict to enrich.
+    :type event: dict[str, Any]
+    :param response_id: Response ID to stamp in the payload.
+    :type response_id: str
+    :param agent_reference: Agent reference metadata dict.
+    :type agent_reference: dict[str, Any]
+    :param model: Optional model identifier.
+    :type model: str | None
+    :param sequence_number: Optional sequence number to set; removed if ``None``.
+    :type sequence_number: int | None
+    :returns: A deep copy of the event with defaults applied.
+    :rtype: dict[str, Any]
+    """
     normalized = deepcopy(event)
     payload = normalized.get("payload")
     if not isinstance(payload, dict):
@@ -103,6 +147,25 @@ def _extract_response_snapshot_from_events(
     model: str | None,
     remove_sequence_number: bool = False,
 ) -> dict[str, Any]:
+    """Extract the latest response snapshot payload from a list of events.
+
+    Scans events in reverse for the most recent response-level lifecycle event
+    and returns its payload enriched with defaults. Falls back to building a
+    synthetic completed lifecycle if no snapshot event is found.
+
+    :param events: The event stream to search.
+    :type events: list[dict[str, Any]]
+    :param response_id: Response ID for default stamping.
+    :type response_id: str
+    :param agent_reference: Agent reference metadata dict.
+    :type agent_reference: dict[str, Any]
+    :param model: Optional model identifier.
+    :type model: str | None
+    :param remove_sequence_number: Whether to strip ``sequence_number`` from the result.
+    :type remove_sequence_number: bool
+    :returns: A dict representing the response snapshot payload.
+    :rtype: dict[str, Any]
+    """
     for event in reversed(events):
         event_type = event.get("type")
         payload = event.get("payload")

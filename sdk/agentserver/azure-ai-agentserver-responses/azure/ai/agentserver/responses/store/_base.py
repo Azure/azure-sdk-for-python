@@ -22,20 +22,41 @@ class ResponseProviderProtocol(Protocol):
         input_items: Iterable[Any] | None,
         history_item_ids: Iterable[str] | None,
     ) -> None:
-        """Persist a new response envelope and optional input/history references."""
+        """Persist a new response envelope and optional input/history references.
+
+        :param response: The response envelope to persist.
+        :type response: ~azure.ai.agentserver.responses.models._generated.Response
+        :param input_items: Optional input items to associate with the response.
+        :type input_items: Iterable[Any] | None
+        :param history_item_ids: Optional history item IDs to link to the response.
+        :type history_item_ids: Iterable[str] | None
+        :rtype: None
+        """
 
     async def get_response_async(self, response_id: str) -> Response:
         """Load one response envelope by ID.
 
+        :param response_id: The unique identifier of the response to retrieve.
+        :type response_id: str
+        :returns: The response envelope matching the given ID.
+        :rtype: ~azure.ai.agentserver.responses.models._generated.Response
         :raises KeyError: If the response does not exist.
         """
 
     async def update_response_async(self, response: Response) -> None:
-        """Persist an updated response envelope."""
+        """Persist an updated response envelope.
+
+        :param response: The response envelope with updated fields to persist.
+        :type response: ~azure.ai.agentserver.responses.models._generated.Response
+        :rtype: None
+        """
 
     async def delete_response_async(self, response_id: str) -> None:
         """Delete a response envelope by ID.
 
+        :param response_id: The unique identifier of the response to delete.
+        :type response_id: str
+        :rtype: None
         :raises KeyError: If the response does not exist.
         """
 
@@ -47,10 +68,30 @@ class ResponseProviderProtocol(Protocol):
         after: str | None = None,
         before: str | None = None,
     ) -> list[Any]:
-        """Get response input/history items for one response ID using cursor pagination."""
+        """Get response input/history items for one response ID using cursor pagination.
+
+        :param response_id: The unique identifier of the response whose items to fetch.
+        :type response_id: str
+        :param limit: Maximum number of items to return. Defaults to 20.
+        :type limit: int
+        :param ascending: Whether to return items in ascending order. Defaults to False.
+        :type ascending: bool
+        :param after: Cursor ID; only return items after this ID.
+        :type after: str | None
+        :param before: Cursor ID; only return items before this ID.
+        :type before: str | None
+        :returns: A list of input/history items matching the pagination criteria.
+        :rtype: list[Any]
+        """
 
     async def get_items_async(self, item_ids: Iterable[str]) -> list[Any | None]:
-        """Get items by ID (missing IDs produce ``None`` entries)."""
+        """Get items by ID (missing IDs produce ``None`` entries).
+
+        :param item_ids: The item identifiers to look up.
+        :type item_ids: Iterable[str]
+        :returns: A list of items in the same order as *item_ids*; missing items are ``None``.
+        :rtype: list[Any | None]
+        """
 
     async def get_history_item_ids_async(
         self,
@@ -58,6 +99,16 @@ class ResponseProviderProtocol(Protocol):
         conversation_id: str | None,
         limit: int,
     ) -> list[str]:
-        """Get history item IDs for a conversation chain scope."""
+        """Get history item IDs for a conversation chain scope.
+
+        :param previous_response_id: Optional response ID to chain history from.
+        :type previous_response_id: str | None
+        :param conversation_id: Optional conversation ID to scope history lookup.
+        :type conversation_id: str | None
+        :param limit: Maximum number of history item IDs to return.
+        :type limit: int
+        :returns: A list of history item IDs within the given scope.
+        :rtype: list[str]
+        """
 
 

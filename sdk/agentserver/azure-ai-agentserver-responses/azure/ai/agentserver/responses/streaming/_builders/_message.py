@@ -17,6 +17,17 @@ class TextContentBuilder:
     """Scoped builder for a text content part within an output message item."""
 
     def __init__(self, stream: "ResponseEventStream", output_index: int, content_index: int, item_id: str) -> None:
+        """Initialize the text content builder.
+
+        :param stream: The parent event stream.
+        :type stream: ResponseEventStream
+        :param output_index: Zero-based index of the parent output item.
+        :type output_index: int
+        :param content_index: Zero-based index of this content part.
+        :type content_index: int
+        :param item_id: Identifier of the parent output item.
+        :type item_id: str
+        """
         self._stream = stream
         self._output_index = output_index
         self._content_index = content_index
@@ -28,13 +39,29 @@ class TextContentBuilder:
 
     @property
     def final_text(self) -> str | None:
+        """Return the final merged text, or ``None`` if not yet done.
+
+        :returns: The final text string.
+        :rtype: str | None
+        """
         return self._final_text
 
     @property
     def content_index(self) -> int:
+        """Return the zero-based content part index.
+
+        :returns: The content index.
+        :rtype: int
+        """
         return self._content_index
 
     def emit_added(self) -> dict[str, Any]:
+        """Emit a ``content_part.added`` event for this text content.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        :raises ValueError: If the builder is not in ``NOT_STARTED`` state.
+        """
         if self._lifecycle_state is not BuilderLifecycleState.NOT_STARTED:
             raise ValueError(f"cannot call emit_added in '{self._lifecycle_state.value}' state")
         self._lifecycle_state = BuilderLifecycleState.ADDED
@@ -68,6 +95,14 @@ class TextContentBuilder:
         )
 
     def emit_done(self, final_text: str | None = None) -> dict[str, Any]:
+        """Emit a text done event with the merged final text.
+
+        :param final_text: Optional override for the final text; uses merged deltas if ``None``.
+        :type final_text: str | None
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        :raises ValueError: If the builder is not in ``ADDED`` state.
+        """
         if self._lifecycle_state is not BuilderLifecycleState.ADDED:
             raise ValueError(f"cannot call emit_done in '{self._lifecycle_state.value}' state")
         self._lifecycle_state = BuilderLifecycleState.DONE
@@ -89,6 +124,13 @@ class TextContentBuilder:
         )
 
     def emit_annotation_added(self, annotation: dict[str, Any]) -> dict[str, Any]:
+        """Emit a text annotation added event.
+
+        :param annotation: The annotation dict to attach.
+        :type annotation: dict[str, Any]
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         annotation_index = self._annotation_index
         self._annotation_index += 1
         return self._stream._emit_event(
@@ -109,6 +151,17 @@ class RefusalContentBuilder:
     """Scoped builder for a refusal content part within an output message item."""
 
     def __init__(self, stream: "ResponseEventStream", output_index: int, content_index: int, item_id: str) -> None:
+        """Initialize the refusal content builder.
+
+        :param stream: The parent event stream.
+        :type stream: ResponseEventStream
+        :param output_index: Zero-based index of the parent output item.
+        :type output_index: int
+        :param content_index: Zero-based index of this content part.
+        :type content_index: int
+        :param item_id: Identifier of the parent output item.
+        :type item_id: str
+        """
         self._stream = stream
         self._output_index = output_index
         self._content_index = content_index
@@ -118,13 +171,29 @@ class RefusalContentBuilder:
 
     @property
     def final_refusal(self) -> str | None:
+        """Return the final refusal text, or ``None`` if not yet done.
+
+        :returns: The final refusal string.
+        :rtype: str | None
+        """
         return self._final_refusal
 
     @property
     def content_index(self) -> int:
+        """Return the zero-based content part index.
+
+        :returns: The content index.
+        :rtype: int
+        """
         return self._content_index
 
     def emit_added(self) -> dict[str, Any]:
+        """Emit a ``content_part.added`` event for this refusal content.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        :raises ValueError: If the builder is not in ``NOT_STARTED`` state.
+        """
         if self._lifecycle_state is not BuilderLifecycleState.NOT_STARTED:
             raise ValueError(f"cannot call emit_added in '{self._lifecycle_state.value}' state")
         self._lifecycle_state = BuilderLifecycleState.ADDED
@@ -141,6 +210,13 @@ class RefusalContentBuilder:
         )
 
     def emit_delta(self, text: str) -> dict[str, Any]:
+        """Emit a refusal delta event.
+
+        :param text: The incremental refusal text fragment.
+        :type text: str
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._stream._emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_REFUSAL_DELTA.value,
@@ -154,6 +230,14 @@ class RefusalContentBuilder:
         )
 
     def emit_done(self, final_refusal: str) -> dict[str, Any]:
+        """Emit a refusal done event.
+
+        :param final_refusal: The final, complete refusal text.
+        :type final_refusal: str
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        :raises ValueError: If the builder is not in ``ADDED`` state.
+        """
         if self._lifecycle_state is not BuilderLifecycleState.ADDED:
             raise ValueError(f"cannot call emit_done in '{self._lifecycle_state.value}' state")
         self._lifecycle_state = BuilderLifecycleState.DONE
@@ -180,11 +264,25 @@ class OutputItemMessageBuilder(BaseOutputItemBuilder):
         output_index: int,
         item_id: str,
     ) -> None:
+        """Initialize the message output item builder.
+
+        :param stream: The parent event stream.
+        :type stream: ResponseEventStream
+        :param output_index: Zero-based index of this output item.
+        :type output_index: int
+        :param item_id: Unique identifier for this output item.
+        :type item_id: str
+        """
         super().__init__(stream=stream, output_index=output_index, item_id=item_id)
         self._content_index = 0
         self._completed_contents: list[dict[str, Any]] = []
 
     def emit_added(self) -> dict[str, Any]:
+        """Emit an ``output_item.added`` event for this message item.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         return self._emit_added(
             {
                 "type": "output_message",
@@ -196,6 +294,11 @@ class OutputItemMessageBuilder(BaseOutputItemBuilder):
         )
 
     def add_text_content(self) -> TextContentBuilder:
+        """Create and return a text content part builder.
+
+        :returns: A new text content builder scoped to this message.
+        :rtype: TextContentBuilder
+        """
         content_index = self._content_index
         self._content_index += 1
         return TextContentBuilder(
@@ -206,6 +309,11 @@ class OutputItemMessageBuilder(BaseOutputItemBuilder):
         )
 
     def add_refusal_content(self) -> RefusalContentBuilder:
+        """Create and return a refusal content part builder.
+
+        :returns: A new refusal content builder scoped to this message.
+        :rtype: RefusalContentBuilder
+        """
         content_index = self._content_index
         self._content_index += 1
         return RefusalContentBuilder(
@@ -216,6 +324,13 @@ class OutputItemMessageBuilder(BaseOutputItemBuilder):
         )
 
     def emit_content_done(self, content_builder: TextContentBuilder | RefusalContentBuilder) -> dict[str, Any]:
+        """Emit a ``content_part.done`` event for a completed content part.
+
+        :param content_builder: The content builder whose final state to emit.
+        :type content_builder: TextContentBuilder | RefusalContentBuilder
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        """
         if isinstance(content_builder, TextContentBuilder):
             part = {
                 "type": "output_text",
@@ -245,6 +360,12 @@ class OutputItemMessageBuilder(BaseOutputItemBuilder):
         )
 
     def emit_done(self) -> dict[str, Any]:
+        """Emit an ``output_item.done`` event for this message item.
+
+        :returns: The emitted event dict.
+        :rtype: dict[str, Any]
+        :raises ValueError: If no content parts have been completed.
+        """
         if len(self._completed_contents) == 0:
             raise ValueError("message output item requires at least one content part before emit_done")
         return self._emit_done(

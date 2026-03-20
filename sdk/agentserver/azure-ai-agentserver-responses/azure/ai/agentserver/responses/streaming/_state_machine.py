@@ -36,7 +36,17 @@ class LifecycleStateMachineError(ValueError):
 
 
 def validate_response_event_stream(events: Sequence[Mapping[str, Any]]) -> None:
-    """Validate lifecycle and output-item event ordering for a response stream."""
+    """Validate lifecycle and output-item event ordering for a response stream.
+
+    Checks that the first event is ``response.created``, lifecycle events
+    are in monotonically non-decreasing order, at most one terminal event
+    exists, and output-item events obey added/delta/done constraints.
+
+    :param events: The sequence of event mappings to validate.
+    :type events: Sequence[Mapping[str, Any]]
+    :rtype: None
+    :raises LifecycleStateMachineError: If any ordering or structural constraint is violated.
+    """
     if not events:
         raise LifecycleStateMachineError("event stream cannot be empty")
 
@@ -100,7 +110,21 @@ def validate_response_event_stream(events: Sequence[Mapping[str, Any]]) -> None:
 def normalize_lifecycle_events(
     *, response_id: str, events: Sequence[Mapping[str, Any]], default_model: str | None = None
 ) -> list[dict[str, Any]]:
-    """Normalize lifecycle events with ordering and terminal-state guarantees."""
+    """Normalize lifecycle events with ordering and terminal-state guarantees.
+
+    Applies ``id`` and ``model`` defaults to each payload, validates ordering,
+    and appends a synthetic ``response.failed`` terminal event when none is present.
+
+    :param response_id: Response ID to stamp in each event payload.
+    :type response_id: str
+    :param events: The sequence of raw lifecycle event mappings.
+    :type events: Sequence[Mapping[str, Any]]
+    :param default_model: Optional default model identifier to set.
+    :type default_model: str | None
+    :returns: A list of normalized event dicts with guaranteed terminal event.
+    :rtype: list[dict[str, Any]]
+    :raises LifecycleStateMachineError: If a lifecycle event has no type or ordering is invalid.
+    """
     normalized: list[dict[str, Any]] = []
 
     for raw_event in events:

@@ -21,11 +21,19 @@ class RequestValidationError(ValueError):
     debug_info: dict[str, Any] | None = None
 
     def __post_init__(self) -> None:
-        """Initialize the parent :class:`ValueError` message."""
+        """Initialize the parent :class:`ValueError` message.
+
+        Calls :meth:`ValueError.__init__` with the stored *message* so that
+        ``str(err)`` returns the validation message.
+        """
         ValueError.__init__(self, self.message)
 
     def to_error(self) -> Error:
-        """Convert this validation error to the generated ``Error`` model."""
+        """Convert this validation error to the generated ``Error`` model.
+
+        :returns: An ``Error`` instance populated from this validation error's fields.
+        :rtype: Error
+        """
         return Error(
             code=self.code,
             message=self.message,
@@ -35,5 +43,9 @@ class RequestValidationError(ValueError):
         )
 
     def to_api_error_response(self) -> ApiErrorResponse:
-        """Convert this validation error to the generated API error envelope."""
+        """Convert this validation error to the generated API error envelope.
+
+        :returns: An ``ApiErrorResponse`` wrapping the generated ``Error``.
+        :rtype: ApiErrorResponse
+        """
         return ApiErrorResponse(error=self.to_error())

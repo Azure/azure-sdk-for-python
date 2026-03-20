@@ -37,17 +37,31 @@ class StreamEventRecord:
 
     @property
     def terminal(self) -> bool:
-        """Return True when this event is one of the terminal response events."""
+        """Return True when this event is one of the terminal response events.
+
+        Terminal events are ``response.completed``, ``response.failed``,
+        and ``response.incomplete``.
+
+        :returns: True if the event type is terminal, False otherwise.
+        :rtype: bool
+        """
         return self.event_type in {
             EVENT_TYPE.RESPONSE_COMPLETED.value,
             EVENT_TYPE.RESPONSE_FAILED.value,
-            EVENT_TYPE.RESPONSE_CANCELLED.value,
             EVENT_TYPE.RESPONSE_INCOMPLETE.value,
         }
 
     @classmethod
     def from_generated(cls, event: ResponseStreamEvent, payload: Mapping[str, Any]) -> "StreamEventRecord":
-        """Create a stream event record from a generated response stream event model."""
+        """Create a stream event record from a generated response stream event model.
+
+        :param event: The generated response stream event to convert.
+        :type event: ResponseStreamEvent
+        :param payload: The serialized payload mapping for the event.
+        :type payload: Mapping[str, Any]
+        :returns: A new ``StreamEventRecord`` populated from the generated event.
+        :rtype: StreamEventRecord
+        """
         return cls(sequence_number=event.sequence_number, event_type=event.type, payload=payload)
 
 
@@ -74,6 +88,11 @@ class ResponseExecution:
     def transition_to(self, next_status: ResponseStatus) -> None:
         """Transition this execution to a valid lifecycle status.
 
+        Updates ``status``, ``updated_at``, and ``completed_at`` (for terminal states).
+        Re-entering the current status is a no-op that only refreshes ``updated_at``.
+
+        :param next_status: The target lifecycle status.
+        :type next_status: ResponseStatus
         :raises ValueError: If the requested transition is not allowed.
         """
         allowed: dict[ResponseStatus, set[ResponseStatus]] = {
@@ -100,11 +119,19 @@ class ResponseExecution:
 
     @property
     def is_terminal(self) -> bool:
-        """Return whether the execution has reached a terminal state."""
+        """Return whether the execution has reached a terminal state.
+
+        :returns: True if the status is one of completed, failed, cancelled, or incomplete.
+        :rtype: bool
+        """
         return self.status in {"completed", "failed", "cancelled", "incomplete"}
 
     def set_response_snapshot(self, response: Response) -> None:
-        """Replace the current response snapshot from handler-emitted events."""
+        """Replace the current response snapshot from handler-emitted events.
+
+        :param response: The latest response snapshot to store.
+        :type response: Response
+        """
         self.response = response
         self.updated_at = datetime.now(timezone.utc)
 
@@ -117,7 +144,13 @@ class StreamReplayState:
     events: list[StreamEventRecord] = field(default_factory=list)
 
     def append(self, event: StreamEventRecord) -> None:
-        """Append a stream event and enforce replay sequence integrity."""
+        """Append a stream event and enforce replay sequence integrity.
+
+        :param event: The stream event record to append.
+        :type event: StreamEventRecord
+        :raises ValueError: If the sequence number is not strictly increasing or
+            a terminal event has already been recorded.
+        """
         if self.events and event.sequence_number <= self.events[-1].sequence_number:
             raise ValueError("stream event sequence numbers must be strictly increasing")
 
@@ -128,5 +161,9 @@ class StreamReplayState:
 
     @property
     def terminal_event_seen(self) -> bool:
-        """Return whether replay state has already recorded a terminal event."""
+        """Return whether replay state has already recorded a terminal event.
+
+        :returns: True if the last recorded event is terminal, False otherwise.
+        :rtype: bool
+        """
         return bool(self.events and self.events[-1].terminal)

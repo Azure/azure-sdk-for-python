@@ -72,12 +72,24 @@ _EVENT_MODEL_CLASS_NAMES: dict[str, str] = {
 
 
 def enum_value(value: Any) -> Any:
-    """Return the ``.value`` of an enum member, or the value itself."""
+    """Return the ``.value`` of an enum member, or the value itself.
+
+    :param value: An enum member or a plain value.
+    :type value: Any
+    :returns: The ``.value`` attribute if present, otherwise *value* unchanged.
+    :rtype: Any
+    """
     return getattr(value, "value", value)
 
 
 def coerce_model_mapping(value: Any) -> dict[str, Any] | None:
-    """Normalise a generated model, dict, or ``None`` to a plain dict copy."""
+    """Normalise a generated model, dict, or ``None`` to a plain dict copy.
+
+    :param value: A generated model, a dict, or ``None``.
+    :type value: Any
+    :returns: A deep-copied plain dict, or ``None`` if *value* is ``None`` or not coercible.
+    :rtype: dict[str, Any] | None
+    """
     if value is None:
         return None
     if isinstance(value, dict):
@@ -90,7 +102,13 @@ def coerce_model_mapping(value: Any) -> dict[str, Any] | None:
 
 
 def materialize_generated_payload(value: Any) -> Any:
-    """Recursively resolve generators/tuples to plain lists/dicts."""
+    """Recursively resolve generators/tuples to plain lists/dicts.
+
+    :param value: A nested structure that may contain generators or tuples.
+    :type value: Any
+    :returns: A fully materialized structure using only dicts and lists.
+    :rtype: Any
+    """
     if isinstance(value, dict):
         return {key: materialize_generated_payload(item) for key, item in value.items()}
     if isinstance(value, list):
@@ -103,7 +121,16 @@ def materialize_generated_payload(value: Any) -> Any:
 
 
 def coerce_event_with_generated_class(event: dict[str, Any]) -> dict[str, Any]:
-    """Round-trip an event dict through the corresponding generated model class."""
+    """Round-trip an event dict through the corresponding generated model class.
+
+    If the event type has a known generated model class, the event is
+    serialized into that class and back to ensure canonical shape.
+
+    :param event: The event dict to coerce.
+    :type event: dict[str, Any]
+    :returns: The coerced event dict, or the original if no matching class is found.
+    :rtype: dict[str, Any]
+    """
     event_type = event.get("type")
     if not isinstance(event_type, str) or not event_type:
         return event
@@ -137,7 +164,21 @@ def apply_common_defaults(
     agent_reference: dict[str, Any] | None,
     model: str | None,
 ) -> None:
-    """Stamp every event payload with response-level defaults."""
+    """Stamp every event payload with response-level defaults.
+
+    Mutates each event's payload in-place with ``id``, ``response_id``,
+    ``object``, ``agent_reference``, and ``model`` defaults.
+
+    :param events: The list of event dicts to mutate.
+    :type events: list[dict[str, Any]]
+    :param response_id: Response ID to set as default.
+    :type response_id: str
+    :param agent_reference: Optional agent reference metadata dict.
+    :type agent_reference: dict[str, Any] | None
+    :param model: Optional model identifier.
+    :type model: str | None
+    :rtype: None
+    """
     for event in events:
         payload = event.get("payload")
         if not isinstance(payload, dict):
@@ -153,7 +194,15 @@ def apply_common_defaults(
 
 
 def assign_sequence_numbers(events: list[dict[str, Any]]) -> None:
-    """Assign deterministic ``sequence_number`` to every payload."""
+    """Assign deterministic ``sequence_number`` to every payload.
+
+    Mutates each event's payload in-place, setting ``sequence_number``
+    to the event's zero-based index.
+
+    :param events: The list of event dicts to mutate.
+    :type events: list[dict[str, Any]]
+    :rtype: None
+    """
     for index, event in enumerate(events):
         payload = event.get("payload")
         if isinstance(payload, dict):
@@ -164,7 +213,17 @@ def track_completed_output_item(
     response: generated_models.Response,
     event: dict[str, Any],
 ) -> None:
-    """When an output-item-done event arrives, persist the item on the response."""
+    """When an output-item-done event arrives, persist the item on the response.
+
+    Checks if the event is of type ``response.output_item.done`` and, if so,
+    stores the item at the appropriate index in ``response.output``.
+
+    :param response: The response envelope to which the completed item is attached.
+    :type response: ~azure.ai.agentserver.responses.models._generated.Response
+    :param event: The event dict to inspect.
+    :type event: dict[str, Any]
+    :rtype: None
+    """
     if event.get("type") != EVENT_TYPE.RESPONSE_OUTPUT_ITEM_DONE.value:
         return
 
@@ -196,7 +255,14 @@ def track_completed_output_item(
 def coerce_usage(
     usage: generated_models.ResponseUsage | dict[str, Any] | None,
 ) -> generated_models.ResponseUsage | None:
-    """Normalise a usage value to a generated ``ResponseUsage`` instance."""
+    """Normalise a usage value to a generated ``ResponseUsage`` instance.
+
+    :param usage: A usage dict, a ``ResponseUsage`` model, or ``None``.
+    :type usage: ~azure.ai.agentserver.responses.models._generated.ResponseUsage | dict[str, Any] | None
+    :returns: A ``ResponseUsage`` instance, or ``None`` if *usage* is ``None``.
+    :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseUsage | None
+    :raises TypeError: If *usage* is not a dict or a generated ``ResponseUsage`` model.
+    """
     if usage is None:
         return None
     if isinstance(usage, dict):
@@ -207,7 +273,13 @@ def coerce_usage(
 
 
 def compute_output_text(response: generated_models.Response) -> str | None:
-    """Concatenate all ``output_text`` content parts from message output items."""
+    """Concatenate all ``output_text`` content parts from message output items.
+
+    :param response: The response envelope whose output items to scan.
+    :type response: ~azure.ai.agentserver.responses.models._generated.Response
+    :returns: Concatenated text from all ``output_text`` content parts, or ``None`` if none found.
+    :rtype: str | None
+    """
     output = response.output
     if not isinstance(output, list):
         return None
@@ -239,7 +311,13 @@ def compute_output_text(response: generated_models.Response) -> str | None:
 
 
 def extract_agent_reference(response: generated_models.Response) -> dict[str, Any] | None:
-    """Pull the ``agent_reference`` dict from a response, if present."""
+    """Pull the ``agent_reference`` dict from a response, if present.
+
+    :param response: The response envelope to inspect.
+    :type response: ~azure.ai.agentserver.responses.models._generated.Response
+    :returns: The agent reference dict, or ``None`` if not present.
+    :rtype: dict[str, Any] | None
+    """
     payload = coerce_model_mapping(response)
     if not isinstance(payload, dict):
         return None
@@ -250,7 +328,13 @@ def extract_agent_reference(response: generated_models.Response) -> dict[str, An
 
 
 def extract_model(response: generated_models.Response) -> str | None:
-    """Pull the ``model`` string from a response, if present."""
+    """Pull the ``model`` string from a response, if present.
+
+    :param response: The response envelope to inspect.
+    :type response: ~azure.ai.agentserver.responses.models._generated.Response
+    :returns: The model string, or ``None`` if not present.
+    :rtype: str | None
+    """
     payload = coerce_model_mapping(response)
     if not isinstance(payload, dict):
         return None

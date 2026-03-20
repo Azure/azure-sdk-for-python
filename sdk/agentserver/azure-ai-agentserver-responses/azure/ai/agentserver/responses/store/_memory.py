@@ -44,7 +44,20 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         input_items: Iterable[Any] | None,
         history_item_ids: Iterable[str] | None,
     ) -> None:
-        """Persist a new response envelope and optional input/history references."""
+        """Persist a new response envelope and optional input/history references.
+
+        Stores a deep copy of the response, indexes input items by their IDs,
+        and tracks conversation membership for history resolution.
+
+        :param response: The response envelope to persist.
+        :type response: ~azure.ai.agentserver.responses.models._generated.Response
+        :param input_items: Optional input items to associate with the response.
+        :type input_items: Iterable[Any] | None
+        :param history_item_ids: Optional history item IDs to link to the response.
+        :type history_item_ids: Iterable[str] | None
+        :rtype: None
+        :raises ValueError: If a non-deleted response with the same ID already exists.
+        """
         response_id = str(getattr(response, "id"))
         async with self._lock:
             self._purge_expired_unlocked()
@@ -80,7 +93,14 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
                 self._conversation_responses.setdefault(conversation_id, []).append(response_id)
 
     async def get_response_async(self, response_id: str) -> Response:
-        """Retrieve one response envelope by identifier."""
+        """Retrieve one response envelope by identifier.
+
+        :param response_id: The unique identifier of the response to retrieve.
+        :type response_id: str
+        :returns: A deep copy of the stored response envelope.
+        :rtype: ~azure.ai.agentserver.responses.models._generated.Response
+        :raises KeyError: If the response does not exist or has been deleted.
+        """
         async with self._lock:
             self._purge_expired_unlocked()
             entry = self._entries.get(response_id)
@@ -89,7 +109,16 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
             return deepcopy(entry.response)
 
     async def update_response_async(self, response: Response) -> None:
-        """Update a stored response envelope."""
+        """Update a stored response envelope.
+
+        Replaces the stored response with a deep copy and updates
+        the execution snapshot.
+
+        :param response: The response envelope with updated fields.
+        :type response: ~azure.ai.agentserver.responses.models._generated.Response
+        :rtype: None
+        :raises KeyError: If the response does not exist or has been deleted.
+        """
         response_id = str(getattr(response, "id"))
         async with self._lock:
             self._purge_expired_unlocked()
@@ -101,7 +130,15 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
             entry.execution.set_response_snapshot(deepcopy(response))
 
     async def delete_response_async(self, response_id: str) -> None:
-        """Delete a stored response envelope by identifier."""
+        """Delete a stored response envelope by identifier.
+
+        Marks the entry as deleted and clears the response payload.
+
+        :param response_id: The unique identifier of the response to delete.
+        :type response_id: str
+        :rtype: None
+        :raises KeyError: If the response does not exist or has already been deleted.
+        """
         async with self._lock:
             self._purge_expired_unlocked()
             entry = self._entries.get(response_id)
@@ -118,7 +155,26 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         after: str | None = None,
         before: str | None = None,
     ) -> list[Any]:
-        """Retrieve input/history items for a response with basic cursor paging."""
+        """Retrieve input/history items for a response with basic cursor paging.
+
+        Returns deep copies of stored items, combining history and input item IDs
+        with optional cursor-based pagination.
+
+        :param response_id: The unique identifier of the response whose items to fetch.
+        :type response_id: str
+        :param limit: Maximum number of items to return (clamped to 1–100). Defaults to 20.
+        :type limit: int
+        :param ascending: Whether to return items in ascending order. Defaults to False.
+        :type ascending: bool
+        :param after: Cursor ID; only return items after this ID.
+        :type after: str | None
+        :param before: Cursor ID; only return items before this ID.
+        :type before: str | None
+        :returns: A list of input/history items matching the pagination criteria.
+        :rtype: list[Any]
+        :raises KeyError: If the response does not exist.
+        :raises ValueError: If the response has been deleted.
+        """
         async with self._lock:
             self._purge_expired_unlocked()
             entry = self._entries.get(response_id)
@@ -148,7 +204,15 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
             return [deepcopy(self._item_store[item_id]) for item_id in ordered_ids[:safe_limit] if item_id in self._item_store]
 
     async def get_items_async(self, item_ids: Iterable[str]) -> list[Any | None]:
-        """Retrieve items by ID, preserving request order."""
+        """Retrieve items by ID, preserving request order.
+
+        Returns deep copies of stored items. Missing IDs produce ``None`` entries.
+
+        :param item_ids: The item identifiers to look up.
+        :type item_ids: Iterable[str]
+        :returns: A list of items in the same order as *item_ids*; missing items are ``None``.
+        :rtype: list[Any | None]
+        """
         async with self._lock:
             return [deepcopy(self._item_store[item_id]) if item_id in self._item_store else None for item_id in item_ids]
 
@@ -158,7 +222,20 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         conversation_id: str | None,
         limit: int,
     ) -> list[str]:
-        """Resolve history item IDs from previous response and/or conversation scope."""
+        """Resolve history item IDs from previous response and/or conversation scope.
+
+        Collects history item IDs from the previous response chain and/or
+        all responses within the given conversation, up to *limit*.
+
+        :param previous_response_id: Optional response ID to chain history from.
+        :type previous_response_id: str | None
+        :param conversation_id: Optional conversation ID to scope history lookup.
+        :type conversation_id: str | None
+        :param limit: Maximum number of history item IDs to return.
+        :type limit: int
+        :returns: A list of history item IDs within the given scope.
+        :rtype: list[str]
+        """
         async with self._lock:
             self._purge_expired_unlocked()
             resolved: list[str] = []
@@ -180,7 +257,15 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
             return resolved[:limit]
 
     async def create_execution(self, execution: ResponseExecution, *, ttl_seconds: int | None = None) -> None:
-        """Create a new execution and replay container for ``execution.response_id``."""
+        """Create a new execution and replay container for ``execution.response_id``.
+
+        :param execution: The execution state to store.
+        :type execution: ~azure.ai.agentserver.responses.models.runtime.ResponseExecution
+        :param ttl_seconds: Optional time-to-live in seconds for automatic expiration.
+        :type ttl_seconds: int | None
+        :rtype: None
+        :raises ValueError: If an entry with the same response ID already exists.
+        """
         async with self._lock:
             self._purge_expired_unlocked()
 
@@ -194,7 +279,13 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
             )
 
     async def get_execution(self, response_id: str) -> ResponseExecution | None:
-        """Get a defensive copy of execution state for ``response_id`` if present."""
+        """Get a defensive copy of execution state for ``response_id`` if present.
+
+        :param response_id: The unique identifier of the response execution to retrieve.
+        :type response_id: str
+        :returns: A deep copy of the execution state, or ``None`` if not found.
+        :rtype: ~azure.ai.agentserver.responses.models.runtime.ResponseExecution | None
+        """
         async with self._lock:
             self._purge_expired_unlocked()
             entry = self._entries.get(response_id)
@@ -209,7 +300,17 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         *,
         ttl_seconds: int | None = None,
     ) -> bool:
-        """Set the latest response snapshot for an existing response execution."""
+        """Set the latest response snapshot for an existing response execution.
+
+        :param response_id: The unique identifier of the response to update.
+        :type response_id: str
+        :param response: The response snapshot to associate with the execution.
+        :type response: ~azure.ai.agentserver.responses.models._generated.Response
+        :param ttl_seconds: Optional time-to-live in seconds to refresh expiration.
+        :type ttl_seconds: int | None
+        :returns: ``True`` if the entry was found and updated, ``False`` otherwise.
+        :rtype: bool
+        """
         async with self._lock:
             self._purge_expired_unlocked()
             entry = self._entries.get(response_id)
@@ -227,7 +328,17 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         *,
         ttl_seconds: int | None = None,
     ) -> bool:
-        """Transition execution state while preserving lifecycle invariants."""
+        """Transition execution state while preserving lifecycle invariants.
+
+        :param response_id: The unique identifier of the response execution to transition.
+        :type response_id: str
+        :param next_status: The target status to transition to.
+        :type next_status: ~azure.ai.agentserver.responses.models.runtime.ResponseStatus
+        :param ttl_seconds: Optional time-to-live in seconds to refresh expiration.
+        :type ttl_seconds: int | None
+        :returns: ``True`` if the entry was found and transitioned, ``False`` otherwise.
+        :rtype: bool
+        """
         async with self._lock:
             self._purge_expired_unlocked()
             entry = self._entries.get(response_id)
@@ -241,6 +352,12 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
     async def set_cancel_requested(self, response_id: str, *, ttl_seconds: int | None = None) -> bool:
         """Mark cancellation requested and enforce lifecycle-safe cancel transitions.
 
+        :param response_id: The unique identifier of the response to cancel.
+        :type response_id: str
+        :param ttl_seconds: Optional time-to-live in seconds to refresh expiration.
+        :type ttl_seconds: int | None
+        :returns: ``True`` if the entry was found and cancel was applied, ``False`` otherwise.
+        :rtype: bool
         :raises ValueError: If the execution is already terminal in a non-cancelled state.
         """
         async with self._lock:
@@ -255,7 +372,16 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
 
     @staticmethod
     def _apply_cancel_transition_unlocked(entry: _StoreEntry) -> None:
-        """Apply deterministic and lifecycle-safe cancellation status updates."""
+        """Apply deterministic and lifecycle-safe cancellation status updates.
+
+        Transitions the entry through ``queued -> in_progress -> cancelled`` when
+        applicable, and sets the ``cancel_requested`` flag.
+
+        :param entry: The store entry whose execution state will be updated.
+        :type entry: _StoreEntry
+        :rtype: None
+        :raises ValueError: If the execution is in a terminal non-cancelled state.
+        """
         status = entry.execution.status
 
         if status == "cancelled":
@@ -279,7 +405,17 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         *,
         ttl_seconds: int | None = None,
     ) -> bool:
-        """Append one stream event to replay state for an existing execution."""
+        """Append one stream event to replay state for an existing execution.
+
+        :param response_id: The unique identifier of the response to append the event to.
+        :type response_id: str
+        :param event: The stream event record to append.
+        :type event: ~azure.ai.agentserver.responses.models.runtime.StreamEventRecord
+        :param ttl_seconds: Optional time-to-live in seconds to refresh expiration.
+        :type ttl_seconds: int | None
+        :returns: ``True`` if the entry was found and the event was appended, ``False`` otherwise.
+        :rtype: bool
+        """
         async with self._lock:
             self._purge_expired_unlocked()
             entry = self._entries.get(response_id)
@@ -291,7 +427,13 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
             return True
 
     async def get_stream_events(self, response_id: str) -> list[StreamEventRecord] | None:
-        """Get defensive copies of all replay events for ``response_id``."""
+        """Get defensive copies of all replay events for ``response_id``.
+
+        :param response_id: The unique identifier of the response whose events to retrieve.
+        :type response_id: str
+        :returns: A list of deep-copied stream event records, or ``None`` if not found.
+        :rtype: list[~azure.ai.agentserver.responses.models.runtime.StreamEventRecord] | None
+        """
         async with self._lock:
             self._purge_expired_unlocked()
             entry = self._entries.get(response_id)
@@ -300,19 +442,41 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
             return deepcopy(entry.replay.events)
 
     async def delete(self, response_id: str) -> bool:
-        """Delete all state for a response ID if present."""
+        """Delete all state for a response ID if present.
+
+        Removes the entry entirely from the store (unlike ``delete_response_async``
+        which soft-deletes).
+
+        :param response_id: The unique identifier of the response to remove.
+        :type response_id: str
+        :returns: ``True`` if an entry was found and removed, ``False`` otherwise.
+        :rtype: bool
+        """
         async with self._lock:
             self._purge_expired_unlocked()
             return self._entries.pop(response_id, None) is not None
 
     async def purge_expired(self, *, now: datetime | None = None) -> int:
-        """Remove expired entries and return count."""
+        """Remove expired entries and return count.
+
+        :param now: Optional override for the current time (useful for testing).
+        :type now: ~datetime.datetime | None
+        :returns: The number of expired entries that were removed.
+        :rtype: int
+        """
         async with self._lock:
             return self._purge_expired_unlocked(now=now)
 
     @staticmethod
     def _compute_expiry(ttl_seconds: int | None) -> datetime | None:
-        """Compute an absolute expiration timestamp from a TTL."""
+        """Compute an absolute expiration timestamp from a TTL.
+
+        :param ttl_seconds: Time-to-live in seconds, or ``None`` for no expiration.
+        :type ttl_seconds: int | None
+        :returns: A UTC datetime for the expiry, or ``None`` if *ttl_seconds* is ``None``.
+        :rtype: ~datetime.datetime | None
+        :raises ValueError: If *ttl_seconds* is <= 0.
+        """
         if ttl_seconds is None:
             return None
         if ttl_seconds <= 0:
@@ -320,12 +484,25 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         return datetime.now(timezone.utc) + timedelta(seconds=ttl_seconds)
 
     def _apply_ttl_unlocked(self, entry: _StoreEntry, ttl_seconds: int | None) -> None:
-        """Update entry expiration timestamp when a TTL value is supplied."""
+        """Update entry expiration timestamp when a TTL value is supplied.
+
+        :param entry: The store entry whose expiration to update.
+        :type entry: _StoreEntry
+        :param ttl_seconds: Time-to-live in seconds, or ``None`` to leave unchanged.
+        :type ttl_seconds: int | None
+        :rtype: None
+        """
         if ttl_seconds is not None:
             entry.expires_at = self._compute_expiry(ttl_seconds)
 
     def _purge_expired_unlocked(self, *, now: datetime | None = None) -> int:
-        """Remove expired entries without acquiring the lock."""
+        """Remove expired entries without acquiring the lock.
+
+        :param now: Optional override for the current time (useful for testing).
+        :type now: ~datetime.datetime | None
+        :returns: The number of expired entries that were removed.
+        :rtype: int
+        """
         current_time = now or datetime.now(timezone.utc)
         expired_ids = [
             response_id
@@ -340,7 +517,16 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
 
     @staticmethod
     def _extract_item_id(item: Any) -> str | None:
-        """Extract item identifier from object-like or mapping-like values."""
+        """Extract item identifier from object-like or mapping-like values.
+
+        Supports both dict-like (``item["id"]``) and attribute-like (``item.id``)
+        access patterns.
+
+        :param item: The item to extract an ID from.
+        :type item: Any
+        :returns: The string ID if found, or ``None``.
+        :rtype: str | None
+        """
         if item is None:
             return None
         if isinstance(item, dict):
@@ -351,7 +537,13 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
 
     @staticmethod
     def _extract_conversation_id(response: Response) -> str | None:
-        """Extract conversation identifier if present on the response envelope."""
+        """Extract conversation identifier if present on the response envelope.
+
+        :param response: The response envelope to inspect.
+        :type response: ~azure.ai.agentserver.responses.models._generated.Response
+        :returns: The conversation ID as a string, or ``None`` if not present.
+        :rtype: str | None
+        """
         value = getattr(response, "conversation_id", None)
         if value is None:
             return None
@@ -359,7 +551,13 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
 
     @staticmethod
     def _resolve_mode_flags_from_response(response: Response) -> ResponseModeFlags:
-        """Build mode flags from a response snapshot where available."""
+        """Build mode flags from a response snapshot where available.
+
+        :param response: The response envelope to extract mode flags from.
+        :type response: ~azure.ai.agentserver.responses.models._generated.Response
+        :returns: Mode flags derived from the response's ``stream``, ``store``, and ``background`` attributes.
+        :rtype: ~azure.ai.agentserver.responses.models.runtime.ResponseModeFlags
+        """
         return ResponseModeFlags(
             stream=bool(getattr(response, "stream", False)),
             store=bool(getattr(response, "store", True)),
