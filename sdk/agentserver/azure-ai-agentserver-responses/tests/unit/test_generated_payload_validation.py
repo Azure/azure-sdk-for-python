@@ -7,7 +7,7 @@ from __future__ import annotations
 import pytest
 
 from azure.ai.agentserver.responses.hosting._validation import parse_create_response
-from azure.ai.agentserver.responses.models import RequestValidationError
+from azure.ai.agentserver.responses.models.errors import RequestValidationError
 from azure.ai.agentserver.responses.models._generated._validators import validate_CreateResponse
 
 

@@ -302,14 +302,14 @@ type_spec/                 TypeSpec definitions and pipeline
 
 ## Samples
 
-The [`samples/`](samples/) directory contains runnable Starlette servers demonstrating the SDK:
+The `samples/` directory contains runnable Starlette servers demonstrating the SDK:
 
 | Sample | Description |
 |--------|-------------|
-| [GettingStarted](samples/GetStarted/) | Minimal echo handler — text message in default, streaming, and background modes |
-| [FunctionCalling](samples/FunctionCalling/) | Two-turn conversation — server emits a function call, client submits output, server returns result |
-| [MultiOutput](samples/MultiOutput/) | Multiple output items — reasoning followed by a text message |
-| [ConversationHistory](samples/ConversationHistory/) | Multi-turn with `previous_response_id` — demonstrates `get_history_async()` and conversation chaining |
+| GettingStarted | Minimal echo handler — text message in default, streaming, and background modes |
+| FunctionCalling | Two-turn conversation — server emits a function call, client submits output, server returns result |
+| MultiOutput | Multiple output items — reasoning followed by a text message |
+| ConversationHistory | Multi-turn with `previous_response_id` — demonstrates `get_history_async()` and conversation chaining |
 
 Each sample includes:
 - `app.py` — the sample Starlette server
