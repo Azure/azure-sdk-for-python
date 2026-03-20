@@ -10,7 +10,7 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class _AgentDefinitionOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class AgentDefinitionOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Feature opt-in keys for agent definition operations supporting hosted or workflow agents."""
 
     HOSTED_AGENTS_V1_PREVIEW = "HostedAgents=V1Preview"
@@ -358,7 +358,7 @@ class EvaluatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Custom evaluator."""
 
 
-class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of FoundryFeaturesOptInKeys."""
 
     EVALUATIONS_V1_PREVIEW = "Evaluations=V1Preview"
@@ -550,8 +550,8 @@ class RankerVersionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AUTO = "auto"
     """AUTO."""
-    DEFAULT_2024_11_15 = "default-2024-11-15"
-    """DEFAULT_2024_11_15."""
+    DEFAULT2024_11_15 = "default-2024-11-15"
+    """DEFAULT2024_11_15."""
 
 
 class RecurrenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -666,8 +666,8 @@ class ToolChoiceParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """WEB_SEARCH_PREVIEW."""
     COMPUTER_USE_PREVIEW = "computer_use_preview"
     """COMPUTER_USE_PREVIEW."""
-    WEB_SEARCH_PREVIEW_2025_03_11 = "web_search_preview_2025_03_11"
-    """WEB_SEARCH_PREVIEW_2025_03_11."""
+    WEB_SEARCH_PREVIEW2025_03_11 = "web_search_preview_2025_03_11"
+    """WEB_SEARCH_PREVIEW2025_03_11."""
     IMAGE_GENERATION = "image_generation"
     """IMAGE_GENERATION."""
     CODE_INTERPRETER = "code_interpreter"

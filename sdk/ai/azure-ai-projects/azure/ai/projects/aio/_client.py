@@ -16,10 +16,10 @@ from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._utils.serialization import Deserializer, Serializer
+from ..beta.aio.operations import BetaOperations
 from ._configuration import AIProjectClientConfiguration
 from .operations import (
     AgentsOperations,
-    BetaOperations,
     ConnectionsOperations,
     DatasetsOperations,
     DeploymentsOperations,

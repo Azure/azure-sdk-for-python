@@ -2792,7 +2792,7 @@ class ContainerNetworkPolicyAllowlistParam(ContainerNetworkPolicyParam, discrimi
     allowed_domains: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of allowed domains when type is ``allowlist``. Required."""
     domain_secrets: Optional[list["_models.ContainerNetworkPolicyDomainSecretParam"]] = rest_field(
-        visibility=["create"]
+        visibility=["read", "create", "update", "delete", "query"]
     )
     """Optional domain-scoped secrets for allowlisted domains."""
 
@@ -8636,12 +8636,14 @@ class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
     :vartype mode: str or str
     :ivar tools: A list of tool definitions that the model should be allowed to call. For the
      Responses API, the list of tool definitions might look like:
+
      .. code-block:: json
-     [
-     { "type": "function", "name": "get_weather" },
-     { "type": "mcp", "server_label": "deepwiki" },
-     { "type": "image_generation" }
-     ]. Required.
+
+        [
+          { "type": "function", "name": "get_weather" },
+          { "type": "mcp", "server_label": "deepwiki" },
+          { "type": "image_generation" }
+        ]. Required.
     :vartype tools: list[dict[str, any]]
     """
 
@@ -8655,12 +8657,14 @@ class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
     tools: list[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of tool definitions that the model should be allowed to call. For the Responses API, the
      list of tool definitions might look like:
+     
      .. code-block:: json
-     [
-     { \"type\": \"function\", \"name\": \"get_weather\" },
-     { \"type\": \"mcp\", \"server_label\": \"deepwiki\" },
-     { \"type\": \"image_generation\" }
-     ]. Required."""
+     
+        [
+          { \"type\": \"function\", \"name\": \"get_weather\" },
+          { \"type\": \"mcp\", \"server_label\": \"deepwiki\" },
+          { \"type\": \"image_generation\" }
+        ]. Required."""
 
     @overload
     def __init__(
@@ -8929,12 +8933,12 @@ class ToolChoiceWebSearchPreview20250311(ToolChoiceParam, discriminator="web_sea
     """Indicates that the model should use a built-in tool to generate a response. `Learn more about
     built-in tools <https://platform.openai.com/docs/guides/tools>`_.
 
-    :ivar type: Required. WEB_SEARCH_PREVIEW_2025_03_11.
-    :vartype type: str or ~azure.ai.projects.models.WEB_SEARCH_PREVIEW_2025_03_11
+    :ivar type: Required. WEB_SEARCH_PREVIEW2025_03_11.
+    :vartype type: str or ~azure.ai.projects.models.WEB_SEARCH_PREVIEW2025_03_11
     """
 
-    type: Literal[ToolChoiceParamType.WEB_SEARCH_PREVIEW_2025_03_11] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. WEB_SEARCH_PREVIEW_2025_03_11."""
+    type: Literal[ToolChoiceParamType.WEB_SEARCH_PREVIEW2025_03_11] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. WEB_SEARCH_PREVIEW2025_03_11."""
 
     @overload
     def __init__(
@@ -8950,7 +8954,7 @@ class ToolChoiceWebSearchPreview20250311(ToolChoiceParam, discriminator="web_sea
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = ToolChoiceParamType.WEB_SEARCH_PREVIEW_2025_03_11  # type: ignore
+        self.type = ToolChoiceParamType.WEB_SEARCH_PREVIEW2025_03_11  # type: ignore
 
 
 class ToolDescription(_Model):
