@@ -1,6 +1,6 @@
 ## Release History
 
-### 4.15.1 (2026-03-21)
+### 4.16.0b1 (2026-03-21)
 
 #### Features Added
 * Added support for Query Advisor feature - See [PR 45331](https://github.com/Azure/azure-sdk-for-python/pull/45331)
