@@ -30,11 +30,7 @@ from dotenv import load_dotenv
 
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from openai.types.chat import (
-    ChatCompletionSystemMessageParam,
-    ChatCompletionUserMessageParam,
-    ChatCompletionAssistantMessageParam,
-)
+from openai.types.chat import ChatCompletionMessageParam
 
 load_dotenv()
 
@@ -47,9 +43,9 @@ with (
 ):
     # [START chat_completions]
     with project_client.get_openai_client() as openai_client:
-        messages: list = [
-            ChatCompletionSystemMessageParam(role="system", content="You are a helpful assistant."),
-            ChatCompletionUserMessageParam(role="user", content="Give me one fun fact about the Eiffel Tower."),
+        messages: list[ChatCompletionMessageParam] = [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": "Give me one fun fact about the Eiffel Tower."},
         ]
 
         completion = openai_client.chat.completions.create(
@@ -62,8 +58,8 @@ with (
         assistant_message = completion.choices[0].message.content
         print(f"Assistant: {assistant_message}")
 
-        messages.append(ChatCompletionAssistantMessageParam(role="assistant", content=assistant_message))
-        messages.append(ChatCompletionUserMessageParam(role="user", content="Now give me one related fun fact."))
+        messages.append({"role": "assistant", "content": assistant_message})
+        messages.append({"role": "user", "content": "Now give me one related fun fact."})
 
         completion = openai_client.chat.completions.create(
             model=model,
