@@ -18,16 +18,12 @@ class _StubCreateResponse:
         self.model = data.get("model")
 
 
-class _StubGeneratedValidators:
-    @staticmethod
-    def validate_CreateResponse(_payload: object) -> list[dict[str, str]]:
-        return [{"path": "$.model", "message": "Required property 'model' is missing"}]
+def _stub_validate_create_response(_payload: object) -> list[dict[str, str]]:
+    return [{"path": "$.model", "message": "Required property 'model' is missing"}]
 
 
-class _PassGeneratedValidators:
-    @staticmethod
-    def validate_CreateResponse(_payload: object) -> list[dict[str, str]]:
-        return []
+def _pass_validate_create_response(_payload: object) -> list[dict[str, str]]:
+    return []
 
 
 def _load_generated_validators_module() -> types.ModuleType:
@@ -41,7 +37,7 @@ def _load_generated_validators_module() -> types.ModuleType:
 
 def test_parse_create_response_uses_generated_payload_validator(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(_validation, "CreateResponse", _StubCreateResponse)
-    monkeypatch.setattr(_validation, "_generated_validators", _StubGeneratedValidators)
+    monkeypatch.setattr(_validation, "validate_CreateResponse", _stub_validate_create_response)
 
     with pytest.raises(RequestValidationError) as exc_info:
         parse_create_response({})
@@ -56,23 +52,17 @@ def test_parse_create_response_allows_valid_payload_when_generated_checks_pass(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(_validation, "CreateResponse", _StubCreateResponse)
-    monkeypatch.setattr(_validation, "_generated_validators", _PassGeneratedValidators)
+    monkeypatch.setattr(_validation, "validate_CreateResponse", _pass_validate_create_response)
 
     parsed = parse_create_response({"model": "gpt-4o"})
     assert parsed.model == "gpt-4o"
 
 
-def test_parse_create_response_without_generated_module_still_parses() -> None:
-    module = _validation._generated_validators
-    original_create_response = _validation.CreateResponse
-    try:
-        _validation.CreateResponse = _StubCreateResponse
-        _validation._generated_validators = None
-        parsed = parse_create_response({"model": "gpt-4o"})
-        assert parsed.model == "gpt-4o"
-    finally:
-        _validation.CreateResponse = original_create_response
-        _validation._generated_validators = module
+def test_parse_create_response_without_generated_module_still_parses(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(_validation, "CreateResponse", _StubCreateResponse)
+    monkeypatch.setattr(_validation, "validate_CreateResponse", _pass_validate_create_response)
+    parsed = parse_create_response({"model": "gpt-4o"})
+    assert parsed.model == "gpt-4o"
 
 
 def test_generated_create_response_validator_accepts_string_input() -> None:

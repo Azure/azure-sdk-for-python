@@ -3,26 +3,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
-if TYPE_CHECKING:
-    from ._generated import ApiErrorResponse as ApiErrorResponseType
-    from ._generated import Error as ErrorType
-else:
-    ApiErrorResponseType = Any
-    ErrorType = Any
-
-try:
-    from ._generated import ApiErrorResponse, Error
-except Exception:  # pragma: no cover - allows isolated unit testing when generated deps are unavailable.
-    class _GeneratedUnavailable:
-        def __init__(self, *_args: Any, **_kwargs: Any) -> None:
-            raise ModuleNotFoundError(
-                "generated contract models are unavailable; run generation to restore runtime dependencies"
-            )
-
-    ApiErrorResponse = _GeneratedUnavailable  # type: ignore[assignment]
-    Error = _GeneratedUnavailable  # type: ignore[assignment]
+from azure.ai.agentserver.responses.models._generated import ApiErrorResponse, Error
 
 
 @dataclass(slots=True)
@@ -39,7 +22,7 @@ class RequestValidationError(ValueError):
         """Initialize the parent :class:`ValueError` message."""
         ValueError.__init__(self, self.message)
 
-    def to_error(self) -> ErrorType:
+    def to_error(self) -> Error:
         """Convert this validation error to the generated ``Error`` model."""
         return Error(
             code=self.code,
@@ -49,6 +32,6 @@ class RequestValidationError(ValueError):
             debug_info=self.debug_info,
         )
 
-    def to_api_error_response(self) -> ApiErrorResponseType:
+    def to_api_error_response(self) -> ApiErrorResponse:
         """Convert this validation error to the generated API error envelope."""
         return ApiErrorResponse(error=self.to_error())

@@ -4,26 +4,10 @@ from __future__ import annotations
 
 from typing import Any, Mapping
 
-from .._options import ResponsesServerOptions
-from ..models.errors import RequestValidationError
-
-try:
-    from ..models._generated import ApiErrorResponse, CreateResponse, Error
-except Exception:  # pragma: no cover - allows isolated unit testing when generated deps are unavailable.
-    class _GeneratedUnavailable:
-        def __init__(self, *_args: Any, **_kwargs: Any) -> None:
-            raise ModuleNotFoundError(
-                "generated contract models are unavailable; run generation to restore runtime dependencies"
-            )
-
-    ApiErrorResponse = _GeneratedUnavailable  # type: ignore[assignment]
-    CreateResponse = _GeneratedUnavailable  # type: ignore[assignment]
-    Error = _GeneratedUnavailable  # type: ignore[assignment]
-
-try:
-    from ..models._generated import _validators as _generated_validators
-except Exception:  # pragma: no cover - optional until validator generation is integrated in all environments.
-    _generated_validators = None
+from azure.ai.agentserver.responses._options import ResponsesServerOptions
+from azure.ai.agentserver.responses.models._generated import ApiErrorResponse, CreateResponse, Error
+from azure.ai.agentserver.responses.models._generated._validators import validate_CreateResponse
+from azure.ai.agentserver.responses.models.errors import RequestValidationError
 
 
 def parse_create_response(payload: Mapping[str, Any]) -> CreateResponse:
@@ -36,12 +20,10 @@ def parse_create_response(payload: Mapping[str, Any]) -> CreateResponse:
     if not isinstance(payload, Mapping):
         raise RequestValidationError("request body must be a JSON object", code="invalid_request")
 
-    validator = getattr(_generated_validators, "validate_CreateResponse", None) if _generated_validators else None
-    if callable(validator):
-        validation_errors = validator(payload)
-        if validation_errors:
-            raise RequestValidationError(
-                "request body failed schema validation",
+    validation_errors = validate_CreateResponse(payload)
+    if validation_errors:
+        raise RequestValidationError(
+            "request body failed schema validation",
                 code="invalid_request",
                 debug_info={"errors": validation_errors},
             )

@@ -128,4 +128,3 @@ class StreamReplayState:
     def terminal_event_seen(self) -> bool:
         """Return whether replay state has already recorded a terminal event."""
         return bool(self.events and self.events[-1].terminal)
-
