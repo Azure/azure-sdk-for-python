@@ -1,11 +1,11 @@
 ---
 name: build-tests
-description: Build, write, and run tests for the azure-ai-ml package following Azure SDK Python testing guidelines. Optionally accepts a GitHub issue URL for context and a virtual env path. Format: "build tests [for <issue-url>] [using venv <path>]"
+description: Build, write, and run tests for any Azure SDK for Python package following Azure SDK Python testing guidelines. Optionally accepts a GitHub issue URL for context, a package path, and a virtual env path. Format: "build tests [for <issue-url>] [in <package-path>] [using venv <path>]"
 ---
 
 # Build Tests Skill
 
-This skill sets up the environment, installs dependencies, runs existing tests, and helps write new tests for the azure-ai-ml package following Azure SDK Python testing guidelines.
+This skill sets up the environment, installs dependencies, runs existing tests, and helps write new tests for any Azure SDK for Python package following Azure SDK Python testing guidelines.
 
 ## Overview
 
@@ -25,32 +25,32 @@ Intelligently builds and runs tests by:
 
 **Command for entire package (tox):**
 ```powershell
-cd sdk/ml/azure-ai-ml
+cd sdk/<service>/<package>
 tox -e whl --c ../../../eng/tox/tox.ini --root .
 ```
 
 **Command for specific test file (pytest):**
 ```powershell
-cd sdk/ml/azure-ai-ml
+cd sdk/<service>/<package>
 pytest tests/test_specific_file.py -v
 ```
 
 **Command for specific test class or method:**
 ```powershell
-cd sdk/ml/azure-ai-ml
+cd sdk/<service>/<package>
 pytest tests/test_specific_file.py::TestClassName::test_method_name -v
 ```
 
 **Run all tests in playback mode (default):**
 ```powershell
-cd sdk/ml/azure-ai-ml
+cd sdk/<service>/<package>
 pytest tests/ -v
 ```
 
 **Run tests in live mode:**
 ```powershell
 $env:AZURE_TEST_RUN_LIVE = "true"
-cd sdk/ml/azure-ai-ml
+cd sdk/<service>/<package>
 pytest tests/ -v
 ```
 
@@ -68,7 +68,11 @@ pytest tests/ -v
 
 **Check if user provided in their request:**
 - GitHub issue URL (look for `https://github.com/Azure/azure-sdk-for-python/issues/...` in user's message) — optional, for context
+- Package path (look for phrases like "in sdk/...", "for package", or a path like `sdk/<service>/<package>`)
 - Virtual environment path (look for phrases like "using venv", "use env", "virtual environment at", or just the venv name)
+
+**If package path is missing:**
+Ask: "Which package do you want to run tests for? Please provide the path (e.g., `sdk/<service>/<package>`)."
 
 **If GitHub issue URL is provided:**
 Read the issue to understand which tests to run or write, and what functionality to validate.
@@ -94,8 +98,8 @@ python -m venv env
 ### Step 2: Install Dependencies (within activated venv)
 
 ```powershell
-# Navigate to azure-ai-ml directory (within activated venv)
-cd sdk/ml/azure-ai-ml
+# Navigate to the package directory (within activated venv)
+cd sdk/<service>/<package>
 
 # Install dev dependencies from dev_requirements.txt (within activated venv)
 pip install -r dev_requirements.txt
@@ -127,13 +131,13 @@ az login
 
 **Option A - Run all tests via tox:**
 ```powershell
-cd sdk/ml/azure-ai-ml
+cd sdk/<service>/<package>
 tox -e whl --c ../../../eng/tox/tox.ini --root .
 ```
 
 **Option B - Run specific tests via pytest:**
 ```powershell
-cd sdk/ml/azure-ai-ml
+cd sdk/<service>/<package>
 pytest tests/ -v
 
 # Or a specific test file
@@ -145,7 +149,7 @@ pytest tests/test_specific_file.py::TestClassName -v
 
 **Option C - Run tests mentioned in the issue:**
 ```powershell
-cd sdk/ml/azure-ai-ml
+cd sdk/<service>/<package>
 pytest tests/<path-from-issue> -v -k "<test-name-pattern>"
 ```
 
@@ -189,10 +193,10 @@ def start_proxy(test_proxy):
 ```python
 import pytest
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
-from devtools_testutils.azure_mgmt_testcase import AzureMgmtPreparer
-
-from azure.ai.ml import MLClient
 from azure.identity import DefaultAzureCredential
+
+# Import the client for the package under test
+from azure.<service>.<package> import <ServiceClient>
 
 
 class TestMyFeature(AzureRecordedTestCase):
@@ -201,7 +205,7 @@ class TestMyFeature(AzureRecordedTestCase):
     def test_my_feature(self, **kwargs):
         """Test description following Azure SDK style."""
         # Arrange
-        client = self.create_mgmt_client(MLClient)
+        client = self.create_mgmt_client(<ServiceClient>)
 
         # Act
         result = client.some_operation()
@@ -212,24 +216,24 @@ class TestMyFeature(AzureRecordedTestCase):
 
 **Using `EnvironmentVariableLoader` for credentials:**
 ```python
-from devtools_testutils import EnvironmentVariableLoader
+from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 
-MLClientPreparer = EnvironmentVariableLoader(
-    "ml",
-    azure_ml_workspace_name="test-workspace",
-    azure_ml_resource_group="test-rg",
+ServicePreparer = EnvironmentVariableLoader(
+    "<service>",
     azure_subscription_id="00000000-0000-0000-0000-000000000000",
+    azure_resource_group="test-rg",
+    # Add any other service-specific environment variables here
 )
 
 
 class TestMyFeature(AzureRecordedTestCase):
 
-    @MLClientPreparer()
+    @ServicePreparer()
     @recorded_by_proxy
     def test_my_feature(self, **kwargs):
-        workspace_name = kwargs.pop("azure_ml_workspace_name")
-        # Use workspace_name in test
-        assert workspace_name is not None
+        subscription_id = kwargs.pop("azure_subscription_id")
+        # Use the injected variables in the test
+        assert subscription_id is not None
 ```
 
 **Recording new tests:**
@@ -249,7 +253,7 @@ pytest tests/test_my_feature.py -v
 Run tests in both playback and live modes (if credentials available):
 
 ```powershell
-cd sdk/ml/azure-ai-ml
+cd sdk/<service>/<package>
 
 # Verify in playback mode
 pytest tests/ -v
@@ -277,10 +281,10 @@ After writing and verifying new tests, create a pull request:
 ```powershell
 # Stage test files and recordings
 git add tests/
-git add sdk/ml/azure-ai-ml/tests/
+git add sdk/<service>/<package>/tests/
 
 # Create a descriptive commit message
-git commit -m "test(azure-ai-ml): add tests for <feature> (#<issue-number>)
+git commit -m "test(<package-name>): add tests for <feature> (#<issue-number>)
 
 - Added tests for <feature description>
 - Tests use AzureRecordedTestCase with playback recordings
@@ -294,7 +298,7 @@ Closes #<issue-number>"
 Option 1 - Using GitHub CLI (if available):
 ```powershell
 # Create a new branch
-$branchName = "test/azure-ai-ml-<feature>-<issue-number>"
+$branchName = "test/<package-name>-<feature>-<issue-number>"
 git checkout -b $branchName
 
 # Push the branch
@@ -302,9 +306,9 @@ git push origin $branchName
 
 # Create PR using gh CLI
 gh pr create `
-  --title "test(azure-ai-ml): Add tests for <feature> (#<issue-number>)" `
+  --title "test(<package-name>): Add tests for <feature> (#<issue-number>)" `
   --body "## Description
-This PR adds tests for the azure-ai-ml package as described in #<issue-number>.
+This PR adds tests for the <package-name> package as described in #<issue-number>.
 
 ## Changes
 - Added tests for <feature description> following AzureRecordedTestCase pattern
@@ -347,11 +351,11 @@ Remove-Item Env:AZURE_TEST_RUN_LIVE -ErrorAction SilentlyContinue
 
 ### Import Errors
 
-**Error:** `ModuleNotFoundError: No module named 'azure.ai.ml'`
+**Error:** `ModuleNotFoundError: No module named 'azure.<service>.<package>'`
 
 **Fix:** Ensure the package is installed in the venv:
 ```powershell
-cd sdk/ml/azure-ai-ml
+cd sdk/<service>/<package>
 pip install -e .
 pip install -r dev_requirements.txt
 ```
@@ -403,11 +407,11 @@ Remove-Item Env:AZURE_TEST_RUN_LIVE -ErrorAction SilentlyContinue
 ```powershell
 # 0. Get context
 # User provides: https://github.com/Azure/azure-sdk-for-python/issues/12345
-# Issue mentions: missing tests for job submission feature
+# Issue mentions: missing tests for a feature in sdk/storage/azure-storage-blob
 
 # 1. CRITICAL - Activate virtual environment FIRST
-.\envml\Scripts\Activate.ps1  # Use the venv name provided by user
-cd sdk/ml/azure-ai-ml
+.\env\Scripts\Activate.ps1  # Use the venv name provided by user
+cd sdk/storage/azure-storage-blob
 pip install -r dev_requirements.txt
 pip install -e .
 
@@ -415,33 +419,33 @@ pip install -e .
 pytest tests/ -v --tb=short 2>&1 | Tee-Object test_results.txt
 
 # 3. Check what tests already exist for the feature
-Get-ChildItem tests/ -Filter "*job*"
+Get-ChildItem tests/ -Filter "*blob*"
 
 # 4. Run tests in playback mode (default)
 Remove-Item Env:AZURE_TEST_RUN_LIVE -ErrorAction SilentlyContinue
-pytest tests/test_job_operations.py -v
+pytest tests/test_blob_client.py -v
 
 # 5. Write new test for the missing scenario
-# (Edit tests/test_job_operations.py following AzureRecordedTestCase pattern)
+# (Edit tests/test_blob_client.py following AzureRecordedTestCase pattern)
 
 # 6. Record the new test in live mode
 $env:AZURE_TEST_RUN_LIVE = "true"
-pytest tests/test_job_operations.py::TestJobOperations::test_submit_job -v
+pytest tests/test_blob_client.py::TestBlobClient::test_upload_blob -v
 Remove-Item Env:AZURE_TEST_RUN_LIVE -ErrorAction SilentlyContinue
 
 # 7. Verify new test passes in playback mode
-pytest tests/test_job_operations.py -v
+pytest tests/test_blob_client.py -v
 
 # 8. Create PR
-$branchName = "test/azure-ai-ml-job-submission-12345"
+$branchName = "test/azure-storage-blob-upload-12345"
 git checkout -b $branchName
 git add tests/
-git commit -m "test(azure-ai-ml): add tests for job submission (#12345)
+git commit -m "test(azure-storage-blob): add tests for blob upload (#12345)
 
 Closes #12345"
 git push origin $branchName
 gh pr create `
-  --title "test(azure-ai-ml): Add tests for job submission (#12345)" `
+  --title "test(azure-storage-blob): Add tests for blob upload (#12345)" `
   --body "Fixes #12345" `
   --base main `
   --repo Azure/azure-sdk-for-python
