@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
 from azure.core.pipeline import policies
 from azure.mgmt.core.policies import ARMHttpLoggingPolicy, AsyncARMChallengeAuthenticationPolicy
@@ -14,11 +14,11 @@ from azure.mgmt.core.policies import ARMHttpLoggingPolicy, AsyncARMChallengeAuth
 from .._version import VERSION
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core import AzureClouds
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class FrontDoorManagementClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class FrontDoorManagementClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for FrontDoorManagementClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -26,12 +26,25 @@ class FrontDoorManagementClientConfiguration:  # pylint: disable=too-many-instan
 
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The subscription credentials which uniquely identify the Microsoft
-     Azure subscription. The subscription ID forms part of the URI for every service call. Required.
+    :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
+    :param cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :type cloud_setting: ~azure.core.AzureClouds
+    :keyword api_version: Api Version. Default value is "2025-10-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
-    def __init__(self, credential: "AsyncTokenCredential", subscription_id: str, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        credential: "AsyncTokenCredential",
+        subscription_id: str,
+        cloud_setting: Optional["AzureClouds"] = None,
+        **kwargs: Any
+    ) -> None:
+        api_version: str = kwargs.pop("api_version", "2025-10-01")
+
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
@@ -39,6 +52,8 @@ class FrontDoorManagementClientConfiguration:  # pylint: disable=too-many-instan
 
         self.credential = credential
         self.subscription_id = subscription_id
+        self.cloud_setting = cloud_setting
+        self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://management.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "mgmt-frontdoor/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)

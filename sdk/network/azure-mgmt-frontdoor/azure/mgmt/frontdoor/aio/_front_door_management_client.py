@@ -7,15 +7,18 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
+from typing import Any, Awaitable, Optional, TYPE_CHECKING, cast
+from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.settings import settings
 from azure.mgmt.core import AsyncARMPipelineClient
 from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPolicy
+from azure.mgmt.core.tools import get_arm_endpoints
 
 from .. import models as _models
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 from ._configuration import FrontDoorManagementClientConfiguration
 from .operations import (
     EndpointsOperations,
@@ -33,49 +36,54 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core import AzureClouds
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class FrontDoorManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class FrontDoorManagementClient:  # pylint: disable=too-many-instance-attributes
     """FrontDoor Client.
 
-    :ivar policies: PoliciesOperations operations
-    :vartype policies: azure.mgmt.frontdoor.aio.operations.PoliciesOperations
-    :ivar managed_rule_sets: ManagedRuleSetsOperations operations
-    :vartype managed_rule_sets: azure.mgmt.frontdoor.aio.operations.ManagedRuleSetsOperations
     :ivar front_door_name_availability: FrontDoorNameAvailabilityOperations operations
     :vartype front_door_name_availability:
      azure.mgmt.frontdoor.aio.operations.FrontDoorNameAvailabilityOperations
+    :ivar policies: PoliciesOperations operations
+    :vartype policies: azure.mgmt.frontdoor.aio.operations.PoliciesOperations
+    :ivar network_experiment_profiles: NetworkExperimentProfilesOperations operations
+    :vartype network_experiment_profiles:
+     azure.mgmt.frontdoor.aio.operations.NetworkExperimentProfilesOperations
     :ivar front_door_name_availability_with_subscription:
      FrontDoorNameAvailabilityWithSubscriptionOperations operations
     :vartype front_door_name_availability_with_subscription:
      azure.mgmt.frontdoor.aio.operations.FrontDoorNameAvailabilityWithSubscriptionOperations
+    :ivar managed_rule_sets: ManagedRuleSetsOperations operations
+    :vartype managed_rule_sets: azure.mgmt.frontdoor.aio.operations.ManagedRuleSetsOperations
     :ivar front_doors: FrontDoorsOperations operations
     :vartype front_doors: azure.mgmt.frontdoor.aio.operations.FrontDoorsOperations
+    :ivar experiments: ExperimentsOperations operations
+    :vartype experiments: azure.mgmt.frontdoor.aio.operations.ExperimentsOperations
+    :ivar reports: ReportsOperations operations
+    :vartype reports: azure.mgmt.frontdoor.aio.operations.ReportsOperations
+    :ivar preconfigured_endpoints: PreconfiguredEndpointsOperations operations
+    :vartype preconfigured_endpoints:
+     azure.mgmt.frontdoor.aio.operations.PreconfiguredEndpointsOperations
     :ivar frontend_endpoints: FrontendEndpointsOperations operations
     :vartype frontend_endpoints: azure.mgmt.frontdoor.aio.operations.FrontendEndpointsOperations
     :ivar endpoints: EndpointsOperations operations
     :vartype endpoints: azure.mgmt.frontdoor.aio.operations.EndpointsOperations
     :ivar rules_engines: RulesEnginesOperations operations
     :vartype rules_engines: azure.mgmt.frontdoor.aio.operations.RulesEnginesOperations
-    :ivar network_experiment_profiles: NetworkExperimentProfilesOperations operations
-    :vartype network_experiment_profiles:
-     azure.mgmt.frontdoor.aio.operations.NetworkExperimentProfilesOperations
-    :ivar preconfigured_endpoints: PreconfiguredEndpointsOperations operations
-    :vartype preconfigured_endpoints:
-     azure.mgmt.frontdoor.aio.operations.PreconfiguredEndpointsOperations
-    :ivar experiments: ExperimentsOperations operations
-    :vartype experiments: azure.mgmt.frontdoor.aio.operations.ExperimentsOperations
-    :ivar reports: ReportsOperations operations
-    :vartype reports: azure.mgmt.frontdoor.aio.operations.ReportsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The subscription credentials which uniquely identify the Microsoft
-     Azure subscription. The subscription ID forms part of the URI for every service call. Required.
+    :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :param base_url: Service URL. Default value is None.
     :type base_url: str
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
+    :keyword api_version: Api Version. Default value is "2025-10-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -84,12 +92,24 @@ class FrontDoorManagementClient:  # pylint: disable=client-accepts-api-version-k
         self,
         credential: "AsyncTokenCredential",
         subscription_id: str,
-        base_url: str = "https://management.azure.com",
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
         **kwargs: Any
     ) -> None:
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
+        _endpoints = get_arm_endpoints(_cloud)
+        if not base_url:
+            base_url = _endpoints["resource_manager"]
+        credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = FrontDoorManagementClientConfiguration(
-            credential=credential, subscription_id=subscription_id, **kwargs
+            credential=credential,
+            subscription_id=subscription_id,
+            cloud_setting=cloud_setting,
+            credential_scopes=credential_scopes,
+            **kwargs
         )
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -108,36 +128,38 @@ class FrontDoorManagementClient:  # pylint: disable=client-accepts-api-version-k
                 policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
                 self._config.http_logging_policy,
             ]
-        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(
+            base_url=cast(str, base_url), policies=_policies, **kwargs
+        )
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.policies = PoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.managed_rule_sets = ManagedRuleSetsOperations(
+        self.front_door_name_availability = FrontDoorNameAvailabilityOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.front_door_name_availability = FrontDoorNameAvailabilityOperations(
+        self.policies = PoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.network_experiment_profiles = NetworkExperimentProfilesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.front_door_name_availability_with_subscription = FrontDoorNameAvailabilityWithSubscriptionOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.managed_rule_sets = ManagedRuleSetsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.front_doors = FrontDoorsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.experiments = ExperimentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.reports = ReportsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.preconfigured_endpoints = PreconfiguredEndpointsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.frontend_endpoints = FrontendEndpointsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.endpoints = EndpointsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.rules_engines = RulesEnginesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.network_experiment_profiles = NetworkExperimentProfilesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.preconfigured_endpoints = PreconfiguredEndpointsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.experiments = ExperimentsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.reports = ReportsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
@@ -166,7 +188,7 @@ class FrontDoorManagementClient:  # pylint: disable=client-accepts-api-version-k
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "FrontDoorManagementClient":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 

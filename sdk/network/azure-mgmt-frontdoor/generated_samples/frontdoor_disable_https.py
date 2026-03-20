@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -37,6 +38,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/frontdoor/resource-manager/Microsoft.Network/stable/2021-06-01/examples/FrontdoorDisableHttps.json
+# x-ms-original-file: specification/frontdoor/resource-manager/Microsoft.Network/stable/2025-10-01/examples/FrontdoorDisableHttps.json
 if __name__ == "__main__":
     main()
