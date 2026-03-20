@@ -40,10 +40,12 @@ class _AzureEvals(Evals):
         self,
         *,
         data_source_config: DataSourceConfig,
-        testing_criteria: Iterable[Union[
-            TestingCriterion,
-            AzureAIGraderCoherenceParam,
-        ]],
+        testing_criteria: Iterable[
+            Union[
+                TestingCriterion,
+                AzureAIGraderCoherenceParam,
+            ]
+        ],
         metadata: Optional[Metadata] | Omit = ...,
         name: str | Omit = ...,
         extra_headers: Headers | None = None,

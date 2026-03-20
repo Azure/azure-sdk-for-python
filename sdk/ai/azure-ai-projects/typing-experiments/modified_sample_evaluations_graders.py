@@ -66,7 +66,7 @@ with (
 
     # Specified using TypedDict:
     testing_criteria = [
-        LabelModelGraderParam( # We whave both this one in openai, as TypedDict, to be used as input. We also have LabelModelGrader as a "normal" class derived from base model with utils (to_dict, to_json) to be used as output. Don't use it here.
+        LabelModelGraderParam(  # We whave both this one in openai, as TypedDict, to be used as input. We also have LabelModelGrader as a "normal" class derived from base model with utils (to_dict, to_json) to be used as output. Don't use it here.
             type="label_model",
             model=model_deployment_name,
             input=[
@@ -116,7 +116,7 @@ with (
             evaluator_name="builtin.coherence",
             initialization_parameters={"deployment_name": f"{model_deployment_name}"},
             data_mapping={"query": "{{item.query}}", "response": "{{item.response}}"},
-        )
+        ),
     ]
 
     """
@@ -186,12 +186,13 @@ with (
         data_source_config=data_source_config,
         testing_criteria=[
             AzureAIGraderCoherenceParam(
-            type="azure_ai_evaluator",
-            name="coherence",
-            evaluator_name="builtin.coherence",
-            initialization_parameters={"deployment_name": f"{model_deployment_name}"},
-            data_mapping={"query": "{{item.query}}", "response": "{{item.response}}"},
-        )],
+                type="azure_ai_evaluator",
+                name="coherence",
+                evaluator_name="builtin.coherence",
+                initialization_parameters={"deployment_name": f"{model_deployment_name}"},
+                data_mapping={"query": "{{item.query}}", "response": "{{item.response}}"},
+            )
+        ],
     )
     print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 
