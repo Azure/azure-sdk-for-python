@@ -7050,7 +7050,7 @@ class BetaMemoryStoresOperations:
             if scope is _Unset:
                 raise TypeError("missing required argument: scope")
             body = {
-                "items_property": items,
+                "items": items,
                 "options": options,
                 "previous_search_id": previous_search_id,
                 "scope": scope,
@@ -7136,7 +7136,7 @@ class BetaMemoryStoresOperations:
             if scope is _Unset:
                 raise TypeError("missing required argument: scope")
             body = {
-                "items_property": items,
+                "items": items,
                 "previous_update_id": previous_update_id,
                 "scope": scope,
                 "update_delay": update_delay,
