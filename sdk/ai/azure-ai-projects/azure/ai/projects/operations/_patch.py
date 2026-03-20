@@ -27,7 +27,6 @@ from ._operations import (
     BetaToolsetsOperations,
 )
 
-
 _FOUNDRY_FEATURES_HEADER_NAME: Final[str] = "Foundry-Features"
 _BETA_OPERATION_FEATURE_HEADERS: Final[Dict[str, str]] = {
     "evaluation_taxonomies": "Evaluations=V1Preview",
@@ -38,6 +37,7 @@ _BETA_OPERATION_FEATURE_HEADERS: Final[Dict[str, str]] = {
     "schedules": "Schedules=V1Preview",
     "toolsets": "Toolsets=V1Preview",
 }
+
 
 def _has_header_case_insensitive(headers: Any, header_name: str) -> bool:
     """Return True if headers already contains the provided header name."""
@@ -80,9 +80,7 @@ class _OperationMethodHeaderProxy:
         def _wrapped(*args: Any, **kwargs: Any) -> Any:
             headers = kwargs.get("headers")
             if headers is None:
-                kwargs["headers"] = {
-                    _FOUNDRY_FEATURES_HEADER_NAME: self._foundry_features_value
-                }
+                kwargs["headers"] = {_FOUNDRY_FEATURES_HEADER_NAME: self._foundry_features_value}
             elif not _has_header_case_insensitive(headers, _FOUNDRY_FEATURES_HEADER_NAME):
                 try:
                     headers[_FOUNDRY_FEATURES_HEADER_NAME] = self._foundry_features_value

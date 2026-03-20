@@ -391,9 +391,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
             polling_method: _UpdateMemoriesLROPollingMethod = _UpdateMemoriesLROPollingMethod(
                 lro_delay,
                 path_format_arguments=path_format_arguments,
-                headers={
-                    _FOUNDRY_FEATURES_HEADER_NAME: _BETA_OPERATION_FEATURE_HEADERS["memory_stores"]
-                },
+                headers={_FOUNDRY_FEATURES_HEADER_NAME: _BETA_OPERATION_FEATURE_HEADERS["memory_stores"]},
                 **kwargs,
             )
         else:
