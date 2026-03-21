@@ -95,6 +95,9 @@ class _OperationMethodHeaderProxy:
 
         return _wrapped
 
+    def __dir__(self) -> list:
+        return dir(self._operation)
+
     def __setattr__(self, name: str, value: Any) -> None:
         setattr(self._operation, name, value)
 

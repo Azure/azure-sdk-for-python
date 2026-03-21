@@ -12,7 +12,11 @@ from typing import Union, Optional, Any, IO, overload
 from azure.core.exceptions import HttpResponseError
 from ._operations import AgentsOperations as GeneratedAgentsOperations, JSON, _Unset
 from ... import models as _models
-from ...operations._patch_agents import _PREVIEW_FEATURE_REQUIRED_CODE, _PREVIEW_FEATURE_ADDED_ERROR_MESSAGE
+from ...operations._patch_agents import (
+    _AGENT_OPERATION_FEATURE_HEADERS,
+    _PREVIEW_FEATURE_REQUIRED_CODE,
+    _PREVIEW_FEATURE_ADDED_ERROR_MESSAGE,
+)
 
 
 class AgentsOperations(GeneratedAgentsOperations):
@@ -151,6 +155,18 @@ class AgentsOperations(GeneratedAgentsOperations):
         :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        if getattr(self._config, "_allow_preview", False):
+            # Import at call time to avoid circular import during module initialization.
+            from ...operations._patch import _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
+
+            # Add Foundry-Features header if not already present
+            headers = kwargs.get("headers")
+            if headers is None:
+                kwargs["headers"] = {_FOUNDRY_FEATURES_HEADER_NAME: _AGENT_OPERATION_FEATURE_HEADERS}
+            elif not _has_header_case_insensitive(headers, _FOUNDRY_FEATURES_HEADER_NAME):
+                headers[_FOUNDRY_FEATURES_HEADER_NAME] = _AGENT_OPERATION_FEATURE_HEADERS
+                kwargs["headers"] = headers
+
         try:
             return await super().create_version(
                 agent_name,

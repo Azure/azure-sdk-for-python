@@ -13,6 +13,7 @@ from azure.core.exceptions import HttpResponseError
 from ._operations import EvaluationRulesOperations as GeneratedEvaluationRulesOperations, JSON
 from ._patch_agents import _PREVIEW_FEATURE_REQUIRED_CODE, _PREVIEW_FEATURE_ADDED_ERROR_MESSAGE
 from .. import models as _models
+from ..models._enums import _FoundryFeaturesOptInKeys
 
 
 class EvaluationRulesOperations(GeneratedEvaluationRulesOperations):
@@ -96,6 +97,21 @@ class EvaluationRulesOperations(GeneratedEvaluationRulesOperations):
         :rtype: ~azure.ai.projects.models.EvaluationRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+
+        if getattr(self._config, "_allow_preview", False):
+            # Import at call time to avoid circular import during module initialization.
+            from ._patch import _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
+
+            # Add Foundry-Features header if not already present
+            headers = kwargs.get("headers")
+            if headers is None:
+                kwargs["headers"] = {
+                    _FOUNDRY_FEATURES_HEADER_NAME: _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value
+                }
+            elif not _has_header_case_insensitive(headers, _FOUNDRY_FEATURES_HEADER_NAME):
+                headers[_FOUNDRY_FEATURES_HEADER_NAME] = _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value
+                kwargs["headers"] = headers
+
         try:
             return super().create_or_update(id, evaluation_rule, **kwargs)
         except HttpResponseError as exc:
