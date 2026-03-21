@@ -233,7 +233,6 @@ from ._models import (  # type: ignore
 )
 
 from ._enums import (  # type: ignore
-    AgentDefinitionOptInKeys,
     AgentKind,
     AgentObjectType,
     AgentProtocol,
@@ -257,7 +256,6 @@ from ._enums import (  # type: ignore
     EvaluatorMetricDirection,
     EvaluatorMetricType,
     EvaluatorType,
-    FoundryFeaturesOptInKeys,
     FunctionShellToolParamEnvironmentType,
     GrammarSyntax1,
     ImageGenAction,
@@ -508,7 +506,6 @@ __all__ = [
     "WorkIQPreviewTool",
     "WorkIQPreviewToolParameters",
     "WorkflowAgentDefinition",
-    "AgentDefinitionOptInKeys",
     "AgentKind",
     "AgentObjectType",
     "AgentProtocol",
@@ -532,7 +529,6 @@ __all__ = [
     "EvaluatorMetricDirection",
     "EvaluatorMetricType",
     "EvaluatorType",
-    "FoundryFeaturesOptInKeys",
     "FunctionShellToolParamEnvironmentType",
     "GrammarSyntax1",
     "ImageGenAction",
