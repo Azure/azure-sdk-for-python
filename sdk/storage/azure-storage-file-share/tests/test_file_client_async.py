@@ -512,4 +512,63 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
                 self.account_url(storage_account_name, "file"), credential=self.account_key.secret, share_name='foo', directory_path='bar', file_path='baz')
             await service.close()
 
+    @pytest.mark.parametrize(
+        "account_url, expected_primary, expected_secondary", [
+            (
+                "https://myaccount.file.core.windows.net/",
+                "myaccount.file.core.windows.net",
+                "myaccount-secondary.file.core.windows.net",
+            ),
+            (
+                "https://myaccount-secondary.file.core.windows.net/",
+                "myaccount.file.core.windows.net",
+                "myaccount-secondary.file.core.windows.net",
+            ),
+            (
+                "https://myaccount-dualstack.file.core.windows.net/",
+                "myaccount-dualstack.file.core.windows.net",
+                "myaccount-secondary-dualstack.file.core.windows.net",
+            ),
+            (
+                "https://myaccount-ipv6.file.core.windows.net/",
+                "myaccount-ipv6.file.core.windows.net",
+                "myaccount-secondary-ipv6.file.core.windows.net",
+            ),
+            (
+                "https://myaccount-secondary-dualstack.file.core.windows.net/",
+                "myaccount-dualstack.file.core.windows.net",
+                "myaccount-secondary-dualstack.file.core.windows.net",
+            ),
+            (
+                "https://myaccount-secondary-ipv6.file.core.windows.net/",
+                "myaccount-ipv6.file.core.windows.net",
+                "myaccount-secondary-ipv6.file.core.windows.net",
+            ),
+        ]
+    )
+    @FileSharePreparer()
+    def test_create_service_conn_str_ipv6(self, account_url, expected_primary, expected_secondary, **kwargs):
+        storage_account_name = "myaccount"
+        storage_account_key = kwargs.pop("storage_account_key")
 
+        for service_type in SERVICES.keys():
+            conn_str = (
+                "DefaultEndpointsProtocol=https;"
+                f"AccountName={storage_account_name};"
+                f"AccountKey={storage_account_key.secret};"
+                f"FileEndpoint={account_url};"
+            )
+            service = service_type.from_connection_string(
+                conn_str,
+                credential=storage_account_key.secret,
+                share_name='foo',
+                directory_path='bar',
+                file_path='baz'
+            )
+
+            assert service is not None
+            assert service.scheme == "https"
+            assert service.account_name == storage_account_name
+            assert service.credential.account_key == storage_account_key.secret
+            assert service._hosts[LocationMode.PRIMARY] == expected_primary
+            assert service._hosts[LocationMode.SECONDARY] == expected_secondary
