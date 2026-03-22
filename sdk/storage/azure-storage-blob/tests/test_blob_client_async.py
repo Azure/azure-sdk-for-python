@@ -327,12 +327,14 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
         storage_account_name = "myaccount"
         storage_account_key = kwargs.pop("storage_account_key")
 
+        container_name, blob_name = "foo", "bar"
+
         for service_type in SERVICES.keys():
             service = service_type(
                 account_url,
                 credential=storage_account_key.secret,
-                container_name='foo',
-                blob_name='bar'
+                container_name=container_name,
+                blob_name=blob_name
             )
 
             assert service is not None
@@ -351,8 +353,8 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
             service = service_type.from_connection_string(
                 conn_str,
                 credential=storage_account_key.secret,
-                container_name='foo',
-                blob_name='bar'
+                container_name=container_name,
+                blob_name=blob_name
             )
 
             assert service is not None
@@ -361,6 +363,18 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
             assert service.credential.account_key == storage_account_key.secret
             assert service._hosts[LocationMode.PRIMARY] == expected_primary
             assert service._hosts[LocationMode.SECONDARY] == expected_secondary
+
+        service = BlobClient.from_blob_url(
+            blob_url=f"{account_url}/{container_name}/{blob_name}",
+            credential=storage_account_key.secret
+        )
+
+        assert service is not None
+        assert service.scheme == "https"
+        assert service.account_name == storage_account_name
+        assert service.credential.account_key == storage_account_key.secret
+        assert service._hosts[LocationMode.PRIMARY] == expected_primary
+        assert service._hosts[LocationMode.SECONDARY] == expected_secondary
 
     # --Connection String Test Cases --------------------------------------------
     @BlobPreparer()

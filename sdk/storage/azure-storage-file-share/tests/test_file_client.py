@@ -222,13 +222,15 @@ class TestStorageFileClient(StorageRecordedTestCase):
         storage_account_name = "myaccount"
         storage_account_key = kwargs.pop("storage_account_key")
 
+        share_name, directory_path, file_path = "foo", "bar", "baz"
+
         for service_type in SERVICES.keys():
             service = service_type(
                 account_url,
                 credential=storage_account_key.secret,
-                share_name='foo',
-                directory_path='bar',
-                file_path='baz'
+                share_name=share_name,
+                directory_path=directory_path,
+                file_path=file_path
             )
 
             assert service is not None
@@ -247,9 +249,9 @@ class TestStorageFileClient(StorageRecordedTestCase):
             service = service_type.from_connection_string(
                 conn_str,
                 credential=storage_account_key.secret,
-                share_name='foo',
-                directory_path='bar',
-                file_path='baz'
+                share_name=share_name,
+                directory_path=directory_path,
+                file_path=file_path
             )
 
             assert service is not None
@@ -258,6 +260,17 @@ class TestStorageFileClient(StorageRecordedTestCase):
             assert service.credential.account_key == storage_account_key.secret
             assert service._hosts[LocationMode.PRIMARY] == expected_primary
             assert service._hosts[LocationMode.SECONDARY] == expected_secondary
+
+        service = ShareFileClient.from_file_url(
+            file_url=f"{account_url}/{share_name}/{directory_path}/{file_path}",
+            credential=storage_account_key.secret
+        )
+        assert service is not None
+        assert service.scheme == "https"
+        assert service.account_name == storage_account_name
+        assert service.credential.account_key == storage_account_key.secret
+        assert service._hosts[LocationMode.PRIMARY] == expected_primary
+        assert service._hosts[LocationMode.SECONDARY] == expected_secondary
 
     # --Connection String Test Cases --------------------------------------------
 
