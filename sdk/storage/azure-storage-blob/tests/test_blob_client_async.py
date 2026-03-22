@@ -12,6 +12,7 @@ from azure.core.credentials import AzureSasCredential
 from azure.storage.blob import (
     AccountSasPermissions,
     generate_account_sas,
+    LocationMode,
     ResourceTypes,
     VERSION,
 )
@@ -322,7 +323,7 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
         ]
     )
     @BlobPreparer()
-    def test_create_service_ipv6(self, account_url, expected_primary, expected_secondary, **kwargs):
+    def test_create_service_clients_ipv6(self, account_url, expected_primary, expected_secondary, **kwargs):
         storage_account_name = "myaccount"
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -338,8 +339,8 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
             assert service.scheme == "https"
             assert service.account_name == storage_account_name
             assert service.credential.account_key == storage_account_key.secret
-            assert service._hosts["primary"] == expected_primary
-            assert service._hosts["secondary"] == expected_secondary
+            assert service._hosts[LocationMode.PRIMARY] == expected_primary
+            assert service._hosts[LocationMode.SECONDARY] == expected_secondary
 
     # --Connection String Test Cases --------------------------------------------
     @BlobPreparer()
@@ -740,5 +741,65 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
             service = client(
                 self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, container_name='foo', blob_name='bar')
             await service.close()
+
+    @pytest.mark.parametrize(
+        "account_url, expected_primary, expected_secondary", [
+            (
+                "https://myaccount.blob.core.windows.net/",
+                "myaccount.blob.core.windows.net",
+                "myaccount-secondary.blob.core.windows.net",
+            ),
+            (
+                "https://myaccount-secondary.blob.core.windows.net/",
+                "myaccount.blob.core.windows.net",
+                "myaccount-secondary.blob.core.windows.net",
+            ),
+            (
+                "https://myaccount-dualstack.blob.core.windows.net/",
+                "myaccount-dualstack.blob.core.windows.net",
+                "myaccount-secondary-dualstack.blob.core.windows.net",
+            ),
+            (
+                "https://myaccount-ipv6.blob.core.windows.net/",
+                "myaccount-ipv6.blob.core.windows.net",
+                "myaccount-secondary-ipv6.blob.core.windows.net",
+            ),
+            (
+                "https://myaccount-secondary-dualstack.blob.core.windows.net/",
+                "myaccount-dualstack.blob.core.windows.net",
+                "myaccount-secondary-dualstack.blob.core.windows.net",
+            ),
+            (
+                "https://myaccount-secondary-ipv6.blob.core.windows.net/",
+                "myaccount-ipv6.blob.core.windows.net",
+                "myaccount-secondary-ipv6.blob.core.windows.net",
+            ),
+        ]
+    )
+    @BlobPreparer()
+    def test_create_service_conn_str_ipv6(self, account_url, expected_primary, expected_secondary, **kwargs):
+        storage_account_name = "myaccount"
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        for client in SERVICES.keys():
+            conn_str = (
+                "DefaultEndpointsProtocol=https;"
+                f"AccountName={storage_account_name};"
+                f"AccountKey={storage_account_key.secret};"
+                f"BlobEndpoint={account_url};"
+            )
+            service = client.from_connection_string(
+                conn_str,
+                credential=storage_account_key.secret,
+                container_name='foo',
+                blob_name='bar'
+            )
+
+            assert service is not None
+            assert service.scheme == "https"
+            assert service.account_name == storage_account_name
+            assert service.credential.account_key == storage_account_key.secret
+            assert service._hosts[LocationMode.PRIMARY] == expected_primary
+            assert service._hosts[LocationMode.SECONDARY] == expected_secondary
 
 # ------------------------------------------------------------------------------

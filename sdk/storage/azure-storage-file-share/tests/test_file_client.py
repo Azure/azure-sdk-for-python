@@ -211,7 +211,7 @@ class TestStorageFileClient(StorageRecordedTestCase):
         ]
     )
     @FileSharePreparer()
-    def test_create_service_ipv6(self, account_url, expected_primary, expected_secondary, **kwargs):
+    def test_create_service_clients_ipv6(self, account_url, expected_primary, expected_secondary, **kwargs):
         storage_account_name = "myaccount"
         storage_account_key = kwargs.pop("storage_account_key")
 

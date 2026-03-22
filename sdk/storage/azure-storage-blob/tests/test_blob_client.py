@@ -15,6 +15,7 @@ from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
     generate_account_sas,
+    LocationMode,
     ResourceTypes,
     VERSION,
 )
@@ -334,7 +335,7 @@ class TestStorageClient(StorageRecordedTestCase):
         ]
     )
     @BlobPreparer()
-    def test_create_service_ipv6(self, account_url, expected_primary, expected_secondary, **kwargs):
+    def test_create_service_clients_ipv6(self, account_url, expected_primary, expected_secondary, **kwargs):
         storage_account_name = "myaccount"
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -350,8 +351,8 @@ class TestStorageClient(StorageRecordedTestCase):
             assert service.scheme == "https"
             assert service.account_name == storage_account_name
             assert service.credential.account_key == storage_account_key.secret
-            assert service._hosts["primary"] == expected_primary
-            assert service._hosts["secondary"] == expected_secondary
+            assert service._hosts[LocationMode.PRIMARY] == expected_primary
+            assert service._hosts[LocationMode.SECONDARY] == expected_secondary
 
     # --Connection String Test Cases --------------------------------------------
 
@@ -790,5 +791,65 @@ class TestStorageClient(StorageRecordedTestCase):
         assert config is not None
         assert config.max_block_size == 4 * 1024 * 1024
         assert sdk_name in config.user_agent_policy.user_agent
+
+    @pytest.mark.parametrize(
+        "account_url, expected_primary, expected_secondary", [
+            (
+                "https://myaccount.blob.core.windows.net/",
+                "myaccount.blob.core.windows.net",
+                "myaccount-secondary.blob.core.windows.net",
+            ),
+            (
+                "https://myaccount-secondary.blob.core.windows.net/",
+                "myaccount.blob.core.windows.net",
+                "myaccount-secondary.blob.core.windows.net",
+            ),
+            (
+                "https://myaccount-dualstack.blob.core.windows.net/",
+                "myaccount-dualstack.blob.core.windows.net",
+                "myaccount-secondary-dualstack.blob.core.windows.net",
+            ),
+            (
+                "https://myaccount-ipv6.blob.core.windows.net/",
+                "myaccount-ipv6.blob.core.windows.net",
+                "myaccount-secondary-ipv6.blob.core.windows.net",
+            ),
+            (
+                "https://myaccount-secondary-dualstack.blob.core.windows.net/",
+                "myaccount-dualstack.blob.core.windows.net",
+                "myaccount-secondary-dualstack.blob.core.windows.net",
+            ),
+            (
+                "https://myaccount-secondary-ipv6.blob.core.windows.net/",
+                "myaccount-ipv6.blob.core.windows.net",
+                "myaccount-secondary-ipv6.blob.core.windows.net",
+            ),
+        ]
+    )
+    @BlobPreparer()
+    def test_create_service_conn_str_ipv6(self, account_url, expected_primary, expected_secondary, **kwargs):
+        storage_account_name = "myaccount"
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        for client in SERVICES.keys():
+            conn_str = (
+                "DefaultEndpointsProtocol=https;"
+                f"AccountName={storage_account_name};"
+                f"AccountKey={storage_account_key.secret};"
+                f"BlobEndpoint={account_url};"
+            )
+            service = client.from_connection_string(
+                conn_str,
+                credential=storage_account_key.secret,
+                container_name='foo',
+                blob_name='bar'
+            )
+
+            assert service is not None
+            assert service.scheme == "https"
+            assert service.account_name == storage_account_name
+            assert service.credential.account_key == storage_account_key.secret
+            assert service._hosts[LocationMode.PRIMARY] == expected_primary
+            assert service._hosts[LocationMode.SECONDARY] == expected_secondary
 
 # ------------------------------------------------------------------------------
