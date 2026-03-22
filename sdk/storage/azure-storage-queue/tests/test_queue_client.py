@@ -728,6 +728,60 @@ class TestStorageQueueClient(StorageRecordedTestCase):
         acl = queue_client.get_queue_access_policy()
         assert acl is not None
 
+    @pytest.mark.parametrize(
+        "account_url, expected_primary, expected_secondary", [
+            (
+                "https://myaccount.queue.core.windows.net/",
+                "myaccount.queue.core.windows.net",
+                "myaccount-secondary.queue.core.windows.net",
+            ),
+            (
+                "https://myaccount-secondary.queue.core.windows.net/",
+                "myaccount.queue.core.windows.net",
+                "myaccount-secondary.queue.core.windows.net",
+            ),
+            (
+                "https://myaccount-dualstack.queue.core.windows.net/",
+                "myaccount-dualstack.queue.core.windows.net",
+                "myaccount-secondary-dualstack.queue.core.windows.net",
+            ),
+            (
+                "https://myaccount-ipv6.queue.core.windows.net/",
+                "myaccount-ipv6.queue.core.windows.net",
+                "myaccount-secondary-ipv6.queue.core.windows.net",
+            ),
+            (
+                "https://myaccount-secondary-dualstack.queue.core.windows.net/",
+                "myaccount-dualstack.queue.core.windows.net",
+                "myaccount-secondary-dualstack.queue.core.windows.net",
+            ),
+            (
+                "https://myaccount-secondary-ipv6.queue.core.windows.net/",
+                "myaccount-ipv6.queue.core.windows.net",
+                "myaccount-secondary-ipv6.queue.core.windows.net",
+            ),
+        ]
+    )
+    @QueuePreparer()
+    def test_create_service_conn_str_ipv6(self, account_url, expected_primary, expected_secondary, **kwargs):
+        storage_account_name = "myaccount"
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        for service_type in SERVICES.keys():
+            conn_str = (
+                "DefaultEndpointsProtocol=https;"
+                f"AccountName={storage_account_name};"
+                f"AccountKey={storage_account_key.secret};"
+                f"QueueEndpoint={account_url};"
+            )
+            service = service_type(account_url, credential=storage_account_key.secret, queue_name="foo")
+
+            assert service is not None
+            assert service.scheme == "https"
+            assert service.account_name == storage_account_name
+            assert service.credential.account_key == storage_account_key.secret
+            assert service._hosts[LocationMode.PRIMARY] == expected_primary
+            assert service._hosts[LocationMode.SECONDARY] == expected_secondary
 
 # ------------------------------------------------------------------------------
 if __name__ == "__main__":
