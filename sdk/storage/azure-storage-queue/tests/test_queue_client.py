@@ -11,6 +11,7 @@ import pytest
 from azure.storage.queue import (
     AccountSasPermissions,
     generate_account_sas,
+    LocationMode,
     QueueClient,
     QueueServiceClient,
     ResourceTypes,
@@ -281,8 +282,8 @@ class TestStorageQueueClient(StorageRecordedTestCase):
             assert service.scheme == "https"
             assert service.account_name == storage_account_name
             assert service.credential.account_key == storage_account_key.secret
-            assert service._hosts["primary"] == expected_primary
-            assert service._hosts["secondary"] == expected_secondary
+            assert service._hosts[LocationMode.PRIMARY] == expected_primary
+            assert service._hosts[LocationMode.SECONDARY] == expected_secondary
 
     # --Connection String Test Cases --------------------------------------------
     @QueuePreparer()

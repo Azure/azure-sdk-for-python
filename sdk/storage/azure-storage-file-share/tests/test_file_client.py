@@ -8,7 +8,14 @@ import platform
 
 import pytest
 from azure.core.exceptions import AzureError
-from azure.storage.fileshare import ShareClient, ShareDirectoryClient, ShareFileClient, ShareServiceClient, VERSION
+from azure.storage.fileshare import (
+    LocationMode,
+    ShareClient,
+    ShareDirectoryClient,
+    ShareFileClient,
+    ShareServiceClient,
+    VERSION
+)
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
@@ -228,8 +235,8 @@ class TestStorageFileClient(StorageRecordedTestCase):
             assert service.scheme == "https"
             assert service.account_name == storage_account_name
             assert service.credential.account_key == storage_account_key.secret
-            assert service._hosts["primary"] == expected_primary
-            assert service._hosts["secondary"] == expected_secondary
+            assert service._hosts[LocationMode.PRIMARY] == expected_primary
+            assert service._hosts[LocationMode.SECONDARY] == expected_secondary
 
     # --Connection String Test Cases --------------------------------------------
 

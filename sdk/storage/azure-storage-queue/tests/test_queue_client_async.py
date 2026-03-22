@@ -8,7 +8,7 @@ import unittest
 from datetime import datetime, timedelta
 
 import pytest
-from azure.storage.queue import AccountSasPermissions, generate_account_sas, ResourceTypes, VERSION
+from azure.storage.queue import AccountSasPermissions, generate_account_sas, LocationMode, ResourceTypes, VERSION
 from azure.storage.queue._shared.parser import DEVSTORE_ACCOUNT_KEY, DEVSTORE_ACCOUNT_NAME
 from azure.storage.queue.aio import QueueClient, QueueServiceClient
 
@@ -272,8 +272,8 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
             assert service.scheme == "https"
             assert service.account_name == storage_account_name
             assert service.credential.account_key == storage_account_key.secret
-            assert service._hosts["primary"] == expected_primary
-            assert service._hosts["secondary"] == expected_secondary
+            assert service._hosts[LocationMode.PRIMARY] == expected_primary
+            assert service._hosts[LocationMode.SECONDARY] == expected_secondary
 
     # --Connection String Test Cases --------------------------------------------
     @QueuePreparer()
