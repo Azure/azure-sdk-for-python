@@ -227,7 +227,8 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
             assert default_service._client._client._pipeline._transport.connection_config.timeout in [20, (20, 2000)]
 
     @pytest.mark.parametrize(
-        "account_url, expected_primary, expected_secondary", [
+        "account_url, expected_primary, expected_secondary",
+        [
             (
                 "https://myaccount.queue.core.windows.net/",
                 "myaccount.queue.core.windows.net",
@@ -258,7 +259,7 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
                 "myaccount-ipv6.queue.core.windows.net",
                 "myaccount-secondary-ipv6.queue.core.windows.net",
             ),
-        ]
+        ],
     )
     @QueuePreparer()
     def test_create_service_clients_ipv6(self, account_url, expected_primary, expected_secondary, **kwargs):
@@ -688,7 +689,8 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         assert acl is not None
 
     @pytest.mark.parametrize(
-        "account_url, expected_primary, expected_secondary", [
+        "account_url, expected_primary, expected_secondary",
+        [
             (
                 "https://myaccount.queue.core.windows.net/",
                 "myaccount.queue.core.windows.net",
@@ -719,7 +721,7 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
                 "myaccount-ipv6.queue.core.windows.net",
                 "myaccount-secondary-ipv6.queue.core.windows.net",
             ),
-        ]
+        ],
     )
     @QueuePreparer()
     def test_create_service_conn_str_ipv6(self, account_url, expected_primary, expected_secondary, **kwargs):
@@ -741,6 +743,7 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
             assert service.credential.account_key == storage_account_key.secret
             assert service._hosts[LocationMode.PRIMARY] == expected_primary
             assert service._hosts[LocationMode.SECONDARY] == expected_secondary
+
 
 # ------------------------------------------------------------------------------
 if __name__ == "__main__":
