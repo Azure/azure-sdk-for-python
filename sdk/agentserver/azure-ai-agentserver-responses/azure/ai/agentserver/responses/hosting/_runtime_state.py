@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 from copy import deepcopy
 from dataclasses import dataclass, field
 from typing import Any
@@ -14,7 +14,7 @@ from ..models import _generated as generated_models
 
 
 @dataclass(slots=True)
-class _ExecutionRecord:
+class _ExecutionRecord:  # pylint: disable=too-many-instance-attributes
     response_id: str
     agent_reference: dict[str, Any]
     stream: bool

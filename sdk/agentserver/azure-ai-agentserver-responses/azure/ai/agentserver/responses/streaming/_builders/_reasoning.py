@@ -63,7 +63,7 @@ class ReasoningSummaryPartBuilder:
         if self._lifecycle_state is not BuilderLifecycleState.NOT_STARTED:
             raise ValueError(f"cannot call emit_added in '{self._lifecycle_state.value}' state")
         self._lifecycle_state = BuilderLifecycleState.ADDED
-        return self._stream._emit_event(
+        return self._stream.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_REASONING_SUMMARY_PART_ADDED.value,
                 "payload": {
@@ -83,7 +83,7 @@ class ReasoningSummaryPartBuilder:
         :returns: The emitted event dict.
         :rtype: dict[str, Any]
         """
-        return self._stream._emit_event(
+        return self._stream.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_REASONING_SUMMARY_TEXT_DELTA.value,
                 "payload": {
@@ -104,7 +104,7 @@ class ReasoningSummaryPartBuilder:
         :rtype: dict[str, Any]
         """
         self._final_text = final_text
-        return self._stream._emit_event(
+        return self._stream.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_REASONING_SUMMARY_TEXT_DONE.value,
                 "payload": {
@@ -126,7 +126,7 @@ class ReasoningSummaryPartBuilder:
         if self._lifecycle_state is not BuilderLifecycleState.ADDED:
             raise ValueError(f"cannot call emit_done in '{self._lifecycle_state.value}' state")
         self._lifecycle_state = BuilderLifecycleState.DONE
-        return self._stream._emit_event(
+        return self._stream.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_REASONING_SUMMARY_PART_DONE.value,
                 "payload": {

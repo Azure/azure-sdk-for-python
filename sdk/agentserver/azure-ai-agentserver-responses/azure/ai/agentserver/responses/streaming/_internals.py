@@ -9,7 +9,6 @@ and generated model objects. They carry no mutable state of their own.
 from __future__ import annotations
 
 from copy import deepcopy
-from datetime import datetime, timezone
 from types import GeneratorType
 from typing import Any
 
@@ -153,7 +152,7 @@ def coerce_event_with_generated_class(event: dict[str, Any]) -> dict[str, Any]:
         model_data = materialize_generated_payload(model_event.as_dict())
         model_type = model_data.pop("type", event_type)
         return {"type": model_type, "payload": model_data}
-    except Exception:
+    except Exception:  # pylint: disable=broad-exception-caught
         return event
 
 
@@ -243,7 +242,7 @@ def track_completed_output_item(
 
     try:
         typed_item: Any = generated_models.OutputItem(deepcopy(item))
-    except Exception:
+    except Exception:  # pylint: disable=broad-exception-caught
         typed_item = deepcopy(item)
 
     while len(output_items) <= output_index:

@@ -85,7 +85,7 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
         :returns: The emitted event dict.
         :rtype: dict[str, Any]
         """
-        return self._stream._emit_event(
+        return self._stream.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA.value,
                 "payload": {
@@ -105,7 +105,7 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
         :rtype: dict[str, Any]
         """
         self._final_arguments = arguments
-        return self._stream._emit_event(
+        return self._stream.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE.value,
                 "payload": {

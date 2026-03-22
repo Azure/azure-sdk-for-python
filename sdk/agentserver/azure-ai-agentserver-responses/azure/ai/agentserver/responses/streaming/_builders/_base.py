@@ -102,8 +102,8 @@ class BaseOutputItemBuilder:
         :raises ValueError: If the builder is not in ``NOT_STARTED`` state.
         """
         self._ensure_transition(BuilderLifecycleState.NOT_STARTED, BuilderLifecycleState.ADDED)
-        stamped_item = self._stream._with_output_item_defaults(item)
-        return self._stream._emit_event(
+        stamped_item = self._stream.with_output_item_defaults(item)
+        return self._stream.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_OUTPUT_ITEM_ADDED.value,
                 "payload": {
@@ -123,8 +123,8 @@ class BaseOutputItemBuilder:
         :raises ValueError: If the builder is not in ``ADDED`` state.
         """
         self._ensure_transition(BuilderLifecycleState.ADDED, BuilderLifecycleState.DONE)
-        stamped_item = self._stream._with_output_item_defaults(item)
-        return self._stream._emit_event(
+        stamped_item = self._stream.with_output_item_defaults(item)
+        return self._stream.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_OUTPUT_ITEM_DONE.value,
                 "payload": {
@@ -139,8 +139,8 @@ class BaseOutputItemBuilder:
 
         :param event_type: The event type string.
         :type event_type: str
-        :param extra_payload: Optional additional payload fields to merge.
-        :type extra_payload: dict[str, Any] | None
+        :keyword extra_payload: Optional additional payload fields to merge.
+        :paramtype extra_payload: dict[str, Any] | None
         :returns: The emitted event dict.
         :rtype: dict[str, Any]
         """
@@ -150,7 +150,7 @@ class BaseOutputItemBuilder:
         }
         if extra_payload:
             payload.update(deepcopy(extra_payload))
-        return self._stream._emit_event({"type": event_type, "payload": payload})
+        return self._stream.emit_event({"type": event_type, "payload": payload})
 
 
 class OutputItemBuilder(BaseOutputItemBuilder):

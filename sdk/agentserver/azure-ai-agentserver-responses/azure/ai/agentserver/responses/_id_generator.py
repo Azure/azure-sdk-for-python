@@ -11,7 +11,7 @@ from typing import Sequence
 from .models import _generated as generated_models
 
 
-class IdGenerator:
+class IdGenerator:  # pylint: disable=too-many-public-methods
     """Generates IDs with embedded partition keys matching the .NET format."""
 
     _PARTITION_KEY_HEX_LENGTH = 16
@@ -435,7 +435,9 @@ class IdGenerator:
         if len(body) != IdGenerator._NEW_FORMAT_BODY_LENGTH and len(body) != IdGenerator._LEGACY_BODY_LENGTH:
             return (
                 False,
-                f"ID '{id_value}' has unexpected body length {len(body)} (expected {IdGenerator._NEW_FORMAT_BODY_LENGTH} or {IdGenerator._LEGACY_BODY_LENGTH}).",
+                f"ID '{id_value}' has unexpected body length {len(body)}" \
+                + f" (expected {IdGenerator._NEW_FORMAT_BODY_LENGTH} or" \
+                + f" {IdGenerator._LEGACY_BODY_LENGTH}).",
             )
 
         if allowed_prefixes is not None and prefix not in allowed_prefixes:

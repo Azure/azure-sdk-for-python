@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any, AsyncIterable, Awaitable, Callable, Mapping, Protocol, Sequence, runtime_checkable

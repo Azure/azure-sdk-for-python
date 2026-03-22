@@ -4,11 +4,6 @@
 
 from ._helpers import (
     EVENT_TYPE,
-    _apply_stream_event_defaults,
-    _build_events,
-    _coerce_handler_event,
-    _encode_sse,
-    _extract_response_snapshot_from_events,
 )
 from ._sse import encode_sse_event, encode_sse_payload, encode_keep_alive_comment
 from ._state_machine import (

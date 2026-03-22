@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any, Literal, Mapping
@@ -66,7 +66,7 @@ class StreamEventRecord:
 
 
 @dataclass(slots=True)
-class ResponseExecution:
+class ResponseExecution:  # pylint: disable=too-many-instance-attributes
     """Lightweight pipeline state for one response execution.
 
     This type intentionally does not own persisted stream history. Stream replay

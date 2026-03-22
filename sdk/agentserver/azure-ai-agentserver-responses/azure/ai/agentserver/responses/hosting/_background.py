@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 from copy import deepcopy
 from typing import Any
 
@@ -71,7 +71,7 @@ async def _run_background_non_stream(
                 sequence_number=None,
             )
             handler_events.append(normalized)
-    except Exception:
+    except Exception:  # pylint: disable=broad-exception-caught
         if record.status != "cancelled":
             record.status = "failed"
             record.response_payload = {

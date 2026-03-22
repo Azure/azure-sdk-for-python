@@ -228,6 +228,8 @@ def _resolve_identity_fields(parsed: Any) -> tuple[str, dict[str, Any]]:
 
     _validate_response_id(response_id)
     agent_reference = _normalize_agent_reference(
-        parsed_mapping.get("agent_reference") if isinstance(parsed_mapping, dict) else getattr(parsed, "agent_reference", None)
+        parsed_mapping.get("agent_reference") \
+            if isinstance(parsed_mapping, dict) \
+            else getattr(parsed, "agent_reference", None)
     )
     return response_id, agent_reference

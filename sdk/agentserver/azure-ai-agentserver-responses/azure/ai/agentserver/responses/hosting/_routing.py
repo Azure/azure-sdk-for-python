@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 import sys
 from contextlib import asynccontextmanager
 from copy import deepcopy
@@ -20,8 +20,6 @@ from ..streaming._sse import encode_keep_alive_comment, encode_sse_payload
 from ..streaming._state_machine import LifecycleStateMachineError, normalize_lifecycle_events
 from ._validation import parse_and_validate_create_response
 from ..models import ResponseModeFlags
-from ..models import _generated as generated_models
-
 from ._background import _refresh_background_status, _run_background_non_stream, _try_execute_background_runner
 from ..streaming._helpers import (
     EVENT_TYPE,
@@ -91,7 +89,7 @@ def map_responses_server(
     *,
     prefix: str = "",
     options: ResponsesServerOptions | None = None,
-) -> None:
+) -> None:  # pylint: disable=too-many-statements
     """Register Responses API routes on a Starlette application.
 
     :param app: Starlette application instance to configure.
@@ -147,7 +145,7 @@ def map_responses_server(
         previous_response_id: str | None,
         span: Any,
         captured_error: Exception | None,
-    ) -> Response:
+    ) -> Response:  # pylint: disable=too-many-statements
         """Handle a streaming create-response request.
 
         Invokes the handler's async generator and returns an SSE
@@ -231,7 +229,7 @@ def map_responses_server(
                     span.end(captured_error)
 
             return StreamingResponse(_fallback_stream(), media_type="text/event-stream", headers=response_headers)
-        except Exception as exc:
+        except Exception as exc:  # pylint: disable=broad-exception-caught
             captured_error = exc
             span.end(captured_error)
             return _error_response(exc, response_headers)
@@ -245,7 +243,7 @@ def map_responses_server(
         )
         handler_events.append(first_normalized)
 
-        async def _live_stream() -> AsyncIterator[str]:
+        async def _live_stream() -> AsyncIterator[str]:  # pylint: disable=too-many-statements
             nonlocal captured_error
 
             if not runtime_options.sse_keep_alive_enabled:
@@ -263,7 +261,7 @@ def map_responses_server(
                         )
                         handler_events.append(normalized)
                         yield encode_sse_payload(normalized["type"], normalized["payload"])
-                except Exception as exc:
+                except Exception as exc:  # pylint: disable=broad-exception-caught
                     captured_error = exc
                     return
                 finally:
@@ -327,7 +325,7 @@ def map_responses_server(
                         )
                         handler_events.append(normalized)
                         await merge_queue.put(encode_sse_payload(normalized["type"], normalized["payload"]))
-                except Exception as exc:
+                except Exception as exc:  # pylint: disable=broad-exception-caught
                     handler_error.append(exc)
                 finally:
                     await merge_queue.put(_SENTINEL)
@@ -354,7 +352,7 @@ def map_responses_server(
                     yield item  # type: ignore[misc]
                 if handler_error:
                     captured_error = handler_error[0]
-            except Exception as exc:
+            except Exception as exc:  # pylint: disable=broad-exception-caught
                 captured_error = exc
             finally:
                 keep_alive_task.cancel()
@@ -468,7 +466,7 @@ def map_responses_server(
                     sequence_number=None,
                 )
                 handler_events.append(normalized)
-        except Exception as exc:
+        except Exception as exc:  # pylint: disable=broad-exception-caught
             captured_error = exc
             span.end(captured_error)
             return _error_response(exc, response_headers)
@@ -622,14 +620,14 @@ def map_responses_server(
             payload = await request.json()
             _prevalidate_identity_payload(payload)
             parsed = parse_and_validate_create_response(payload, options=runtime_options)
-        except Exception as exc:
+        except Exception as exc:  # pylint: disable=broad-exception-caught
             captured_error = exc
             span.end(captured_error)
             return _error_response(exc, response_headers)
 
         try:
             response_id, agent_reference = _resolve_identity_fields(parsed)
-        except Exception as exc:
+        except Exception as exc:  # pylint: disable=broad-exception-caught
             captured_error = exc
             span.end(captured_error)
             return _error_response(exc, response_headers)
@@ -705,7 +703,7 @@ def map_responses_server(
             captured_error=captured_error,
         )
 
-    async def _get(request: Request) -> Response:
+    async def _get(request: Request) -> Response:  # pylint: disable=too-many-return-statements
         """Route handler for ``GET /responses/{response_id}``.
 
         Returns the response snapshot or replays SSE events if ``stream=true``
@@ -729,7 +727,11 @@ def map_responses_server(
         stream_replay = request.query_params.get("stream", "false").lower() == "true"
         if stream_replay:
             if not record.replay_enabled:
-                return _invalid_mode("stream replay is not available for this response", response_headers, param="stream")
+                return _invalid_mode(
+                    "stream replay is not available for this response",
+                    response_headers,
+                    param="stream",
+                )
 
             cursor_raw = request.query_params.get("starting_after")
             starting_after = -1
@@ -737,10 +739,19 @@ def map_responses_server(
                 try:
                     starting_after = int(cursor_raw)
                 except ValueError:
-                    return _invalid_request("starting_after must be an integer", response_headers, param="starting_after")
+                    return _invalid_request(
+                        "starting_after must be an integer",
+                        response_headers,
+                        param="starting_after",
+                    )
 
-            replay_events = [event for event in record.events if event["payload"]["sequence_number"] > starting_after]
-            return StreamingResponse(_encode_sse(replay_events), media_type="text/event-stream", headers=response_headers)
+            replay_events = [
+                event for event in record.events
+                if event["payload"]["sequence_number"] > starting_after
+            ]
+            return StreamingResponse(
+                _encode_sse(replay_events), media_type="text/event-stream", headers=response_headers
+            )
 
         if not record.visible_via_get:
             return _not_found(response_id, response_headers)
@@ -782,7 +793,7 @@ def map_responses_server(
         }
         return JSONResponse(payload, status_code=200, headers=response_headers)
 
-    async def _cancel(request: Request) -> Response:
+    async def _cancel(request: Request) -> Response:  # pylint: disable=too-many-return-statements
         """Route handler for ``POST /responses/{response_id}/cancel``.
 
         Cancels a background response by setting the cancellation signal and
@@ -949,7 +960,9 @@ def map_responses_server(
             pending = [
                 record
                 for record in records
-                if record.background and record.background_execution_started and record.status in {"queued", "in_progress"}
+                if record.background
+                and record.background_execution_started
+                and record.status in {"queued", "in_progress"}
             ]
             if not pending:
                 break

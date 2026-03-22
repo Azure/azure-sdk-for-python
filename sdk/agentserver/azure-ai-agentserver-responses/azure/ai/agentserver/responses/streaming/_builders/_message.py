@@ -65,7 +65,7 @@ class TextContentBuilder:
         if self._lifecycle_state is not BuilderLifecycleState.NOT_STARTED:
             raise ValueError(f"cannot call emit_added in '{self._lifecycle_state.value}' state")
         self._lifecycle_state = BuilderLifecycleState.ADDED
-        return self._stream._emit_event(
+        return self._stream.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_CONTENT_PART_ADDED.value,
                 "payload": {
@@ -81,7 +81,7 @@ class TextContentBuilder:
         if self._lifecycle_state is not BuilderLifecycleState.ADDED:
             raise ValueError(f"cannot call emit_delta in '{self._lifecycle_state.value}' state")
         self._delta_fragments.append(text)
-        return self._stream._emit_event(
+        return self._stream.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_OUTPUT_TEXT_DELTA.value,
                 "payload": {
@@ -110,7 +110,7 @@ class TextContentBuilder:
         if not merged_text and final_text is not None:
             merged_text = final_text
         self._final_text = merged_text
-        return self._stream._emit_event(
+        return self._stream.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_OUTPUT_TEXT_DONE.value,
                 "payload": {
@@ -133,7 +133,7 @@ class TextContentBuilder:
         """
         annotation_index = self._annotation_index
         self._annotation_index += 1
-        return self._stream._emit_event(
+        return self._stream.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_OUTPUT_TEXT_ANNOTATION_ADDED.value,
                 "payload": {
@@ -197,7 +197,7 @@ class RefusalContentBuilder:
         if self._lifecycle_state is not BuilderLifecycleState.NOT_STARTED:
             raise ValueError(f"cannot call emit_added in '{self._lifecycle_state.value}' state")
         self._lifecycle_state = BuilderLifecycleState.ADDED
-        return self._stream._emit_event(
+        return self._stream.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_CONTENT_PART_ADDED.value,
                 "payload": {
@@ -217,7 +217,7 @@ class RefusalContentBuilder:
         :returns: The emitted event dict.
         :rtype: dict[str, Any]
         """
-        return self._stream._emit_event(
+        return self._stream.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_REFUSAL_DELTA.value,
                 "payload": {
@@ -242,7 +242,7 @@ class RefusalContentBuilder:
             raise ValueError(f"cannot call emit_done in '{self._lifecycle_state.value}' state")
         self._lifecycle_state = BuilderLifecycleState.DONE
         self._final_refusal = final_refusal
-        return self._stream._emit_event(
+        return self._stream.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_REFUSAL_DONE.value,
                 "payload": {
@@ -347,7 +347,7 @@ class OutputItemMessageBuilder(BaseOutputItemBuilder):
             content_index = content_builder.content_index
 
         self._completed_contents.append(deepcopy(part))
-        return self._stream._emit_event(
+        return self._stream.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_CONTENT_PART_DONE.value,
                 "payload": {

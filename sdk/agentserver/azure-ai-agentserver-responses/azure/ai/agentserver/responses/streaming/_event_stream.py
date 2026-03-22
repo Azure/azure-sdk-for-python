@@ -30,7 +30,7 @@ from ..models import _generated as generated_models
 EVENT_TYPE = generated_models.ResponseStreamEventType
 
 
-class ResponseEventStream:
+class ResponseEventStream:  # pylint: disable=too-many-public-methods
     """.NET-aligned response event stream with deterministic sequence numbers."""
 
     def __init__(
@@ -126,7 +126,7 @@ class ResponseEventStream:
         :rtype: dict[str, Any]
         """
         self._response.status = "queued"
-        return self._emit_event(
+        return self.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_QUEUED.value,
                 "payload": self._response_payload(),
@@ -142,7 +142,7 @@ class ResponseEventStream:
         :rtype: dict[str, Any]
         """
         self._response.status = status
-        return self._emit_event(
+        return self.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_CREATED.value,
                 "payload": self._response_payload(),
@@ -156,7 +156,7 @@ class ResponseEventStream:
         :rtype: dict[str, Any]
         """
         self._response.status = "in_progress"
-        return self._emit_event(
+        return self.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_IN_PROGRESS.value,
                 "payload": self._response_payload(),
@@ -175,7 +175,7 @@ class ResponseEventStream:
         self._response.error = None
         self._response.incomplete_details = None
         self._set_terminal_fields(usage=usage)
-        return self._emit_event(
+        return self.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_COMPLETED.value,
                 "payload": self._response_payload(),
@@ -209,7 +209,7 @@ class ResponseEventStream:
             }
         )
         self._set_terminal_fields(usage=usage)
-        return self._emit_event(
+        return self.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_FAILED.value,
                 "payload": self._response_payload(),
@@ -242,7 +242,7 @@ class ResponseEventStream:
                 }
             )
         self._set_terminal_fields(usage=usage)
-        return self._emit_event(
+        return self.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_INCOMPLETE.value,
                 "payload": self._response_payload(),
@@ -448,8 +448,15 @@ class ResponseEventStream:
         events = [deepcopy(event) for event in self._events]
 
         if not events:
-            events = normalize_lifecycle_events(response_id=self._response_id, events=[], default_model=self._model)
-            _internals.apply_common_defaults(events, response_id=self._response_id, agent_reference=self._agent_reference, model=self._model)
+            events = normalize_lifecycle_events(
+                response_id=self._response_id, events=[], default_model=self._model
+            )
+            _internals.apply_common_defaults(
+                events,
+                response_id=self._response_id,
+                agent_reference=self._agent_reference,
+                model=self._model
+            )
             _internals.assign_sequence_numbers(events)
             validate_response_event_stream(events)
             return events
@@ -474,7 +481,9 @@ class ResponseEventStream:
             stitched_events.extend(remaining_lifecycle)
             events = stitched_events
 
-        _internals.apply_common_defaults(events, response_id=self._response_id, agent_reference=self._agent_reference, model=self._model)
+        _internals.apply_common_defaults(
+            events, response_id=self._response_id, agent_reference=self._agent_reference, model=self._model
+        )
         _internals.assign_sequence_numbers(events)
         validate_response_event_stream(events)
         return events
@@ -487,7 +496,7 @@ class ResponseEventStream:
         """
         return [deepcopy(event) for event in self._events]
 
-    def _emit_event(self, event: dict[str, Any]) -> dict[str, Any]:
+    def emit_event(self, event: dict[str, Any]) -> dict[str, Any]:
         """Emit a single event, applying defaults and validating the stream.
 
         :param event: The raw event dict to emit.
@@ -496,7 +505,12 @@ class ResponseEventStream:
         :rtype: dict[str, Any]
         """
         candidate = deepcopy(event)
-        _internals.apply_common_defaults([candidate], response_id=self._response_id, agent_reference=self._agent_reference, model=self._model)
+        _internals.apply_common_defaults(
+            [candidate],
+            response_id=self._response_id,
+            agent_reference=self._agent_reference,
+            model=self._model
+        )
         _internals.track_completed_output_item(self._response, candidate)
         payload = candidate.get("payload")
         if isinstance(payload, dict):
@@ -516,7 +530,7 @@ class ResponseEventStream:
         """
         return _internals.materialize_generated_payload(self._response.as_dict())
 
-    def _with_output_item_defaults(self, item: dict[str, Any]) -> dict[str, Any]:
+    def with_output_item_defaults(self, item: dict[str, Any]) -> dict[str, Any]:
         """Stamp an output item dict with response-level defaults.
 
         :param item: The item dict to stamp.
