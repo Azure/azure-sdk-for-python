@@ -135,9 +135,7 @@ class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated
             )
 
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
         return _request
@@ -157,7 +155,7 @@ class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         continuation_token: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Iterable["_models.KeyValue"]:
         """Gets a list of key-values in one page.
 
@@ -269,7 +267,7 @@ class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         continuation_token: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Iterable["_models.KeyValue"]:
         """Checks key-values using HEAD request, returning only headers without the response body.
 
