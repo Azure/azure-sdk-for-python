@@ -703,15 +703,17 @@ class QueueOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def set_metadata(self, *, metadata: str, timeout: Optional[int] = None, **kwargs: Any) -> None:
+    async def set_metadata(
+        self, *, timeout: Optional[int] = None, metadata: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """operation sets one or more user-defined name-value pairs for the specified queue.
 
-        :keyword metadata: The metadata headers. Required.
-        :paramtype metadata: str
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
          href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
          Timeouts for Queue Service Operations.</a>. Default value is None.
         :paramtype timeout: int
+        :keyword metadata: The metadata headers. Default value is None.
+        :paramtype metadata: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -730,8 +732,8 @@ class QueueOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_queue_set_metadata_request(
-            metadata=metadata,
             timeout=timeout,
+            metadata=metadata,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -846,11 +848,11 @@ class QueueOperations:
 
     @distributed_trace_async
     async def set_access_policy(
-        self, queue_acl: _models.SignedIdentifiers, *, timeout: Optional[int] = None, **kwargs: Any
+        self, queue_acl: Optional[_models.SignedIdentifiers] = None, *, timeout: Optional[int] = None, **kwargs: Any
     ) -> None:
         """sets the permissions for the specified queue.
 
-        :param queue_acl: The access control list for the queue. Required.
+        :param queue_acl: The access control list for the queue. Default value is None.
         :type queue_acl: ~azure.storage.queue._generated.models.SignedIdentifiers
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
          href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
@@ -871,10 +873,14 @@ class QueueOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        content_type = content_type if queue_acl else None
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = _get_element(queue_acl)
+        if queue_acl is not None:
+            _content = _get_element(queue_acl)
+        else:
+            _content = None
 
         _request = build_queue_set_access_policy_request(
             timeout=timeout,

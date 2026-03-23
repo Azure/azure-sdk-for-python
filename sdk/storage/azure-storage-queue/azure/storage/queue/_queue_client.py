@@ -456,7 +456,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             )
         except HttpResponseError as error:
             process_storage_error(error)
-        return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
+        return {s.id: s.access_policy or AccessPolicy() for s in identifiers.items_property} if identifiers else {}
 
     @distributed_trace
     def set_queue_access_policy(

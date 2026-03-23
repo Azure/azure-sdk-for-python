@@ -219,7 +219,9 @@ def build_queue_delete_request(*, timeout: Optional[int] = None, **kwargs: Any) 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_queue_set_metadata_request(*, metadata: str, timeout: Optional[int] = None, **kwargs: Any) -> HttpRequest:
+def build_queue_set_metadata_request(
+    *, timeout: Optional[int] = None, metadata: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -233,7 +235,8 @@ def build_queue_set_metadata_request(*, metadata: str, timeout: Optional[int] = 
 
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
-    _headers["x-ms-meta"] = _SERIALIZER.header("metadata", metadata, "str")
+    if metadata is not None:
+        _headers["x-ms-meta"] = _SERIALIZER.header("metadata", metadata, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -263,7 +266,7 @@ def build_queue_set_access_policy_request(*, timeout: Optional[int] = None, **kw
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
     _url = "?comp=acl"
@@ -274,7 +277,8 @@ def build_queue_set_access_policy_request(*, timeout: Optional[int] = None, **kw
 
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -293,7 +297,7 @@ def build_queue_receive_messages_request(
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = "messages"
+    _url = "/messages"
 
     # Construct parameters
     if number_of_messages is not None:
@@ -316,7 +320,7 @@ def build_queue_clear_request(*, timeout: Optional[int] = None, **kwargs: Any) -
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "messages"
+    _url = "/messages"
 
     # Construct parameters
     if timeout is not None:
@@ -343,7 +347,7 @@ def build_queue_send_message_request(
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = "messages"
+    _url = "/messages"
 
     # Construct parameters
     if visibility_timeout is not None:
@@ -371,7 +375,7 @@ def build_queue_peek_messages_request(
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = "messages?peekonly=true"
+    _url = "/messages?peekonly=true"
 
     # Construct parameters
     if number_of_messages is not None:
@@ -392,10 +396,10 @@ def build_queue_update_message_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "messages/{messageId}"
+    _url = "/messages/{messageId}"
     path_format_arguments = {
         "messageId": _SERIALIZER.url("message_id", message_id, "str"),
     }
@@ -410,7 +414,8 @@ def build_queue_update_message_request(
 
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -423,7 +428,7 @@ def build_queue_delete_message_request(
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "messages/{messageId}"
+    _url = "/messages/{messageId}"
     path_format_arguments = {
         "messageId": _SERIALIZER.url("message_id", message_id, "str"),
     }
@@ -1098,16 +1103,16 @@ class QueueOperations:
 
     @distributed_trace
     def set_metadata(  # pylint: disable=inconsistent-return-statements
-        self, *, metadata: str, timeout: Optional[int] = None, **kwargs: Any
+        self, *, timeout: Optional[int] = None, metadata: Optional[str] = None, **kwargs: Any
     ) -> None:
         """operation sets one or more user-defined name-value pairs for the specified queue.
 
-        :keyword metadata: The metadata headers. Required.
-        :paramtype metadata: str
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
          href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
          Timeouts for Queue Service Operations.</a>. Default value is None.
         :paramtype timeout: int
+        :keyword metadata: The metadata headers. Default value is None.
+        :paramtype metadata: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1126,8 +1131,8 @@ class QueueOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_queue_set_metadata_request(
-            metadata=metadata,
             timeout=timeout,
+            metadata=metadata,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -1242,11 +1247,11 @@ class QueueOperations:
 
     @distributed_trace
     def set_access_policy(  # pylint: disable=inconsistent-return-statements
-        self, queue_acl: _models.SignedIdentifiers, *, timeout: Optional[int] = None, **kwargs: Any
+        self, queue_acl: Optional[_models.SignedIdentifiers] = None, *, timeout: Optional[int] = None, **kwargs: Any
     ) -> None:
         """sets the permissions for the specified queue.
 
-        :param queue_acl: The access control list for the queue. Required.
+        :param queue_acl: The access control list for the queue. Default value is None.
         :type queue_acl: ~azure.storage.queue._generated.models.SignedIdentifiers
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
          href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
@@ -1267,10 +1272,14 @@ class QueueOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        content_type = content_type if queue_acl else None
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = _get_element(queue_acl)
+        if queue_acl is not None:
+            _content = _get_element(queue_acl)
+        else:
+            _content = None
 
         _request = build_queue_set_access_policy_request(
             timeout=timeout,

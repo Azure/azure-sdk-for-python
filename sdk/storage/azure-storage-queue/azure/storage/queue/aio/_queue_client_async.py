@@ -472,7 +472,7 @@ class QueueClient(  # type: ignore [misc]
             )
         except HttpResponseError as error:
             process_storage_error(error)
-        return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
+        return {s.id: s.access_policy or AccessPolicy() for s in identifiers.items_property} if identifiers else {}
 
     @distributed_trace_async
     async def set_queue_access_policy(
@@ -696,7 +696,7 @@ class QueueClient(  # type: ignore [misc]
                 **kwargs
             )
             wrapped_message = (
-                QueueMessage._from_generated(message.items_property[0]) # pylint: disable=protected-access
+                QueueMessage._from_generated(message.items_property[0])  # pylint: disable=protected-access
                 if message.items_property
                 else None
             )

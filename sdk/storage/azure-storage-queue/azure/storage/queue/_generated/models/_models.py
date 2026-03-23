@@ -268,20 +268,22 @@ class KeyInfo(_Model):
     """Key information for user delegation key.
 
     :ivar start: The date-time the key is active in ISO 8601 UTC time.
-    :vartype start: str
+    :vartype start: ~datetime.datetime
     :ivar expiry: The date-time the key expires in ISO 8601 UTC time. Required.
-    :vartype expiry: str
+    :vartype expiry: ~datetime.datetime
     :ivar delegated_user_tid: The delegated user tenant id in Azure AD.
     :vartype delegated_user_tid: str
     """
 
-    start: Optional[str] = rest_field(
+    start: Optional[datetime.datetime] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
+        format="rfc3339",
         xml={"attribute": False, "name": "Start", "text": False, "unwrapped": False},
     )
     """The date-time the key is active in ISO 8601 UTC time."""
-    expiry: str = rest_field(
+    expiry: datetime.datetime = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
+        format="rfc3339",
         xml={"attribute": False, "name": "Expiry", "text": False, "unwrapped": False},
     )
     """The date-time the key expires in ISO 8601 UTC time. Required."""
@@ -298,8 +300,8 @@ class KeyInfo(_Model):
     def __init__(
         self,
         *,
-        expiry: str,
-        start: Optional[str] = None,
+        expiry: datetime.datetime,
+        start: Optional[datetime.datetime] = None,
         delegated_user_tid: Optional[str] = None,
     ) -> None: ...
 
