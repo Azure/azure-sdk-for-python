@@ -273,38 +273,32 @@ class TestFoundryFeaturesHeaderOverrideOnBetaOperations(FoundryFeaturesHeaderTes
                 kwargs[param_name] = fake
         return lambda: method(*args, **kwargs)
 
-    def test_foundry_features_header_override_on_beta_operations(
-        self, client: AIProjectClient
-    ) -> None:
+    def test_foundry_features_header_override_on_beta_operations(self, client: AIProjectClient) -> None:
         """Caller-supplied headers={"Foundry-Features": "CustomValue"} must reach the transport
         instead of the internally-set default value."""
         sc = getattr(client.beta, _FIRST_SC_NAME)
         method = getattr(sc, _FIRST_M_NAME)
         custom_headers = {FOUNDRY_FEATURES_HEADER: "CustomValue"}
         request = self._capture(self._make_fake_call_with_headers(method, custom_headers))
-        assert request.headers.get(FOUNDRY_FEATURES_HEADER) == "CustomValue", (
-            f"Expected '{FOUNDRY_FEATURES_HEADER}: CustomValue' but got: {dict(request.headers)}"
-        )
+        assert (
+            request.headers.get(FOUNDRY_FEATURES_HEADER) == "CustomValue"
+        ), f"Expected '{FOUNDRY_FEATURES_HEADER}: CustomValue' but got: {dict(request.headers)}"
 
-    def test_foundry_features_header_override_and_add_on_beta_operations(
-        self, client: AIProjectClient
-    ) -> None:
+    def test_foundry_features_header_override_and_add_on_beta_operations(self, client: AIProjectClient) -> None:
         """Caller-supplied headers={"Foundry-Features": "CustomValue", "SomeOtherHeaderName": "SomeOtherHeaderValue"}
         must result in both headers reaching the transport (custom Foundry-Features value and extra header)."""
         sc = getattr(client.beta, _FIRST_SC_NAME)
         method = getattr(sc, _FIRST_M_NAME)
         custom_headers = {FOUNDRY_FEATURES_HEADER: "CustomValue", "SomeOtherHeaderName": "SomeOtherHeaderValue"}
         request = self._capture(self._make_fake_call_with_headers(method, custom_headers))
-        assert request.headers.get(FOUNDRY_FEATURES_HEADER) == "CustomValue", (
-            f"Expected '{FOUNDRY_FEATURES_HEADER}: CustomValue' but got: {dict(request.headers)}"
-        )
-        assert request.headers.get("SomeOtherHeaderName") == "SomeOtherHeaderValue", (
-            f"Expected 'SomeOtherHeaderName: SomeOtherHeaderValue' in headers but got: {dict(request.headers)}"
-        )
+        assert (
+            request.headers.get(FOUNDRY_FEATURES_HEADER) == "CustomValue"
+        ), f"Expected '{FOUNDRY_FEATURES_HEADER}: CustomValue' but got: {dict(request.headers)}"
+        assert (
+            request.headers.get("SomeOtherHeaderName") == "SomeOtherHeaderValue"
+        ), f"Expected 'SomeOtherHeaderName: SomeOtherHeaderValue' in headers but got: {dict(request.headers)}"
 
-    def test_foundry_features_header_additional_header_on_beta_operations(
-        self, client: AIProjectClient
-    ) -> None:
+    def test_foundry_features_header_additional_header_on_beta_operations(self, client: AIProjectClient) -> None:
         """Caller-supplied headers={"SomeOtherHeaderName": "SomeOtherHeaderValue"} (no Foundry-Features
         override) must result in the extra header AND the internally-set Foundry-Features header both
         reaching the transport."""
@@ -316,6 +310,6 @@ class TestFoundryFeaturesHeaderOverrideOnBetaOperations(FoundryFeaturesHeaderTes
             f"Expected '{FOUNDRY_FEATURES_HEADER}' to be present but it was missing. "
             f"Headers: {dict(request.headers)}"
         )
-        assert request.headers.get("SomeOtherHeaderName") == "SomeOtherHeaderValue", (
-            f"Expected 'SomeOtherHeaderName: SomeOtherHeaderValue' in headers but got: {dict(request.headers)}"
-        )
+        assert (
+            request.headers.get("SomeOtherHeaderName") == "SomeOtherHeaderValue"
+        ), f"Expected 'SomeOtherHeaderName: SomeOtherHeaderValue' in headers but got: {dict(request.headers)}"

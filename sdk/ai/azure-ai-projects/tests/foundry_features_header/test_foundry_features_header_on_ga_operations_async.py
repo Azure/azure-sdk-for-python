@@ -235,9 +235,9 @@ class TestFoundryFeaturesHeaderOverrideOnGaOperationsAsync(FoundryFeaturesHeader
         method = getattr(sc, method_attr)
         custom_headers = {FOUNDRY_FEATURES_HEADER: "CustomValue"}
         request = await self._capture_async(self._make_fake_call_with_headers(method, custom_headers))
-        assert request.headers.get(FOUNDRY_FEATURES_HEADER) == "CustomValue", (
-            f"{method_name}: Expected '{FOUNDRY_FEATURES_HEADER}: CustomValue' but got: {dict(request.headers)}"
-        )
+        assert (
+            request.headers.get(FOUNDRY_FEATURES_HEADER) == "CustomValue"
+        ), f"{method_name}: Expected '{FOUNDRY_FEATURES_HEADER}: CustomValue' but got: {dict(request.headers)}"
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("method_name,_expected_header_value", _NON_BETA_OPTIONAL_TEST_CASES)
@@ -254,12 +254,12 @@ class TestFoundryFeaturesHeaderOverrideOnGaOperationsAsync(FoundryFeaturesHeader
         method = getattr(sc, method_attr)
         custom_headers = {FOUNDRY_FEATURES_HEADER: "CustomValue", "SomeOtherHeaderName": "SomeOtherHeaderValue"}
         request = await self._capture_async(self._make_fake_call_with_headers(method, custom_headers))
-        assert request.headers.get(FOUNDRY_FEATURES_HEADER) == "CustomValue", (
-            f"{method_name}: Expected '{FOUNDRY_FEATURES_HEADER}: CustomValue' but got: {dict(request.headers)}"
-        )
-        assert request.headers.get("SomeOtherHeaderName") == "SomeOtherHeaderValue", (
-            f"{method_name}: Expected 'SomeOtherHeaderName: SomeOtherHeaderValue' in headers but got: {dict(request.headers)}"
-        )
+        assert (
+            request.headers.get(FOUNDRY_FEATURES_HEADER) == "CustomValue"
+        ), f"{method_name}: Expected '{FOUNDRY_FEATURES_HEADER}: CustomValue' but got: {dict(request.headers)}"
+        assert (
+            request.headers.get("SomeOtherHeaderName") == "SomeOtherHeaderValue"
+        ), f"{method_name}: Expected 'SomeOtherHeaderName: SomeOtherHeaderValue' in headers but got: {dict(request.headers)}"
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("method_name,_expected_header_value", _NON_BETA_OPTIONAL_TEST_CASES)
@@ -281,9 +281,9 @@ class TestFoundryFeaturesHeaderOverrideOnGaOperationsAsync(FoundryFeaturesHeader
             f"{method_name}: Expected '{FOUNDRY_FEATURES_HEADER}' to be present but it was missing. "
             f"Headers: {dict(request.headers)}"
         )
-        assert request.headers.get("SomeOtherHeaderName") == "SomeOtherHeaderValue", (
-            f"{method_name}: Expected 'SomeOtherHeaderName: SomeOtherHeaderValue' in headers but got: {dict(request.headers)}"
-        )
+        assert (
+            request.headers.get("SomeOtherHeaderName") == "SomeOtherHeaderValue"
+        ), f"{method_name}: Expected 'SomeOtherHeaderName: SomeOtherHeaderValue' in headers but got: {dict(request.headers)}"
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("method_name,_expected_header_value", _NON_BETA_OPTIONAL_TEST_CASES)
@@ -301,9 +301,9 @@ class TestFoundryFeaturesHeaderOverrideOnGaOperationsAsync(FoundryFeaturesHeader
         method = getattr(sc, method_attr)
         custom_headers = {"SomeOtherHeaderName": "SomeOtherHeaderValue"}
         request = await self._capture_async(self._make_fake_call_with_headers(method, custom_headers))
-        assert request.headers.get("SomeOtherHeaderName") == "SomeOtherHeaderValue", (
-            f"{method_name}: Expected 'SomeOtherHeaderName: SomeOtherHeaderValue' in headers but got: {dict(request.headers)}"
-        )
+        assert (
+            request.headers.get("SomeOtherHeaderName") == "SomeOtherHeaderValue"
+        ), f"{method_name}: Expected 'SomeOtherHeaderName: SomeOtherHeaderValue' in headers but got: {dict(request.headers)}"
         assert request.headers.get(FOUNDRY_FEATURES_HEADER) is None, (
             f"{method_name}: Expected '{FOUNDRY_FEATURES_HEADER}' to be absent when allow_preview is not set, "
             f"but found: {request.headers.get(FOUNDRY_FEATURES_HEADER)}"

@@ -27,13 +27,6 @@ powershell -Command "(Get-Content azure\ai\projects\models\_models.py) -replace 
 REM Rename DEFAULT2024_11_15 to DEFAULT_2024_11_15
 powershell -Command "(Get-Content azure\ai\projects\models\_enums.py) -replace 'DEFAULT2024_11_15', 'DEFAULT_2024_11_15' | Set-Content azure\ai\projects\models\_enums.py"
 
-exit /b
-
-REM Remove required 'foundry_features' from public API surface, and instead set them internally in the relevant methods
-copy agent-scripts\auto_set_foundry_features.py .
-python auto_set_foundry_features.py
-del auto_set_foundry_features.py
-
 REM Finishing by running 'black' tool to format code. 
 black --config ../../../eng/black-pyproject.toml .
 
@@ -49,10 +42,4 @@ REM  { \"type\": \"mcp\", \"server_label\": \"deepwiki\" },
 REM  { \"type\": \"image_generation\" }
 REM  ]. Required."""
 
-REM Edit file azure/ai/projects/aio/operations/_operations.py and:
-REM Add "_get_agent_definition_opt_in_keys," as the first line of: from ...operations._operations import (
-REM Add:
-REM _SERIALIZER = Serializer()
-REM _SERIALIZER.client_side_validation = False
-REM just before the definition of the class BetaOperations (the first class defined in the file)
 

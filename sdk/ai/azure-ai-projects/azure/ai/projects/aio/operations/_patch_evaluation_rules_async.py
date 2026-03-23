@@ -110,9 +110,11 @@ class EvaluationRulesOperations(GeneratedEvaluationRulesOperations):
                     _sync_patch._FOUNDRY_FEATURES_HEADER_NAME: _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value
                 }
             elif not _sync_patch._has_header_case_insensitive(headers, _sync_patch._FOUNDRY_FEATURES_HEADER_NAME):
-                headers[_sync_patch._FOUNDRY_FEATURES_HEADER_NAME] = _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value
+                headers[_sync_patch._FOUNDRY_FEATURES_HEADER_NAME] = (
+                    _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value
+                )
                 kwargs["headers"] = headers
-        
+
         try:
             return await super().create_or_update(id, evaluation_rule, **kwargs)
         except HttpResponseError as exc:
