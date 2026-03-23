@@ -23,7 +23,7 @@ from azure.appconfiguration import (
 class AppConfigTestCase(AzureRecordedTestCase):
     client = None
 
-    def create_aad_client(self, appconfiguration_endpoint_string, audience=None):
+    def create_client(self, appconfiguration_endpoint_string, audience=None):
         cred = self.get_credential(AzureAppConfigurationClient)
         return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred, audience=audience)
 
@@ -46,7 +46,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
         )
 
     def set_up(self, appconfiguration_string):
-        self.client = self.create_aad_client(appconfiguration_string)
+        self.client = self.create_client(appconfiguration_string)
         self.client.set_configuration_setting(self.create_config_setting())
         self.client.set_configuration_setting(self.create_config_setting_no_label())
 
