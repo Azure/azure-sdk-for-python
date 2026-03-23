@@ -259,6 +259,63 @@ class AzureAppConfigurationClient:
         )
 
     @distributed_trace
+    def check_configuration_settings(
+        self,
+        *,
+        key_filter: Optional[str] = None,
+        label_filter: Optional[str] = None,
+        tags_filter: Optional[List[str]] = None,
+        accept_datetime: Optional[Union[datetime, str]] = None,
+        fields: Optional[List[Union[str, ConfigurationSettingFields]]] = None,
+        **kwargs: Any,
+    ) -> ConfigurationSettingPaged:
+        """Check configuration settings using a HEAD request, returning only headers without the
+        response body. This is useful for efficiently checking if settings have changed by comparing ETags.
+
+        :keyword key_filter: Filter results based on their keys. '*' can be used as wildcard in the beginning or end
+            of the filter.
+        :paramtype key_filter: str or None
+        :keyword label_filter: Filter results based on their label. '*' can be used as wildcard in the beginning or end
+            of the filter.
+        :paramtype label_filter: str or None
+        :keyword tags_filter: Filter results based on their tags.
+        :paramtype tags_filter: list[str] or None
+        :keyword accept_datetime: Retrieve ConfigurationSetting that existed at this datetime
+        :paramtype accept_datetime: ~datetime.datetime or str or None
+        :keyword fields: Specify which fields to include in the results. If not specified, will include all fields.
+            Available fields see :class:`~azure.appconfiguration.ConfigurationSettingFields`.
+        :paramtype fields: list[str] or list[~azure.appconfiguration.ConfigurationSettingFields] or None
+        :return: An iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
+        :rtype: ~azure.appconfiguration.ConfigurationSettingPaged
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
+            :class:`~azure.core.exceptions.ClientAuthenticationError`
+
+        Example
+
+        .. code-block:: python
+
+            items = client.check_configuration_settings(key_filter="my_key*")
+            for page in items.by_page():
+                print(page.etag)  # etag for this page
+        """
+        if isinstance(accept_datetime, datetime):
+            accept_datetime = str(accept_datetime)
+        select = fields
+        if select:
+            select = ["locked" if x == "read_only" else x for x in select]
+        tags = tags_filter
+        command = functools.partial(self._impl.check_key_values_in_one_page, **kwargs)  # type: ignore[attr-defined]
+        return ConfigurationSettingPaged(
+            command,
+            key=key_filter,
+            label=label_filter,
+            accept_datetime=accept_datetime,
+            select=select,
+            tags=tags,
+            page_iterator_class=ConfigurationSettingPropertiesPaged,
+        )
+
+    @distributed_trace
     def get_configuration_setting(
         self,
         key: str,

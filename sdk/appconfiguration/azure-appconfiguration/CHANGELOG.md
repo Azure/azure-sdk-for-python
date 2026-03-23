@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added `check_configuration_settings()` method to efficiently check for configuration changes using HEAD requests, returning only headers (ETags) without response bodies.
+
 ### Breaking Changes
 
 ### Bugs Fixed

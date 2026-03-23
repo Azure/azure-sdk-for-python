@@ -26,6 +26,7 @@ from ._operations import (
     AzureAppConfigurationClientOperationsMixin as AzureAppConfigClientOpGenerated,
     ClsType,
     build_azure_app_configuration_get_key_values_request,
+    build_azure_app_configuration_check_key_values_request,
 )
 from ..._operations._operations import prep_if_match, prep_if_none_match
 from ... import models as _models
@@ -206,6 +207,165 @@ class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated
             if unparsed_link:
                 next_link = unparsed_link[1 : unparsed_link.index(">")]
             deserialized["@nextLink"] = next_link
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
+
+    @distributed_trace_async
+    async def check_key_values_in_one_page(
+        self,
+        *,
+        key: Optional[str] = None,
+        label: Optional[str] = None,
+        sync_token: Optional[str] = None,
+        after: Optional[str] = None,
+        accept_datetime: Optional[str] = None,
+        select: Optional[List[Union[str, _models.ConfigurationSettingFields]]] = None,
+        snapshot: Optional[str] = None,
+        tags: Optional[List[str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        continuation_token: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncIterable["_models.KeyValue"]:
+        """Checks key-values using HEAD request, returning only headers without the response body.
+
+        :keyword key: A filter used to match keys. Default value is None.
+        :paramtype key: str
+        :keyword label: A filter used to match labels. Default value is None.
+        :paramtype label: str
+        :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is None.
+        :paramtype sync_token: str
+        :keyword after: Instructs the server to return elements that appear after the element referred
+         to by the specified token. Default value is None.
+        :paramtype after: str
+        :keyword accept_datetime: Requests the server to respond with the state of the resource at the
+         specified time. Default value is None.
+        :paramtype accept_datetime: str
+        :keyword select: Used to select what fields are present in the returned resource(s). Default value is None.
+        :paramtype select: list[str or ~azure.appconfiguration.models.ConfigurationSettingFields]
+        :keyword snapshot: A filter used get key-values for a snapshot. Default value is None.
+        :paramtype snapshot: str
+        :keyword tags: A filter used to query by tags. Default value is None.
+        :paramtype tags: list[str]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :param str continuation_token: An opaque continuation token.
+        :return: Deserialized response with headers
+        :rtype: dict
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.KeyValue]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+                _request = build_azure_app_configuration_check_key_values_request(
+                    key=key,
+                    label=label,
+                    sync_token=sync_token,
+                    after=after,
+                    accept_datetime=accept_datetime,
+                    select=select,
+                    snapshot=snapshot,
+                    tags=tags,
+                    etag=etag,
+                    match_condition=match_condition,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+
+                _next_headers = dict(_headers)
+                accept = _headers.pop("Accept", None)
+                if etag is not None:
+                    if sync_token is not None:
+                        _next_headers["Sync-Token"] = _SERIALIZER.header("sync_token", sync_token, "str")
+                    if accept_datetime is not None:
+                        _next_headers["Accept-Datetime"] = _SERIALIZER.header("accept_datetime", accept_datetime, "str")
+                    if accept is not None:
+                        _next_headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+                    if_match = prep_if_match(etag, match_condition)
+                    if if_match is not None:
+                        _next_headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+                    if_none_match = prep_if_none_match(etag, match_condition)
+                    if if_none_match is not None:
+                        _next_headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+                _request = HttpRequest(
+                    "HEAD",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
+                    headers=_next_headers,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        _request = prepare_request(continuation_token)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+        response = pipeline_response.http_response
+
+        valid_status_codes = [200]
+        if etag is not None and match_condition is not None:
+            valid_status_codes.append(304)
+
+        if response.status_code not in valid_status_codes:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = response.headers
+        deserialized = {}
+        unparsed_link = response_headers.get("Link")
+        next_link = None
+        if unparsed_link:
+            next_link = unparsed_link[1 : unparsed_link.index(">")]
+        deserialized["@nextLink"] = next_link
+        if response.status_code != 304:
+            deserialized["items"] = []
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
