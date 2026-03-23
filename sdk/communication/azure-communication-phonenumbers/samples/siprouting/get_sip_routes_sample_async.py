@@ -33,7 +33,7 @@ async def get_sip_routes_sample():
             print(route.description)
             print(route.number_pattern)
 
-            for trunk_fqdn in route.trunks:
+            for trunk_fqdn in route.trunks or []:
                 print(trunk_fqdn)
 
 

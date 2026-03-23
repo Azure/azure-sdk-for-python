@@ -5,16 +5,22 @@
 # ------------------------------------
 # cSpell:disable
 
-from test_base import TestBase, servicePreparer, recorded_by_proxy_httpx
+from test_base import TestBase, servicePreparer
+from devtools_testutils import recorded_by_proxy, RecordedTransport
+import pytest
 
 # from azure.ai.projects.models import ResponsesUserMessageItemParam, ItemContentInputText
 
 
 # TODO: Emitter did not produce the output class OpenAI.ConversationResource. Validating service response as Dict for now.
+
+
 class TestConversationCrud(TestBase):
 
+    # To run only this test:
+    # pytest tests/agents/test_conversation_crud.py::TestConversationCrud::test_conversation_crud -s
     @servicePreparer()
-    @recorded_by_proxy_httpx
+    @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_conversation_crud(self, **kwargs):
         """
         Test CRUD operations for Conversations.

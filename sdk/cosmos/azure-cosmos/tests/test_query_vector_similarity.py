@@ -134,7 +134,6 @@ class TestVectorSimilarityQuery(unittest.TestCase):
                                  "Please ensure you are using a limit smaller than the max, or change the max.")
 
         os.environ["AZURE_COSMOS_MAX_ITEM_BUFFER_VECTOR_SEARCH"] = "50000"
-        os.environ["AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"] = "False"
         [item for item in self.created_large_container.query_items(query=query, enable_cross_partition_query=True)]
 
     def test_ordering_distances(self):

@@ -8,7 +8,7 @@
 import json
 import pytest
 from test_base import TestBase, servicePreparer
-from devtools_testutils import is_live_and_not_recording
+from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, FunctionTool
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 
@@ -16,10 +16,7 @@ from openai.types.responses.response_input_param import FunctionCallOutput, Resp
 class TestAgentFunctionTool(TestBase):
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agent_function_tool(self, **kwargs):
         """
         Test agent with custom function tool.
@@ -44,7 +41,8 @@ class TestAgentFunctionTool(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_model_deployment_name")
+        agent_name = "function-tool-agent"
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -70,7 +68,7 @@ class TestAgentFunctionTool(TestBase):
 
             # Create agent with function tool
             agent = project_client.agents.create_version(
-                agent_name="function-tool-agent",
+                agent_name=agent_name,
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a helpful assistant that can check the weather. Use the get_weather function when users ask about weather.",
@@ -78,24 +76,17 @@ class TestAgentFunctionTool(TestBase):
                 ),
                 description="Agent for testing function tool capabilities.",
             )
-            print(
-                f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version}, model: {agent.definition['model']})"
-            )
-            assert agent.id is not None
-            assert agent.name == "function-tool-agent"
-            assert agent.version is not None
+            self._validate_agent_version(agent, expected_name=agent_name)
 
             # Ask a question that should trigger the function call
             print("\nAsking agent: What's the weather in Seattle?")
 
             response = openai_client.responses.create(
                 input="What's the weather in Seattle?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
-            print(f"Initial response completed (id: {response.id})")
-            assert response.id is not None
-            assert response.output is not None
+            self.validate_response(response, print_message="Initial response completed")
 
             # Check for function calls in the response
             function_calls_found = 0
@@ -145,11 +136,10 @@ class TestAgentFunctionTool(TestBase):
             response = openai_client.responses.create(
                 input=input_list,
                 previous_response_id=response.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
-            print(f"Final response completed (id: {response.id})")
-            assert response.id is not None
+            self.validate_response(response, print_message="Final response completed")
 
             # Get the final response text
             response_text = response.output_text
@@ -171,10 +161,7 @@ class TestAgentFunctionTool(TestBase):
         print("Agent deleted")
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agent_function_tool_multi_turn_with_multiple_calls(self, **kwargs):
         """
         Test multi-turn conversation where agent calls functions multiple times.
@@ -185,7 +172,7 @@ class TestAgentFunctionTool(TestBase):
         - Ability to use previous function results in subsequent queries
         """
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -242,7 +229,7 @@ class TestAgentFunctionTool(TestBase):
             print("\n--- Turn 1: Current weather query ---")
             response_1 = openai_client.responses.create(
                 input="What's the weather in New York?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             # Handle function call
@@ -266,7 +253,7 @@ class TestAgentFunctionTool(TestBase):
             response_1 = openai_client.responses.create(
                 input=input_list,
                 previous_response_id=response_1.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_1_text = response_1.output_text
@@ -278,7 +265,7 @@ class TestAgentFunctionTool(TestBase):
             response_2 = openai_client.responses.create(
                 input="What about the forecast for the next few days?",
                 previous_response_id=response_1.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             # Handle forecast function call
@@ -313,7 +300,7 @@ class TestAgentFunctionTool(TestBase):
             response_2 = openai_client.responses.create(
                 input=input_list,
                 previous_response_id=response_2.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_2_text = response_2.output_text
@@ -325,7 +312,7 @@ class TestAgentFunctionTool(TestBase):
             response_3 = openai_client.responses.create(
                 input="How does that compare to Seattle's weather?",
                 previous_response_id=response_2.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             # Handle function calls for Seattle (agent might call both weather and forecast)
@@ -367,7 +354,7 @@ class TestAgentFunctionTool(TestBase):
             response_3 = openai_client.responses.create(
                 input=input_list,
                 previous_response_id=response_3.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_3_text = response_3.output_text
@@ -385,10 +372,7 @@ class TestAgentFunctionTool(TestBase):
             print("Agent deleted")
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agent_function_tool_context_dependent_followup(self, **kwargs):
         """
         Test deeply context-dependent follow-ups (e.g., unit conversion, clarification).
@@ -397,7 +381,7 @@ class TestAgentFunctionTool(TestBase):
         remembering parameters from the first query.
         """
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -437,7 +421,7 @@ class TestAgentFunctionTool(TestBase):
             print("\n--- Turn 1: Get temperature ---")
             response_1 = openai_client.responses.create(
                 input="What's the temperature in Boston?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             # Handle function call
@@ -456,7 +440,7 @@ class TestAgentFunctionTool(TestBase):
             response_1 = openai_client.responses.create(
                 input=input_list,
                 previous_response_id=response_1.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_1_text = response_1.output_text
@@ -468,7 +452,7 @@ class TestAgentFunctionTool(TestBase):
             response_2 = openai_client.responses.create(
                 input="What is that in Celsius?",  # "that" refers to the 72°F from previous response
                 previous_response_id=response_1.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_2_text = response_2.output_text
@@ -489,7 +473,7 @@ class TestAgentFunctionTool(TestBase):
             response_3 = openai_client.responses.create(
                 input="Is that warmer or colder than 25°C?",  # "that" refers to the Celsius value just mentioned
                 previous_response_id=response_2.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_3_text = response_3.output_text

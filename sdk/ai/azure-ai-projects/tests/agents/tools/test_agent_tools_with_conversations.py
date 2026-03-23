@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -13,12 +14,12 @@ within the context of conversations, testing conversation state management with 
 import json
 import pytest
 from test_base import TestBase, servicePreparer
-from devtools_testutils import is_live_and_not_recording
+from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import (
     FunctionTool,
     FileSearchTool,
     CodeInterpreterTool,
-    CodeInterpreterToolAuto,
+    AutoCodeInterpreterToolParam,
     PromptAgentDefinition,
 )
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
@@ -27,10 +28,7 @@ from openai.types.responses.response_input_param import FunctionCallOutput, Resp
 class TestAgentToolsWithConversations(TestBase):
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_function_tool_with_conversation(self, **kwargs):
         """
         Test using FunctionTool within a conversation.
@@ -42,7 +40,7 @@ class TestAgentToolsWithConversations(TestBase):
         - Using conversation_id parameter
         """
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -90,7 +88,7 @@ class TestAgentToolsWithConversations(TestBase):
             response_1 = openai_client.responses.create(
                 input="What is 15 plus 27?",
                 conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             # Handle function call
@@ -119,7 +117,7 @@ class TestAgentToolsWithConversations(TestBase):
             response_1 = openai_client.responses.create(
                 input=input_list,
                 conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
             print(f"Response 1: {response_1.output_text[:100]}...")
             assert "42" in response_1.output_text
@@ -129,7 +127,7 @@ class TestAgentToolsWithConversations(TestBase):
             response_2 = openai_client.responses.create(
                 input="Now multiply that result by 2",
                 conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             # Handle function call
@@ -155,7 +153,7 @@ class TestAgentToolsWithConversations(TestBase):
             response_2 = openai_client.responses.create(
                 input=input_list,
                 conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
             print(f"Response 2: {response_2.output_text[:100]}...")
             assert "84" in response_2.output_text
@@ -192,10 +190,7 @@ class TestAgentToolsWithConversations(TestBase):
             print("Cleanup completed")
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_file_search_with_conversation(self, **kwargs):
         """
         Test using FileSearchTool within a conversation.
@@ -206,7 +201,7 @@ class TestAgentToolsWithConversations(TestBase):
         - Conversation context retention
         """
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -270,7 +265,7 @@ Widget C:
             response_1 = openai_client.responses.create(
                 input="Which widget has the highest rating?",
                 conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_1_text = response_1.output_text
@@ -282,7 +277,7 @@ Widget C:
             response_2 = openai_client.responses.create(
                 input="What is its price?",  # "its" refers to Widget B from previous turn
                 conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_2_text = response_2.output_text
@@ -294,7 +289,7 @@ Widget C:
             response_3 = openai_client.responses.create(
                 input="Which widget is in the Home Goods category?",
                 conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_3_text = response_3.output_text
@@ -312,10 +307,7 @@ Widget C:
             print("Cleanup completed")
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_code_interpreter_with_conversation(self, **kwargs):
         """
         Test using CodeInterpreterTool within a conversation.
@@ -326,7 +318,7 @@ Widget C:
         - Variables/state persistence across turns
         """
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -338,7 +330,7 @@ Widget C:
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a data analysis assistant. Use Python to perform calculations.",
-                    tools=[CodeInterpreterTool(container=CodeInterpreterToolAuto(file_ids=[]))],
+                    tools=[CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[]))],
                 ),
                 description="Code interpreter agent for conversation testing.",
             )
@@ -353,7 +345,7 @@ Widget C:
             response_1 = openai_client.responses.create(
                 input="Calculate the average of these numbers: 10, 20, 30, 40, 50",
                 conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_1_text = response_1.output_text
@@ -365,7 +357,7 @@ Widget C:
             response_2 = openai_client.responses.create(
                 input="Now calculate the standard deviation of those same numbers",
                 conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_2_text = response_2.output_text
@@ -378,7 +370,7 @@ Widget C:
             response_3 = openai_client.responses.create(
                 input="Create a list of squares from 1 to 5",
                 conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_3_text = response_3.output_text
@@ -394,11 +386,10 @@ Widget C:
             openai_client.conversations.delete(conversation_id=conversation.id)
             print("Cleanup completed")
 
+    # To run this test only:
+    # pytest tests/agents/tools/test_agent_tools_with_conversations.py::TestAgentToolsWithConversations::test_code_interpreter_with_file_in_conversation -s
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_code_interpreter_with_file_in_conversation(self, **kwargs):
         """
         Test using CodeInterpreterTool with file upload within a conversation.
@@ -412,7 +403,7 @@ Widget C:
         - Server-side code execution with file access and chart generation
         """
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_model_deployment_name")
         import os
 
         with (
@@ -428,7 +419,7 @@ Widget C:
             )
 
             # Upload file using open() with rb mode, just like the sample
-            with open(asset_file_path, "rb") as f:
+            with self.open_with_lf(asset_file_path, "rb") as f:
                 uploaded_file = openai_client.files.create(file=f, purpose="assistants")
             print(f"File uploaded: {uploaded_file.id}")
 
@@ -438,7 +429,7 @@ Widget C:
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a helpful assistant.",
-                    tools=[CodeInterpreterTool(container=CodeInterpreterToolAuto(file_ids=[uploaded_file.id]))],
+                    tools=[CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[uploaded_file.id]))],
                 ),
                 description="Code interpreter agent for data analysis and visualization.",
             )
@@ -453,7 +444,7 @@ Widget C:
             response_1 = openai_client.responses.create(
                 conversation=conversation.id,
                 input="Could you please create bar chart in TRANSPORTATION sector for the operating profit from the uploaded csv file and provide file to me?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_1_text = response_1.output_text

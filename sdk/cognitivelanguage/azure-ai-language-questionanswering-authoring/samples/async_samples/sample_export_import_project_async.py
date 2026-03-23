@@ -1,3 +1,9 @@
+# coding=utf-8
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+
 """Async sample - Export and import a Question Answering authoring project."""
 
 import os

@@ -48,7 +48,7 @@ REMOVE_ACL = "mask," + "default:user,default:group," + \
 class TestDirectoryAsync(AsyncStorageRecordedTestCase):
     async def _setUp(self, account_name, account_key):
         url = self.account_url(account_name, 'dfs')
-        self.dsc = DataLakeServiceClient(url, credential=account_key)
+        self.dsc = DataLakeServiceClient(url, credential=account_key.secret)
         self.config = self.dsc._config
 
         self.file_system_name = self.get_resource_name('filesystem')
@@ -1344,7 +1344,7 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
         token = generate_directory_sas(self.dsc.account_name,
                                        self.file_system_name,
                                        "olddir",
-                                       datalake_storage_account_key,
+                                       datalake_storage_account_key.secret,
                                        permission=DirectorySasPermissions(read=True, create=True, write=True,
                                                                           delete=True, move=True),
                                        expiry=datetime.utcnow() + timedelta(hours=1),
@@ -1353,7 +1353,7 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
         new_token = generate_directory_sas(self.dsc.account_name,
                                            self.file_system_name,
                                            "newdir",
-                                           datalake_storage_account_key,
+                                           datalake_storage_account_key.secret,
                                            permission=DirectorySasPermissions(read=True, create=True, write=True,
                                                                               delete=True),
                                            expiry=datetime.utcnow() + timedelta(hours=1),
@@ -1408,7 +1408,7 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
 
         # Arrange
         url = self.account_url(datalake_storage_account_name, 'dfs')
-        self.dsc = DataLakeServiceClient(url, credential=datalake_storage_account_key, logging_enable=True)
+        self.dsc = DataLakeServiceClient(url, credential=datalake_storage_account_key.secret, logging_enable=True)
         self.config = self.dsc._config
         self.file_system_name = self.get_resource_name('filesystem')
         dir_name = 'testdir'

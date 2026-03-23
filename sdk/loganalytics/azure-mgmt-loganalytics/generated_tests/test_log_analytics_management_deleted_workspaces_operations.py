@@ -20,9 +20,9 @@ class TestLogAnalyticsManagementDeletedWorkspacesOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_deleted_workspaces_list(self, resource_group):
         response = self.client.deleted_workspaces.list(
-            api_version="2022-10-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -30,10 +30,10 @@ class TestLogAnalyticsManagementDeletedWorkspacesOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_deleted_workspaces_list_by_resource_group(self, resource_group):
         response = self.client.deleted_workspaces.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2022-10-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

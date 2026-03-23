@@ -15,7 +15,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv aiohttp
+    pip install "azure-ai-projects>=2.0.0" python-dotenv aiohttp
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -90,7 +90,7 @@ async def main() -> None:
                 },
             ],
             tool_choice="required",
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
 
         print("Processing streaming file search results...\n")
@@ -122,7 +122,7 @@ async def main() -> None:
                 },
             ],
             tool_choice="required",
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
 
         print("Processing follow-up streaming response...\n")
@@ -145,7 +145,7 @@ async def main() -> None:
                                 print(f"File Citation - Filename: {annotation.filename}, File ID: {annotation.file_id}")
             elif event.type == "response.completed":
                 print(f"\nFollow-up completed!")
-                print(f"Full response: {event.response.output_text}")
+                print(f"Agent response: {event.response.output_text}")
 
         # Clean up resources
         print("\n" + "=" * 60)

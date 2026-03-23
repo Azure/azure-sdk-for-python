@@ -451,6 +451,7 @@ class SmartRoutingMapProvider(PartitionKeyRangeCache):
                 while currentProvidedRange.max <= lastKnownTargetRange.max:
                     currentProvidedRange = next(it)
         except StopIteration:
+            # when the iteration is exhausted we get here. There is nothing else to be done
             pass
 
         return target_partition_key_ranges

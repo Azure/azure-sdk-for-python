@@ -5,10 +5,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from packaging.version import Version
 import pytest
 
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
+from azure.core import VERSION as core_version
 from azure.core.exceptions import HttpResponseError
 
 from azure.data.tables import (

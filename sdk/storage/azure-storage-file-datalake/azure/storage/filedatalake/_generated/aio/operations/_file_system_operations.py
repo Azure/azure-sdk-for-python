@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, List, Literal, Optional, TypeVar, Union
+from typing import Any, Callable, Literal, Optional, TypeVar, Union
 
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import (
@@ -36,7 +36,7 @@ from ...operations._file_system_operations import (
 from .._configuration import AzureDataLakeStorageRESTAPIConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
 class FileSystemOperations:
@@ -129,7 +129,10 @@ class FileSystemOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -226,7 +229,10 @@ class FileSystemOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -293,7 +299,10 @@ class FileSystemOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -386,7 +395,10 @@ class FileSystemOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -496,7 +508,10 @@ class FileSystemOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -521,7 +536,7 @@ class FileSystemOperations:
         delimiter: Optional[str] = None,
         marker: Optional[str] = None,
         max_results: Optional[int] = None,
-        include: Optional[List[Union[str, _models.ListBlobsIncludeItem]]] = None,
+        include: Optional[list[Union[str, _models.ListBlobsIncludeItem]]] = None,
         showonly: Literal["deleted"] = "deleted",
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -609,7 +624,10 @@ class FileSystemOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

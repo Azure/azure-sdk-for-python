@@ -3,6 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import pytest
+
 """
 Test agents using multiple tools within conversations.
 
@@ -11,10 +13,9 @@ within the context of conversations, testing conversation state management with 
 """
 
 import json
-import pytest
 from io import BytesIO
 from test_base import TestBase, servicePreparer
-from devtools_testutils import is_live_and_not_recording
+from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import (
     FunctionTool,
     FileSearchTool,
@@ -26,10 +27,7 @@ from openai.types.responses.response_input_param import FunctionCallOutput, Resp
 class TestMultiToolWithConversations(TestBase):
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_file_search_and_function_with_conversation(self, **kwargs):
         """
         Test using multiple tools (FileSearch + Function) within one conversation.
@@ -41,7 +39,7 @@ class TestMultiToolWithConversations(TestBase):
         - Verifying conversation state preserves all tool interactions
         """
 
-        model = self.test_agents_params["model_deployment_name"]
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
@@ -104,7 +102,7 @@ Total Revenue: $144,000
         response_1 = openai_client.responses.create(
             input="What was the total revenue in Q1 2024?",
             conversation=conversation.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
 
         print(f"Response 1: {response_1.output_text[:150]}...")
@@ -115,7 +113,7 @@ Total Revenue: $144,000
         response_2 = openai_client.responses.create(
             input="Which product had the highest sales?",
             conversation=conversation.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
 
         print(f"Response 2: {response_2.output_text[:150]}...")
@@ -126,7 +124,7 @@ Total Revenue: $144,000
         response_3 = openai_client.responses.create(
             input="Save a summary report of these Q1 results",
             conversation=conversation.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
 
         # Handle function call
@@ -149,11 +147,11 @@ Total Revenue: $144,000
         response_3 = openai_client.responses.create(
             input=input_list,
             conversation=conversation.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Response 3: {response_3.output_text[:150]}...")
 
-        print("\n✓ Mixed tools with conversation successful!")
+        print("\n[PASS] Mixed tools with conversation successful!")
         print("  - File search (server-side) worked")
         print("  - Function call (client-side) worked")
         print("  - Both tools used in same conversation")
@@ -189,7 +187,7 @@ Total Revenue: $144,000
         assert function_calls >= 1, "Expected at least 1 function call (save_report)"
         assert function_outputs >= 1, "Expected at least 1 function output"
 
-        print("\n✓ Multi-tool conversation state verified")
+        print("\n[PASS] Multi-tool conversation state verified")
         print("  - Both server-side (FileSearch) and client-side (Function) tools tracked")
         print("  - All 3 turns preserved in conversation")
 

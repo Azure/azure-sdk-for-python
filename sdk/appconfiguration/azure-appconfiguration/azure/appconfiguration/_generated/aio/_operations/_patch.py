@@ -6,6 +6,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+import json
 import urllib.parse
 from typing import Any, AsyncIterable, List, Optional, Union, MutableMapping, Type
 from azure.core import MatchConditions
@@ -26,8 +27,13 @@ from ._operations import (
     ClsType,
     build_azure_app_configuration_get_key_values_request,
 )
+from ..._operations._operations import prep_if_match, prep_if_none_match
 from ... import models as _models
 from ..._model_base import _deserialize
+from ..._serialization import Serializer
+
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 
 
 class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated):
@@ -141,8 +147,28 @@ class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
+
+                # Add etag and match_condition to headers
+                _next_headers = dict(_headers)
+                accept = _headers.pop("Accept", None)
+                if etag is not None:
+                    if sync_token is not None:
+                        _next_headers["Sync-Token"] = _SERIALIZER.header("sync_token", sync_token, "str")
+                    if accept_datetime is not None:
+                        _next_headers["Accept-Datetime"] = _SERIALIZER.header("accept_datetime", accept_datetime, "str")
+                    if accept is not None:
+                        _next_headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+                    if_match = prep_if_match(etag, match_condition)
+                    if if_match is not None:
+                        _next_headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+                    if_none_match = prep_if_none_match(etag, match_condition)
+                    if if_none_match is not None:
+                        _next_headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
+                    headers=_next_headers,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -161,13 +187,25 @@ class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated
         )
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        valid_status_codes = [200]
+        if etag is not None and match_condition is not None:
+            valid_status_codes.append(304)
+
+        if response.status_code not in valid_status_codes:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.Error, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = response.headers
-        deserialized = pipeline_response.http_response.json()
+        deserialized = json.loads("{}")
+        if response.status_code != 304:
+            deserialized = pipeline_response.http_response.json()
+        else:
+            unparsed_link = pipeline_response.http_response.headers.get("Link")
+            next_link = None
+            if unparsed_link:
+                next_link = unparsed_link[1 : unparsed_link.index(">")]
+            deserialized["@nextLink"] = next_link
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)

@@ -26,7 +26,7 @@ USAGE:
     Please see Getting Started with Azure Functions page for more information on Azure Functions:
     https://learn.microsoft.com/azure/azure-functions/functions-get-started
     **Note:** The Azure Function may be only used in standard agent setup. Please follow the instruction on the web page
-    https://github.com/azure-ai-foundry/foundry-samples/tree/main/samples/microsoft/infrastructure-setup/41-standard-agent-setup
+    https://github.com/azure-ai-foundry/foundry-samples/tree/main/infrastructure/infrastructure-setup-bicep/41-standard-agent-setup
     to deploy an agent, capable of calling Azure Functions.
 """
 

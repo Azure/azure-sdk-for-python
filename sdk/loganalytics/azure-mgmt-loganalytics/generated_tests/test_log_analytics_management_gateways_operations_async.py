@@ -21,12 +21,12 @@ class TestLogAnalyticsManagementGatewaysOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_gateways_delete(self, resource_group):
         response = await self.client.gateways.delete(
             resource_group_name=resource_group.name,
             workspace_name="str",
             gateway_id="str",
-            api_version="2020-08-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself

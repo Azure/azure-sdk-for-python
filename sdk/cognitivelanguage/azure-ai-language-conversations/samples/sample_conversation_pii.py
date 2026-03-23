@@ -38,10 +38,7 @@ from azure.ai.language.conversations.models import (
     AnalyzeConversationOperationInput,
     PiiOperationAction,
     ConversationPiiActionContent,
-    AnalyzeConversationOperationResult,
     ConversationPiiOperationResult,
-    InputWarning,
-    ConversationError,
 )
 
 
@@ -116,7 +113,7 @@ def sample_conversation_pii():
         print(f"Display Name: {d.get('display_name')}")
 
     # iterate results (sync pageable)
-    for actions_page in paged_actions:
+    for actions_page in paged_actions: # pylint:disable=too-many-nested-blocks
         print(
             f"Completed: {actions_page.completed}, "
             f"In Progress: {actions_page.in_progress}, "
@@ -143,13 +140,6 @@ def sample_conversation_pii():
                             print(f"  Length: {entity.length}")
                             print(f"  Confidence score: {entity.confidence_score}\n")
                             entities_detected.append(entity)
-
-                    if conversation.warnings:
-                        print("Warnings:")
-                        for warning in conversation.warnings:
-                            if isinstance(warning, InputWarning):
-                                print(f"  Code: {warning.code}")
-                                print(f"  Message: {warning.message}")
                     print()
             else:
                 print("  [No supported results to display for this action type]")

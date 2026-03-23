@@ -22,6 +22,10 @@
 """Internal class for partition key range cache implementation in the Azure
 Cosmos database service.
 """
+import logging
+from typing import Any, Optional
+
+from ... import _base
 import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 from typing import Dict, Any, Optional, List, TYPE_CHECKING
@@ -29,6 +33,9 @@ from ..routing_range import PartitionKeyRange
 from ... import _base, http_constants
 from ..collection_routing_map import CollectionRoutingMap
 from .. import routing_range
+
+_LOGGER = logging.getLogger(__name__)
+
 if TYPE_CHECKING:
     from ...aio._cosmos_client_connection_async import CosmosClientConnection
 # pylint: disable=protected-access

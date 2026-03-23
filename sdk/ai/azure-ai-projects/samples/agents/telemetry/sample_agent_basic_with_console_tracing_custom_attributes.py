@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -15,14 +14,16 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv opentelemetry-sdk azure-core-tracing-opentelemetry
+    pip install "azure-ai-projects>=2.0.0" python-dotenv opentelemetry-sdk azure-core-tracing-opentelemetry
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
     2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
-    3) OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT - Optional. Set to `true` to trace the content of chat
+    3) AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING - Set to `true` to enable GenAI telemetry tracing, which is
+       disabled by default.
+    4) OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT - Optional. Set to `true` to trace the content of chat
        messages, which may contain personal data. False by default.
 """
 
@@ -50,7 +51,7 @@ endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 # attributes to spans when they are started.
 # [START custom_attribute_span_processor]
 class CustomAttributeSpanProcessor(SpanProcessor):
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
     def on_start(self, span: Span, parent_context=None):

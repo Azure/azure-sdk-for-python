@@ -18,7 +18,6 @@ from azure.monitor.opentelemetry.exporter.export.trace._utils import _get_DJB2_s
 from azure.monitor.opentelemetry.exporter._constants import _SAMPLE_RATE_KEY
 
 
-
 # Sampler is responsible for the following:
 # Implements same trace id hashing algorithm so that traces are sampled the same across multiple nodes (via AI SDKS)
 # Adds item count to span attribute if span is sampled (needed for ingestion service)

@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv aiohttp
+    pip install "azure-ai-projects>=2.0.0" python-dotenv aiohttp
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -30,9 +30,7 @@ from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
-    AgentReference,
     PromptAgentDefinition,
-    ResponseStreamEventType,
     WorkflowAgentDefinition,
 )
 
@@ -45,12 +43,12 @@ async def main():
 
     async with (
         DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
         project_client.get_openai_client() as openai_client,
     ):
 
         teacher_agent = await project_client.agents.create_version(
-            agent_name="teacher-agent",
+            agent_name="teacher-agent-async",
             definition=PromptAgentDefinition(
                 model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
                 instructions="""You are a teacher that create pre-school math question for student and check answer. 
@@ -61,7 +59,7 @@ async def main():
         print(f"Agent created (id: {teacher_agent.id}, name: {teacher_agent.name}, version: {teacher_agent.version})")
 
         student_agent = await project_client.agents.create_version(
-            agent_name="student-agent",
+            agent_name="student-agent-async",
             definition=PromptAgentDefinition(
                 model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
                 instructions="""You are a student who answers questions from the teacher. 
@@ -111,6 +109,10 @@ trigger:
       output:
         messages: Local.LatestMessage
 
+    - kind: SendActivity
+      id: send_teacher_reply
+      activity: "{{Last(Local.LatestMessage).Text}}"        
+        
     - kind: SetVariable
       id: set_variable_turncount
       variable: Local.TurnCount
@@ -139,7 +141,7 @@ trigger:
 """
 
         workflow = await project_client.agents.create_version(
-            agent_name="student-teacherworkflow",
+            agent_name="student-teacher-workflow-async",
             definition=WorkflowAgentDefinition(workflow=workflow_yaml),
         )
 
@@ -150,28 +152,24 @@ trigger:
 
         stream = await openai_client.responses.create(
             conversation=conversation.id,
-            extra_body={"agent": AgentReference(name=workflow.name).as_dict()},
+            extra_body={"agent_reference": {"name": workflow.name, "type": "agent_reference"}},
             input="1 + 1 = ?",
             stream=True,
-            metadata={"x-ms-debug-mode-enabled": "1"},
         )
 
         async for event in stream:
-            if event.type == ResponseStreamEventType.RESPONSE_OUTPUT_TEXT_DONE:
-                print("\t", event.text)
-            elif (
-                event.type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED
-                and event.item.type == "workflow_action"
-                and (event.item.action_id == "teacher_agent" or event.item.action_id == "student_agent")
-            ):
-                print(f"********************************\nActor - '{event.item.action_id}' :")
-            # feel free to uncomment below to see more events
-            # elif event.type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED and event.item.type == "workflow_action":
-            #     print(f"Workflow Item '{event.item.action_id}' is '{event.item.status}' - (previous item was : '{event.item.previous_action_id}')")
-            # elif event.type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_DONE and event.item.type == "workflow_action":
-            #     print(f"Workflow Item '{event.item.action_id}' is '{event.item.status}' - (previous item was: '{event.item.previous_action_id}')")
-            # elif event.type == ResponseStreamEventType.RESPONSE_OUTPUT_TEXT_DELTA:
-            #     print(event.delta)
+            print(f"Event {event.sequence_number} type '{event.type}'", end="")
+            if (
+                event.type == "response.output_item.added" or event.type == "response.output_item.done"
+            ) and event.item.type == "workflow_action":
+                print(
+                    f": item action ID '{event.item.action_id}' is '{event.item.status}' (previous action ID: '{event.item.previous_action_id}')",
+                    end="",
+                )
+            elif event.type == "response.completed":
+                response = await openai_client.responses.retrieve(event.response.id)
+                print(f": Final Response: {response}", end="")
+            print("", flush=True)
 
         await openai_client.conversations.delete(conversation_id=conversation.id)
         print("Conversation deleted")

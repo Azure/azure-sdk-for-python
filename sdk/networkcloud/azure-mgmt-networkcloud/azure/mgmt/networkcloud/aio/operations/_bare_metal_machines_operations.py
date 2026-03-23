@@ -161,7 +161,10 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -254,7 +257,10 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -311,7 +317,10 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("BareMetalMachine", pipeline_response.http_response)
@@ -382,7 +391,10 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -412,9 +424,9 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.BareMetalMachine]:
         """Create or update the bare metal machine.
 
-        Create a new bare metal machine or update the properties of the existing one.
-        All customer initiated requests will be rejected as the life cycle of this resource is managed
-        by the system.
+        Create a new bare metal machine or update the properties of the existing one. All customer
+        initiated requests will be rejected as the life cycle of this resource is managed by the
+        system.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -454,9 +466,9 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.BareMetalMachine]:
         """Create or update the bare metal machine.
 
-        Create a new bare metal machine or update the properties of the existing one.
-        All customer initiated requests will be rejected as the life cycle of this resource is managed
-        by the system.
+        Create a new bare metal machine or update the properties of the existing one. All customer
+        initiated requests will be rejected as the life cycle of this resource is managed by the
+        system.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -494,9 +506,9 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.BareMetalMachine]:
         """Create or update the bare metal machine.
 
-        Create a new bare metal machine or update the properties of the existing one.
-        All customer initiated requests will be rejected as the life cycle of this resource is managed
-        by the system.
+        Create a new bare metal machine or update the properties of the existing one. All customer
+        initiated requests will be rejected as the life cycle of this resource is managed by the
+        system.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -620,7 +632,10 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -645,9 +660,8 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.OperationStatusResult]:
         """Delete the bare metal machine.
 
-        Delete the provided bare metal machine.
-        All customer initiated requests will be rejected as the life cycle of this resource is managed
-        by the system.
+        Delete the provided bare metal machine. All customer initiated requests will be rejected as the
+        life cycle of this resource is managed by the system.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -783,7 +797,10 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1038,7 +1055,10 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1259,7 +1279,10 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1456,7 +1479,10 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1598,7 +1624,10 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1795,7 +1824,10 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1933,7 +1965,10 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2153,7 +2188,10 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2375,7 +2413,10 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2597,7 +2638,10 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2799,7 +2843,10 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2919,7 +2966,10 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}

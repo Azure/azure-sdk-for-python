@@ -7,7 +7,7 @@
 import functools
 import os.path
 
-from devtools_testutils import PowerShellPreparer
+from devtools_testutils import EnvironmentVariableLoader, EnvironmentVariableOptions
 from devtools_testutils.fake_credentials import STORAGE_ACCOUNT_FAKE_KEY
 
 try:
@@ -37,9 +37,10 @@ os.environ['PROTOCOL'] = PROTOCOL
 os.environ['ACCOUNT_URL_SUFFIX'] = ACCOUNT_URL_SUFFIX
 
 DataLakePreparer = functools.partial(
-    PowerShellPreparer, "storage",
+    EnvironmentVariableLoader, "storage",
     datalake_storage_account_name="storagename",
     datalake_storage_account_key=STORAGE_ACCOUNT_FAKE_KEY,
     storage_data_lake_soft_delete_account_name="storagesoftdelname",
     storage_data_lake_soft_delete_account_key=STORAGE_ACCOUNT_FAKE_KEY,
+    options=EnvironmentVariableOptions(hide_secrets=["datalake_storage_account_key", "storage_data_lake_soft_delete_account_key"]),
 )

@@ -9,12 +9,43 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_field
 
 if TYPE_CHECKING:
     from .. import models as _models
+
+
+class Affinity(_Model):
+    """Affinity is a group of cluster affinity scheduling rules. More to be added.
+
+    :ivar cluster_affinity: ClusterAffinity contains cluster affinity scheduling rules for the
+     selected resources.
+    :vartype cluster_affinity: ~azure.mgmt.containerservicefleet.models.ClusterAffinity
+    """
+
+    cluster_affinity: Optional["_models.ClusterAffinity"] = rest_field(
+        name="clusterAffinity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ClusterAffinity contains cluster affinity scheduling rules for the selected resources."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        cluster_affinity: Optional["_models.ClusterAffinity"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class AgentProfile(_Model):
@@ -396,10 +427,162 @@ class AutoUpgradeProfileStatus(_Model):
     """The status of the last AutoUpgrade trigger. Known values are: \"Succeeded\" and \"Failed\"."""
     last_trigger_error: Optional["_models.ErrorDetail"] = rest_field(name="lastTriggerError", visibility=["read"])
     """The error details of the last trigger."""
-    last_trigger_upgrade_versions: Optional[List[str]] = rest_field(
+    last_trigger_upgrade_versions: Optional[list[str]] = rest_field(
         name="lastTriggerUpgradeVersions", visibility=["read"]
     )
     """The target Kubernetes version or node image versions of the last trigger."""
+
+
+class ClusterAffinity(_Model):
+    """ClusterAffinity contains cluster affinity scheduling rules for the selected resources.
+
+    :ivar required_during_scheduling_ignored_during_execution: If the affinity requirements
+     specified by this field are not met at scheduling time, the resource will not be scheduled onto
+     the cluster. If the affinity requirements specified by this field cease to be met at some point
+     after the placement (e.g. due to an update), the system may or may not try to eventually remove
+     the resource from the cluster.
+    :vartype required_during_scheduling_ignored_during_execution:
+     ~azure.mgmt.containerservicefleet.models.ClusterSelector
+    """
+
+    required_during_scheduling_ignored_during_execution: Optional["_models.ClusterSelector"] = rest_field(
+        name="requiredDuringSchedulingIgnoredDuringExecution",
+        visibility=["read", "create", "update", "delete", "query"],
+    )
+    """If the affinity requirements specified by this field are not met at scheduling time, the
+     resource will not be scheduled onto the cluster. If the affinity requirements specified by this
+     field cease to be met at some point after the placement (e.g. due to an update), the system may
+     or may not try to eventually remove the resource from the cluster."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        required_during_scheduling_ignored_during_execution: Optional["_models.ClusterSelector"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ClusterResourcePlacementSpec(_Model):
+    """ClusterResourcePlacementSpec defines the desired state of ClusterResourcePlacement.
+
+    :ivar policy: Policy defines how to select member clusters to place the selected resources. If
+     unspecified, all the joined member clusters are selected.
+    :vartype policy: ~azure.mgmt.containerservicefleet.models.PlacementPolicy
+    """
+
+    policy: Optional["_models.PlacementPolicy"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Policy defines how to select member clusters to place the selected resources. If unspecified,
+     all the joined member clusters are selected."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        policy: Optional["_models.PlacementPolicy"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ClusterSelector(_Model):
+    """ClusterSelector.
+
+    :ivar cluster_selector_terms: ClusterSelectorTerms is a list of cluster selector terms. The
+     terms are ``ORed``. Required.
+    :vartype cluster_selector_terms:
+     list[~azure.mgmt.containerservicefleet.models.ClusterSelectorTerm]
+    """
+
+    cluster_selector_terms: list["_models.ClusterSelectorTerm"] = rest_field(
+        name="clusterSelectorTerms", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ClusterSelectorTerms is a list of cluster selector terms. The terms are ``ORed``. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        cluster_selector_terms: list["_models.ClusterSelectorTerm"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ClusterSelectorTerm(_Model):
+    """ClusterSelectorTerm.
+
+    :ivar label_selector: LabelSelector is a label query over all the joined member clusters.
+     Clusters matching the query are selected. If you specify both label and property selectors in
+     the same term, the results are AND'd.
+    :vartype label_selector: ~azure.mgmt.containerservicefleet.models.LabelSelector
+    :ivar property_selector: PropertySelector is a property query over all joined member clusters.
+     Clusters matching the query are selected. If you specify both label and property selectors in
+     the same term, the results are AND'd. At this moment, PropertySelector can only be used with
+     ``RequiredDuringSchedulingIgnoredDuringExecution`` affinity terms. This field is beta-level; it
+     is for the property-based scheduling feature and is only functional when a property provider is
+     enabled in the deployment.
+    :vartype property_selector: ~azure.mgmt.containerservicefleet.models.PropertySelector
+    """
+
+    label_selector: Optional["_models.LabelSelector"] = rest_field(
+        name="labelSelector", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """LabelSelector is a label query over all the joined member clusters. Clusters matching the query
+     are selected. If you specify both label and property selectors in the same term, the results
+     are AND'd."""
+    property_selector: Optional["_models.PropertySelector"] = rest_field(
+        name="propertySelector", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """PropertySelector is a property query over all joined member clusters. Clusters matching the
+     query are selected. If you specify both label and property selectors in the same term, the
+     results are AND'd. At this moment, PropertySelector can only be used with
+     ``RequiredDuringSchedulingIgnoredDuringExecution`` affinity terms. This field is beta-level; it
+     is for the property-based scheduling feature and is only functional when a property provider is
+     enabled in the deployment."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        label_selector: Optional["_models.LabelSelector"] = None,
+        property_selector: Optional["_models.PropertySelector"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class ErrorAdditionalInfo(_Model):
@@ -438,9 +621,9 @@ class ErrorDetail(_Model):
     """The error message."""
     target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[List["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
@@ -494,7 +677,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -504,7 +687,7 @@ class TrackedResource(Resource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -568,7 +751,7 @@ class Fleet(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.FleetProperties"] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
@@ -624,7 +807,7 @@ class FleetCredentialResults(_Model):
     :vartype kubeconfigs: list[~azure.mgmt.containerservicefleet.models.FleetCredentialResult]
     """
 
-    kubeconfigs: Optional[List["_models.FleetCredentialResult"]] = rest_field(visibility=["read"])
+    kubeconfigs: Optional[list["_models.FleetCredentialResult"]] = rest_field(visibility=["read"])
     """Array of base64-encoded Kubernetes configuration files."""
 
 
@@ -679,6 +862,207 @@ class FleetHubProfile(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class FleetManagedNamespace(TrackedResource):
+    """A fleet managed namespace.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.containerservicefleet.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.containerservicefleet.models.FleetManagedNamespaceProperties
+    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype e_tag: str
+    """
+
+    properties: Optional["_models.FleetManagedNamespaceProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+
+    __flattened_items = [
+        "provisioning_state",
+        "managed_namespace_properties",
+        "adoption_policy",
+        "delete_policy",
+        "propagation_policy",
+        "status",
+        "portal_fqdn",
+    ]
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.FleetManagedNamespaceProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
+        super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
+
+
+class FleetManagedNamespacePatch(_Model):
+    """The properties of a fleet managed namespace that can be patched.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FleetManagedNamespaceProperties(_Model):
+    """The properties of a fleet managed namespace.
+
+    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+     "Failed", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerservicefleet.models.FleetManagedNamespaceProvisioningState
+    :ivar managed_namespace_properties: The namespace properties for the fleet managed namespace.
+    :vartype managed_namespace_properties:
+     ~azure.mgmt.containerservicefleet.models.ManagedNamespaceProperties
+    :ivar adoption_policy: Action if the managed namespace with the same name already exists.
+     Default is Never. Required. Known values are: "Never", "IfIdentical", and "Always".
+    :vartype adoption_policy: str or ~azure.mgmt.containerservicefleet.models.AdoptionPolicy
+    :ivar delete_policy: Delete options of a fleet managed namespace. Default is Keep. Required.
+     Known values are: "Keep" and "Delete".
+    :vartype delete_policy: str or ~azure.mgmt.containerservicefleet.models.DeletePolicy
+    :ivar propagation_policy: The profile of the propagation to create the namespace.
+    :vartype propagation_policy: ~azure.mgmt.containerservicefleet.models.PropagationPolicy
+    :ivar status: Status information of the last operation for fleet managed namespace.
+    :vartype status: ~azure.mgmt.containerservicefleet.models.FleetManagedNamespaceStatus
+    :ivar portal_fqdn: The Azure Portal FQDN of the Fleet hub.
+    :vartype portal_fqdn: str
+    """
+
+    provisioning_state: Optional[Union[str, "_models.FleetManagedNamespaceProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The status of the last operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Creating\", \"Updating\", and \"Deleting\"."""
+    managed_namespace_properties: Optional["_models.ManagedNamespaceProperties"] = rest_field(
+        name="managedNamespaceProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The namespace properties for the fleet managed namespace."""
+    adoption_policy: Union[str, "_models.AdoptionPolicy"] = rest_field(
+        name="adoptionPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Action if the managed namespace with the same name already exists. Default is Never. Required.
+     Known values are: \"Never\", \"IfIdentical\", and \"Always\"."""
+    delete_policy: Union[str, "_models.DeletePolicy"] = rest_field(
+        name="deletePolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Delete options of a fleet managed namespace. Default is Keep. Required. Known values are:
+     \"Keep\" and \"Delete\"."""
+    propagation_policy: Optional["_models.PropagationPolicy"] = rest_field(
+        name="propagationPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The profile of the propagation to create the namespace."""
+    status: Optional["_models.FleetManagedNamespaceStatus"] = rest_field(visibility=["read"])
+    """Status information of the last operation for fleet managed namespace."""
+    portal_fqdn: Optional[str] = rest_field(name="portalFqdn", visibility=["read"])
+    """The Azure Portal FQDN of the Fleet hub."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        adoption_policy: Union[str, "_models.AdoptionPolicy"],
+        delete_policy: Union[str, "_models.DeletePolicy"],
+        managed_namespace_properties: Optional["_models.ManagedNamespaceProperties"] = None,
+        propagation_policy: Optional["_models.PropagationPolicy"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FleetManagedNamespaceStatus(_Model):
+    """Status information for the fleet managed namespace.
+
+    :ivar last_operation_id: The last operation ID for the fleet managed namespace.
+    :vartype last_operation_id: str
+    :ivar last_operation_error: The last operation error of the fleet managed namespace.
+    :vartype last_operation_error: ~azure.mgmt.containerservicefleet.models.ErrorDetail
+    """
+
+    last_operation_id: Optional[str] = rest_field(name="lastOperationId", visibility=["read"])
+    """The last operation ID for the fleet managed namespace."""
+    last_operation_error: Optional["_models.ErrorDetail"] = rest_field(name="lastOperationError", visibility=["read"])
+    """The last operation error of the fleet managed namespace."""
 
 
 class FleetMember(ProxyResource):
@@ -784,7 +1168,7 @@ class FleetMemberProperties(_Model):
     )
     """The status of the last operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
      \"Joining\", \"Leaving\", and \"Updating\"."""
-    labels: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    labels: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The labels for the fleet member."""
     status: Optional["_models.FleetMemberStatus"] = rest_field(visibility=["read"])
     """Status information of the last operation for fleet member."""
@@ -795,7 +1179,7 @@ class FleetMemberProperties(_Model):
         *,
         cluster_resource_id: str,
         group: Optional[str] = None,
-        labels: Optional[Dict[str, str]] = None,
+        labels: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -885,7 +1269,7 @@ class FleetMemberUpdateProperties(_Model):
 
     group: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The group this member belongs to for multi-cluster update management."""
-    labels: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    labels: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The labels for the fleet member."""
 
     @overload
@@ -893,7 +1277,7 @@ class FleetMemberUpdateProperties(_Model):
         self,
         *,
         group: Optional[str] = None,
-        labels: Optional[Dict[str, str]] = None,
+        labels: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -916,7 +1300,7 @@ class FleetPatch(_Model):
     :vartype identity: ~azure.mgmt.containerservicefleet.models.ManagedServiceIdentity
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -927,7 +1311,7 @@ class FleetPatch(_Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -1376,6 +1760,102 @@ class GenerateResponse(_Model):
      Required."""
 
 
+class LabelSelector(_Model):
+    """A label selector is a label query over a set of resources. The result of matchLabels and
+    matchExpressions are ANDed. An empty label selector matches all objects. A null label selector
+    matches no objects.
+
+    :ivar match_labels: matchLabels is a map of {key,value} pairs. A single {key,value} in the
+     matchLabels map is equivalent to an element of matchExpressions, whose key field is "key", the
+     operator is "In", and the values array contains only "value". The requirements are ANDed.
+    :vartype match_labels: dict[str, str]
+    :ivar match_expressions: matchExpressions is a list of label selector requirements. The
+     requirements are ANDed.
+    :vartype match_expressions:
+     list[~azure.mgmt.containerservicefleet.models.LabelSelectorRequirement]
+    """
+
+    match_labels: Optional[dict[str, str]] = rest_field(
+        name="matchLabels", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is
+     equivalent to an element of matchExpressions, whose key field is \"key\", the operator is
+     \"In\", and the values array contains only \"value\". The requirements are ANDed."""
+    match_expressions: Optional[list["_models.LabelSelectorRequirement"]] = rest_field(
+        name="matchExpressions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """matchExpressions is a list of label selector requirements. The requirements are ANDed."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        match_labels: Optional[dict[str, str]] = None,
+        match_expressions: Optional[list["_models.LabelSelectorRequirement"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LabelSelectorRequirement(_Model):
+    """A label selector requirement is a selector that contains values, a key, and an operator that
+    relates the key and values.
+
+    :ivar key: key is the label key that the selector applies to. Required.
+    :vartype key: str
+    :ivar operator: operator represents a key's relationship to a set of values. Valid operators
+     are In, NotIn, Exists and DoesNotExist. Required. Known values are: "In", "NotIn", "Exists",
+     and "DoesNotExist".
+    :vartype operator: str or ~azure.mgmt.containerservicefleet.models.LabelSelectorOperator
+    :ivar values_property: values is an array of string values. If the operator is In or NotIn, the
+     values array must be non-empty. If the operator is Exists or DoesNotExist, the values array
+     must be empty. This array is replaced during a strategic merge patch.
+    :vartype values_property: list[str]
+    """
+
+    key: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """key is the label key that the selector applies to. Required."""
+    operator: Union[str, "_models.LabelSelectorOperator"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """operator represents a key's relationship to a set of values. Valid operators are In, NotIn,
+     Exists and DoesNotExist. Required. Known values are: \"In\", \"NotIn\", \"Exists\", and
+     \"DoesNotExist\"."""
+    values_property: Optional[list[str]] = rest_field(
+        name="values", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """values is an array of string values. If the operator is In or NotIn, the values array must be
+     non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This
+     array is replaced during a strategic merge patch."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        key: str,
+        operator: Union[str, "_models.LabelSelectorOperator"],
+        values_property: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ManagedClusterUpdate(_Model):
     """The update to be applied to the ManagedClusters.
 
@@ -1453,6 +1933,53 @@ class ManagedClusterUpgradeSpec(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ManagedNamespaceProperties(_Model):
+    """The namespace properties for the fleet managed namespace.
+
+    :ivar labels: The labels for the fleet managed namespace.
+    :vartype labels: dict[str, str]
+    :ivar annotations: The annotations for the fleet managed namespace.
+    :vartype annotations: dict[str, str]
+    :ivar default_resource_quota: The default resource quota for the fleet managed namespace.
+    :vartype default_resource_quota: ~azure.mgmt.containerservicefleet.models.ResourceQuota
+    :ivar default_network_policy: The default network policy for the fleet managed namespace.
+    :vartype default_network_policy: ~azure.mgmt.containerservicefleet.models.NetworkPolicy
+    """
+
+    labels: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The labels for the fleet managed namespace."""
+    annotations: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The annotations for the fleet managed namespace."""
+    default_resource_quota: Optional["_models.ResourceQuota"] = rest_field(
+        name="defaultResourceQuota", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The default resource quota for the fleet managed namespace."""
+    default_network_policy: Optional["_models.NetworkPolicy"] = rest_field(
+        name="defaultNetworkPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The default network policy for the fleet managed namespace."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        labels: Optional[dict[str, str]] = None,
+        annotations: Optional[dict[str, str]] = None,
+        default_resource_quota: Optional["_models.ResourceQuota"] = None,
+        default_network_policy: Optional["_models.NetworkPolicy"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ManagedServiceIdentity(_Model):
     """Managed service identity (system assigned and/or user assigned identities).
 
@@ -1481,7 +2008,7 @@ class ManagedServiceIdentity(_Model):
     )
     """The type of managed identity assigned to this resource. Required. Known values are: \"None\",
      \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned, UserAssigned\"."""
-    user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = rest_field(
+    user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = rest_field(
         name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
     )
     """The identities assigned to this resource by the user."""
@@ -1491,7 +2018,7 @@ class ManagedServiceIdentity(_Model):
         self,
         *,
         type: Union[str, "_models.ManagedServiceIdentityType"],
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
     ) -> None: ...
 
     @overload
@@ -1532,6 +2059,47 @@ class MemberUpdateStatus(_Model):
     """The status message after processing the member update operation."""
 
 
+class NetworkPolicy(_Model):
+    """The network policy for the managed namespace.
+
+    :ivar ingress: The ingress policy for the managed namespace. Known values are: "AllowAll",
+     "DenyAll", and "AllowSameNamespace".
+    :vartype ingress: str or ~azure.mgmt.containerservicefleet.models.PolicyRule
+    :ivar egress: The egress policy for the managed namespace. Known values are: "AllowAll",
+     "DenyAll", and "AllowSameNamespace".
+    :vartype egress: str or ~azure.mgmt.containerservicefleet.models.PolicyRule
+    """
+
+    ingress: Optional[Union[str, "_models.PolicyRule"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ingress policy for the managed namespace. Known values are: \"AllowAll\", \"DenyAll\", and
+     \"AllowSameNamespace\"."""
+    egress: Optional[Union[str, "_models.PolicyRule"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The egress policy for the managed namespace. Known values are: \"AllowAll\", \"DenyAll\", and
+     \"AllowSameNamespace\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        ingress: Optional[Union[str, "_models.PolicyRule"]] = None,
+        egress: Optional[Union[str, "_models.PolicyRule"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class NodeImageSelection(_Model):
     """The node image upgrade to be applied to the target nodes in update run.
 
@@ -1551,7 +2119,7 @@ class NodeImageSelection(_Model):
     type: Union[str, "_models.NodeImageSelectionType"] = rest_field(visibility=["read", "create"])
     """The node image upgrade type. Required. Known values are: \"Latest\", \"Consistent\", and
      \"Custom\"."""
-    custom_node_image_versions: Optional[List["_models.NodeImageVersion"]] = rest_field(
+    custom_node_image_versions: Optional[list["_models.NodeImageVersion"]] = rest_field(
         name="customNodeImageVersions", visibility=["read", "create", "update", "delete", "query"]
     )
     """Custom node image versions to upgrade the nodes to. This field is required if node image
@@ -1566,7 +2134,7 @@ class NodeImageSelection(_Model):
         self,
         *,
         type: Union[str, "_models.NodeImageSelectionType"],
-        custom_node_image_versions: Optional[List["_models.NodeImageVersion"]] = None,
+        custom_node_image_versions: Optional[list["_models.NodeImageVersion"]] = None,
     ) -> None: ...
 
     @overload
@@ -1588,7 +2156,7 @@ class NodeImageSelectionStatus(_Model):
      list[~azure.mgmt.containerservicefleet.models.NodeImageVersion]
     """
 
-    selected_node_image_versions: Optional[List["_models.NodeImageVersion"]] = rest_field(
+    selected_node_image_versions: Optional[list["_models.NodeImageVersion"]] = rest_field(
         name="selectedNodeImageVersions", visibility=["read"]
     )
     """The image versions to upgrade the nodes to."""
@@ -1694,6 +2262,290 @@ class OperationDisplay(_Model):
      views."""
 
 
+class PlacementPolicy(_Model):
+    """PlacementPolicy contains the rules to select target member clusters to place the selected
+    resources. Note that only clusters that are both joined and satisfying the rules will be
+    selected. You can only specify at most one of the two fields: ClusterNames and Affinity. If
+    none is specified, all the joined clusters are selected.
+
+    :ivar placement_type: Type of placement. Can be "PickAll", "PickN" or "PickFixed". Default is
+     PickAll. Known values are: "PickAll" and "PickFixed".
+    :vartype placement_type: str or ~azure.mgmt.containerservicefleet.models.PlacementType
+    :ivar cluster_names: ClusterNames contains a list of names of MemberCluster to place the
+     selected resources. Only valid if the placement type is "PickFixed".
+    :vartype cluster_names: list[str]
+    :ivar affinity: Affinity contains cluster affinity scheduling rules. Defines which member
+     clusters to place the selected resources. Only valid if the placement type is "PickAll" or
+     "PickN".
+    :vartype affinity: ~azure.mgmt.containerservicefleet.models.Affinity
+    :ivar tolerations: If specified, the ClusterResourcePlacement's Tolerations. Tolerations cannot
+     be updated or deleted. This field is beta-level and is for the taints and tolerations feature.
+    :vartype tolerations: list[~azure.mgmt.containerservicefleet.models.Toleration]
+    """
+
+    placement_type: Optional[Union[str, "_models.PlacementType"]] = rest_field(
+        name="placementType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of placement. Can be \"PickAll\", \"PickN\" or \"PickFixed\". Default is PickAll. Known
+     values are: \"PickAll\" and \"PickFixed\"."""
+    cluster_names: Optional[list[str]] = rest_field(
+        name="clusterNames", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ClusterNames contains a list of names of MemberCluster to place the selected resources. Only
+     valid if the placement type is \"PickFixed\"."""
+    affinity: Optional["_models.Affinity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Affinity contains cluster affinity scheduling rules. Defines which member clusters to place the
+     selected resources. Only valid if the placement type is \"PickAll\" or \"PickN\"."""
+    tolerations: Optional[list["_models.Toleration"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """If specified, the ClusterResourcePlacement's Tolerations. Tolerations cannot be updated or
+     deleted. This field is beta-level and is for the taints and tolerations feature."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        placement_type: Optional[Union[str, "_models.PlacementType"]] = None,
+        cluster_names: Optional[list[str]] = None,
+        affinity: Optional["_models.Affinity"] = None,
+        tolerations: Optional[list["_models.Toleration"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PlacementProfile(_Model):
+    """The configuration profile for default ClusterResourcePlacement for placement.
+
+    :ivar default_cluster_resource_placement: The default ClusterResourcePlacement policy
+     configuration.
+    :vartype default_cluster_resource_placement:
+     ~azure.mgmt.containerservicefleet.models.ClusterResourcePlacementSpec
+    """
+
+    default_cluster_resource_placement: Optional["_models.ClusterResourcePlacementSpec"] = rest_field(
+        name="defaultClusterResourcePlacement", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The default ClusterResourcePlacement policy configuration."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        default_cluster_resource_placement: Optional["_models.ClusterResourcePlacementSpec"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PropagationPolicy(_Model):
+    """The propagation to be used for provisioning the namespace among the fleet.
+
+    :ivar type: The type of the policy to be used. Default is Placement. Required. "Placement"
+    :vartype type: str or ~azure.mgmt.containerservicefleet.models.PropagationType
+    :ivar placement_profile: The profile to be used for propagation via placement.
+    :vartype placement_profile: ~azure.mgmt.containerservicefleet.models.PlacementProfile
+    """
+
+    type: Union[str, "_models.PropagationType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The type of the policy to be used. Default is Placement. Required. \"Placement\""""
+    placement_profile: Optional["_models.PlacementProfile"] = rest_field(
+        name="placementProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The profile to be used for propagation via placement."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.PropagationType"],
+        placement_profile: Optional["_models.PlacementProfile"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PropertySelector(_Model):
+    """PropertySelector helps user specify property requirements when picking clusters for resource
+    placement.
+
+    :ivar match_expressions: MatchExpressions is an array of PropertySelectorRequirements. The
+     requirements are AND'd. Required.
+    :vartype match_expressions:
+     list[~azure.mgmt.containerservicefleet.models.PropertySelectorRequirement]
+    """
+
+    match_expressions: list["_models.PropertySelectorRequirement"] = rest_field(
+        name="matchExpressions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """MatchExpressions is an array of PropertySelectorRequirements. The requirements are AND'd.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        match_expressions: list["_models.PropertySelectorRequirement"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PropertySelectorRequirement(_Model):
+    """PropertySelectorRequirement is a specific property requirement when picking clusters for
+    resource placement.
+
+    :ivar name: Name is the name of the property; it should be a Kubernetes label name. Required.
+    :vartype name: str
+    :ivar operator: Operator specifies the relationship between a cluster's observed value of the
+     specified property and the values given in the requirement. Required. Known values are: "Gt",
+     "Ge", "Eq", "Ne", "Lt", and "Le".
+    :vartype operator: str or ~azure.mgmt.containerservicefleet.models.PropertySelectorOperator
+    :ivar values_property: Values are a list of values of the specified property which Fleet will
+     compare against the observed values of individual member clusters in accordance with the given
+     operator. At this moment, each value should be a Kubernetes quantity. For more information, see
+     `https://pkg.go.dev/k8s.io/apimachinery/pkg/api/resource#Quantity
+     <https://pkg.go.dev/k8s.io/apimachinery/pkg/api/resource#Quantity>`_. If the operator is Gt
+     (greater than), Ge (greater than or equal to), Lt (less than), or ``Le`` (less than or equal
+     to), Eq (equal to), or Ne (ne), exactly one value must be specified in the list. Required.
+    :vartype values_property: list[str]
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name is the name of the property; it should be a Kubernetes label name. Required."""
+    operator: Union[str, "_models.PropertySelectorOperator"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Operator specifies the relationship between a cluster's observed value of the specified
+     property and the values given in the requirement. Required. Known values are: \"Gt\", \"Ge\",
+     \"Eq\", \"Ne\", \"Lt\", and \"Le\"."""
+    values_property: list[str] = rest_field(name="values", visibility=["read", "create", "update", "delete", "query"])
+    """Values are a list of values of the specified property which Fleet will compare against the
+     observed values of individual member clusters in accordance with the given operator. At this
+     moment, each value should be a Kubernetes quantity. For more information, see
+     `https://pkg.go.dev/k8s.io/apimachinery/pkg/api/resource#Quantity
+     <https://pkg.go.dev/k8s.io/apimachinery/pkg/api/resource#Quantity>`_. If the operator is Gt
+     (greater than), Ge (greater than or equal to), Lt (less than), or ``Le`` (less than or equal
+     to), Eq (equal to), or Ne (ne), exactly one value must be specified in the list. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        operator: Union[str, "_models.PropertySelectorOperator"],
+        values_property: list[str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceQuota(_Model):
+    """The resource quota for the managed namespace.
+
+    :ivar cpu_request: The CPU request for the managed namespace. See more at
+     `https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu
+     <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu>`_.
+    :vartype cpu_request: str
+    :ivar cpu_limit: The CPU limit for the managed namespace. See more at
+     `https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu
+     <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu>`_.
+    :vartype cpu_limit: str
+    :ivar memory_request: The memory request for the managed namespace. See more at
+     `https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory
+     <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory>`_.
+    :vartype memory_request: str
+    :ivar memory_limit: The memory limit for the managed namespace. See more at
+     `https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory
+     <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory>`_.
+    :vartype memory_limit: str
+    """
+
+    cpu_request: Optional[str] = rest_field(
+        name="cpuRequest", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The CPU request for the managed namespace. See more at
+     `https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu
+     <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu>`_."""
+    cpu_limit: Optional[str] = rest_field(name="cpuLimit", visibility=["read", "create", "update", "delete", "query"])
+    """The CPU limit for the managed namespace. See more at
+     `https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu
+     <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu>`_."""
+    memory_request: Optional[str] = rest_field(
+        name="memoryRequest", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The memory request for the managed namespace. See more at
+     `https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory
+     <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory>`_."""
+    memory_limit: Optional[str] = rest_field(
+        name="memoryLimit", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The memory limit for the managed namespace. See more at
+     `https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory
+     <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory>`_."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        cpu_request: Optional[str] = None,
+        cpu_limit: Optional[str] = None,
+        memory_request: Optional[str] = None,
+        memory_limit: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class SkipProperties(_Model):
     """The properties of a skip operation containing multiple skip requests.
 
@@ -1701,14 +2553,14 @@ class SkipProperties(_Model):
     :vartype targets: list[~azure.mgmt.containerservicefleet.models.SkipTarget]
     """
 
-    targets: List["_models.SkipTarget"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    targets: list["_models.SkipTarget"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The targets to skip. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        targets: List["_models.SkipTarget"],
+        targets: list["_models.SkipTarget"],
     ) -> None: ...
 
     @overload
@@ -1828,6 +2680,67 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
+class Toleration(_Model):
+    """Toleration allows ClusterResourcePlacement to tolerate any taint that matches the triple
+    <key,value,effect> using the matching operator <operator>.
+
+    :ivar key: Key is the taint key that the toleration applies to. Empty means match all taint
+     keys. If the key is empty, operator must be Exists; this combination means to match all values
+     and all keys.
+    :vartype key: str
+    :ivar operator: Operator represents a key's relationship to the value. Valid operators are
+     Exists and Equal. Defaults to Equal. Exists is equivalent to wildcard for value, so that a
+     ClusterResourcePlacement can tolerate all taints of a particular category. Known values are:
+     "Exists" and "Equal".
+    :vartype operator: str or ~azure.mgmt.containerservicefleet.models.TolerationOperator
+    :ivar value: Value is the taint value the toleration matches to. If the operator is Exists, the
+     value should be empty, otherwise just a regular string.
+    :vartype value: str
+    :ivar effect: Effect indicates the taint effect to match. Empty means match all taint effects.
+     When specified, only allowed value is NoSchedule. "NoSchedule"
+    :vartype effect: str or ~azure.mgmt.containerservicefleet.models.TaintEffect
+    """
+
+    key: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Key is the taint key that the toleration applies to. Empty means match all taint keys. If the
+     key is empty, operator must be Exists; this combination means to match all values and all keys."""
+    operator: Optional[Union[str, "_models.TolerationOperator"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Operator represents a key's relationship to the value. Valid operators are Exists and Equal.
+     Defaults to Equal. Exists is equivalent to wildcard for value, so that a
+     ClusterResourcePlacement can tolerate all taints of a particular category. Known values are:
+     \"Exists\" and \"Equal\"."""
+    value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Value is the taint value the toleration matches to. If the operator is Exists, the value should
+     be empty, otherwise just a regular string."""
+    effect: Optional[Union[str, "_models.TaintEffect"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Effect indicates the taint effect to match. Empty means match all taint effects. When
+     specified, only allowed value is NoSchedule. \"NoSchedule\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        key: Optional[str] = None,
+        operator: Optional[Union[str, "_models.TolerationOperator"]] = None,
+        value: Optional[str] = None,
+        effect: Optional[Union[str, "_models.TaintEffect"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class UpdateGroup(_Model):
     """A group to be updated.
 
@@ -1843,11 +2756,11 @@ class UpdateGroup(_Model):
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Name of the group.
      It must match a group name of an existing fleet member. Required."""
-    before_gates: Optional[List["_models.GateConfiguration"]] = rest_field(
+    before_gates: Optional[list["_models.GateConfiguration"]] = rest_field(
         name="beforeGates", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of Gates that will be created before this Group is executed."""
-    after_gates: Optional[List["_models.GateConfiguration"]] = rest_field(
+    after_gates: Optional[list["_models.GateConfiguration"]] = rest_field(
         name="afterGates", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of Gates that will be created after this Group is executed."""
@@ -1857,8 +2770,8 @@ class UpdateGroup(_Model):
         self,
         *,
         name: str,
-        before_gates: Optional[List["_models.GateConfiguration"]] = None,
-        after_gates: Optional[List["_models.GateConfiguration"]] = None,
+        before_gates: Optional[list["_models.GateConfiguration"]] = None,
+        after_gates: Optional[list["_models.GateConfiguration"]] = None,
     ) -> None: ...
 
     @overload
@@ -1891,11 +2804,11 @@ class UpdateGroupStatus(_Model):
     """The status of the UpdateGroup."""
     name: Optional[str] = rest_field(visibility=["read"])
     """The name of the UpdateGroup."""
-    members: Optional[List["_models.MemberUpdateStatus"]] = rest_field(visibility=["read"])
+    members: Optional[list["_models.MemberUpdateStatus"]] = rest_field(visibility=["read"])
     """The list of member this UpdateGroup updates."""
-    before_gates: Optional[List["_models.UpdateRunGateStatus"]] = rest_field(name="beforeGates", visibility=["read"])
+    before_gates: Optional[list["_models.UpdateRunGateStatus"]] = rest_field(name="beforeGates", visibility=["read"])
     """The list of Gates that will run before this UpdateGroup."""
-    after_gates: Optional[List["_models.UpdateRunGateStatus"]] = rest_field(name="afterGates", visibility=["read"])
+    after_gates: Optional[list["_models.UpdateRunGateStatus"]] = rest_field(name="afterGates", visibility=["read"])
     """The list of Gates that will run after this UpdateGroup."""
 
 
@@ -2154,7 +3067,7 @@ class UpdateRunStatus(_Model):
 
     status: Optional["_models.UpdateStatus"] = rest_field(visibility=["read"])
     """The status of the UpdateRun."""
-    stages: Optional[List["_models.UpdateStageStatus"]] = rest_field(visibility=["read"])
+    stages: Optional[list["_models.UpdateStageStatus"]] = rest_field(visibility=["read"])
     """The stages composing an update run. Stages are run sequentially withing an UpdateRun."""
     node_image_selection: Optional["_models.NodeImageSelectionStatus"] = rest_field(
         name="nodeImageSelection", visibility=["read"]
@@ -2176,14 +3089,14 @@ class UpdateRunStrategy(_Model):
     :vartype stages: list[~azure.mgmt.containerservicefleet.models.UpdateStage]
     """
 
-    stages: List["_models.UpdateStage"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    stages: list["_models.UpdateStage"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The list of stages that compose this update run. Min size: 1. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        stages: List["_models.UpdateStage"],
+        stages: list["_models.UpdateStage"],
     ) -> None: ...
 
     @overload
@@ -2217,7 +3130,7 @@ class UpdateStage(_Model):
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the stage. Must be unique within the UpdateRun. Required."""
-    groups: Optional[List["_models.UpdateGroup"]] = rest_field(
+    groups: Optional[list["_models.UpdateGroup"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Defines the groups to be executed in parallel in this stage. Duplicate groups are not allowed.
@@ -2227,11 +3140,11 @@ class UpdateStage(_Model):
     )
     """The time in seconds to wait at the end of this stage before starting the next one. Defaults to
      0 seconds if unspecified."""
-    before_gates: Optional[List["_models.GateConfiguration"]] = rest_field(
+    before_gates: Optional[list["_models.GateConfiguration"]] = rest_field(
         name="beforeGates", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of Gates that will be created before this Stage is executed."""
-    after_gates: Optional[List["_models.GateConfiguration"]] = rest_field(
+    after_gates: Optional[list["_models.GateConfiguration"]] = rest_field(
         name="afterGates", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of Gates that will be created after this Stage is executed."""
@@ -2241,10 +3154,10 @@ class UpdateStage(_Model):
         self,
         *,
         name: str,
-        groups: Optional[List["_models.UpdateGroup"]] = None,
+        groups: Optional[list["_models.UpdateGroup"]] = None,
         after_stage_wait_in_seconds: Optional[int] = None,
-        before_gates: Optional[List["_models.GateConfiguration"]] = None,
-        after_gates: Optional[List["_models.GateConfiguration"]] = None,
+        before_gates: Optional[list["_models.GateConfiguration"]] = None,
+        after_gates: Optional[list["_models.GateConfiguration"]] = None,
     ) -> None: ...
 
     @overload
@@ -2279,11 +3192,11 @@ class UpdateStageStatus(_Model):
     """The status of the UpdateStage."""
     name: Optional[str] = rest_field(visibility=["read"])
     """The name of the UpdateStage."""
-    groups: Optional[List["_models.UpdateGroupStatus"]] = rest_field(visibility=["read"])
+    groups: Optional[list["_models.UpdateGroupStatus"]] = rest_field(visibility=["read"])
     """The list of groups to be updated as part of this UpdateStage."""
-    before_gates: Optional[List["_models.UpdateRunGateStatus"]] = rest_field(name="beforeGates", visibility=["read"])
+    before_gates: Optional[list["_models.UpdateRunGateStatus"]] = rest_field(name="beforeGates", visibility=["read"])
     """The list of Gates that will run before this UpdateStage."""
-    after_gates: Optional[List["_models.UpdateRunGateStatus"]] = rest_field(name="afterGates", visibility=["read"])
+    after_gates: Optional[list["_models.UpdateRunGateStatus"]] = rest_field(name="afterGates", visibility=["read"])
     """The list of Gates that will run after this UpdateStage."""
     after_stage_wait_status: Optional["_models.WaitStatus"] = rest_field(
         name="afterStageWaitStatus", visibility=["read"]

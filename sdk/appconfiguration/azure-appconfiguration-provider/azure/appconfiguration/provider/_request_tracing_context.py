@@ -39,10 +39,7 @@ CHAT_COMPLETION_PROFILE = "chat-completion"
 LOAD_BALANCING_FEATURE = "LB"
 AI_CONFIGURATION_FEATURE = "AI"
 AI_CHAT_COMPLETION_FEATURE = "AICC"
-AI_FOUNDRY_SDK_FEATURE = "USE_AI_FOUNDRY_SDK"
-
-# Package name constants
-AZURE_AI_PROJECTS_PACKAGE = "azure-ai-projects"
+SNAPSHOT_REFERENCE_TAG = "SnapshotRef"
 
 # Correlation context constants
 FEATUREMANAGEMENT_PACKAGE = "featuremanagement"
@@ -86,6 +83,7 @@ class _RequestTracingContext:  # pylint: disable=too-many-instance-attributes
         self.uses_load_balancing = load_balancing_enabled
         self.uses_ai_configuration = False
         self.uses_aicc_configuration = False  # AI Chat Completion
+        self.uses_snapshot_reference = False
         self.uses_telemetry = False
         self.uses_seed = False
         self.max_variants: Optional[int] = None
@@ -274,8 +272,8 @@ class _RequestTracingContext:  # pylint: disable=too-many-instance-attributes
             features_list.append(AI_CONFIGURATION_FEATURE)
         if self.uses_aicc_configuration:
             features_list.append(AI_CHAT_COMPLETION_FEATURE)
-        if self.get_assembly_version(AZURE_AI_PROJECTS_PACKAGE):
-            features_list.append(AI_FOUNDRY_SDK_FEATURE)
+        if self.uses_snapshot_reference:
+            features_list.append(SNAPSHOT_REFERENCE_TAG)
 
         return Delimiter.join(features_list)
 

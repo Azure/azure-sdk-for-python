@@ -39,6 +39,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-09-01-preview/ElasticVolumes_ListByElasticPool.json
+# x-ms-original-file: 2025-12-15-preview/ElasticVolumes_ListByElasticPool.json
 if __name__ == "__main__":
     main()

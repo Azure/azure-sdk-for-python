@@ -741,6 +741,8 @@ class KeyInfo(_serialization.Model):
     :vartype start: str
     :ivar expiry: The date-time the key expires in ISO 8601 UTC time. Required.
     :vartype expiry: str
+    :ivar delegated_user_tid: The delegated user tenant id in Azure AD.
+    :vartype delegated_user_tid: str
     """
 
     _validation = {
@@ -750,18 +752,24 @@ class KeyInfo(_serialization.Model):
     _attribute_map = {
         "start": {"key": "Start", "type": "str"},
         "expiry": {"key": "Expiry", "type": "str"},
+        "delegated_user_tid": {"key": "DelegatedUserTid", "type": "str"},
     }
 
-    def __init__(self, *, expiry: str, start: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, expiry: str, start: Optional[str] = None, delegated_user_tid: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword start: The date-time the key is active in ISO 8601 UTC time.
         :paramtype start: str
         :keyword expiry: The date-time the key expires in ISO 8601 UTC time. Required.
         :paramtype expiry: str
+        :keyword delegated_user_tid: The delegated user tenant id in Azure AD.
+        :paramtype delegated_user_tid: str
         """
         super().__init__(**kwargs)
         self.start = start
         self.expiry = expiry
+        self.delegated_user_tid = delegated_user_tid
 
 
 class LeaseAccessConditions(_serialization.Model):
@@ -1339,6 +1347,8 @@ class SharePropertiesInternal(_serialization.Model):
     :vartype next_allowed_provisioned_iops_downgrade_time: ~datetime.datetime
     :ivar next_allowed_provisioned_bandwidth_downgrade_time:
     :vartype next_allowed_provisioned_bandwidth_downgrade_time: ~datetime.datetime
+    :ivar enable_smb_directory_lease:
+    :vartype enable_smb_directory_lease: bool
     """
 
     _validation = {
@@ -1380,6 +1390,7 @@ class SharePropertiesInternal(_serialization.Model):
             "key": "NextAllowedProvisionedBandwidthDowngradeTime",
             "type": "rfc-1123",
         },
+        "enable_smb_directory_lease": {"key": "EnableSmbDirectoryLease", "type": "bool"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -1411,6 +1422,7 @@ class SharePropertiesInternal(_serialization.Model):
         max_burst_credits_for_iops: Optional[int] = None,
         next_allowed_provisioned_iops_downgrade_time: Optional[datetime.datetime] = None,
         next_allowed_provisioned_bandwidth_downgrade_time: Optional[datetime.datetime] = None,
+        enable_smb_directory_lease: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1469,6 +1481,8 @@ class SharePropertiesInternal(_serialization.Model):
         :paramtype next_allowed_provisioned_iops_downgrade_time: ~datetime.datetime
         :keyword next_allowed_provisioned_bandwidth_downgrade_time:
         :paramtype next_allowed_provisioned_bandwidth_downgrade_time: ~datetime.datetime
+        :keyword enable_smb_directory_lease:
+        :paramtype enable_smb_directory_lease: bool
         """
         super().__init__(**kwargs)
         self.last_modified = last_modified
@@ -1497,6 +1511,7 @@ class SharePropertiesInternal(_serialization.Model):
         self.max_burst_credits_for_iops = max_burst_credits_for_iops
         self.next_allowed_provisioned_iops_downgrade_time = next_allowed_provisioned_iops_downgrade_time
         self.next_allowed_provisioned_bandwidth_downgrade_time = next_allowed_provisioned_bandwidth_downgrade_time
+        self.enable_smb_directory_lease = enable_smb_directory_lease
 
 
 class ShareProtocolSettings(_serialization.Model):
@@ -1876,6 +1891,9 @@ class UserDelegationKey(_serialization.Model):
     :vartype signed_service: str
     :ivar signed_version: The service version that created the key. Required.
     :vartype signed_version: str
+    :ivar signed_delegated_user_tid: The delegated user tenant id in Azure AD. Return if
+     DelegatedUserTid is specified.
+    :vartype signed_delegated_user_tid: str
     :ivar value: The key as a base64 string. Required.
     :vartype value: str
     """
@@ -1897,6 +1915,7 @@ class UserDelegationKey(_serialization.Model):
         "signed_expiry": {"key": "SignedExpiry", "type": "iso-8601"},
         "signed_service": {"key": "SignedService", "type": "str"},
         "signed_version": {"key": "SignedVersion", "type": "str"},
+        "signed_delegated_user_tid": {"key": "SignedDelegatedUserTid", "type": "str"},
         "value": {"key": "Value", "type": "str"},
     }
 
@@ -1910,6 +1929,7 @@ class UserDelegationKey(_serialization.Model):
         signed_service: str,
         signed_version: str,
         value: str,
+        signed_delegated_user_tid: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1926,6 +1946,9 @@ class UserDelegationKey(_serialization.Model):
         :paramtype signed_service: str
         :keyword signed_version: The service version that created the key. Required.
         :paramtype signed_version: str
+        :keyword signed_delegated_user_tid: The delegated user tenant id in Azure AD. Return if
+         DelegatedUserTid is specified.
+        :paramtype signed_delegated_user_tid: str
         :keyword value: The key as a base64 string. Required.
         :paramtype value: str
         """
@@ -1936,4 +1959,5 @@ class UserDelegationKey(_serialization.Model):
         self.signed_expiry = signed_expiry
         self.signed_service = signed_service
         self.signed_version = signed_version
+        self.signed_delegated_user_tid = signed_delegated_user_tid
         self.value = value

@@ -22,7 +22,7 @@ class TestNetworkCloudMgmtStorageAppliancesOperations(AzureMgmtRecordedTestCase)
     @recorded_by_proxy
     def test_storage_appliances_list_by_subscription(self, resource_group):
         response = self.client.storage_appliances.list_by_subscription(
-            api_version="2025-07-01-preview",
+            api_version="2025-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestNetworkCloudMgmtStorageAppliancesOperations(AzureMgmtRecordedTestCase)
     def test_storage_appliances_list_by_resource_group(self, resource_group):
         response = self.client.storage_appliances.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-07-01-preview",
+            api_version="2025-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestNetworkCloudMgmtStorageAppliancesOperations(AzureMgmtRecordedTestCase)
         response = self.client.storage_appliances.get(
             resource_group_name=resource_group.name,
             storage_appliance_name="str",
-            api_version="2025-07-01-preview",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -106,7 +106,7 @@ class TestNetworkCloudMgmtStorageAppliancesOperations(AzureMgmtRecordedTestCase)
                 "type": "str",
                 "version": "str",
             },
-            api_version="2025-07-01-preview",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -118,7 +118,7 @@ class TestNetworkCloudMgmtStorageAppliancesOperations(AzureMgmtRecordedTestCase)
         response = self.client.storage_appliances.begin_delete(
             resource_group_name=resource_group.name,
             storage_appliance_name="str",
-            api_version="2025-07-01-preview",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -130,7 +130,7 @@ class TestNetworkCloudMgmtStorageAppliancesOperations(AzureMgmtRecordedTestCase)
         response = self.client.storage_appliances.begin_update(
             resource_group_name=resource_group.name,
             storage_appliance_name="str",
-            api_version="2025-07-01-preview",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -142,7 +142,7 @@ class TestNetworkCloudMgmtStorageAppliancesOperations(AzureMgmtRecordedTestCase)
         response = self.client.storage_appliances.begin_disable_remote_vendor_management(
             resource_group_name=resource_group.name,
             storage_appliance_name="str",
-            api_version="2025-07-01-preview",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -154,7 +154,7 @@ class TestNetworkCloudMgmtStorageAppliancesOperations(AzureMgmtRecordedTestCase)
         response = self.client.storage_appliances.begin_enable_remote_vendor_management(
             resource_group_name=resource_group.name,
             storage_appliance_name="str",
-            api_version="2025-07-01-preview",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -170,7 +170,7 @@ class TestNetworkCloudMgmtStorageAppliancesOperations(AzureMgmtRecordedTestCase)
                 "commands": [{"command": "str", "arguments": ["str"]}],
                 "limitTimeSeconds": 0,
             },
-            api_version="2025-07-01-preview",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

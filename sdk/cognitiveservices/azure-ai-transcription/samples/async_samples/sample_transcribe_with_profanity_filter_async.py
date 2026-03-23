@@ -33,10 +33,18 @@ async def sample_transcribe_with_profanity_filter_async():
 
     # Get configuration from environment variables
     endpoint = os.environ["AZURE_SPEECH_ENDPOINT"]
-    api_key = os.environ["AZURE_SPEECH_API_KEY"]
+
+    # We recommend using role-based access control (RBAC) for production scenarios
+    api_key = os.environ.get("AZURE_SPEECH_API_KEY")
+    if api_key:
+        credential = AzureKeyCredential(api_key)
+    else:
+        from azure.identity.aio import DefaultAzureCredential
+
+        credential = DefaultAzureCredential()
 
     # Create the transcription client
-    async with TranscriptionClient(endpoint=endpoint, credential=AzureKeyCredential(api_key)) as client:
+    async with TranscriptionClient(endpoint=endpoint, credential=credential) as client:
         # Path to your audio file
         import pathlib
 

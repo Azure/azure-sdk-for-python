@@ -7,11 +7,18 @@ from datetime import date, datetime, time, timedelta, tzinfo
 from enum import Enum
 import json
 import sys
-import traceback
+import typing
 from typing import Any, Dict, List, Optional, Union, Type
 from io import BytesIO
 
-from azure.core.serialization import AzureJSONEncoder, NULL, as_attribute_dict, is_generated_model, attribute_list
+from azure.core.serialization import (
+    AzureJSONEncoder,
+    NULL,
+    as_attribute_dict,
+    get_backcompat_attr_name,
+    is_generated_model,
+    attribute_list,
+)
 from azure.core.exceptions import DeserializationError
 import pytest
 from modeltypes._utils.model_base import (
@@ -144,6 +151,688 @@ def test_dictionary_basic(json_dumps_with_encoder):
     assert json.loads(complex_serialized) == test_obj
 
 
+def test_dictionary_set():
+    """Test that dictionary mutations via attribute syntax persist and sync to dictionary syntax."""
+
+    class MyModel(HybridModel):
+        my_dict: Dict[str, int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    # Test 1: Basic mutation via attribute syntax
+    m = MyModel(my_dict={"a": 1, "b": 2})
+    assert m.my_dict == {"a": 1, "b": 2}
+
+    # Test 2: Add new key via attribute syntax and verify it persists
+    m.my_dict["c"] = 3
+    assert m.my_dict["c"] == 3
+    assert m.my_dict == {"a": 1, "b": 2, "c": 3}
+
+    # Test 3: Verify mutation is reflected in dictionary syntax
+    assert m["my_dict"] == {"a": 1, "b": 2, "c": 3}
+
+    # Test 4: Modify existing key via attribute syntax
+    m.my_dict["a"] = 100
+    assert m.my_dict["a"] == 100
+    assert m["my_dict"]["a"] == 100
+
+    # Test 5: Delete key via attribute syntax
+    del m.my_dict["b"]
+    assert "b" not in m.my_dict
+    assert "b" not in m["my_dict"]
+
+    # Test 6: Update via dict methods
+    m.my_dict.update({"d": 4, "e": 5})
+    assert m.my_dict["d"] == 4
+    assert m.my_dict["e"] == 5
+    assert m["my_dict"]["d"] == 4
+
+    # Test 7: Clear via attribute syntax and verify via dictionary syntax
+    m.my_dict.clear()
+    assert len(m.my_dict) == 0
+    assert len(m["my_dict"]) == 0
+
+    # Test 8: Reassign entire dictionary via attribute syntax
+    m.my_dict = {"x": 10, "y": 20}
+    assert m.my_dict == {"x": 10, "y": 20}
+    assert m["my_dict"] == {"x": 10, "y": 20}
+
+    # Test 9: Mutation after reassignment
+    m.my_dict["z"] = 30
+    assert m.my_dict["z"] == 30
+    assert m["my_dict"]["z"] == 30
+
+    # Test 10: Access via dictionary syntax first, then mutate via attribute syntax
+    m.my_dict["w"] = 40
+    assert m["my_dict"]["w"] == 40
+
+    # Test 11: Multiple accesses maintain same cached object
+    dict_ref1 = m.my_dict
+    dict_ref2 = m.my_dict
+    assert dict_ref1 is dict_ref2
+    dict_ref1["new_key"] = 999
+    assert dict_ref2["new_key"] == 999
+    assert m.my_dict["new_key"] == 999
+
+
+def test_list_set():
+    """Test that list mutations via attribute syntax persist and sync to dictionary syntax."""
+
+    class MyModel(HybridModel):
+        my_list: List[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    # Test 1: Basic mutation via attribute syntax
+    m = MyModel(my_list=[1, 2, 3])
+    assert m.my_list == [1, 2, 3]
+
+    # Test 2: Append via attribute syntax and verify it persists
+    m.my_list.append(4)
+    assert m.my_list == [1, 2, 3, 4]
+
+    # Test 3: Verify mutation is reflected in dictionary syntax
+    assert m["my_list"] == [1, 2, 3, 4]
+
+    # Test 4: Modify existing element via attribute syntax
+    m.my_list[0] = 100
+    assert m.my_list[0] == 100
+    assert m["my_list"][0] == 100
+
+    # Test 5: Extend list via attribute syntax
+    m.my_list.extend([5, 6])
+    assert m.my_list == [100, 2, 3, 4, 5, 6]
+    assert m["my_list"] == [100, 2, 3, 4, 5, 6]
+
+    # Test 6: Remove element via attribute syntax
+    m.my_list.remove(2)
+    assert 2 not in m.my_list
+    assert 2 not in m["my_list"]
+
+    # Test 7: Pop element
+    popped = m.my_list.pop()
+    assert popped == 6
+    assert 6 not in m.my_list
+    assert 6 not in m["my_list"]
+
+    # Test 8: Insert element
+    m.my_list.insert(0, 999)
+    assert m.my_list[0] == 999
+    assert m["my_list"][0] == 999
+
+    # Test 9: Clear via attribute syntax
+    m.my_list.clear()
+    assert len(m.my_list) == 0
+    assert len(m["my_list"]) == 0
+
+    # Test 10: Reassign entire list via attribute syntax
+    m.my_list = [10, 20, 30]
+    assert m.my_list == [10, 20, 30]
+    assert m["my_list"] == [10, 20, 30]
+
+    # Test 11: Mutation after reassignment
+    m.my_list.append(40)
+    assert m.my_list == [10, 20, 30, 40]
+    assert m["my_list"] == [10, 20, 30, 40]
+
+    # Test 12: Multiple accesses maintain same cached object
+    list_ref1 = m.my_list
+    list_ref2 = m.my_list
+    assert list_ref1 is list_ref2
+    list_ref1.append(50)
+    assert 50 in list_ref2
+    assert 50 in m.my_list
+
+    # Test 13: Delete element via dict syntax
+    m["my_list"] = [1, 2, 3]
+    m["my_list"].append(4)
+    del m["my_list"]
+    m.my_list = [4, 5, 6]
+    assert m.my_list == [4, 5, 6]
+
+
+def test_set_collection():
+    """Test that set mutations via attribute syntax persist and sync to dictionary syntax."""
+
+    class MyModel(HybridModel):
+        my_set: typing.Set[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    # Test 1: Basic mutation via attribute syntax
+    m = MyModel(my_set={1, 2, 3})
+    assert m.my_set == {1, 2, 3}
+
+    # Test 2: Add via attribute syntax and verify it persists
+    m.my_set.add(4)
+    assert 4 in m.my_set
+
+    # Test 3: Verify mutation is reflected in dictionary syntax
+    assert 4 in m["my_set"]
+
+    # Test 4: Remove element via attribute syntax
+    m.my_set.remove(2)
+    assert 2 not in m.my_set
+    assert 2 not in m["my_set"]
+
+    # Test 5: Update set via attribute syntax
+    m.my_set.update({5, 6, 7})
+    assert m.my_set == {1, 3, 4, 5, 6, 7}
+    assert m["my_set"] == {1, 3, 4, 5, 6, 7}
+
+    # Test 6: Discard element
+    m.my_set.discard(1)
+    assert 1 not in m.my_set
+    assert 1 not in m["my_set"]
+
+    # Test 7: Clear via attribute syntax
+    m.my_set.clear()
+    assert len(m.my_set) == 0
+    assert len(m["my_set"]) == 0
+
+    # Test 8: Reassign entire set via attribute syntax
+    m.my_set = {10, 20, 30}
+    assert m.my_set == {10, 20, 30}
+    assert m["my_set"] == {10, 20, 30}
+
+    # Test 9: Mutation after reassignment
+    m.my_set.add(40)
+    assert 40 in m.my_set
+    assert 40 in m["my_set"]
+
+    # Test 10: Multiple accesses maintain same cached object
+    set_ref1 = m.my_set
+    set_ref2 = m.my_set
+    assert set_ref1 is set_ref2
+    set_ref1.add(50)
+    assert 50 in set_ref2
+    assert 50 in m.my_set
+
+
+def test_empty_collection_caching():
+    """Test edge cases with empty collections to ensure caching works correctly."""
+
+    # Test 1: Empty dictionary
+    class DictModel(HybridModel):
+        my_dict: Dict[str, int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    m1 = DictModel(my_dict={})
+    assert m1.my_dict == {}
+    assert m1["my_dict"] == {}
+
+    # Add items to empty dict
+    m1.my_dict["a"] = 1
+    assert m1.my_dict == {"a": 1}
+    assert m1["my_dict"] == {"a": 1}
+
+    # Clear to empty again
+    m1.my_dict.clear()
+    assert m1.my_dict == {}
+    assert m1["my_dict"] == {}
+
+    # Test 2: Empty list
+    class ListModel(HybridModel):
+        my_list: List[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    m2 = ListModel(my_list=[])
+    assert m2.my_list == []
+    assert m2["my_list"] == []
+
+    # Add items to empty list
+    m2.my_list.append(1)
+    m2.my_list.append(2)
+    assert m2.my_list == [1, 2]
+    assert m2["my_list"] == [1, 2]
+
+    # Clear to empty again
+    m2.my_list.clear()
+    assert m2.my_list == []
+    assert m2["my_list"] == []
+
+    # Test 3: Empty set
+    class SetModel(HybridModel):
+        my_set: typing.Set[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    m3 = SetModel(my_set=set())
+    assert m3.my_set == set()
+    assert m3["my_set"] == set()
+
+    # Add items to empty set
+    m3.my_set.add(1)
+    m3.my_set.add(2)
+    assert m3.my_set == {1, 2}
+    assert m3["my_set"] == {1, 2}
+
+    # Clear to empty again
+    m3.my_set.clear()
+    assert m3.my_set == set()
+    assert m3["my_set"] == set()
+
+    # Test 4: Initialize non-empty, then set to empty via dict access
+    m4 = DictModel(my_dict={"x": 10, "y": 20})
+    assert m4.my_dict == {"x": 10, "y": 20}
+
+    # Set to empty via dict access
+    m4["my_dict"] = {}
+    assert m4.my_dict == {}
+    assert m4["my_dict"] == {}
+
+    # Test 5: Initialize non-empty list, then set to empty via dict access
+    m5 = ListModel(my_list=[1, 2, 3])
+    assert m5.my_list == [1, 2, 3]
+
+    # Set to empty via dict access
+    m5["my_list"] = []
+    assert m5.my_list == []
+    assert m5["my_list"] == []
+
+    # Test 6: Cache identity maintained for empty collections
+    m6 = DictModel(my_dict={})
+    ref1 = m6.my_dict
+    ref2 = m6.my_dict
+    assert ref1 is ref2
+
+    # Modify empty cached dict
+    ref1["key"] = "value"
+    assert ref2["key"] == "value"
+    assert m6.my_dict["key"] == "value"
+    assert m6["my_dict"]["key"] == "value"
+
+
+def test_cache_alternating_access_patterns():
+    """Test alternating between dict and attr access patterns."""
+
+    class MyModel(HybridModel):
+        my_dict: Dict[str, int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    # Test 1: Multiple alternating accesses
+    m = MyModel(my_dict={"a": 1})
+
+    # attr -> dict -> attr -> dict pattern
+    assert m.my_dict == {"a": 1}
+    assert m["my_dict"] == {"a": 1}
+    m.my_dict["b"] = 2
+    assert m["my_dict"] == {"a": 1, "b": 2}
+    m["my_dict"]["c"] = 3
+    assert m.my_dict == {"a": 1, "b": 2, "c": 3}
+    assert m["my_dict"] == {"a": 1, "b": 2, "c": 3}
+
+    # Test 2: Rapid alternating mutations
+    m2 = MyModel(my_dict={})
+    for i in range(5):
+        if i % 2 == 0:
+            m2.my_dict[f"attr_{i}"] = i
+        else:
+            m2["my_dict"][f"dict_{i}"] = i
+
+    expected = {"attr_0": 0, "dict_1": 1, "attr_2": 2, "dict_3": 3, "attr_4": 4}
+    assert m2.my_dict == expected
+    assert m2["my_dict"] == expected
+
+
+def test_cache_nested_mutations():
+    """Test nested dict/list mutations."""
+
+    class NestedModel(HybridModel):
+        nested: Dict[str, Dict[str, int]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    m = NestedModel(nested={"outer": {"inner": 1}})
+
+    # Access nested value via attr
+    assert m.nested["outer"]["inner"] == 1
+
+    # Mutate nested value via attr
+    m.nested["outer"]["inner"] = 100
+    assert m.nested["outer"]["inner"] == 100
+    assert m["nested"]["outer"]["inner"] == 100
+
+    # Add new nested key via attr
+    m.nested["outer"]["new_inner"] = 200
+    assert m["nested"]["outer"]["new_inner"] == 200
+
+    # Add new outer key via dict access
+    m["nested"]["new_outer"] = {"a": 1}
+    assert m.nested["new_outer"] == {"a": 1}
+
+
+def test_cache_list_nested_mutations():
+    """Test nested list mutations."""
+
+    class ListModel(HybridModel):
+        nested_list: List[List[int]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    m = ListModel(nested_list=[[1, 2], [3, 4]])
+
+    # Access and mutate nested list
+    m.nested_list[0].append(99)
+    assert m.nested_list[0] == [1, 2, 99]
+    assert m["nested_list"][0] == [1, 2, 99]
+
+    # Mutate via dict access
+    m["nested_list"][1].append(100)
+    assert m.nested_list[1] == [3, 4, 100]
+
+
+def test_cache_set_to_none_and_back():
+    """Test setting to None and back to a value."""
+
+    class MyModel(HybridModel):
+        my_dict: Optional[Dict[str, int]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    m = MyModel(my_dict={"a": 1})
+
+    # Mutate, then set to None
+    m.my_dict["b"] = 2
+    assert m.my_dict == {"a": 1, "b": 2}
+
+    m.my_dict = None
+    assert m.my_dict is None
+    assert m.get("my_dict") is None
+
+    # Set back to a value
+    m.my_dict = {"c": 3}
+    assert m.my_dict == {"c": 3}
+    assert m["my_dict"] == {"c": 3}
+
+    # Mutate again
+    m.my_dict["d"] = 4
+    assert m.my_dict == {"c": 3, "d": 4}
+
+
+def test_cache_dict_methods():
+    """Test that dict methods work correctly with caching."""
+
+    class MyModel(HybridModel):
+        my_dict: Dict[str, int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    m = MyModel(my_dict={"a": 1, "b": 2, "c": 3})
+
+    # Test keys(), values(), items() via attr
+    assert set(m.my_dict.keys()) == {"a", "b", "c"}
+    assert set(m.my_dict.values()) == {1, 2, 3}
+    assert set(m.my_dict.items()) == {("a", 1), ("b", 2), ("c", 3)}
+
+    # Test pop via attr
+    popped = m.my_dict.pop("a")
+    assert popped == 1
+    assert "a" not in m.my_dict
+    assert "a" not in m["my_dict"]
+
+    # Test update via attr
+    m.my_dict.update({"d": 4, "e": 5})
+    assert m.my_dict["d"] == 4
+    assert m["my_dict"]["e"] == 5
+
+    # Test setdefault via attr
+    result = m.my_dict.setdefault("f", 6)
+    assert result == 6
+    assert m["my_dict"]["f"] == 6
+
+    # Test get via attr
+    assert m.my_dict.get("nonexistent", 999) == 999
+    assert m.my_dict.get("b") == 2
+
+
+def test_cache_list_methods():
+    """Test that list methods work correctly with caching."""
+
+    class MyModel(HybridModel):
+        my_list: List[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    m = MyModel(my_list=[1, 2, 3, 4, 5])
+
+    # Test index and slicing
+    assert m.my_list[0] == 1
+    assert m.my_list[-1] == 5
+    assert m.my_list[1:3] == [2, 3]
+
+    # Test pop
+    popped = m.my_list.pop()
+    assert popped == 5
+    assert m["my_list"] == [1, 2, 3, 4]
+
+    # Test insert
+    m.my_list.insert(0, 0)
+    assert m.my_list[0] == 0
+    assert m["my_list"][0] == 0
+
+    # Test remove
+    m.my_list.remove(2)
+    assert 2 not in m.my_list
+    assert 2 not in m["my_list"]
+
+    # Test reverse
+    m.my_list.reverse()
+    assert m.my_list == [4, 3, 1, 0]
+    assert m["my_list"] == [4, 3, 1, 0]
+
+    # Test sort
+    m.my_list.sort()
+    assert m.my_list == [0, 1, 3, 4]
+    assert m["my_list"] == [0, 1, 3, 4]
+
+
+def test_cache_multiple_fields():
+    """Test caching with multiple mutable fields."""
+
+    class MultiModel(HybridModel):
+        dict1: Dict[str, int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+        dict2: Dict[str, int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+        list1: List[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    m = MultiModel(dict1={"a": 1}, dict2={"b": 2}, list1=[1, 2])
+
+    # Mutate each field independently
+    m.dict1["c"] = 3
+    m.dict2["d"] = 4
+    m.list1.append(3)
+
+    # Verify each field is correct
+    assert m.dict1 == {"a": 1, "c": 3}
+    assert m.dict2 == {"b": 2, "d": 4}
+    assert m.list1 == [1, 2, 3]
+
+    # Verify dict access
+    assert m["dict1"] == {"a": 1, "c": 3}
+    assert m["dict2"] == {"b": 2, "d": 4}
+    assert m["list1"] == [1, 2, 3]
+
+    # Mutate via dict access
+    m["dict1"]["e"] = 5
+    m["list1"].append(4)
+
+    assert m.dict1 == {"a": 1, "c": 3, "e": 5}
+    assert m.list1 == [1, 2, 3, 4]
+
+
+def test_cache_after_reassignment():
+    """Test that cache is properly cleared after reassignment."""
+
+    class MyModel(HybridModel):
+        my_dict: Dict[str, int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    m = MyModel(my_dict={"a": 1})
+
+    # Get reference, mutate
+    ref1 = m.my_dict
+    ref1["b"] = 2
+    assert m.my_dict["b"] == 2
+
+    # Reassign via attr
+    m.my_dict = {"x": 10}
+    ref2 = m.my_dict
+
+    # Old reference should be stale (different object)
+    ref1["c"] = 3  # This mutates old object, not m._data
+    assert "c" not in m.my_dict
+    assert m.my_dict == {"x": 10}
+
+    # Reassign via dict access
+    m["my_dict"] = {"y": 20}
+    assert m.my_dict == {"y": 20}
+
+
+def test_cache_model_equality():
+    """Test that model equality works correctly with cached values."""
+
+    class MyModel(HybridModel):
+        my_dict: Dict[str, int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    m1 = MyModel(my_dict={"a": 1, "b": 2})
+    m2 = MyModel(my_dict={"a": 1, "b": 2})
+
+    # Models should be equal initially
+    assert m1 == m2
+
+    # Mutate m1 via attr
+    m1.my_dict["c"] = 3
+
+    # Models should not be equal
+    assert m1 != m2
+
+    # Mutate m2 to match
+    m2.my_dict["c"] = 3
+
+    # Models should be equal again
+    assert m1 == m2
+
+    # Also test equality with plain dict
+    assert m1 == {"my_dict": {"a": 1, "b": 2, "c": 3}}
+
+
+def test_dictionary_set_datetime():
+    """Test that dictionary with datetime values properly serializes/deserializes."""
+    from datetime import datetime, timezone
+
+    class MyModel(HybridModel):
+        my_dict: Dict[str, datetime] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    # Test 1: Initialize with datetime values
+    dt1 = datetime(2023, 1, 15, 10, 30, 45, tzinfo=timezone.utc)
+    dt2 = datetime(2023, 6, 20, 14, 15, 30, tzinfo=timezone.utc)
+    m = MyModel(my_dict={"created": dt1, "updated": dt2})
+
+    # Test 2: Access via attribute syntax returns datetime objects
+    assert isinstance(m.my_dict["created"], datetime)
+    assert isinstance(m.my_dict["updated"], datetime)
+    assert m.my_dict["created"] == dt1
+    assert m.my_dict["updated"] == dt2
+
+    # Test 3: Access via dictionary syntax returns serialized strings (ISO format)
+    dict_access = m["my_dict"]
+    assert isinstance(dict_access["created"], str)
+    assert isinstance(dict_access["updated"], str)
+    assert dict_access["created"] == "2023-01-15T10:30:45Z"
+    assert dict_access["updated"] == "2023-06-20T14:15:30Z"
+
+    # Test 4: Mutate via attribute syntax with new datetime
+    dt3 = datetime(2023, 12, 25, 18, 0, 0, tzinfo=timezone.utc)
+    m.my_dict["holiday"] = dt3
+    assert m.my_dict["holiday"] == dt3
+
+    # Test 5: Verify mutation is serialized in dictionary syntax
+    assert m["my_dict"]["holiday"] == "2023-12-25T18:00:00Z"
+
+    # Test 6: Update existing datetime via attribute syntax
+    dt4 = datetime(2024, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
+    m.my_dict["created"] = dt4
+    assert m.my_dict["created"] == dt4
+    assert m["my_dict"]["created"] == "2024-01-01T00:00:00Z"
+
+    # Test 7: Verify all datetimes are deserialized correctly after mutation
+    assert isinstance(m.my_dict["created"], datetime)
+    assert isinstance(m.my_dict["updated"], datetime)
+    assert isinstance(m.my_dict["holiday"], datetime)
+
+    # Test 8: Use dict update method with datetimes
+    dt5 = datetime(2024, 6, 15, 12, 30, 0, tzinfo=timezone.utc)
+    dt6 = datetime(2024, 7, 4, 16, 45, 0, tzinfo=timezone.utc)
+    m.my_dict.update({"event1": dt5, "event2": dt6})
+    assert m.my_dict["event1"] == dt5
+    assert m["my_dict"]["event1"] == "2024-06-15T12:30:00Z"
+
+    # Test 9: Reassign entire dictionary with new datetimes
+    dt7 = datetime(2025, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
+    dt8 = datetime(2025, 12, 31, 23, 59, 59, tzinfo=timezone.utc)
+    m.my_dict = {"start": dt7, "end": dt8}
+    assert m.my_dict["start"] == dt7
+    assert m.my_dict["end"] == dt8
+    assert m["my_dict"]["start"] == "2025-01-01T00:00:00Z"
+    assert m["my_dict"]["end"] == "2025-12-31T23:59:59Z"
+
+    # Test 10: Cached object maintains datetime type
+    dict_ref1 = m.my_dict
+    dict_ref2 = m.my_dict
+    assert dict_ref1 is dict_ref2
+    assert isinstance(dict_ref1["start"], datetime)
+    assert isinstance(dict_ref2["start"], datetime)
+
+
+def test_dict_access_modification_clears_cache():
+    """Test that modifying through dict access clears cache and updates attribute access."""
+
+    # Test 1: Dictionary modification
+    class DictModel(HybridModel):
+        my_dict: Dict[str, int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    m = DictModel(my_dict={"a": 1, "b": 2})
+
+    # Access via attribute to cache it
+    assert m.my_dict == {"a": 1, "b": 2}
+
+    # Modify through dict access
+    m["my_dict"] = {"x": 10, "y": 20}
+
+    # Attribute access should reflect the new value
+    assert m.my_dict == {"x": 10, "y": 20}
+    assert m["my_dict"] == {"x": 10, "y": 20}
+
+    # Test 2: List modification
+    class ListModel(HybridModel):
+        my_list: List[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    m2 = ListModel(my_list=[1, 2, 3])
+
+    # Access via attribute to cache it
+    assert m2.my_list == [1, 2, 3]
+
+    # Modify through dict access
+    m2["my_list"] = [10, 20, 30]
+
+    # Attribute access should reflect the new value
+    assert m2.my_list == [10, 20, 30]
+    assert m2["my_list"] == [10, 20, 30]
+
+    # Test 3: Set modification
+    class SetModel(HybridModel):
+        my_set: typing.Set[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    m3 = SetModel(my_set={1, 2, 3})
+
+    # Access via attribute to cache it
+    assert m3.my_set == {1, 2, 3}
+
+    # Modify through dict access
+    m3["my_set"] = {10, 20, 30}
+
+    # Attribute access should reflect the new value
+    assert m3.my_set == {10, 20, 30}
+    assert m3["my_set"] == {10, 20, 30}
+
+    # Test 4: Comma-delimited format example (simulating custom format)
+    class ColorModel(HybridModel):
+        colors: List[str] = rest_field(format="csv", visibility=["read", "create", "update", "delete", "query"])
+
+    m4 = ColorModel(colors=["green", "yellow", "purple"])
+    assert m4.colors == ["green", "yellow", "purple"]
+
+    # With format="csv", the serialized form would be comma-delimited
+    # But since we don't have that format implemented, let's test the principle:
+    # Access via attribute creates cache
+    cached_colors = m4.colors
+
+    # Modify through dict access with serialized form
+    m4["colors"] = ["orange", "pink"]
+
+    # Attribute access should deserialize the new value
+    assert m4.colors == ["orange", "pink"]
+    assert m4["colors"] == ["orange", "pink"]
+
+
 def test_model_basic(json_dumps_with_encoder):
     class BasicModel(SerializerMixin):
         def __init__(self):
@@ -183,6 +872,25 @@ def test_dictionary_datetime(json_dumps_with_encoder):
     assert json.loads(json_dumps_with_encoder(test_obj)) == expected
 
 
+def test_both_item_attr_access():
+    """Test that mutations via dictionary access properly sync to attribute access."""
+
+    class MyModel(HybridModel):
+        my_dict: dict[str, int] = rest_field()
+
+    m = MyModel(my_dict={"a": 1, "b": 2})
+
+    # Mutate via attribute syntax
+    m.my_dict["c"] = 3
+    assert m.my_dict["c"] == 3
+
+    # Direct assignment via dictionary syntax
+    m["my_dict"]["d"] = 4
+    assert m.my_dict["d"] == 4
+
+    assert m.my_dict == {"a": 1, "b": 2, "c": 3, "d": 4}
+
+
 def test_model_datetime(json_dumps_with_encoder):
     class DatetimeModel(SerializerMixin):
         def __init__(self):
@@ -199,6 +907,15 @@ def test_model_datetime(json_dumps_with_encoder):
         "time": "11:12:13",
     }
     assert json.loads(json_dumps_with_encoder(expected.to_dict())) == expected_dict
+
+
+def test_repr():
+    class MyModel(HybridModel):
+        my_dict: dict[str, int] = rest_field()
+
+    m = MyModel(my_dict={"a": 1, "b": 2})
+    m.my_dict["c"] = 3
+    assert repr(m) == "{'my_dict': {'a': 1, 'b': 2, 'c': 3}}"
 
 
 def test_model_key_vault(json_dumps_with_encoder):
@@ -1644,3 +2361,463 @@ class TestTypeHandlerRegistry:
         deserialized_a = _deserialize(ModelA, json_dict_a)
         assert isinstance(deserialized_a, ModelA)
         assert deserialized_a.type == "A2"
+
+
+class TestBackcompatPropertyMatrix:
+    """
+    Systematic test matrix for DPG model property backcompat scenarios.
+
+    Tests all combinations of 5 key dimensions:
+    1. wireName: same/different from attr_name
+    2. attr_name: normal/padded (reserved word)
+    3. original_tsp_name: None/present (TSP name before padding)
+    4. visibility: readonly/readwrite (affects exclude_readonly)
+    5. structure: regular/nested/flattened models
+
+    COMPLETE TEST MATRIX:
+    ┌───────┬─────────────┬──────────────┬─────────────────┬────────────┬──────────────┬─────────────────────────────┐
+    │ Test  │ Wire Name   │ Attr Name    │ Original TSP    │ Visibility │ Structure    │ Expected Behavior           │
+    ├───────┼─────────────┼──────────────┼─────────────────┼────────────┼──────────────┼─────────────────────────────┤
+    │ 1a    │ same        │ normal       │ None            │ readwrite  │ regular      │ attr_name                   │
+    │ 1b    │ same        │ normal       │ None            │ readonly   │ regular      │ attr_name (exclude test)    │
+    │ 2a    │ different   │ normal       │ None            │ readwrite  │ regular      │ attr_name                   │
+    │ 2b    │ different   │ normal       │ None            │ readonly   │ regular      │ attr_name (exclude test)    │
+    │ 3a    │ same        │ padded       │ present         │ readwrite  │ regular      │ original_tsp_name           │
+    │ 3b    │ same        │ padded       │ present         │ readonly   │ regular      │ original_tsp_name (exclude) │
+    │ 4a    │ different   │ padded       │ present         │ readwrite  │ regular      │ original_tsp_name           │
+    │ 4b    │ different   │ padded       │ present         │ readonly   │ regular      │ original_tsp_name (exclude) │
+    │ 5a    │ various     │ mixed        │ mixed           │ mixed      │ nested       │ recursive backcompat        │
+    │ 6a    │ same        │ padded       │ present         │ readwrite  │ flat-contain │ flattened + backcompat      │
+    │ 6b    │ various     │ mixed        │ mixed           │ mixed      │ flat-props   │ flattened props backcompat  │
+    │ 6c    │ various     │ mixed        │ mixed           │ readonly   │ flat-mixed   │ flattened + exclude         │
+    └───────┴─────────────┴──────────────┴─────────────────┴────────────┴──────────────┴─────────────────────────────┘
+    """
+
+    # ========== DIMENSION 1-4 COMBINATIONS: REGULAR STRUCTURE ==========
+
+    def test_1a_same_wire_normal_attr_no_original_readwrite_regular(self):
+        """Wire=attr, normal attr, no original, readwrite, regular model"""
+
+        class RegularModel(HybridModel):
+            field_name: str = rest_field()
+
+        model = RegularModel(field_name="value")
+
+        # Should use attr_name (same as wire name)
+        assert attribute_list(model) == ["field_name"]
+        assert as_attribute_dict(model) == {"field_name": "value"}
+        assert as_attribute_dict(model, exclude_readonly=True) == {"field_name": "value"}
+        assert getattr(model, "field_name") == "value"
+        assert get_backcompat_attr_name(model, "field_name") == "field_name"
+
+    def test_1b_same_wire_normal_attr_no_original_readonly_regular(self):
+        """Wire=attr, normal attr, no original, readonly, regular model"""
+
+        class ReadonlyModel(HybridModel):
+            field_name: str = rest_field(visibility=["read"])
+
+        model = ReadonlyModel(field_name="value")
+
+        # Should use attr_name, but excluded when exclude_readonly=True
+        assert attribute_list(model) == ["field_name"]
+        assert as_attribute_dict(model) == {"field_name": "value"}
+        assert as_attribute_dict(model, exclude_readonly=True) == {}
+        assert getattr(model, "field_name") == "value"
+        assert get_backcompat_attr_name(model, "field_name") == "field_name"
+
+    def test_2a_different_wire_normal_attr_no_original_readwrite_regular(self):
+        """Wire≠attr, normal attr, no original, readwrite, regular model"""
+
+        class DifferentWireModel(HybridModel):
+            client_field: str = rest_field(name="wireField")
+
+        model = DifferentWireModel(client_field="value")
+
+        # Should use attr_name (wire name is different)
+        assert attribute_list(model) == ["client_field"]
+        assert as_attribute_dict(model) == {"client_field": "value"}
+        # Verify wire representation uses different name
+        assert dict(model) == {"wireField": "value"}
+        assert getattr(model, "client_field") == "value"
+        assert get_backcompat_attr_name(model, "client_field") == "client_field"
+
+    def test_2b_different_wire_normal_attr_no_original_readonly_regular(self):
+        """Wire≠attr, normal attr, no original, readonly, regular model"""
+
+        class ReadonlyDifferentWireModel(HybridModel):
+            client_field: str = rest_field(name="wireField", visibility=["read"])
+
+        model = ReadonlyDifferentWireModel(client_field="value")
+
+        # Should use attr_name, excluded when exclude_readonly=True
+        assert attribute_list(model) == ["client_field"]
+        assert as_attribute_dict(model) == {"client_field": "value"}
+        assert as_attribute_dict(model, exclude_readonly=True) == {}
+        assert getattr(model, "client_field") == "value"
+        assert get_backcompat_attr_name(model, "client_field") == "client_field"
+
+    def test_3a_same_wire_padded_attr_with_original_readwrite_regular(self):
+        """Wire=original, padded attr, original present, readwrite, regular model"""
+
+        class PaddedModel(HybridModel):
+            keys_property: str = rest_field(original_tsp_name="keys")
+
+        model = PaddedModel(keys_property="value")
+
+        # Should use original_tsp_name when available
+        assert attribute_list(model) == ["keys_property"]
+        assert as_attribute_dict(model) == {"keys_property": "value"}
+        assert get_backcompat_attr_name(model, "keys_property") == "keys"
+        assert getattr(model, "keys_property") == "value"
+        assert set(model.keys()) == {"keys_property"}
+
+    def test_3b_same_wire_padded_attr_with_original_readonly_regular(self):
+        """Wire=original, padded attr, original present, readonly, regular model"""
+
+        class ReadonlyPaddedModel(HybridModel):
+            keys_property: str = rest_field(visibility=["read"], original_tsp_name="keys")
+
+        model = ReadonlyPaddedModel(keys_property="value")
+
+        assert attribute_list(model) == ["keys_property"]
+        assert as_attribute_dict(model) == {"keys_property": "value"}
+        assert as_attribute_dict(model, exclude_readonly=True) == {}
+        assert get_backcompat_attr_name(model, "keys_property") == "keys"
+        assert getattr(model, "keys_property") == "value"
+        assert set(model.keys()) == {"keys_property"}
+
+    def test_4a_different_wire_padded_attr_with_original_readwrite_regular(self):
+        """Wire≠original, padded attr, original present, readwrite, regular model"""
+
+        class DifferentWirePaddedModel(HybridModel):
+            clear_property: str = rest_field(name="clearWire", original_tsp_name="clear")
+
+        model = DifferentWirePaddedModel(clear_property="value")
+
+        assert attribute_list(model) == ["clear_property"]
+        assert as_attribute_dict(model) == {"clear_property": "value"}
+        # Verify wire uses different name
+        assert dict(model) == {"clearWire": "value"}
+        assert getattr(model, "clear_property") == "value"
+        assert set(model.keys()) == {"clearWire"}
+
+    def test_4b_different_wire_padded_attr_with_original_readonly_regular(self):
+        """Wire≠original, padded attr, original present, readonly, regular model"""
+
+        class ReadonlyDifferentWirePaddedModel(HybridModel):
+            pop_property: str = rest_field(name="popWire", visibility=["read"], original_tsp_name="pop")
+
+        model = ReadonlyDifferentWirePaddedModel(pop_property="value")
+
+        assert attribute_list(model) == ["pop_property"]
+        assert as_attribute_dict(model) == {"pop_property": "value"}
+        assert as_attribute_dict(model, exclude_readonly=True) == {}
+        assert getattr(model, "pop_property") == "value"
+        assert set(model.keys()) == {"popWire"}
+
+    # ========== DIMENSION 5: STRUCTURE VARIATIONS ==========
+
+    def test_5a_nested_model_backcompat_recursive(self):
+        """Nested models with mixed backcompat scenarios"""
+
+        class NestedBackcompatModel(HybridModel):
+            keys_property: str = rest_field(name="keysWire", original_tsp_name="keys")
+            normal_field: str = rest_field(name="normalWire")
+
+        class ParentModel(HybridModel):
+            nested: NestedBackcompatModel = rest_field()
+            items_property: str = rest_field(name="itemsWire", original_tsp_name="items")
+
+        nested_model = NestedBackcompatModel(keys_property="nested_keys", normal_field="nested_normal")
+        parent_model = ParentModel(nested=nested_model, items_property="parent_items")
+
+        # Test nested model independently
+        nested_attrs = attribute_list(nested_model)
+        assert set(nested_attrs) == {"keys_property", "normal_field"}
+
+        nested_dict = as_attribute_dict(nested_model)
+        assert nested_dict == {"keys_property": "nested_keys", "normal_field": "nested_normal"}
+
+        # Test parent model with recursive backcompat
+        parent_attrs = attribute_list(parent_model)
+        assert set(parent_attrs) == {"nested", "items_property"}
+
+        parent_dict = as_attribute_dict(parent_model)
+        expected_parent = {
+            "nested": {"keys_property": "nested_keys", "normal_field": "nested_normal"},
+            "items_property": "parent_items",
+        }
+        assert parent_dict == expected_parent
+
+        assert getattr(nested_model, "keys_property") == "nested_keys"
+        assert getattr(parent_model, "items_property") == "parent_items"
+
+        assert set(nested_model.keys()) == {"keysWire", "normalWire"}
+        assert set(nested_model.items()) == {("keysWire", "nested_keys"), ("normalWire", "nested_normal")}
+        assert set(parent_model.keys()) == {"nested", "itemsWire"}
+        assert len(parent_model.items()) == 2
+        assert ("nested", parent_model.nested) in parent_model.items()
+        assert ("itemsWire", "parent_items") in parent_model.items()
+
+    def test_6a_flattened_container_with_backcompat(self):
+        """Flattened property where container has backcompat (keys_property → keys)"""
+
+        # Helper model for flattening content
+        class ContentModel(HybridModel):
+            name: str = rest_field()
+            description: str = rest_field()
+
+        class FlattenedContainerModel(HybridModel):
+            id: str = rest_field()
+            update_property: ContentModel = rest_field(original_tsp_name="update")
+
+            __flattened_items = ["name", "description"]
+
+            def __init__(self, *args: Any, **kwargs: Any) -> None:
+                _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
+                super().__init__(*args, **kwargs)
+                for k, v in _flattened_input.items():
+                    setattr(self, k, v)
+
+            def __getattr__(self, name: str) -> Any:
+                if name in self.__flattened_items:
+                    if self.update_property is None:
+                        return None
+                    return getattr(self.update_property, name)
+                raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+            def __setattr__(self, key: str, value: Any) -> None:
+                if key in self.__flattened_items:
+                    if self.update_property is None:
+                        self.update_property = self._attr_to_rest_field["update_property"]._class_type()
+                    setattr(self.update_property, key, value)
+                else:
+                    super().__setattr__(key, value)
+
+        model = FlattenedContainerModel(id="test_id", name="flattened_name", description="flattened_desc")
+
+        # Flattened items should appear at top level
+        attrs = attribute_list(model)
+        assert set(attrs) == {"id", "name", "description"}
+        assert getattr(model, "name") == "flattened_name"
+        assert getattr(model, "description") == "flattened_desc"
+
+        # Flattened dict should use top-level names
+        attr_dict = as_attribute_dict(model)
+        expected = {"id": "test_id", "name": "flattened_name", "description": "flattened_desc"}
+        assert attr_dict == expected
+
+        assert get_backcompat_attr_name(model, "update_property") == "update"
+
+        assert set(model.keys()) == {"id", "update_property"}
+
+    def test_6b_flattened_properties_with_backcompat(self):
+        """Flattened properties themselves have backcompat (type_property → type)"""
+
+        class BackcompatContentModel(HybridModel):
+            values_property: str = rest_field(name="valuesWire", original_tsp_name="values")
+            get_property: str = rest_field(name="getWire", original_tsp_name="get")
+
+        class FlattenedPropsBackcompatModel(HybridModel):
+            name: str = rest_field()
+            properties: BackcompatContentModel = rest_field()
+
+            __flattened_items = ["values_property", "get_property"]
+
+            def __init__(self, *args: Any, **kwargs: Any) -> None:
+                _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
+                super().__init__(*args, **kwargs)
+                for k, v in _flattened_input.items():
+                    setattr(self, k, v)
+
+            def __getattr__(self, name: str) -> Any:
+                if name in self.__flattened_items:
+                    if self.properties is None:
+                        return None
+                    return getattr(self.properties, name)
+                raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+            def __setattr__(self, key: str, value: Any) -> None:
+                if key in self.__flattened_items:
+                    if self.properties is None:
+                        self.properties = self._attr_to_rest_field["properties"]._class_type()
+                    setattr(self.properties, key, value)
+                else:
+                    super().__setattr__(key, value)
+
+        model = FlattenedPropsBackcompatModel(
+            name="test_name", values_property="test_values", get_property="test_class"
+        )
+
+        # Should use original names for flattened properties
+        attrs = attribute_list(model)
+        assert set(attrs) == {"name", "values_property", "get_property"}
+        assert get_backcompat_attr_name(model, "values_property") == "values"
+        assert "test_name" in model.values()
+
+        attr_dict = as_attribute_dict(model)
+        expected = {"name": "test_name", "values_property": "test_values", "get_property": "test_class"}
+        assert attr_dict == expected
+
+    def test_6c_flattened_with_readonly_exclusion(self):
+        """Flattened model with readonly properties and exclude_readonly behavior"""
+
+        class ReadonlyContentModel(HybridModel):
+            setdefault_property: str = rest_field(name="readonlyWire", original_tsp_name="setdefault")
+            popitem_property: str = rest_field(name="readwriteWire", original_tsp_name="popitem")
+
+        class FlattenedReadonlyModel(HybridModel):
+            get_property: str = rest_field(name="getProperty", original_tsp_name="get", visibility=["read"])
+            properties: ReadonlyContentModel = rest_field()
+
+            __flattened_items = ["setdefault_property", "popitem_property"]
+
+            def __init__(self, *args: Any, **kwargs: Any) -> None:
+                _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
+                super().__init__(*args, **kwargs)
+                for k, v in _flattened_input.items():
+                    setattr(self, k, v)
+
+            def __getattr__(self, name: str) -> Any:
+                if name in self.__flattened_items:
+                    if self.properties is None:
+                        return None
+                    return getattr(self.properties, name)
+                raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+            def __setattr__(self, key: str, value: Any) -> None:
+                if key in self.__flattened_items:
+                    if self.properties is None:
+                        self.properties = self._attr_to_rest_field["properties"]._class_type()
+                    setattr(self.properties, key, value)
+                else:
+                    super().__setattr__(key, value)
+
+        model = FlattenedReadonlyModel(
+            get_property="test_get", setdefault_property="setdefault", popitem_property="readwrite_value"
+        )
+
+        # All properties included by default
+        full_dict = as_attribute_dict(model, exclude_readonly=False)
+        expected_full = {
+            "get_property": "test_get",
+            "setdefault_property": "setdefault",
+            "popitem_property": "readwrite_value",
+        }
+        assert full_dict == expected_full
+
+        # Readonly properties excluded when requested
+        filtered_dict = as_attribute_dict(model, exclude_readonly=True)
+        expected_filtered = {"setdefault_property": "setdefault", "popitem_property": "readwrite_value"}
+        assert filtered_dict == expected_filtered
+
+        attribute_list_result = attribute_list(model)
+        expected_attrs = {"get_property", "setdefault_property", "popitem_property"}
+        assert set(attribute_list_result) == expected_attrs
+        assert get_backcompat_attr_name(model, "setdefault_property") == "setdefault"
+        assert get_backcompat_attr_name(model, "popitem_property") == "popitem"
+        assert getattr(model, "get_property") == "test_get"
+
+    # ========== EDGE CASES ==========
+
+    def test_mixed_combinations_comprehensive(self):
+        """Comprehensive test mixing all backcompat scenarios in one model"""
+
+        class ComprehensiveModel(HybridModel):
+            # Case 1: Normal field, same wire name, no original
+            normal_field: str = rest_field()
+
+            # Case 2: Normal field, different wire name, no original
+            different_wire: str = rest_field(name="wireNameDifferent")
+
+            # Case 3: Padded field with original, same wire name
+            keys_property: str = rest_field(original_tsp_name="keys")
+
+            # Case 4: Padded field with original, different wire name
+            values_property: str = rest_field(name="valuesWire", original_tsp_name="values")
+
+            # Case 5: Readonly field with original
+            items_property: str = rest_field(name="itemsWire", visibility=["read"], original_tsp_name="items")
+
+        model = ComprehensiveModel(
+            normal_field="normal",
+            different_wire="different",
+            keys_property="keys_val",
+            values_property="values_val",
+            items_property="items_val",
+        )
+
+        # attribute_list should use backcompat names where available
+        attrs = attribute_list(model)
+        expected_attrs = {"normal_field", "different_wire", "keys_property", "values_property", "items_property"}
+        assert set(attrs) == expected_attrs
+        assert get_backcompat_attr_name(model, "keys_property") == "keys"
+        assert get_backcompat_attr_name(model, "values_property") == "values"
+        assert get_backcompat_attr_name(model, "items_property") == "items"
+        assert get_backcompat_attr_name(model, "normal_field") == "normal_field"
+        assert get_backcompat_attr_name(model, "different_wire") == "different_wire"
+        assert getattr(model, "keys_property") == "keys_val"
+        assert getattr(model, "values_property") == "values_val"
+        assert getattr(model, "items_property") == "items_val"
+        assert getattr(model, "normal_field") == "normal"
+        assert getattr(model, "different_wire") == "different"
+
+        # Full as_attribute_dict
+        full_dict = as_attribute_dict(model)
+        expected_full = {
+            "normal_field": "normal",
+            "different_wire": "different",
+            "keys_property": "keys_val",
+            "values_property": "values_val",
+            "items_property": "items_val",
+        }
+        assert full_dict == expected_full
+
+        # Exclude readonly
+        filtered_dict = as_attribute_dict(model, exclude_readonly=True)
+        expected_filtered = {
+            "normal_field": "normal",
+            "different_wire": "different",
+            "keys_property": "keys_val",
+            "values_property": "values_val",
+            # "items_property" excluded because it's readonly
+        }
+        assert filtered_dict == expected_filtered
+
+        # Verify wire representations use correct wire names
+        wire_dict = dict(model)
+        expected_wire = {
+            "normal_field": "normal",  # same as attr
+            "wireNameDifferent": "different",  # different wire name
+            "keys_property": "keys_val",  # same as attr (padded)
+            "valuesWire": "values_val",  # different wire name
+            "itemsWire": "items_val",  # different wire name
+        }
+        assert wire_dict == expected_wire
+
+    def test_no_backcompat_fallback(self):
+        """Test fallback behavior when no backcompat mapping exists"""
+
+        class NoBackcompatModel(HybridModel):
+            padded_attr: str = rest_field(name="wireField")
+            # Note: No original_tsp_name set, so no backcompat should occur
+
+        model = NoBackcompatModel(padded_attr="value")
+
+        # Should fall back to using actual attribute names
+        assert attribute_list(model) == ["padded_attr"]
+        assert as_attribute_dict(model) == {"padded_attr": "value"}
+        assert dict(model) == {"wireField": "value"}
+
+    def test_property_with_padding_in_actual_name(self):
+        """Test handling of properties that have padding in their actual attribute names"""
+
+        class PaddingInNameModel(HybridModel):
+            keys_property: str = rest_field(name="myKeys")
+
+        model = PaddingInNameModel(keys_property="value")
+        # Should use actual attribute name since no original_tsp_name is set
+        assert attribute_list(model) == ["keys_property"]
+        assert as_attribute_dict(model) == {"keys_property": "value"}
+        assert dict(model) == {"myKeys": "value"}
+        assert getattr(model, "keys_property") == "value"

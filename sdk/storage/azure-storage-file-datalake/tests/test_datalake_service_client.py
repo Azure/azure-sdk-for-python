@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import pytest
+from typing import NamedTuple
 from unittest.mock import MagicMock
 
 from azure.core.credentials import AzureNamedKeyCredential
@@ -35,7 +36,7 @@ class TestDatalakeService(StorageRecordedTestCase):
     # --Helpers-----------------------------------------------------------------
     def _setup(self, account_name, account_key):
         url = self.account_url(account_name, 'dfs')
-        self.dsc = DataLakeServiceClient(url, account_key)
+        self.dsc = DataLakeServiceClient(url, account_key.secret)
         self.config = self.dsc._config
 
     def _assert_properties_default(self, prop):
@@ -430,7 +431,7 @@ class TestDatalakeService(StorageRecordedTestCase):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
-        named_key = AzureNamedKeyCredential(datalake_storage_account_name, datalake_storage_account_key)
+        named_key = AzureNamedKeyCredential(datalake_storage_account_name, datalake_storage_account_key.secret)
         dsc = DataLakeServiceClient(self.account_url(datalake_storage_account_name, "blob"), named_key)
 
         # Act
@@ -442,7 +443,8 @@ class TestDatalakeService(StorageRecordedTestCase):
     @DataLakePreparer()
     def test_datalake_clients_properly_close(self, **kwargs):
         account_name = "adlsstorage"
-        account_key = "adlskey"
+        # secret attribute necessary for credential parameter because of hidden environment variables from loader
+        account_key = NamedTuple("StorageAccountKey", [("secret", str)])("adlskey")
 
         self._setup(account_name, account_key)
         file_system_client = self.dsc.get_file_system_client(file_system='testfs')

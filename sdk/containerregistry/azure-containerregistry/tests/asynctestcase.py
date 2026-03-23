@@ -12,7 +12,12 @@ from azure.core.credentials import AccessToken
 from azure.identity.aio import DefaultAzureCredential, ClientSecretCredential
 from azure.identity import AzureAuthorityHosts
 
-from testcase import ContainerRegistryTestClass, get_audience, get_authority, get_credential
+from testcase import (
+    ContainerRegistryTestClass,
+    get_audience,
+    get_authority,
+    get_credential,
+)
 
 logger = logging.getLogger()
 

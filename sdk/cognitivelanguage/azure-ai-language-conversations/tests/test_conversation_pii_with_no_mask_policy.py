@@ -1,6 +1,6 @@
 # pylint: disable=line-too-long,useless-suppression
 import functools
-import pytest
+from typing import cast, List
 
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 from azure.ai.language.conversations import ConversationAnalysisClient, AnalyzeConversationLROPoller
@@ -9,6 +9,7 @@ from azure.ai.language.conversations.models import (
     # request models
     AnalyzeConversationOperationInput,
     MultiLanguageConversationInput,
+    NamedEntity,
     TextConversation,
     TextConversationItem,
     PiiOperationAction,
@@ -18,13 +19,10 @@ from azure.ai.language.conversations.models import (
     ConversationPiiOperationResult,
     ConversationalPiiResult,
     ConversationPiiItemResult,
-    NamedEntity,
     ConversationError,
     AnalyzeConversationOperationAction,
     NoMaskPolicyType,
 )
-from typing import cast, List
-import re
 
 from azure.core.credentials import AzureKeyCredential
 
@@ -110,7 +108,7 @@ class TestConversationsCase(TestConversations):
                 print(f"  Code: {err.code} - {err.message}")
 
         # ---- Iterate results and validate: PII present in returned text -------
-        for actions_page in paged_actions:
+        for actions_page in paged_actions: # pylint: disable=too-many-nested-blocks
             for action_result in actions_page.task_results or []:
                 ar = cast(AnalyzeConversationOperationResult, action_result)
                 if isinstance(ar, ConversationPiiOperationResult):
@@ -130,6 +128,6 @@ class TestConversationsCase(TestConversations):
                                         ent_text in returned_text
                                     ), f"Expected entity '{ent_text}' to be present but was not found in: {returned_text}"
 
-        # ---- Assertions -------------------------------------------------------
+        # ---- Assertions ------------------------
         assert len(detected_entities) > 0, "Expected at least one detected PII entity."
         assert (d.get("status") or "").lower() in {"succeeded", "partiallysucceeded"}

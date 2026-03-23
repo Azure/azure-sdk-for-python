@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, AsyncIterator, Callable, Dict, IO, List, Literal, Optional, TypeVar, Union
+from typing import Any, AsyncIterator, Callable, IO, Literal, Optional, TypeVar, Union
 
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import (
@@ -50,7 +50,7 @@ from ...operations._container_operations import (
 from .._configuration import AzureBlobStorageConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
 class ContainerOperations:
@@ -76,7 +76,7 @@ class ContainerOperations:
     async def create(
         self,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         access: Optional[Union[str, _models.PublicAccessType]] = None,
         request_id_parameter: Optional[str] = None,
         container_cpk_scope_info: Optional[_models.ContainerCpkScopeInfo] = None,
@@ -133,6 +133,7 @@ class ContainerOperations:
 
         _request = build_create_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             access=access,
@@ -140,7 +141,6 @@ class ContainerOperations:
             default_encryption_scope=_default_encryption_scope,
             prevent_encryption_scope_override=_prevent_encryption_scope_override,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -155,7 +155,10 @@ class ContainerOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -217,11 +220,11 @@ class ContainerOperations:
 
         _request = build_get_properties_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -236,7 +239,10 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -326,13 +332,13 @@ class ContainerOperations:
 
         _request = build_delete_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
             request_id_parameter=request_id_parameter,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -347,7 +353,10 @@ class ContainerOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -365,7 +374,7 @@ class ContainerOperations:
     async def set_metadata(
         self,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
@@ -422,6 +431,7 @@ class ContainerOperations:
 
         _request = build_set_metadata_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             metadata=metadata,
@@ -429,7 +439,6 @@ class ContainerOperations:
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -444,7 +453,10 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -467,7 +479,7 @@ class ContainerOperations:
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
-    ) -> List[_models.SignedIdentifier]:
+    ) -> list[_models.SignedIdentifier]:
         """gets the permissions for the specified container. The permissions indicate whether container
         data may be accessed publicly.
 
@@ -499,7 +511,7 @@ class ContainerOperations:
 
         restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
         comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
-        cls: ClsType[List[_models.SignedIdentifier]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.SignedIdentifier]] = kwargs.pop("cls", None)
 
         _lease_id = None
         if lease_access_conditions is not None:
@@ -507,12 +519,12 @@ class ContainerOperations:
 
         _request = build_get_access_policy_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -527,7 +539,10 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -558,7 +573,7 @@ class ContainerOperations:
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
-        container_acl: Optional[List[_models.SignedIdentifier]] = None,
+        container_acl: Optional[list[_models.SignedIdentifier]] = None,
         **kwargs: Any
     ) -> None:
         """sets the permissions for the specified container. The permissions indicate whether blobs in a
@@ -599,7 +614,8 @@ class ContainerOperations:
 
         restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
         comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        content_type = content_type if container_acl else None
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _lease_id = None
@@ -620,6 +636,7 @@ class ContainerOperations:
 
         _request = build_set_access_policy_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             access=access,
@@ -629,7 +646,6 @@ class ContainerOperations:
             restype=restype,
             comp=comp,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -645,7 +661,10 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -708,13 +727,13 @@ class ContainerOperations:
 
         _request = build_restore_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             deleted_container_name=deleted_container_name,
             deleted_container_version=deleted_container_version,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -729,7 +748,10 @@ class ContainerOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -791,12 +813,12 @@ class ContainerOperations:
         _request = build_rename_request(
             url=self._config.url,
             source_container_name=source_container_name,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             source_lease_id=source_lease_id,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -811,7 +833,10 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -876,12 +901,12 @@ class ContainerOperations:
         _request = build_submit_batch_request(
             url=self._config.url,
             content_length=content_length,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
             multipart_content_type=multipart_content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -902,7 +927,10 @@ class ContainerOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -925,7 +953,7 @@ class ContainerOperations:
         where: Optional[str] = None,
         marker: Optional[str] = None,
         maxresults: Optional[int] = None,
-        include: Optional[List[Union[str, _models.FilterBlobsIncludeItem]]] = None,
+        include: Optional[list[Union[str, _models.FilterBlobsIncludeItem]]] = None,
         **kwargs: Any
     ) -> _models.FilterBlobSegment:
         """The Filter Blobs operation enables callers to list blobs in a container whose tags match a
@@ -981,6 +1009,7 @@ class ContainerOperations:
 
         _request = build_filter_blobs_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             where=where,
@@ -989,7 +1018,6 @@ class ContainerOperations:
             include=include,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1004,7 +1032,10 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1082,6 +1113,7 @@ class ContainerOperations:
 
         _request = build_acquire_lease_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             duration=duration,
             proposed_lease_id=proposed_lease_id,
@@ -1091,7 +1123,6 @@ class ContainerOperations:
             comp=comp,
             restype=restype,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1106,7 +1137,10 @@ class ContainerOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1177,6 +1211,7 @@ class ContainerOperations:
         _request = build_release_lease_request(
             url=self._config.url,
             lease_id=lease_id,
+            version=self._config.version,
             timeout=timeout,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
@@ -1184,7 +1219,6 @@ class ContainerOperations:
             comp=comp,
             restype=restype,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1199,7 +1233,10 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1269,6 +1306,7 @@ class ContainerOperations:
         _request = build_renew_lease_request(
             url=self._config.url,
             lease_id=lease_id,
+            version=self._config.version,
             timeout=timeout,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
@@ -1276,7 +1314,6 @@ class ContainerOperations:
             comp=comp,
             restype=restype,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1291,7 +1328,10 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1367,6 +1407,7 @@ class ContainerOperations:
 
         _request = build_break_lease_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             break_period=break_period,
             if_modified_since=_if_modified_since,
@@ -1375,7 +1416,6 @@ class ContainerOperations:
             comp=comp,
             restype=restype,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1390,7 +1430,10 @@ class ContainerOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1467,6 +1510,7 @@ class ContainerOperations:
             url=self._config.url,
             lease_id=lease_id,
             proposed_lease_id=proposed_lease_id,
+            version=self._config.version,
             timeout=timeout,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
@@ -1474,7 +1518,6 @@ class ContainerOperations:
             comp=comp,
             restype=restype,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1489,7 +1532,10 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1512,7 +1558,7 @@ class ContainerOperations:
         prefix: Optional[str] = None,
         marker: Optional[str] = None,
         maxresults: Optional[int] = None,
-        include: Optional[List[Union[str, _models.ListBlobsIncludeItem]]] = None,
+        include: Optional[list[Union[str, _models.ListBlobsIncludeItem]]] = None,
         start_from: Optional[str] = None,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -1574,6 +1620,7 @@ class ContainerOperations:
 
         _request = build_list_blob_flat_segment_request(
             url=self._config.url,
+            version=self._config.version,
             prefix=prefix,
             marker=marker,
             maxresults=maxresults,
@@ -1583,7 +1630,6 @@ class ContainerOperations:
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1598,7 +1644,10 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1624,7 +1673,7 @@ class ContainerOperations:
         prefix: Optional[str] = None,
         marker: Optional[str] = None,
         maxresults: Optional[int] = None,
-        include: Optional[List[Union[str, _models.ListBlobsIncludeItem]]] = None,
+        include: Optional[list[Union[str, _models.ListBlobsIncludeItem]]] = None,
         start_from: Optional[str] = None,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -1692,6 +1741,7 @@ class ContainerOperations:
         _request = build_list_blob_hierarchy_segment_request(
             url=self._config.url,
             delimiter=delimiter,
+            version=self._config.version,
             prefix=prefix,
             marker=marker,
             maxresults=maxresults,
@@ -1701,7 +1751,6 @@ class ContainerOperations:
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1716,7 +1765,10 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1771,11 +1823,11 @@ class ContainerOperations:
 
         _request = build_get_account_info_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1790,7 +1842,10 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

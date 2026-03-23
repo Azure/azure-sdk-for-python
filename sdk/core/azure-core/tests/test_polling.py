@@ -23,6 +23,7 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import base64
 import time
 
 try:
@@ -97,6 +98,53 @@ def test_no_polling(client):
     assert no_polling_revived.status() == "succeeded"
     assert no_polling_revived.finished()
     assert no_polling_revived.resource() == "Treated: " + initial_response
+
+
+def test_no_polling_continuation_token_missing_callback():
+    """Test that from_continuation_token raises ValueError when deserialization_callback is missing."""
+    no_polling = NoPolling()
+    no_polling.initialize(None, "test", lambda x: x)
+
+    continuation_token = no_polling.get_continuation_token()
+
+    with pytest.raises(ValueError) as excinfo:
+        NoPolling.from_continuation_token(continuation_token)
+    assert "deserialization_callback" in str(excinfo.value)
+
+
+def test_no_polling_continuation_token_pickle_incompatibility():
+    """Test that from_continuation_token raises ValueError with helpful message for old pickle tokens."""
+    import pickle
+
+    # Simulate an old pickle-based continuation token
+    old_pickle_data = pickle.dumps({"some": "data"})
+    old_continuation_token = base64.b64encode(old_pickle_data).decode("ascii")
+
+    with pytest.raises(ValueError) as excinfo:
+        NoPolling.from_continuation_token(old_continuation_token, deserialization_callback=lambda x: x)
+
+    error_message = str(excinfo.value)
+    assert "aka.ms" in error_message
+
+
+def test_no_polling_continuation_token_non_serializable():
+    """Test that get_continuation_token raises TypeError for non-JSON-serializable initial responses."""
+    no_polling = NoPolling()
+
+    # Create a non-JSON-serializable object
+    class CustomObject:
+        def __init__(self, value):
+            self.value = value
+
+    initial_response = CustomObject("test")
+
+    no_polling.initialize(None, initial_response, lambda x: x)
+
+    with pytest.raises(TypeError) as excinfo:
+        no_polling.get_continuation_token()
+
+    error_message = str(excinfo.value)
+    assert "not JSON-serializable" in error_message
 
 
 def test_polling_with_path_format_arguments(client):

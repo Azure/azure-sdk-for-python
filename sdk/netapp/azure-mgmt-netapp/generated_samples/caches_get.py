@@ -39,6 +39,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-09-01-preview/Caches_Get.json
+# x-ms-original-file: 2025-12-15-preview/Caches_Get.json
 if __name__ == "__main__":
     main()

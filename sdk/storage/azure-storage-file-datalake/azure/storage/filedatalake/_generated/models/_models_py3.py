@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, List, Literal, Optional, TYPE_CHECKING
+from typing import Any, Literal, Optional, TYPE_CHECKING
 
 from .._utils import serialization as _serialization
 
@@ -79,8 +79,8 @@ class BlobHierarchyListSegment(_serialization.Model):
     def __init__(
         self,
         *,
-        blob_items: List["_models.BlobItemInternal"],
-        blob_prefixes: Optional[List["_models.BlobPrefix"]] = None,
+        blob_items: list["_models.BlobItemInternal"],
+        blob_prefixes: Optional[list["_models.BlobPrefix"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -532,7 +532,7 @@ class FileSystemList(_serialization.Model):
         "filesystems": {"key": "filesystems", "type": "[FileSystem]"},
     }
 
-    def __init__(self, *, filesystems: Optional[List["_models.FileSystem"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, filesystems: Optional[list["_models.FileSystem"]] = None, **kwargs: Any) -> None:
         """
         :keyword filesystems:
         :paramtype filesystems: list[~azure.storage.filedatalake.models.FileSystem]
@@ -888,7 +888,7 @@ class PathList(_serialization.Model):
         "paths": {"key": "paths", "type": "[Path]"},
     }
 
-    def __init__(self, *, paths: Optional[List["_models.Path"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, paths: Optional[list["_models.Path"]] = None, **kwargs: Any) -> None:
         """
         :keyword paths:
         :paramtype paths: list[~azure.storage.filedatalake.models.Path]
@@ -923,7 +923,7 @@ class SetAccessControlRecursiveResponse(_serialization.Model):
         directories_successful: Optional[int] = None,
         files_successful: Optional[int] = None,
         failure_count: Optional[int] = None,
-        failed_entries: Optional[List["_models.AclFailedEntry"]] = None,
+        failed_entries: Optional[list["_models.AclFailedEntry"]] = None,
         **kwargs: Any
     ) -> None:
         """
