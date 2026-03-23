@@ -165,7 +165,7 @@ class EvaluatorsOperations(EvaluatorsOperationsGenerated):
                         try:
                             await container_client.upload_blob(name=str(blob_name), data=data, **kwargs)
                         except HttpResponseError as e:
-                            if e.error_code == "AuthorizationPermissionMismatch":
+                            if hasattr(e, "error_code") and e.error_code == "AuthorizationPermissionMismatch":
                                 storage_account = urlsplit(container_client.url).hostname
                                 raise HttpResponseError(
                                     message=(
