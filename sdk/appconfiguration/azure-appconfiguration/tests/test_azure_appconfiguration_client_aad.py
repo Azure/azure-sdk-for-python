@@ -6,6 +6,7 @@
 import copy
 import json
 import re
+import time
 from datetime import datetime, timezone
 import functools
 import pytest
@@ -27,10 +28,13 @@ from azure.core.exceptions import (
     ResourceModifiedError,
     ResourceNotFoundError,
     ResourceExistsError,
+    HttpResponseError,
 )
 from azure.appconfiguration import (
     ResourceReadOnlyError,
+    AzureAppConfigurationClient,
     ConfigurationSetting,
+    ConfigurationSettingsFilter,
     SecretReferenceConfigurationSetting,
     FeatureFlagConfigurationSetting,
     FILTER_PERCENTAGE,
@@ -50,7 +54,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     @AppConfigPreparer()
     @recorded_by_proxy
     def test_add_configuration_setting(self, appconfiguration_endpoint_string):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
+        client = self.create_client(appconfiguration_endpoint_string)
         test_config_setting = ConfigurationSetting(
             key=KEY + "_ADD",
             label=LABEL,
@@ -84,7 +88,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     @AppConfigPreparer()
     @recorded_by_proxy
     def test_set_existing_configuration_setting_label_etag(self, appconfiguration_endpoint_string):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
+        client = self.create_client(appconfiguration_endpoint_string)
         to_set_kv = self.create_config_setting()
         to_set_kv.value = to_set_kv.value + "a"
         to_set_kv.tags = {"a": "b", "c": "d"}
@@ -102,7 +106,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     @AppConfigPreparer()
     @recorded_by_proxy
     def test_set_configuration_setting_wrong_etag(self, appconfiguration_endpoint_string):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
+        client = self.create_client(appconfiguration_endpoint_string)
         to_set_kv = self.create_config_setting()
         to_set_kv.value = to_set_kv.value + "a"
         to_set_kv.tags = {"a": "b", "c": "d"}
@@ -114,7 +118,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     @AppConfigPreparer()
     @recorded_by_proxy
     def test_get_configuration_setting_no_label(self, appconfiguration_endpoint_string):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
+        client = self.create_client(appconfiguration_endpoint_string)
         compare_kv = self.create_config_setting_no_label()
         self.add_for_test(client, compare_kv)
         fetched_kv = client.get_configuration_setting(compare_kv.key)
@@ -131,7 +135,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     @AppConfigPreparer()
     @recorded_by_proxy
     def test_get_configuration_setting(self, appconfiguration_endpoint_string):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
+        client = self.create_client(appconfiguration_endpoint_string)
         compare_kv = self.create_config_setting()
         self.add_for_test(client, compare_kv)
         fetched_kv = client.get_configuration_setting(compare_kv.key, compare_kv.label)
@@ -148,7 +152,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     @AppConfigPreparer()
     @recorded_by_proxy
     def test_get_non_existing_configuration_setting(self, appconfiguration_endpoint_string):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
+        client = self.create_client(appconfiguration_endpoint_string)
         compare_kv = self.create_config_setting()
         with pytest.raises(ResourceNotFoundError):
             client.get_configuration_setting(compare_kv.key, compare_kv.label + "a")
@@ -156,7 +160,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     @AppConfigPreparer()
     @recorded_by_proxy
     def test_get_configuration_setting_with_etag(self, appconfiguration_endpoint_string):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
+        client = self.create_client(appconfiguration_endpoint_string)
         compare_kv = self.create_config_setting()
         self.add_for_test(client, compare_kv)
         compare_kv = client.get_configuration_setting(compare_kv.key, compare_kv.label)
@@ -177,7 +181,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     @AppConfigPreparer()
     @recorded_by_proxy
     def test_delete_configuration_setting_with_key_no_label(self, appconfiguration_endpoint_string):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
+        client = self.create_client(appconfiguration_endpoint_string)
         to_delete_kv = self.create_config_setting_no_label()
         self.add_for_test(client, to_delete_kv)
         deleted_kv = client.delete_configuration_setting(key=to_delete_kv.key, label=to_delete_kv.label)
@@ -188,7 +192,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     @AppConfigPreparer()
     @recorded_by_proxy
     def test_delete_configuration_setting_with_key_label(self, appconfiguration_endpoint_string):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
+        client = self.create_client(appconfiguration_endpoint_string)
         to_delete_kv = self.create_config_setting()
         self.add_for_test(client, to_delete_kv)
         deleted_kv = client.delete_configuration_setting(key=to_delete_kv.key, label=to_delete_kv.label)
@@ -199,14 +203,14 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     @AppConfigPreparer()
     @recorded_by_proxy
     def test_delete_not_existing_configuration_setting(self, appconfiguration_endpoint_string):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
+        client = self.create_client(appconfiguration_endpoint_string)
         deleted_kv = client.delete_configuration_setting("not_exist_" + KEY)
         assert deleted_kv is None
 
     @AppConfigPreparer()
     @recorded_by_proxy
     def test_delete_configuration_setting_with_etag(self, appconfiguration_endpoint_string):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
+        client = self.create_client(appconfiguration_endpoint_string)
         to_delete_kv = self.create_config_setting_no_label()
         self.add_for_test(client, to_delete_kv)
         to_delete_kv = client.get_configuration_setting(to_delete_kv.key, to_delete_kv.label)
@@ -228,7 +232,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     def test_list_configuration_settings_key_label(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        self.set_up(appconfiguration_endpoint_string, is_aad=True)
+        self.set_up(appconfiguration_endpoint_string)
         items = list(self.client.list_configuration_settings(key_filter=KEY, label_filter=LABEL))
         assert len(items) == 1
         assert all(x.key == KEY and x.label == LABEL for x in items)
@@ -263,7 +267,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     def test_list_configuration_settings_only_label(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        self.set_up(appconfiguration_endpoint_string, is_aad=True)
+        self.set_up(appconfiguration_endpoint_string)
         items = list(self.client.list_configuration_settings(label_filter=LABEL))
         assert len(items) == 1
         assert all(x.label == LABEL for x in items)
@@ -274,7 +278,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     def test_list_configuration_settings_only_key(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        self.set_up(appconfiguration_endpoint_string, is_aad=True)
+        self.set_up(appconfiguration_endpoint_string)
         items = list(self.client.list_configuration_settings(key_filter=KEY))
         assert len(items) == 2
         assert all(x.key == KEY for x in items)
@@ -285,7 +289,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     def test_list_configuration_settings_with_tags_filter(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        self.set_up(appconfiguration_endpoint_string, is_aad=True)
+        self.set_up(appconfiguration_endpoint_string)
         items = list(self.client.list_configuration_settings(tags_filter=["tag1=value1"]))
         assert len(items) == 1
         assert items[0].key == KEY
@@ -297,7 +301,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     def test_list_configuration_settings_fields(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        self.set_up(appconfiguration_endpoint_string, is_aad=True)
+        self.set_up(appconfiguration_endpoint_string)
         items = list(
             self.client.list_configuration_settings(key_filter="*", label_filter=LABEL, fields=["key", "content_type"])
         )
@@ -310,7 +314,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     def test_list_configuration_settings_reserved_chars(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        client = self.create_aad_client(appconfiguration_endpoint_string)
+        client = self.create_client(appconfiguration_endpoint_string)
         reserved_char_kv = ConfigurationSetting(key=KEY, label=LABEL_RESERVED_CHARS, value=TEST_VALUE)
         reserved_char_kv = client.add_configuration_setting(reserved_char_kv)
         escaped_label = re.sub(r"((?!^)\*(?!$)|\\|,)", r"\\\1", LABEL_RESERVED_CHARS)
@@ -324,7 +328,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     def test_list_configuration_settings_contains(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        self.set_up(appconfiguration_endpoint_string, is_aad=True)
+        self.set_up(appconfiguration_endpoint_string)
         items = list(self.client.list_configuration_settings(label_filter=LABEL + "*"))
         assert len(items) == 1
         assert all(x.label == LABEL for x in items)
@@ -335,7 +339,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     def test_list_configuration_settings_correct_etag(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        client = self.create_aad_client(appconfiguration_endpoint_string)
+        client = self.create_client(appconfiguration_endpoint_string)
         to_list_kv = self.create_config_setting()
         self.add_for_test(client, to_list_kv)
         to_list_kv = client.get_configuration_setting(to_list_kv.key, to_list_kv.label)
@@ -354,7 +358,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     def test_list_configuration_settings_multi_pages(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        client = self.create_aad_client(appconfiguration_endpoint_string)
+        client = self.create_client(appconfiguration_endpoint_string)
         # create PAGE_SIZE+1 configuration settings to have at least two pages
         try:
             [
@@ -386,7 +390,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     def test_list_configuration_settings_no_label(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        self.set_up(appconfiguration_endpoint_string, is_aad=True)
+        self.set_up(appconfiguration_endpoint_string)
         items = self.client.list_configuration_settings(label_filter="\0")
         assert len(list(items)) > 0
         self.tear_down()
@@ -399,7 +403,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
         recorded_variables = kwargs.pop("variables", {})
         recorded_variables.setdefault("timestamp", str(datetime.now(timezone.utc)))
 
-        with self.create_aad_client(appconfiguration_endpoint_string) as client:
+        with self.create_client(appconfiguration_endpoint_string) as client:
             # Confirm all configuration settings are cleaned up
             current_config_settings = client.list_configuration_settings()
             if len(list(current_config_settings)) != 0:
@@ -421,7 +425,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     def test_list_revisions_key_label(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        self.set_up(appconfiguration_endpoint_string, is_aad=True)
+        self.set_up(appconfiguration_endpoint_string)
         to_list = self.create_config_setting()
         items = list(self.client.list_revisions(label_filter=to_list.label, key_filter=to_list.key))
         assert len(items) >= 2
@@ -433,7 +437,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     def test_list_revisions_only_label(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        self.set_up(appconfiguration_endpoint_string, is_aad=True)
+        self.set_up(appconfiguration_endpoint_string)
         items = list(self.client.list_revisions(label_filter=LABEL))
         assert len(items) >= 1
         assert all(x.label == LABEL for x in items)
@@ -444,7 +448,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     def test_list_revisions_key_no_label(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        self.set_up(appconfiguration_endpoint_string, is_aad=True)
+        self.set_up(appconfiguration_endpoint_string)
         items = list(self.client.list_revisions(key_filter=KEY))
         assert len(items) >= 1
         assert all(x.key == KEY for x in items)
@@ -455,7 +459,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     def test_list_revisions_with_tags_filter(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        self.set_up(appconfiguration_endpoint_string, is_aad=True)
+        self.set_up(appconfiguration_endpoint_string)
         items = list(self.client.list_revisions(tags_filter=["tag1=value1"]))
         assert len(items) >= 1
         assert all(x.key == KEY for x in items)
@@ -467,7 +471,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     def test_list_revisions_fields(self, appconfiguration_endpoint_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        self.set_up(appconfiguration_endpoint_string, is_aad=True)
+        self.set_up(appconfiguration_endpoint_string)
         items = list(self.client.list_revisions(key_filter="*", label_filter=LABEL, fields=["key", "content_type"]))
         assert all(x.key and not x.label and x.content_type and not x.tags and not x.etag for x in items)
         self.tear_down()
@@ -475,7 +479,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     @AppConfigPreparer()
     @recorded_by_proxy
     def test_list_revisions_correct_etag(self, appconfiguration_endpoint_string):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
+        client = self.create_client(appconfiguration_endpoint_string)
         to_list_kv = self.create_config_setting()
         self.add_for_test(client, to_list_kv)
         to_list_kv = client.get_configuration_setting(to_list_kv.key, to_list_kv.label)
@@ -492,7 +496,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     @AppConfigPreparer()
     @recorded_by_proxy
     def test_set_read_only(self, appconfiguration_endpoint_string):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
+        client = self.create_client(appconfiguration_endpoint_string)
         to_set_kv = self.create_config_setting()
         self.add_for_test(client, to_set_kv)
         to_set_kv = client.get_configuration_setting(to_set_kv.key, to_set_kv.label)
@@ -512,7 +516,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     @AppConfigPreparer()
     @recorded_by_proxy
     def test_set_read_only_with_wrong_etag(self, appconfiguration_endpoint_string):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
+        client = self.create_client(appconfiguration_endpoint_string)
         to_set_kv = self.create_config_setting()
         self.add_for_test(client, to_set_kv)
         to_set_kv = client.get_configuration_setting(to_set_kv.key, to_set_kv.label)
@@ -526,7 +530,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     @AppConfigPreparer()
     @recorded_by_proxy
     def test_sync_tokens_with_configuration_setting(self, appconfiguration_endpoint_string):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
+        client = self.create_client(appconfiguration_endpoint_string)
         sync_tokens = copy.deepcopy(client._sync_token_policy._sync_tokens)
         sync_token_header = self._order_dict(sync_tokens)
         sync_token_header = ",".join(str(x) for x in sync_token_header.values())
@@ -565,7 +569,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     @AppConfigPreparer()
     @recorded_by_proxy
     def test_sync_tokens_with_feature_flag_configuration_setting(self, appconfiguration_endpoint_string):
-        self.set_up(appconfiguration_endpoint_string, is_aad=True)
+        self.set_up(appconfiguration_endpoint_string)
         new = FeatureFlagConfigurationSetting(
             "custom",
             enabled=True,
@@ -627,7 +631,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     @AppConfigPreparer()
     @recorded_by_proxy
     def test_config_setting_feature_flag(self, appconfiguration_endpoint_string):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
+        client = self.create_client(appconfiguration_endpoint_string)
         feature_flag = FeatureFlagConfigurationSetting("test_feature", enabled=True)
 
         set_flag = client.set_configuration_setting(feature_flag)
@@ -672,7 +676,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     @AppConfigPreparer()
     @recorded_by_proxy
     def test_config_setting_secret_reference(self, appconfiguration_endpoint_string):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
+        client = self.create_client(appconfiguration_endpoint_string)
         secret_reference = SecretReferenceConfigurationSetting(
             "ConnectionString", "https://test-test.vault.azure.net/secrets/connectionString"
         )
@@ -701,7 +705,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     @AppConfigPreparer()
     @recorded_by_proxy
     def test_feature_filter_targeting(self, appconfiguration_endpoint_string):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
+        client = self.create_client(appconfiguration_endpoint_string)
         new = FeatureFlagConfigurationSetting(
             "newflag",
             enabled=True,
@@ -758,7 +762,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     @AppConfigPreparer()
     @recorded_by_proxy
     def test_feature_filter_time_window(self, appconfiguration_endpoint_string):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
+        client = self.create_client(appconfiguration_endpoint_string)
         new = FeatureFlagConfigurationSetting(
             "time_window",
             enabled=True,
@@ -782,7 +786,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     @AppConfigPreparer()
     @recorded_by_proxy
     def test_feature_filter_custom(self, appconfiguration_endpoint_string):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
+        client = self.create_client(appconfiguration_endpoint_string)
         new = FeatureFlagConfigurationSetting(
             "custom", enabled=True, filters=[{"name": FILTER_PERCENTAGE, "parameters": {"Value": 10, "User": "user1"}}]
         )
@@ -799,7 +803,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
     @AppConfigPreparer()
     @recorded_by_proxy
     def test_feature_filter_multiple(self, appconfiguration_endpoint_string):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
+        client = self.create_client(appconfiguration_endpoint_string)
         new = FeatureFlagConfigurationSetting(
             "custom",
             enabled=True,
@@ -837,3 +841,450 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):  # pylint: disable=too-m
         assert new_sent.filters[2]["parameters"]["Audience"]["DefaultRolloutPercentage"] == 100
 
         client.delete_configuration_setting(new_sent.key)
+
+    @AppConfigPreparer()
+    @recorded_by_proxy
+    def test_feature_custom_fields(self, appconfiguration_endpoint_string):
+        client = self.create_client(appconfiguration_endpoint_string)
+        custom_fields = {
+            "variants": [
+                {"name": "Off", "configuration_value": "Off", "status_override": "Enabled"},
+                {"name": "On", "configuration_value": "On", "status_override": "Disabled"},
+            ],
+            "allocation": {
+                "percentile": [{"variant": "Off", "from": 0, "to": 100}],
+                "user": [{"variant": "Off", "users": ["Adam"]}],
+                "seed": "adfsasdfzsd",
+                "default_when_enabled": "Off",
+                "default_when_disabled": "Off",
+            },
+        }
+        new = FeatureFlagConfigurationSetting(
+            "Beta",
+            description="Matt's variant FF",
+            enabled=True,
+        )
+        new.value = json.dumps(custom_fields)
+        sent = client.set_configuration_setting(new)
+        self._assert_same_keys(sent, new)
+
+        client.delete_configuration_setting(new.key)
+
+    @AppConfigPreparer()
+    @recorded_by_proxy
+    def test_breaking_with_feature_flag_configuration_setting(self, appconfiguration_endpoint_string):
+        client = self.create_client(appconfiguration_endpoint_string)
+        new = FeatureFlagConfigurationSetting(
+            "breaking1",
+            enabled=True,
+            filters=[
+                {
+                    "name": FILTER_TIME_WINDOW,
+                    "parameters": {
+                        "Start": "bababooey, 31 Mar 2021 25:00:00 GMT",  # cspell:disable-line
+                        "End": "Fri, 02 Apr 2021 04:00:00 GMT",
+                    },
+                },
+            ],
+        )
+        client.set_configuration_setting(new)
+        client.get_configuration_setting(new.key)
+        client.delete_configuration_setting(new.key)
+
+        new = FeatureFlagConfigurationSetting(
+            "breaking2",
+            enabled=True,
+            filters=[
+                {
+                    "name": FILTER_TIME_WINDOW,
+                    "parameters": {
+                        "Start": "bababooey, 31 Mar 2021 25:00:00 GMT",  # cspell:disable-line
+                        "End": "not even trying to be a date",
+                    },
+                },
+            ],
+        )
+        client.set_configuration_setting(new)
+        client.get_configuration_setting(new.key)
+        client.delete_configuration_setting(new.key)
+
+        # This will show up as a Custom filter
+        new = FeatureFlagConfigurationSetting(
+            "breaking3",
+            enabled=True,
+            filters=[
+                {
+                    "name": FILTER_TIME_WINDOW,
+                    "parameters": {
+                        "Start": "bababooey, 31 Mar 2021 25:00:00 GMT",  # cspell:disable-line
+                        "End": "not even trying to be a date",
+                    },
+                },
+            ],
+        )
+        client.set_configuration_setting(new)
+        client.get_configuration_setting(new.key)
+        client.delete_configuration_setting(new.key)
+
+        new = FeatureFlagConfigurationSetting(
+            "breaking4",
+            enabled=True,
+            filters=[
+                {"name": FILTER_TIME_WINDOW, "parameters": "stringystring"},
+            ],
+        )
+        client.set_configuration_setting(new)
+        client.get_configuration_setting(new.key)
+        client.delete_configuration_setting(new.key)
+
+        new = FeatureFlagConfigurationSetting(
+            "breaking5",
+            enabled=True,
+            filters=[{"name": FILTER_TARGETING, "parameters": {"Audience": {"Users": "123"}}}],
+        )
+        client.set_configuration_setting(new)
+        client.get_configuration_setting(new.key)
+        client.delete_configuration_setting(new.key)
+
+        new = FeatureFlagConfigurationSetting(
+            "breaking6", enabled=True, filters=[{"name": FILTER_TARGETING, "parameters": "invalidformat"}]
+        )
+        client.set_configuration_setting(new)
+        client.get_configuration_setting(new.key)
+        client.delete_configuration_setting(new.key)
+
+        new = FeatureFlagConfigurationSetting("breaking7", enabled=True, filters=[{"abc": "def"}])
+        client.set_configuration_setting(new)
+        client.get_configuration_setting(new.key)
+        client.delete_configuration_setting(new.key)
+
+        new = FeatureFlagConfigurationSetting("breaking8", enabled=True, filters=[{"abc": "def"}])
+        new.feature_flag_content_type = "fakeyfakey"  # cspell:disable-line
+        client.set_configuration_setting(new)
+        client.get_configuration_setting(new.key)
+        client.delete_configuration_setting(new.key)
+
+    @AppConfigPreparer()
+    @recorded_by_proxy
+    def test_breaking_with_secret_reference_configuration_setting(self, appconfiguration_endpoint_string):
+        client = self.create_client(appconfiguration_endpoint_string)
+        new = SecretReferenceConfigurationSetting("aref", "notaurl")  # cspell:disable-line
+        client.set_configuration_setting(new)
+        client.get_configuration_setting(new.key)
+
+        client.delete_configuration_setting(new.key)
+
+        new = SecretReferenceConfigurationSetting("aref1", "notaurl")  # cspell:disable-line
+        new.content_type = "fkaeyjfdkal;"  # cspell:disable-line
+        client.set_configuration_setting(new)
+        client.get_configuration_setting(new.key)
+
+        client.delete_configuration_setting(new.key)
+
+    @AppConfigPreparer()
+    @recorded_by_proxy
+    def test_create_snapshot(self, appconfiguration_endpoint_string, **kwargs):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
+        self.set_up(appconfiguration_endpoint_string)
+
+        variables = kwargs.pop("variables", {})
+        dynamic_snapshot_name_postfix = variables.setdefault("dynamic_snapshot_name_postfix", str(int(time.time())))
+
+        snapshot_name = f"{self.get_resource_name('snapshot')}_{dynamic_snapshot_name_postfix}"
+
+        filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
+        response = self.client.begin_create_snapshot(name=snapshot_name, filters=filters, retention_period=3600)
+        created_snapshot = response.result()
+        assert created_snapshot.name == snapshot_name
+        assert created_snapshot.status == "ready"
+        assert created_snapshot.retention_period == 3600
+        assert len(created_snapshot.filters) == 1
+        assert created_snapshot.filters[0].key == KEY
+        assert created_snapshot.filters[0].label == LABEL
+
+        received_snapshot = self.client.get_snapshot(name=snapshot_name)
+        self._assert_snapshots(received_snapshot, created_snapshot)
+
+        self.tear_down()
+        return variables
+
+    @AppConfigPreparer()
+    @recorded_by_proxy
+    def test_update_snapshot_status(self, appconfiguration_endpoint_string, **kwargs):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
+        self.set_up(appconfiguration_endpoint_string)
+
+        variables = kwargs.pop("variables", {})
+        dynamic_snapshot_name_postfix = variables.setdefault("dynamic_snapshot_name_postfix", str(int(time.time())))
+
+        snapshot_name = f"{self.get_resource_name('snapshot')}_{dynamic_snapshot_name_postfix}"
+
+        filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
+        response = self.client.begin_create_snapshot(name=snapshot_name, filters=filters, retention_period=3600)
+        created_snapshot = response.result()
+        assert created_snapshot.status == "ready"
+
+        archived_snapshot = self.client.archive_snapshot(name=snapshot_name)
+        assert archived_snapshot.status == "archived"
+
+        recovered_snapshot = self.client.recover_snapshot(name=snapshot_name)
+        assert recovered_snapshot.status == "ready"
+
+        self.tear_down()
+        return variables
+
+    @AppConfigPreparer()
+    @recorded_by_proxy
+    def test_update_snapshot_status_with_etag(self, appconfiguration_endpoint_string, **kwargs):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
+        self.set_up(appconfiguration_endpoint_string)
+
+        variables = kwargs.pop("variables", {})
+        dynamic_snapshot_name_postfix = variables.setdefault("dynamic_snapshot_name_postfix", str(int(time.time())))
+
+        snapshot_name = f"{self.get_resource_name('snapshot')}_{dynamic_snapshot_name_postfix}"
+
+        filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
+        response = self.client.begin_create_snapshot(name=snapshot_name, filters=filters, retention_period=3600)
+        created_snapshot = response.result()
+
+        # test update with wrong etag
+        with pytest.raises(ResourceModifiedError):
+            self.client.archive_snapshot(
+                name=snapshot_name, etag="wrong etag", match_condition=MatchConditions.IfNotModified
+            )
+        # test update with correct etag
+        archived_snapshot = self.client.archive_snapshot(name=snapshot_name, etag=created_snapshot.etag)
+        assert archived_snapshot.status == "archived"
+
+        self.tear_down()
+        return variables
+
+    @AppConfigPreparer()
+    @recorded_by_proxy
+    def test_list_snapshots(self, appconfiguration_endpoint_string, **kwargs):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
+        self.set_up(appconfiguration_endpoint_string)
+
+        # Only list "ready" snapshots to avoid counting archived snapshots that may expire during test runs
+        result = self.client.list_snapshots(status=["ready"])
+        initial_snapshots = len(list(result))
+
+        variables = kwargs.pop("variables", {})
+        dynamic_snapshot_name_postfix = variables.setdefault("dynamic_snapshot_name_postfix", str(int(time.time())))
+
+        snapshot_name1 = f"{self.get_resource_name('snapshot1')}_{dynamic_snapshot_name_postfix}"
+        snapshot_name2 = f"{self.get_resource_name('snapshot2')}_{dynamic_snapshot_name_postfix}"
+
+        filters1 = [ConfigurationSettingsFilter(key=KEY)]
+        response1 = self.client.begin_create_snapshot(name=snapshot_name1, filters=filters1, retention_period=3600)
+        created_snapshot1 = response1.result()
+        assert created_snapshot1.status == "ready"
+        filters2 = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
+        response2 = self.client.begin_create_snapshot(name=snapshot_name2, filters=filters2, retention_period=3600)
+        created_snapshot2 = response2.result()
+        assert created_snapshot2.status == "ready"
+
+        result = self.client.list_snapshots(status=["ready"])
+        assert len(list(result)) == initial_snapshots + 2
+
+        self.tear_down()
+        return variables
+
+    @AppConfigPreparer()
+    @recorded_by_proxy
+    def test_list_snapshot_configuration_settings(self, appconfiguration_endpoint_string, **kwargs):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
+        self.set_up(appconfiguration_endpoint_string)
+
+        variables = kwargs.pop("variables", {})
+        dynamic_snapshot_name_postfix = variables.setdefault("dynamic_snapshot_name_postfix", str(int(time.time())))
+
+        snapshot_name1 = f"{self.get_resource_name('snapshot1')}_{dynamic_snapshot_name_postfix}"
+
+        filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
+        response = self.client.begin_create_snapshot(name=snapshot_name1, filters=filters, retention_period=3600)
+        created_snapshot = response.result()
+        assert created_snapshot.status == "ready"
+
+        items = self.client.list_configuration_settings(snapshot_name=snapshot_name1)
+        assert len(list(items)) == 1
+
+        snapshot_name2 = f"{self.get_resource_name('snapshot2')}_{dynamic_snapshot_name_postfix}"
+
+        filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL, tags=["tag1=invalid"])]
+        response = self.client.begin_create_snapshot(name=snapshot_name2, filters=filters, retention_period=3600)
+        created_snapshot = response.result()
+        assert created_snapshot.status == "ready"
+
+        items = self.client.list_configuration_settings(snapshot_name=snapshot_name2)
+        assert len(list(items)) == 0
+
+        self.tear_down()
+        return variables
+
+    @AppConfigPreparer()
+    @recorded_by_proxy
+    def test_monitor_configuration_settings_by_page_etag(self, appconfiguration_endpoint_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
+        self.set_up(appconfiguration_endpoint_string)
+        # prepare 200 configuration settings
+        for i in range(200):
+            self.client.set_configuration_setting(
+                ConfigurationSetting(
+                    key=f"sample_key_{str(i)}",
+                    label=f"sample_label_{str(i)}",
+                )
+            )
+        # there will have 2 pages while listing, there are 100 configuration settings per page.
+
+        # get page etags
+        match_conditions = []
+        items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
+        iterator = items.by_page()
+        for _ in iterator:
+            etag = iterator.etag
+            match_conditions.append(etag)
+
+        # monitor page updates without changes - only changed pages will be yielded
+        items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
+        iterator = items.by_page(match_conditions=match_conditions)
+        changed_pages = list(iterator)
+
+        # No pages should be yielded since nothing changed
+        assert len(changed_pages) == 0
+
+        # do some changes
+        self.client.set_configuration_setting(
+            ConfigurationSetting(
+                key="sample_key_201",
+                label="sample_label_202",
+            )
+        )
+        # now we have three pages, 100 settings in first two pages and 1 setting in the last page
+
+        # get page etags after updates
+        new_match_conditions = []
+        items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
+        iterator = items.by_page()
+        for _ in iterator:
+            etag = iterator.etag
+            new_match_conditions.append(etag)
+
+        assert match_conditions[0] == new_match_conditions[0]
+        assert match_conditions[1] != new_match_conditions[1]
+        assert match_conditions[2] != new_match_conditions[2]
+        assert len(new_match_conditions) == 3
+
+        # monitor pages after updates - only changed pages will be yielded
+        items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
+        iterator = items.by_page(match_conditions=new_match_conditions)
+        changed_pages = list(iterator)
+        # Should yield 0 pages
+        assert len(changed_pages) == 0
+
+        # clean up
+        self.tear_down()
+
+    @AppConfigPreparer()
+    @recorded_by_proxy
+    def test_check_configuration_settings_by_page_etag(self, appconfiguration_endpoint_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
+        self.set_up(appconfiguration_endpoint_string)
+        # prepare 200 configuration settings
+        for i in range(200):
+            self.client.set_configuration_setting(
+                ConfigurationSetting(
+                    key=f"sample_key_{str(i)}",
+                    label=f"sample_label_{str(i)}",
+                )
+            )
+        # there will have 2 pages while listing, there are 100 configuration settings per page.
+
+        # get page etags using check (HEAD request)
+        match_conditions = []
+        items = self.client.check_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
+        iterator = items.by_page()
+        for _ in iterator:
+            etag = iterator.etag
+            match_conditions.append(etag)
+
+        # monitor page updates without changes - only changed pages will be yielded
+        items = self.client.check_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
+        iterator = items.by_page(match_conditions=match_conditions)
+        changed_pages = list(iterator)
+
+        # No pages should be yielded since nothing changed
+        assert len(changed_pages) == 0
+
+        # do some changes
+        self.client.set_configuration_setting(
+            ConfigurationSetting(
+                key="sample_key_201",
+                label="sample_label_202",
+            )
+        )
+        # now we have three pages, 100 settings in first two pages and 1 setting in the last page
+
+        # get page etags after updates using check (HEAD request)
+        new_match_conditions = []
+        items = self.client.check_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
+        iterator = items.by_page()
+        for _ in iterator:
+            etag = iterator.etag
+            new_match_conditions.append(etag)
+
+        assert match_conditions[0] == new_match_conditions[0]
+        assert match_conditions[1] != new_match_conditions[1]
+        assert match_conditions[2] != new_match_conditions[2]
+        assert len(new_match_conditions) == 3
+
+        # monitor pages after updates - only changed pages will be yielded
+        items = self.client.check_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
+        iterator = items.by_page(match_conditions=new_match_conditions)
+        changed_pages = list(iterator)
+        # Should yield 0 pages
+        assert len(changed_pages) == 0
+
+        # clean up
+        self.tear_down()
+
+    @AppConfigPreparer()
+    @recorded_by_proxy
+    def test_list_labels(self, appconfiguration_endpoint_string):
+        self.set_up(appconfiguration_endpoint_string)
+
+        rep = self.client.list_labels()
+        assert len(list(rep)) >= 2
+
+        rep = self.client.list_labels(name="test*")
+        assert len(list(rep)) == 1
+
+        rep = self.client.list_labels(name="test'@*$!%")
+        with pytest.raises(HttpResponseError) as error:
+            rep.next()
+        assert error.value.status_code == 400
+        assert error.value.message == "Operation returned an invalid status 'Bad Request'"
+        assert (
+            '"title":"Invalid request parameter \'label\'","name":"label","detail":"label(6): Invalid character"'
+            in str(error.value)
+        )
+
+        self.tear_down()
+        rep = self.client.list_labels()
+        assert len(list(rep)) == 0
+
+
+class TestAppConfigurationClientAADUnitTest:
+    def test_type_error(self):
+        with pytest.raises(TypeError):
+            _ = FeatureFlagConfigurationSetting("blah", value="blah")
+        with pytest.raises(TypeError):
+            _ = SecretReferenceConfigurationSetting("blah", value="blah")  # pylint: disable=no-value-for-parameter
