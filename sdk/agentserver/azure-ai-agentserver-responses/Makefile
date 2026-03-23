@@ -77,6 +77,7 @@ generate-models:
 	@copy /Y "$(MODEL_SHIMS_DIR)\_enums.py" "$(OUTPUT_DIR)\_enums.py" >NUL
 	@copy /Y "$(MODEL_SHIMS_DIR)\_models.py" "$(OUTPUT_DIR)\_models.py" >NUL
 	@copy /Y "$(MODEL_SHIMS_DIR)\_patch.py" "$(OUTPUT_DIR)\_patch.py" >NUL
+	@copy /Y "$(MODEL_SHIMS_DIR)\models_patch.py" "$(OUTPUT_DIR)\sdk\models\models\_patch.py" >NUL
 	@if exist "$(TEMP_OUTPUT_DIR)" rmdir /s /q "$(TEMP_OUTPUT_DIR)"
 else
 generate-models:
@@ -112,6 +113,7 @@ generate-models:
 	cp $(MODEL_SHIMS_DIR)/_enums.py $(OUTPUT_DIR)/_enums.py
 	cp $(MODEL_SHIMS_DIR)/_models.py $(OUTPUT_DIR)/_models.py
 	cp $(MODEL_SHIMS_DIR)/_patch.py $(OUTPUT_DIR)/_patch.py
+	cp $(MODEL_SHIMS_DIR)/models_patch.py $(OUTPUT_DIR)/sdk/models/models/_patch.py
 	rm -rf $(TEMP_OUTPUT_DIR)
 endif
 
